@@ -1,0 +1,3 @@
+﻿  main.cpp
+main.obj : error LNK2019: unresolved external symbol D3D11CreateDeviceAndSwapChain referenced in function "bool __cdecl CreateDeviceD3D(struct HWND__ *)" (?CreateDeviceD3D@@YA_NPEAUHWND__@@@Z)
+C:\Users\Dillon Kyle\source\repos\WindowsApplication\x64\Debug\WindowsApplication.exe : fatal error LNK1120: 1 unresolved externals
