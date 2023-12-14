@@ -1,3 +1,4 @@
 ﻿  main.cpp
-main.obj : error LNK2019: unresolved external symbol D3D11CreateDeviceAndSwapChain referenced in function "bool __cdecl CreateDeviceD3D(struct HWND__ *)" (?CreateDeviceD3D@@YA_NPEAUHWND__@@@Z)
-C:\Users\Dillon Kyle\source\repos\WindowsApplication\x64\Debug\WindowsApplication.exe : fatal error LNK1120: 1 unresolved externals
+C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(119,37): warning C4390: ';': empty controlled statement found; is this the intent?
+C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(273,14): warning C4101: 'e': unreferenced local variable
+  WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\WindowsApplication\x64\Debug\WindowsApplication.exe
