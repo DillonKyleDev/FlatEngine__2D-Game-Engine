@@ -11,43 +11,28 @@
 class Texture
 {
 public:
-	//Initializes variables
 	Texture();
-
-	//Deallocatees memory
 	~Texture();
-
 	bool loadFromFile(std::string path);
-
 	bool loadSurface(std::string path, SDL_Surface* screenSurface);
-
 	bool blitSurface(SDL_Surface* screenSurface);
-
 	//Creates image from font string
 	bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* font);
-
 	//Deallocates texture
 	void freeTexture();
-
 	//Deallocates surface
 	void freeSurface();
-
 	//Set color modulation
 	void setColor(Uint8 red, Uint8 green, Uint8 blue);
-
 	//Set blending
 	void setBlendMode(SDL_BlendMode blending);
-
 	//Set alpha modulation
 	void setAlpha(Uint8 alpha);
-
 	//Render texture at given point
 	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
 	//Get image dimensions
 	int getWidth();
 	int getHeight();
-
 	//Set image dimensions
 	void setDimensions(int width, int height);
 
