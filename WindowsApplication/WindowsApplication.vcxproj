@@ -143,6 +143,7 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="FlatEngine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="FlatEngine.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="Sprite.h" />
