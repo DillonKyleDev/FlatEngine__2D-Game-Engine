@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{0f09fd41-5348-48f7-b921-a0218dbe0c17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FlatEngine">
+      <UniqueIdentifier>{4c21b399-5d4a-445f-af72-74efea3e87aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FlatEngine">
+      <UniqueIdentifier>{388cfe3a-612d-4859-a0ca-0614ba2d0187}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Desktop\01_hello_SDL\main.cpp">
@@ -85,16 +91,13 @@
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="FlatEngine.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\FlatEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="FlatGui.cpp">
+      <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -140,8 +143,14 @@
     <ClInclude Include="GameObjectManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="FlatEngine.h">
+    <ClInclude Include="Button.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlatEngine.h">
+      <Filter>Header Files\FlatEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
