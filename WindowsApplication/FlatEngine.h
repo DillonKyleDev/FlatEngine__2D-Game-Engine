@@ -29,12 +29,9 @@ namespace FlatEngine
 
 	namespace FlatGui
 	{
-		void RenderGui(ImGuiIO& io);
-
-		void SetupImGui(ImGuiIO& io);
+		void SetupImGui();
 		void HandleEvents(SDL_Event event, bool &quit);
-		void StartFrame();
-		void Render(ImGuiIO& io);
+		void Render(bool& quit);
 		void RenderHierarchy();
 		void Cleanup();
 	}
