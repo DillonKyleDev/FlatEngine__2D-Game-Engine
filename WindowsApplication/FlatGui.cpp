@@ -13,13 +13,10 @@
 
 namespace FlatEngine { namespace FlatGui {
 
-	ImGuiIO io;
-
 	// Our state
 	bool show_demo_window = true;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-	//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	//Setup
 	void FlatEngine::FlatGui::SetupImGui()
@@ -27,13 +24,10 @@ namespace FlatEngine { namespace FlatGui {
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		io = ImGui::GetIO(); (void)io;
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
@@ -68,6 +62,39 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui_ImplSDLRenderer2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
+
+		//Create dockable background space for all viewports
+		ImGui::DockSpaceOverViewport();
+
+		//Add viewports
+		FlatEngine::FlatGui::AddViewports();
+
+		// Rendering
+		ImGui::Render();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		SDL_RenderSetScale(Window::renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+		SDL_SetRenderDrawColor(Window::renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+		SDL_RenderClear(Window::renderer);
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+		SDL_RenderPresent(Window::renderer);
+	}
+
+
+	void FlatEngine::FlatGui::AddViewports()
+	{
+		// 0. Texture window
+		{
+			// Render texture
+			SDL_Texture* my_texture = TextureManager::dot.getTexture();
+			float my_image_width = (float)TextureManager::dot.getWidth();
+			float my_image_height = (float)TextureManager::dot.getHeight();
+
+			ImGui::Begin("SDL2/SDL_Renderer Texture Test");
+			ImGui::Text("pointer = %p", my_texture);
+			ImGui::Text("size = %d x %d", my_image_width, my_image_height);
+			ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
+			ImGui::End();
+		}
 
 		FlatEngine::FlatGui::RenderHierarchy();
 
@@ -107,22 +134,6 @@ namespace FlatEngine { namespace FlatGui {
 				show_another_window = false;
 			ImGui::End();
 		}
-
-
-
-		// Rendering
-		ImGui::Render();
-
-		SDL_RenderSetScale(Window::renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-		SDL_SetRenderDrawColor(Window::renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
-		SDL_RenderClear(Window::renderer);
-		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-
-		// Update and Render additional Platform Windows
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-
-		SDL_RenderPresent(Window::renderer);
 	}
 
 
@@ -139,7 +150,7 @@ namespace FlatEngine { namespace FlatGui {
 		static int counter = 0;
 
 		//Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-		ImGui::Begin("Game Object Manager");
+		ImGui::Begin("Scene Hierarchy");
 
 		if (ImGui::Button("Create New GameObject"))
 		{
@@ -149,6 +160,7 @@ namespace FlatEngine { namespace FlatGui {
 		for (int i = 0; i < GameObjectManager::gameObjects.size(); i++)
 		{
 			ImGui::Text("GameObject");
+			ImGui::Text("");
 		}
 
 		ImGui::End();
@@ -160,7 +172,6 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext();
 	}
-
 }
 }
 

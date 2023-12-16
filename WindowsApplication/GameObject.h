@@ -4,6 +4,11 @@
 #include "Component.h"
 
 
+enum ComponentTypes {
+	Transform,
+	Sprite,
+};
+
 class GameObject
 {
 public:
@@ -13,7 +18,7 @@ public:
 	std::string GetName();
 	void AddComponent(Component component);
 	void RemoveComponent(Component component);
-	void GetComponent();
+	Component GetComponent();
 
 private:
 	long ID;

@@ -41,7 +41,8 @@ void GameObject::RemoveComponent(Component component)
 }
 
 
-void GameObject::GetComponent()
+Component GameObject::GetComponent()
 {
-
+	Component temp;
+	return temp;
 }

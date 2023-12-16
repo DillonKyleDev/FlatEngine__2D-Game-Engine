@@ -17,6 +17,9 @@ namespace TextureManager
 	Texture dots;
 	Texture button;
 
+	//Buttons
+	Button goldButton;
+
 	bool LoadTextures()
 	{
 		font = TTF_OpenFont("C:/Users/Dillon Kyle/fonts/Cinzel/Cinzel-Black.ttf", 46);
@@ -41,6 +44,9 @@ namespace TextureManager
 			printf("Failed to render text texture!\n");
 			success = false;
 		}
+
+		//For Buttons
+		goldButton.setSpriteTexture("assets/images/SingleButton.png");
 
 		return success;
 	}
@@ -70,6 +76,9 @@ namespace TextureManager
 		//Render current frame
 
 		//Window::Render();
+
+		//Render buttons
+		goldButton.render();
 
 		//Update the screen
 		SDL_RenderPresent(renderer);

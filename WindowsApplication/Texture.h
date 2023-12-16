@@ -7,7 +7,6 @@
 #include "Window.h"
 
 
-
 class Texture
 {
 public:
@@ -20,6 +19,8 @@ public:
 	bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* font);
 	//Deallocates texture
 	void freeTexture();
+	//Returns SDL_Texture
+	SDL_Texture* getTexture();
 	//Deallocates surface
 	void freeSurface();
 	//Set color modulation

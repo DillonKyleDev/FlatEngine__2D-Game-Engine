@@ -1,5 +1,7 @@
 #include "GameObjectManager.h"
 
+
+
 GameObject GameObjectManager::CreateGameObject(std::string name)
 {
 	GameObject newObject;

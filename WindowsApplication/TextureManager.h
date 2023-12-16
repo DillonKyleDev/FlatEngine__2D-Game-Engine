@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "Texture.h"
+#include "Button.h"
 
 namespace TextureManager
 {
@@ -29,6 +30,7 @@ namespace TextureManager
 	extern Texture dots;
 	extern Texture button;
 
-
+	//Buttons
+	extern Button goldButton;
 };
 

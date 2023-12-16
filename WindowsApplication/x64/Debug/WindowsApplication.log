@@ -1,2 +1,4 @@
-﻿  FlatGui.cpp
+﻿  GameObject.cpp
+  GameObjectManager.cpp
+  Generating Code...
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\WindowsApplication\x64\Debug\WindowsApplication.exe

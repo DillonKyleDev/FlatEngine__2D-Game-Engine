@@ -31,8 +31,8 @@ namespace FlatEngine
 	namespace FlatGui
 	{
 		void SetupImGui();
-		void HandleEvents(SDL_Event event, bool &quit);
 		void Render(bool& quit);
+		void AddViewports();
 		void RenderHierarchy();
 		void Cleanup();
 	}

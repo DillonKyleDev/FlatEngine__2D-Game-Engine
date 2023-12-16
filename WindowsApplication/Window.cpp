@@ -1,5 +1,6 @@
 #include "Window.h"
 
+
 SDL_Window* Window::window;
 SDL_Renderer* Window::renderer;
 SDL_Surface* Window::screenSurface;
@@ -19,7 +20,7 @@ bool Window::Init(char* title, int width=640, int height=480)
 
 	// Create window with SDL_Renderer graphics context
 	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-	Window::window = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+	Window::window = SDL_CreateWindow("FlatEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 	Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
 	if (Window::window == NULL)
@@ -76,8 +77,6 @@ void Window::Render()
 	//Clear the screen
 	SDL_SetRenderDrawColor(Window::renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(Window::renderer);
-
-
 
 	//Update the screen
 	SDL_RenderPresent(Window::renderer);

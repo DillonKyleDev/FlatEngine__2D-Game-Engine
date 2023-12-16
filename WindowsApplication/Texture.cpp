@@ -5,10 +5,10 @@
 Texture::Texture()
 {
 	//Initialize
-	texture = NULL;
-	surface = NULL;
-	textureWidth = 0;
-	textureHeight = 0;
+	this->texture = NULL;
+	this->surface = NULL;
+	this->textureWidth = 0;
+	this->textureHeight = 0;
 }
 
 
@@ -47,7 +47,7 @@ bool Texture::loadFromFile(std::string path)
 		}
 		else
 		{
-			//Get image dimensions
+			//Set image dimensions
 			this->textureWidth = loadedSurface->w;
 			this->textureHeight = loadedSurface->h;
 		}
@@ -154,6 +154,12 @@ void Texture::freeTexture()
 		this->textureWidth = 0;
 		this->textureHeight = 0;
 	}
+}
+
+
+SDL_Texture* Texture::getTexture()
+{
+	return this->texture;
 }
 
 
