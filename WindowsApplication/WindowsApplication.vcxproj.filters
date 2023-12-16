@@ -96,6 +96,9 @@
     <ClCompile Include="FlatGui.cpp">
       <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="FlatEngine.h">
       <Filter>Header Files\FlatEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

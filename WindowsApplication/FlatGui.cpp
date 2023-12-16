@@ -1,4 +1,5 @@
 #include "FlatEngine.h"
+#include "TextureManager.h"
 
 
 /*
@@ -48,7 +49,8 @@ FrameContext* WaitForNextFrameResources();
 // Our state
 bool show_demo_window = true;
 bool show_another_window = false;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 //Setup
 void FlatEngine::FlatGui::SetupImGui()
@@ -130,6 +132,7 @@ void FlatEngine::FlatGui::Render(bool& quit)
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
+
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
@@ -183,7 +186,7 @@ void FlatEngine::FlatGui::Render(bool& quit)
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	g_pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
 	g_pd3dCommandList->ResourceBarrier(1, &barrier);
-
+	TextureManager::RenderTextures();
 	// Render Dear ImGui graphics
 	const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
 	g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
@@ -198,10 +201,8 @@ void FlatEngine::FlatGui::Render(bool& quit)
 	g_pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&g_pd3dCommandList);
 
 	// Update and Render additional Platform Windows
-
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault(nullptr, (void*)g_pd3dCommandList);
-		
+	ImGui::UpdatePlatformWindows();
+	ImGui::RenderPlatformWindowsDefault(nullptr, (void*)g_pd3dCommandList);
 
 	g_pSwapChain->Present(1, 0); // Present with vsync
 	//g_pSwapChain->Present(0, 0); // Present without vsync
