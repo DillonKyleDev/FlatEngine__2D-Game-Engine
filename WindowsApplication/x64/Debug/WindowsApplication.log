@@ -1,2 +1,4 @@
-﻿  FlatGui.cpp
+﻿  main.cpp
+C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(104,37): warning C4390: ';': empty controlled statement found; is this the intent?
+C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(283,14): warning C4101: 'e': unreferenced local variable
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\WindowsApplication\x64\Debug\WindowsApplication.exe
