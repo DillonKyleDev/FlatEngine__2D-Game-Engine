@@ -8,6 +8,7 @@
 //ImGui - SDL + DirextX12
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
 #include "imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>

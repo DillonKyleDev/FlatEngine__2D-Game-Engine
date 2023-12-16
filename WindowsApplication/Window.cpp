@@ -15,7 +15,13 @@ bool Window::Init(char* title, int width=640, int height=480)
 	Window::SetScreenDimensions(width, height);
 
 	//Create window
-	Window::window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Window::WINDOW_WIDTH, Window::WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	//Window::window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Window::WINDOW_WIDTH, Window::WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+
+	// Create window with SDL_Renderer graphics context
+	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+	Window::window = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+	Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+
 	if (Window::window == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -24,7 +30,7 @@ bool Window::Init(char* title, int width=640, int height=480)
 	else
 	{
 		//Create vsynced renderer for window
-		Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+		//Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 		if (Window::renderer == NULL)
 		{
 			printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());

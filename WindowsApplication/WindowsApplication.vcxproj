@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%SDL2_DIR%\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,6 +136,7 @@
     <ClCompile Include="..\..\..\..\Desktop\01_hello_SDL\main.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_draw.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_dx12.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imconfig.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_internal.h" />
