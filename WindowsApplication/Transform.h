@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "Vector2.h"
 
-class Transform : Component
+class Transform : public Component
 {
 public:
 	Transform(float posX = 0, float posY = 0);

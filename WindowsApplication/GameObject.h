@@ -2,26 +2,30 @@
 #include <string>
 #include <vector>
 #include "Component.h"
+#include "Transform.h"
+#include "Sprite.h"
 
-
-enum ComponentTypes {
-	Transform,
-	Sprite,
-};
 
 class GameObject
 {
 public:
-	GameObject();
+	GameObject(GameObject* parent = nullptr);
 	~GameObject();
 	void SetName(std::string name);
 	std::string GetName();
-	void AddComponent(Component component);
+	void AddComponent(Component::ComponentTypes type);
 	void RemoveComponent(Component component);
-	Component GetComponent();
+	Component GetComponent(Component::ComponentTypes type);
+	void SetParent(GameObject* parent);
+	GameObject* GetParent();
+	void AddChild(GameObject* child);
+	void RemoveChild(GameObject child);
+	std::vector<GameObject*> GetChildren();
 
 private:
 	long ID;
 	std::string name;
 	std::vector<Component> components;
+	GameObject* parent;
+	std::vector<GameObject*> children;
 };

@@ -1,29 +1,29 @@
 #include "GameObjectManager.h"
 
 
+namespace GameObjectManager {
 
-GameObject GameObjectManager::CreateGameObject(std::string name)
-{
-	GameObject newObject;
-	newObject.SetName(name);
-	GameObjectManager::gameObjects.push_back(newObject);
-	return newObject;
+	//Variables
+	std::vector<GameObject> GameObjectManager::gameObjects;
+	long currentID = 0;
+
+	GameObject CreateGameObject()
+	{
+		GameObject newObject;
+		GameObjectManager::gameObjects.push_back(newObject);
+		return newObject;
+	}
+
+
+	void DeleteGameObject(GameObject gameObject)
+	{
+
+	}
+
+
+	void IncrementID()
+	{
+		currentID += 1;
+	}
 }
-
-
-void GameObjectManager::DeleteGameObject(GameObject gameObject)
-{
-
-}
-
-
-void GameObjectManager::IncrementID()
-{
-	GameObjectManager::currentID += 1;
-}
-
-
-//Variables
-std::vector<GameObject> GameObjectManager::gameObjects;
-long GameObjectManager::currentID = 0;
 

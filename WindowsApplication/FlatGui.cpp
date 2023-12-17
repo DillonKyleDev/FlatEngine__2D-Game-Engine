@@ -139,28 +139,21 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
-		GameObject newGameObject;
-		Component characterSprite;
+		std::vector<GameObject> objects = GameObjectManager::gameObjects;
 
-		newGameObject.SetName("MainCharacter");
-		newGameObject.AddComponent(characterSprite);
-		std::string tempName = newGameObject.GetName();
-
-		static float f = 0.0f;
-		static int counter = 0;
-
-		//Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
 		ImGui::Begin("Scene Hierarchy");
 
 		if (ImGui::Button("Create New GameObject"))
 		{
-			GameObjectManager::CreateGameObject("GameObjectTitle");
+			GameObjectManager::CreateGameObject();
 		}
 
-		for (int i = 0; i < GameObjectManager::gameObjects.size(); i++)
+		for (int i = 0; i < objects.size(); i++)
 		{
-			ImGui::Text("GameObject");
-			ImGui::Text("");
+			std::string name = objects[i].GetName();
+			const char* charName = name.c_str();
+			//ImGui::Text(charName);
+			ImGui::Text(charName);
 		}
 
 		ImGui::End();

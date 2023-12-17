@@ -3,9 +3,10 @@
 #include <string>
 #include "GameObject.h"
 
+
 namespace GameObjectManager
 {
-	extern GameObject CreateGameObject(std::string name);
+	extern GameObject CreateGameObject();
 	extern void DeleteGameObject(GameObject gameObject);	
 	extern void IncrementID();
 
