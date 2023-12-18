@@ -11,6 +11,7 @@ class GameObject
 public:
 	GameObject(GameObject* parent = nullptr);
 	~GameObject();
+	int GetID();
 	void SetName(std::string name);
 	std::string GetName();
 	void AddComponent(Component::ComponentTypes type);

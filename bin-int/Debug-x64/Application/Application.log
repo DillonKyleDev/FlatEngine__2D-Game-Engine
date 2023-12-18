@@ -1,0 +1,4 @@
+﻿  Application.cpp
+C:\Users\Dillon Kyle\source\repos\FlatEngine\Application\resource.h(12,1): warning C4005: 'IDI_APPLICATION': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winuser.h(11092,1): message : see previous definition of 'IDI_APPLICATION'
+  Application.vcxproj -> C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\Application\Application.exe

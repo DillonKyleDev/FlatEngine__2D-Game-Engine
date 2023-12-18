@@ -24,6 +24,7 @@
     <ProjectGuid>{d99a45f5-dd33-42b3-ad04-2ceec4679aa4}</ProjectGuid>
     <RootNamespace>WindowsApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>FlatEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,8 +72,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2_image-2.8.0\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL_Text\SDL2_ttf-2.20.2\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2-2.28.5\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2_image-2.8.0\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL_Text\SDL2_ttf-2.20.2\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2-2.28.5\include;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\backends;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2_image-2.8.0\lib\x64;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL_Text\SDL2_ttf-2.20.2\lib\x64;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\SDL2-2.28.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

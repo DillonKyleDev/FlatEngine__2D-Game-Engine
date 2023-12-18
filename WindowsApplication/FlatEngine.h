@@ -29,6 +29,7 @@ namespace FlatEngine
 		extern void AddViewports();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
+		extern void RenderSceneView();
 		extern void Cleanup();
 	}
 };

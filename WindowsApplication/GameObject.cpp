@@ -5,7 +5,8 @@
 GameObject::GameObject(GameObject* parent)
 {
 	this->ID = GameObjectManager::currentID;
-	this->name = "New GameObject";
+	//this->name = "New GameObject (" + std::to_string(this->ID) + ")";
+	this->name = "New";
 	this->parent = parent;
 	this->components = {};
 	this->AddComponent(Component::ComponentTypes::Transform);
@@ -17,6 +18,12 @@ GameObject::GameObject(GameObject* parent)
 GameObject::~GameObject()
 {
 
+}
+
+
+int GameObject::GetID()
+{
+	return this->ID;
 }
 
 
