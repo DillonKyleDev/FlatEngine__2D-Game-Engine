@@ -3,7 +3,7 @@
 #include <SDL_syswm.h>
 #include <imgui.h>
 #include "Window.h"
-#include "GameObjectManager.h"
+#include "GameObject.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -17,7 +17,10 @@
 
 namespace FlatEngine
 {
-
+	//Variables
+	extern int FocusedGameObjectIndex;
+	void SetFocusedGameObjectIndex(int index);
+	int GetFocusedGameObjectIndex();
 
 	namespace FlatGui
 	{
@@ -25,6 +28,7 @@ namespace FlatEngine
 		extern void Render(bool& quit);
 		extern void AddViewports();
 		extern void RenderHierarchy();
+		extern void RenderInspector();
 		extern void Cleanup();
 	}
 };

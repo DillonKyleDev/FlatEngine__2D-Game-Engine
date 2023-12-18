@@ -4,6 +4,7 @@ Transform::Transform(float posX, float posY)
 {
 	this->position.x = posX;
 	this->position.y = posY;
+	this->SetType(Component::ComponentTypes::Transform);
 }
 
 

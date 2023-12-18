@@ -1,12 +1,14 @@
 #include "GameObject.h"
 #include "GameObjectManager.h"
 
+
 GameObject::GameObject(GameObject* parent)
 {
 	this->ID = GameObjectManager::currentID;
-	name = "New GameObject";
+	this->name = "New GameObject";
 	this->parent = parent;
 	this->components = {};
+	this->AddComponent(Component::ComponentTypes::Transform);
 
 	GameObjectManager::IncrementID();
 }
@@ -46,6 +48,9 @@ void GameObject::AddComponent(Component::ComponentTypes type)
 		spriteComponent = Sprite();
 
 		this->components.push_back(spriteComponent);
+		spriteComponent = spriteComponent;
+		break;
+	default:
 		break;
 	}
 }
@@ -71,6 +76,12 @@ Component GameObject::GetComponent(Component::ComponentTypes type)
 	}
 
 	return nullComponent;
+}
+
+
+std::vector<Component> GameObject::GetComponents()
+{
+	return this->components;
 }
 
 

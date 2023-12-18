@@ -3,6 +3,7 @@
 Sprite::Sprite()
 {
 	this->texture = NULL;
+	this->SetType(Component::ComponentTypes::Sprite);
 }
 
 

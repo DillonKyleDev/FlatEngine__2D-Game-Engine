@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "TextureManager.h"
+#include "GameObjectManager.h"
 
 
 /*
@@ -97,6 +98,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		FlatEngine::FlatGui::RenderHierarchy();
+		FlatEngine::FlatGui::RenderInspector();
 
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 		if (show_demo_window)
@@ -139,8 +141,6 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
-		std::vector<GameObject> objects = GameObjectManager::gameObjects;
-
 		ImGui::Begin("Scene Hierarchy");
 
 		if (ImGui::Button("Create New GameObject"))
@@ -148,12 +148,63 @@ namespace FlatEngine { namespace FlatGui {
 			GameObjectManager::CreateGameObject();
 		}
 
-		for (int i = 0; i < objects.size(); i++)
+		for (int i = 0; i < GameObjectManager::gameObjects.size(); i++)
 		{
-			std::string name = objects[i].GetName();
+			std::string name = GameObjectManager::gameObjects[i].GetName();
 			const char* charName = name.c_str();
-			//ImGui::Text(charName);
-			ImGui::Text(charName);
+			GameObjectManager::gameObjects[i].SetName("Helloooooo" + i);
+			if (ImGui::Button(charName))
+			{
+				FlatEngine::SetFocusedGameObjectIndex(i);
+			}
+		}
+
+		ImGui::End();
+	}
+
+
+	void FlatEngine::FlatGui::RenderInspector()
+	{
+		ImGui::Begin("Inspector Window");
+		std::vector<GameObject> gameObjects = GameObjectManager::gameObjects;
+		int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
+
+		if (focusedObjectIndex != -1)
+		{
+			//Get focused GameObject
+			GameObject* focusedObject = &gameObjects[focusedObjectIndex];
+
+			std::string objectName = focusedObject->GetName();
+			const char* charObjectName = objectName.c_str();
+			std::vector<Component> components = focusedObject->GetComponents();
+
+			ImGui::Text(charObjectName);
+
+			if (components.size() > 0)
+			{
+				for (int i = 0; i < components.size(); i++)
+				{
+					std::string componentType = components[i].GetTypeString();
+					const char* charComponentType = componentType.c_str();
+					ImGui::Text(charComponentType);
+				}
+			}
+
+			if (ImGui::Button("Add Component"))
+			{
+				gameObjects[focusedObjectIndex].AddComponent(Component::ComponentTypes::Sprite);
+
+			}
+
+			if (components.size() > 0)
+			{
+				for (int i = 0; i < components.size(); i++)
+				{
+					std::string componentType = components[i].GetTypeString();
+					const char* charComponentType = componentType.c_str();
+					ImGui::Text(charComponentType);
+				}
+			}
 		}
 
 		ImGui::End();

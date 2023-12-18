@@ -18,6 +18,7 @@ public:
 	void SetType(ComponentTypes type);
 
 	ComponentTypes GetType();
+	std::string GetTypeString();
 
 private:
 	ComponentTypes type;
