@@ -47,7 +47,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%SDL2_DIR%\include;C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="FlatEngine.cpp" />
@@ -168,7 +169,10 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="EntryPoint.h" />
+    <ClInclude Include="FlatClient.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="FlatEngine.h" />
     <ClInclude Include="GameObject.h" />

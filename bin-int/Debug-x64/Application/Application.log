@@ -1,2 +1,3 @@
-﻿  Application.cpp
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatEngine.h(2,10): fatal  error C1083: Cannot open include file: 'SDL.h': No such file or directory
+﻿Game.obj : error LNK2019: unresolved external symbol "public: virtual __cdecl FlatEngine::Application::~Application(void)" (??1Application@FlatEngine@@UEAA@XZ) referenced in function "private: virtual __cdecl Game::~Game(void)" (??1Game@@EEAA@XZ)
+SDL2main.lib(SDL_windows_main.obj) : error LNK2019: unresolved external symbol SDL_main referenced in function main_getcmdline
+C:\Users\Dillon Kyle\source\repos\FlatEngine\\bin\Debug-x64\Application\Application.exe : fatal error LNK1120: 2 unresolved externals

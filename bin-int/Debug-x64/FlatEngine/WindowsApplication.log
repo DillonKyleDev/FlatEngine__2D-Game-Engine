@@ -1,5 +1,5 @@
 ﻿  main.cpp
-C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(49,37): warning C4390: ';': empty controlled statement found; is this the intent?
+C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(42,37): warning C4390: ';': empty controlled statement found; is this the intent?
   imgui_impl_dx12.cpp
   imgui_impl_sdl2.cpp
   imgui_impl_sdlrenderer2.cpp
@@ -8,6 +8,7 @@ C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(49,37): warning C4390: ';': e
   imgui_draw.cpp
   imgui_tables.cpp
   imgui_widgets.cpp
+  Application.cpp
   Button.cpp
   Component.cpp
   FlatEngine.cpp
@@ -18,9 +19,10 @@ C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp(49,37): warning C4390: ';': e
   Texture.cpp
   TextureManager.cpp
   Transform.cpp
-  Vector2.cpp
   Generating Code...
   Compiling...
+  Vector2.cpp
   Window.cpp
   Generating Code...
+  LINK : C:\Users\Dillon Kyle\source\repos\FlatEngine\\bin\Debug-x64\FlatEngine\FlatEngine.exe not found or not built by the last incremental link; performing full link
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\FlatEngine\FlatEngine.exe

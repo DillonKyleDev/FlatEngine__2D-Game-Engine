@@ -2,9 +2,6 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\FlatEngine\FlatEngine.exe</FullPath>
-    </ProjectOutput>
-    <ProjectOutput>
       <FullPath>C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\Application\Application.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
