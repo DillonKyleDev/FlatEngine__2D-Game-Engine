@@ -10,8 +10,5 @@ namespace FlatEngine
 		virtual ~Application();
 
 		void Run();
-		//virtual void OnUpdate();
 	};
-
-	//Application* CreateApplication();
 }

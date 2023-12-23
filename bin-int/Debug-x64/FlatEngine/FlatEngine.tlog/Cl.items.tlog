@@ -14,6 +14,7 @@ C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatEngine.cpp;C
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatGui.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\FlatGui.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\GameObject.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\GameObject.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\GameObjectManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\GameObjectManager.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Scene.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\Scene.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sprite.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\Sprite.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Texture.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\Texture.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\TextureManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\bin-int\Debug-x64\FlatEngine\TextureManager.obj

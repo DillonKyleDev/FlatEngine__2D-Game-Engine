@@ -1,6 +1,7 @@
 #include "FlatEngine.h"
 #include "TextureManager.h"
 #include "GameObjectManager.h"
+#include "Scene.h"
 
 
 /*
@@ -138,6 +139,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Text("Hello from another window!");
 			if (ImGui::Button("Close Me"))
 				show_another_window = false;
+
 			ImGui::End();
 		}
 	}
@@ -162,6 +164,14 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				FlatEngine::SetFocusedGameObjectIndex(i);
 			}
+		}
+
+
+		if (ImGui::Button("Save File"))
+		{
+			Scene newScene;
+			newScene.SetName("Test Scene");
+			FlatEngine::SaveScene(newScene);
 		}
 
 		ImGui::End();
