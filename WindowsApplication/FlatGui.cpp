@@ -1,7 +1,7 @@
 #include "FlatEngine.h"
 #include "TextureManager.h"
 #include "GameObjectManager.h"
-#include "Scene.h"
+#include "SceneManager.h"
 
 
 /*
@@ -166,12 +166,13 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 
+		SceneManager sceneManager;
 
 		if (ImGui::Button("Save File"))
 		{
 			Scene newScene;
 			newScene.SetName("Test Scene");
-			FlatEngine::SaveScene(newScene);
+			sceneManager.SaveScene(newScene);
 		}
 
 		ImGui::End();

@@ -12,17 +12,12 @@ namespace FlatEngine
 		~Scene();
 
 		void SetName(std::string name);
+		std::string GetName();
 		void AddSceneObject(GameObject sceneObject);
 		void GetSceneObjects();
-		std::string name;
-		int num;
-
 
 	private:
-		
+		std::string name;
 		std::vector<GameObject> sceneObjects;
 	};
-	
-	extern void SaveScene(Scene scene);
-	extern void LoadScene(std::string name);
 }
