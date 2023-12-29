@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <array>
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -12,7 +13,7 @@ namespace FlatEngine
 {
 	SceneManager::SceneManager()
 	{
-
+		this->loadedScene;
 	}
 
 	SceneManager::~SceneManager()
@@ -52,31 +53,42 @@ namespace FlatEngine
 		// Opening file in append mode
 		file_obj.open("SavedScenes.json", std::ios::app);
 
-		// Here, this will be a loop that goes through each GameObject and inserts the
-		// values into a json object with the important data. That will then be put into
-		// the SceneObjects["Scene GameObjects"] array and then that will be pushed into
-		// the empty newFileObject json object to be saved to the file.
-		static json jsonObject = json::object(
-		{
-			{ "name", "Player" },
-			{ "components",
-				{
-					{"type", "Transform"},
-					{"xPos", 5.68},
-					{"yPos", 23.40}
-				}
-			}
-		});
-		// += this current loop iterations GameObject saved object V
-		//jsonObject.push_back(jsonObject);
-		//jsonObject += json::object_t::value_type({ "GameObject", {{ "name", "Player1" }} });
+		// Declare object we'll be filling
+		//static json gameObjectJson = json::object_t();
+ 
+		// Array that will hold our gameObject json objects
+		json sceneObjectsJsonArray;
 
-		// Add json object full of GameObjects to the main array object
-		json SceneObjects = json::array({jsonObject});
+		std::vector<GameObject> sceneObjects = scene.GetSceneObjects();
+		for (int i = 0; i < sceneObjects.size(); i++)
+		{
+			// Declare components array json object for components
+			json componentsArray = json::array();
+
+			// Get the object we'll be working with and it's components
+			GameObject currentObject = scene.GetSceneObjects()[i];
+			std::vector<Component> components = currentObject.GetComponents();
+
+			for (int j = 0; j < components.size(); j++)
+			{
+				std::string typeString = components[j].GetTypeString();
+				componentsArray.push_back({ { "type", components[j].GetTypeString() } });
+			}
+
+			std::string objectName = currentObject.GetName();
+
+			json gameObjectJson = json::object({ {"name", objectName}, {"components", componentsArray} });
+
+			// Adding elements to objects in this way doesn't seem to save correctly. ^ Use the way above ^
+			//gameObjectJson += json::object_t::value_type("name", objectName);
+			//gameObjectJson += json::object_t::value_type("components", componentsArray);
+
+			// Finally, add the gameObject json to the sceneObjectsJsonArray
+			sceneObjectsJsonArray.push_back(gameObjectJson);
+		}
 
 		// Recreate the GameObjects json object and add the array as the content
-		static json newFileObject = json::object({});
-		newFileObject += json::object_t::value_type({ "Scene GameObjects", SceneObjects });
+		json newFileObject = json::object({ {"Scene GameObjects", sceneObjectsJsonArray } });
 
 		// Add the GameObjects object contents to the file
 		file_obj << newFileObject.dump(4).c_str() << std::endl;
@@ -87,7 +99,82 @@ namespace FlatEngine
 
 	void SceneManager::LoadScene(std::string fileName)
 	{
+		Scene freshScene;
 
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream("SavedScenes.json");
+
+		// Open file in in mode
+		file_obj.open("SavedScenes.json", std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj)
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		fileContent = fileContent;
+
+		// Go from string to json object
+		json fileContentJson = json::parse(fileContent);
+		fileContentJson = fileContentJson;
+
+		auto firstObjectName = fileContentJson["Scene GameObjects"];
+		firstObjectName = firstObjectName;
+
+		std::string name = firstObjectName[0]["name"];
+		name = name;
+
+		// Loop through the saved GameObjects in the JSON file
+		for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
+		{
+			// Get data from the loaded object
+			json currentObjectJson = fileContentJson["Scene GameObjects"][i];
+			std::string loadedName = currentObjectJson["name"];
+
+			// Create new GameObject to load the data into
+			GameObject loadedObject;
+			loadedObject.SetName(loadedName);
+
+			// Loop through the components in this GameObjects json
+			for (int j = 0; j < currentObjectJson["components"].size(); j++)
+			{
+				j = j;
+				auto type = currentObjectJson["components"][j]["type"];
+				type = type;
+				//Add each loaded component to the newly created GameObject
+				if (type == "Transform")
+				{
+					//loadedObject.AddComponent(Component::ComponentTypes::Transform);
+				}
+				else if (type == "Sprite")
+				{
+					loadedObject.AddComponent(Component::ComponentTypes::Sprite);
+				}
+			}
+
+			// Add created GameObject to our freshScene
+			freshScene.AddSceneObject(loadedObject);
+		}
+
+		// Assign our freshScene to the SceneManagers currently loadedScene member variable
+		this->loadedScene = freshScene;
+	}
+
+	Scene &SceneManager::GetLoadedScene()
+	{
+		return this->loadedScene;
 	}
 }
 

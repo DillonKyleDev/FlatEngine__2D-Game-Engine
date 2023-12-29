@@ -147,16 +147,18 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
+		std::vector<GameObject> gameObjects = FlatEngine::sceneManager.GetLoadedScene().GetGameObjects();
+
 		ImGui::Begin("Scene Hierarchy");
 
-		if (ImGui::Button("Create New GameObject"))
+		if (ImGui::Button("Create New Game Object"))
 		{
-			GameObjectManager::CreateGameObject();
+			FlatEngine::sceneManager.GetLoadedScene().CreateGameObject();
 		}
 
-		for (int i = 0; i < GameObjectManager::gameObjects.size(); i++)
+		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			GameObject currentObject = GameObjectManager::gameObjects[i];
+			GameObject currentObject = gameObjects[i];
 			//Plus the ID to give each button a unique identifier in case there are duplicate names
 			std::string name = currentObject.GetName() + "##" + std::to_string(currentObject.GetID());
 			const char* charName = name.c_str();
@@ -166,13 +168,14 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 
-		SceneManager sceneManager;
-
-		if (ImGui::Button("Save File"))
+		if (ImGui::Button("Save Scene"))
 		{
-			Scene newScene;
-			newScene.SetName("Test Scene");
-			sceneManager.SaveScene(newScene);
+			FlatEngine::sceneManager.SaveScene(FlatEngine::sceneManager.GetLoadedScene());
+		}
+
+		if (ImGui::Button("Load Scene"))
+		{
+			FlatEngine::sceneManager.LoadScene("SavedScenes.json");
 		}
 
 		ImGui::End();
@@ -182,17 +185,16 @@ namespace FlatEngine { namespace FlatGui {
 	void FlatEngine::FlatGui::RenderInspector()
 	{
 		ImGui::Begin("Inspector Window");
-		std::vector<GameObject> *gameObjects = &GameObjectManager::gameObjects;
 		int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
 
 		if (focusedObjectIndex != -1)
 		{
 			//Get focused GameObject
-			GameObject* focusedObject = &GameObjectManager::gameObjects[focusedObjectIndex];
+			GameObject* focusedObject = &FlatEngine::sceneManager.GetLoadedScene().GetGameObjects()[focusedObjectIndex];
 
-			std::string objectName = GameObjectManager::gameObjects[focusedObjectIndex].GetName();
+			std::string objectName = focusedObject->GetName();
 			const char* charObjectName = objectName.c_str();
-			std::vector<Component> components = GameObjectManager::gameObjects[focusedObjectIndex].GetComponents();
+			std::vector<Component> components = focusedObject->GetComponents();
 
 			ImGui::Text(charObjectName);
 

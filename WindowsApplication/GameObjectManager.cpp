@@ -1,29 +1,45 @@
 #include "GameObjectManager.h"
+#include "FlatEngine.h"
 
 
-namespace GameObjectManager {
+namespace FlatEngine {
 
-	//Variables
-	std::vector<GameObject> GameObjectManager::gameObjects;
-	long currentID = 0;
+	GameObjectManager::GameObjectManager()
+	{
+		std::vector<GameObject> gameObjects;
+		this->currentID = 0;
+	}
 
-	GameObject CreateGameObject()
+	GameObjectManager::~GameObjectManager()
+	{
+
+	}
+
+	GameObject GameObjectManager::CreateGameObject()
 	{
 		GameObject newObject;
-		GameObjectManager::gameObjects.push_back(newObject);
+		this->gameObjects.push_back(newObject);
+		FlatEngine::sceneManager.GetLoadedScene().AddSceneObject(newObject);
 		return newObject;
 	}
 
-
-	void DeleteGameObject(GameObject gameObject)
+	void GameObjectManager::DeleteGameObject(GameObject gameObject)
 	{
 
 	}
 
-
-	void IncrementID()
+	void GameObjectManager::IncrementID()
 	{
-		currentID += 1;
+		this->currentID += 1;
+	}
+
+	std::vector<GameObject> &GameObjectManager::GetGameObjects()
+	{
+		return this->gameObjects;
+	}
+
+	long GameObjectManager::GetCurrentID()
+	{
+		return this->currentID;
 	}
 }
-

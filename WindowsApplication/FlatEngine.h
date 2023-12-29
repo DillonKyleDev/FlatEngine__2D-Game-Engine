@@ -4,6 +4,8 @@
 #include <imgui.h>
 #include "Window.h"
 #include "GameObject.h"
+#include "SceneManager.h"
+#include "GameObjectManager.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -21,6 +23,8 @@ namespace FlatEngine
 	extern int FocusedGameObjectIndex;
 	void SetFocusedGameObjectIndex(int index);
 	int GetFocusedGameObjectIndex();
+	extern FlatEngine::SceneManager sceneManager;
+	extern FlatEngine::GameObjectManager gameObjectManager;
 
 	namespace FlatGui
 	{

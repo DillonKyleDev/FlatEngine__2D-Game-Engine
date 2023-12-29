@@ -4,13 +4,22 @@
 #include "GameObject.h"
 
 
-namespace GameObjectManager
+namespace FlatEngine 
 {
-	extern GameObject CreateGameObject();
-	extern void DeleteGameObject(GameObject gameObject);	
-	extern void IncrementID();
+	class GameObjectManager
+	{
+	public:
+		GameObjectManager();
+		~GameObjectManager();
 
-	//Variables
-	extern std::vector<GameObject> gameObjects;
-	extern long currentID;
-};
+		GameObject CreateGameObject();
+		void DeleteGameObject(GameObject gameObject);
+		void IncrementID();
+		std::vector<GameObject> &GetGameObjects();
+		long GetCurrentID();
+
+	private:
+		std::vector<GameObject> gameObjects;
+		long currentID;
+	};
+}

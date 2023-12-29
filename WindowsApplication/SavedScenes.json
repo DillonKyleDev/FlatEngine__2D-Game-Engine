@@ -1,12 +1,40 @@
 {
     "Scene GameObjects": [
         {
-            "components": {
-                "type": "Transform",
-                "xPos": 5.68,
-                "yPos": 23.4
-            },
-            "name": "Player"
+            "components": [
+                {
+                    "type": "Transform"
+                },
+                {
+                    "type": "Sprite"
+                },
+                {
+                    "type": "Sprite"
+                },
+                {
+                    "type": "Sprite"
+                }
+            ],
+            "name": "New"
+        },
+        {
+            "components": [
+                {
+                    "type": "Transform"
+                }
+            ],
+            "name": "New"
+        },
+        {
+            "components": [
+                {
+                    "type": "Transform"
+                },
+                {
+                    "type": "Sprite"
+                }
+            ],
+            "name": "New"
         }
     ]
 }

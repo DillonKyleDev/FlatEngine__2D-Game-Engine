@@ -11,6 +11,7 @@ namespace FlatEngine
 
 		void SaveScene(Scene scene);
 		void LoadScene(std::string name);
+		Scene &GetLoadedScene();
 
 	private:
 		Scene loadedScene;

@@ -1,2 +1,4 @@
-﻿  SceneManager.cpp
+﻿  GameObject.cpp
+  SceneManager.cpp
+  Generating Code...
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\FlatEngine\FlatEngine.exe

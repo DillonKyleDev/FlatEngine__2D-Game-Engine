@@ -1,17 +1,17 @@
 #include "GameObject.h"
-#include "GameObjectManager.h"
+#include "FlatEngine.h"
 
 
 GameObject::GameObject(GameObject* parent)
 {
-	this->ID = GameObjectManager::currentID;
+	this->ID = FlatEngine::gameObjectManager.GetCurrentID();
 	//this->name = "New GameObject (" + std::to_string(this->ID) + ")";
 	this->name = "New";
 	this->parent = parent;
 	this->components = {};
 	this->AddComponent(Component::ComponentTypes::Transform);
 
-	GameObjectManager::IncrementID();
+	FlatEngine::gameObjectManager.IncrementID();
 }
 
 
