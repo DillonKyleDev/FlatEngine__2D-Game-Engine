@@ -1,5 +1,10 @@
 #pragma once
 #include <string>
+#include "json.hpp"
+#include "Vector2.h"
+using json = nlohmann::json;
+using namespace nlohmann::literals;
+
 
 
 
@@ -19,8 +24,12 @@ public:
 
 	ComponentTypes GetType();
 	std::string GetTypeString();
+	virtual std::string GetData();
+
+	//Vector2 position = { 0, 0 };
 
 private:
-	ComponentTypes type;
+	ComponentTypes type = Component::ComponentTypes::Null;
+
 };
 

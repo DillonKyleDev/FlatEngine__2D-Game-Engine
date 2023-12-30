@@ -1,16 +1,30 @@
 #pragma once
 #include "Component.h"
 #include "Vector2.h"
+#include "json.hpp"
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
-class Transform : public Component
+
+namespace FlatEngine
 {
-public:
-	Transform(float posX = 0, float posY = 0);
-	~Transform();
-	void SetPosition(Vector2 position);
-	Vector2 GetPosition();
+	class Transform : public Component
+	{
+	public:
+		Transform();
+		~Transform();
+		void SetPosition(Vector2 position);
+		Vector2 GetPosition();
+		std::string GetData();
 
-private:
-	Vector2 position;
-	//Rotation
-};
+
+		//Vector2 position = { 0, 0 };
+
+	private:
+		Vector2 position;
+		int posX;
+		int posY;
+		int rotation;
+		//Rotation
+	};
+}

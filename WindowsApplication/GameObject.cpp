@@ -2,127 +2,126 @@
 #include "FlatEngine.h"
 
 
-GameObject::GameObject(GameObject* parent)
+
+namespace FlatEngine
 {
-	this->ID = FlatEngine::gameObjectManager.GetCurrentID();
-	//this->name = "New GameObject (" + std::to_string(this->ID) + ")";
-	this->name = "New";
-	this->parent = parent;
-	this->components = {};
-	this->AddComponent(Component::ComponentTypes::Transform);
-
-	FlatEngine::gameObjectManager.IncrementID();
-}
-
-
-GameObject::~GameObject()
-{
-
-}
-
-
-int GameObject::GetID()
-{
-	return this->ID;
-}
-
-
-void GameObject::SetName(std::string name)
-{
-	this->name = name;
-}
-
-std::string GameObject::GetName()
-{
-	return name;
-}
-
-
-void GameObject::AddComponent(Component::ComponentTypes type)
-{
-	Transform transformComponent;
-	Sprite spriteComponent;
-
-	switch (type)
+	GameObject::GameObject(GameObject* parent)
 	{
-	case Component::ComponentTypes::Transform:
-		transformComponent = Transform();
+		this->ID = FlatEngine::gameObjectManager.GetCurrentID();
+		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
+		this->parent = parent;
+		this->components = {};
 
-		this->components.push_back(transformComponent);
-		break;
-
-	case Component::ComponentTypes::Sprite:
-		spriteComponent = Sprite();
-
-		this->components.push_back(spriteComponent);
-		spriteComponent = spriteComponent;
-		break;
-	default:
-		break;
+		FlatEngine::gameObjectManager.IncrementID();
 	}
-}
 
 
-void GameObject::RemoveComponent(Component component)
-{
-
-}
-
-
-Component GameObject::GetComponent(Component::ComponentTypes type)
-{
-	Component nullComponent;
-	nullComponent.SetType(Component::ComponentTypes::Null);
-
-	for (int i = 0; i < this->components.size(); i++)
+	GameObject::~GameObject()
 	{
-		if (this->components[i].GetType() == type)
+
+	}
+
+
+	int GameObject::GetID()
+	{
+		return this->ID;
+	}
+
+
+	void GameObject::SetName(std::string name)
+	{
+		this->name = name;
+	}
+
+	std::string GameObject::GetName()
+	{
+		return name;
+	}
+
+
+	void GameObject::AddComponent(Component::ComponentTypes type)
+	{
+		// Look into making these smart pointers so they delete automatically
+		FlatEngine::Transform *transformComponent = new FlatEngine::Transform();
+		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite();
+
+		switch (type)
 		{
-			return this->components[i];
+		case Component::ComponentTypes::Transform:
+			this->components.push_back(transformComponent);
+			break;
+
+		case Component::ComponentTypes::Sprite:
+			this->components.push_back(spriteComponent);
+			break;
+		default:
+			break;
 		}
 	}
 
-	return nullComponent;
-}
 
-
-std::vector<Component> GameObject::GetComponents()
-{
-	return this->components;
-}
-
-
-void GameObject::SetParent(GameObject* parent)
-{
-	if (parent != nullptr)
+	void GameObject::RemoveComponent(Component* component)
 	{
-		this->parent = parent;
+
 	}
-}
 
 
-GameObject* GameObject::GetParent()
-{
-	return this->parent;
-}
+	//Component GameObject::GetComponent(Component::ComponentTypes type)
+	//{
+	//	FlatEngine::Transform nullComponent;
+	//	nullComponent.SetType(Component::ComponentTypes::Null);
+
+	//	for (int i = 0; i < this->components.size(); i++)
+	//	{
+	//		if (this->components[i].GetType() == type)
+	//		{
+	//			return this->components[i];
+	//		}
+	//	}
+
+	//	// This is returning address of a local variable. Must not do this in final implementation
+	//	return nullComponent;
+	//}
 
 
-void GameObject::AddChild(GameObject* child)
-{
-	if (child != nullptr)
+	std::vector<Component*> &GameObject::GetComponents()
 	{
-		this->children.push_back(child);
+		return this->components;
 	}
-}
 
 
-void GameObject::RemoveChild(GameObject child)
-{
+	void GameObject::SetParent(GameObject* parent)
+	{
+		if (parent != nullptr)
+		{
+			this->parent = parent;
+		}
+	}
 
-}
+
+	GameObject* GameObject::GetParent()
+	{
+		return this->parent;
+	}
 
 
-std::vector<GameObject*> GameObject::GetChildren()
-{
-	return this->children;
+	void GameObject::AddChild(GameObject* child)
+	{
+		if (child != nullptr)
+		{
+			this->children.push_back(child);
+		}
+	}
+
+
+	void GameObject::RemoveChild(GameObject child)
+	{
+
+	}
+
+
+	std::vector<GameObject*> GameObject::GetChildren()
+	{
+		return this->children;
+	}
 }

@@ -3,7 +3,9 @@
 
 Component::Component()
 {
-	this->type = Component::ComponentTypes::Null;
+	//this->type = Component::ComponentTypes::Null;
+	//this->position.x = 0;
+	//this->position.y = 0;
 }
 
 
@@ -27,6 +29,7 @@ Component::ComponentTypes Component::GetType()
 
 std::string Component::GetTypeString()
 {
+	this->type = this->type;
 	switch (this->type)
 	{
 	case Component::ComponentTypes::Transform:
@@ -40,4 +43,10 @@ std::string Component::GetTypeString()
 	default:
 		return "Null";
 	}
+}
+
+
+std::string Component::GetData()
+{
+	return "{}";
 }

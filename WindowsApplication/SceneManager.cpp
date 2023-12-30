@@ -4,9 +4,11 @@
 #include <sstream>
 #include <string>
 #include <array>
+#include <SDL.h>
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
+
 
 
 namespace FlatEngine
@@ -67,12 +69,36 @@ namespace FlatEngine
 
 			// Get the object we'll be working with and it's components
 			GameObject currentObject = scene.GetSceneObjects()[i];
-			std::vector<Component> components = currentObject.GetComponents();
+			std::vector<Component*> components = currentObject.GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
 			{
-				std::string typeString = components[j].GetTypeString();
-				componentsArray.push_back({ { "type", components[j].GetTypeString() } });
+				std::string typeString = components[j]->GetTypeString();
+
+				if (typeString == "Transform")
+				{
+					FlatEngine::Transform *component = static_cast<FlatEngine::Transform*>(components[j]);
+					std::string data = component->GetData();
+					componentsArray.push_back(json::parse(data));
+
+					//
+
+					//json jsonData = {
+					//	{ "type", "Transform" },
+					//	{ "xPos", component->position.x },
+					//	{ "yPos", component->position.y },
+					//	{ "rotation", 0 }
+					//};
+
+					//componentsArray.push_back(jsonData);
+				}
+				else if (typeString == "Sprite")
+				{
+					Component *component = components[j];
+					//Sprite& component = static_cast<Sprite&>(components[j]);
+					std::string data = component->GetData();
+					componentsArray.push_back(data);
+				}
 			}
 
 			std::string objectName = currentObject.GetName();
@@ -150,13 +176,12 @@ namespace FlatEngine
 			// Loop through the components in this GameObjects json
 			for (int j = 0; j < currentObjectJson["components"].size(); j++)
 			{
-				j = j;
 				auto type = currentObjectJson["components"][j]["type"];
-				type = type;
+
 				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
-					//loadedObject.AddComponent(Component::ComponentTypes::Transform);
+					loadedObject.AddComponent(Component::ComponentTypes::Transform);
 				}
 				else if (type == "Sprite")
 				{

@@ -147,7 +147,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
-		std::vector<GameObject> gameObjects = FlatEngine::sceneManager.GetLoadedScene().GetGameObjects();
+		std::vector<GameObject> gameObjects = FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects();
 
 		ImGui::Begin("Scene Hierarchy");
 
@@ -190,11 +190,11 @@ namespace FlatEngine { namespace FlatGui {
 		if (focusedObjectIndex != -1)
 		{
 			//Get focused GameObject
-			GameObject* focusedObject = &FlatEngine::sceneManager.GetLoadedScene().GetGameObjects()[focusedObjectIndex];
+			GameObject focusedObject = FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex];
 
-			std::string objectName = focusedObject->GetName();
+			std::string objectName = focusedObject.GetName();
 			const char* charObjectName = objectName.c_str();
-			std::vector<Component> components = focusedObject->GetComponents();
+			std::vector<Component*> components = focusedObject.GetComponents();
 
 			ImGui::Text(charObjectName);
 
@@ -202,16 +202,27 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				for (int i = 0; i < components.size(); i++)
 				{
-					std::string componentType = components[i].GetTypeString();
+					std::string componentType = components[i]->GetTypeString();
 					const char* charComponentType = componentType.c_str();
 					ImGui::Text(charComponentType);
 				}
 			}
 
-			if (ImGui::Button("Add Component"))
+			if (ImGui::Button("Add Transform Component"))
+			{
+
+				FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex].AddComponent(Component::ComponentTypes::Transform);
+			}
+
+			if (ImGui::Button("Add Sprite Component"))
 			{
 				
-				focusedObject->AddComponent(Component::ComponentTypes::Sprite);
+				FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex].AddComponent(Component::ComponentTypes::Sprite);
+			}
+
+			if (ImGui::Button("Delete GameObject"))
+			{
+				FlatEngine::sceneManager.GetLoadedScene().DeleteGameObject(focusedObjectIndex);
 			}
 		}
 

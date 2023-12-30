@@ -3,38 +3,25 @@
         {
             "components": [
                 {
-                    "type": "Transform"
+                    "rotation": 5,
+                    "type": "Transform",
+                    "xPos": 0,
+                    "yPos": 0
                 },
-                {
-                    "type": "Sprite"
-                },
-                {
-                    "type": "Sprite"
-                },
-                {
-                    "type": "Sprite"
-                }
+                "{\"texture\":\"\"}"
             ],
-            "name": "New"
+            "name": "New GameObject (0)"
         },
         {
             "components": [
                 {
-                    "type": "Transform"
+                    "rotation": 5,
+                    "type": "Transform",
+                    "xPos": 0,
+                    "yPos": 0
                 }
             ],
-            "name": "New"
-        },
-        {
-            "components": [
-                {
-                    "type": "Transform"
-                },
-                {
-                    "type": "Sprite"
-                }
-            ],
-            "name": "New"
+            "name": "New GameObject (1)"
         }
     ]
 }

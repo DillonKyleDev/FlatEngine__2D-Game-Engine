@@ -29,7 +29,7 @@ namespace FlatEngine
 		this->sceneObjects.push_back(sceneObject);
 	}
 
-	std::vector<GameObject> Scene::GetSceneObjects()
+	std::vector<GameObject> &Scene::GetSceneObjects()
 	{
 		return this->sceneObjects;
 	}
@@ -42,19 +42,14 @@ namespace FlatEngine
 		return newObject;
 	}
 
-	void Scene::DeleteGameObject(GameObject gameObject)
+	void Scene::DeleteGameObject(int sceneObjectIndex)
 	{
-
+		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectIndex);
 	}
 
 	void Scene::IncrementID()
 	{
 		this->currentID += 1;
-	}
-
-	std::vector<GameObject>& Scene::GetGameObjects()
-	{
-		return this->sceneObjects;
 	}
 
 	long Scene::GetCurrentID()
