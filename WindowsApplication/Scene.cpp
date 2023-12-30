@@ -24,22 +24,21 @@ namespace FlatEngine
 		return this->name;
 	}
 
-	void Scene::AddSceneObject(GameObject sceneObject)
+	void Scene::AddSceneObject(GameObject *sceneObject)
 	{
 		this->sceneObjects.push_back(sceneObject);
 	}
 
-	std::vector<GameObject> &Scene::GetSceneObjects()
+	std::vector<GameObject*> Scene::GetSceneObjects()
 	{
 		return this->sceneObjects;
 	}
 
 
-	GameObject Scene::CreateGameObject()
+	void Scene::CreateGameObject()
 	{
-		GameObject newObject;
+		GameObject *newObject = new GameObject();
 		this->AddSceneObject(newObject);
-		return newObject;
 	}
 
 	void Scene::DeleteGameObject(int sceneObjectIndex)

@@ -18,7 +18,10 @@ namespace FlatEngine
 
 	std::string Sprite::GetData()
 	{
-		json jsonData = { { "texture", this->path } };
+		json jsonData = { 
+			{ "type", "Sprite" },
+			{ "texture", this->path }
+		};
 		std::string data = jsonData.dump();
 		return data;
 	}

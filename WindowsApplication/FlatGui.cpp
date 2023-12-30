@@ -1,6 +1,5 @@
 #include "FlatEngine.h"
 #include "TextureManager.h"
-#include "GameObjectManager.h"
 #include "SceneManager.h"
 
 
@@ -44,6 +43,7 @@ namespace FlatEngine { namespace FlatGui {
 			style.FramePadding = { 0.0f, 0.0f };
 			style.DisplayWindowPadding = { 0.0f, 0.0f };
 			style.WindowPadding = { 0.0f, 0.0f };
+			style.ItemSpacing = { 0, 0 };
 		}
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::window, Window::renderer);
@@ -147,20 +147,20 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
-		std::vector<GameObject> gameObjects = FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects();
+		std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
 
 		ImGui::Begin("Scene Hierarchy");
 
 		if (ImGui::Button("Create New Game Object"))
 		{
-			FlatEngine::sceneManager.GetLoadedScene().CreateGameObject();
+			FlatEngine::sceneManager->GetLoadedScene()->CreateGameObject();
 		}
 
-		for (int i = 0; i < gameObjects.size(); i++)
+		for (int i = 0; i < sceneObjects.size(); i++)
 		{
-			GameObject currentObject = gameObjects[i];
+			FlatEngine::GameObject *currentObject = sceneObjects[i];
 			//Plus the ID to give each button a unique identifier in case there are duplicate names
-			std::string name = currentObject.GetName() + "##" + std::to_string(currentObject.GetID());
+			std::string name = currentObject->GetName() + "##" + std::to_string(currentObject->GetID());
 			const char* charName = name.c_str();
 			if (ImGui::Button(charName))
 			{
@@ -170,12 +170,12 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (ImGui::Button("Save Scene"))
 		{
-			FlatEngine::sceneManager.SaveScene(FlatEngine::sceneManager.GetLoadedScene());
+			FlatEngine::sceneManager->SaveScene(FlatEngine::sceneManager->GetLoadedScene());
 		}
 
 		if (ImGui::Button("Load Scene"))
 		{
-			FlatEngine::sceneManager.LoadScene("SavedScenes.json");
+			FlatEngine::sceneManager->LoadScene("SavedScenes.json");
 		}
 
 		ImGui::End();
@@ -190,11 +190,11 @@ namespace FlatEngine { namespace FlatGui {
 		if (focusedObjectIndex != -1)
 		{
 			//Get focused GameObject
-			GameObject focusedObject = FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex];
+			GameObject *focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectIndex];
 
-			std::string objectName = focusedObject.GetName();
+			std::string objectName = focusedObject->GetName();
 			const char* charObjectName = objectName.c_str();
-			std::vector<Component*> components = focusedObject.GetComponents();
+			std::vector<Component*> components = focusedObject->GetComponents();
 
 			ImGui::Text(charObjectName);
 
@@ -205,24 +205,47 @@ namespace FlatEngine { namespace FlatGui {
 					std::string componentType = components[i]->GetTypeString();
 					const char* charComponentType = componentType.c_str();
 					ImGui::Text(charComponentType);
+
+					if (componentType == "Transform")
+					{
+						FlatEngine::Transform *component = static_cast<FlatEngine::Transform*>(components[i]);
+						Vector2 position = component->GetPosition();
+						float xPos = position.x;
+						float yPos = position.y;
+						//ImGui::Text();
+					}
+					else if (componentType == "Sprite")
+					{
+						FlatEngine::Sprite *component = static_cast<FlatEngine::Sprite*>(components[i]);
+					}
 				}
 			}
 
-			if (ImGui::Button("Add Transform Component"))
-			{
+			// For checking if SceneObject has these components yet
+			FlatEngine::Component* transformComponent = focusedObject->GetComponent(Component::ComponentTypes::Transform);
+			FlatEngine::Component* spriteComponent = focusedObject->GetComponent(Component::ComponentTypes::Sprite);
 
-				FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex].AddComponent(Component::ComponentTypes::Transform);
+			if (transformComponent->GetType() == Component::ComponentTypes::Null)
+			{
+				if (ImGui::Button("Add Transform Component"))
+				{
+
+					focusedObject->AddComponent(Component::ComponentTypes::Transform);
+				}
 			}
 
-			if (ImGui::Button("Add Sprite Component"))
+			if (spriteComponent->GetType() == Component::ComponentTypes::Null)
 			{
-				
-				FlatEngine::sceneManager.GetLoadedScene().GetSceneObjects()[focusedObjectIndex].AddComponent(Component::ComponentTypes::Sprite);
+				if (ImGui::Button("Add Sprite Component"))
+				{
+
+					focusedObject->AddComponent(Component::ComponentTypes::Sprite);
+				}
 			}
 
 			if (ImGui::Button("Delete GameObject"))
 			{
-				FlatEngine::sceneManager.GetLoadedScene().DeleteGameObject(focusedObjectIndex);
+				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(focusedObjectIndex);
 			}
 		}
 
@@ -265,7 +288,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiIO& io = ImGui::GetIO();
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-		draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+		//draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
 
 		// This will catch our interactions
 		ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);

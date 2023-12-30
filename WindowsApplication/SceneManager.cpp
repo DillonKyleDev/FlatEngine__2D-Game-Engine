@@ -15,7 +15,7 @@ namespace FlatEngine
 {
 	SceneManager::SceneManager()
 	{
-		this->loadedScene;
+		this->loadedScene = new Scene();
 	}
 
 	SceneManager::~SceneManager()
@@ -23,7 +23,7 @@ namespace FlatEngine
 
 	}
 
-	void SceneManager::SaveScene(Scene scene)
+	void SceneManager::SaveScene(Scene *scene)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -54,22 +54,19 @@ namespace FlatEngine
 
 		// Opening file in append mode
 		file_obj.open("SavedScenes.json", std::ios::app);
-
-		// Declare object we'll be filling
-		//static json gameObjectJson = json::object_t();
  
 		// Array that will hold our gameObject json objects
 		json sceneObjectsJsonArray;
 
-		std::vector<GameObject> sceneObjects = scene.GetSceneObjects();
+		std::vector<GameObject*> sceneObjects = scene->GetSceneObjects();
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			// Declare components array json object for components
 			json componentsArray = json::array();
 
 			// Get the object we'll be working with and it's components
-			GameObject currentObject = scene.GetSceneObjects()[i];
-			std::vector<Component*> components = currentObject.GetComponents();
+			GameObject *currentObject = scene->GetSceneObjects()[i];
+			std::vector<FlatEngine::Component*> components = currentObject->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
 			{
@@ -77,31 +74,19 @@ namespace FlatEngine
 
 				if (typeString == "Transform")
 				{
-					FlatEngine::Transform *component = static_cast<FlatEngine::Transform*>(components[j]);
-					std::string data = component->GetData();
+					//FlatEngine::Transform *component = static_cast<FlatEngine::Transform*>(components[j]);
+					std::string data = components[j]->GetData();
 					componentsArray.push_back(json::parse(data));
-
-					//
-
-					//json jsonData = {
-					//	{ "type", "Transform" },
-					//	{ "xPos", component->position.x },
-					//	{ "yPos", component->position.y },
-					//	{ "rotation", 0 }
-					//};
-
-					//componentsArray.push_back(jsonData);
 				}
 				else if (typeString == "Sprite")
 				{
-					Component *component = components[j];
-					//Sprite& component = static_cast<Sprite&>(components[j]);
-					std::string data = component->GetData();
-					componentsArray.push_back(data);
+					//FlatEngine::Sprite *component = static_cast<FlatEngine::Sprite*>(components[j]);
+					std::string data = components[j]->GetData();
+					componentsArray.push_back(json::parse(data));
 				}
 			}
 
-			std::string objectName = currentObject.GetName();
+			std::string objectName = currentObject->GetName();
 
 			json gameObjectJson = json::object({ {"name", objectName}, {"components", componentsArray} });
 
@@ -125,7 +110,11 @@ namespace FlatEngine
 
 	void SceneManager::LoadScene(std::string fileName)
 	{
-		Scene freshScene;
+		delete this->loadedScene;
+		this->loadedScene = nullptr;
+
+		Scene *freshScene = new Scene();
+		this->loadedScene = freshScene;
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -170,8 +159,8 @@ namespace FlatEngine
 			std::string loadedName = currentObjectJson["name"];
 
 			// Create new GameObject to load the data into
-			GameObject loadedObject;
-			loadedObject.SetName(loadedName);
+			GameObject *loadedObject = new GameObject();
+			loadedObject->SetName(loadedName);
 
 			// Loop through the components in this GameObjects json
 			for (int j = 0; j < currentObjectJson["components"].size(); j++)
@@ -181,23 +170,23 @@ namespace FlatEngine
 				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
-					loadedObject.AddComponent(Component::ComponentTypes::Transform);
+					loadedObject->AddComponent(Component::ComponentTypes::Transform);
 				}
 				else if (type == "Sprite")
 				{
-					loadedObject.AddComponent(Component::ComponentTypes::Sprite);
+					loadedObject->AddComponent(Component::ComponentTypes::Sprite);
 				}
 			}
 
 			// Add created GameObject to our freshScene
-			freshScene.AddSceneObject(loadedObject);
+			freshScene->AddSceneObject(loadedObject);
 		}
 
 		// Assign our freshScene to the SceneManagers currently loadedScene member variable
 		this->loadedScene = freshScene;
 	}
 
-	Scene &SceneManager::GetLoadedScene()
+	Scene *SceneManager::GetLoadedScene()
 	{
 		return this->loadedScene;
 	}

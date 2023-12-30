@@ -19,7 +19,7 @@ namespace FlatEngine
 		std::string GetName();
 		void AddComponent(Component::ComponentTypes type);
 		void RemoveComponent(Component* component);
-		//Component GetComponent(Component::ComponentTypes type);
+		Component* GetComponent(Component::ComponentTypes type);
 		std::vector<Component*> &GetComponents();
 		void SetParent(GameObject* parent);
 		GameObject* GetParent();

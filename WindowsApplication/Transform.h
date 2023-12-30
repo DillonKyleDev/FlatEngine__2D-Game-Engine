@@ -15,6 +15,7 @@ namespace FlatEngine
 		~Transform();
 		void SetPosition(Vector2 position);
 		Vector2 GetPosition();
+		float GetRotation();
 		std::string GetData();
 
 
@@ -22,9 +23,6 @@ namespace FlatEngine
 
 	private:
 		Vector2 position;
-		int posX;
-		int posY;
-		int rotation;
-		//Rotation
+		float rotation;
 	};
 }

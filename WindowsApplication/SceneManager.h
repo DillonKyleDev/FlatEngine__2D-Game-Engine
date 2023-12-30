@@ -9,12 +9,12 @@ namespace FlatEngine
 		SceneManager();
 		~SceneManager();
 
-		void SaveScene(Scene scene);
+		void SaveScene(Scene *scene);
 		void LoadScene(std::string name);
-		Scene &GetLoadedScene();
+		Scene *GetLoadedScene();
 
 	private:
-		Scene loadedScene;
+		Scene *loadedScene;
 	};
 }
 

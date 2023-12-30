@@ -7,12 +7,12 @@ namespace FlatEngine
 {
 	GameObject::GameObject(GameObject* parent)
 	{
-		this->ID = FlatEngine::gameObjectManager.GetCurrentID();
+		this->ID = FlatEngine::sceneManager->GetLoadedScene()->GetCurrentID();
 		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
 		this->parent = parent;
 		this->components = {};
 
-		FlatEngine::gameObjectManager.IncrementID();
+		FlatEngine::sceneManager->GetLoadedScene()->IncrementID();
 	}
 
 
@@ -66,22 +66,21 @@ namespace FlatEngine
 	}
 
 
-	//Component GameObject::GetComponent(Component::ComponentTypes type)
-	//{
-	//	FlatEngine::Transform nullComponent;
-	//	nullComponent.SetType(Component::ComponentTypes::Null);
+	Component* GameObject::GetComponent(Component::ComponentTypes type)
+	{
+		FlatEngine::Component *nullComponent = new Component();
+		//nullComponent->SetType(Component::ComponentTypes::Null);
 
-	//	for (int i = 0; i < this->components.size(); i++)
-	//	{
-	//		if (this->components[i].GetType() == type)
-	//		{
-	//			return this->components[i];
-	//		}
-	//	}
+		for (int i = 0; i < this->components.size(); i++)
+		{
+			if (this->components[i]->GetType() == type)
+			{
+				return this->components[i];
+			}
+		}
 
-	//	// This is returning address of a local variable. Must not do this in final implementation
-	//	return nullComponent;
-	//}
+		return nullComponent;
+	}
 
 
 	std::vector<Component*> &GameObject::GetComponents()

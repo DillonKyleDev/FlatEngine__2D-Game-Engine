@@ -7,29 +7,27 @@ using namespace nlohmann::literals;
 
 
 
-
-class Component
+namespace FlatEngine
 {
-public:
-	enum ComponentTypes {
-		Null,
-		Transform,
-		Sprite,
+	class Component
+	{
+	public:
+		enum ComponentTypes {
+			Null,
+			Transform,
+			Sprite,
+		};
+
+		Component();
+		~Component();
+
+		void SetType(ComponentTypes type);
+
+		ComponentTypes GetType();
+		std::string GetTypeString();
+		virtual std::string GetData();
+
+	private:
+		ComponentTypes type = Component::ComponentTypes::Null;
 	};
-
-	Component();
-	~Component();
-
-	void SetType(ComponentTypes type);
-
-	ComponentTypes GetType();
-	std::string GetTypeString();
-	virtual std::string GetData();
-
-	//Vector2 position = { 0, 0 };
-
-private:
-	ComponentTypes type = Component::ComponentTypes::Null;
-
-};
-
+}

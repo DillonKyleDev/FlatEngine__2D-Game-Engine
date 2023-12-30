@@ -1,11 +1,13 @@
 #pragma once
-#include "../vendors/SDL2_2/include/SDL.h"
+#include <stdio.h>
+#include <string>
+#include <sstream>
+#include "SDL.h"
 #include <SDL_syswm.h>
 #include <imgui.h>
 #include "Window.h"
 #include "GameObject.h"
 #include "SceneManager.h"
-#include "GameObjectManager.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -13,9 +15,6 @@
 #include "../WindowsApplication/backends/imgui_impl_sdl2.h"
 #include "../WindowsApplication/backends/imgui_impl_sdlrenderer2.h"
 
-#include <stdio.h>
-#include <string>
-#include <sstream>
 
 namespace FlatEngine
 {
@@ -23,8 +22,7 @@ namespace FlatEngine
 	extern int FocusedGameObjectIndex;
 	void SetFocusedGameObjectIndex(int index);
 	int GetFocusedGameObjectIndex();
-	extern FlatEngine::SceneManager sceneManager;
-	extern FlatEngine::GameObjectManager gameObjectManager;
+	extern FlatEngine::SceneManager *sceneManager;
 
 	namespace FlatGui
 	{

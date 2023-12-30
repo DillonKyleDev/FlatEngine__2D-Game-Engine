@@ -3,25 +3,56 @@
         {
             "components": [
                 {
-                    "rotation": 5,
+                    "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0,
-                    "yPos": 0
-                },
-                "{\"texture\":\"\"}"
+                    "xPos": 0.0,
+                    "yPos": 0.0
+                }
             ],
             "name": "New GameObject (0)"
         },
         {
             "components": [
                 {
-                    "rotation": 5,
+                    "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0,
-                    "yPos": 0
+                    "xPos": 0.0,
+                    "yPos": 0.0
+                },
+                {
+                    "texture": "",
+                    "type": "Sprite"
                 }
             ],
             "name": "New GameObject (1)"
+        },
+        {
+            "components": [],
+            "name": "New GameObject (2)"
+        },
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "yPos": 0.0
+                },
+                {
+                    "texture": "",
+                    "type": "Sprite"
+                }
+            ],
+            "name": "New GameObject (3)"
+        },
+        {
+            "components": [
+                {
+                    "texture": "",
+                    "type": "Sprite"
+                }
+            ],
+            "name": "New GameObject (4)"
         }
     ]
 }
