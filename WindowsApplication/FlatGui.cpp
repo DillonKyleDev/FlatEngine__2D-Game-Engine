@@ -212,7 +212,15 @@ namespace FlatEngine { namespace FlatGui {
 						Vector2 position = component->GetPosition();
 						float xPos = position.x;
 						float yPos = position.y;
-						//ImGui::Text();
+						float rotation = component->GetRotation();
+
+						std::string xPosString = "x: " + std::to_string(xPos);
+						std::string yPosString = "y: " + std::to_string(yPos);
+						std::string rotationString = "rotation: " + std::to_string(rotation);
+
+						ImGui::Text(xPosString.c_str());
+						ImGui::Text(yPosString.c_str());
+						ImGui::Text(rotationString.c_str());
 					}
 					else if (componentType == "Sprite")
 					{
@@ -225,7 +233,7 @@ namespace FlatEngine { namespace FlatGui {
 			FlatEngine::Component* transformComponent = focusedObject->GetComponent(Component::ComponentTypes::Transform);
 			FlatEngine::Component* spriteComponent = focusedObject->GetComponent(Component::ComponentTypes::Sprite);
 
-			if (transformComponent->GetType() == Component::ComponentTypes::Null)
+			if (transformComponent == nullptr)
 			{
 				if (ImGui::Button("Add Transform Component"))
 				{
@@ -234,7 +242,7 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			if (spriteComponent->GetType() == Component::ComponentTypes::Null)
+			if (spriteComponent == nullptr)
 			{
 				if (ImGui::Button("Add Sprite Component"))
 				{
@@ -255,6 +263,7 @@ namespace FlatEngine { namespace FlatGui {
 	void FlatEngine::FlatGui::RenderSceneView()
 	{
 		ImGui::Begin("Scene View");
+
 
 		static ImVector<ImVec2> points;
 		static ImVec2 scrolling(0.0f, 0.0f);
@@ -347,6 +356,36 @@ namespace FlatEngine { namespace FlatGui {
 		for (int n = 0; n < points.Size; n += 2)
 			draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
 		draw_list->PopClipRect();
+
+
+		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
+		std::vector<GameObject*> sceneObjects = loadedScene->GetSceneObjects();
+
+		// Go through scene objects
+		for (int i = 0; i < sceneObjects.size(); i++)
+		{
+			FlatEngine::Component* transformComponent = sceneObjects[i]->GetComponent(Component::ComponentTypes::Transform);
+			FlatEngine::Component* spriteComponent = sceneObjects[i]->GetComponent(Component::ComponentTypes::Sprite);
+
+			// Check if each object has a Transform component
+			if (transformComponent != nullptr && spriteComponent != nullptr)
+			{
+				FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
+				// Render texture
+				SDL_Texture* currentTexture = spriteCasted->GetTexture();
+				float textureWidth = (float)spriteCasted->GetTextureWidth();
+				float textureHeight = (float)spriteCasted->GetTextureHeight();
+				ImGui::GetWindowDrawList()->AddImage((void*)currentTexture, ImVec2(canvas_p0.x, canvas_p0.y), ImVec2(canvas_p0.x + textureWidth, canvas_p0.y + textureHeight));
+
+
+				// Render texture
+				//SDL_Texture* my_texture = TextureManager::dot.getTexture();
+				//float my_image_width = (float)TextureManager::dot.getWidth();
+				//float my_image_height = (float)TextureManager::dot.getHeight();
+				//ImGui::GetWindowDrawList()->AddImage((void*)my_texture, ImVec2(canvas_p0.x, canvas_p0.y), ImVec2(canvas_p0.x + my_image_width, canvas_p0.y + my_image_height));
+			}
+		}
+
 
 		ImGui::End();
 	}

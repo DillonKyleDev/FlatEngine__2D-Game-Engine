@@ -7,6 +7,9 @@ namespace FlatEngine
 	{
 		this->texture = NULL;
 		this->SetType(Component::ComponentTypes::Sprite);
+		this->textureWidth = 0;
+		this->textureHeight = 0;
+		this->SetTexture("assets/images/Dot.png");
 	}
 
 
@@ -20,7 +23,9 @@ namespace FlatEngine
 	{
 		json jsonData = { 
 			{ "type", "Sprite" },
-			{ "texture", this->path }
+			{ "texture", this->path },
+			{ "texture_width", this->textureWidth },
+			{ "texture_height", this->textureHeight }
 		};
 		std::string data = jsonData.dump();
 		return data;
@@ -33,11 +38,12 @@ namespace FlatEngine
 		{
 			// Save path for referencing later if needed
 			this->path = path;
-
-			Texture texture;
-			if (texture.loadFromFile(path))
+			Texture* texture = new Texture();
+			if (texture->loadFromFile(path))
 			{
-				this->texture = texture.getTexture();
+				this->texture = texture->getTexture();
+				this->textureWidth = texture->getWidth();
+				this->textureHeight = texture->getHeight();
 			}
 		}
 	}
@@ -46,6 +52,18 @@ namespace FlatEngine
 	SDL_Texture* Sprite::GetTexture()
 	{
 		return this->texture;
+	}
+
+
+	float Sprite::GetTextureWidth()
+	{
+		return this->textureWidth;
+	}
+
+
+	float Sprite::GetTextureHeight()
+	{
+		return this->textureHeight;
 	}
 
 	

@@ -170,11 +170,20 @@ namespace FlatEngine
 				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
-					loadedObject->AddComponent(Component::ComponentTypes::Transform);
+					FlatEngine::Transform* newTransform = static_cast<FlatEngine::Transform*>(loadedObject->AddComponent(Component::ComponentTypes::Transform));
+					float xPos = currentObjectJson["components"][j]["xPos"];
+					float yPos = currentObjectJson["components"][j]["yPos"];
+					float rotation = currentObjectJson["components"][j]["rotation"];
+
+					newTransform->SetPosition(Vector2(xPos, yPos));
+					newTransform->SetRotation(rotation);
 				}
 				else if (type == "Sprite")
 				{
-					loadedObject->AddComponent(Component::ComponentTypes::Sprite);
+					FlatEngine::Sprite* newSprite = static_cast<FlatEngine::Sprite*>(loadedObject->AddComponent(Component::ComponentTypes::Sprite));
+					std::string path = currentObjectJson["components"][j]["path"];
+
+					newSprite->SetTexture(path);
 				}
 			}
 

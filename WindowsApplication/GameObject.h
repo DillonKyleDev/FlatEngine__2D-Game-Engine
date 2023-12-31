@@ -17,7 +17,7 @@ namespace FlatEngine
 		int GetID();
 		void SetName(std::string name);
 		std::string GetName();
-		void AddComponent(Component::ComponentTypes type);
+		Component* AddComponent(Component::ComponentTypes type);
 		void RemoveComponent(Component* component);
 		Component* GetComponent(Component::ComponentTypes type);
 		std::vector<Component*> &GetComponents();

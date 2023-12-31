@@ -33,6 +33,18 @@ namespace FlatEngine
 	}
 
 
+	void Transform::SetPosition(Vector2 position)
+	{
+		this->position = position;
+	}
+
+
+	void Transform::SetRotation(float rotation)
+	{
+		this->rotation = rotation;
+	}
+
+
 	Vector2 Transform::GetPosition()
 	{
 		return this->position;
@@ -42,11 +54,5 @@ namespace FlatEngine
 	float Transform::GetRotation()
 	{
 		return this->rotation;
-	}
-
-
-	void Transform::SetPosition(Vector2 position)
-	{
-		this->position = position;
 	}
 }

@@ -14,6 +14,7 @@ namespace FlatEngine
 		Transform();
 		~Transform();
 		void SetPosition(Vector2 position);
+		void SetRotation(float rotation);
 		Vector2 GetPosition();
 		float GetRotation();
 		std::string GetData();

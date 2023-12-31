@@ -16,12 +16,16 @@ namespace FlatEngine
 		~Sprite();
 		void SetTexture(std::string path);
 		SDL_Texture* GetTexture();
+		float GetTextureWidth();
+		float GetTextureHeight();
 		std::string GetPath();
 		void RemoveTexture();
 		std::string GetData();
 
 	private:
 		SDL_Texture* texture;
+		float textureWidth;
+		float textureHeight;
 		std::string path;
 	};
 }

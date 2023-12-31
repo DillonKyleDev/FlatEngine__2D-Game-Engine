@@ -39,7 +39,7 @@ namespace FlatEngine
 	}
 
 
-	void GameObject::AddComponent(Component::ComponentTypes type)
+	Component* GameObject::AddComponent(Component::ComponentTypes type)
 	{
 		// Look into making these smart pointers so they delete automatically
 		FlatEngine::Transform *transformComponent = new FlatEngine::Transform();
@@ -49,12 +49,15 @@ namespace FlatEngine
 		{
 		case Component::ComponentTypes::Transform:
 			this->components.push_back(transformComponent);
+			return transformComponent;
 			break;
 
 		case Component::ComponentTypes::Sprite:
 			this->components.push_back(spriteComponent);
+			return spriteComponent;
 			break;
 		default:
+			return nullptr;
 			break;
 		}
 	}
@@ -68,9 +71,6 @@ namespace FlatEngine
 
 	Component* GameObject::GetComponent(Component::ComponentTypes type)
 	{
-		FlatEngine::Component *nullComponent = new Component();
-		//nullComponent->SetType(Component::ComponentTypes::Null);
-
 		for (int i = 0; i < this->components.size(); i++)
 		{
 			if (this->components[i]->GetType() == type)
@@ -79,7 +79,7 @@ namespace FlatEngine
 			}
 		}
 
-		return nullComponent;
+		return nullptr;
 	}
 
 
