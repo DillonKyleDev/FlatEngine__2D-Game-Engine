@@ -7,9 +7,32 @@
                     "type": "Transform",
                     "xPos": 0.0,
                     "yPos": 0.0
+                },
+                {
+                    "texture": "assets/images/Dot.png",
+                    "texture_height": 100.0,
+                    "texture_width": 100.0,
+                    "type": "Sprite"
                 }
             ],
-            "name": "New GameObject (0)"
+            "name": "Player"
+        },
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 50.0,
+                    "yPos": 20.0
+                },
+                {
+                    "texture": "assets/images/Dot.png",
+                    "texture_height": 100.0,
+                    "texture_width": 100.0,
+                    "type": "Sprite"
+                }
+            ],
+            "name": "Enemy 1"
         }
     ]
 }

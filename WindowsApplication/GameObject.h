@@ -26,10 +26,12 @@ namespace FlatEngine
 		void AddChild(GameObject* child);
 		void RemoveChild(GameObject child);
 		std::vector<GameObject*> GetChildren();
+		bool HasChildren();
 
 	private:
 		long ID;
 		std::string name;
+
 		std::vector<Component*> components;
 		GameObject* parent;
 		std::vector<GameObject*> children;

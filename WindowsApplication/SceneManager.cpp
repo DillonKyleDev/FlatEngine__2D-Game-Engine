@@ -181,7 +181,7 @@ namespace FlatEngine
 				else if (type == "Sprite")
 				{
 					FlatEngine::Sprite* newSprite = static_cast<FlatEngine::Sprite*>(loadedObject->AddComponent(Component::ComponentTypes::Sprite));
-					std::string path = currentObjectJson["components"][j]["path"];
+					std::string path = currentObjectJson["components"][j]["texture"];
 
 					newSprite->SetTexture(path);
 				}

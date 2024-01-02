@@ -8,6 +8,7 @@
 #include "Window.h"
 #include "GameObject.h"
 #include "SceneManager.h"
+#include "Logger.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -18,20 +19,26 @@
 
 namespace FlatEngine
 {
-	//Variables
+	// Variables
 	extern int FocusedGameObjectIndex;
 	void SetFocusedGameObjectIndex(int index);
 	int GetFocusedGameObjectIndex();
 	extern FlatEngine::SceneManager *sceneManager;
+	extern FlatEngine::Logger* logger;
 
 	namespace FlatGui
 	{
+		// Variables
+		extern bool _editingValue;
+		extern char text[1024];
+
 		extern void SetupImGui();
 		extern void Render(bool& quit);
 		extern void AddViewports();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void RenderSceneView();
+		extern void RenderLog();
 		extern void Cleanup();
 	}
 };

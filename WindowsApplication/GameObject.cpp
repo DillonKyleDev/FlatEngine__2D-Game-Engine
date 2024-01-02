@@ -123,4 +123,9 @@ namespace FlatEngine
 	{
 		return this->children;
 	}
+
+	bool GameObject::HasChildren()
+	{
+		return this->children.size() > 0;
+	}
 }

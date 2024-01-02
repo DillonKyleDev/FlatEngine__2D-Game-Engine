@@ -1,6 +1,2 @@
 ﻿  FlatGui.cpp
-  Sprite.cpp
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sprite.cpp(45,43): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sprite.cpp(46,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\FlatEngine\bin\Debug-x64\FlatEngine\FlatEngine.exe

@@ -14,7 +14,8 @@ namespace FlatEngine
 {
 	//Variables
 	int FlatEngine::FocusedGameObjectIndex = -1;
-	SceneManager *FlatEngine::sceneManager = new SceneManager();
+	FlatEngine::SceneManager *FlatEngine::sceneManager = new FlatEngine::SceneManager();
+	FlatEngine::Logger *FlatEngine::logger = new FlatEngine::Logger();
 
 	void FlatEngine::SetFocusedGameObjectIndex(int index)
 	{
