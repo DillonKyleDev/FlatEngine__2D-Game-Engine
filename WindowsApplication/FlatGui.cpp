@@ -111,8 +111,8 @@ namespace FlatEngine { namespace FlatGui {
 		FlatEngine::FlatGui::RenderLog();
 
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
+		//if (show_demo_window)
+		//	ImGui::ShowDemoWindow(&show_demo_window);
 
 		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
 		//{
@@ -167,7 +167,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			FlatEngine::sceneManager->SaveScene(FlatEngine::sceneManager->GetLoadedScene());
 		}
-
+		ImGui::SameLine(0, 5);
 		if (ImGui::Button("Load Scene"))
 		{
 			FlatEngine::sceneManager->LoadScene("SavedScenes.json");
@@ -184,7 +184,6 @@ namespace FlatEngine { namespace FlatGui {
 			ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.1)));
 			
-			//FlatEngine::logger->Log(std::to_string(ImGui::GetStyleColorVec4(ImGuiCol_FrameBg).w));
 			ImGui::BeginChild("ChildL", ImVec2(canvas_p1.x, canvas_p1.y - 100), ImGuiChildFlags_::ImGuiChildFlags_None, window_flags);
 				
 			static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -318,17 +317,24 @@ namespace FlatEngine { namespace FlatGui {
 
 			if (components.size() > 0)
 			{
+				float availableVerticalSpace = ImGui::GetContentRegionAvail().y / components.size();
+
 				for (int i = 0; i < components.size(); i++)
 				{
+					FlatEngine::logger->Log("Region Available: " + std::to_string(availableVerticalSpace));
 					std::string componentType = components[i]->GetTypeString();
 					const char* charComponentType = componentType.c_str();
 					ImGui::Text(charComponentType);
 
-					ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
+					ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeY;
 					ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.1)));
 
+					ImGui::BeginGroup();
+
+					// Here we will just have to set the size of the components children explicitly once
+					// we know exactly how big each one will be :(
 					//ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 1), ImVec2(FLT_MAX, ImGui::GetTextLineHeightWithSpacing() * max_height_in_lines));
-					ImGui::BeginChild(charComponentType, ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 6));
+					ImGui::BeginChild(charComponentType, ImVec2(0, availableVerticalSpace));
 
 					if (componentType == "Transform")
 					{
@@ -370,6 +376,8 @@ namespace FlatEngine { namespace FlatGui {
 
 					ImGui::PopStyleColor();
 					ImGui::EndChild();
+
+					ImGui::EndGroup();
 				}
 			}
 
@@ -457,8 +465,6 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			scrolling.x += io.MouseDelta.x;
 			scrolling.y += io.MouseDelta.y;
-
-			FlatEngine::logger->Log("x: " + std::to_string(scrolling.x) + ", y: " + std::to_string(scrolling.y));
 		}
 
 		// Context menu (under default mouse threshold)
@@ -524,9 +530,6 @@ namespace FlatEngine { namespace FlatGui {
 
 				// Render sprite to viewport
 				ImGui::GetWindowDrawList()->AddImage((void*)currentTexture, renderStart, renderEnd);
-
-				FlatEngine::logger->Log("canvas_p0.x: " + std::to_string(canvas_p0.x) + ", canvas_p0.y: " + std::to_string(canvas_p0.y));
-				FlatEngine::logger->Log("canvas_sz.x: " + std::to_string(canvas_sz.x) + ", canvas_sz.y: " + std::to_string(canvas_sz.y));
 			}
 		}
 
@@ -549,12 +552,17 @@ namespace FlatEngine { namespace FlatGui {
 		{ 
 			log->clear(); lines = 0; 
 		}
-		ImGui::BeginChild("Log");
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.2)));
+		ImGui::BeginChild("Log", ImVec2(0,0));
 		ImGui::TextUnformatted(log->begin(), log->end());
+		ImGui::PopStyleColor();
 		ImGui::EndChild();
 		ImGui::End();
 
-		FlatEngine::logger->ClearBuffer();
+		//FlatEngine::logger->ClearBuffer();
 	}
 
 	void FlatEngine::FlatGui::Cleanup()
