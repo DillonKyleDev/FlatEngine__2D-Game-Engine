@@ -30,7 +30,17 @@ namespace FlatEngine
 	{
 		// Variables
 		extern bool _editingValue;
-		extern char text[1024];
+		extern float childPadding;
+		extern ImVec4 outerWindowColor;
+		extern ImVec4 innerWindowColor;
+		extern ImVec4 singleItemColor;
+		extern int zoomLevels[];
+		extern float zoomMultipliers[];
+		extern int currentZoomLevel;
+		extern float currentZoomMultiplier;
+		extern float SCENE_VIEWPORT_WIDTH;
+		extern float SCENE_VIEWPORT_HEIGHT;
+		extern bool _viewportsHaveBeenSet;
 
 		extern void SetupImGui();
 		extern void Render(bool& quit);
@@ -38,8 +48,13 @@ namespace FlatEngine
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void RenderSceneView();
+		extern void IncreaseSceneZoom();
+		extern void DecreaseSceneZoom();
 		extern void RenderLog();
 		extern void Cleanup();
+
+		// Helper
+		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, float textureWidth, float textureHeight, Vector2 pivotPoint, ImVec2 scrolling, ImVec2 canvas_p0, Vector2 scale = { 1, 1 }, bool _scalesWithZoom = true);
 	}
 };
 

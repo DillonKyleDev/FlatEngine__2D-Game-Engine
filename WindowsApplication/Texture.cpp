@@ -196,7 +196,7 @@ void Texture::setAlpha(Uint8 alpha)
 }
 
 
-//Render texture at given point
+//Render texture at given point not using ImGui method, just SDL_2
 void Texture::render(int x=Window::WINDOW_WIDTH/2, int y=Window::WINDOW_HEIGHT/2, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space

@@ -14,16 +14,16 @@ namespace FlatEngine
 		Transform();
 		~Transform();
 		void SetPosition(Vector2 position);
+		void SetScale(Vector2 scale);
 		void SetRotation(float rotation);
 		Vector2 GetPosition();
+		Vector2 GetScale();
 		float GetRotation();
 		std::string GetData();
 
-
-		//Vector2 position = { 0, 0 };
-
 	private:
 		Vector2 position;
+		Vector2 scale;
 		float rotation;
 	};
 }

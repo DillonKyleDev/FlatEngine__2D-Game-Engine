@@ -9,7 +9,8 @@ namespace FlatEngine
 		this->SetType(Component::ComponentTypes::Sprite);
 		this->textureWidth = 0;
 		this->textureHeight = 0;
-		this->SetTexture("assets/images/Dot.png");
+		this->offset = { 0,0 };
+		this->path = "";
 	}
 
 
@@ -25,7 +26,9 @@ namespace FlatEngine
 			{ "type", "Sprite" },
 			{ "texture", this->path },
 			{ "texture_width", this->textureWidth },
-			{ "texture_height", this->textureHeight }
+			{ "texture_height", this->textureHeight },
+			{ "xOffset", this->offset.x },
+			{ "yOffset", this->offset.y }
 		};
 		std::string data = jsonData.dump();
 		return data;
@@ -42,10 +45,25 @@ namespace FlatEngine
 			if (texture->loadFromFile(path))
 			{
 				this->texture = texture->getTexture();
-				this->textureWidth = texture->getWidth();
-				this->textureHeight = texture->getHeight();
+				this->textureWidth = (float)texture->getWidth();
+				this->textureHeight = (float)texture->getHeight();
+
+				// Set pivot point to the center of the texture by default
+				this->offset = { this->textureWidth / 2, this->textureHeight / 2 };
 			}
 		}
+	}
+
+
+	void Sprite::SetOffset(Vector2 offset)
+	{
+		this->offset = offset;
+	}
+
+
+	Vector2 Sprite::GetOffset()
+	{
+		return this->offset;
 	}
 
 
@@ -57,13 +75,13 @@ namespace FlatEngine
 
 	float Sprite::GetTextureWidth()
 	{
-		return this->textureWidth;
+		return (float)this->textureWidth;
 	}
 
 
 	float Sprite::GetTextureHeight()
 	{
-		return this->textureHeight;
+		return (float)this->textureHeight;
 	}
 
 	

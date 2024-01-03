@@ -19,6 +19,8 @@ namespace FlatEngine
 		float GetTextureWidth();
 		float GetTextureHeight();
 		std::string GetPath();
+		void SetOffset(Vector2 offset);
+		Vector2 GetOffset();
 		void RemoveTexture();
 		std::string GetData();
 
@@ -26,6 +28,7 @@ namespace FlatEngine
 		SDL_Texture* texture;
 		float textureWidth;
 		float textureHeight;
+		Vector2 offset;
 		std::string path;
 	};
 }

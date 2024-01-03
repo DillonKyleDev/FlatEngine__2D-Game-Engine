@@ -19,11 +19,24 @@ namespace FlatEngine { namespace FlatGui {
 	bool show_demo_window = true;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-	// For renaming sceneObject in Inspector window
-	bool FlatEngine::FlatGui::_editingValue = false;
-	char text[1024] = "";
+	// For window styles
+	float childPadding = 8;
+	ImVec4 outerWindowColor = ImVec4(float(0.9), float(0.9), 1, float(0.05));
+	ImVec4 innerWindowColor = ImVec4(float(0.9), float(0.9), 1, float(0.1));
+	ImVec4 singleItemColor = ImVec4(float(0.9), float(0.9), 1, float(0.1));
+	// For scene view zoom levels
+	int zoomLevels[7] = {
+		0,1,2,3,4,5,6
+	};
+	float zoomMultipliers[7] = { 0.13f, .25, .5, 1, 2.0f, 4.0f, 8.0f };
+	int currentZoomLevel = 3;
+	float currentZoomMultiplier = zoomMultipliers[currentZoomLevel];
 
-	//Setup
+	float SCENE_VIEWPORT_WIDTH = 900;
+	float SCENE_VIEWPORT_HEIGHT = 600;
+	bool _viewportsHaveBeenSet = false;
+
+
 	void FlatEngine::FlatGui::SetupImGui()
 	{
 		// Setup Dear ImGui context
@@ -38,17 +51,17 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();
 
-		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 		ImGuiStyle& style = ImGui::GetStyle();
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			style.WindowRounding = 0.0f;
-			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-			style.FramePadding = { 0.0f, 0.0f };
-			style.DisplayWindowPadding = { 0.0f, 0.0f };
-			style.WindowPadding = { 0.0f, 0.0f };
-			style.ItemSpacing = { 0, 0 };
-		}
+
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		style.WindowPadding = { 5.0f, 5.0f };
+		style.DockingSeparatorSize = 1;
+		style.SeparatorTextAlign = ImVec2(0.5f, 0.0f);
+		style.SeparatorTextBorderSize = 1;
+		//style.ItemSpacing = { 0, 0 };
+		//style.FramePadding = { 0.0f, 0.0f };
+		//style.DisplayWindowPadding = { 0.0f, 0.0f };
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::window, Window::renderer);
 		ImGui_ImplSDLRenderer2_Init(Window::renderer);
@@ -91,70 +104,30 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::AddViewports()
 	{
-		// 0. Texture window
-		//{
-		//	// Render texture
-		//	SDL_Texture* my_texture = TextureManager::dot.getTexture();
-		//	float my_image_width = (float)TextureManager::dot.getWidth();
-		//	float my_image_height = (float)TextureManager::dot.getHeight();
-
-		//	ImGui::Begin("SDL2/SDL_Renderer Texture Test");
-		//	ImGui::Text("pointer = %p", my_texture);
-		//	ImGui::Text("size = %d x %d", my_image_width, my_image_height);
-		//	ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
-		//	ImGui::End();
-		//}
-
 		FlatEngine::FlatGui::RenderHierarchy();
 		FlatEngine::FlatGui::RenderInspector();
 		FlatEngine::FlatGui::RenderSceneView();
 		FlatEngine::FlatGui::RenderLog();
 
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		//if (show_demo_window)
-		//	ImGui::ShowDemoWindow(&show_demo_window);
-
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-		//{
-		//	static float f = 0.0f;
-		//	static int counter = 0;
-
-		//	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		//	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		//	ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		//	ImGui::Checkbox("Another Window", &show_another_window);
-
-		//	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		//	ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		//	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-		//		counter++;
-		//	ImGui::SameLine();
-		//	ImGui::Text("counter = %d", counter);
-
-		//	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		//	ImGui::End();
-		//}
-
-		// 3. Show another simple window.
-		if (show_another_window)
-		{
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
-
-			ImGui::End();
-		}
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
 
 	void FlatEngine::FlatGui::RenderHierarchy()
 	{
-		std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
+		ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeX;
+		ImGuiStyle& style = ImGui::GetStyle();
 
 		ImGui::Begin("Scene Hierarchy");
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
+		float availableHorizontalSpace = ImGui::GetContentRegionAvail().x;
+		float availableVerticalSpace = ImGui::GetContentRegionAvail().y;
+
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGui::BeginChild("Hierarchy Background", ImVec2(0, 0), padding_child_flags);
 
 		// Variables for viewport dimensions
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
@@ -181,10 +154,9 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Scene Objects
 		{
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.1)));
-			
-			ImGui::BeginChild("ChildL", ImVec2(canvas_p1.x, canvas_p1.y - 100), ImGuiChildFlags_::ImGuiChildFlags_None, window_flags);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
+			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
+			ImGui::PopStyleColor();
 				
 			static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 			static bool align_label_with_current_x_position = false;
@@ -196,14 +168,20 @@ namespace FlatEngine { namespace FlatGui {
 			//  You may retain selection state inside or outside your objects in whatever format you see fit.
 			// 'node_clicked' is temporary storage of what node we have clicked to process selection at the end
 			/// of the loop. May be a pointer to your own node type, etc.
-			static int selection_mask = (1 << 2);
+			//static int selection_mask = (1 << 2);
+			static int selection_mask = -1;
 			int node_clicked = -1;
+
+			std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
+
 			for (int i = 0; i < sceneObjects.size(); i++)
 			{
 				// Disable the default "open on single-click behavior" + set Selected flag according to our selection.
 				// To alter selection we use IsItemClicked() && !IsItemToggledOpen(), so clicking on an arrow doesn't alter selection.
 				ImGuiTreeNodeFlags node_flags = base_flags;
-				const bool is_selected = (selection_mask & (1 << i)) != 0;
+				//const bool is_selected = (selection_mask & (1 << i)) != 0;
+				const bool is_selected = selection_mask == i != 0;
+				// If this node is selected, use the nodeFlag_selected to highlight it
 				if (is_selected)
 					node_flags |= ImGuiTreeNodeFlags_Selected;
 
@@ -256,128 +234,136 @@ namespace FlatEngine { namespace FlatGui {
 				// Update selection state
 				// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
 				if (ImGui::GetIO().KeyCtrl)
-					selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
+				{
+					//selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
+					selection_mask = node_clicked;
+				}
+					
 				else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-					selection_mask = (1 << node_clicked);           // Click to single-select
+				{
+					//selection_mask = (1 << node_clicked);  // Click to single-select
+					selection_mask = node_clicked;
+				}
 			}
 			if (align_label_with_current_x_position)
 				ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
-		
-			
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-		}
 
+			ImGui::EndListBox();
+		}
+		
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
 		ImGui::End();
 	}
-
-
+	
+	
 	void FlatEngine::FlatGui::RenderInspector()
 	{
 		ImGui::Begin("Inspector Window");
 		int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
 
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGui::BeginChild("Inspector Background", ImVec2(0,0), padding_child_flags);
+
 		if (focusedObjectIndex != -1)
 		{
 			// Get focused GameObject
 			GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectIndex];
-			std::string objectName = "Name: " + focusedObject->GetName();
-			const char* charObjectName = objectName.c_str();
-			bool _doneRenaming = true;
+			// Name variables and editing
+			std::string nameLabel = "Name: ";
+			char newName[1024];
+			strcpy_s(newName, focusedObject->GetName().c_str());
+			ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
-			// For renaming
-			if (!FlatEngine::FlatGui::_editingValue)
-			{
-				if (ImGui::Button("Rename"))
-				{
-					strcpy_s(FlatEngine::FlatGui::text, focusedObject->GetName().c_str());
-					FlatEngine::FlatGui::_editingValue = true;
-				}
-			}
-			else
-			{
-				if (ImGui::Button("Done"))
-				{
-					focusedObject->SetName(FlatEngine::FlatGui::text);
-					FlatEngine::FlatGui::_editingValue = false;
-				}
-			}
+			ImGui::Text(nameLabel.c_str());
+			ImGui::SameLine(0, 5);
+			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), flags))
+				focusedObject->SetName(newName);
 
-			if (FlatEngine::FlatGui::_editingValue)
-			{
-				static ImGuiInputTextFlags flags = ImGuiInputTextFlags_CtrlEnterForNewLine;
-				ImGui::InputText("##source", FlatEngine::FlatGui::text, IM_ARRAYSIZE(FlatEngine::FlatGui::text), flags);
-			}
-
-
+			ImGui::Text("Components:");
+			
 			std::vector<Component*> components = focusedObject->GetComponents();
-
-			if (!FlatEngine::FlatGui::_editingValue)
-				ImGui::Text(charObjectName);
-
 			if (components.size() > 0)
 			{
-				float availableVerticalSpace = ImGui::GetContentRegionAvail().y / components.size();
-
 				for (int i = 0; i < components.size(); i++)
 				{
-					FlatEngine::logger->Log("Region Available: " + std::to_string(availableVerticalSpace));
 					std::string componentType = components[i]->GetTypeString();
-					const char* charComponentType = componentType.c_str();
-					ImGui::Text(charComponentType);
+					ImGui::SeparatorText(componentType.c_str());
 
-					ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeY;
-					ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.1)));
+					ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+					ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
 
-					ImGui::BeginGroup();
-
-					// Here we will just have to set the size of the components children explicitly once
-					// we know exactly how big each one will be :(
-					//ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 1), ImVec2(FLT_MAX, ImGui::GetTextLineHeightWithSpacing() * max_height_in_lines));
-					ImGui::BeginChild(charComponentType, ImVec2(0, availableVerticalSpace));
+					ImGui::BeginChild(componentType.c_str(), ImVec2(0, 0), child_flags);
 
 					if (componentType == "Transform")
 					{
+						// Position, scale, and rotation of transform
 						FlatEngine::Transform *transform = static_cast<FlatEngine::Transform*>(components[i]);
 						Vector2 position = transform->GetPosition();
 						float xPos = position.x;
 						float yPos = position.y;
+						Vector2 scale = transform->GetScale();
+						float scaleX = scale.x;
+						float scaleY = scale.y;
 						float rotation = transform->GetRotation();
-
 						std::string rotationString = "rotation: " + std::to_string(rotation);
+						static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 
-						static ImGuiSliderFlags flags = ImGuiSliderFlags_None;
-
-						// Drags for position
-						static float drag_f = 1.0f;
-						ImGui::DragFloat("x position", &xPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("y position", &yPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						// Drags for position editing
+						ImGui::Text("xPos:");
+						ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+						ImGui::Text("yPos:");
+						ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
 						ImGui::Text(rotationString.c_str());
-
 						// Assign the new slider values to the transforms position
 						transform->SetPosition(Vector2(xPos, yPos));
+
+						// Drags for scale of transform
+						ImGui::Text("Scale x:");
+						ImGui::DragFloat("##xScale", &scaleX, 0.5f, 0, -FLT_MAX, "%.3f", flags);
+						ImGui::Text("Scale y:");
+						ImGui::DragFloat("##yScale", &scaleY, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+						// Assign the new slider values to the sprites pivotPoint
+						transform->SetScale(Vector2(scaleX, scaleY));
 					}
 					else if (componentType == "Sprite")
 					{
+						// Sprite path and texture dimensions
 						FlatEngine::Sprite *sprite = static_cast<FlatEngine::Sprite*>(components[i]);
-
 						std::string path = sprite->GetPath();
+						char newPath[1024];
+						strcpy_s(newPath, path.c_str());
 						float textureWidth = sprite->GetTextureWidth();
 						float textureHeight = sprite->GetTextureHeight();
-
-						std::string pathString = "Path: " + path;
+						std::string pathString = "Path: ";
 						std::string textureWidthString = "Texture width: " + std::to_string(textureWidth);
 						std::string textureHeightString = "Texture height: " + std::to_string(textureHeight);
 
 						ImGui::Text(pathString.c_str());
+						ImGui::SameLine(0,5);
+						if (ImGui::InputText("##source", newPath, IM_ARRAYSIZE(newPath), flags))
+							sprite->SetTexture(newPath);
 						ImGui::Text(textureWidthString.c_str());
 						ImGui::Text(textureHeightString.c_str());
+
+						// Sprite offset
+						Vector2 offset = sprite->GetOffset();
+						float xOffset = offset.x;
+						float yOffset = offset.y;
+						static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+
+						// Drags for offset of texture editing
+						ImGui::Text("xOffset:");
+						ImGui::DragFloat("x Offset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+						ImGui::Text("yOffset:");
+						ImGui::DragFloat("y Offset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+						// Assign the new slider values to the sprites pivotPoint
+						sprite->SetOffset(Vector2(xOffset, yOffset));
 					}
 
 					ImGui::PopStyleColor();
 					ImGui::EndChild();
-
-					ImGui::EndGroup();
 				}
 			}
 
@@ -408,12 +394,18 @@ namespace FlatEngine { namespace FlatGui {
 				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(focusedObjectIndex);
 			}
 		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
 
 		ImGui::End();
 	}
 
+
 	void FlatEngine::FlatGui::RenderSceneView()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
 		ImGui::Begin("Scene View");
 
 		static ImVector<ImVec2> points;
@@ -422,7 +414,7 @@ namespace FlatEngine { namespace FlatGui {
 		static bool opt_enable_context_menu = true;
 		static bool adding_line = false;
 
-		ImGui::Checkbox("Enable grid", &opt_enable_grid);
+		//ImGui::Checkbox("Enable grid", &opt_enable_grid);
 
 		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
@@ -430,6 +422,16 @@ namespace FlatEngine { namespace FlatGui {
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+
+		// Set initial viewport dimensions for rendering scene view grid and objects
+		if (!_viewportsHaveBeenSet)
+		{
+			SCENE_VIEWPORT_WIDTH = canvas_sz.x;
+			SCENE_VIEWPORT_HEIGHT = canvas_sz.y;
+			_viewportsHaveBeenSet = true;
+		}
+
+		FlatEngine::logger->DrawRectangle(canvas_p0, canvas_p1);
 
 		// Draw border and background color
 		ImGuiIO& io = ImGui::GetIO();
@@ -444,6 +446,18 @@ namespace FlatEngine { namespace FlatGui {
 		const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y); // Lock scrolled origin
 		const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
 
+		// Get scroll amount for changing zoom level of scene view
+		ImGuiIO *inputOutput = &ImGui::GetIO();
+		float scrollInput = inputOutput->MouseWheel;			
+
+		if (is_hovered)
+		{
+			if (scrollInput > 0)
+				IncreaseSceneZoom();
+			else if (scrollInput < 0)
+				DecreaseSceneZoom();
+		}
+		
 		// Add first and second point
 		if (is_hovered && !adding_line && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
@@ -468,40 +482,46 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// Context menu (under default mouse threshold)
-		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-		if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-			ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-		if (ImGui::BeginPopup("context"))
-		{
-			if (adding_line)
-				points.resize(points.size() - 2);
-			adding_line = false;
-			if (ImGui::MenuItem("Remove one", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
-			if (ImGui::MenuItem("Remove all", NULL, false, points.Size > 0)) { points.clear(); }
-			ImGui::EndPopup();
-		}
+		//ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+		//if (opt_enable_context_menu && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
+		//	ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
+		//if (ImGui::BeginPopup("context"))
+		//{
+		//	if (adding_line)
+		//		points.resize(points.size() - 2);
+		//	adding_line = false;
+		//	if (ImGui::MenuItem("Remove one", NULL, false, points.Size > 0)) { points.resize(points.size() - 2); }
+		//	if (ImGui::MenuItem("Remove all", NULL, false, points.Size > 0)) { points.clear(); }
+		//	ImGui::EndPopup();
+		//}
 
 		// Draw grid + all lines in the canvas
-		draw_list->PushClipRect(canvas_p0, canvas_p1, true);
+		//draw_list->PushClipRect(canvas_p0, canvas_p1, true);
 		if (opt_enable_grid)
 		{
-			const float GRID_STEP = 64.0f;
+			const float GRID_STEP = 16.0f * currentZoomMultiplier;
+
+			//FlatEngine::logger->LogFloat(fmodf(canvas_sz.x, 16));
+			FlatEngine::logger->LogFloat(SCENE_VIEWPORT_WIDTH / GRID_STEP);
+			FlatEngine::logger->LogFloat(SCENE_VIEWPORT_HEIGHT / GRID_STEP);
+			FlatEngine::logger->LogFloat(SCENE_VIEWPORT_WIDTH);
+
 			for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
+			{
+				//FlatEngine::logger->LogString("X: " + std::to_string(x) + " Canvas_p0.y " + std::to_string(canvas_p0.y));
 				draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
+			}
+				
 			for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
 				draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
 		}
-		for (int n = 0; n < points.Size; n += 2)
-			draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
-		draw_list->PopClipRect();
+		//for (int n = 0; n < points.Size; n += 2)
+		//	draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
+		//draw_list->PopClipRect();
 
 
 		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
 		std::vector<GameObject*> sceneObjects = loadedScene->GetSceneObjects();
-		// If these values change based on the window dimensions, the center point calculated below will change based
-		// on the squash or stretch of the window, which we don't want. We want to set it once and have it be constant
-		float viewportWidth = 900;
-		float viewportHeight = 400;
 
 		// Go through scene objects
 		for (int i = 0; i < sceneObjects.size(); i++)
@@ -510,37 +530,116 @@ namespace FlatEngine { namespace FlatGui {
 			FlatEngine::Component* spriteComponent = sceneObjects[i]->GetComponent(Component::ComponentTypes::Sprite);
 
 			// Check if each object has a Transform component
-			if (transformComponent != nullptr && spriteComponent != nullptr)
+			if (transformComponent != nullptr)
 			{
-				// Cast the components to their respective types
-				FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
+				int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
 				FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
-	
-				SDL_Texture* currentTexture = spriteCasted->GetTexture();
-				float textureWidth = (float)spriteCasted->GetTextureWidth();
-				float textureHeight = (float)spriteCasted->GetTextureHeight();
-
 				Vector2 position = transformCasted->GetPosition();
+				Vector2 scale = transformCasted->GetScale();
 
-				// Get the center point of the canvas by dividing the width by 2 and adding the viewport position offset and the mouse scroll offset
-				ImVec2 centerPoint = ImVec2(viewportWidth / 2 + (canvas_p0.x + scrolling.x), viewportHeight / 2 + (canvas_p0.y + scrolling.y));
-				// Get the render position based on the (0,0) center point we just got and adding the sprite transform position to that with the texture dimensions
-				ImVec2 renderStart = ImVec2(centerPoint.x + position.x, centerPoint.y + position.y);
-				ImVec2 renderEnd = ImVec2(renderStart.x + textureWidth, renderStart.y + textureHeight);
+				// If it has a sprite component, render that sprite texture at the objects transform position
+				if (spriteComponent != nullptr)
+				{
+					// Cast the components to their respective types
+					FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
 
-				// Render sprite to viewport
-				ImGui::GetWindowDrawList()->AddImage((void*)currentTexture, renderStart, renderEnd);
+					SDL_Texture* spriteTexture = spriteCasted->GetTexture();
+					float textureWidth = (float)spriteCasted->GetTextureWidth();
+					float textureHeight = (float)spriteCasted->GetTextureHeight();
+					Vector2 offset = spriteCasted->GetOffset();
+
+					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, textureWidth, textureHeight, offset, scrolling, canvas_p0, scale);
+				}
+
+				// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
+				// render the focused objects TransformArrow for moving it within the scene view
+				if (focusedObjectIndex != -1 && focusedObjectIndex == i)
+				{
+					// Get focused GameObject and transformArrow png
+					GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectIndex];
+					Texture *transformArrow = new Texture();
+					transformArrow->loadFromFile("assets/images/TransformArrow.png");
+
+					SDL_Texture* texture = transformArrow->getTexture();
+					// * 3 because the texture is so small. If we change the scale, it will change the render starting
+					// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
+					float width = (float)transformArrow->getWidth() * 3;
+					float height = (float)transformArrow->getHeight() * 3;
+					Vector2 scale = { 1, 1 };
+					Vector2 offset = { 0, 0 };
+					Vector2 adjustedPosition = { position.x, position.y };
+					bool _scalesWithZoom = false;
+
+					FlatEngine::FlatGui::AddImageToDrawList(texture, adjustedPosition, width, height, offset, scrolling, canvas_p0, scale, _scalesWithZoom);
+				}
 			}
 		}
 
 		ImGui::End();
+
+		// Reset WindowPadding
+		ImGui::PopStyleVar();
+		// Reset WindowBorder
+		ImGui::PopStyleVar();
+	}
+
+
+	void FlatEngine::FlatGui::AddImageToDrawList(SDL_Texture *texture, Vector2 position, float textureWidth, float textureHeight, Vector2 offset, ImVec2 scrolling, ImVec2 canvas_p0, Vector2 scale, bool _scalesWithZoom)
+	{
+		// Get the center point of the canvas by dividing the width by 2 and adding the viewport position offset and the mouse scroll offset
+		ImVec2 centerPoint = ImVec2(SCENE_VIEWPORT_WIDTH / 2 + (canvas_p0.x + scrolling.x), SCENE_VIEWPORT_HEIGHT / 2 + (canvas_p0.y + scrolling.y));
+		// Get the render position based on the (0,0) center point we just got and adding the sprite transform position to that with the texture dimensions
+		// Also account for the pivotPoint offset of the Sprite component.
+		// Also account for scale which defaults to 1.
+		// Lastly, accounts for the current scene view zoom level.
+		
+		ImVec2 renderStart;
+		ImVec2 renderEnd;
+
+		if (_scalesWithZoom)
+		{
+			renderStart = ImVec2(centerPoint.x + ((position.x - (offset.x * scale.x)) * currentZoomMultiplier), centerPoint.y + ((position.y - (offset.y * scale.y)) * currentZoomMultiplier));
+			renderEnd = ImVec2(renderStart.x + ((textureWidth * scale.x) * currentZoomMultiplier), renderStart.y + ((textureHeight * scale.y) * currentZoomMultiplier));
+		}
+		else
+		{
+			renderStart = ImVec2(centerPoint.x + (position.x) * currentZoomMultiplier, centerPoint.y + ((position.y - (offset.y * scale.y)) * currentZoomMultiplier) - textureHeight);
+			renderEnd = ImVec2(renderStart.x + textureWidth, renderStart.y + textureHeight);
+		}
+
+		// Render sprite to viewport
+		ImGui::GetWindowDrawList()->AddImage((void*)texture, renderStart, renderEnd);
+	}
+
+
+	void FlatEngine::FlatGui::IncreaseSceneZoom()
+	{
+		if (currentZoomLevel < 6)
+		{
+			currentZoomLevel++;
+			currentZoomMultiplier = zoomMultipliers[currentZoomLevel];
+		}
+	}
+
+	void FlatEngine::FlatGui::DecreaseSceneZoom()
+	{
+		if (currentZoomLevel > 0)
+		{
+			currentZoomLevel--;
+			currentZoomMultiplier = zoomMultipliers[currentZoomLevel];
+		}
 	}
 
 
 	void FlatEngine::FlatGui::RenderLog()
 	{
-		ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 		ImGui::Begin("Debug Log");
+		
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+
+		//ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild("Log Container", ImVec2(0,0), padding_child_flags);
+		//ImGui::PopStyleColor();
 
 		static int test_type = 0;
 		static ImGuiTextBuffer *log = FlatEngine::logger->GetBuffer();
@@ -553,17 +652,19 @@ namespace FlatEngine { namespace FlatGui {
 			log->clear(); lines = 0; 
 		}
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
-
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(float(0.9), float(0.9), 1, float(0.2)));
-		ImGui::BeginChild("Log", ImVec2(0,0));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGui::BeginChild("Log", ImVec2(0,0), padding_child_flags);
 		ImGui::TextUnformatted(log->begin(), log->end());
 		ImGui::PopStyleColor();
 		ImGui::EndChild();
+
+		ImGui::EndChild();
+
 		ImGui::End();
 
-		//FlatEngine::logger->ClearBuffer();
+		FlatEngine::logger->ClearBuffer();
 	}
+
 
 	void FlatEngine::FlatGui::Cleanup()
 	{

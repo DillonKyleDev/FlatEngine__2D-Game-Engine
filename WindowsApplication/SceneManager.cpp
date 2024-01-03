@@ -165,17 +165,41 @@ namespace FlatEngine
 			// Loop through the components in this GameObjects json
 			for (int j = 0; j < currentObjectJson["components"].size(); j++)
 			{
-				auto type = currentObjectJson["components"][j]["type"];
+				std::string type = "";
+				if (currentObjectJson["components"][j].contains("type"))
+					type = currentObjectJson["components"][j]["type"];
 
 				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
+					// Default values
+					float xScale = 1;
+					float yScale = 1;
+					float xPos = 0;
+					float yPos = 0;
+					float rotation = 0;
+
 					FlatEngine::Transform* newTransform = static_cast<FlatEngine::Transform*>(loadedObject->AddComponent(Component::ComponentTypes::Transform));
-					float xPos = currentObjectJson["components"][j]["xPos"];
-					float yPos = currentObjectJson["components"][j]["yPos"];
-					float rotation = currentObjectJson["components"][j]["rotation"];
+					// position
+					if (currentObjectJson["components"][j].contains("xPos"))
+						xPos = currentObjectJson["components"][j]["xPos"];
+
+					if (currentObjectJson["components"][j].contains("yPos"))
+						yPos = currentObjectJson["components"][j]["yPos"];
+
+					// scale
+					if (currentObjectJson["components"][j].contains("xScale"))
+						xScale = currentObjectJson["components"][j]["xScale"];
+
+					if (currentObjectJson["components"][j].contains("yScale"))
+						yScale = currentObjectJson["components"][j]["yScale"];
+
+					// rotation
+					if (currentObjectJson["components"][j].contains("rotation"))
+						rotation = currentObjectJson["components"][j]["rotation"];
 
 					newTransform->SetPosition(Vector2(xPos, yPos));
+					newTransform->SetScale(Vector2(xScale, yScale));
 					newTransform->SetRotation(rotation);
 				}
 				else if (type == "Sprite")

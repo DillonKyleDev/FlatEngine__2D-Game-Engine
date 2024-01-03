@@ -8,6 +8,8 @@ namespace FlatEngine
 		this->SetType(Component::ComponentTypes::Transform);
 		this->position.x = 0;
 		this->position.y = 0;
+		this->scale.x = 1;
+		this->scale.y = 1;
 		this->rotation = 0;
 	}
 
@@ -24,7 +26,9 @@ namespace FlatEngine
 			{ "type", "Transform" },
 			{ "xPos", this->position.x }, 
 			{ "yPos", this->position.y },
-			{ "rotation", this->rotation }
+			{ "rotation", this->rotation },
+			{ "xScale", this->scale.x },
+			{ "yScale", this->scale.y }
 		};
 
 		std::string data = jsonData.dump();
@@ -32,24 +36,32 @@ namespace FlatEngine
 		return data;
 	}
 
-
+	// Setters
 	void Transform::SetPosition(Vector2 position)
 	{
 		this->position = position;
 	}
 
+	void Transform::SetScale(Vector2 scale)
+	{
+		this->scale = scale;
+	}
 
 	void Transform::SetRotation(float rotation)
 	{
 		this->rotation = rotation;
 	}
 
-
+	// Getters
 	Vector2 Transform::GetPosition()
 	{
 		return this->position;
 	}
 
+	Vector2 Transform::GetScale()
+	{
+		return this->scale;
+	}
 
 	float Transform::GetRotation()
 	{
