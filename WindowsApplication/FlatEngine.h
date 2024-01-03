@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Logger.h"
+#include "Script.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -24,7 +25,14 @@ namespace FlatEngine
 	void SetFocusedGameObjectIndex(int index);
 	int GetFocusedGameObjectIndex();
 	extern FlatEngine::SceneManager *sceneManager;
-	extern FlatEngine::Logger* logger;
+	extern FlatEngine::Logger *logger;
+
+	extern void LogString(std::string line = "");
+	extern void LogFloat(float var, std::string line = "");
+	extern void LogInt(int var, std::string line = "");
+	extern void LogVector2(Vector2 vector, std::string line = "");
+	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint);
+	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint);
 
 	namespace FlatGui
 	{
@@ -34,27 +42,44 @@ namespace FlatEngine
 		extern ImVec4 outerWindowColor;
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
+
+		// Scene view
 		extern int zoomLevels[];
 		extern float zoomMultipliers[];
 		extern int currentZoomLevel;
 		extern float currentZoomMultiplier;
 		extern float SCENE_VIEWPORT_WIDTH;
 		extern float SCENE_VIEWPORT_HEIGHT;
-		extern bool _viewportsHaveBeenSet;
+		extern bool _firstSceneRenderPass;
+		extern bool _sceneHasBeenSet;
+		extern float gridStep;
+		extern float xSceneCenter;
+		extern float ySceneCenter;
+		// Game view
+		extern float GAME_VIEWPORT_WIDTH;
+		extern 	float GAME_VIEWPORT_HEIGHT;
+		extern float xGameCenter;
+		extern float yGameCenter;
+		extern bool _firstGameViewRenderPass;
+		extern bool _gameViewHasBeenSet;
 
 		extern void SetupImGui();
 		extern void Render(bool& quit);
 		extern void AddViewports();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
+		extern void RenderGameView();
+		extern void RenderGameObjects(ImVec2 scrolling, ImVec2 canvas_p0);
 		extern void RenderSceneView();
+		extern void RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz);
+		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0);
 		extern void IncreaseSceneZoom();
 		extern void DecreaseSceneZoom();
 		extern void RenderLog();
 		extern void Cleanup();
 
 		// Helper
-		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, float textureWidth, float textureHeight, Vector2 pivotPoint, ImVec2 scrolling, ImVec2 canvas_p0, Vector2 scale = { 1, 1 }, bool _scalesWithZoom = true);
+		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, ImVec2 scrolling, ImVec2 canvas_p0, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier);
 	}
 };
 

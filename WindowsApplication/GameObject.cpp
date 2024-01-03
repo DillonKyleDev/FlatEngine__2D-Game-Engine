@@ -44,6 +44,8 @@ namespace FlatEngine
 		// Look into making these smart pointers so they delete automatically
 		FlatEngine::Transform *transformComponent = new FlatEngine::Transform();
 		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite();
+		FlatEngine::Camera *cameraComponent = new FlatEngine::Camera();
+		FlatEngine::Script* scriptComponent = new FlatEngine::Script();
 
 		switch (type)
 		{
@@ -55,6 +57,14 @@ namespace FlatEngine
 		case Component::ComponentTypes::Sprite:
 			this->components.push_back(spriteComponent);
 			return spriteComponent;
+			break;
+		case Component::ComponentTypes::Camera:
+			this->components.push_back(cameraComponent);
+			return cameraComponent;
+			break;
+		case Component::ComponentTypes::Script:
+			this->components.push_back(scriptComponent);
+			return scriptComponent;
 			break;
 		default:
 			return nullptr;

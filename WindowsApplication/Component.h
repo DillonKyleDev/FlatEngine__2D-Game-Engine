@@ -16,6 +16,8 @@ namespace FlatEngine
 			Null,
 			Transform,
 			Sprite,
+			Camera,
+			Script,
 		};
 
 		Component();

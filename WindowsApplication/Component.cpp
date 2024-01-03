@@ -40,6 +40,14 @@ namespace FlatEngine
 			return "Sprite";
 			break;
 
+		case Component::ComponentTypes::Camera:
+			return "Camera";
+			break;
+
+		case Component::ComponentTypes::Script:
+			return "Script";
+			break;
+
 		default:
 			return "Null";
 		}
