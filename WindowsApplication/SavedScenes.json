@@ -1,49 +1,5 @@
 {
     "Scene GameObjects": [
-        {
-            "components": [
-                {
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 111.5,
-                    "xScale": 4.0,
-                    "yPos": 113.5,
-                    "yScale": 4.0
-                },
-                {
-                    "texture": "assets/images/Player.png",
-                    "texture_height": 64.0,
-                    "texture_width": 64.0,
-                    "type": "Sprite",
-                    "xOffset": 32.0,
-                    "yOffset": 32.0
-                }
-            ],
-            "name": "Player"
-        },
-        {
-            "components": [
-                {
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isPrimaryCamera": true,
-                    "height": 300.0,
-                    "type": "Camera",
-                    "width": 400.0
-                },
-                {
-                    "_isActive": true,
-                    "path": "",
-                    "type": "Script"
-                }
-            ],
-            "name": "Camera"
-        }
+        "NULL"
     ]
 }

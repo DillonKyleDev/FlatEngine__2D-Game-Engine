@@ -99,9 +99,6 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -178,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.h">
       <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>

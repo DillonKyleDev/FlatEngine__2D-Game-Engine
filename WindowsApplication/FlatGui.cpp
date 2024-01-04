@@ -27,6 +27,9 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 innerWindowColor = ImVec4(float(0.9), float(0.9), 1, float(0.1));
 	ImVec4 singleItemColor = ImVec4(float(0.9), float(0.9), 1, float(0.1));
 	
+	// Frame Counter
+	int framesDrawn = 0;
+
 	// Scene view
 	int zoomLevels[7] = {
 		0,1,2,3,4,5,6
@@ -121,6 +124,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::AddViewports()
 	{
+		FlatEngine::FlatGui::RenderToolbar();
 		FlatEngine::FlatGui::RenderHierarchy();
 		FlatEngine::FlatGui::RenderInspector();
 		FlatEngine::FlatGui::RenderGameView();
@@ -130,6 +134,42 @@ namespace FlatEngine { namespace FlatGui {
 		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 		//if (show_demo_window)
 		//	ImGui::ShowDemoWindow(&show_demo_window);
+	}
+
+
+	void FlatEngine::FlatGui::RenderToolbar()
+	{
+		ImGui::Begin("Toolbar");
+
+		if (ImGui::Button("Start"))
+		{
+			FlatEngine::StartGameLoop();
+		}
+		ImGui::SameLine(0, 5);
+		if (ImGui::Button("Pause"))
+		{
+			FlatEngine::PauseGameLoop();
+		}
+		ImGui::SameLine(0, 5);
+		if (ImGui::Button("Stop"))
+		{
+			FlatEngine::StopGameLoop();
+		}
+
+		if (FlatEngine::GameLoopStarted())
+		{
+			framesDrawn++;
+			int ellapsedTime = FlatEngine::GetEllapsedGameTime();
+			std::string timeString = "Ellapsed Time: " + std::to_string(ellapsedTime / 1000);
+			std::string fpsString = "Average FPS: " + std::to_string(FlatEngine::GetAverageFps());
+
+			ImGui::SameLine(0, 5);
+			ImGui::Text(timeString.c_str());
+			ImGui::SameLine(0, 5);
+			ImGui::Text(fpsString.c_str());
+		}
+
+		ImGui::End();
 	}
 
 

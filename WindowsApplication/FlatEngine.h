@@ -10,6 +10,7 @@
 #include "SceneManager.h"
 #include "Logger.h"
 #include "Script.h"
+#include "GameLoop.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -20,13 +21,20 @@
 
 namespace FlatEngine
 {
+	// #### FLAGENGINE #### //
+	// 
 	// Variables
 	extern int FocusedGameObjectIndex;
 	void SetFocusedGameObjectIndex(int index);
 	int GetFocusedGameObjectIndex();
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
+	extern FlatEngine::GameLoop *gameLoop;
 
+	// Engine
+	extern void Run(bool &_hasQuit);
+
+	// Logging Prettification
 	extern void LogString(std::string line = "");
 	extern void LogFloat(float var, std::string line = "");
 	extern void LogInt(int var, std::string line = "");
@@ -34,9 +42,23 @@ namespace FlatEngine
 	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint);
 	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint);
 
+	// Game Loop Prettification
+	extern void StartGameLoop();
+	extern void GameLoopUpdate();
+	extern void PauseGameLoop();
+	extern void StopGameLoop();
+	extern int GetEllapsedGameTime();
+	extern bool GameLoopStarted();
+	extern bool GameLoopPaused();
+	extern float GetAverageFps();
+
+
+
+
+	// #### FLATGUI #### //
 	namespace FlatGui
 	{
-		// Variables
+		// General window variables
 		extern bool _editingValue;
 		extern float childPadding;
 		extern ImVec4 outerWindowColor;
@@ -66,6 +88,7 @@ namespace FlatEngine
 		extern void SetupImGui();
 		extern void Render(bool& quit);
 		extern void AddViewports();
+		extern void RenderToolbar();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void RenderGameView();
