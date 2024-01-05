@@ -2,7 +2,6 @@
 #include "FlatEngine.h"
 
 
-
 namespace FlatEngine
 {
 	GameLoop::GameLoop()
@@ -13,6 +12,12 @@ namespace FlatEngine
 		this->_started = false;
 		this->_paused = false;
 		this->framesCounted = 0;
+
+		this->scripts = {};
+
+		this->moverScript = nullptr;
+		this->upScript = nullptr;
+		this->sinwaveScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -28,13 +33,69 @@ namespace FlatEngine
 		// Get Start "time" in Ticks ellapsed
 		this->startTime = SDL_GetTicks();
 		this->pausedTicks = 0;
+
+		// Create our script instances
+		this->moverScript = new Mover();
+		this->upScript = new Up();
+		this->sinwaveScript = new Sinwave();
+
+		this->scripts.push_back(moverScript);
+		this->scripts.push_back(upScript);
+		this->scripts.push_back(sinwaveScript);
+
+
+		// Find all script components on Scene GameObjects and add those GameObjects
+		// to their corresponding script class entity vector members
+		std::vector<GameObject*> sceneObjects = FlatEngine::GetSceneObjects();
+		for (int i = 0; i < sceneObjects.size(); i++)
+		{
+			std::vector<Component*> components = sceneObjects[i]->GetComponents();
+
+			for (int j = 0; j < components.size(); j++)
+			{
+				if (components[j]->GetTypeString() == "Script")
+				{
+					FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[j]);
+					std::string attatchedScript = script->GetAttachedScript();
+
+					if (attatchedScript == "Mover")
+					{
+						moverScript->AddEntity(sceneObjects[i]);
+					}
+					else if (attatchedScript == "Up")
+					{
+						upScript->AddEntity(sceneObjects[i]);
+					}
+					else if (attatchedScript == "Sinwave")
+					{
+						sinwaveScript->AddEntity(sceneObjects[i]);
+					}
+
+					// Add other script name checks here and add them to those script objects
+				}
+			}
+		}
+
+
+		// After all the scripts have gotten all of their scene objects added to them, we can run their Start methods
+		for (int i = 0; i < scripts.size(); i++)
+		{
+			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+				scripts[i]->Start();
+		}
 	}
 
 
 	void GameLoop::Update()
 	{
 		this->AddFrame();
-		FlatEngine::LogString("Inside main game loop.");
+
+		// Run all the script Update() functions
+		for (int i = 0; i < scripts.size(); i++)
+		{
+			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+				scripts[i]->Update(1);
+		}
 	}
 
 
@@ -47,6 +108,17 @@ namespace FlatEngine
 		this->countedTicks = SDL_GetTicks();
 		this->pausedTicks = 0;
 		this->framesCounted = 0;
+
+		// Delete the script objects
+		delete this->moverScript;
+		this->moverScript = nullptr;
+		delete this->upScript;
+		this->upScript = nullptr;
+		delete this->sinwaveScript;
+		this->sinwaveScript = nullptr;
+
+		// Load back up the saved version of the scene
+		FlatEngine::LoadScene(FlatEngine::GetLoadedScene()->GetName());
 	}
 
 	void GameLoop::Pause()

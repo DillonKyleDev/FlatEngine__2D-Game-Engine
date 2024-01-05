@@ -1,6 +1,8 @@
 #include "GameObject.h"
 #include "FlatEngine.h"
-
+#include "Transform.h"
+#include "Sprite.h"
+#include "Camera.h"
 
 
 namespace FlatEngine
@@ -45,7 +47,7 @@ namespace FlatEngine
 		FlatEngine::Transform *transformComponent = new FlatEngine::Transform();
 		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite();
 		FlatEngine::Camera *cameraComponent = new FlatEngine::Camera();
-		FlatEngine::Script* scriptComponent = new FlatEngine::Script();
+		FlatEngine::ScriptComponent* scriptComponent = new FlatEngine::ScriptComponent();
 
 		switch (type)
 		{

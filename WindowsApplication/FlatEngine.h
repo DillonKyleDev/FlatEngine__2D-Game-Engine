@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <sstream>
+#include <vector>
 #include "SDL.h"
 #include <SDL_syswm.h>
 #include <imgui.h>
@@ -9,8 +10,9 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Logger.h"
-#include "Script.h"
+#include "ScriptComponent.h"
 #include "GameLoop.h"
+
 
 //ImGui - SDL Renderer
 #pragma once
@@ -25,14 +27,24 @@ namespace FlatEngine
 	// 
 	// Variables
 	extern int FocusedGameObjectIndex;
-	void SetFocusedGameObjectIndex(int index);
-	int GetFocusedGameObjectIndex();
+	extern void SetFocusedGameObjectIndex(int index);
+	extern int GetFocusedGameObjectIndex();
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
+
+	// Scene Manager Prettification
+	extern Scene* GetLoadedScene();
+	extern void SaveScene(Scene *scene);
+	extern void LoadScene(std::string name);
+
+	// Scene Prettification
+	extern std::vector<GameObject*> GetSceneObjects();
+	extern void CreateGameObject();
+	extern void DeleteGameObject(int sceneObjectIndex);
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
@@ -56,6 +68,7 @@ namespace FlatEngine
 
 
 	// #### FLATGUI #### //
+	//
 	namespace FlatGui
 	{
 		// General window variables

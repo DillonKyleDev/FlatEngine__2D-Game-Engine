@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "GameObject.h"
+#include "Camera.h"
 
 
 namespace FlatEngine
@@ -20,10 +21,14 @@ namespace FlatEngine
 		void DeleteGameObject(int sceneObjectIndex);
 		void IncrementID();
 		long GetCurrentID();
+		void SetPrimaryCamera(Camera* camera);
+		void RemovePrimaryCamera();
+		Camera* GetPrimaryCamera();
 
 	private:
 		std::string name;
 		std::vector<GameObject*> sceneObjects;
+		Camera* primaryCamera;
 		long currentID;
 	};
 }

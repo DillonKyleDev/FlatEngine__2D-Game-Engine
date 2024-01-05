@@ -1,5 +1,117 @@
 {
     "Scene GameObjects": [
-        "NULL"
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 4.0,
+                    "yPos": 12.003353118896484,
+                    "yScale": 4.0
+                },
+                {
+                    "texture": "assets/images/Player.png",
+                    "texture_height": 64.0,
+                    "texture_width": 64.0,
+                    "type": "Sprite",
+                    "xOffset": 32.0,
+                    "yOffset": 32.0
+                },
+                {
+                    "_isActive": true,
+                    "attachedScript": "Sinwave",
+                    "type": "Script"
+                },
+                {
+                    "_isActive": false,
+                    "attachedScript": "",
+                    "type": "Script"
+                }
+            ],
+            "name": "Player"
+        },
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 165.0,
+                    "xScale": -5.0,
+                    "yPos": 8.0,
+                    "yScale": 5.0
+                },
+                {
+                    "texture": "assets/images/Skeli.png",
+                    "texture_height": 64.0,
+                    "texture_width": 64.0,
+                    "type": "Sprite",
+                    "xOffset": 32.0,
+                    "yOffset": 32.0
+                },
+                {
+                    "_isActive": true,
+                    "attachedScript": "",
+                    "type": "Script"
+                }
+            ],
+            "name": "Skeli"
+        },
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -173.0,
+                    "xScale": 4.0,
+                    "yPos": -17.5,
+                    "yScale": 4.0
+                },
+                {
+                    "texture": "assets/images/Slime.png",
+                    "texture_height": 64.0,
+                    "texture_width": 64.0,
+                    "type": "Sprite",
+                    "xOffset": 32.0,
+                    "yOffset": 32.0
+                },
+                {
+                    "_isActive": true,
+                    "attachedScript": "Up",
+                    "type": "Script"
+                }
+            ],
+            "name": "Slime"
+        },
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isPrimaryCamera": true,
+                    "height": 300.0,
+                    "type": "Camera",
+                    "width": 400.0
+                }
+            ],
+            "name": "Camera"
+        },
+        {
+            "components": [
+                {
+                    "_isPrimaryCamera": false,
+                    "height": 300.0,
+                    "type": "Camera",
+                    "width": 400.0
+                }
+            ],
+            "name": "Camera 2"
+        }
     ]
 }

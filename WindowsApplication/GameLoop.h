@@ -1,6 +1,9 @@
 #pragma once
 #include "SDL.h"
-
+#include "GameScript.h"
+#include "Mover.h"
+#include "./scripts/Up.h"
+#include "./scripts/Sinwave.h"
 
 
 namespace FlatEngine
@@ -30,6 +33,12 @@ namespace FlatEngine
 		bool _started;
 		bool _paused;
 		float framesCounted;
+
+		std::vector<GameScript*> scripts;
+
+		Mover* moverScript;
+		Up* upScript;
+		Sinwave* sinwaveScript;
 	};
 }
 

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "FlatEngine.h"
 
 
 namespace FlatEngine
@@ -7,6 +8,7 @@ namespace FlatEngine
 	{
         this->name = "New Scene";
         this->sceneObjects = {};
+		this->primaryCamera = nullptr;
 	}
 
 	Scene::~Scene()
@@ -54,5 +56,37 @@ namespace FlatEngine
 	long Scene::GetCurrentID()
 	{
 		return this->currentID;
+	}
+
+	void Scene::SetPrimaryCamera(Camera* camera)
+	{
+		if (camera != nullptr)
+		{
+			// Remove the old primaryCamera
+			if (this->primaryCamera != nullptr)
+			{
+				this->primaryCamera->SetPrimaryCamera(false);
+				FlatEngine::LogString("Primary camera removed");
+			}
+
+			this->primaryCamera = camera;
+			this->primaryCamera->SetPrimaryCamera(true);
+			FlatEngine::LogString("Primary camera set.");
+		}
+		else
+		{
+			FlatEngine::LogString("The Camera pointer you tried to set as the primary Camera was a nullptr.");
+		}
+	}
+
+	void Scene::RemovePrimaryCamera()
+	{
+		this->primaryCamera = nullptr;
+		FlatEngine::LogString("Primary camera removed");
+	}
+
+	Camera* Scene::GetPrimaryCamera()
+	{
+		return this->primaryCamera;
 	}
 }

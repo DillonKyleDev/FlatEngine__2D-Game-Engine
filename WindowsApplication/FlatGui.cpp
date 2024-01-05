@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 #include "SceneManager.h"
 #include "Logger.h"
-#include "Script.h"
+#include "ScriptComponent.h"
 #include <cmath>
 
 
@@ -45,7 +45,7 @@ namespace FlatEngine { namespace FlatGui {
 	bool _firstSceneRenderPass = true;
 	bool _sceneHasBeenSet = false;
 
-	// Game view
+	// Game view default values
 	float GAME_VIEWPORT_WIDTH = 600;
 	float GAME_VIEWPORT_HEIGHT = 400;
 	float xGameCenter = 600/2;
@@ -441,33 +441,38 @@ namespace FlatEngine { namespace FlatGui {
 						float truncatedHeight = trunc(height);
 						std::string aspectRatioString = "Aspect Ratio: " + std::to_string(truncatedWidth) + ":" + std::to_string(truncatedHeight);
 						ImGui::Text(aspectRatioString.c_str());
-						ImGui::Checkbox("Is Primary Camera", &_isPrimary);
+
+						if (ImGui::Checkbox("Is Primary Camera", &_isPrimary))
+						{
+							if (_isPrimary)
+								FlatEngine::GetLoadedScene()->SetPrimaryCamera(camera);
+							else
+								FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
+						}
+							
 						camera->SetPrimaryCamera(_isPrimary);
 					}
 					else if (componentType == "Script")
 					{
-						FlatEngine::Script* script = static_cast<FlatEngine::Script*>(components[i]);
-						std::string path = script->GetPath();
+						FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[i]);
+						std::string path = script->GetAttachedScript();
 						bool _isActive = script->IsActive();
 
 						// For path editing
 						char newPath[1024];
 						strcpy_s(newPath, path.c_str());
-						std::string pathString = "Path: ";
+						std::string pathString = "Name: ";
 						ImGui::Text(pathString.c_str());
 						ImGui::SameLine(0, 5);
 						ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-						if (ImGui::InputText("##scriptPath", newPath, IM_ARRAYSIZE(newPath), flags))
-							script->SetPath(newPath);
+						std::string inputId = "##scriptName_" + std::to_string(i);
+						if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
+							script->SetAttachedScript(newPath);
 
 						// _isActive checkbox
-						ImGui::Checkbox("Active", &_isActive);
+						std::string checkboxId = "Active##" + std::to_string(i);
+						ImGui::Checkbox(checkboxId.c_str(), &_isActive);
 						script->SetActive(_isActive);
-
-						if (ImGui::Button("Create New Script"))
-						{
-							script->CreateScriptFile("Move");
-						}
 					}
 
 					ImGui::PopStyleColor();

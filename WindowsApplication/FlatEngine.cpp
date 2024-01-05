@@ -18,6 +18,7 @@ namespace FlatEngine
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 
+	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
 		// Keeping track of the frames passed since we started the GameLoop
@@ -37,6 +38,43 @@ namespace FlatEngine
 	int FlatEngine::GetFocusedGameObjectIndex()
 	{
 		return FlatEngine::FocusedGameObjectIndex;
+	}
+
+
+	std::vector<FlatEngine::GameScript*> gameScripts = {};
+
+
+	// Scene Manager Prettification
+	Scene* FlatEngine::GetLoadedScene()
+	{
+		return FlatEngine::sceneManager->GetLoadedScene();
+	}
+
+	void FlatEngine::SaveScene(Scene *scene)
+	{
+		FlatEngine::sceneManager->SaveScene(scene);
+	}
+
+	void FlatEngine::LoadScene(std::string name)
+	{
+		FlatEngine::sceneManager->LoadScene(name);
+	}
+	
+
+	// Scene Manager Prettification
+	std::vector<GameObject*> FlatEngine::GetSceneObjects()
+	{
+		return FlatEngine::GetLoadedScene()->GetSceneObjects();
+	}
+
+	void FlatEngine::CreateGameObject()
+	{
+		FlatEngine::GetLoadedScene()->CreateGameObject();
+	}
+
+	void FlatEngine::DeleteGameObject(int sceneObjectIndex)
+	{
+		FlatEngine::GetLoadedScene()->DeleteGameObject(sceneObjectIndex);
 	}
 
 

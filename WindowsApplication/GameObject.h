@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Component.h"
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"

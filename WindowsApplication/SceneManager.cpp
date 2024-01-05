@@ -9,7 +9,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
-#include "Script.h"
+#include "ScriptComponent.h"
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -256,27 +256,40 @@ namespace FlatEngine
 
 						newCamera->SetDimensions(width, height);
 						newCamera->SetPrimaryCamera(_isPrimaryCamera);
+						// If this camera is the primary camera, set it in the Scene as the primaryCamera
+						if (_isPrimaryCamera)
+							freshScene->SetPrimaryCamera(newCamera);
 					}
 					else if (type == "Script")
 					{
-						FlatEngine::Script* newScript = static_cast<FlatEngine::Script*>(loadedObject->AddComponent(Component::ComponentTypes::Script));
+						FlatEngine::ScriptComponent* newScript = static_cast<FlatEngine::ScriptComponent*>(loadedObject->AddComponent(Component::ComponentTypes::Script));
 
 						// Default values
-						std::string path = "";
+						std::string attachedScript = "";
 						bool _isActive = false;
 
-						if (currentObjectJson["components"][j].contains("path"))
-							path = currentObjectJson["components"][j]["path"];
+						if (currentObjectJson["components"][j].contains("attachedScript"))
+							attachedScript = currentObjectJson["components"][j]["attachedScript"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'path' in object: ");
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'attachedScript' in object: ");
 
 						if (currentObjectJson["components"][j].contains("_isActive"))
 							_isActive = currentObjectJson["components"][j]["_isActive"];
 						else
 							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isActive' in object: ");
 
-						newScript->SetPath(path);
+						newScript->SetAttachedScript(attachedScript);
 						newScript->SetActive(_isActive);
+
+
+						// Does it have any script classes attatched via strings
+						// If so, grab that class from a lookup list using
+						// Its name, then it's name will be the key to its value
+						// which is it's instanceCreation function pointer
+						// that can then be called by 
+						// scriptComponent->CreateScriptInstance();
+						// That member function will assign the new Script object
+						// to the loadedScript variable in the component.
 					}
 				}
 
