@@ -35,6 +35,10 @@ namespace FlatEngine
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
 
+	// ImU32 colors
+	extern ImU32 White;
+	extern ImU32 Green;
+
 	// Engine
 	extern void Run(bool &_hasQuit);
 
@@ -113,18 +117,18 @@ namespace FlatEngine
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void RenderGameView();
-		extern void RenderGameObjects(ImVec2 cameraPosition, float cameraWidth, float cameraHeight, ImVec2 canvas_p0, ImVec2 canvas_sz);
+		extern void RenderGameObjects(ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderSceneView();
 		extern void RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderLog();
 		extern void Cleanup();
 
+
 		// Helper
 		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
-
 		// Just add - canvas_p0 to get Window coordinates
-		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor);
+		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 	}
 };
 

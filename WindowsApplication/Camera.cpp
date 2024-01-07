@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "FlatEngine.h"
 
 
 namespace FlatEngine 
@@ -12,6 +13,8 @@ namespace FlatEngine
 		this->width = 50;
 		this->height = 30;
 		this->SetParentID(parentID);
+		this->zoom = 10;
+		this->frustrumColor = ImVec4(255,255,255,255);
 	}
 
 	Camera::~Camera()
@@ -32,6 +35,27 @@ namespace FlatEngine
 	bool Camera::IsPrimary()
 	{
 		return this->_isPrimaryCamera;
+	}
+
+	void Camera::SetFrustrumColor(ImVec4 color)
+	{
+		this->frustrumColor = color;
+	}
+
+	ImVec4 Camera::GetFrustrumColor()
+	{
+		return this->frustrumColor;
+	}
+
+	void Camera::SetZoom(float zoom)
+	{
+		if (zoom >= 1 && zoom <= 100)
+			this->zoom = zoom;
+	}
+
+	float Camera::GetZoom()
+	{
+		return this->zoom;
 	}
 
 	void Camera::SetDimensions(float width, float height)
@@ -56,7 +80,12 @@ namespace FlatEngine
 			{ "type", "Camera" },
 			{ "width", this->width },
 			{ "height", this->height },
-			{ "_isPrimaryCamera", this->_isPrimaryCamera }
+			{ "_isPrimaryCamera", this->_isPrimaryCamera },
+			{ "zoom", this->zoom },
+			{ "frustrumRed", this->frustrumColor.x },
+			{ "frustrumGreen", this->frustrumColor.y },
+			{ "frustrumBlue", this->frustrumColor.z },
+			{ "frustrumAlpha", this->frustrumColor.w },
 		};
 
 		std::string data = jsonData.dump();

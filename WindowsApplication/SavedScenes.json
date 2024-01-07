@@ -11,13 +11,15 @@
                     "yScale": 1.0
                 },
                 {
-                    "_isPrimaryCamera": true,
-                    "height": 6.0,
-                    "type": "Camera",
-                    "width": 10.0
+                    "texture": "assets/images/Player.png",
+                    "texture_height": 27.0,
+                    "texture_width": 47.0,
+                    "type": "Sprite",
+                    "xOffset": 23.5,
+                    "yOffset": 13.5
                 }
             ],
-            "name": "Camera"
+            "name": "Player"
         },
         {
             "components": [
@@ -30,15 +32,18 @@
                     "yScale": 1.0
                 },
                 {
-                    "texture": "assets/images/Player.png",
-                    "texture_height": 27.0,
-                    "texture_width": 47.0,
-                    "type": "Sprite",
-                    "xOffset": 23.5,
-                    "yOffset": 13.5
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 157.5,
+                    "frustrumGreen": 149.32525634765625,
+                    "frustrumRed": 18.52941131591797,
+                    "height": 30.0,
+                    "type": "Camera",
+                    "width": 55.0,
+                    "zoom": 12.57800006866455
                 }
             ],
-            "name": "Player"
+            "name": "Camera"
         }
     ]
 }

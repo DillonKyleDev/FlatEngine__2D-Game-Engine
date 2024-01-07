@@ -18,6 +18,10 @@ namespace FlatEngine
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 
+	// Colors
+	ImU32 White = IM_COL32(255, 255, 255, 255);
+	ImU32 Green = IM_COL32(1, 255, 1, 255);
+
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{

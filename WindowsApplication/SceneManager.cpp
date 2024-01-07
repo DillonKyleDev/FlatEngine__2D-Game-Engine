@@ -249,24 +249,61 @@ namespace FlatEngine
 						float width = 400;
 						float height = 300;
 						bool _isPrimaryCamera = false;
+						float zoom = 1;
+						
+						float f_red = 1;
+						float f_green = 1;
+						float f_blue = 1;
+						float f_alpha = 1;
 
+						// Width and height
 						if (currentObjectJson["components"][j].contains("width"))
 							width = currentObjectJson["components"][j]["width"];
 						else
 							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'width' in object: ");
-
 						if (currentObjectJson["components"][j].contains("height"))
 							height = currentObjectJson["components"][j]["height"];
 						else
 							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'height' in object: ");
-
+						// Is primaryCamera
 						if (currentObjectJson["components"][j].contains("_isPrimaryCamera"))
 							_isPrimaryCamera = currentObjectJson["components"][j]["_isPrimaryCamera"];
 						else
 							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isPrimaryCamera' in object: ");
+						// Zoom
+						if (currentObjectJson["components"][j].contains("zoom"))
+							zoom = currentObjectJson["components"][j]["zoom"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'zoom' in object: ");
+						// Frustrum RGBA values
+						if (currentObjectJson["components"][j].contains("frustrumRed"))
+							f_red = currentObjectJson["components"][j]["frustrumRed"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumRed' in object: ");
+						if (currentObjectJson["components"][j].contains("frustrumGreen"))
+							f_green = currentObjectJson["components"][j]["frustrumGreen"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumGreen' in object: ");
+						if (currentObjectJson["components"][j].contains("frustrumBlue"))
+							f_blue = currentObjectJson["components"][j]["frustrumBlue"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumBlue' in object: ");
+						if (currentObjectJson["components"][j].contains("frustrumAlpha"))
+							f_alpha = currentObjectJson["components"][j]["frustrumAlpha"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumAlpha' in object: ");
+
+						FlatEngine::LogFloat(f_red, "F-red: ");
+						FlatEngine::LogFloat(f_green, "F-green: ");
+						FlatEngine::LogFloat(f_blue, "f_blue: ");
+						FlatEngine::LogFloat(f_alpha, "F-alpha: ");
+						ImVec4 frustrumColor = ImVec4(f_red, f_green, f_blue, f_alpha);
 
 						newCamera->SetDimensions(width, height);
 						newCamera->SetPrimaryCamera(_isPrimaryCamera);
+						newCamera->SetZoom(zoom);
+						newCamera->SetFrustrumColor(frustrumColor);
+
 						// If this camera is the primary camera, set it in the Scene as the primaryCamera
 						if (_isPrimaryCamera)
 							freshScene->SetPrimaryCamera(newCamera);

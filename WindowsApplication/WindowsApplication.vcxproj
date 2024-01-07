@@ -160,6 +160,7 @@
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="scripts\Sinwave.cpp" />
     <ClCompile Include="scripts\ScriptTemplate.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="ScriptComponent.h" />
     <ClInclude Include="scripts\Sinwave.h" />
     <ClInclude Include="scripts\ScriptTemplate.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
