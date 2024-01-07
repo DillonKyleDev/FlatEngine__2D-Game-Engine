@@ -222,13 +222,24 @@ namespace FlatEngine
 
 						// Default values
 						std::string path = "";
+						float xOffset = 0;
+						float yOffset = 0;
 
 						if (currentObjectJson["components"][j].contains("texture"))
 							path = currentObjectJson["components"][j]["texture"];
 						else
 							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'texture' in object: ");
+						if (currentObjectJson["components"][j].contains("xOffset"))
+							xOffset = currentObjectJson["components"][j]["xOffset"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'xOffset' in object: ");
+						if (currentObjectJson["components"][j].contains("yOffset"))
+							yOffset = currentObjectJson["components"][j]["yOffset"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'yOffset' in object: ");
 
 						newSprite->SetTexture(path);
+						newSprite->SetOffset(Vector2(xOffset, yOffset));
 					}
 					else if (type == "Camera")
 					{
@@ -280,16 +291,6 @@ namespace FlatEngine
 
 						newScript->SetAttachedScript(attachedScript);
 						newScript->SetActive(_isActive);
-
-
-						// Does it have any script classes attatched via strings
-						// If so, grab that class from a lookup list using
-						// Its name, then it's name will be the key to its value
-						// which is it's instanceCreation function pointer
-						// that can then be called by 
-						// scriptComponent->CreateScriptInstance();
-						// That member function will assign the new Script object
-						// to the loadedScript variable in the component.
 					}
 				}
 

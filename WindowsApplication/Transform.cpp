@@ -3,7 +3,7 @@
 
 namespace FlatEngine
 {
-	Transform::Transform()
+	Transform::Transform(long parentID)
 	{
 		this->SetType(Component::ComponentTypes::Transform);
 		this->position.x = 0;
@@ -11,6 +11,7 @@ namespace FlatEngine
 		this->scale.x = 1;
 		this->scale.y = 1;
 		this->rotation = 0;
+		this->SetParentID(parentID);
 	}
 
 

@@ -23,6 +23,8 @@
 
 namespace FlatEngine
 {
+	using ComponentTypes = Component::ComponentTypes;
+
 	// #### FLAGENGINE #### //
 	// 
 	// Variables
@@ -45,14 +47,20 @@ namespace FlatEngine
 	extern std::vector<GameObject*> GetSceneObjects();
 	extern void CreateGameObject();
 	extern void DeleteGameObject(int sceneObjectIndex);
+	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
+	extern GameObject* GetObjectById(long objectID);
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
 	extern void LogFloat(float var, std::string line = "");
 	extern void LogInt(int var, std::string line = "");
 	extern void LogVector2(Vector2 vector, std::string line = "");
-	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint);
-	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint);
+	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList);
+	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList);
+	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList);
+	extern void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList);
+	extern void DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList);
+	extern void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList);
 
 	// Game Loop Prettification
 	extern void StartGameLoop();
@@ -63,6 +71,7 @@ namespace FlatEngine
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
+	extern float GetDeltaTime();
 
 
 
@@ -79,24 +88,23 @@ namespace FlatEngine
 		extern ImVec4 singleItemColor;
 
 		// Scene view
-		extern int zoomLevels[];
-		extern float zoomMultipliers[];
-		extern int currentZoomLevel;
-		extern float currentZoomMultiplier;
 		extern float SCENE_VIEWPORT_WIDTH;
 		extern float SCENE_VIEWPORT_HEIGHT;
+		extern float DYNAMIC_VIEWPORT_WIDTH;
+		extern float DYNAMIC_VIEWPORT_HEIGHT;
 		extern bool _firstSceneRenderPass;
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
-		extern float xSceneCenter;
-		extern float ySceneCenter;
+		extern int iconTransparency;
+
+		extern Texture* transformArrow;
+		extern Texture* cameraTexture;
+
 		// Game view
 		extern float GAME_VIEWPORT_WIDTH;
 		extern 	float GAME_VIEWPORT_HEIGHT;
 		extern float xGameCenter;
 		extern float yGameCenter;
-		extern bool _firstGameViewRenderPass;
-		extern bool _gameViewHasBeenSet;
 
 		extern void SetupImGui();
 		extern void Render(bool& quit);
@@ -105,17 +113,18 @@ namespace FlatEngine
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void RenderGameView();
-		extern void RenderGameObjects(ImVec2 scrolling, ImVec2 canvas_p0);
+		extern void RenderGameObjects(ImVec2 cameraPosition, float cameraWidth, float cameraHeight, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderSceneView();
-		extern void RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz);
-		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0);
-		extern void IncreaseSceneZoom();
-		extern void DecreaseSceneZoom();
+		extern void RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderLog();
 		extern void Cleanup();
 
 		// Helper
-		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, ImVec2 scrolling, ImVec2 canvas_p0, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier);
+		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
+
+		// Just add - canvas_p0 to get Window coordinates
+		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor);
 	}
 };
 

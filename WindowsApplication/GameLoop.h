@@ -25,6 +25,7 @@ namespace FlatEngine
 		float GetAverageFps();
 		float GetFramesCounted();
 		void AddFrame();
+		float GetDeltaTime();
 
 	private:
 		Uint32 startTime;
@@ -33,6 +34,9 @@ namespace FlatEngine
 		bool _started;
 		bool _paused;
 		float framesCounted;
+		// Both for deltaTime
+		float lastFrameTime;
+		float deltaTime;
 
 		std::vector<GameScript*> scripts;
 

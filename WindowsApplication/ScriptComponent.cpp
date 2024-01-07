@@ -7,10 +7,11 @@
 
 namespace FlatEngine
 {
-	ScriptComponent::ScriptComponent()
+	ScriptComponent::ScriptComponent(long parentID)
 	{
 		this->SetType(Component::ComponentTypes::Script);
 		this->attachedScript = "";
+		this->SetParentID(parentID);
 	}
 
 	ScriptComponent::~ScriptComponent()

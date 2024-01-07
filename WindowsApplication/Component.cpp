@@ -15,6 +15,18 @@ namespace FlatEngine
 	}
 
 
+	void Component::SetParentID(long parentID)
+	{
+		this->parentID = parentID;
+	}
+
+
+	long Component::GetParentID()
+	{
+		return this->parentID;
+	}
+
+
 	void Component::SetType(ComponentTypes type)
 	{
 		this->type = type;

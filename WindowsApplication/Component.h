@@ -25,6 +25,8 @@ namespace FlatEngine
 		~Component();
 
 		void SetType(ComponentTypes type);
+		void SetParentID(long ID);
+		long GetParentID();
 
 		ComponentTypes GetType();
 		std::string GetTypeString();
@@ -32,7 +34,6 @@ namespace FlatEngine
 
 	private:
 		ComponentTypes type = Component::ComponentTypes::Null;
-		// Maybe use an id system here instead of passing actual gameobjects so you can keep track of the 
-		// parents of each component without causing cyclical dependencies. ie. GameObject uses component and component can't use gameobject.
+		long parentID;
 	};
 }

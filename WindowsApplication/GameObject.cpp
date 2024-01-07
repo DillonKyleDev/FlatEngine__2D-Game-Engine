@@ -20,7 +20,15 @@ namespace FlatEngine
 
 	GameObject::~GameObject()
 	{
-
+		// Delete all pointers
+		for (int i = 0; i < this->components.size(); i++)
+		{
+			if (this->components[i] != nullptr)
+			{
+				delete this->components[i];
+				this->components[i] = nullptr;
+			}
+		}
 	}
 
 
@@ -44,10 +52,10 @@ namespace FlatEngine
 	Component* GameObject::AddComponent(Component::ComponentTypes type)
 	{
 		// Look into making these smart pointers so they delete automatically
-		FlatEngine::Transform *transformComponent = new FlatEngine::Transform();
-		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite();
-		FlatEngine::Camera *cameraComponent = new FlatEngine::Camera();
-		FlatEngine::ScriptComponent* scriptComponent = new FlatEngine::ScriptComponent();
+		FlatEngine::Transform *transformComponent = new FlatEngine::Transform(this->ID);
+		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite(this->ID);
+		FlatEngine::Camera *cameraComponent = new FlatEngine::Camera(this->ID);
+		FlatEngine::ScriptComponent* scriptComponent = new FlatEngine::ScriptComponent(this->ID);
 
 		switch (type)
 		{
@@ -77,7 +85,14 @@ namespace FlatEngine
 
 	void GameObject::RemoveComponent(Component* component)
 	{
-
+		for (int i = 0; i < this->components.size(); i++)
+		{
+			if (this->components[i] == component)
+			{
+				delete this->components[i];
+				this->components[i] = nullptr;
+			}
+		}
 	}
 
 

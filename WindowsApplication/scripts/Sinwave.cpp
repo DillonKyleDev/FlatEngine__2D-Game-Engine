@@ -29,7 +29,7 @@ void Sinwave::Update(float deltaTime)
 		FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(attatchedEntities[i]->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
 		Vector2 position = transform->GetPosition();
 
-		float pi = 3.14;
+		float pi = 3.14f;
 		float xPos = 0;
 		float yPos = 0;
 

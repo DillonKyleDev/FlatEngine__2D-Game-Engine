@@ -37,6 +37,20 @@ namespace FlatEngine
 	}
 
 
+	GameObject* Scene::GetObjectById(long ID)
+	{
+		ID = ID;
+		for (int i = 0; i < this->sceneObjects.size(); i++)
+		{
+			if (ID == sceneObjects[i]->GetID())
+			{
+				return sceneObjects[i];
+			}
+		}
+		return nullptr;
+	}
+
+
 	void Scene::CreateGameObject()
 	{
 		GameObject *newObject = new GameObject();
@@ -45,6 +59,12 @@ namespace FlatEngine
 
 	void Scene::DeleteGameObject(int sceneObjectIndex)
 	{
+		// If this GameObject was the primary camera, unset it as the primaryCamera and set this->primaryCamera to nullptr
+		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == this->sceneObjects[sceneObjectIndex]->GetID())
+		{
+			this->primaryCamera->SetPrimaryCamera(false);
+			this->primaryCamera = nullptr;
+		}
 		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectIndex);
 	}
 
@@ -66,23 +86,20 @@ namespace FlatEngine
 			if (this->primaryCamera != nullptr)
 			{
 				this->primaryCamera->SetPrimaryCamera(false);
-				FlatEngine::LogString("Primary camera removed");
 			}
 
 			this->primaryCamera = camera;
 			this->primaryCamera->SetPrimaryCamera(true);
-			FlatEngine::LogString("Primary camera set.");
 		}
 		else
 		{
-			FlatEngine::LogString("The Camera pointer you tried to set as the primary Camera was a nullptr.");
+			FlatEngine::LogString("Scene::SetPrimaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
 		}
 	}
 
 	void Scene::RemovePrimaryCamera()
 	{
 		this->primaryCamera = nullptr;
-		FlatEngine::LogString("Primary camera removed");
 	}
 
 	Camera* Scene::GetPrimaryCamera()

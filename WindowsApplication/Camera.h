@@ -13,7 +13,7 @@ namespace FlatEngine
 	class Camera : public Component
 	{
 	public:
-		Camera();
+		Camera(long parentID);
 		~Camera();
 
 		void FollowTarget(FlatEngine::Transform transform, float ease);
@@ -27,6 +27,7 @@ namespace FlatEngine
 	private:
 		float width;
 		float height;
+		float zoom;
 		bool _isPrimaryCamera;
 	};
 }

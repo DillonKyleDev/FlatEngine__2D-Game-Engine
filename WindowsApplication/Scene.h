@@ -16,7 +16,7 @@ namespace FlatEngine
 		std::string GetName();
 		void AddSceneObject(GameObject *sceneObject);
 		std::vector<GameObject*> GetSceneObjects();
-		// Managing GameObjects
+		GameObject* GetObjectById(long ID);
 		void CreateGameObject();
 		void DeleteGameObject(int sceneObjectIndex);
 		void IncrementID();

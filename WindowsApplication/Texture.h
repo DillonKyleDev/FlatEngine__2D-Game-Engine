@@ -10,7 +10,7 @@
 class Texture
 {
 public:
-	Texture();
+	Texture(std::string path = "");
 	~Texture();
 	bool loadFromFile(std::string path);
 	bool loadSurface(std::string path, SDL_Surface* screenSurface);

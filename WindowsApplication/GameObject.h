@@ -9,6 +9,8 @@
 
 namespace FlatEngine
 {
+	using ComponentTypes = Component::ComponentTypes;
+
 	class GameObject
 	{
 	public:
@@ -17,9 +19,9 @@ namespace FlatEngine
 		int GetID();
 		void SetName(std::string name);
 		std::string GetName();
-		Component* AddComponent(Component::ComponentTypes type);
+		Component* AddComponent(ComponentTypes type);
 		void RemoveComponent(Component* component);
-		Component* GetComponent(Component::ComponentTypes type);
+		Component* GetComponent(ComponentTypes type);
 		std::vector<Component*> &GetComponents();
 		void SetParent(GameObject* parent);
 		GameObject* GetParent();

@@ -1,7 +1,6 @@
 #include "Logger.h"
 
 
-
 namespace FlatEngine
 {
 	Logger::Logger()
@@ -38,17 +37,40 @@ namespace FlatEngine
 		this->log->appendf(line.c_str());
 	}
 
-	void Logger::DrawRectangle(Vector2 startingPoint, Vector2 endingPoint)
+	void Logger::DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
 	{
-		ImDrawList *drawList = ImGui::GetForegroundDrawList();
-		drawList->AddRect(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), 0x2D02EF8D, 0.0f, 0, 3.0f);
+		drawList->AddRect(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), color, 0.0f, 0, thickness);
 	}
 
-	void Logger::DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint)
+	void Logger::DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
 	{
-		ImDrawList* drawList = ImGui::GetForegroundDrawList();
-		drawList->AddRect(startingPoint, endingPoint, 0x2D02EF8D, 0.0f, 0, 3.0f);
+		drawList->AddRect(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), color, 0.0f, 0, thickness);
 	}
+
+	void Logger::DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
+	{
+		drawList->AddLine(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), color, thickness);
+	}
+
+	void Logger::DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
+	{
+		drawList->AddLine(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), color, thickness);
+	}
+
+	void Logger::DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList)
+	{
+		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x + 1, point.y), color);
+		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x, point.y - 1), color);
+		drawList->AddLine(ImVec2(point.x + 1, point.y + 1), ImVec2(point.x + 1, point.y + 1), color);
+	}
+
+	void Logger::DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList)
+	{
+		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x + 1, point.y), color);
+		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x, point.y - 1), color);
+		drawList->AddLine(ImVec2(point.x + 1, point.y + 1), ImVec2(point.x + 1, point.y + 1), color);
+	}
+
 
 	ImGuiTextBuffer *Logger::GetBuffer()
 	{

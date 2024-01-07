@@ -3,12 +3,15 @@
 
 namespace FlatEngine 
 {
-	Camera::Camera()
+	using ComponentTypes = Component::ComponentTypes;
+
+	Camera::Camera(long parentID)
 	{
-		this->SetType(Component::ComponentTypes::Camera);
+		this->SetType(ComponentTypes::Camera);
 		this->_isPrimaryCamera = false;
-		this->width = 400;
-		this->height = 300;
+		this->width = 50;
+		this->height = 30;
+		this->SetParentID(parentID);
 	}
 
 	Camera::~Camera()

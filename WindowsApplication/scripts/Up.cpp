@@ -29,6 +29,7 @@ void Up::Update(float deltaTime)
 		Vector2 position = transform->GetPosition();
 		float xPos = position.x;
 		float yPos = position.y;
-		transform->SetPosition(Vector2(xPos, yPos + 1));
+		FlatEngine::LogFloat(deltaTime, "deltaTime: ");
+		transform->SetPosition(Vector2(xPos, yPos + .2f * deltaTime));
 	}
 }

@@ -12,6 +12,8 @@ namespace FlatEngine
 		this->_started = false;
 		this->_paused = false;
 		this->framesCounted = 0;
+		this->lastFrameTime = 0;
+		this->deltaTime = 0;
 
 		this->scripts = {};
 
@@ -29,6 +31,7 @@ namespace FlatEngine
 	{
 		this->_started = true;
 		this->_paused = false;
+		this->lastFrameTime = (float)SDL_GetTicks();
 
 		// Get Start "time" in Ticks ellapsed
 		this->startTime = SDL_GetTicks();
@@ -89,12 +92,17 @@ namespace FlatEngine
 	void GameLoop::Update()
 	{
 		this->AddFrame();
+		// The time that this function was called last (the last frame), this->lastFrameTime, is the marker for how long it has been 
+		// (in milliseconds) from that frame to this current one. That is deltaTime.
+		this->deltaTime = (float)SDL_GetTicks() - this->lastFrameTime;
+		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
+		this->lastFrameTime = (float)SDL_GetTicks();
 
 		// Run all the script Update() functions
 		for (int i = 0; i < scripts.size(); i++)
 		{
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
-				scripts[i]->Update(1);
+				scripts[i]->Update(this->deltaTime);
 		}
 	}
 
@@ -185,5 +193,10 @@ namespace FlatEngine
 	void GameLoop::AddFrame()
 	{
 		this->framesCounted++;
+	}
+
+	float GameLoop::GetDeltaTime()
+	{
+		return this->deltaTime;
 	}
 }

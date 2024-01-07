@@ -2,13 +2,15 @@
 
 
 //Initializes variables
-Texture::Texture()
+Texture::Texture(std::string path)
 {
 	//Initialize
 	this->texture = NULL;
 	this->surface = NULL;
 	this->textureWidth = 0;
 	this->textureHeight = 0;
+	if (path != "")
+		this->loadFromFile(path);
 }
 
 
