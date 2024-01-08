@@ -31,6 +31,6 @@ namespace TextureManager
 	extern Texture button;
 
 	//Buttons
-	extern Button goldButton;
+	//extern Button goldButton;
 };
 

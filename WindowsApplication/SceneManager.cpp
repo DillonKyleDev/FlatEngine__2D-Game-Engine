@@ -329,13 +329,58 @@ namespace FlatEngine
 						newScript->SetAttachedScript(attachedScript);
 						newScript->SetActive(_isActive);
 					}
-				}
+					else if (type == "Button")
+					{
+						FlatEngine::Button* newButton = static_cast<FlatEngine::Button*>(loadedObject->AddComponent(ComponentTypes::Button));
 
+						// Default values
+						bool _isActive = true;
+						float activeWidth = 5;
+						float activeHeight = 3;
+						Vector2 activeOffset = { 0, 0 };
+						std::string attachedScript = "";
+
+						if (currentObjectJson["components"][j].contains("_isActive"))
+							_isActive = currentObjectJson["components"][j]["_isActive"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isActive' in object: ");
+
+						if (currentObjectJson["components"][j].contains("activeWidth"))
+							activeWidth = currentObjectJson["components"][j]["activeWidth"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeWidth' in object: ");
+
+						if (currentObjectJson["components"][j].contains("activeHeight"))
+							activeHeight = currentObjectJson["components"][j]["activeHeight"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeHeight' in object: ");
+
+						if (currentObjectJson["components"][j].contains("activeOffsetX"))
+							activeOffset.x = currentObjectJson["components"][j]["activeOffsetX"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeOffsetX' in object: ");
+
+						if (currentObjectJson["components"][j].contains("activeOffsetY"))
+							activeOffset.y = currentObjectJson["components"][j]["activeOffsetY"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeOffsetY' in object: ");
+
+						if (currentObjectJson["components"][j].contains("attachedScript"))
+							attachedScript = currentObjectJson["components"][j]["attachedScript"];
+						else
+							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'attachedScript' in object: ");
+						
+						newButton->SetActive(_isActive);
+						newButton->SetActiveDimensions(activeWidth, activeHeight);
+						newButton->SetActiveOffset(activeOffset);
+						newButton->SetAttachedScript(attachedScript);
+					}
+				}
+				
 				// Add created GameObject to our freshScene
 				freshScene->AddSceneObject(loadedObject);
 			}
 		}
-
 
 		// Assign our freshScene to the SceneManagers currently loadedScene member variable
 		this->loadedScene = freshScene;

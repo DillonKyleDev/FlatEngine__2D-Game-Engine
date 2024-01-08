@@ -60,6 +60,10 @@ namespace FlatEngine
 			return "Script";
 			break;
 
+		case Component::ComponentTypes::Button:
+			return "Button";
+			break;
+
 		default:
 			return "Null";
 		}

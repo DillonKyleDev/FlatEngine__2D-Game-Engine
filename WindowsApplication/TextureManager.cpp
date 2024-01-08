@@ -18,7 +18,7 @@ namespace TextureManager
 	Texture button;
 
 	//Buttons
-	Button goldButton;
+	//Button goldButton;
 
 	bool LoadTextures()
 	{
@@ -46,7 +46,7 @@ namespace TextureManager
 		}
 
 		//For Buttons
-		goldButton.setSpriteTexture("assets/images/SingleButton.png");
+		//goldButton.setSpriteTexture("assets/images/SingleButton.png");
 
 		return success;
 	}
@@ -78,7 +78,7 @@ namespace TextureManager
 		//Window::Render();
 
 		//Render buttons
-		goldButton.render();
+		//goldButton.render();
 
 		//Update the screen
 		SDL_RenderPresent(renderer);

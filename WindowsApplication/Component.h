@@ -19,6 +19,7 @@ namespace FlatEngine
 			Sprite,
 			Camera,
 			Script,
+			Button,
 		};
 
 		Component();

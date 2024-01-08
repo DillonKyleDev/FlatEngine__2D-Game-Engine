@@ -77,6 +77,8 @@ namespace FlatEngine
 	extern float GetAverageFps();
 	extern float GetDeltaTime();
 
+	extern bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
+
 
 
 
@@ -99,7 +101,10 @@ namespace FlatEngine
 		extern bool _firstSceneRenderPass;
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
+
+		// Settings
 		extern int iconTransparency;
+		extern bool _clearBufferEveryFrame;
 
 		extern Texture* transformArrow;
 		extern Texture* cameraTexture;
@@ -123,7 +128,6 @@ namespace FlatEngine
 		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderLog();
 		extern void Cleanup();
-
 
 		// Helper
 		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));

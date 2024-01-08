@@ -15,6 +15,9 @@ namespace FlatEngine
 		this->lastFrameTime = 0;
 		this->deltaTime = 0;
 
+		this->gameObjects = FlatEngine::GetSceneObjects();
+		this->buttonComponents = {};
+		//this->animationObjects = {};
 		this->scripts = {};
 
 		this->moverScript = nullptr;
@@ -41,18 +44,19 @@ namespace FlatEngine
 		this->moverScript = new Mover();
 		this->upScript = new Up();
 		this->sinwaveScript = new Sinwave();
+		// this->buttonScript = new ButtonScript();
 
 		this->scripts.push_back(moverScript);
 		this->scripts.push_back(upScript);
 		this->scripts.push_back(sinwaveScript);
+		// this->scripts.push_back(buttonScript);
 
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
-		std::vector<GameObject*> sceneObjects = FlatEngine::GetSceneObjects();
-		for (int i = 0; i < sceneObjects.size(); i++)
+		for (int i = 0; i < this->gameObjects.size(); i++)
 		{
-			std::vector<Component*> components = sceneObjects[i]->GetComponents();
+			std::vector<Component*> components = this->gameObjects[i]->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
 			{
@@ -63,21 +67,34 @@ namespace FlatEngine
 
 					if (attatchedScript == "Mover")
 					{
-						moverScript->AddEntity(sceneObjects[i]);
+						moverScript->AddEntity(this->gameObjects[i]);
 					}
 					else if (attatchedScript == "Up")
 					{
-						upScript->AddEntity(sceneObjects[i]);
+						upScript->AddEntity(this->gameObjects[i]);
 					}
 					else if (attatchedScript == "Sinwave")
 					{
-						sinwaveScript->AddEntity(sceneObjects[i]);
+						sinwaveScript->AddEntity(this->gameObjects[i]);
 					}
+					// Add the Button GameObject(s) to the buttonScript;
 
 					// Add other script name checks here and add them to those script objects
 				}
+				// Also
+				if (components[j]->GetTypeString() == "Button")
+				{
+					this->buttonComponents.push_back(static_cast<FlatEngine::Button*>(components[j]));
+				}
+				if (components[j]->GetTypeString() == "Animation")
+				{
+					//this->animationComponents.push_back(components[j]);
+				}
 			}
 		}
+
+
+		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
 
 		// After all the scripts have gotten all of their scene objects added to them, we can run their Start methods
@@ -86,17 +103,24 @@ namespace FlatEngine
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
 				scripts[i]->Start();
 		}
+
+		// In the Start() function of the buttonScript script:
+		// startButton->OnMouseOver(callbackFunctionFromScript);
+		// This will register the callback function inside the Button Component to be called during the gameloop when the button gets its event.
 	}
 
 
 	void GameLoop::Update()
 	{
 		this->AddFrame();
+
+
 		// The time that this function was called last (the last frame), this->lastFrameTime, is the marker for how long it has been 
 		// (in milliseconds) from that frame to this current one. That is deltaTime.
 		this->deltaTime = (float)SDL_GetTicks() - this->lastFrameTime;
 		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
 		this->lastFrameTime = (float)SDL_GetTicks();
+
 
 		// Run all the script Update() functions
 		for (int i = 0; i < scripts.size(); i++)
@@ -104,6 +128,15 @@ namespace FlatEngine
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
 				scripts[i]->Update(this->deltaTime);
 		}
+
+
+		// Run logic for other gameplay components here too like hover and click events for Buttons and Animation components
+		// For all the Buttons:
+
+		// int params = 204;
+		// 
+		// If FlatEngine::AreColliding(ButtonPositions, MousePositions)
+			// button->OnMouseOverFunction(params);
 	}
 
 

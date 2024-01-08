@@ -65,7 +65,7 @@ namespace FlatEngine
 	}
 	
 
-	// Scene Manager Prettification
+	// Scene Prettification
 	std::vector<GameObject*> FlatEngine::GetSceneObjects()
 	{
 		return FlatEngine::GetLoadedScene()->GetSceneObjects();
@@ -213,5 +213,21 @@ namespace FlatEngine
 	float FlatEngine::GetDeltaTime()
 	{
 		return gameLoop->GetDeltaTime();
+	}
+
+	//ImVec4 objectA(top, right, bottom, left), ImVec4 objectB(top, right, bottom, left)
+	bool FlatEngine::AreColliding(ImVec4 ObjectA, ImVec4 ObjectB)
+	{
+		float A_TopEdge = ObjectA.x;
+		float A_RightEdge = ObjectA.y;
+		float A_BottomEdge = ObjectA.z;
+		float A_LeftEdge = ObjectA.w;
+
+		float B_TopEdge = ObjectB.x;
+		float B_RightEdge = ObjectB.y;
+		float B_BottomEdge = ObjectB.z;
+		float B_LeftEdge = ObjectB.w;
+
+		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 }

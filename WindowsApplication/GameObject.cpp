@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
+#include "Button.h"
 
 
 namespace FlatEngine
@@ -52,29 +53,38 @@ namespace FlatEngine
 	Component* GameObject::AddComponent(Component::ComponentTypes type)
 	{
 		// Look into making these smart pointers so they delete automatically
-		FlatEngine::Transform *transformComponent = new FlatEngine::Transform(this->ID);
-		FlatEngine::Sprite *spriteComponent = new FlatEngine::Sprite(this->ID);
-		FlatEngine::Camera *cameraComponent = new FlatEngine::Camera(this->ID);
-		FlatEngine::ScriptComponent* scriptComponent = new FlatEngine::ScriptComponent(this->ID);
+		FlatEngine::Transform* transformComponent = nullptr;
+		FlatEngine::Sprite* spriteComponent = nullptr;
+		FlatEngine::Camera* cameraComponent = nullptr;
+		FlatEngine::ScriptComponent* scriptComponent = nullptr;
+		FlatEngine::Button* buttonComponent = nullptr;
 
 		switch (type)
 		{
 		case Component::ComponentTypes::Transform:
+			transformComponent = new FlatEngine::Transform(this->ID);
 			this->components.push_back(transformComponent);
 			return transformComponent;
 			break;
-
 		case Component::ComponentTypes::Sprite:
+			spriteComponent = new FlatEngine::Sprite(this->ID);
 			this->components.push_back(spriteComponent);
 			return spriteComponent;
 			break;
 		case Component::ComponentTypes::Camera:
+			cameraComponent = new FlatEngine::Camera(this->ID);
 			this->components.push_back(cameraComponent);
 			return cameraComponent;
 			break;
 		case Component::ComponentTypes::Script:
+			scriptComponent = new FlatEngine::ScriptComponent(this->ID);
 			this->components.push_back(scriptComponent);
 			return scriptComponent;
+			break;
+		case Component::ComponentTypes::Button:
+			buttonComponent = new FlatEngine::Button(this->ID);
+			this->components.push_back(buttonComponent);
+			return buttonComponent;
 			break;
 		default:
 			return nullptr;

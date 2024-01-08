@@ -1,41 +1,141 @@
 #include "Button.h"
+#include "FlatEngine.h"
 
 
-Button::Button()
+namespace FlatEngine
 {
-	this->position = { 0, 0 };
-}
-
-Button::~Button()
-{
-	
-}
-
-void Button::setSpriteTexture(std::string path)
-{
-	this->sprite.loadFromFile(path);
-}
-
-//Set top left position
-void Button::setPosition(int x, int y)
-{
-	this->position = { x, y };
-}
-
-//Handle events
-void Button::handleEvent(SDL_Event* e)
-{
-	//e->type == SDL_MOUSEMOTION
-	if (e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP)
+	Button::Button(long parentID)
 	{
-		//Get mouse position
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-	}
-}
+		this->SetType(ComponentTypes::Button);
+		this->_mouseIsOver = false;
+		this->_hasMouseOverFired = false;
+		this->_active = true;
+		this->activeWidth = 5;
+		this->activeHeight = 3;
+		this->activeOffset = Vector2(0, 0);
 
-//Render buttton sprite
-void Button::render()
-{
-	this->sprite.render(Window::WINDOW_WIDTH / 2, Window::WINDOW_HEIGHT / 2);
+		// Initialize callback functions to nullptr
+		this->OnMouseOverFunction = nullptr;
+		this->OnMouseLeaveFunction = nullptr;
+		this->OnLeftClickFunction = nullptr;
+		this->OnRightClickFunction = nullptr;
+
+		this->attachedScript = "";
+		this->SetParentID(parentID);
+	}
+
+	Button::~Button()
+	{
+
+	}
+
+	void Button::OnMouseOver(CallbackFunction onMouseOver(int params))
+	{	
+		int mousePos = 233;
+		this->OnMouseOverFunction(mousePos);
+	}
+
+	void Button::OnMouseLeave(CallbackFunction onMouseLeave(int params))
+	{
+		this->_mouseIsOver = false;
+		int mouseXPosition = 342;
+
+		this->OnMouseLeaveFunction = onMouseLeave(mouseXPosition);
+	}
+
+	void Button::OnMouseLeftClick(CallbackFunction onLeftClick(int params))
+	{
+		int mouseXPosition = 342;
+
+		this->OnLeftClickFunction = onLeftClick(mouseXPosition);
+	}
+
+	void Button::OnMouseRightClick(CallbackFunction onRightClick(int params))
+	{
+		int mouseXPosition = 342;
+
+		this->OnRightClickFunction = onRightClick(mouseXPosition);
+	}
+
+	void Button::SetActive(bool _active)
+	{
+		this->_active = _active;
+	}
+
+	void Button::SetActiveDimensions(float width, float height)
+	{
+		if (width >= 0 && height >= 0)
+		{
+			this->activeWidth = width;
+			this->activeHeight = height;
+		}
+		else
+			FlatEngine::LogString("The active width or height you tried to set to Button component was < 0. Try again.");
+	}
+
+	void Button::SetActiveOffset(Vector2 offset)
+	{
+		this->activeOffset = offset;
+	}
+
+	void Button::SetAttachedScript(std::string script)
+	{
+		this->attachedScript = script;
+	}
+
+	bool Button::IsActive()
+	{
+		return this->_active;
+	}
+
+	float Button::GetActiveWidth()
+	{
+		return this->activeWidth;
+	}
+
+	float Button::GetActiveHeight()
+	{
+		return this->activeHeight;
+	}
+
+	Vector2 Button::GetActiveOffset()
+	{
+		return this->activeOffset;
+	}
+
+	std::string Button::GetAttachedScript()
+	{
+		return this->attachedScript;
+	}
+
+	void Button::SetMouseIsOver(bool _isOver)
+	{
+		this->_mouseIsOver = _isOver;
+	}
+	void Button::SetIsOverFired(bool _fired)
+	{
+		this->_hasMouseOverFired = _fired;
+	}
+
+	bool Button::MouseIsOver()
+	{
+		return this->_mouseIsOver;
+	}
+
+	std::string Button::GetData()
+	{
+		json jsonData = {
+			{ "type", "Button" },
+			{ "_isActive", this->_active },
+			{ "activeWidth", this->activeWidth },
+			{ "activeHeight", this->activeHeight },
+			{ "activeOffsetX", this->activeOffset.x },
+			{ "activeOffsetY", this->activeOffset.y },
+			{ "attachedScript", this->attachedScript },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
+	}
 }
