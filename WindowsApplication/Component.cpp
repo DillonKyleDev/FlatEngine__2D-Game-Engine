@@ -32,10 +32,24 @@ namespace FlatEngine
 		this->type = type;
 	}
 
+	void Component::SetID(long ID)
+	{
+		this->ID = ID;
+	}
+
+	long Component::GetID()
+	{
+		return this->ID;
+	}
 
 	Component::ComponentTypes Component::GetType()
 	{
 		return this->type;
+	}
+
+	bool Component::IsCollapsed()
+	{
+		return this->_isCollapsed;
 	}
 
 
@@ -67,6 +81,11 @@ namespace FlatEngine
 		default:
 			return "Null";
 		}
+	}
+
+	void Component::SetCollapsed(bool collapsed)
+	{
+		this->_isCollapsed = collapsed;
 	}
 
 

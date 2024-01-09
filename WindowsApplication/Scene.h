@@ -19,8 +19,10 @@ namespace FlatEngine
 		GameObject* GetObjectById(long ID);
 		void CreateGameObject();
 		void DeleteGameObject(int sceneObjectIndex);
-		void IncrementID();
-		long GetCurrentID();
+		void IncrementGameObjectID();
+		long GetNextGameObjectID();
+		void IncrementComponentID();
+		long GetNextComponentID();
 		void SetPrimaryCamera(Camera* camera);
 		void RemovePrimaryCamera();
 		Camera* GetPrimaryCamera();
@@ -29,6 +31,7 @@ namespace FlatEngine
 		std::string name;
 		std::vector<GameObject*> sceneObjects;
 		Camera* primaryCamera;
-		long currentID;
+		long nextGameObjectID;
+		long nextComponentID;
 	};
 }

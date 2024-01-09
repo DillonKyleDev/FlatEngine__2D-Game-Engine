@@ -6,13 +6,14 @@ namespace FlatEngine
 {
 	using ComponentTypes = Component::ComponentTypes;
 
-	Camera::Camera(long parentID)
+	Camera::Camera(long myID, long parentID)
 	{
 		this->SetType(ComponentTypes::Camera);
+		this->SetID(myID);
+		this->SetParentID(parentID);
 		this->_isPrimaryCamera = false;
 		this->width = 50;
 		this->height = 30;
-		this->SetParentID(parentID);
 		this->zoom = 10;
 		this->frustrumColor = ImVec4(255,255,255,255);
 	}

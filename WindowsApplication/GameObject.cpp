@@ -10,12 +10,12 @@ namespace FlatEngine
 {
 	GameObject::GameObject(GameObject* parent)
 	{
-		this->ID = FlatEngine::sceneManager->GetLoadedScene()->GetCurrentID();
+		this->ID = FlatEngine::sceneManager->GetLoadedScene()->GetNextGameObjectID();
 		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
 		this->parent = parent;
 		this->components = {};
 
-		FlatEngine::sceneManager->GetLoadedScene()->IncrementID();
+		FlatEngine::sceneManager->GetLoadedScene()->IncrementGameObjectID();
 	}
 
 
@@ -59,33 +59,48 @@ namespace FlatEngine
 		FlatEngine::ScriptComponent* scriptComponent = nullptr;
 		FlatEngine::Button* buttonComponent = nullptr;
 
+		// Get next Component ID from the scene
+		Scene* scene = FlatEngine::GetLoadedScene();
+		long nextID = scene->GetNextComponentID();
+		// Increment the Component ID after assigning it to a component
+
 		switch (type)
 		{
 		case Component::ComponentTypes::Transform:
-			transformComponent = new FlatEngine::Transform(this->ID);
+			transformComponent = new FlatEngine::Transform(nextID, this->ID);
+			scene->IncrementComponentID();
 			this->components.push_back(transformComponent);
 			return transformComponent;
 			break;
+
 		case Component::ComponentTypes::Sprite:
-			spriteComponent = new FlatEngine::Sprite(this->ID);
+			spriteComponent = new FlatEngine::Sprite(nextID, this->ID);
 			this->components.push_back(spriteComponent);
+			scene->IncrementComponentID();
 			return spriteComponent;
 			break;
+
 		case Component::ComponentTypes::Camera:
-			cameraComponent = new FlatEngine::Camera(this->ID);
+			cameraComponent = new FlatEngine::Camera(nextID, this->ID);
 			this->components.push_back(cameraComponent);
+			scene->IncrementComponentID();
 			return cameraComponent;
 			break;
+
 		case Component::ComponentTypes::Script:
-			scriptComponent = new FlatEngine::ScriptComponent(this->ID);
+			scriptComponent = new FlatEngine::ScriptComponent(nextID, this->ID);
 			this->components.push_back(scriptComponent);
+			scene->IncrementComponentID();
 			return scriptComponent;
 			break;
+
 		case Component::ComponentTypes::Button:
-			buttonComponent = new FlatEngine::Button(this->ID);
+			buttonComponent = new FlatEngine::Button(nextID, this->ID);
 			this->components.push_back(buttonComponent);
+			scene->IncrementComponentID();
 			return buttonComponent;
 			break;
+
 		default:
 			return nullptr;
 			break;

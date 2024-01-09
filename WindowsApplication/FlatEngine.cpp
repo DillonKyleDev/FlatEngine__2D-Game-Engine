@@ -20,7 +20,11 @@ namespace FlatEngine
 
 	// Colors
 	ImU32 White = IM_COL32(255, 255, 255, 255);
-	ImU32 Green = IM_COL32(1, 255, 1, 255);
+	ImU32 Green = IM_COL32(0, 255, 0, 255);
+	ImU32 Blue = IM_COL32(0, 0, 255, 255);
+	ImU32 Red = IM_COL32(255, 0, 0, 255);
+	ImU32 ActiveButtonColor = IM_COL32(50, 230, 50, 130);
+	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
 
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)

@@ -15,7 +15,7 @@ namespace FlatEngine
 	class Button : public Component
 	{
 	public:
-		Button(long parentID);
+		Button(long myID, long parentID);
 		~Button();
 		
 		void OnMouseOver(CallbackFunction onMouseOver(int params));
@@ -27,6 +27,8 @@ namespace FlatEngine
 		void SetActiveOffset(Vector2 offset);
 		void SetAttachedScript(std::string script);
 		bool IsActive();
+		void SetActiveLayer(int layer);
+		int GetActiveLayer();
 		float GetActiveWidth();
 		float GetActiveHeight();
 		Vector2 GetActiveOffset();
@@ -37,12 +39,14 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
+		long ID;
 		bool _mouseIsOver;
 		bool _hasMouseOverFired;
 		bool _active;
 		float activeWidth;
 		float activeHeight;
 		Vector2 activeOffset;
+		int activeLayer;
 
 		std::string attachedScript;
 

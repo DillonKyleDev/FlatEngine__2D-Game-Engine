@@ -3,15 +3,16 @@
 
 namespace FlatEngine
 {
-	Sprite::Sprite(long parentID)
+	Sprite::Sprite(long myID, long parentID)
 	{
-		this->texture = NULL;
 		this->SetType(Component::ComponentTypes::Sprite);
+		this->SetID(myID);
+		this->SetParentID(parentID);
+		this->texture = NULL;
 		this->textureWidth = 0;
 		this->textureHeight = 0;
 		this->offset = { 0,0 };
 		this->path = "";
-		this->SetParentID(parentID);
 	}
 
 

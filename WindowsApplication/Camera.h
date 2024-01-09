@@ -14,7 +14,7 @@ namespace FlatEngine
 	class Camera : public Component
 	{
 	public:
-		Camera(long parentID);
+		Camera(long myID, long parentID);
 		~Camera();
 
 		void FollowTarget(FlatEngine::Transform transform, float ease);

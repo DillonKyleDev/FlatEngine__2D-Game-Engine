@@ -38,6 +38,10 @@ namespace FlatEngine
 	// ImU32 colors
 	extern ImU32 White;
 	extern ImU32 Green;
+	extern ImU32 Blue;
+	extern ImU32 Red;
+	extern ImU32 ActiveButtonColor;
+	extern ImU32 InactiveButtonColor;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -92,6 +96,10 @@ namespace FlatEngine
 		extern ImVec4 outerWindowColor;
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
+
+		// Icons
+		extern std::unique_ptr<Texture> expandIcon;
+		extern std::unique_ptr<Texture> expandFlippedIcon;
 
 		// Scene view
 		extern float SCENE_VIEWPORT_WIDTH;

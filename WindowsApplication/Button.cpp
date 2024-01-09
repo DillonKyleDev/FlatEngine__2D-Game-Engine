@@ -4,9 +4,11 @@
 
 namespace FlatEngine
 {
-	Button::Button(long parentID)
+	Button::Button(long myID, long parentID)
 	{
 		this->SetType(ComponentTypes::Button);
+		this->SetID(myID);
+		this->SetParentID(parentID);
 		this->_mouseIsOver = false;
 		this->_hasMouseOverFired = false;
 		this->_active = true;
@@ -21,7 +23,7 @@ namespace FlatEngine
 		this->OnRightClickFunction = nullptr;
 
 		this->attachedScript = "";
-		this->SetParentID(parentID);
+
 	}
 
 	Button::~Button()
@@ -88,6 +90,19 @@ namespace FlatEngine
 		return this->_active;
 	}
 
+	void Button::SetActiveLayer(int layer)
+	{
+		if (layer > 0)
+			this->activeLayer = layer;
+		else
+			FlatEngine::LogString("Button active layer must be an integer greater than 0.");
+	}
+
+	int Button::GetActiveLayer()
+	{
+		return this->activeLayer;
+	}
+
 	float Button::GetActiveWidth()
 	{
 		return this->activeWidth;
@@ -132,6 +147,7 @@ namespace FlatEngine
 			{ "activeOffsetX", this->activeOffset.x },
 			{ "activeOffsetY", this->activeOffset.y },
 			{ "attachedScript", this->attachedScript },
+			{ "activeLayer", this->activeLayer },
 		};
 
 		std::string data = jsonData.dump();

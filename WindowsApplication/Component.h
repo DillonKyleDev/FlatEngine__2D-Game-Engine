@@ -26,8 +26,12 @@ namespace FlatEngine
 		~Component();
 
 		void SetType(ComponentTypes type);
+		void SetID(long ID);
+		long GetID();
 		void SetParentID(long ID);
 		long GetParentID();
+		bool IsCollapsed();
+		void SetCollapsed(bool collapsed);
 
 		ComponentTypes GetType();
 		std::string GetTypeString();
@@ -35,6 +39,8 @@ namespace FlatEngine
 
 	private:
 		ComponentTypes type = Component::ComponentTypes::Null;
+		long ID;
 		long parentID;
+		bool _isCollapsed;
 	};
 }

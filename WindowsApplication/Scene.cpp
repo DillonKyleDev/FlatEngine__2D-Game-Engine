@@ -68,14 +68,24 @@ namespace FlatEngine
 		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectIndex);
 	}
 
-	void Scene::IncrementID()
+	void Scene::IncrementGameObjectID()
 	{
-		this->currentID += 1;
+		this->nextGameObjectID += 1;
 	}
 
-	long Scene::GetCurrentID()
+	long Scene::GetNextGameObjectID()
 	{
-		return this->currentID;
+		return this->nextGameObjectID;
+	}
+
+	void  Scene::IncrementComponentID()
+	{
+		this->nextComponentID += 1;
+	}
+
+	long  Scene::GetNextComponentID()
+	{
+		return this->nextComponentID;
 	}
 
 	void Scene::SetPrimaryCamera(Camera* camera)
