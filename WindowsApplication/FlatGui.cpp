@@ -384,7 +384,6 @@ namespace FlatEngine { namespace FlatGui {
 
 				for (int i = 0; i < components.size(); i++)
 				{
-					FlatEngine::LogString(components[i]->GetTypeString());
 					// Is Collapsed
 					bool _isCollapsed = components[i]->IsCollapsed();
 
