@@ -12,8 +12,10 @@
 
 namespace FlatEngine
 {
+	bool _isDebugMode = true;
+
 	//Variables
-	int FlatEngine::FocusedGameObjectIndex = -1;
+	long FlatEngine::FocusedGameObjectID = -1;
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
@@ -29,6 +31,12 @@ namespace FlatEngine
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
+		// If Release - Start the Game Loop
+		if (FlatEngine::_isDebugMode == false && !FlatEngine::GameLoopStarted())
+		{
+			FlatEngine::StartGameLoop();
+		}
+
 		// Keeping track of the frames passed since we started the GameLoop
 		if (FlatEngine::GameLoopStarted() && !FlatEngine::GameLoopPaused())
 		{
@@ -38,14 +46,14 @@ namespace FlatEngine
 		FlatEngine::FlatGui::Render(_hasQuit);
 	}
 
-	void FlatEngine::SetFocusedGameObjectIndex(int index)
+	void FlatEngine::SetFocusedGameObjectID(long ID)
 	{
-		FlatEngine::FocusedGameObjectIndex = index;
+		FlatEngine::FocusedGameObjectID = ID;
 	}
 
-	int FlatEngine::GetFocusedGameObjectIndex()
+	long FlatEngine::GetFocusedGameObjectID()
 	{
-		return FlatEngine::FocusedGameObjectIndex;
+		return FlatEngine::FocusedGameObjectID;
 	}
 
 
@@ -75,14 +83,14 @@ namespace FlatEngine
 		return FlatEngine::GetLoadedScene()->GetSceneObjects();
 	}
 
-	void FlatEngine::CreateGameObject()
+	GameObject* FlatEngine::CreateGameObject(long parentID)
 	{
-		FlatEngine::GetLoadedScene()->CreateGameObject();
+		return FlatEngine::GetLoadedScene()->CreateGameObject(parentID);
 	}
 
-	void FlatEngine::DeleteGameObject(int sceneObjectIndex)
+	void FlatEngine::DeleteGameObject(int sceneObjectID)
 	{
-		FlatEngine::GetLoadedScene()->DeleteGameObject(sceneObjectIndex);
+		FlatEngine::GetLoadedScene()->DeleteGameObject(sceneObjectID);
 	}
 
 

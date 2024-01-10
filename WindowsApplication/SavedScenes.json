@@ -17,6 +17,11 @@
                     "type": "Sprite",
                     "xOffset": 23.5,
                     "yOffset": 13.5
+                },
+                {
+                    "_isActive": true,
+                    "attachedScript": "Sinwave",
+                    "type": "Script"
                 }
             ],
             "name": "Player"
@@ -25,35 +30,25 @@
             "components": [
                 {
                     "_isActive": true,
-                    "activeHeight": 1.0,
+                    "activeHeight": 3.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 4.5,
-                    "attachedScript": "StartButton",
+                    "activeWidth": 5.0,
+                    "attachedScript": "",
                     "type": "Button"
                 },
                 {
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 7.5,
-                    "xScale": 0.25,
-                    "yPos": 0.0,
-                    "yScale": 0.25
+                    "_isPrimaryCamera": false,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 10.0
                 },
-                {
-                    "texture": "assets/images/SingleButton.png",
-                    "texture_height": 19.0,
-                    "texture_width": 89.0,
-                    "type": "Sprite",
-                    "xOffset": 44.5,
-                    "yOffset": 9.5
-                }
-            ],
-            "name": "Button"
-        },
-        {
-            "components": [
                 {
                     "rotation": 0.0,
                     "type": "Transform",
@@ -63,22 +58,20 @@
                     "yScale": 1.0
                 },
                 {
-                    "_isPrimaryCamera": true,
-                    "frustrumAlpha": 255.0,
-                    "frustrumBlue": 128.75001525878906,
-                    "frustrumGreen": 109.25931549072266,
-                    "frustrumRed": 34.08088684082031,
-                    "height": 30.0,
-                    "type": "Camera",
-                    "width": 50.0,
-                    "zoom": 10.527000427246094
+                    "texture": "",
+                    "texture_height": 0.0,
+                    "texture_width": 0.0,
+                    "type": "Sprite",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                },
+                {
+                    "_isActive": true,
+                    "attachedScript": "",
+                    "type": "Script"
                 }
             ],
-            "name": "Camera"
-        },
-        {
-            "components": [],
-            "name": "New GameObject (3)"
+            "name": "Button"
         }
     ]
 }

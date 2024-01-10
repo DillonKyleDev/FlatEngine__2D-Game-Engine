@@ -14,7 +14,7 @@ namespace FlatEngine
 	class GameObject
 	{
 	public:
-		GameObject(GameObject* parent = nullptr);
+		GameObject(long parentID = -1);
 		~GameObject();
 		int GetID();
 		void SetName(std::string name);
@@ -23,19 +23,18 @@ namespace FlatEngine
 		void RemoveComponent(Component* component);
 		Component* GetComponent(ComponentTypes type);
 		std::vector<Component*> &GetComponents();
-		void SetParent(GameObject* parent);
-		GameObject* GetParent();
-		void AddChild(GameObject* child);
-		void RemoveChild(GameObject child);
-		std::vector<GameObject*> GetChildren();
+		void SetParentID(long parentID);
+		long GetParentID();
+		void AddChild(long childID);
+		void RemoveChild(long childID);
+		std::vector<long> GetChildren();
 		bool HasChildren();
 
 	private:
 		long ID;
+		long parentID;
 		std::string name;
-
 		std::vector<Component*> components;
-		GameObject* parent;
-		std::vector<GameObject*> children;
+		std::vector<long> childrenIDs;
 	};
 }

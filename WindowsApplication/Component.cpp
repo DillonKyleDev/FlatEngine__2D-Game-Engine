@@ -6,6 +6,9 @@ namespace FlatEngine
 	Component::Component()
 	{
 		this->type = Component::ComponentTypes::Null;
+		this->ID = -1;
+		this->parentID = -1;
+		this->_isCollapsed = false;
 	}
 
 

@@ -10,6 +10,7 @@ namespace Window
 	void SetScreenDimensions(int width, int height);
 	SDL_Renderer* GetRenderer();
 	void Render();
+	void SetFullscreen(bool _isFullscreen);
 
 	//Variables
 	extern SDL_Window* window;
@@ -19,5 +20,6 @@ namespace Window
 	//Window dimensions
 	extern int WINDOW_WIDTH;
 	extern int WINDOW_HEIGHT;
+	extern bool _isFullscreen;
 };
 

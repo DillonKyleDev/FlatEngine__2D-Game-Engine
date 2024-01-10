@@ -17,20 +17,22 @@
 //ImGui - SDL Renderer
 #pragma once
 #include "imgui.h"
-#include "../WindowsApplication/backends/imgui_impl_sdl2.h"
-#include "../WindowsApplication/backends/imgui_impl_sdlrenderer2.h"
+#include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_sdlrenderer2.h"
 
 
 namespace FlatEngine
 {
 	using ComponentTypes = Component::ComponentTypes;
 
+	extern bool _isDebugMode;
+
 	// #### FLAGENGINE #### //
 	// 
 	// Variables
-	extern int FocusedGameObjectIndex;
-	extern void SetFocusedGameObjectIndex(int index);
-	extern int GetFocusedGameObjectIndex();
+	extern long FocusedGameObjectID;
+	extern void SetFocusedGameObjectID(long ID);
+	extern long GetFocusedGameObjectID();
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
@@ -53,8 +55,8 @@ namespace FlatEngine
 
 	// Scene Prettification
 	extern std::vector<GameObject*> GetSceneObjects();
-	extern void CreateGameObject();
-	extern void DeleteGameObject(int sceneObjectIndex);
+	extern GameObject* CreateGameObject(long parentID = -1);
+	extern void DeleteGameObject(int sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectById(long objectID);
 
@@ -141,6 +143,10 @@ namespace FlatEngine
 		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
+
+		// Recursive - For Rendering Hierarchy Objects and their children
+		extern void AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked);
+		extern void AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked);
 	}
 };
 

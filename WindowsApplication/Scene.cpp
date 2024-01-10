@@ -51,21 +51,22 @@ namespace FlatEngine
 	}
 
 
-	void Scene::CreateGameObject()
+	GameObject* Scene::CreateGameObject(long parentID)
 	{
-		GameObject *newObject = new GameObject();
+		GameObject *newObject = new GameObject(parentID);
 		this->AddSceneObject(newObject);
+		return newObject;
 	}
 
-	void Scene::DeleteGameObject(int sceneObjectIndex)
+	void Scene::DeleteGameObject(int sceneObjectID)
 	{
 		// If this GameObject was the primary camera, unset it as the primaryCamera and set this->primaryCamera to nullptr
-		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == this->sceneObjects[sceneObjectIndex]->GetID())
+		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == this->sceneObjects[sceneObjectID]->GetID())
 		{
 			this->primaryCamera->SetPrimaryCamera(false);
 			this->primaryCamera = nullptr;
 		}
-		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectIndex);
+		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectID);
 	}
 
 	void Scene::IncrementGameObjectID()

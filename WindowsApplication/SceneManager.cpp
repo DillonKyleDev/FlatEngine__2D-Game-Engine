@@ -171,7 +171,7 @@ namespace FlatEngine
 					if (currentObjectJson["components"][j].contains("type"))
 						type = currentObjectJson["components"][j]["type"];
 					else
-						FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'type' in object: ");
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'type' in object: ");
 
 					//Add each loaded component to the newly created GameObject
 					if (type == "Transform")
@@ -188,29 +188,29 @@ namespace FlatEngine
 						if (currentObjectJson["components"][j].contains("xPos"))
 							xPos = currentObjectJson["components"][j]["xPos"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'xPos' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'xPos' in object: ");
 
 						if (currentObjectJson["components"][j].contains("yPos"))
 							yPos = currentObjectJson["components"][j]["yPos"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'yPos' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yPos' in object: ");
 
 						// scale
 						if (currentObjectJson["components"][j].contains("xScale"))
 							xScale = currentObjectJson["components"][j]["xScale"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'xScale' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'xScale' in object: ");
 
 						if (currentObjectJson["components"][j].contains("yScale"))
 							yScale = currentObjectJson["components"][j]["yScale"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'yScale' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yScale' in object: ");
 
 						// rotation
 						if (currentObjectJson["components"][j].contains("rotation"))
 							rotation = currentObjectJson["components"][j]["rotation"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'rotation' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'rotation' in object: ");
 
 						newTransform->SetPosition(Vector2(xPos, yPos));
 						newTransform->SetScale(Vector2(xScale, yScale));
@@ -228,15 +228,15 @@ namespace FlatEngine
 						if (currentObjectJson["components"][j].contains("texture"))
 							path = currentObjectJson["components"][j]["texture"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'texture' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'texture' in object: ");
 						if (currentObjectJson["components"][j].contains("xOffset"))
 							xOffset = currentObjectJson["components"][j]["xOffset"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'xOffset' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'xOffset' in object: ");
 						if (currentObjectJson["components"][j].contains("yOffset"))
 							yOffset = currentObjectJson["components"][j]["yOffset"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'yOffset' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yOffset' in object: ");
 
 						newSprite->SetTexture(path);
 						newSprite->SetOffset(Vector2(xOffset, yOffset));
@@ -260,43 +260,39 @@ namespace FlatEngine
 						if (currentObjectJson["components"][j].contains("width"))
 							width = currentObjectJson["components"][j]["width"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'width' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'width' in object: ");
 						if (currentObjectJson["components"][j].contains("height"))
 							height = currentObjectJson["components"][j]["height"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'height' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'height' in object: ");
 						// Is primaryCamera
 						if (currentObjectJson["components"][j].contains("_isPrimaryCamera"))
 							_isPrimaryCamera = currentObjectJson["components"][j]["_isPrimaryCamera"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isPrimaryCamera' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isPrimaryCamera' in object: ");
 						// Zoom
 						if (currentObjectJson["components"][j].contains("zoom"))
 							zoom = currentObjectJson["components"][j]["zoom"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'zoom' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'zoom' in object: ");
 						// Frustrum RGBA values
 						if (currentObjectJson["components"][j].contains("frustrumRed"))
 							f_red = currentObjectJson["components"][j]["frustrumRed"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumRed' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumRed' in object: ");
 						if (currentObjectJson["components"][j].contains("frustrumGreen"))
 							f_green = currentObjectJson["components"][j]["frustrumGreen"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumGreen' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumGreen' in object: ");
 						if (currentObjectJson["components"][j].contains("frustrumBlue"))
 							f_blue = currentObjectJson["components"][j]["frustrumBlue"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumBlue' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumBlue' in object: ");
 						if (currentObjectJson["components"][j].contains("frustrumAlpha"))
 							f_alpha = currentObjectJson["components"][j]["frustrumAlpha"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'frustrumAlpha' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumAlpha' in object: ");
 
-						FlatEngine::LogFloat(f_red, "F-red: ");
-						FlatEngine::LogFloat(f_green, "F-green: ");
-						FlatEngine::LogFloat(f_blue, "f_blue: ");
-						FlatEngine::LogFloat(f_alpha, "F-alpha: ");
 						ImVec4 frustrumColor = ImVec4(f_red, f_green, f_blue, f_alpha);
 
 						newCamera->SetDimensions(width, height);
@@ -319,12 +315,12 @@ namespace FlatEngine
 						if (currentObjectJson["components"][j].contains("attachedScript"))
 							attachedScript = currentObjectJson["components"][j]["attachedScript"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'attachedScript' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'attachedScript' in object: ");
 
 						if (currentObjectJson["components"][j].contains("_isActive"))
 							_isActive = currentObjectJson["components"][j]["_isActive"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isActive' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
 
 						newScript->SetAttachedScript(attachedScript);
 						newScript->SetActive(_isActive);
@@ -343,32 +339,32 @@ namespace FlatEngine
 						if (currentObjectJson["components"][j].contains("_isActive"))
 							_isActive = currentObjectJson["components"][j]["_isActive"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for '_isActive' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
 
 						if (currentObjectJson["components"][j].contains("activeWidth"))
 							activeWidth = currentObjectJson["components"][j]["activeWidth"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeWidth' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeWidth' in object: ");
 
 						if (currentObjectJson["components"][j].contains("activeHeight"))
 							activeHeight = currentObjectJson["components"][j]["activeHeight"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeHeight' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeHeight' in object: ");
 
 						if (currentObjectJson["components"][j].contains("activeOffsetX"))
 							activeOffset.x = currentObjectJson["components"][j]["activeOffsetX"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeOffsetX' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetX' in object: ");
 
 						if (currentObjectJson["components"][j].contains("activeOffsetY"))
 							activeOffset.y = currentObjectJson["components"][j]["activeOffsetY"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'activeOffsetY' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetY' in object: ");
 
 						if (currentObjectJson["components"][j].contains("attachedScript"))
 							attachedScript = currentObjectJson["components"][j]["attachedScript"];
 						else
-							FlatEngine::LogInt(j, "Saved scene json does not contain a value for 'attachedScript' in object: ");
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'attachedScript' in object: ");
 						
 						newButton->SetActive(_isActive);
 						newButton->SetActiveDimensions(activeWidth, activeHeight);

@@ -8,13 +8,14 @@
 
 namespace FlatEngine
 {
-	GameObject::GameObject(GameObject* parent)
+	GameObject::GameObject(long parentID)
 	{
 		this->ID = FlatEngine::sceneManager->GetLoadedScene()->GetNextGameObjectID();
+		this->parentID = parentID;
 		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
-		this->parent = parent;
 		this->components = {};
-
+		
+		// Increment GameObjectID counter in the scene for next GameObject
 		FlatEngine::sceneManager->GetLoadedScene()->IncrementGameObjectID();
 	}
 
@@ -112,7 +113,7 @@ namespace FlatEngine
 	{
 		for (int i = 0; i < this->components.size(); i++)
 		{
-			if (this->components[i] == component)
+			if (this->components[i]->GetID() == component->GetID())
 			{
 				delete this->components[i];
 				this->components[i] = nullptr;
@@ -141,43 +142,47 @@ namespace FlatEngine
 	}
 
 
-	void GameObject::SetParent(GameObject* parent)
+	void GameObject::SetParentID(long parentID)
 	{
-		if (parent != nullptr)
+		this->parentID = parentID;
+	}
+
+
+	long GameObject::GetParentID()
+	{
+		return this->parentID;
+	}
+
+
+	void GameObject::AddChild(long childID)
+	{
+		if (childID != -1)
 		{
-			this->parent = parent;
+			this->childrenIDs.push_back(childID);
 		}
 	}
 
 
-	GameObject* GameObject::GetParent()
+	void GameObject::RemoveChild(long childID)
 	{
-		return this->parent;
-	}
-
-
-	void GameObject::AddChild(GameObject* child)
-	{
-		if (child != nullptr)
+		for (int i = 0; i < this->childrenIDs.size(); i++)
 		{
-			this->children.push_back(child);
+			if (this->childrenIDs[i] == childID)
+			{
+				this->childrenIDs.erase(childrenIDs.begin() + i);
+			}
 		}
 	}
 
 
-	void GameObject::RemoveChild(GameObject child)
+	std::vector<long> GameObject::GetChildren()
 	{
-
+		return this->childrenIDs;
 	}
 
-
-	std::vector<GameObject*> GameObject::GetChildren()
-	{
-		return this->children;
-	}
 
 	bool GameObject::HasChildren()
 	{
-		return this->children.size() > 0;
+		return this->childrenIDs.size() > 0;
 	}
 }

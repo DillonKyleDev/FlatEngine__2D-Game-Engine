@@ -15,7 +15,7 @@ namespace FlatEngine
 		this->lastFrameTime = 0;
 		this->deltaTime = 0;
 
-		this->gameObjects = FlatEngine::GetSceneObjects();
+		this->gameObjects = std::vector<GameObject*>();
 		this->buttonComponents = {};
 		//this->animationObjects = {};
 		this->scripts = {};
@@ -40,6 +40,8 @@ namespace FlatEngine
 		this->startTime = SDL_GetTicks();
 		this->pausedTicks = 0;
 
+		this->gameObjects = FlatEngine::GetSceneObjects();
+
 		// Create our script instances
 		this->moverScript = new Mover();
 		this->upScript = new Up();
@@ -51,11 +53,11 @@ namespace FlatEngine
 		this->scripts.push_back(sinwaveScript);
 		// this->scripts.push_back(buttonScript);
 
-
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
 		for (int i = 0; i < this->gameObjects.size(); i++)
 		{
+			FlatEngine::LogString("GameObject: " + this->gameObjects[i]->GetName());
 			std::vector<Component*> components = this->gameObjects[i]->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
@@ -64,6 +66,8 @@ namespace FlatEngine
 				{
 					FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[j]);
 					std::string attatchedScript = script->GetAttachedScript();
+
+					FlatEngine::LogString("Attached Script: " + attatchedScript);
 
 					if (attatchedScript == "Mover")
 					{
@@ -75,6 +79,7 @@ namespace FlatEngine
 					}
 					else if (attatchedScript == "Sinwave")
 					{
+						FlatEngine::LogString("Object Added to Sinewave.");
 						sinwaveScript->AddEntity(this->gameObjects[i]);
 					}
 					// Add the Button GameObject(s) to the buttonScript;

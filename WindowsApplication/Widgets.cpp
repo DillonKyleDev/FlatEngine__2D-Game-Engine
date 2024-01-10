@@ -5,7 +5,10 @@ namespace FlatEngine { namespace FlatGui
 {
 	Widgets::Widgets()
 	{
-		this->hoveredButtons = {};
+		this->sceneHoveredButtons = std::vector<Button*>();
+		this->gameHoveredButtons = std::vector<Button*>();
+		this->sceneCanvases = std::vector<Canvas*>();
+		this->gameCanvases = std::vector<Canvas*>();
 	}
 
 	Widgets::~Widgets()
@@ -13,52 +16,102 @@ namespace FlatEngine { namespace FlatGui
 
 	}
 
-	void Widgets::AddHoveredButton(Button* button)
+	void Widgets::AddSceneCanvas(Canvas* canvas)
 	{
-		this->hoveredButtons.push_back(button);
 	}
 
-	void Widgets::RemoveHoveredButton(Button* button)
+	void Widgets::RemoveSceneCanvas(Canvas* canvas)
 	{
-		for (int i = 0; i < this->hoveredButtons.size(); i++)
-		{
-			if (this->hoveredButtons[i])
-			{
+	}
 
+	std::vector<Canvas*> Widgets::GetSceneCanvases()
+	{
+		return std::vector<Canvas*>();
+	}
+
+	void Widgets::AddHoveredSceneButton(Button* button)
+	{
+		this->sceneHoveredButtons.push_back(button);
+	}
+
+	void Widgets::RemoveHoveredSceneButton(Button* button)
+	{
+		for (int i = 0; i < this->sceneHoveredButtons.size(); i++)
+		{
+			if (this->sceneHoveredButtons[i])
+			{
+				this->sceneHoveredButtons.erase(this->sceneHoveredButtons.begin() + i);
 			}
 		}
 	}
 
-	void Widgets::IncrementID()
+	void Widgets::IncrementSceneCanvasID()
 	{
-		this->currentID++;
+		this->nextSceneCanvasID++;
 	}
 
-	long Widgets::GetCurrentID()
+	long Widgets::GetNextSceneCanvasID()
 	{
-		return this->currentID;
+		return this->nextSceneCanvasID;
 	}
 
-	Button* Widgets::GetTopLevelButton()
+	Button* Widgets::GetTopLevelSceneButton()
 	{
+		// Figure this out later **********************
 		Button* highestPriority = nullptr;
 
-		for (int i = 0; i < this->hoveredButtons.size(); i++)
+		for (int i = 0; i < this->sceneHoveredButtons.size(); i++)
 		{
 			if (i == 0)
-				highestPriority = this->hoveredButtons[i];
-			else if (this->hoveredButtons[i]->GetActiveLayer() > highestPriority->GetActiveLayer())
+				highestPriority = this->sceneHoveredButtons[i];
+			else if (this->sceneHoveredButtons[i]->GetActiveLayer() > highestPriority->GetActiveLayer())
 			{
-				highestPriority = this->hoveredButtons[i];
+				highestPriority = this->sceneHoveredButtons[i];
 			}
 		}
 
 		return highestPriority;
 	}
 
-	std::vector<Button*> Widgets::GetHoveredButtons()
+	std::vector<Button*> Widgets::GetHoveredSceneButtons()
 	{
+		// TO DO
 		return std::vector<Button*>();
+	}
+
+	void Widgets::AddHoveredGameButton(Button* button)
+	{
+		this->gameHoveredButtons.push_back(button);
+	}
+
+	void Widgets::RemoveHoveredGameButton(Button* button)
+	{
+		for (int i = 0; i < this->gameHoveredButtons.size(); i++)
+		{
+			if (this->gameHoveredButtons[i]->GetID() == button->GetID())
+				this->gameHoveredButtons.erase(this->gameHoveredButtons.begin() + i);
+		}
+	}
+
+	void Widgets::IncrementGameCanvasID()
+	{
+		this->nextGameCanvasID++;
+	}
+
+	long Widgets::GetNextGameCanvasID()
+	{
+		return this->nextGameCanvasID;
+	}
+
+	Button* Widgets::GetTopLevelGameButton()
+	{
+		// TO DO
+		return nullptr;
+	}
+
+	std::vector<Button*> Widgets::GetHoveredGameButtons()
+	{
+		return this->gameHoveredButtons;
 	}
 }
 }

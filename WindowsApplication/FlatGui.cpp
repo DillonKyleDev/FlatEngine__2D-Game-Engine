@@ -91,7 +91,15 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui_ImplSDLRenderer2_Init(Window::renderer);
 
 
-		// Load in what is currently in SavedScenes.json
+		// If Release
+		if (FlatEngine::_isDebugMode == false)
+		{
+			// Load in what is currently in SavedScenes.json
+			FlatEngine::sceneManager->LoadScene("SavedScenes.json");
+
+			Window::SetFullscreen(true);
+		}
+
 		FlatEngine::sceneManager->LoadScene("SavedScenes.json");
 	}
 
@@ -116,8 +124,17 @@ namespace FlatEngine { namespace FlatGui {
 		//Create dockable background space for all viewports
 		ImGui::DockSpaceOverViewport();
 
-		//Add viewports
-		FlatEngine::FlatGui::AddViewports();
+		//Add viewport(s)
+		// 
+		// If Release
+		if (FlatEngine::_isDebugMode == false)
+		{
+			// Just Add GameView
+			FlatEngine::FlatGui::RenderGameView();
+		}
+		// Else add FlatEngine viewports
+		else
+			FlatEngine::FlatGui::AddViewports();
 
 		// Rendering
 		ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -225,92 +242,49 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
 			ImGui::PopStyleColor();
-				
-			static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-			static bool align_label_with_current_x_position = false;
+			
+			static bool align_label_with_current_x_position = true;
 			static bool test_drag_and_drop = true;
+
 			if (align_label_with_current_x_position)
 				ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
 
-			static int selection_mask = -1;
-			int node_clicked = -1;
+			static int node_clicked = -1;
 
 			std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
 
 			for (int i = 0; i < sceneObjects.size(); i++)
 			{
-				// Disable the default "open on single-click behavior" + set Selected flag according to our selection.
-				// To alter selection we use IsItemClicked() && !IsItemToggledOpen(), so clicking on an arrow doesn't alter selection.
-				ImGuiTreeNodeFlags node_flags = base_flags;
-				//const bool is_selected = (selection_mask & (1 << i)) != 0;
-				const bool is_selected = selection_mask == i != 0;
-				// If this node is selected, use the nodeFlag_selected to highlight it
-				if (is_selected)
-					node_flags |= ImGuiTreeNodeFlags_Selected;
-
-				FlatEngine::GameObject* currentObject = sceneObjects[i];
-				std::string name = currentObject->GetName();
-				const char* charName = name.c_str();
-
-				if (currentObject->HasChildren())
+				// If this object does not have a parent we render it and all of its children.
+				if (sceneObjects[i]->GetParentID() == -1)
 				{
-					bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, charName, i);
-					if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+					// Get Object name
+					FlatEngine::GameObject* currentObject = sceneObjects[i];
+					std::string name = currentObject->GetName();
+					const char* charName = name.c_str();
+					const bool is_selected = node_clicked == currentObject->GetID();
+
+					// Fix indent
+					if (align_label_with_current_x_position && currentObject->HasChildren())
+						ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
+
+
+					// If the object has children call the recursive AddObjectWithChild();
+					if (currentObject->HasChildren())
 					{
-						node_clicked = i;
-						FlatEngine::SetFocusedGameObjectIndex(i);
+						FlatEngine::FlatGui::AddObjectWithChild(currentObject, charName, node_clicked);
+					}
+					else
+					{
+						FlatEngine::FlatGui::AddObjectWithoutChild(currentObject, charName, node_clicked);
 					}
 
-					if (test_drag_and_drop && ImGui::BeginDragDropSource())
-					{
-						ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-						ImGui::Text("This is a drag and drop source");
-						ImGui::EndDragDropSource();
-					}
-					if (node_open)
-					{
-						// Render SceneObject children
-						ImGui::BulletText("Blah blah\nBlah Blah");
-						ImGui::TreePop();
-					}
+					// Reapply the indent to be removed next time if object has children
+					if (align_label_with_current_x_position && currentObject->HasChildren())
+						ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
+
+					ImGui::Separator();
 				}
-				else
-				{
-					node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-					ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, charName, i);
-					if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
-					{
-						node_clicked = i;
-						//ImGui::Text("This a popup for \"%s\"!", charName);
-						if (ImGui::Button("Add child"))
-						{
-							//FlatEngine::GetLoadedScene()->AddSceneObject()
-
-							///// ADD CHILD FUNCTIONALITY HERE
-							ImGui::CloseCurrentPopup();
-						}
-						if (ImGui::Button("Delete GameObject"))
-						{
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::EndPopup();
-					}
-					/*ImGui::SetItemTooltip("Right-click to open popup");*/
-					if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-					{
-						node_clicked = i;
-						FlatEngine::SetFocusedGameObjectIndex(i);
-					}
-
-					if (test_drag_and_drop && ImGui::BeginDragDropSource())
-					{
-						ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-						ImGui::Text("This is a drag and drop source");
-						ImGui::EndDragDropSource();
-					}
-				}
-
-				ImGui::Separator();
 			}
 			if (node_clicked != -1)
 			{
@@ -318,14 +292,11 @@ namespace FlatEngine { namespace FlatGui {
 				// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
 				if (ImGui::GetIO().KeyCtrl)
 				{
-					//selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-					selection_mask = node_clicked;
+
 				}
-					
-				else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
+				else
 				{
-					//selection_mask = (1 << node_clicked);  // Click to single-select
-					selection_mask = node_clicked;
+					
 				}
 			}
 			if (align_label_with_current_x_position)
@@ -333,26 +304,158 @@ namespace FlatEngine { namespace FlatGui {
 
 			ImGui::EndListBox();
 		}
-		
+
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
 		ImGui::End();
 	}
-	
+
+
+
+	// Helper function for Hierarchy child rendering (Recursive)
+	void FlatEngine::FlatGui::AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked)
+	{
+		ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags node_flags = base_flags;
+		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+
+		// If this node is selected, use the nodeFlag_selected to highlight it
+		if (focusedObjectID == currentObject->GetID())
+			node_flags |= ImGuiTreeNodeFlags_Selected;
+		else
+			node_flags = base_flags;
+
+		FlatEngine::LogString(currentObject->GetName());
+		FlatEngine::LogFloat(focusedObjectID, "Focused Object ID: ");
+		FlatEngine::LogFloat(currentObject->GetID(), "Current Object ID: ");
+
+		// Right click context menu for GameObject
+		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+		{
+			node_clicked = currentObject->GetID();
+
+			if (ImGui::Button("Add child"))
+			{
+				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
+				currentObject->AddChild(childObject->GetID());
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Delete GameObject"))
+			{
+				FlatEngine::DeleteGameObject(currentObject->GetID());
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+		// For whether the object is the currentlySelected GameObject
+		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+		{
+			FlatEngine::LogFloat(currentObject->GetID(), "Current ID: ");
+			FlatEngine::LogFloat(node_clicked, "Node Clicked: ");
+
+			node_clicked = currentObject->GetID();
+			FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
+		}
+		// Drag and Drop functionality
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
+			ImGui::Text("This is a drag and drop source");
+			ImGui::EndDragDropSource();
+		}
+		if (node_open)
+		{
+			std::vector<long> childrenIDs = currentObject->GetChildren();
+
+			// Render SceneObject children
+			for (int j = 0; j < childrenIDs.size(); j++)
+			{
+				GameObject* child = FlatEngine::GetObjectById(childrenIDs[j]);
+				std::string name = child->GetName();
+				const char* childName = name.c_str();
+
+				if (child->HasChildren())
+				{
+					FlatEngine::LogString("Adding child object with child.");
+					FlatEngine::FlatGui::AddObjectWithChild(child, childName, node_clicked);
+				}
+					
+				else
+				{
+					FlatEngine::LogString("Adding child object NO child.");
+					FlatEngine::FlatGui::AddObjectWithoutChild(child, childName, node_clicked);
+				}
+
+				ImGui::TreePop();
+			}
+		}
+	}
+	// Helper function for Hierarchy child rendering
+	void FlatEngine::FlatGui::AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked)
+	{
+		ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
+		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+
+		// If this node is selected, use the nodeFlag_selected to highlight it
+		if (focusedObjectID == currentObject->GetID()) {
+			node_flags |= ImGuiTreeNodeFlags_Selected;
+			FlatEngine::LogString("Selected: " + currentObject->GetName());
+		}
+		else
+		{
+			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		}
+			
+
+		ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+		{
+			node_clicked = currentObject->GetID();
+
+			if (ImGui::Button("Add child"))
+			{
+				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
+				currentObject->AddChild(childObject->GetID());
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Delete GameObject"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		// Setting the focus to this GameObject
+		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+		{
+			node_clicked = currentObject->GetID();
+			FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
+		}
+		// Drag and Drop Functionality
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
+			ImGui::Text("This is a drag and drop source");
+			ImGui::EndDragDropSource();
+		}
+	}
+
+
 	
 	void FlatEngine::FlatGui::RenderInspector()
 	{
 		ImGui::Begin("Inspector Window");
-		int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
+		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 		ImGui::BeginChild("Inspector Background", ImVec2(0,0), padding_child_flags);
 
-		if (focusedObjectIndex != -1)
+		if (focusedObjectID != -1)
 		{
 			// Get focused GameObject
-			GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectIndex];
+			GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectID];
 			// Name editing
 			std::string nameLabel = "Name: ";
 			char newName[1024];
@@ -372,6 +475,9 @@ namespace FlatEngine { namespace FlatGui {
 			if (components.size() > 0)
 			{
 				// Get expander icons for components
+				// 
+				// FOR RELEASE CHANGE TO WINDOWSAPPLICATION
+				//expandIcon->loadFromFile("WindowsApplication/assets/images/Expand.png");
 				expandIcon->loadFromFile("assets/images/Expand.png");
 				SDL_Texture* expandTexture = expandIcon->getTexture();
 				expandFlippedIcon->loadFromFile("assets/images/ExpandFlipped.png");
@@ -653,12 +759,12 @@ namespace FlatEngine { namespace FlatGui {
 							ImGui::Text(pathString.c_str());
 							ImGui::SameLine(0, 5);
 							ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-							std::string inputId = "##scriptName_" + std::to_string(i);
+							std::string inputId = "##scriptName_" + std::to_string(script->GetID());
 							if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
 								script->SetAttachedScript(newPath);
 
 							// _isActive checkbox
-							std::string checkboxId = "Active##" + std::to_string(i);
+							std::string checkboxId = "Active##" + std::to_string(script->GetID());
 							ImGui::Checkbox(checkboxId.c_str(), &_isActive);
 							script->SetActive(_isActive);
 						}
@@ -675,19 +781,36 @@ namespace FlatEngine { namespace FlatGui {
 							ImGui::Checkbox("Active:", &_isActive);
 							button->SetActive(_isActive);
 
+							// Push Item Width Setting
+							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+							// Set cursor type
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
 							// Drags for active width, height and offsets
 							ImGui::Text("Active width:");
-							ImGui::DragFloat("##activeWidth", &activeWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
 							ImGui::Text("Active height:");
+
+							ImGui::DragFloat("##activeWidth", &activeWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+							ImGui::SameLine(0, 5);
 							ImGui::DragFloat("##activeHeight", &activeHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+
 							ImGui::Text("Active offset x:");
-							ImGui::DragFloat("##activeoffsetx", &activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
 							ImGui::Text("Active offset y:");
+
+							ImGui::DragFloat("##activeoffsetx", &activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+							ImGui::SameLine(0, 5);
 							ImGui::DragFloat("##activeoffsety", &activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
 
 							// Assign the new slider values
 							button->SetActiveDimensions(activeWidth, activeHeight);
 							button->SetActiveOffset(activeOffset);
+
+							// Pop Width Setting
+							ImGui::PopItemWidth();
 
 							// For path editing
 							char newName[1024];
@@ -772,8 +895,8 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::Button("Delete GameObject"))
 			{
 				// Unfocus GameObject first
-				int tempIndex = focusedObjectIndex;
-				FlatEngine::SetFocusedGameObjectIndex(-1);
+				int tempIndex = focusedObjectID;
+				FlatEngine::SetFocusedGameObjectID(-1);
 				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(tempIndex);
 			}
 		}
@@ -790,11 +913,11 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
-		bool _runInDebugMode = true;
-
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
-		if (!_runInDebugMode)
+
+		// If Release - Make GameView full screen and disable tab decoration and resizing
+		if (FlatEngine::_isDebugMode == false)
 		{
 			// Get InputOutput
 			ImGuiIO& inputOutput = ImGui::GetIO();
@@ -896,7 +1019,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Check if each object has a Transform component
 				if (transformComponent != nullptr)
 				{
-					int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
+					long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 					FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
 					Vector2 position = transformCasted->GetPosition();
 					Vector2 scale = transformCasted->GetScale();
@@ -1090,7 +1213,11 @@ namespace FlatEngine { namespace FlatGui {
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			// Get parent of object for relative transform movement
-			FlatEngine::GameObject* parent = sceneObjects[i]->GetParent();
+			if (sceneObjects[i]->GetParentID() != -1)
+			{
+				FlatEngine::GameObject* parent = FlatEngine::GetObjectById(sceneObjects[i]->GetParentID());
+			}
+
 
 			FlatEngine::Component* transformComponent = sceneObjects[i]->GetComponent(ComponentTypes::Transform);
 			FlatEngine::Component* spriteComponent = sceneObjects[i]->GetComponent(ComponentTypes::Sprite);
@@ -1100,7 +1227,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Check if each object has a Transform component
 			if (transformComponent != nullptr)
 			{
-				int focusedObjectIndex = FlatEngine::GetFocusedGameObjectIndex();
+				long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 				FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
 				Vector2 position = transformCasted->GetPosition();
 				Vector2 transformScale = transformCasted->GetScale();
@@ -1192,10 +1319,10 @@ namespace FlatEngine { namespace FlatGui {
 				// 
 				// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
 				// render the focused objects TransformArrow for moving it within the scene view
-				if (focusedObjectIndex != -1 && focusedObjectIndex == i)
+				if (focusedObjectID != -1 && focusedObjectID == i)
 				{
 					// Get focused GameObject and transformArrow png
-					GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectIndex];
+					GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectID];
 					transformArrow = new Texture("assets/images/transformArrow.png");
 
 					SDL_Texture* texture = transformArrow->getTexture();
