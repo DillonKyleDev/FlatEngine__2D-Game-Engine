@@ -21,10 +21,10 @@ namespace FlatEngine
 		long GetID();
 		void SetName(std::string name);
 		std::string GetName();
-		Component* AddComponent(ComponentTypes type);
+		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
-		Component* GetComponent(ComponentTypes type);
-		std::vector<Component*> &GetComponents();
+		std::shared_ptr<Component> GetComponent(ComponentTypes type);
+		std::vector<std::shared_ptr<Component>> &GetComponents();
 		void SetParentID(long parentID);
 		long GetParentID();
 		void AddChild(long childID);
@@ -36,7 +36,7 @@ namespace FlatEngine
 		long ID;
 		long parentID;
 		std::string name;
-		std::vector<Component*> components;
+		std::vector<std::shared_ptr<Component>> components;
 		std::vector<long> childrenIDs;
 	};
 }

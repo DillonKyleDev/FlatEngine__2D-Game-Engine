@@ -14,24 +14,24 @@ namespace FlatEngine
 
 		void SetName(std::string name);
 		std::string GetName();
-		void AddSceneObject(GameObject *sceneObject);
-		std::vector<GameObject*> GetSceneObjects();
-		GameObject* GetObjectById(long ID);
-		GameObject* CreateGameObject(long parentID = -1);
+		void AddSceneObject(std::shared_ptr<GameObject> sceneObject);
+		std::vector<std::shared_ptr<GameObject>> GetSceneObjects();
+		std::shared_ptr<GameObject> GetObjectById(long ID);
+		std::shared_ptr<GameObject> CreateGameObject(long parentID = -1);
 		void DeleteGameObject(long sceneObjectID);
-		void DeleteChildrenAndSelf(GameObject* objectToDelete); // Recursive
+		void DeleteChildrenAndSelf(std::shared_ptr<GameObject> objectToDelete); // Recursive
 		void IncrementGameObjectID();
 		long GetNextGameObjectID();
 		void IncrementComponentID();
 		long GetNextComponentID();
-		void SetPrimaryCamera(Camera* camera);
+		void SetPrimaryCamera(std::shared_ptr<Camera> camera);
 		void RemovePrimaryCamera();
-		Camera* GetPrimaryCamera();
+		std::shared_ptr<Camera> GetPrimaryCamera();
 
 	private:
 		std::string name;
-		std::vector<GameObject*> sceneObjects;
-		Camera* primaryCamera;
+		std::vector<std::shared_ptr<GameObject>> sceneObjects;
+		std::shared_ptr<Camera> primaryCamera;
 		long nextGameObjectID;
 		long nextComponentID;
 	};

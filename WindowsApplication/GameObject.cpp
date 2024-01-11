@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Button.h"
 #include "Canvas.h"
+#include "WidgetsManager.h"
 
 
 namespace FlatEngine
@@ -28,7 +29,6 @@ namespace FlatEngine
 		{
 			if (this->components[i] != nullptr)
 			{
-				delete this->components[i];
 				this->components[i] = nullptr;
 			}
 		}
@@ -59,60 +59,59 @@ namespace FlatEngine
 	}
 
 
-	Component* GameObject::AddComponent(Component::ComponentTypes type)
+	std::shared_ptr<Component> GameObject::AddComponent(Component::ComponentTypes type)
 	{
 		// Look into making these smart pointers so they delete automatically
-		FlatEngine::Transform* transformComponent = nullptr;
-		FlatEngine::Sprite* spriteComponent = nullptr;
-		FlatEngine::Camera* cameraComponent = nullptr;
-		FlatEngine::ScriptComponent* scriptComponent = nullptr;
-		FlatEngine::Button* buttonComponent = nullptr;
-		FlatEngine::Canvas* canvasComponent = nullptr;
+		std::shared_ptr <FlatEngine::Transform> transformComponent;
+		std::shared_ptr <FlatEngine::Sprite> spriteComponent;
+		std::shared_ptr <FlatEngine::Camera> cameraComponent;
+		std::shared_ptr <FlatEngine::ScriptComponent> scriptComponent;
+		std::shared_ptr <FlatEngine::Button> buttonComponent;
+		std::shared_ptr<FlatEngine::Canvas> canvasComponent;
 
 		// Get next Component ID from the scene
-		Scene* scene = FlatEngine::GetLoadedScene();
+		std::shared_ptr<Scene> scene = FlatEngine::GetLoadedScene();
 		long nextID = scene->GetNextComponentID();
-		// Increment the Component ID after assigning it to a component
 
 		switch (type)
 		{
 		case ComponentTypes::Transform:
-			transformComponent = new FlatEngine::Transform(nextID, this->ID);
+			transformComponent = std::make_shared<FlatEngine::Transform>(nextID, this->ID);
 			scene->IncrementComponentID();
 			this->components.push_back(transformComponent);
 			return transformComponent;
 			break;
 
 		case ComponentTypes::Sprite:
-			spriteComponent = new FlatEngine::Sprite(nextID, this->ID);
+			spriteComponent = std::make_shared < FlatEngine::Sprite>(nextID, this->ID);
 			this->components.push_back(spriteComponent);
 			scene->IncrementComponentID();
 			return spriteComponent;
 			break;
 
 		case ComponentTypes::Camera:
-			cameraComponent = new FlatEngine::Camera(nextID, this->ID);
+			cameraComponent = std::make_shared < FlatEngine::Camera>(nextID, this->ID);
 			this->components.push_back(cameraComponent);
 			scene->IncrementComponentID();
 			return cameraComponent;
 			break;
 
 		case ComponentTypes::Script:
-			scriptComponent = new FlatEngine::ScriptComponent(nextID, this->ID);
+			scriptComponent = std::make_shared < FlatEngine::ScriptComponent>(nextID, this->ID);
 			this->components.push_back(scriptComponent);
 			scene->IncrementComponentID();
 			return scriptComponent;
 			break;
 
 		case ComponentTypes::Button:
-			buttonComponent = new FlatEngine::Button(nextID, this->ID);
+			buttonComponent = std::make_shared < FlatEngine::Button>(nextID, this->ID);
 			this->components.push_back(buttonComponent);
 			scene->IncrementComponentID();
 			return buttonComponent;
 			break;
 
 		case ComponentTypes::Canvas:
-			canvasComponent = new FlatEngine::Canvas(nextID, this->ID);
+			canvasComponent = FlatEngine::widgetsManager->Game_CreateCanvas(nextID, this->ID, 0);
 			this->components.push_back(canvasComponent);
 			scene->IncrementComponentID();
 			return canvasComponent;
@@ -144,8 +143,6 @@ namespace FlatEngine
 				}
 				else
 				{
-					delete this->components[i];
-					this->components[i] = nullptr;
 					this->components.erase(this->components.begin());
 				}				
 				break;
@@ -154,7 +151,7 @@ namespace FlatEngine
 	}
 
 
-	Component* GameObject::GetComponent(Component::ComponentTypes type)
+	std::shared_ptr<Component> GameObject::GetComponent(Component::ComponentTypes type)
 	{
 		for (int i = 0; i < this->components.size(); i++)
 		{
@@ -168,7 +165,7 @@ namespace FlatEngine
 	}
 
 
-	std::vector<Component*> &GameObject::GetComponents()
+	std::vector<std::shared_ptr<Component>> &GameObject::GetComponents()
 	{
 		return this->components;
 	}

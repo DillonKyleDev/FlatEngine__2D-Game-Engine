@@ -23,10 +23,10 @@ void Sinwave::Start()
 
 void Sinwave::Update(float deltaTime)
 {
-	std::vector<FlatEngine::GameObject*> attatchedEntities = this->GetEntities();
+	std::vector<std::shared_ptr<FlatEngine::GameObject>> attatchedEntities = this->GetEntities();
 	for (int i = 0; i < attatchedEntities.size(); i++)
 	{
-		FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(attatchedEntities[i]->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
+		std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(attatchedEntities[i]->GetComponent(FlatEngine::ComponentTypes::Transform));
 		Vector2 position = transform->GetPosition();
 
 		float pi = 3.14f;

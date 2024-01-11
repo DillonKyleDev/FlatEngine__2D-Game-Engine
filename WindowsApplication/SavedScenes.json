@@ -7,6 +7,34 @@
             "components": [
                 {
                     "_isCollapsed": false,
+                    "id": 12,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -7.0,
+                    "xScale": 1.0,
+                    "yPos": 7.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 13,
+                    "texture": "assets/images/Player.png",
+                    "texture_height": 27.0,
+                    "texture_width": 47.0,
+                    "type": "Sprite",
+                    "xOffset": 23.5,
+                    "yOffset": 13.5
+                }
+            ],
+            "id": 0,
+            "name": "Player",
+            "parent": -1
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
                     "id": 0,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -16,41 +44,76 @@
                     "yScale": 1.0
                 },
                 {
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 1,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 10.0
+                }
+            ],
+            "id": 1,
+            "name": "Camera",
+            "parent": 0
+        },
+        {
+            "children": [
+                3
+            ],
+            "components": [
+                {
                     "_blocksLayers": true,
                     "_isCollapsed": false,
                     "height": 30.0,
-                    "id": 12,
-                    "layerNumber": 6,
+                    "id": 2,
+                    "layerNumber": 0,
                     "type": "Canvas",
                     "width": 50.0
-                }
-            ],
-            "id": 0,
-            "name": "Canvas",
-            "parent": -1
-        },
-        {
-            "children": [],
-            "components": [
+                },
                 {
                     "_isCollapsed": false,
-                    "id": 1,
+                    "id": 15,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
-                    "xScale": 0.5,
+                    "xScale": 1.0,
                     "yPos": 0.0,
-                    "yScale": 0.5
+                    "yScale": 1.0
+                }
+            ],
+            "id": 2,
+            "name": "UI",
+            "parent": -1
+        },
+        {
+            "children": [
+                4
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 8,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "activeHeight": 2.0,
+                    "activeHeight": 4.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 9.0,
-                    "id": 2,
+                    "activeWidth": 18.0,
+                    "id": 9,
                     "type": "Button"
                 },
                 {
@@ -64,9 +127,37 @@
                     "yOffset": 9.5
                 }
             ],
-            "id": 1,
-            "name": "Button_1",
-            "parent": 0
+            "id": 3,
+            "name": "StartButton",
+            "parent": 2
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 11,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 14,
+                    "texture": "assets/images/Trashcan.png",
+                    "texture_height": 11.0,
+                    "texture_width": 9.0,
+                    "type": "Sprite",
+                    "xOffset": 4.5,
+                    "yOffset": 5.5
+                }
+            ],
+            "id": 4,
+            "name": "StartText",
+            "parent": 3
         }
     ]
 }

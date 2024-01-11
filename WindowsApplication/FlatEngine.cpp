@@ -19,6 +19,7 @@ namespace FlatEngine
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
+	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 
 	// Colors
 	ImU32 White = IM_COL32(255, 255, 255, 255);
@@ -62,12 +63,17 @@ namespace FlatEngine
 
 
 	// Scene Manager Prettification
-	Scene* FlatEngine::GetLoadedScene()
+	std::shared_ptr<Scene> FlatEngine::GetLoadedScene()
 	{
 		return FlatEngine::sceneManager->GetLoadedScene();
 	}
 
-	void FlatEngine::SaveScene(Scene *scene)
+	std::shared_ptr<Scene> FlatEngine::CreateNewScene()
+	{
+		return FlatEngine::sceneManager->CreateNewScene();
+	}
+
+	void FlatEngine::SaveScene(std::shared_ptr<Scene> scene)
 	{
 		FlatEngine::sceneManager->SaveScene(scene);
 	}
@@ -79,12 +85,15 @@ namespace FlatEngine
 	
 
 	// Scene Prettification
-	std::vector<GameObject*> FlatEngine::GetSceneObjects()
+	std::vector<std::shared_ptr<GameObject>> FlatEngine::GetSceneObjects()
 	{
-		return FlatEngine::GetLoadedScene()->GetSceneObjects();
+		if (FlatEngine::GetLoadedScene() != nullptr)
+			return FlatEngine::GetLoadedScene()->GetSceneObjects();
+		else
+			return std::vector<std::shared_ptr<GameObject>>();
 	}
 
-	GameObject* FlatEngine::CreateGameObject(long parentID)
+	std::shared_ptr<GameObject> FlatEngine::CreateGameObject(long parentID)
 	{
 		return FlatEngine::GetLoadedScene()->CreateGameObject(parentID);
 	}
@@ -95,12 +104,12 @@ namespace FlatEngine
 	}
 
 
-	Component* FlatEngine::GetObjectComponent(long objectID, ComponentTypes type)
+	std::shared_ptr<Component> FlatEngine::GetObjectComponent(long objectID, ComponentTypes type)
 	{
 		return FlatEngine::GetLoadedScene()->GetObjectById(objectID)->GetComponent(type);
 	}
 
-	FlatEngine::GameObject* GetObjectById(long objectID)
+	std::shared_ptr<GameObject> GetObjectById(long objectID)
 	{
 		return FlatEngine::GetLoadedScene()->GetObjectById(objectID);
 	}

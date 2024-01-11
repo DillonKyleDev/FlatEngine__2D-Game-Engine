@@ -9,12 +9,13 @@ namespace FlatEngine
 		SceneManager();
 		~SceneManager();
 
-		void SaveScene(Scene *scene);
+		std::shared_ptr<Scene> CreateNewScene();
+		void SaveScene(std::shared_ptr<Scene> scene);
 		void LoadScene(std::string name);
-		Scene *GetLoadedScene();
+		std::shared_ptr<Scene> GetLoadedScene();
 
 	private:
-		Scene *loadedScene;
+		std::shared_ptr<Scene> loadedScene;
 	};
 }
 

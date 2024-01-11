@@ -8,7 +8,7 @@ namespace FlatEngine
 		this->SetType(Component::ComponentTypes::Sprite);
 		this->SetID(myID);
 		this->SetParentID(parentID);
-		this->texture = NULL;
+		this->texture = nullptr;
 		this->textureWidth = 0;
 		this->textureHeight = 0;
 		this->offset = { 0,0 };
@@ -56,6 +56,8 @@ namespace FlatEngine
 				this->offset = { this->textureWidth / 2, this->textureHeight / 2 };
 			}
 		}
+		else
+			this->texture = nullptr;
 	}
 
 

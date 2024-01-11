@@ -18,12 +18,12 @@ namespace FlatEngine
 		virtual void Update(float deltaTime) {}
 		// Entities will be added at game run time for now. Could move this to 
 		// right as the script string gets attached to the entity later.
-		void AddEntity(GameObject* entity);
-		std::vector<GameObject*> GetEntities();
+		void AddEntity(std::shared_ptr<GameObject> entity);
+		std::vector<std::shared_ptr<GameObject>> GetEntities();
 
 		bool _isActive;
 
 	private:
-		std::vector<GameObject*> entities;
+		std::vector<std::shared_ptr<GameObject>> entities;
 	};
 }

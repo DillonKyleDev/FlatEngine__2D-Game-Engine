@@ -6,7 +6,7 @@ namespace FlatEngine
 {
 	GameScript::GameScript()
 	{
-		this->entities = {};
+		this->entities = std::vector<std::shared_ptr<GameObject>>();
 		this->_isActive = true;
 	}
 
@@ -15,12 +15,12 @@ namespace FlatEngine
 
 	}	
 
-	void GameScript::AddEntity(GameObject* entity)
+	void GameScript::AddEntity(std::shared_ptr<GameObject> entity)
 	{
 		this->entities.push_back(entity);
 	}
 
-	std::vector<GameObject*> GameScript::GetEntities()
+	std::vector<std::shared_ptr<GameObject>> GameScript::GetEntities()
 	{
 		return this->entities;
 	}

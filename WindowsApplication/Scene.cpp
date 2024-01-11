@@ -7,13 +7,12 @@ namespace FlatEngine
 	Scene::Scene()
 	{
         this->name = "New Scene";
-        this->sceneObjects = {};
-		this->primaryCamera = nullptr;
+        this->sceneObjects = std::vector< std::shared_ptr<GameObject>>();
+		this->primaryCamera;
 	}
 
 	Scene::~Scene()
 	{
-
 	}
 
     void Scene::SetName(std::string name)
@@ -26,18 +25,18 @@ namespace FlatEngine
 		return this->name;
 	}
 
-	void Scene::AddSceneObject(GameObject *sceneObject)
+	void Scene::AddSceneObject(std::shared_ptr<GameObject> sceneObject)
 	{
 		this->sceneObjects.push_back(sceneObject);
 	}
 
-	std::vector<GameObject*> Scene::GetSceneObjects()
+	std::vector<std::shared_ptr<GameObject>> Scene::GetSceneObjects()
 	{
 		return this->sceneObjects;
 	}
 
 
-	GameObject* Scene::GetObjectById(long ID)
+	std::shared_ptr<GameObject> Scene::GetObjectById(long ID)
 	{
 		ID = ID;
 		for (int i = 0; i < this->sceneObjects.size(); i++)
@@ -51,16 +50,16 @@ namespace FlatEngine
 	}
 
 
-	GameObject* Scene::CreateGameObject(long parentID)
+	std::shared_ptr<GameObject> Scene::CreateGameObject(long parentID)
 	{
-		GameObject *newObject = new GameObject(parentID);
+		std::shared_ptr<GameObject> newObject(new GameObject(parentID));
 		this->AddSceneObject(newObject);
 		return newObject;
 	}
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject* objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
+		std::shared_ptr<GameObject> objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
 
 		// If this GameObject was the primary camera, unset it as the primaryCamera and set this->primaryCamera to nullptr
 		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == objectToDelete->GetID())
@@ -73,7 +72,7 @@ namespace FlatEngine
 		long parentID = objectToDelete->GetParentID();
 		if (parentID != -1)
 		{
-			GameObject* parent = FlatEngine::GetObjectById(parentID);
+			std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(parentID);
 			parent->RemoveChild(sceneObjectID);
 		}
 		// Check for children and delete those as well
@@ -82,11 +81,11 @@ namespace FlatEngine
 
 
 	// Recursive
-	void Scene::DeleteChildrenAndSelf(GameObject* objectToDelete)
+	void Scene::DeleteChildrenAndSelf(std::shared_ptr<GameObject> objectToDelete)
 	{
 		// Must remove the primaryCamera pointer from the loaded scene before deleting the GameObject.
-		FlatEngine::Scene* loadedScene = FlatEngine::GetLoadedScene();
-		FlatEngine::Camera* primaryCamera = loadedScene->GetPrimaryCamera();
+		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
+		std::shared_ptr<Camera> primaryCamera = loadedScene->GetPrimaryCamera();
 		long cameraObjectID = FlatEngine::GetObjectById(primaryCamera->GetParentID())->GetID();
 
 		// Check for children
@@ -95,7 +94,7 @@ namespace FlatEngine
 			// Call this function again on this objects children
 			for (int c = 0; c < objectToDelete->GetChildren().size(); c++)
 			{
-				GameObject* child = FlatEngine::GetObjectById(objectToDelete->GetChildren()[c]);
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(objectToDelete->GetChildren()[c]);
 				Scene::DeleteChildrenAndSelf(child);
 			}
 		}
@@ -134,7 +133,7 @@ namespace FlatEngine
 		return this->nextComponentID;
 	}
 
-	void Scene::SetPrimaryCamera(Camera* camera)
+	void Scene::SetPrimaryCamera(std::shared_ptr<Camera> camera)
 	{
 		if (camera != nullptr)
 		{
@@ -158,7 +157,7 @@ namespace FlatEngine
 		this->primaryCamera = nullptr;
 	}
 
-	Camera* Scene::GetPrimaryCamera()
+	std::shared_ptr<Camera> Scene::GetPrimaryCamera()
 	{
 		return this->primaryCamera;
 	}

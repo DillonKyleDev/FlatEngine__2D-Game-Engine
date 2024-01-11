@@ -15,6 +15,7 @@ namespace FlatEngine
 		this->activeWidth = 5;
 		this->activeHeight = 3;
 		this->activeOffset = Vector2(0, 0);
+		this->activeLayer = 0;
 
 		// Initialize callback functions to nullptr
 		this->OnMouseOverFunction = nullptr;

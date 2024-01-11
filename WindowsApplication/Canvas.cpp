@@ -3,13 +3,13 @@
 
 
 namespace FlatEngine {
-	Canvas::Canvas(long myID, long parentID)
+	Canvas::Canvas(long myID, long parentID, long canvasID)
 	{
 		this->SetType(ComponentTypes::Canvas);
 		this->SetID(myID);
 		this->SetParentID(parentID);
 		this->canvasID = canvasID;
-		this->buttons = std::vector<FlatEngine::Button*>();
+		this->buttons = std::vector<std::shared_ptr<FlatEngine::Button>>();
 		this->layerNumber = canvasID;
 		this->_blocksLayers = true;
 		this->width = 50;
@@ -20,12 +20,12 @@ namespace FlatEngine {
 	{
 	}
 
-	void Canvas::AddButton(FlatEngine::Button* button)
+	void Canvas::AddButton(std::shared_ptr<FlatEngine::Button> button)
 	{
 		this->buttons.push_back(button);
 	}
 
-	void Canvas::RemoveButton(FlatEngine::Button* button)
+	void Canvas::RemoveButton(std::shared_ptr<FlatEngine::Button> button)
 	{
 		for (int i = 0; i < this->buttons.size(); i++)
 		{
@@ -75,9 +75,9 @@ namespace FlatEngine {
 		return this->_blocksLayers;
 	}
 
-	std::vector<FlatEngine::Button*> Canvas::GetButtons()
+	std::vector<std::shared_ptr<FlatEngine::Button>> Canvas::GetButtons()
 	{
-		return std::vector<FlatEngine::Button*>();
+		return std::vector<std::shared_ptr<FlatEngine::Button>>();
 	}
 
 	std::string Canvas::GetData()

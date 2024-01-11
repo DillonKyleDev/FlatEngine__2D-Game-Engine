@@ -15,7 +15,7 @@ namespace FlatEngine
 		this->lastFrameTime = 0;
 		this->deltaTime = 0;
 
-		this->gameObjects = std::vector<GameObject*>();
+		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		this->buttonComponents = {};
 		//this->animationObjects = {};
 		this->scripts = {};
@@ -43,9 +43,9 @@ namespace FlatEngine
 		this->gameObjects = FlatEngine::GetSceneObjects();
 
 		// Create our script instances
-		this->moverScript = new Mover();
-		this->upScript = new Up();
-		this->sinwaveScript = new Sinwave();
+		this->moverScript = std::make_shared<Mover>();
+		this->upScript = std::make_shared<Up>();
+		this->sinwaveScript = std::make_shared<Sinwave>();
 		// this->buttonScript = new ButtonScript();
 
 		this->scripts.push_back(moverScript);
@@ -58,13 +58,13 @@ namespace FlatEngine
 		for (int i = 0; i < this->gameObjects.size(); i++)
 		{
 			FlatEngine::LogString("GameObject: " + this->gameObjects[i]->GetName());
-			std::vector<Component*> components = this->gameObjects[i]->GetComponents();
+			std::vector<std::shared_ptr<Component>> components = this->gameObjects[i]->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
 			{
 				if (components[j]->GetTypeString() == "Script")
 				{
-					FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[j]);
+					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attatchedScript = script->GetAttachedScript();
 
 					FlatEngine::LogString("Attached Script: " + attatchedScript);
@@ -89,7 +89,7 @@ namespace FlatEngine
 				// Also
 				if (components[j]->GetTypeString() == "Button")
 				{
-					this->buttonComponents.push_back(static_cast<FlatEngine::Button*>(components[j]));
+					this->buttonComponents.push_back(std::static_pointer_cast<Button>(components[j]));
 				}
 				if (components[j]->GetTypeString() == "Animation")
 				{
@@ -155,13 +155,10 @@ namespace FlatEngine
 		this->pausedTicks = 0;
 		this->framesCounted = 0;
 
-		// Delete the script objects
-		delete this->moverScript;
-		this->moverScript = nullptr;
-		delete this->upScript;
-		this->upScript = nullptr;
-		delete this->sinwaveScript;
-		this->sinwaveScript = nullptr;
+		// Delete the script objects (MAY NOT BE REQUIRED NOW)
+		//this->moverScript = nullptr;
+		//this->upScript = nullptr;
+		//this->sinwaveScript = nullptr;
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(FlatEngine::GetLoadedScene()->GetName());

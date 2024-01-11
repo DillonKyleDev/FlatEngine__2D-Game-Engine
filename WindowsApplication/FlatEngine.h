@@ -13,6 +13,7 @@
 #include "ScriptComponent.h"
 #include "GameLoop.h"
 #include "Canvas.h"
+#include "WidgetsManager.h"
 
 
 //ImGui - SDL Renderer
@@ -34,9 +35,11 @@ namespace FlatEngine
 	extern long FocusedGameObjectID;
 	extern void SetFocusedGameObjectID(long ID);
 	extern long GetFocusedGameObjectID();
+
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
+	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 
 	// ImU32 colors
 	extern ImU32 White;
@@ -51,16 +54,17 @@ namespace FlatEngine
 	extern void Run(bool &_hasQuit);
 
 	// Scene Manager Prettification
-	extern Scene* GetLoadedScene();
-	extern void SaveScene(Scene *scene);
+	extern std::shared_ptr<Scene> GetLoadedScene();
+	extern std::shared_ptr<Scene> CreateNewScene();
+	extern void SaveScene(std::shared_ptr<Scene> scene);
 	extern void LoadScene(std::string name);
 
 	// Scene Prettification
-	extern std::vector<GameObject*> GetSceneObjects();
-	extern GameObject* CreateGameObject(long parentID = -1);
+	extern std::vector<std::shared_ptr<GameObject>> GetSceneObjects();
+	extern std::shared_ptr<GameObject> CreateGameObject(long parentID = -1);
 	extern void DeleteGameObject(int sceneObjectID);
-	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
-	extern GameObject* GetObjectById(long objectID);
+	extern std::shared_ptr<Component> GetObjectComponent(long objectID, ComponentTypes type);
+	extern std::shared_ptr<GameObject> GetObjectById(long objectID);
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
@@ -85,6 +89,7 @@ namespace FlatEngine
 	extern float GetAverageFps();
 	extern float GetDeltaTime();
 
+	// Helper
 	extern bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
 
 
@@ -150,12 +155,16 @@ namespace FlatEngine
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 
 		// Recursive - For Rendering Hierarchy Objects and their children
-		extern void AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
-		extern void AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
+		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
+		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 
 		// Recursive - For adding GameObjects and their children to the scene/game view
-		void Scene_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
-		void Game_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 worldCenterPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
+
+		ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera);
+		// Recursive - For getting gameObjects total offset
+		void Game_GetParentOffset(std::shared_ptr<GameObject> child, Vector2& offset);
 	}
 };
 

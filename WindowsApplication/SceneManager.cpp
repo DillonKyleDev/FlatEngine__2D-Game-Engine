@@ -20,7 +20,7 @@ namespace FlatEngine
 {
 	SceneManager::SceneManager()
 	{
-		this->loadedScene = new Scene();
+		this->loadedScene;
 	}
 
 	SceneManager::~SceneManager()
@@ -28,7 +28,44 @@ namespace FlatEngine
 
 	}
 
-	void SceneManager::SaveScene(Scene *scene)
+	std::shared_ptr<Scene> SceneManager::CreateNewScene()
+	{
+		// Remove loaded scene from memory
+		this->loadedScene = nullptr;
+
+		// Start up a new scene
+		std::shared_ptr<Scene> freshScene(new Scene());
+		this->loadedScene = freshScene;
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+
+		// Delete old contents of the file
+		file_obj.open("NewScene.json", std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open("NewScene.json", std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json sceneObjectsJsonArray;
+		
+		// Set sceneObjectsJsonArray to empty
+		sceneObjectsJsonArray.push_back("NULL");
+
+		// Create the GameObjects json object and add the empty array as the content
+		json newFileObject = json::object({ {"Scene GameObjects", sceneObjectsJsonArray } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
+
+		return this->loadedScene;
+	}
+
+	void SceneManager::SaveScene(std::shared_ptr<Scene> scene)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -63,7 +100,7 @@ namespace FlatEngine
 		// Array that will hold our gameObject json objects
 		json sceneObjectsJsonArray;
 
-		std::vector<GameObject*> sceneObjects = scene->GetSceneObjects();
+		std::vector<std::shared_ptr<GameObject>> sceneObjects = scene->GetSceneObjects();
 		if (sceneObjects.size() > 0)
 		{
 			for (int i = 0; i < sceneObjects.size(); i++)
@@ -72,8 +109,8 @@ namespace FlatEngine
 				json componentsArray = json::array();
 
 				// Get the object we'll be working with and it's components
-				GameObject* currentObject = sceneObjects[i];
-				std::vector<FlatEngine::Component*> components = currentObject->GetComponents();
+				std::shared_ptr<GameObject> currentObject = sceneObjects[i];
+				std::vector<std::shared_ptr<Component>> components = currentObject->GetComponents();
 
 				for (int j = 0; j < components.size(); j++)
 				{
@@ -132,10 +169,11 @@ namespace FlatEngine
 
 	void SceneManager::LoadScene(std::string fileName)
 	{
-		delete this->loadedScene;
+		// Remove loaded scene from memory
 		this->loadedScene = nullptr;
 
-		Scene *freshScene = new Scene();
+		// Start up a new scene
+		std::shared_ptr<Scene> freshScene(new Scene());
 		this->loadedScene = freshScene;
 
 		// Declare file and input stream
@@ -211,7 +249,7 @@ namespace FlatEngine
 				
 
 				// Create new GameObject to load the data into
-				GameObject* loadedObject = new GameObject();
+				std::shared_ptr<GameObject> loadedObject(new GameObject());
 				loadedObject->SetName(loadedName);
 				loadedObject->SetID(loadedID);
 				loadedObject->SetParentID(loadedParentID);
@@ -243,7 +281,7 @@ namespace FlatEngine
 						float yPos = 0;
 						float rotation = 0;
 
-						FlatEngine::Transform* newTransform = static_cast<FlatEngine::Transform*>(loadedObject->AddComponent(Component::ComponentTypes::Transform));
+						std::shared_ptr<Transform> newTransform = std::static_pointer_cast<Transform>(loadedObject->AddComponent(Component::ComponentTypes::Transform));
 
 						// Load ID
 						if (currentObjectJson["components"][j].contains("id"))
@@ -292,7 +330,7 @@ namespace FlatEngine
 					}
 					else if (type == "Sprite")
 					{
-						FlatEngine::Sprite* newSprite = static_cast<FlatEngine::Sprite*>(loadedObject->AddComponent(Component::ComponentTypes::Sprite));
+						std::shared_ptr<Sprite> newSprite = std::static_pointer_cast<Sprite>(loadedObject->AddComponent(Component::ComponentTypes::Sprite));
 
 						// Default values
 						long id = -1;
@@ -332,7 +370,7 @@ namespace FlatEngine
 					}
 					else if (type == "Camera")
 					{
-						FlatEngine::Camera* newCamera = static_cast<FlatEngine::Camera*>(loadedObject->AddComponent(Component::ComponentTypes::Camera));
+						std::shared_ptr<Camera> newCamera = std::static_pointer_cast<Camera>(loadedObject->AddComponent(Component::ComponentTypes::Camera));
 
 						// Default values
 						long id = -1;
@@ -409,7 +447,7 @@ namespace FlatEngine
 					}
 					else if (type == "Script")
 					{
-						FlatEngine::ScriptComponent* newScript = static_cast<FlatEngine::ScriptComponent*>(loadedObject->AddComponent(Component::ComponentTypes::Script));
+						std::shared_ptr<ScriptComponent> newScript = std::static_pointer_cast<ScriptComponent>(loadedObject->AddComponent(Component::ComponentTypes::Script));
 
 						// Default values
 						long id = -1;
@@ -445,7 +483,7 @@ namespace FlatEngine
 					}
 					else if (type == "Button")
 					{
-						FlatEngine::Button* newButton = static_cast<FlatEngine::Button*>(loadedObject->AddComponent(ComponentTypes::Button));
+						std::shared_ptr<Button> newButton = std::static_pointer_cast<Button>(loadedObject->AddComponent(ComponentTypes::Button));
 
 						// Default values
 						long id = -1;
@@ -500,7 +538,7 @@ namespace FlatEngine
 					}
 					else if (type == "Canvas")
 					{
-						FlatEngine::Canvas* newCanvas = static_cast<FlatEngine::Canvas*>(loadedObject->AddComponent(ComponentTypes::Canvas));
+						std::shared_ptr<Canvas> newCanvas = std::static_pointer_cast<Canvas>(loadedObject->AddComponent(ComponentTypes::Canvas));
 
 						// Default values
 						long id = -1;
@@ -560,7 +598,7 @@ namespace FlatEngine
 		this->loadedScene = freshScene;
 	}
 
-	Scene *SceneManager::GetLoadedScene()
+	std::shared_ptr<Scene> SceneManager::GetLoadedScene()
 	{
 		return this->loadedScene;
 	}

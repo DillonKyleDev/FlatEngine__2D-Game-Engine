@@ -100,7 +100,8 @@ namespace FlatEngine { namespace FlatGui {
 			Window::SetFullscreen(true);
 		}
 
-		FlatEngine::sceneManager->LoadScene("SavedScenes.json");
+		FlatEngine::CreateNewScene();
+		//FlatEngine::sceneManager->LoadScene("SavedScenes.json");
 	}
 
 
@@ -235,7 +236,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (ImGui::Button("Create New Game Object"))
 		{
-			FlatEngine::sceneManager->GetLoadedScene()->CreateGameObject();
+			FlatEngine::CreateGameObject();
 		}
 
 		// Scene Objects in Hierarchy
@@ -249,7 +250,7 @@ namespace FlatEngine { namespace FlatGui {
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
 
-			std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
+			std::vector<std::shared_ptr<GameObject>> sceneObjects = FlatEngine::GetSceneObjects();
 
 			for (int i = 0; i < sceneObjects.size(); i++)
 			{
@@ -257,7 +258,7 @@ namespace FlatEngine { namespace FlatGui {
 				if (sceneObjects[i]->GetParentID() == -1)
 				{
 					// Get Object name
-					FlatEngine::GameObject* currentObject = sceneObjects[i];
+					std::shared_ptr<GameObject> currentObject = sceneObjects[i];
 					std::string name = currentObject->GetName();
 					const char* charName = name.c_str();
 
@@ -313,7 +314,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper function for Hierarchy child rendering (Recursive)
-	void FlatEngine::FlatGui::AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
+	void FlatEngine::FlatGui::AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
@@ -335,7 +336,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (ImGui::Button("Add child"))
 			{
-				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
+				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
@@ -368,7 +369,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Render SceneObject children
 			for (int j = 0; j < childrenIDs.size(); j++)
 			{
-				GameObject* child = FlatEngine::GetObjectById(childrenIDs[j]);
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(childrenIDs[j]);
 				std::string name = child->GetName();
 				const char* childName = name.c_str();
 
@@ -390,7 +391,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper function for Hierarchy child rendering
-	void FlatEngine::FlatGui::AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
+	void FlatEngine::FlatGui::AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
@@ -409,7 +410,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (ImGui::Button("Add child"))
 			{
-				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
+				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
@@ -451,7 +452,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (focusedObjectID != -1)
 		{
 			// Get focused GameObject
-			GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+			std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
 			// Name editing
 			std::string nameLabel = "Name: ";
 			char newName[1024];
@@ -467,7 +468,8 @@ namespace FlatEngine { namespace FlatGui {
 			// Components section
 			ImGui::Text("Components:");
 
-			std::vector<Component*> components = focusedObject->GetComponents();
+			std::vector<std::shared_ptr<Component>> components = focusedObject->GetComponents();
+
 			if (components.size() > 0)
 			{
 				// Get Expander and Trashcan icons for components
@@ -577,7 +579,7 @@ namespace FlatEngine { namespace FlatGui {
 							if (componentType == "Transform")
 							{
 								// Position, scale, and rotation of transform
-								FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(components[i]);
+								std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(components[i]);
 								Vector2 position = transform->GetPosition();
 								float xPos = position.x;
 								float yPos = position.y;
@@ -647,7 +649,7 @@ namespace FlatEngine { namespace FlatGui {
 							else if (componentType == "Sprite")
 							{
 								// Sprite path and texture dimension variables
-								FlatEngine::Sprite* sprite = static_cast<FlatEngine::Sprite*>(components[i]);
+								std::shared_ptr<FlatEngine::Sprite> sprite = std::static_pointer_cast<FlatEngine::Sprite>(components[i]);
 								std::string path = sprite->GetPath();
 								char newPath[1024];
 								strcpy_s(newPath, path.c_str());
@@ -699,7 +701,7 @@ namespace FlatEngine { namespace FlatGui {
 							else if (componentType == "Camera")
 							{
 								// Camera position and aspect ratio
-								FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(components[i]);
+								std::shared_ptr<FlatEngine::Camera> camera = std::static_pointer_cast<FlatEngine::Camera>(components[i]);
 								float width = camera->GetWidth();
 								float height = camera->GetHeight();
 								bool _isPrimary = camera->IsPrimary();
@@ -769,7 +771,7 @@ namespace FlatEngine { namespace FlatGui {
 							}
 							else if (componentType == "Script")
 							{
-								FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[i]);
+								std::shared_ptr<FlatEngine::ScriptComponent> script = std::static_pointer_cast<FlatEngine::ScriptComponent>(components[i]);
 								std::string path = script->GetAttachedScript();
 								bool _isActive = script->IsActive();
 
@@ -791,7 +793,7 @@ namespace FlatEngine { namespace FlatGui {
 							}
 							else if (componentType == "Button")
 							{
-								FlatEngine::Button* button = static_cast<FlatEngine::Button*>(components[i]);				
+								std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(components[i]);			
 								bool _isActive = button->IsActive();
 								float activeWidth = button->GetActiveWidth();
 								float activeHeight = button->GetActiveHeight();
@@ -842,14 +844,14 @@ namespace FlatEngine { namespace FlatGui {
 							}
 							else if (componentType == "Canvas")
 							{
-								FlatEngine::Canvas* canvas = static_cast<FlatEngine::Canvas*>(components[i]);
+								std::shared_ptr<FlatEngine::Canvas> canvas = std::static_pointer_cast<FlatEngine::Canvas>(components[i]);
 
 								// Retrieve Canvas values
 								float canvasWidth = canvas->GetWidth();
 								float canvasHeight = canvas->GetHeight();
 								int layerNumber = canvas->GetLayerNumber();
 								bool _blocksLayers = canvas->GetBlocksLayers();
-								std::vector<Button*> canvasButtons = canvas->GetButtons();
+								std::vector<std::shared_ptr<Button>> canvasButtons = canvas->GetButtons();
 
 								// _BlocksLayers Checkbox
 								ImGui::Checkbox("Active:", &_blocksLayers);
@@ -914,10 +916,10 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// For checking if SceneObject has these components yet
-			FlatEngine::Component* transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
-			FlatEngine::Component* spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
-			FlatEngine::Component* cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
-			FlatEngine::Component* canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
+			std::shared_ptr<FlatEngine::Component> transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
+			std::shared_ptr<FlatEngine::Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
+			std::shared_ptr<FlatEngine::Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
+			std::shared_ptr<FlatEngine::Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
 
 			// Render the Adding Components button
 			ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
@@ -1055,10 +1057,24 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
-		// Get loaded scene
-		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
-		std::vector<GameObject*> sceneObjects = loadedScene->GetSceneObjects();
+		// Get loaded scene if it's not a nullptr and initialize necessary entities
+		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
+		std::vector<std::shared_ptr<GameObject>> sceneObjects;
+		std::shared_ptr<FlatEngine::Camera> primaryCamera;
+		std::shared_ptr<FlatEngine::Transform> cameraTransform;
 
+		if (loadedScene != nullptr)
+		{
+			sceneObjects = loadedScene->GetSceneObjects();
+			// Get Primary Camera and set default values for if no camera is set
+			primaryCamera = loadedScene->GetPrimaryCamera();
+		}
+		else
+		{
+			sceneObjects = std::vector <std::shared_ptr<GameObject>>();
+			primaryCamera = nullptr;
+		}
+			
 		// Create Draw List
 		ImDrawList *draw_list = ImGui::GetWindowDrawList();
 		// Create the splitter for the draw_list
@@ -1066,28 +1082,25 @@ namespace FlatEngine { namespace FlatGui {
 		// 3 channels for now in this scene view. 0 = scene objects, 1 = other UI (camera icon, etc), 2 = transform arrow
 		drawSplitter->Split(draw_list, 3);
 
-		// Get Primary Camera and set default values for if no camera is set
-		FlatEngine::Camera* primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
-		FlatEngine::Transform* cameraTransform = nullptr;
 		ImVec2 cameraPosition(0, 0);
 		float cameraWidth = 50;
 		float cameraHeight = 30;
 		// Used to convert grid space values to pixel values.ie. 2 grid squares = 2 * 10 = 20px.
 		float cameraZoom = 10;
 		ImVec4 frustrumColor = ImVec4(1, 1, 1, 1);
+		
 
 		// If the primaryCamera is found and not nullptr, set the cameraPosition accordingly, else it remains at {0,0} above
 		if (primaryCamera != nullptr)
 		{
-			cameraTransform = static_cast<FlatEngine::Transform*>(FlatEngine::GetObjectComponent(primaryCamera->GetParentID(), ComponentTypes::Transform));
+			cameraTransform = std::static_pointer_cast<FlatEngine::Transform>(FlatEngine::GetObjectComponent(primaryCamera->GetParentID(), ComponentTypes::Transform));
 			cameraWidth = primaryCamera->GetWidth();
 			cameraHeight = primaryCamera->GetHeight();
 			cameraZoom = primaryCamera->GetZoom();
 			frustrumColor = primaryCamera->GetFrustrumColor();
-		}
-		if (cameraTransform != nullptr)
-		{
-			cameraPosition = { cameraTransform->GetPosition().x, cameraTransform->GetPosition().y };
+			
+			// Get the cameras position including all of its parents transforms offsets using the recusive Game_GetTotalCameraOffset();
+			cameraPosition = FlatEngine::FlatGui::Game_GetTotalCameraOffset(primaryCamera);
 		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
@@ -1095,62 +1108,16 @@ namespace FlatEngine { namespace FlatGui {
 		// Get the "center point of the viewport
 		ImVec2 viewportCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
+		// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
+		Vector2 parentOffset(0, 0);
 
 		// Render Game Objects
+		for (int i = 0; i < sceneObjects.size(); i++)
 		{
-			for (int i = 0; i < sceneObjects.size(); i++)
-			{
-				// Get Components
-				FlatEngine::Component* transformComponent = sceneObjects[i]->GetComponent(Component::ComponentTypes::Transform);
-				FlatEngine::Component* spriteComponent = sceneObjects[i]->GetComponent(Component::ComponentTypes::Sprite);
-
-				// Check if each object has a Transform component
-				if (transformComponent != nullptr)
-				{
-					long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-					FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
-					Vector2 position = transformCasted->GetPosition();
-					Vector2 scale = transformCasted->GetScale();
-
-					// If it has a sprite component, render that sprite texture at the objects transform position
-					if (spriteComponent != nullptr)
-					{
-						// Cast the components to their respective types
-						FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
-
-						SDL_Texture* spriteTexture = spriteCasted->GetTexture();
-						float textureWidth = (float)spriteCasted->GetTextureWidth();
-						float textureHeight = (float)spriteCasted->GetTextureHeight();
-						Vector2 offset = spriteCasted->GetOffset();
-						bool _scalesWithZoom = true;
-
-						// Changing the scale here because things are rendering too large and I want them to start off smaller
-						Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
-
-						float spriteLeftEdge = position.x - offset.x * newScale.x;
-						float spriteRightEdge = position.x + offset.x * newScale.x;
-						float spriteTopEdge = position.y + offset.y * newScale.y;
-						float spriteBottomEdge = position.y - offset.y * newScale.y;
-
-						float cameraLeftEdge = cameraPosition.x - cameraWidth / 2;
-						float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
-						float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
-						float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
-
-						bool _isIntersecting = false;
-
-						if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge &&
-							spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
-							_isIntersecting = true;
-
-						if (_isIntersecting)
-						{
-							drawSplitter->SetCurrentChannel(draw_list, 0);
-							FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
-						}
-					}
-				}
-			}
+			// If this object doesn't have a parent, render it and then its children recursively
+			if (sceneObjects[i]->GetParentID() == -1)
+				FlatEngine::FlatGui::Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 		}
 
 
@@ -1190,6 +1157,33 @@ namespace FlatEngine { namespace FlatGui {
 
 			drawSplitter->Merge(draw_list);
 		}
+	}
+
+
+	ImVec2 FlatEngine::FlatGui::Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
+	{
+		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(primaryCamera->GetParentID());
+		std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
+		Vector2 offset = transform->GetPosition();
+
+		// If the Primary Camera has a parent, get its offset recursively
+		if (parent->GetParentID() != -1)
+			FlatEngine::FlatGui::Game_GetParentOffset(parent, offset);
+
+		return ImVec2(offset.x, offset.y);
+	}
+
+
+	void FlatEngine::FlatGui::Game_GetParentOffset(std::shared_ptr<GameObject> child, Vector2 &offset)
+	{
+		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(child->GetParentID());
+		std::shared_ptr<Transform> parentTransform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
+		Vector2 parentPosition = parentTransform->GetPosition();
+		offset.x += parentPosition.x;
+		offset.y += parentPosition.y;
+
+		if (parent->GetParentID() != -1)
+			FlatEngine::FlatGui::Game_GetParentOffset(parent, offset);
 	}
 
 
@@ -1290,8 +1284,13 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::ShowDemoWindow();
 
 		// Get currently loade scene
-		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
-		std::vector<GameObject*> sceneObjects = loadedScene->GetSceneObjects();
+		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
+		std::vector<std::shared_ptr<GameObject>> sceneObjects;
+		
+		if (loadedScene != nullptr)
+			sceneObjects = loadedScene->GetSceneObjects();
+		else
+			sceneObjects = std::vector<std::shared_ptr<GameObject>>();
 
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList *draw_list = ImGui::GetWindowDrawList();
@@ -1321,20 +1320,19 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper - Recursively draws scene objects and their children to the scene view
-	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
+	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
 	{
-
-		FlatEngine::Component* transformComponent = self->GetComponent(ComponentTypes::Transform);
-		FlatEngine::Component* spriteComponent = self->GetComponent(ComponentTypes::Sprite);
-		FlatEngine::Component* cameraComponent = self->GetComponent(ComponentTypes::Camera);
-		FlatEngine::Component* buttonComponent = self->GetComponent(ComponentTypes::Button);
-		FlatEngine::Component* canvasComponent = self->GetComponent(ComponentTypes::Canvas);
+		std::shared_ptr<Component> transformComponent = self->GetComponent(ComponentTypes::Transform);
+		std::shared_ptr<Component> spriteComponent = self->GetComponent(ComponentTypes::Sprite);
+		std::shared_ptr<Component> cameraComponent = self->GetComponent(ComponentTypes::Camera);
+		std::shared_ptr<Component> buttonComponent = self->GetComponent(ComponentTypes::Button);
+		std::shared_ptr<Component> canvasComponent = self->GetComponent(ComponentTypes::Canvas);
 
 		// Check if each object has a Transform component
 		if (transformComponent != nullptr)
 		{
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-			FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
+			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
 			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
 			Vector2 transformScale = transformCasted->GetScale();
 
@@ -1342,23 +1340,27 @@ namespace FlatEngine { namespace FlatGui {
 			if (spriteComponent != nullptr)
 			{
 				// Cast the component to Sprite*
-				FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
+				std::shared_ptr<Sprite> spriteCasted = std::static_pointer_cast<Sprite>(spriteComponent);
 				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
 				float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
 				float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
 				Vector2 spriteOffset = spriteCasted->GetOffset();
 				bool _spriteScalesWithZoom = true;
 
-				// Change to draw channel 0 for scene objects
-				drawSplitter->SetCurrentChannel(draw_list, 0);
-				// Draw the texture
-				FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+				// If there is a valid Texture loaded into the Sprite Component
+				if (spriteTexture != nullptr)
+				{
+					// Change to draw channel 0 for scene objects
+					drawSplitter->SetCurrentChannel(draw_list, 0);
+					// Draw the texture
+					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+				}
 			}
 
 			// Renders the camera
 			if (cameraComponent != nullptr)
 			{
-				FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(cameraComponent);
+				std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(cameraComponent);
 				float cameraWidth = camera->GetWidth();
 				float cameraHeight = camera->GetHeight();
 
@@ -1397,7 +1399,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Renders Canvas Component
 			if (canvasComponent != nullptr)
 			{
-				FlatEngine::Canvas* canvas = static_cast<FlatEngine::Canvas*>(canvasComponent);
+				std::shared_ptr<Canvas> canvas = std::static_pointer_cast<Canvas>(canvasComponent);
 
 				float activeWidth = canvas->GetWidth();
 				float activeHeight = canvas->GetHeight();
@@ -1420,7 +1422,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Renders Button Component
 			if (buttonComponent != nullptr)
 			{
-				FlatEngine::Button* button = static_cast<FlatEngine::Button*>(buttonComponent);
+				std::shared_ptr<Button> button = std::static_pointer_cast<Button>(buttonComponent);
 
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
@@ -1453,7 +1455,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
 			{
 				// Get focused GameObject and transformArrow png
-				GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
 				transformArrow->loadFromFile("assets/images/transformArrow.png");
 				SDL_Texture* texture = transformArrow->getTexture();
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting
@@ -1472,16 +1474,16 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (self->HasChildren())
 		{
-			Vector2 parentOffset(0, 0);
 			if (transformComponent != nullptr)
 			{
-				FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
-				parentOffset = transformCasted->GetPosition();
+				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
+				parentOffset.x += transformCasted->GetPosition().x;
+				parentOffset.y += transformCasted->GetPosition().y;
 			}
 
 			for (int c = 0; c < self->GetChildren().size(); c++)
 			{
-				GameObject* child = FlatEngine::GetObjectById(self->GetChildren()[c]);
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
 				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
@@ -1489,9 +1491,77 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper - Recursively draws scene objects and their children to the game view
-	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 worldCenterPoint, ImVec2 canvas_p0, 
+		ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
 	{
+		// Get Components
+		std::shared_ptr<Component> transformComponent = self->GetComponent(Component::ComponentTypes::Transform);
+		std::shared_ptr<Component> spriteComponent = self->GetComponent(Component::ComponentTypes::Sprite);
 
+		// Check if each object has a Transform component
+		if (transformComponent != nullptr)
+		{
+			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
+			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
+			Vector2 scale = transformCasted->GetScale();
+
+			// If it has a sprite component, render that sprite texture at the objects transform position
+			if (spriteComponent != nullptr)
+			{
+				// Cast the components to their respective types
+				std::shared_ptr<Sprite> spriteCasted = std::static_pointer_cast<Sprite>(spriteComponent);
+
+				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
+				float textureWidth = (float)spriteCasted->GetTextureWidth();
+				float textureHeight = (float)spriteCasted->GetTextureHeight();
+				Vector2 offset = spriteCasted->GetOffset();
+				bool _scalesWithZoom = true;
+
+				// Changing the scale here because things are rendering too large and I want them to start off smaller
+				Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
+
+				float spriteLeftEdge = position.x - offset.x * newScale.x;
+				float spriteRightEdge = position.x + offset.x * newScale.x;
+				float spriteTopEdge = position.y + offset.y * newScale.y;
+				float spriteBottomEdge = position.y - offset.y * newScale.y;
+
+				float cameraLeftEdge = cameraPosition.x - cameraWidth / 2;
+				float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
+				float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
+				float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
+
+				bool _isIntersecting = false;
+
+				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge &&
+					spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
+					_isIntersecting = true;
+
+				if (_isIntersecting)
+				{
+					drawSplitter->SetCurrentChannel(draw_list, 0);
+					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
+				}
+			}
+		}
+
+		if (self->HasChildren())
+		{
+			if (transformComponent != nullptr)
+			{
+				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
+				parentOffset.x += transformCasted->GetPosition().x;
+				parentOffset.y += transformCasted->GetPosition().y;
+			}
+
+			for (int c = 0; c < self->GetChildren().size(); c++)
+			{
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
+
+				FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
+			}
+		}
 	}
 
 

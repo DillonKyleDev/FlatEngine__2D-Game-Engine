@@ -14,7 +14,6 @@ namespace FlatEngine
 
 	Component::~Component()
 	{
-
 	}
 
 

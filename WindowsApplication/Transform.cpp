@@ -18,7 +18,6 @@ namespace FlatEngine
 
 	Transform::~Transform()
 	{
-
 	}
 
 

@@ -175,7 +175,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="scripts\Up.cpp" />
     <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Widgets.cpp" />
+    <ClCompile Include="WidgetsManager.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -210,7 +210,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="scripts\Up.h" />
     <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Widgets.h" />
+    <ClInclude Include="WidgetsManager.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

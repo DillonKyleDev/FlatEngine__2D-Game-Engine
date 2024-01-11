@@ -28,10 +28,10 @@ namespace FlatEngine
 
 	void Mover::Update(float deltaTime)
 	{
-		std::vector<GameObject*> attatchedEntities = this->GetEntities();
+		std::vector<std::shared_ptr<GameObject>> attatchedEntities = this->GetEntities();
 		for (int i = 0; i < attatchedEntities.size(); i++)
 		{
-			FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(attatchedEntities[i]->GetComponent(Component::ComponentTypes::Transform));
+			std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(attatchedEntities[i]->GetComponent(Component::ComponentTypes::Transform));
 			Vector2 position = transform->GetPosition();
 			float xPos = position.x;
 			float yPos = position.y;
