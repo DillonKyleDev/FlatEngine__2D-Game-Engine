@@ -27,6 +27,9 @@ namespace FlatEngine { namespace FlatGui {
 	// Icons
 	std::unique_ptr<Texture> expandIcon(new Texture());
 	std::unique_ptr<Texture> expandFlippedIcon(new Texture());
+	std::unique_ptr<Texture> trashIcon(new Texture());
+	std::unique_ptr<Texture> transformArrow(new Texture());
+	std::unique_ptr<Texture> cameraTexture(new Texture());
 
 	// Frame Counter
 	int framesDrawn = 0;
@@ -48,8 +51,8 @@ namespace FlatEngine { namespace FlatGui {
 
 	float spriteScaleMultiplier = 0.2f;
 
-	Texture* transformArrow;
-	Texture* cameraTexture;
+	/*Texture* transformArrow;
+	Texture* cameraTexture;*/
 
 	// Game view default values
 	float GAME_VIEWPORT_WIDTH = 600;
@@ -222,6 +225,8 @@ namespace FlatEngine { namespace FlatGui {
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
+
+		// MOVE THESE OUT INTO A FILE TOP BAR EVENTUALLY
 		if (ImGui::Button("Save Scene"))
 		{
 			FlatEngine::sceneManager->SaveScene(FlatEngine::sceneManager->GetLoadedScene());
@@ -236,20 +241,16 @@ namespace FlatEngine { namespace FlatGui {
 			FlatEngine::sceneManager->GetLoadedScene()->CreateGameObject();
 		}
 
-
-		// Scene Objects
+		// Scene Objects in Hierarchy
 		{
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
 			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
+			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
-			
-			static bool align_label_with_current_x_position = true;
-			static bool test_drag_and_drop = true;
-
-			if (align_label_with_current_x_position)
-				ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
 
 			static int node_clicked = -1;
+			long queuedForDelete = -1;
 
 			std::vector<GameObject*> sceneObjects = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects();
 
@@ -262,28 +263,20 @@ namespace FlatEngine { namespace FlatGui {
 					FlatEngine::GameObject* currentObject = sceneObjects[i];
 					std::string name = currentObject->GetName();
 					const char* charName = name.c_str();
-					const bool is_selected = node_clicked == currentObject->GetID();
-
-					// Fix indent
-					if (align_label_with_current_x_position && currentObject->HasChildren())
-						ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
-
 
 					// If the object has children call the recursive AddObjectWithChild();
 					if (currentObject->HasChildren())
-					{
-						FlatEngine::FlatGui::AddObjectWithChild(currentObject, charName, node_clicked);
-					}
+						FlatEngine::FlatGui::AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete);
 					else
-					{
-						FlatEngine::FlatGui::AddObjectWithoutChild(currentObject, charName, node_clicked);
-					}
+						FlatEngine::FlatGui::AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete);
 
-					// Reapply the indent to be removed next time if object has children
-					if (align_label_with_current_x_position && currentObject->HasChildren())
-						ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
-
+					// Push Item Spacing
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(1, 1, 1, 0.2f));
 					ImGui::Separator();
+					ImGui::PopStyleColor();
+					// Pop Item Spacing
+					ImGui::PopStyleVar();
 				}
 			}
 			if (node_clicked != -1)
@@ -299,10 +292,21 @@ namespace FlatEngine { namespace FlatGui {
 					
 				}
 			}
-			if (align_label_with_current_x_position)
-				ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
 
 			ImGui::EndListBox();
+
+			// Delete queued GameObject
+			if (queuedForDelete != -1)
+			{
+				long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+
+				// Unfocus GameObject first if it is focused
+				if (queuedForDelete == focusedObjectID)
+				{
+					FlatEngine::SetFocusedGameObjectID(-1);
+				}
+				FlatEngine::DeleteGameObject(queuedForDelete);
+			}
 		}
 
 		ImGui::EndChild();
@@ -313,28 +317,26 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper function for Hierarchy child rendering (Recursive)
-	void FlatEngine::FlatGui::AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked)
+	void FlatEngine::FlatGui::AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
-		ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-		ImGuiTreeNodeFlags node_flags = base_flags;
+		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
 
 		// If this node is selected, use the nodeFlag_selected to highlight it
 		if (focusedObjectID == currentObject->GetID())
-			node_flags |= ImGuiTreeNodeFlags_Selected;
+			node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 		else
-			node_flags = base_flags;
+			node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		FlatEngine::LogString(currentObject->GetName());
-		FlatEngine::LogFloat(focusedObjectID, "Focused Object ID: ");
-		FlatEngine::LogFloat(currentObject->GetID(), "Current Object ID: ");
+		// Push item spacing
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+		// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
+		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
 
 		// Right click context menu for GameObject
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			node_clicked = currentObject->GetID();
-
 			if (ImGui::Button("Add child"))
 			{
 				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
@@ -343,7 +345,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			if (ImGui::Button("Delete GameObject"))
 			{
-				FlatEngine::DeleteGameObject(currentObject->GetID());
+				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
@@ -351,9 +353,6 @@ namespace FlatEngine { namespace FlatGui {
 		// For whether the object is the currentlySelected GameObject
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 		{
-			FlatEngine::LogFloat(currentObject->GetID(), "Current ID: ");
-			FlatEngine::LogFloat(node_clicked, "Node Clicked: ");
-
 			node_clicked = currentObject->GetID();
 			FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
 		}
@@ -364,6 +363,8 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Text("This is a drag and drop source");
 			ImGui::EndDragDropSource();
 		}
+		
+		// If the node is open, render it's children
 		if (node_open)
 		{
 			std::vector<long> childrenIDs = currentObject->GetChildren();
@@ -375,44 +376,42 @@ namespace FlatEngine { namespace FlatGui {
 				std::string name = child->GetName();
 				const char* childName = name.c_str();
 
-				if (child->HasChildren())
-				{
-					FlatEngine::LogString("Adding child object with child.");
-					FlatEngine::FlatGui::AddObjectWithChild(child, childName, node_clicked);
-				}
-					
-				else
-				{
-					FlatEngine::LogString("Adding child object NO child.");
-					FlatEngine::FlatGui::AddObjectWithoutChild(child, childName, node_clicked);
-				}
+				ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(1, 1, 1, 0.05f));
+				ImGui::Separator();
+				ImGui::PopStyleColor();
 
-				ImGui::TreePop();
+				if (child->HasChildren())
+					FlatEngine::FlatGui::AddObjectWithChild(child, childName, node_clicked, queuedForDelete);
+				else
+					FlatEngine::FlatGui::AddObjectWithoutChild(child, childName, node_clicked, queuedForDelete);
 			}
+
+			ImGui::TreePop(); // TreeNode Closer
 		}
+
+		// Pop Item Spacing
+		ImGui::PopStyleVar();
 	}
+
+
 	// Helper function for Hierarchy child rendering
-	void FlatEngine::FlatGui::AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked)
+	void FlatEngine::FlatGui::AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
-		ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
+		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
 		// If this node is selected, use the nodeFlag_selected to highlight it
-		if (focusedObjectID == currentObject->GetID()) {
-			node_flags |= ImGuiTreeNodeFlags_Selected;
-			FlatEngine::LogString("Selected: " + currentObject->GetName());
-		}
+		if (focusedObjectID == currentObject->GetID())
+			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 		else
-		{
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-		}
-			
+			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 
+		// TreeNode Opener - No TreePop because it's a leaf
 		ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			node_clicked = currentObject->GetID();
-
 			if (ImGui::Button("Add child"))
 			{
 				GameObject* childObject = FlatEngine::CreateGameObject(currentObject->GetID());
@@ -421,13 +420,14 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			if (ImGui::Button("Delete GameObject"))
 			{
+				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
 		// Setting the focus to this GameObject
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+		if (ImGui::IsItemClicked())
 		{
 			node_clicked = currentObject->GetID();
 			FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
@@ -439,10 +439,11 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Text("This is a drag and drop source");
 			ImGui::EndDragDropSource();
 		}
+
+		ImGui::PopStyleVar();
 	}
 
 
-	
 	void FlatEngine::FlatGui::RenderInspector()
 	{
 		ImGui::Begin("Inspector Window");
@@ -455,7 +456,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (focusedObjectID != -1)
 		{
 			// Get focused GameObject
-			GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectID];
+			GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
 			// Name editing
 			std::string nameLabel = "Name: ";
 			char newName[1024];
@@ -474,364 +475,395 @@ namespace FlatEngine { namespace FlatGui {
 			std::vector<Component*> components = focusedObject->GetComponents();
 			if (components.size() > 0)
 			{
-				// Get expander icons for components
-				// 
-				// FOR RELEASE CHANGE TO WINDOWSAPPLICATION
-				//expandIcon->loadFromFile("WindowsApplication/assets/images/Expand.png");
+				// Get Expander and Trashcan icons for components
+				// Expanders
 				expandIcon->loadFromFile("assets/images/Expand.png");
 				SDL_Texture* expandTexture = expandIcon->getTexture();
 				expandFlippedIcon->loadFromFile("assets/images/ExpandFlipped.png");
 				SDL_Texture* expandFlippedTexture = expandFlippedIcon->getTexture();
 				float expandWidth = (float)expandIcon->getWidth();
 				float expandHeight = (float)expandIcon->getHeight();
+				// Trashcan
+				trashIcon->loadFromFile("assets/images/Trashcan.png");
+				SDL_Texture* trashTexture = trashIcon->getTexture();
+				float trashWidth = (float)trashIcon->getWidth();
+				float trashHeight = (float)trashIcon->getHeight();
+				long queuedForDelete = -1;
 
 				// Flags for child padding and dimensions
 				ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
 
 				for (int i = 0; i < components.size(); i++)
 				{
-					// Is Collapsed
-					bool _isCollapsed = components[i]->IsCollapsed();
-
-					// Component Name
-					ImGui::Separator();
-					std::string componentType = components[i]->GetTypeString();
-					// Get Component ID in to keep the child unique
-					std::string componentID = componentType + std::to_string(components[i]->GetID());
-
-					// Begin Component Child
-					ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-					ImGui::BeginChild(componentID.c_str(), ImVec2(0, 0), child_flags);
-					ImGui::PopStyleColor();
-					ImGui::Text(componentType.c_str());
-
-					// Same Line
-					ImGui::SameLine(ImGui::GetContentRegionMax().x - (expandWidth + childPadding), 5); // Add the expander icon on the same line
-					
-					// Pushes	
-					ImGui::PushItemWidth(-1.0f);
-					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
-					// Expand Icon Button
-					ImVec2 size = ImVec2(expandWidth, expandHeight);             
-					ImVec2 uv0 = ImVec2(0.0f, 0.0f); 
-					ImVec2 uv1 = ImVec2(1.0f, 1.0f);   
-					ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f); 
-					ImVec4 tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f); 
-					std::string id = "##expandIcon-" + i;
-
-					// Draw Expand Icon
-					if (_isCollapsed)
+					if (components[i] != nullptr)
 					{
-						if (ImGui::ImageButton(id.c_str(), expandTexture, size, uv0, uv1, bg_col, tint_col))
-							components[i]->SetCollapsed(!_isCollapsed);
-						if (ImGui::IsItemHovered())
-							ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-					}
-					else
-					{
-						if (ImGui::ImageButton(id.c_str(), expandFlippedTexture, size, uv0, uv1, bg_col, tint_col))
-							components[i]->SetCollapsed(!_isCollapsed);
-						if (ImGui::IsItemHovered())
-							ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-					}
+						// Is Collapsed
+						bool _isCollapsed = components[i]->IsCollapsed();
 
-						
-					// Pops
-					ImGui::PopStyleColor();
-					ImGui::PopStyleVar();
-					ImGui::PopItemWidth();
+						// Component Name
+						ImGui::Separator();
+						std::string componentType = components[i]->GetTypeString();
+						// Get Component ID in to keep the child unique
+						std::string componentID = componentType + std::to_string(components[i]->GetID());
 
-
-					if (!_isCollapsed)
-					{
-						// Component Data - Give it background color and padding
-						// Push
-						ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
-						ImGui::BeginChild(componentType.c_str(), ImVec2(0, 0), child_flags);
-
-						// Make full width Push
-						ImGui::PushItemWidth(-1.0f);
-
-						if (componentType == "Transform")
-						{
-							// Position, scale, and rotation of transform
-							FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(components[i]);
-							Vector2 position = transform->GetPosition();
-							float xPos = position.x;
-							float yPos = position.y;
-							Vector2 scale = transform->GetScale();
-							float scaleX = scale.x;
-							float scaleY = scale.y;
-							float rotation = transform->GetRotation();
-							static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-
-							// Push Item Width
-							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
-
-							// Drags for position editing
-							//
-							// Render Text for Positions + Rotation
-							ImGui::Text("xPos:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
-							ImGui::Text("yPos:");
-							ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
-							ImGui::Text("Rotation:");
-
-							// Render Drags for Positions + Rotation
-							ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##rotation", &rotation, 1.0f, -360, 360, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-							// Assign the new slider values to the transforms position
-							transform->SetPosition(Vector2(xPos, yPos));
-							transform->SetRotation(rotation);
-
-							// Render Drags for scale of transform
-							// Push
-							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-							// Render text for scales
-							ImGui::Text("Scale x:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-							ImGui::Text("Scale y:");
-
-							// Render Drags for scales
-							ImGui::DragFloat("##xScale", &scaleX, 0.05f, 0, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##yScale", &scaleY, 0.05f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							
-							// Pop Width Setting
-							ImGui::PopItemWidth();
-
-							// Assign the new slider values to the sprites pivotPoint
-							transform->SetScale(Vector2(scaleX, scaleY));
-						}
-						else if (componentType == "Sprite")
-						{
-							// Sprite path and texture dimension variables
-							FlatEngine::Sprite* sprite = static_cast<FlatEngine::Sprite*>(components[i]);
-							std::string path = sprite->GetPath();
-							char newPath[1024];
-							strcpy_s(newPath, path.c_str());
-							float textureWidth = sprite->GetTextureWidth();
-							float textureHeight = sprite->GetTextureHeight();
-
-							// Sprite Path Strings
-							std::string pathString = "Path: ";
-							std::string textureWidthString = "Texture width: " + std::to_string(textureWidth);
-							std::string textureHeightString = "Texture height: " + std::to_string(textureHeight);
-
-							// Render Sprite Path
-							ImGui::Text(pathString.c_str());
-							ImGui::SameLine(0, 5);
-							if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
-								sprite->SetTexture(newPath);
-							ImGui::Text(textureWidthString.c_str());
-							ImGui::Text(textureHeightString.c_str());
-
-							// Push Item Width Setting
-							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-							// Sprite offset variables
-							Vector2 offset = sprite->GetOffset();
-							float xOffset = offset.x;
-							float yOffset = offset.y;
-							ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-
-							// Render Drags for offset of texture editing
-							ImGui::Text("xOffset:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-							ImGui::Text("yOffset:");
-							ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-							// Pop Width Setting
-							ImGui::PopItemWidth();
-
-							// Assign the new slider values to the sprites pivotPoint
-							sprite->SetOffset(Vector2(xOffset, yOffset));
-						}
-						else if (componentType == "Camera")
-						{
-							// Camera position and aspect ratio
-							FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(components[i]);
-							float width = camera->GetWidth();
-							float height = camera->GetHeight();
-							bool _isPrimary = camera->IsPrimary();
-							float zoom = camera->GetZoom();
-							ImVec4 frustrumColor = camera->GetFrustrumColor();
-
-							// Push Item Width Setting
-							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-							// Drags for camera width and height editing
-							ImGui::Text("Camera width:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-							ImGui::Text("Camera height:");
-							ImGui::DragFloat("##CameraWidth", &width, 0.5f, 0, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##CameraHeight", &height, 0.5f, 0, -FLT_MAX, "%.3f", flags);
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-							// Pop Width Setting
-							ImGui::PopItemWidth();
-
-							// Assign the new slider values
-							camera->SetDimensions(width, height);
-
-							// Zoom slider
-							ImGui::Text("Camera zoom:");
-							ImGui::SliderFloat("##Zoom", &zoom, 1.0f, 100.0f, "%.3f");
-							camera->SetZoom(zoom);
-
-							// Frustrum color picker
-							ImVec4 color = ImVec4(frustrumColor.x / 255.0f, frustrumColor.y / 255.0f, frustrumColor.z / 255.0f, frustrumColor.w / 255.0f);
-
-							ImGui::ColorEdit4("##FrustrumColor", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
-							ImGui::SameLine(0, 5);
-							ImGui::Text("Frustrum color");
-
-							// Set frustrum color
-							camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
-
-							// _isPrimaryCamera checkbox
-							// Before allowing this camera to be set as primary, we need to ensure it has a transform component
-							if (focusedObject->GetComponent(ComponentTypes::Transform) != nullptr)
-							{
-								if (ImGui::Checkbox("Is Primary Camera", &_isPrimary))
-								{
-									if (_isPrimary)
-										FlatEngine::GetLoadedScene()->SetPrimaryCamera(camera);
-									else
-										FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
-								}
-							}
-							else
-							{
-								bool temp = false;
-								if (ImGui::Checkbox("Is Primary Camera", &temp))
-									FlatEngine::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
-								temp = false;
-								ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
-							}
-
-							camera->SetPrimaryCamera(_isPrimary);
-						}
-						else if (componentType == "Script")
-						{
-							FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[i]);
-							std::string path = script->GetAttachedScript();
-							bool _isActive = script->IsActive();
-
-							// For path editing
-							char newPath[1024];
-							strcpy_s(newPath, path.c_str());
-							std::string pathString = "Name: ";
-							ImGui::Text(pathString.c_str());
-							ImGui::SameLine(0, 5);
-							ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-							std::string inputId = "##scriptName_" + std::to_string(script->GetID());
-							if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
-								script->SetAttachedScript(newPath);
-
-							// _isActive checkbox
-							std::string checkboxId = "Active##" + std::to_string(script->GetID());
-							ImGui::Checkbox(checkboxId.c_str(), &_isActive);
-							script->SetActive(_isActive);
-						}
-						else if (componentType == "Button")
-						{
-							FlatEngine::Button* button = static_cast<FlatEngine::Button*>(components[i]);
-							std::string attachedScript = button->GetAttachedScript();
-							bool _isActive = button->IsActive();
-							float activeWidth = button->GetActiveWidth();
-							float activeHeight = button->GetActiveHeight();
-							Vector2 activeOffset = button->GetActiveOffset();
-
-							// Active Checkbox
-							ImGui::Checkbox("Active:", &_isActive);
-							button->SetActive(_isActive);
-
-							// Push Item Width Setting
-							ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-							// Set cursor type
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-							// Drags for active width, height and offsets
-							ImGui::Text("Active width:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
-							ImGui::Text("Active height:");
-
-							ImGui::DragFloat("##activeWidth", &activeWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##activeHeight", &activeHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-
-							ImGui::Text("Active offset x:");
-							ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
-							ImGui::Text("Active offset y:");
-
-							ImGui::DragFloat("##activeoffsetx", &activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-							ImGui::SameLine(0, 5);
-							ImGui::DragFloat("##activeoffsety", &activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-
-							// Assign the new slider values
-							button->SetActiveDimensions(activeWidth, activeHeight);
-							button->SetActiveOffset(activeOffset);
-
-							// Pop Width Setting
-							ImGui::PopItemWidth();
-
-							// For path editing
-							char newName[1024];
-							strcpy_s(newName, attachedScript.c_str());
-							std::string pathString = "Attached script: ";
-							ImGui::Text(pathString.c_str());
-							if (ImGui::InputText("##ScriptName", newName, IM_ARRAYSIZE(newName), flags))
-								button->SetAttachedScript(newName);
-						}
-						
-						// Pops
-						ImGui::PopItemWidth();
+						// Begin Component Child
+						ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+						ImGui::BeginChild(componentID.c_str(), ImVec2(0, 0), child_flags);
 						ImGui::PopStyleColor();
+						ImGui::Text(componentType.c_str());
 
-						ImGui::EndChild();
+						// Same Line
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - (expandWidth + childPadding + 20), 5); // Add the expander icon on the same line
+
+						// Pushes	
+						ImGui::PushItemWidth(-1.0f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
+
+						// Expand Icon Button
+						ImVec2 expandSize = ImVec2(expandWidth, expandHeight);
+						ImVec2 uv0 = ImVec2(0.0f, 0.0f);
+						ImVec2 uv1 = ImVec2(1.0f, 1.0f);
+						ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+						ImVec4 expand_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+						std::string expandID = "##expandIcon-" + i;
+						// Trashcan Icon Button
+						ImVec2 trashSize = ImVec2(trashWidth, trashHeight);
+						ImVec4 trash_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+						std::string trashcanID = "##trashIcon-" + i;
+
+						// Trash Can Icon for removing Component from Focused Object
+						if (ImGui::ImageButton(trashcanID.c_str(), trashTexture, trashSize, uv0, uv1, bg_col, trash_tint_col))
+							queuedForDelete = components[i]->GetID();
+								
+						// Set Mouse Cursor
+						if (ImGui::IsItemHovered())
+							ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+						ImGui::SameLine(0, 5);
+
+						// Draw Expand Icon for expanding/collapsing current component information
+						if (_isCollapsed)
+						{
+							if (ImGui::ImageButton(expandID.c_str(), expandTexture, expandSize, uv0, uv1, bg_col, expand_tint_col))
+								components[i]->SetCollapsed(!_isCollapsed);
+							// Set Mouse Cursor
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+						}
+						else
+						{
+							if (ImGui::ImageButton(expandID.c_str(), expandFlippedTexture, expandSize, uv0, uv1, bg_col, expand_tint_col))
+								components[i]->SetCollapsed(!_isCollapsed);
+							// Set Mouse Cursor
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+						}
+
+
+						// Pops
+						ImGui::PopStyleColor();
+						ImGui::PopStyleVar();
+						ImGui::PopItemWidth();
+
+						
+						// Render Component
+						//
+						if (!_isCollapsed)
+						{
+							// Component Data - Give it background color and padding
+							// Push
+							ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
+							ImGui::BeginChild(componentType.c_str(), ImVec2(0, 0), child_flags);
+
+							// Make full width Push
+							ImGui::PushItemWidth(-1.0f);
+
+							if (componentType == "Transform")
+							{
+								// Position, scale, and rotation of transform
+								FlatEngine::Transform* transform = static_cast<FlatEngine::Transform*>(components[i]);
+								Vector2 position = transform->GetPosition();
+								float xPos = position.x;
+								float yPos = position.y;
+								Vector2 scale = transform->GetScale();
+								float scaleX = scale.x;
+								float scaleY = scale.y;
+								float rotation = transform->GetRotation();
+								static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+
+								// Push Item Width
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
+
+								// Drags for position editing
+								//
+								// Render Text for Positions + Rotation
+								ImGui::Text("xPos:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
+								ImGui::Text("yPos:");
+								ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
+								ImGui::Text("Rotation:");
+
+								// Render Drags for Positions + Rotation
+								ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##rotation", &rotation, 1.0f, -360, 360, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Assign the new slider values to the transforms position
+								transform->SetPosition(Vector2(xPos, yPos));
+								transform->SetRotation(rotation);
+
+								// Render Drags for scale of transform
+								// Push
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Render text for scales
+								ImGui::Text("Scale x:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
+								ImGui::Text("Scale y:");
+
+								// Render Drags for scales
+								ImGui::DragFloat("##xScale", &scaleX, 0.05f, 0, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##yScale", &scaleY, 0.05f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+
+								// Assign the new slider values to the sprites pivotPoint
+								transform->SetScale(Vector2(scaleX, scaleY));
+							}
+							else if (componentType == "Sprite")
+							{
+								// Sprite path and texture dimension variables
+								FlatEngine::Sprite* sprite = static_cast<FlatEngine::Sprite*>(components[i]);
+								std::string path = sprite->GetPath();
+								char newPath[1024];
+								strcpy_s(newPath, path.c_str());
+								float textureWidth = sprite->GetTextureWidth();
+								float textureHeight = sprite->GetTextureHeight();
+
+								// Sprite Path Strings
+								std::string pathString = "Path: ";
+								std::string textureWidthString = "Texture width: " + std::to_string(textureWidth);
+								std::string textureHeightString = "Texture height: " + std::to_string(textureHeight);
+
+								// Render Sprite Path
+								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+								if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
+									sprite->SetTexture(newPath);
+								ImGui::Text(textureWidthString.c_str());
+								ImGui::Text(textureHeightString.c_str());
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Sprite offset variables
+								Vector2 offset = sprite->GetOffset();
+								float xOffset = offset.x;
+								float yOffset = offset.y;
+								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+
+								// Render Drags for offset of texture editing
+								ImGui::Text("xOffset:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
+								ImGui::Text("yOffset:");
+								ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+
+								// Assign the new slider values to the sprites pivotPoint
+								sprite->SetOffset(Vector2(xOffset, yOffset));
+							}
+							else if (componentType == "Camera")
+							{
+								// Camera position and aspect ratio
+								FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(components[i]);
+								float width = camera->GetWidth();
+								float height = camera->GetHeight();
+								bool _isPrimary = camera->IsPrimary();
+								float zoom = camera->GetZoom();
+								ImVec4 frustrumColor = camera->GetFrustrumColor();
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Drags for camera width and height editing
+								ImGui::Text("Camera width:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
+								ImGui::Text("Camera height:");
+								ImGui::DragFloat("##CameraWidth", &width, 0.5f, 0, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##CameraHeight", &height, 0.5f, 0, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+
+								// Assign the new slider values
+								camera->SetDimensions(width, height);
+
+								// Zoom slider
+								ImGui::Text("Camera zoom:");
+								ImGui::SliderFloat("##Zoom", &zoom, 1.0f, 100.0f, "%.3f");
+								camera->SetZoom(zoom);
+
+								// Frustrum color picker
+								ImVec4 color = ImVec4(frustrumColor.x / 255.0f, frustrumColor.y / 255.0f, frustrumColor.z / 255.0f, frustrumColor.w / 255.0f);
+
+								ImGui::ColorEdit4("##FrustrumColor", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+								ImGui::SameLine(0, 5);
+								ImGui::Text("Frustrum color");
+
+								// Set frustrum color
+								camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
+
+								// _isPrimaryCamera checkbox
+								// Before allowing this camera to be set as primary, we need to ensure it has a transform component
+								if (focusedObject->GetComponent(ComponentTypes::Transform) != nullptr)
+								{
+									if (ImGui::Checkbox("Is Primary Camera", &_isPrimary))
+									{
+										if (_isPrimary)
+											FlatEngine::GetLoadedScene()->SetPrimaryCamera(camera);
+										else
+											FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
+									}
+								}
+								else
+								{
+									bool temp = false;
+									if (ImGui::Checkbox("Is Primary Camera", &temp))
+										FlatEngine::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
+									temp = false;
+									ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
+								}
+
+								camera->SetPrimaryCamera(_isPrimary);
+							}
+							else if (componentType == "Script")
+							{
+								FlatEngine::ScriptComponent* script = static_cast<FlatEngine::ScriptComponent*>(components[i]);
+								std::string path = script->GetAttachedScript();
+								bool _isActive = script->IsActive();
+
+								// For path editing
+								char newPath[1024];
+								strcpy_s(newPath, path.c_str());
+								std::string pathString = "Name: ";
+								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+								std::string inputId = "##scriptName_" + std::to_string(script->GetID());
+								if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
+									script->SetAttachedScript(newPath);
+
+								// _isActive checkbox
+								std::string checkboxId = "Active##" + std::to_string(script->GetID());
+								ImGui::Checkbox(checkboxId.c_str(), &_isActive);
+								script->SetActive(_isActive);
+							}
+							else if (componentType == "Button")
+							{
+								FlatEngine::Button* button = static_cast<FlatEngine::Button*>(components[i]);				
+								bool _isActive = button->IsActive();
+								float activeWidth = button->GetActiveWidth();
+								float activeHeight = button->GetActiveHeight();
+								Vector2 activeOffset = button->GetActiveOffset();
+
+								// Active Checkbox
+								ImGui::Checkbox("Active:", &_isActive);
+								button->SetActive(_isActive);
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Drags for active width, height and offsets
+								ImGui::Text("Active width:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
+								ImGui::Text("Active height:");
+
+								ImGui::DragFloat("##activeWidth", &activeWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##activeHeight", &activeHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								ImGui::Text("Active offset x:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
+								ImGui::Text("Active offset y:");
+
+								ImGui::DragFloat("##activeoffsetx", &activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##activeoffsety", &activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Assign the new slider values
+								button->SetActiveDimensions(activeWidth, activeHeight);
+								button->SetActiveOffset(activeOffset);
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+							}
+
+							// Pops
+							ImGui::PopItemWidth();
+							ImGui::PopStyleColor();
+
+							ImGui::EndChild();
+						}
 					}
 
 					ImGui::EndChild();
 
 					if (i == components.size() - 1)
 						ImGui::Separator();
+				}
+
+				if (queuedForDelete != -1)
+				{
+					focusedObject->RemoveComponent(queuedForDelete);
+					queuedForDelete = -1;
 				}
 			}
 
@@ -895,9 +927,9 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::Button("Delete GameObject"))
 			{
 				// Unfocus GameObject first
-				int tempIndex = focusedObjectID;
+				int tempID = focusedObjectID;
 				FlatEngine::SetFocusedGameObjectID(-1);
-				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(tempIndex);
+				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(tempID);
 			}
 		}
 		ImGui::PopStyleColor();
@@ -1266,7 +1298,7 @@ namespace FlatEngine { namespace FlatGui {
 					ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
 					ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
 
-					cameraTexture = new Texture("assets/images/camera.png");
+					cameraTexture->loadFromFile("assets/images/camera.png");
 					SDL_Texture* texture = cameraTexture->getTexture();
 					float cameraTextureWidth = (float)cameraTexture->getWidth() * 3;
 					float cameraTextureHeight = (float)cameraTexture->getHeight() * 3;
@@ -1319,12 +1351,11 @@ namespace FlatEngine { namespace FlatGui {
 				// 
 				// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
 				// render the focused objects TransformArrow for moving it within the scene view
-				if (focusedObjectID != -1 && focusedObjectID == i)
+				if (focusedObjectID != -1 && focusedObjectID == sceneObjects[i]->GetID())
 				{
 					// Get focused GameObject and transformArrow png
-					GameObject* focusedObject = FlatEngine::sceneManager->GetLoadedScene()->GetSceneObjects()[focusedObjectID];
-					transformArrow = new Texture("assets/images/transformArrow.png");
-
+					GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+					transformArrow->loadFromFile("assets/images/transformArrow.png");
 					SDL_Texture* texture = transformArrow->getTexture();
 					// * 3 because the texture is so small. If we change the scale, it will change the render starting
 					// position, which we don't want. We only want to change the render ending position so we adjust dimensions only

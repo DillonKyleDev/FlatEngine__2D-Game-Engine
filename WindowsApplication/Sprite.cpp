@@ -26,6 +26,8 @@ namespace FlatEngine
 	{
 		json jsonData = { 
 			{ "type", "Sprite" },
+			{ "id", this->GetID() },
+			{ "_isCollapsed", this->IsCollapsed() },
 			{ "texture", this->path },
 			{ "texture_width", this->textureWidth },
 			{ "texture_height", this->textureHeight },

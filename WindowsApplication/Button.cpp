@@ -21,9 +21,6 @@ namespace FlatEngine
 		this->OnMouseLeaveFunction = nullptr;
 		this->OnLeftClickFunction = nullptr;
 		this->OnRightClickFunction = nullptr;
-
-		this->attachedScript = "";
-
 	}
 
 	Button::~Button()
@@ -80,11 +77,6 @@ namespace FlatEngine
 		this->activeOffset = offset;
 	}
 
-	void Button::SetAttachedScript(std::string script)
-	{
-		this->attachedScript = script;
-	}
-
 	bool Button::IsActive()
 	{
 		return this->_active;
@@ -118,11 +110,6 @@ namespace FlatEngine
 		return this->activeOffset;
 	}
 
-	std::string Button::GetAttachedScript()
-	{
-		return this->attachedScript;
-	}
-
 	void Button::SetMouseIsOver(bool _isOver)
 	{
 		this->_mouseIsOver = _isOver;
@@ -141,12 +128,13 @@ namespace FlatEngine
 	{
 		json jsonData = {
 			{ "type", "Button" },
+			{ "id", this->GetID() },
+			{ "_isCollapsed", this->IsCollapsed() },
 			{ "_isActive", this->_active },
 			{ "activeWidth", this->activeWidth },
 			{ "activeHeight", this->activeHeight },
 			{ "activeOffsetX", this->activeOffset.x },
 			{ "activeOffsetY", this->activeOffset.y },
-			{ "attachedScript", this->attachedScript },
 			{ "activeLayer", this->activeLayer },
 		};
 

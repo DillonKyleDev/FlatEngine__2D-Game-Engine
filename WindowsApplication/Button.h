@@ -25,21 +25,18 @@ namespace FlatEngine
 		void SetActive(bool _active);
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
-		void SetAttachedScript(std::string script);
 		bool IsActive();
 		void SetActiveLayer(int layer);
 		int GetActiveLayer();
 		float GetActiveWidth();
 		float GetActiveHeight();
 		Vector2 GetActiveOffset();
-		std::string GetAttachedScript();
 		void SetMouseIsOver(bool _isOver);
 		void SetIsOverFired(bool _fired);
 		bool MouseIsOver();
 		std::string GetData();
 
 	private:
-		long ID;
 		bool _mouseIsOver;
 		bool _hasMouseOverFired;
 		bool _active;
@@ -47,8 +44,6 @@ namespace FlatEngine
 		float activeHeight;
 		Vector2 activeOffset;
 		int activeLayer;
-
-		std::string attachedScript;
 
 		CallbackFunction OnMouseOverFunction;
 		CallbackFunction OnMouseLeaveFunction;

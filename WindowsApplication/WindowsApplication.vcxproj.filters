@@ -135,9 +135,6 @@
     <ClCompile Include="GameLoop.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Source Files\Helper</Filter>
-    </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Helper</Filter>
     </ClCompile>
@@ -152,6 +149,9 @@
     </ClCompile>
     <ClCompile Include="Canvas.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,9 +236,6 @@
     <ClInclude Include="GameLoop.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Header Files\Helper</Filter>
     </ClInclude>
@@ -253,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Canvas.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

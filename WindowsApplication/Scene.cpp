@@ -58,16 +58,52 @@ namespace FlatEngine
 		return newObject;
 	}
 
-	void Scene::DeleteGameObject(int sceneObjectID)
+	void Scene::DeleteGameObject(long sceneObjectID)
 	{
+		GameObject* objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
+
 		// If this GameObject was the primary camera, unset it as the primaryCamera and set this->primaryCamera to nullptr
-		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == this->sceneObjects[sceneObjectID]->GetID())
+		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == objectToDelete->GetID())
 		{
 			this->primaryCamera->SetPrimaryCamera(false);
 			this->primaryCamera = nullptr;
 		}
-		this->sceneObjects.erase(this->sceneObjects.begin() + sceneObjectID);
+
+		// Check for a parent and remove the child object reference
+		long parentID = objectToDelete->GetParentID();
+		if (parentID != -1)
+		{
+			GameObject* parent = FlatEngine::GetObjectById(parentID);
+			parent->RemoveChild(sceneObjectID);
+		}
+		// Check for children and delete those as well
+		Scene::DeleteChildrenAndSelf(objectToDelete);
 	}
+
+
+	// Recursive
+	void Scene::DeleteChildrenAndSelf(GameObject* objectToDelete)
+	{
+		// Check for children
+		if (objectToDelete->HasChildren())
+		{
+			// Call this function again on this objects children
+			for (int c = 0; c < objectToDelete->GetChildren().size(); c++)
+			{
+				GameObject* child = FlatEngine::GetObjectById(objectToDelete->GetChildren()[c]);
+				Scene::DeleteChildrenAndSelf(child);
+			}
+		}
+		// Then delete this GameObject
+		for (int i = 0; i < this->sceneObjects.size(); i++)
+		{
+			if (this->sceneObjects[i]->GetID() == objectToDelete->GetID())
+			{
+				this->sceneObjects.erase(this->sceneObjects.begin() + i);
+			}
+		}
+	}
+
 
 	void Scene::IncrementGameObjectID()
 	{

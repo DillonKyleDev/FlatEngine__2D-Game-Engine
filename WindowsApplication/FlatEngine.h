@@ -102,6 +102,12 @@ namespace FlatEngine
 		// Icons
 		extern std::unique_ptr<Texture> expandIcon;
 		extern std::unique_ptr<Texture> expandFlippedIcon;
+		extern std::unique_ptr<Texture> trashIcon;
+		extern std::unique_ptr<Texture> transformArrow;
+		extern std::unique_ptr<Texture> cameraTexture;
+		/*extern Texture* transformArrow;
+		extern Texture* cameraTexture;*/
+
 
 		// Scene view
 		extern float SCENE_VIEWPORT_WIDTH;
@@ -115,9 +121,6 @@ namespace FlatEngine
 		// Settings
 		extern int iconTransparency;
 		extern bool _clearBufferEveryFrame;
-
-		extern Texture* transformArrow;
-		extern Texture* cameraTexture;
 
 		// Game view
 		extern float GAME_VIEWPORT_WIDTH;
@@ -145,8 +148,8 @@ namespace FlatEngine
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 
 		// Recursive - For Rendering Hierarchy Objects and their children
-		extern void AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked);
-		extern void AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked);
+		extern void AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
+		extern void AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 	}
 };
 

@@ -79,6 +79,8 @@ namespace FlatEngine
 	{
 		json jsonData = {
 			{ "type", "Camera" },
+			{ "id", this->GetID() },
+			{ "_isCollapsed", this->IsCollapsed() },
 			{ "width", this->width },
 			{ "height", this->height },
 			{ "_isPrimaryCamera", this->_isPrimaryCamera },

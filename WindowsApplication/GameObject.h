@@ -16,11 +16,13 @@ namespace FlatEngine
 	public:
 		GameObject(long parentID = -1);
 		~GameObject();
-		int GetID();
+
+		void SetID(long ID);
+		long GetID();
 		void SetName(std::string name);
 		std::string GetName();
 		Component* AddComponent(ComponentTypes type);
-		void RemoveComponent(Component* component);
+		void RemoveComponent(long componentID);
 		Component* GetComponent(ComponentTypes type);
 		std::vector<Component*> &GetComponents();
 		void SetParentID(long parentID);

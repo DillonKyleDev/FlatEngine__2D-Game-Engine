@@ -45,6 +45,8 @@ namespace FlatEngine
 	{
 		json jsonData = {
 			{ "type", "Script" },
+			{ "id", this->GetID() },
+			{ "_isCollapsed", this->IsCollapsed() },
 			{ "attachedScript", this->attachedScript },
 			{ "_isActive", this->_isActive }
 		};

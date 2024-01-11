@@ -18,7 +18,8 @@ namespace FlatEngine
 		std::vector<GameObject*> GetSceneObjects();
 		GameObject* GetObjectById(long ID);
 		GameObject* CreateGameObject(long parentID = -1);
-		void DeleteGameObject(int sceneObjectID);
+		void DeleteGameObject(long sceneObjectID);
+		void DeleteChildrenAndSelf(GameObject* objectToDelete); // Recursive
 		void IncrementGameObjectID();
 		long GetNextGameObjectID();
 		void IncrementComponentID();

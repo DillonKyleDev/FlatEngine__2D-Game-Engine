@@ -1,2 +1,0 @@
-Creating a timer so I can use delta time in the application loop to ease the zoom
-in order to see where it's actually going

@@ -34,7 +34,13 @@ namespace FlatEngine
 	}
 
 
-	int GameObject::GetID()
+	void GameObject::SetID(long ID)
+	{
+		this->ID = ID;
+	}
+
+
+	long GameObject::GetID()
 	{
 		return this->ID;
 	}
@@ -44,6 +50,7 @@ namespace FlatEngine
 	{
 		this->name = name;
 	}
+
 
 	std::string GameObject::GetName()
 	{
@@ -109,14 +116,30 @@ namespace FlatEngine
 	}
 
 
-	void GameObject::RemoveComponent(Component* component)
+	void GameObject::RemoveComponent(long componentID)
 	{
 		for (int i = 0; i < this->components.size(); i++)
 		{
-			if (this->components[i]->GetID() == component->GetID())
+			if (this->components[i]->GetID() == componentID)
 			{
-				delete this->components[i];
-				this->components[i] = nullptr;
+				if (this->components.size() > 1)
+				{
+					for (int j = i; j < components.size(); j++)
+					{
+						if (j == components.size() - 1)
+							this->components[j] = this->components[static_cast<std::vector<FlatEngine::Component*, std::allocator<FlatEngine::Component*>>::size_type>(j)];
+						else
+							this->components[j] = this->components[static_cast<std::vector<FlatEngine::Component*, std::allocator<FlatEngine::Component*>>::size_type>(j) + 1];
+					}
+					this->components.erase(this->components.begin() + this->components.size() - 1);
+				}
+				else
+				{
+					delete this->components[i];
+					this->components[i] = nullptr;
+					this->components.erase(this->components.begin());
+				}				
+				break;
 			}
 		}
 	}

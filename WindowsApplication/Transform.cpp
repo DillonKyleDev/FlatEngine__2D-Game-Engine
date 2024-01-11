@@ -26,6 +26,8 @@ namespace FlatEngine
 	{
 		json jsonData = { 
 			{ "type", "Transform" },
+			{ "id", this->GetID() },
+			{ "_isCollapsed", this->IsCollapsed() },
 			{ "xPos", this->position.x }, 
 			{ "yPos", this->position.y },
 			{ "rotation", this->rotation },
