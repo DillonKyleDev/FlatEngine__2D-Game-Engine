@@ -27,6 +27,7 @@ namespace FlatEngine
 	ImU32 Red = IM_COL32(255, 0, 0, 255);
 	ImU32 ActiveButtonColor = IM_COL32(50, 230, 50, 130);
 	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
+	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
 
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
@@ -128,36 +129,30 @@ namespace FlatEngine
 
 	void FlatEngine::DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
 	{
-		if (startingPoint.x < (canvas_sz.x + canvas_p0.x) && endingPoint.x > canvas_p0.x && startingPoint.y < (canvas_sz.y + canvas_p0.y) && endingPoint.y >(canvas_p0.y))
-		{
-			if (startingPoint.x < canvas_p0.x)
-				startingPoint.x = canvas_p0.x;
-			if (endingPoint.x > canvas_p0.x + canvas_sz.x)
-				endingPoint.x = canvas_p0.x + canvas_sz.x;
-			if (startingPoint.y < canvas_p0.y)
-				startingPoint.y = canvas_p0.y;
-			if (endingPoint.y > canvas_p0.y + canvas_sz.y)
-				endingPoint.y = canvas_p0.y + canvas_sz.y;
+		if (startingPoint.x < canvas_p0.x)
+			startingPoint.x = canvas_p0.x;
+		if (endingPoint.x > canvas_p0.x + canvas_sz.x)
+			endingPoint.x = canvas_p0.x + canvas_sz.x;
+		if (startingPoint.y < canvas_p0.y)
+			startingPoint.y = canvas_p0.y;
+		if (endingPoint.y > canvas_p0.y + canvas_sz.y)
+			endingPoint.y = canvas_p0.y + canvas_sz.y;
 
-			logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
-		}
+		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
 	void FlatEngine::DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
 	{
-		if (startingPoint.x < (canvas_sz.x + canvas_p0.x) && endingPoint.x > canvas_p0.x && startingPoint.y < (canvas_sz.y + canvas_p0.y) && endingPoint.y > (canvas_p0.y))
-		{
-			if (startingPoint.x < canvas_p0.x)
-				startingPoint.x = canvas_p0.x;
-			if (endingPoint.x > canvas_p0.x + canvas_sz.x)
-				endingPoint.x = canvas_p0.x + canvas_sz.x;
-			if (startingPoint.y < canvas_p0.y)
-				startingPoint.y = canvas_p0.y;
-			if (endingPoint.y > canvas_p0.y + canvas_sz.y)
-				endingPoint.y = canvas_p0.y + canvas_sz.y;
+		if (startingPoint.x < canvas_p0.x)
+			startingPoint.x = canvas_p0.x;
+		if (endingPoint.x > canvas_p0.x + canvas_sz.x)
+			endingPoint.x = canvas_p0.x + canvas_sz.x;
+		if (startingPoint.y < canvas_p0.y)
+			startingPoint.y = canvas_p0.y;
+		if (endingPoint.y > canvas_p0.y + canvas_sz.y)
+			endingPoint.y = canvas_p0.y + canvas_sz.y;
 
-			logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
-		}
+		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
 	void FlatEngine::DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)

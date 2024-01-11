@@ -14,6 +14,15 @@
                     "xScale": 1.0,
                     "yPos": 0.0,
                     "yScale": 1.0
+                },
+                {
+                    "_blocksLayers": true,
+                    "_isCollapsed": false,
+                    "height": 30.0,
+                    "id": 12,
+                    "layerNumber": 6,
+                    "type": "Canvas",
+                    "width": 50.0
                 }
             ],
             "id": 0,
@@ -29,20 +38,30 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 0.5,
                     "yPos": 0.0,
-                    "yScale": 1.0
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "activeHeight": 3.0,
+                    "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 5.0,
+                    "activeWidth": 9.0,
                     "id": 2,
                     "type": "Button"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 10,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
                 }
             ],
             "id": 1,

@@ -51,9 +51,6 @@ namespace FlatEngine { namespace FlatGui {
 
 	float spriteScaleMultiplier = 0.2f;
 
-	/*Texture* transformArrow;
-	Texture* cameraTexture;*/
-
 	// Game view default values
 	float GAME_VIEWPORT_WIDTH = 600;
 	float GAME_VIEWPORT_HEIGHT = 400;
@@ -133,7 +130,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FlatEngine::_isDebugMode == false)
 		{
 			// Just Add GameView
-			FlatEngine::FlatGui::RenderGameView();
+			FlatEngine::FlatGui::Game_RenderView();
 		}
 		// Else add FlatEngine viewports
 		else
@@ -156,8 +153,8 @@ namespace FlatEngine { namespace FlatGui {
 		FlatEngine::FlatGui::RenderToolbar();
 		FlatEngine::FlatGui::RenderHierarchy();
 		FlatEngine::FlatGui::RenderInspector();
-		FlatEngine::FlatGui::RenderGameView();
-		FlatEngine::FlatGui::RenderSceneView();
+		FlatEngine::FlatGui::Game_RenderView();
+		FlatEngine::FlatGui::Scene_RenderView();
 		FlatEngine::FlatGui::RenderLog();
 	}
 
@@ -315,7 +312,6 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-
 	// Helper function for Hierarchy child rendering (Recursive)
 	void FlatEngine::FlatGui::AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
@@ -392,7 +388,6 @@ namespace FlatEngine { namespace FlatGui {
 		// Pop Item Spacing
 		ImGui::PopStyleVar();
 	}
-
 
 	// Helper function for Hierarchy child rendering
 	void FlatEngine::FlatGui::AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
@@ -845,6 +840,57 @@ namespace FlatEngine { namespace FlatGui {
 								// Pop Width Setting
 								ImGui::PopItemWidth();
 							}
+							else if (componentType == "Canvas")
+							{
+								FlatEngine::Canvas* canvas = static_cast<FlatEngine::Canvas*>(components[i]);
+
+								// Retrieve Canvas values
+								float canvasWidth = canvas->GetWidth();
+								float canvasHeight = canvas->GetHeight();
+								int layerNumber = canvas->GetLayerNumber();
+								bool _blocksLayers = canvas->GetBlocksLayers();
+								std::vector<Button*> canvasButtons = canvas->GetButtons();
+
+								// _BlocksLayers Checkbox
+								ImGui::Checkbox("Active:", &_blocksLayers);
+								canvas->SetBlocksLayers(_blocksLayers);
+
+								// Text
+								ImGui::Text("Canvas Layer: ");
+
+								// Set Layer Number Slider
+								ImGui::SliderInt("##layerNumber", &layerNumber, 0, 20, "%d");
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+								
+								// Set Canvas Layer to the new value
+								canvas->SetLayerNumber(layerNumber);
+
+								// Text
+								ImGui::Text("Canvas width: ");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
+								ImGui::Text("Canvas height: ");
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								ImGui::DragFloat("##canvasWidth", &canvasWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##canvasHeight", &canvasHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+								// Assign new values to Canvas
+								canvas->SetDimensions(canvasWidth, canvasHeight);
+
+
+								ImGui::PopItemWidth();
+							}
 
 							// Pops
 							ImGui::PopItemWidth();
@@ -868,9 +914,10 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// For checking if SceneObject has these components yet
-			FlatEngine::Component* transformComponent = focusedObject->GetComponent(Component::ComponentTypes::Transform);
-			FlatEngine::Component* spriteComponent = focusedObject->GetComponent(Component::ComponentTypes::Sprite);
-			FlatEngine::Component* cameraComponent = focusedObject->GetComponent(Component::ComponentTypes::Camera);
+			FlatEngine::Component* transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
+			FlatEngine::Component* spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
+			FlatEngine::Component* cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
+			FlatEngine::Component* canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
 
 			// Render the Adding Components button
 			ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
@@ -883,20 +930,22 @@ namespace FlatEngine { namespace FlatGui {
 				// Push button bg color style
 				ImGui::PushStyleColor(ImGuiCol_Button, innerWindowColor);
 
+				// Add all the component types you can add to this GameObject
+				//
 				if (transformComponent == nullptr)
 					if (ImGui::Button("Transform", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Transform);
 						ImGui::CloseCurrentPopup();
 					}
-				
+
 				if (spriteComponent == nullptr)
 					if (ImGui::Button("Sprite", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Sprite);
 						ImGui::CloseCurrentPopup();
 					}
-						
+
 				if (ImGui::Button("Button", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Button);
@@ -909,13 +958,20 @@ namespace FlatEngine { namespace FlatGui {
 						focusedObject->AddComponent(ComponentTypes::Camera);
 						ImGui::CloseCurrentPopup();
 					}
-				
+
 				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Script);
 					ImGui::CloseCurrentPopup();
 				}
-		
+
+				if (canvasComponent == nullptr)
+					if (ImGui::Button("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					{
+						focusedObject->AddComponent(ComponentTypes::Canvas);
+						ImGui::CloseCurrentPopup();
+					}
+						
 				
 				ImGui::EndListBox();
 
@@ -939,7 +995,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderGameView()
+	void FlatEngine::FlatGui::Game_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -984,7 +1040,7 @@ namespace FlatEngine { namespace FlatGui {
 		const bool is_active = ImGui::IsItemActive();   // Held
 
 		// Render GameObjects in game view
-		FlatEngine::FlatGui::RenderGameObjects(canvas_p0, canvas_sz);
+		FlatEngine::FlatGui::Game_RenderObjects(canvas_p0, canvas_sz);
 
 		ImGui::End();
 
@@ -997,7 +1053,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderGameObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void FlatEngine::FlatGui::Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
 		// Get loaded scene
 		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
@@ -1137,7 +1193,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderSceneView()
+	void FlatEngine::FlatGui::Scene_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -1214,9 +1270,11 @@ namespace FlatEngine { namespace FlatGui {
 			scrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		FlatEngine::FlatGui::RenderSceneGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, gridStep);
+		FlatEngine::FlatGui::Scene_RenderGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, gridStep);
 	
-		FlatEngine::FlatGui::RenderSceneObjects(scrolling, canvas_p0, canvas_sz);
+		FlatEngine::FlatGui::Scene_RenderObjects(scrolling, canvas_p0, canvas_sz);
+
+		// FlatEngine::FlatGui::Scene_RenderSceneCanvases();
 
 		// Reset WindowPadding
 		ImGui::PopStyleVar();
@@ -1227,9 +1285,10 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void FlatEngine::FlatGui::Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
 		ImGui::ShowDemoWindow();
+
 		// Get currently loade scene
 		Scene* loadedScene = FlatEngine::sceneManager->GetLoadedScene();
 		std::vector<GameObject*> sceneObjects = loadedScene->GetSceneObjects();
@@ -1244,131 +1303,14 @@ namespace FlatEngine { namespace FlatGui {
 		// Loop through scene objects
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
-			// Get parent of object for relative transform movement
-			if (sceneObjects[i]->GetParentID() != -1)
+			// If this Scene Object doesn't have a parent, render it and all of its children
+			if (sceneObjects[i]->GetParentID() == -1)
 			{
-				FlatEngine::GameObject* parent = FlatEngine::GetObjectById(sceneObjects[i]->GetParentID());
-			}
+				// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
+				Vector2 parentOffset(0, 0);
 
-
-			FlatEngine::Component* transformComponent = sceneObjects[i]->GetComponent(ComponentTypes::Transform);
-			FlatEngine::Component* spriteComponent = sceneObjects[i]->GetComponent(ComponentTypes::Sprite);
-			FlatEngine::Component* cameraComponent = sceneObjects[i]->GetComponent(ComponentTypes::Camera);
-			FlatEngine::Component* buttonComponent = sceneObjects[i]->GetComponent(ComponentTypes::Button);
-
-			// Check if each object has a Transform component
-			if (transformComponent != nullptr)
-			{
-				long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-				FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
-				Vector2 position = transformCasted->GetPosition();
-				Vector2 transformScale = transformCasted->GetScale();
-
-				// If it has a sprite component, render that sprite texture at the objects transform position with offsets
-				if (spriteComponent != nullptr)
-				{
-					// Cast the component to Sprite*
-					FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
-					SDL_Texture* spriteTexture = spriteCasted->GetTexture();
-					float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
-					float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
-					Vector2 spriteOffset = spriteCasted->GetOffset();
-					bool _spriteScalesWithZoom = true;
-
-					// Change to draw channel 0 for scene objects
-					drawSplitter->SetCurrentChannel(draw_list, 0);
-					// Draw the texture
-					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
-				}
-
-				// Renders the camera
-				if (cameraComponent != nullptr)
-				{
-					FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(cameraComponent);
-					float cameraWidth = camera->GetWidth();
-					float cameraHeight = camera->GetHeight();
-
-					float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, gridStep);
-					float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, gridStep);
-					float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), gridStep);
-					float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), gridStep);
-
-					ImVec2 topLeftCorner = ImVec2(cameraLeftEdge, cameraTopEdge);
-					ImVec2 bottomRightCorner = ImVec2(cameraRightEdge, cameraBottomEdge);
-					ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
-					ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
-
-					cameraTexture->loadFromFile("assets/images/camera.png");
-					SDL_Texture* texture = cameraTexture->getTexture();
-					float cameraTextureWidth = (float)cameraTexture->getWidth() * 3;
-					float cameraTextureHeight = (float)cameraTexture->getHeight() * 3;
-					bool _scalesWithZoom = false;
-					Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
-					Vector2 cameraTextureScale = { 1, 1 };
-					Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
-
-					// Draw channel 2 for Lower UI
-					drawSplitter->SetCurrentChannel(draw_list, 2);
-
-					// Draw a rectangle to the scene view to represent the camera frustrum
-					FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
-					FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
-					FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
-
-					// Draw actual camera icon
-					FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
-				}
-
-				if (buttonComponent != nullptr)
-				{
-					FlatEngine::Button* button = static_cast<FlatEngine::Button*>(buttonComponent);
-
-					float activeWidth = button->GetActiveWidth();
-					float activeHeight = button->GetActiveHeight();
-					Vector2 activeOffset = button->GetActiveOffset();
-					bool _isActive = button->IsActive();
-
-					float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x + activeWidth / 2, gridStep, false);
-					float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x - activeWidth / 2 , gridStep, false);
-					float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + activeHeight / 2 , gridStep, true);
-					float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - activeHeight / 2 , gridStep, true);
-
-					Vector2 topLeft = { activeLeft, activeTop };
-					Vector2 bottomRight = { activeRight, activeBottom };
-					
-					drawSplitter->SetCurrentChannel(draw_list, 2);
-
-					if (_isActive)
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
-					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
-				}
-
-
-				// Renders Transform Arrow // 
-				//
-				// Should be last in line here to be rendered top-most
-				// 
-				// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
-				// render the focused objects TransformArrow for moving it within the scene view
-				if (focusedObjectID != -1 && focusedObjectID == sceneObjects[i]->GetID())
-				{
-					// Get focused GameObject and transformArrow png
-					GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
-					transformArrow->loadFromFile("assets/images/transformArrow.png");
-					SDL_Texture* texture = transformArrow->getTexture();
-					// * 3 because the texture is so small. If we change the scale, it will change the render starting
-					// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
-					float arrowWidth = (float)transformArrow->getWidth() * 3;
-					float arrowHeight = (float)transformArrow->getHeight() * 3;
-					Vector2 arrowScale = { 1, 1 };
-					Vector2 arrowOffset = { 0, arrowHeight };
-					bool _scalesWithZoom = false;
-
-					// Draw channel 3 for Upper UI Transform Arrow
-					drawSplitter->SetCurrentChannel(draw_list, 3);
-					FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
-				}
+				// Render self and children recursively
+				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	
@@ -1378,7 +1320,188 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	// Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
+	// Helper - Recursively draws scene objects and their children to the scene view
+	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
+	{
+
+		FlatEngine::Component* transformComponent = self->GetComponent(ComponentTypes::Transform);
+		FlatEngine::Component* spriteComponent = self->GetComponent(ComponentTypes::Sprite);
+		FlatEngine::Component* cameraComponent = self->GetComponent(ComponentTypes::Camera);
+		FlatEngine::Component* buttonComponent = self->GetComponent(ComponentTypes::Button);
+		FlatEngine::Component* canvasComponent = self->GetComponent(ComponentTypes::Canvas);
+
+		// Check if each object has a Transform component
+		if (transformComponent != nullptr)
+		{
+			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+			FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
+			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
+			Vector2 transformScale = transformCasted->GetScale();
+
+			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
+			if (spriteComponent != nullptr)
+			{
+				// Cast the component to Sprite*
+				FlatEngine::Sprite* spriteCasted = static_cast<Sprite*>(spriteComponent);
+				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
+				float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
+				float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
+				Vector2 spriteOffset = spriteCasted->GetOffset();
+				bool _spriteScalesWithZoom = true;
+
+				// Change to draw channel 0 for scene objects
+				drawSplitter->SetCurrentChannel(draw_list, 0);
+				// Draw the texture
+				FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+			}
+
+			// Renders the camera
+			if (cameraComponent != nullptr)
+			{
+				FlatEngine::Camera* camera = static_cast<FlatEngine::Camera*>(cameraComponent);
+				float cameraWidth = camera->GetWidth();
+				float cameraHeight = camera->GetHeight();
+
+				float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, gridStep);
+				float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, gridStep);
+				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), gridStep);
+				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), gridStep);
+
+				ImVec2 topLeftCorner = ImVec2(cameraLeftEdge, cameraTopEdge);
+				ImVec2 bottomRightCorner = ImVec2(cameraRightEdge, cameraBottomEdge);
+				ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
+				ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
+
+				cameraTexture->loadFromFile("assets/images/camera.png");
+				SDL_Texture* texture = cameraTexture->getTexture();
+				float cameraTextureWidth = (float)cameraTexture->getWidth() * 3;
+				float cameraTextureHeight = (float)cameraTexture->getHeight() * 3;
+				bool _scalesWithZoom = false;
+				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
+				Vector2 cameraTextureScale = { 1, 1 };
+				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
+
+				// Draw channel 2 for Lower UI
+				drawSplitter->SetCurrentChannel(draw_list, 2);
+
+				// Draw a rectangle to the scene view to represent the camera frustrum
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+
+				// Draw actual camera icon
+				FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+			}
+
+
+			// Renders Canvas Component
+			if (canvasComponent != nullptr)
+			{
+				FlatEngine::Canvas* canvas = static_cast<FlatEngine::Canvas*>(canvasComponent);
+
+				float activeWidth = canvas->GetWidth();
+				float activeHeight = canvas->GetHeight();
+				int layerNumber = canvas->GetLayerNumber();
+				bool _blocksLayers = canvas->GetBlocksLayers();
+
+				float canvasLeft = WorldToViewport(scrolling.x, position.x - activeWidth / 2, gridStep, false);
+				float canvasRight = WorldToViewport(scrolling.x, position.x + activeWidth / 2, gridStep, false);
+				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, gridStep, true);
+				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, gridStep, true);
+
+				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
+				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
+
+				drawSplitter->SetCurrentChannel(draw_list, 2);
+
+				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, FlatEngine::CanvasBorder, 3.0f, draw_list);
+			}
+
+			// Renders Button Component
+			if (buttonComponent != nullptr)
+			{
+				FlatEngine::Button* button = static_cast<FlatEngine::Button*>(buttonComponent);
+
+				float activeWidth = button->GetActiveWidth();
+				float activeHeight = button->GetActiveHeight();
+				Vector2 activeOffset = button->GetActiveOffset();
+				bool _isActive = button->IsActive();
+
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - activeWidth / 2, gridStep, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + activeWidth / 2, gridStep, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + activeHeight / 2, gridStep, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - activeHeight / 2, gridStep, true);
+
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
+
+				drawSplitter->SetCurrentChannel(draw_list, 2);
+
+				if (_isActive)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
+				else
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+			}
+		
+
+			// Renders Transform Arrow // 
+			//
+			// Should be last in line here to be rendered top-most
+			// 
+			// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
+			// render the focused objects TransformArrow for moving it within the scene view
+			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
+			{
+				// Get focused GameObject and transformArrow png
+				GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+				transformArrow->loadFromFile("assets/images/transformArrow.png");
+				SDL_Texture* texture = transformArrow->getTexture();
+				// * 3 because the texture is so small. If we change the scale, it will change the render starting
+				// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
+				float arrowWidth = (float)transformArrow->getWidth() * 3;
+				float arrowHeight = (float)transformArrow->getHeight() * 3;
+				Vector2 arrowScale = { 1, 1 };
+				Vector2 arrowOffset = { 0, arrowHeight };
+				bool _scalesWithZoom = false;
+
+				// Draw channel 3 for Upper UI Transform Arrow
+				drawSplitter->SetCurrentChannel(draw_list, 3);
+				FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
+			}
+		}
+
+		if (self->HasChildren())
+		{
+			Vector2 parentOffset(0, 0);
+			if (transformComponent != nullptr)
+			{
+				FlatEngine::Transform* transformCasted = static_cast<Transform*>(transformComponent);
+				parentOffset = transformCasted->GetPosition();
+			}
+
+			for (int c = 0; c < self->GetChildren().size(); c++)
+			{
+				GameObject* child = FlatEngine::GetObjectById(self->GetChildren()[c]);
+
+				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+			}
+		}
+	}
+
+	// Helper - Recursively draws scene objects and their children to the game view
+	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	{
+
+	}
+
+
+	//void FlatEngine::FlatGui::Scene_RenderSceneCanvases()
+	//{
+	//	//// Impliment Scene View Canvases here somehow
+	//}
+
+
+	// Helper - Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
 	float FlatEngine::FlatGui::WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
 	{
 		if (_isYCoord)
@@ -1388,7 +1511,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 	
 
-	void FlatEngine::FlatGui::RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	void FlatEngine::FlatGui::Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));

@@ -12,6 +12,7 @@
 #include "Logger.h"
 #include "ScriptComponent.h"
 #include "GameLoop.h"
+#include "Canvas.h"
 
 
 //ImGui - SDL Renderer
@@ -44,6 +45,7 @@ namespace FlatEngine
 	extern ImU32 Red;
 	extern ImU32 ActiveButtonColor;
 	extern ImU32 InactiveButtonColor;
+	extern ImU32 CanvasBorder;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -134,11 +136,11 @@ namespace FlatEngine
 		extern void RenderToolbar();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
-		extern void RenderGameView();
-		extern void RenderGameObjects(ImVec2 canvas_p0, ImVec2 canvas_sz);
-		extern void RenderSceneView();
-		extern void RenderSceneGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void RenderSceneObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
+		extern void Game_RenderView();
+		extern void Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz);
+		extern void Scene_RenderView();
+		extern void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderLog();
 		extern void Cleanup();
 
@@ -150,6 +152,10 @@ namespace FlatEngine
 		// Recursive - For Rendering Hierarchy Objects and their children
 		extern void AddObjectWithChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 		extern void AddObjectWithoutChild(GameObject* currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
+
+		// Recursive - For adding GameObjects and their children to the scene/game view
+		void Scene_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		void Game_RenderSelfThenChildren(GameObject* self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 	}
 };
 

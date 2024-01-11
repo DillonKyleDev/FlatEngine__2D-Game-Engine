@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Button.h"
+#include "Canvas.h"
 
 
 namespace FlatEngine
@@ -66,6 +67,7 @@ namespace FlatEngine
 		FlatEngine::Camera* cameraComponent = nullptr;
 		FlatEngine::ScriptComponent* scriptComponent = nullptr;
 		FlatEngine::Button* buttonComponent = nullptr;
+		FlatEngine::Canvas* canvasComponent = nullptr;
 
 		// Get next Component ID from the scene
 		Scene* scene = FlatEngine::GetLoadedScene();
@@ -74,39 +76,46 @@ namespace FlatEngine
 
 		switch (type)
 		{
-		case Component::ComponentTypes::Transform:
+		case ComponentTypes::Transform:
 			transformComponent = new FlatEngine::Transform(nextID, this->ID);
 			scene->IncrementComponentID();
 			this->components.push_back(transformComponent);
 			return transformComponent;
 			break;
 
-		case Component::ComponentTypes::Sprite:
+		case ComponentTypes::Sprite:
 			spriteComponent = new FlatEngine::Sprite(nextID, this->ID);
 			this->components.push_back(spriteComponent);
 			scene->IncrementComponentID();
 			return spriteComponent;
 			break;
 
-		case Component::ComponentTypes::Camera:
+		case ComponentTypes::Camera:
 			cameraComponent = new FlatEngine::Camera(nextID, this->ID);
 			this->components.push_back(cameraComponent);
 			scene->IncrementComponentID();
 			return cameraComponent;
 			break;
 
-		case Component::ComponentTypes::Script:
+		case ComponentTypes::Script:
 			scriptComponent = new FlatEngine::ScriptComponent(nextID, this->ID);
 			this->components.push_back(scriptComponent);
 			scene->IncrementComponentID();
 			return scriptComponent;
 			break;
 
-		case Component::ComponentTypes::Button:
+		case ComponentTypes::Button:
 			buttonComponent = new FlatEngine::Button(nextID, this->ID);
 			this->components.push_back(buttonComponent);
 			scene->IncrementComponentID();
 			return buttonComponent;
+			break;
+
+		case ComponentTypes::Canvas:
+			canvasComponent = new FlatEngine::Canvas(nextID, this->ID);
+			this->components.push_back(canvasComponent);
+			scene->IncrementComponentID();
+			return canvasComponent;
 			break;
 
 		default:

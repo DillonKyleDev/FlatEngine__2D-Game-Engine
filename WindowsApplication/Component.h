@@ -20,6 +20,7 @@ namespace FlatEngine
 			Camera,
 			Script,
 			Button,
+			Canvas,
 		};
 
 		Component();

@@ -203,7 +203,6 @@ namespace FlatEngine
 					// Add children
 					for (int c = 0; c < currentObjectJson["children"].size(); c++)
 					{
-						FlatEngine::LogFloat(c, "Current Child Number: ");
 						loadedChildrenIDs.push_back(currentObjectJson["children"][c]);
 					}
 				}
@@ -220,7 +219,6 @@ namespace FlatEngine
 				// Add children
 				for (int c = 0; c < currentObjectJson["children"].size(); c++)
 				{
-					FlatEngine::LogFloat(c, "Current Child Number: ");
 					loadedObject->AddChild(loadedChildrenIDs[c]);
 				}
 
@@ -499,6 +497,57 @@ namespace FlatEngine
 						newButton->SetActive(_isActive);
 						newButton->SetActiveDimensions(activeWidth, activeHeight);
 						newButton->SetActiveOffset(activeOffset);						
+					}
+					else if (type == "Canvas")
+					{
+						FlatEngine::Canvas* newCanvas = static_cast<FlatEngine::Canvas*>(loadedObject->AddComponent(ComponentTypes::Canvas));
+
+						// Default values
+						long id = -1;
+						bool _isCollapsed = true;
+						float canvasWidth = 5;
+						float canvasHeight = 3;
+						int layerNumber = -1;
+						bool _blocksLayers = true;
+						
+
+						// Load ID
+						if (currentObjectJson["components"][j].contains("id"))
+							id = currentObjectJson["components"][j]["id"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+						// Load _isCollapsed
+						if (currentObjectJson["components"][j].contains("_isCollapsed"))
+							_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+
+						if (currentObjectJson["components"][j].contains("width"))
+							canvasWidth = currentObjectJson["components"][j]["width"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'width' in object: ");
+
+						if (currentObjectJson["components"][j].contains("height"))
+							canvasHeight = currentObjectJson["components"][j]["height"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'height' in object: ");
+
+						if (currentObjectJson["components"][j].contains("layerNumber"))
+							layerNumber = currentObjectJson["components"][j]["layerNumber"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'layerNumber' in object: ");
+
+						if (currentObjectJson["components"][j].contains("_blocksLayers"))
+							_blocksLayers = currentObjectJson["components"][j]["_blocksLayers"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_blocksLayers' in object: ");
+
+						// Assign values to the new Canvas
+						newCanvas->SetID(id);
+						newCanvas->SetCollapsed(_isCollapsed);
+						newCanvas->SetDimensions(canvasWidth, canvasHeight);
+						newCanvas->SetLayerNumber(layerNumber);
+						newCanvas->SetBlocksLayers(_blocksLayers);
 					}
 				}
 				

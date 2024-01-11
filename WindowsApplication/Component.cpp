@@ -81,6 +81,10 @@ namespace FlatEngine
 			return "Button";
 			break;
 
+		case Component::ComponentTypes::Canvas:
+			return "Canvas";
+			break;
+
 		default:
 			return "Null";
 		}

@@ -84,6 +84,11 @@ namespace FlatEngine
 	// Recursive
 	void Scene::DeleteChildrenAndSelf(GameObject* objectToDelete)
 	{
+		// Must remove the primaryCamera pointer from the loaded scene before deleting the GameObject.
+		FlatEngine::Scene* loadedScene = FlatEngine::GetLoadedScene();
+		FlatEngine::Camera* primaryCamera = loadedScene->GetPrimaryCamera();
+		long cameraObjectID = FlatEngine::GetObjectById(primaryCamera->GetParentID())->GetID();
+
 		// Check for children
 		if (objectToDelete->HasChildren())
 		{
@@ -99,6 +104,10 @@ namespace FlatEngine
 		{
 			if (this->sceneObjects[i]->GetID() == objectToDelete->GetID())
 			{
+				// Remove the primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
+				if (objectToDelete->GetID() == cameraObjectID)
+					loadedScene->RemovePrimaryCamera();
+
 				this->sceneObjects.erase(this->sceneObjects.begin() + i);
 			}
 		}
