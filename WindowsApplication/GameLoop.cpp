@@ -57,7 +57,6 @@ namespace FlatEngine
 		// to their corresponding script class entity vector members
 		for (int i = 0; i < this->gameObjects.size(); i++)
 		{
-			FlatEngine::LogString("GameObject: " + this->gameObjects[i]->GetName());
 			std::vector<std::shared_ptr<Component>> components = this->gameObjects[i]->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
@@ -66,8 +65,6 @@ namespace FlatEngine
 				{
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attatchedScript = script->GetAttachedScript();
-
-					FlatEngine::LogString("Attached Script: " + attatchedScript);
 
 					if (attatchedScript == "Mover")
 					{
@@ -79,7 +76,6 @@ namespace FlatEngine
 					}
 					else if (attatchedScript == "Sinwave")
 					{
-						FlatEngine::LogString("Object Added to Sinewave.");
 						sinwaveScript->AddEntity(this->gameObjects[i]);
 					}
 					// Add the Button GameObject(s) to the buttonScript;

@@ -20,9 +20,11 @@ namespace FlatEngine { namespace FlatGui
 	}
 
 
-	std::shared_ptr<Canvas> WidgetsManager::Scene_CreateCanvas(long componentID, long parentID, int layerNumber)
+	// Scene canvases are not connected to the main Components system. They are controlled completely by the WidgetsManager and
+	// The Scene and SceneManager class have no idea they exist.
+	std::shared_ptr<Canvas> WidgetsManager::Scene_CreateCanvas(int layerNumber)
 	{
-		std::shared_ptr<Canvas> newSceneCanvas(new Canvas(componentID, parentID, this->nextSceneCanvasID));
+		std::shared_ptr<Canvas> newSceneCanvas(new Canvas(-1, -1, this->nextSceneCanvasID));
 		newSceneCanvas->SetLayerNumber(layerNumber);
 		this->sceneCanvases.push_back(newSceneCanvas);
 		this->Scene_IncrementCanvasID();

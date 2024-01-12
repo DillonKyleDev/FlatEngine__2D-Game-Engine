@@ -30,6 +30,8 @@ namespace FlatEngine
 	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
 	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
 
+	//std::vector<std::shared_ptr<GameScript>> gameScripts = std::vector<std::shared_ptr<GameScript>>();
+
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
@@ -57,9 +59,6 @@ namespace FlatEngine
 	{
 		return FlatEngine::FocusedGameObjectID;
 	}
-
-
-	std::vector<FlatEngine::GameScript*> gameScripts = {};
 
 
 	// Scene Manager Prettification
@@ -102,7 +101,6 @@ namespace FlatEngine
 	{
 		FlatEngine::GetLoadedScene()->DeleteGameObject(sceneObjectID);
 	}
-
 
 	std::shared_ptr<Component> FlatEngine::GetObjectComponent(long objectID, ComponentTypes type)
 	{

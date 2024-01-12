@@ -14,7 +14,7 @@ namespace FlatEngine { namespace FlatGui
 		~WidgetsManager();
 
 		// Scene Canvases
-		std::shared_ptr<Canvas> Scene_CreateCanvas(long ID, long parentID, int layerNumber);
+		std::shared_ptr<Canvas> Scene_CreateCanvas(int layerNumber);
 		void Scene_DeleteCanvas(long ID);
 		std::vector<std::shared_ptr<Canvas>> Scene_GetCanvases();
 		void Scene_IncrementCanvasID();

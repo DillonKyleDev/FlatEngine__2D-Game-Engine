@@ -23,7 +23,6 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<FlatEngine::Button>> GetButtons();
 		std::string GetData();
 
-
 	private:
 		long canvasID;
 		// Buttons a Canvas owns will be established at run time

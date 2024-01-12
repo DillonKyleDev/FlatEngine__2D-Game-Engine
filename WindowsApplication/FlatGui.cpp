@@ -57,6 +57,8 @@ namespace FlatEngine { namespace FlatGui {
 	float xGameCenter = 600/2;
 	float yGameCenter = 400/2;
 
+	ImVec2 worldCenterPoint = ImVec2(0, 0);
+
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -102,6 +104,10 @@ namespace FlatEngine { namespace FlatGui {
 
 		FlatEngine::CreateNewScene();
 		//FlatEngine::sceneManager->LoadScene("SavedScenes.json");
+
+		// Set up our WidgetsManager and our Scene view Canvases and buttons
+		//FlatEngine::widgetsManager->Scene_CreateCanvas(-1, -1, 0);
+		//FlatEngine::widgetsManager->Scene_CreateButton(-1, -1)
 	}
 
 
@@ -1104,7 +1110,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
-		ImVec2 worldCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * cameraZoom) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * cameraZoom) + canvas_p0.y);
+		worldCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * cameraZoom) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * cameraZoom) + canvas_p0.y);
 		// Get the "center point of the viewport
 		ImVec2 viewportCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
@@ -1565,12 +1571,6 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	//void FlatEngine::FlatGui::Scene_RenderSceneCanvases()
-	//{
-	//	//// Impliment Scene View Canvases here somehow
-	//}
-
-
 	// Helper - Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
 	float FlatEngine::FlatGui::WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
 	{
@@ -1579,7 +1579,24 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			return centerPoint + (worldPosition * zoomFactor);
 	}
+
+	ImVec2 FlatEngine::FlatGui::ViewportToWorld(ImVec2 viewportPosition)
+	{
+		float zoom = FlatEngine::GetLoadedScene()->GetPrimaryCamera()->GetZoom();
+
+		float xPos = (viewportPosition.x - worldCenterPoint.x) / zoom;
+		float yPos = -(viewportPosition.y - worldCenterPoint.y) / zoom;
+
+		return ImVec2(xPos, yPos);
+	}
 	
+
+	//ImVec2 FlatEngine::FlatGui::MousePositionInGameSpace()
+	//{
+	//	ImVec2 mousePos = ImGui::GetIO().MousePos;
+
+	//	return ImVec2(0,0);
+	//}
 
 	void FlatEngine::FlatGui::Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
 	{
