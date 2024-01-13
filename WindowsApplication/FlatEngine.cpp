@@ -230,6 +230,9 @@ namespace FlatEngine
 		return gameLoop->GetDeltaTime();
 	}
 
+
+	// Helper
+	// 
 	//ImVec4 objectA(top, right, bottom, left), ImVec4 objectB(top, right, bottom, left)
 	bool FlatEngine::AreColliding(ImVec4 ObjectA, ImVec4 ObjectB)
 	{
@@ -244,5 +247,12 @@ namespace FlatEngine
 		float B_LeftEdge = ObjectB.w;
 
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
+	}
+
+	Vector2 FlatEngine::Lerp(Vector2 startPos, Vector2 endPos, float ease)
+	{
+		Vector2 difference = Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
+		Vector2 easedDiff = Vector2(difference.x * ease, difference.y * ease);
+		return Vector2(startPos.x + easedDiff.x, startPos.y + easedDiff.y);
 	}
 }

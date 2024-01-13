@@ -10,6 +10,7 @@ namespace FlatEngine
 		this->SetType(ComponentTypes::Animation);
 		this->SetID(myID);
 		this->SetParentID(parentID);
+		this->_playing = false;
 		this->ticksPerFrame = 10;
 		this->frames = std::vector<std::shared_ptr<GameObject>>();
 	}
@@ -28,15 +29,17 @@ namespace FlatEngine
 
 	void Animation::Play()
 	{
-		//std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->GetParentID());
-
-		//thisObject = std::make_shared<GameObject>();
-
-		//FlatEngine::LogString("Old Name: " + this->frames[0]->GetName());
+		this->_playing = true;
 	}
 
 	void Animation::Stop()
 	{
+		this->_playing = false;
+	}
+
+	bool Animation::IsPlaying()
+	{
+		return this->_playing;
 	}
 
 	void Animation::SetTicksPerFrame(float ticksPerFrame)
@@ -68,5 +71,33 @@ namespace FlatEngine
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
+	}
+
+
+	void Animation::LerpToCenter()
+	{
+		// Start animation timer
+		static float animationStartTime = FlatEngine::GetEllapsedGameTime();
+		FlatEngine::LogFloat(animationStartTime, "Animation Started: ");
+
+		// Get variables
+		std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->GetParentID());
+		std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(ComponentTypes::Transform));
+
+		// If the animation should still be on the first frame
+		//if (animationStartTime + this->ticksPerFrame * 1 < FlatEngine::GetEllapsedGameTime())
+		//{
+		//	// Do first frame things
+		//	transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(0, 0), .01f));
+		//}
+
+		// For 500 ticks, do this:
+		//if (animationStartTime + 500 > FlatEngine::GetEllapsedGameTime())
+		//{
+			// Do first frame things
+			transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(0, 0), .01f));
+		//}
+		//else
+		//	this->Stop();
 	}
 }

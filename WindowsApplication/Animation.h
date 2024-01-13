@@ -16,12 +16,17 @@ namespace FlatEngine
 		void Play();
 		void Stop();
 
+		bool IsPlaying();
 		void SetTicksPerFrame(float ticksPerFrame);
 		float GetTicksPerFrame();
 		std::vector<std::shared_ptr<GameObject>> GetFrames();
 		std::string GetData();
 
+		// Test Animations
+		void LerpToCenter();
+
 	private:
+		bool _playing;
 		float ticksPerFrame;
 		std::vector<std::shared_ptr<GameObject>> frames;
 	};

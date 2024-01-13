@@ -10,7 +10,7 @@
                     "id": 12,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0.0,
+                    "xPos": 22.5,
                     "xScale": 1.0,
                     "yPos": 0.0,
                     "yScale": 1.0
@@ -24,6 +24,30 @@
                     "type": "Sprite",
                     "xOffset": 23.5,
                     "yOffset": 13.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 3.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 5.0,
+                    "id": 16,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "Up",
+                    "id": 17,
+                    "type": "Script"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 18,
+                    "ticksPerFrame": 10.0,
+                    "type": "Animation"
                 }
             ],
             "id": 0,

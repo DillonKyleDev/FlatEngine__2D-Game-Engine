@@ -1,5 +1,6 @@
 #include "UIManager.h"
 #include "FlatEngine.h"
+#include <algorithm>
 
 
 namespace FlatEngine {
@@ -56,6 +57,8 @@ namespace FlatEngine {
 
 		bool UIManager::CheckForMouseOver()
 		{
+			// Save a copy of the last hovered buttons to check if we should fire onMouseLeave()
+			std::vector<std::shared_ptr<FlatEngine::Button>> lastHovered = this->gameHoveredButtons;
 			// Clear the hovered buttons vector
 			this->gameHoveredButtons = std::vector<std::shared_ptr<FlatEngine::Button>>();
 
@@ -88,6 +91,17 @@ namespace FlatEngine {
 					// If Mouse and Button are colliding, add the hovered button
 					if (FlatEngine::AreColliding(ImVec4(top, right, bottom, left), ImVec4(m_posWorld.y, m_posWorld.x, m_posWorld.y, m_posWorld.x)))
 						this->AddHoveredButton(button);
+				}
+			}
+
+			// For Mouse Leave function
+			for (int i = 0; i < lastHovered.size(); i++)
+			{
+				// If the new vector is missing an item from the last saved vector, fire OnMouseLeave() on that item
+				if (std::find(this->gameHoveredButtons.begin(), this->gameHoveredButtons.end(), lastHovered[i]) == this->gameHoveredButtons.end())
+				{
+					std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
+					lastHovered[i]->OnMouseLeaveFunction(thisObject);
 				}
 			}
 

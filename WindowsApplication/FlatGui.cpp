@@ -1538,6 +1538,20 @@ namespace FlatEngine { namespace FlatGui {
 		// Get Components
 		std::shared_ptr<Component> transformComponent = self->GetComponent(Component::ComponentTypes::Transform);
 		std::shared_ptr<Component> spriteComponent = self->GetComponent(Component::ComponentTypes::Sprite);
+		std::shared_ptr<Component> animationComponent = self->GetComponent(Component::ComponentTypes::Animation);
+
+
+		// Animation component handling
+		if (animationComponent != nullptr)
+		{
+			// Cast Animation component
+			std::shared_ptr<Animation> animationCasted = std::static_pointer_cast<Animation>(animationComponent);
+			
+			// If animation component is playing, play the animation
+			if (animationCasted != nullptr && animationCasted->IsPlaying())
+				animationCasted->LerpToCenter();
+		}
+
 
 		// Check if each object has a Transform component
 		if (transformComponent != nullptr)

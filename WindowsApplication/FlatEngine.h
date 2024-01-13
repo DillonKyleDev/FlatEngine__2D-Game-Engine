@@ -95,6 +95,7 @@ namespace FlatEngine
 	// Helper Functions
 	//
 	extern bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
+	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
 
 
 
