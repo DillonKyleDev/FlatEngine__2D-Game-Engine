@@ -20,6 +20,7 @@ namespace FlatEngine
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
+	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
 
 	// Colors
 	ImU32 White = IM_COL32(255, 255, 255, 255);

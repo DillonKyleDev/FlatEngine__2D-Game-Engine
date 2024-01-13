@@ -21,6 +21,7 @@ namespace FlatEngine
 			Script,
 			Button,
 			Canvas,
+			Animation,
 		};
 
 		Component();

@@ -2,7 +2,6 @@
 #include "../GameScript.h"
 
 
-
 class Up : public FlatEngine::GameScript
 {
 public:

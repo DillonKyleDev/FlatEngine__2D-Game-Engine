@@ -60,28 +60,32 @@ namespace FlatEngine
 		this->type = this->type;
 		switch (this->type)
 		{
-		case Component::ComponentTypes::Transform:
+		case ComponentTypes::Transform:
 			return "Transform";
 			break;
 
-		case Component::ComponentTypes::Sprite:
+		case ComponentTypes::Sprite:
 			return "Sprite";
 			break;
 
-		case Component::ComponentTypes::Camera:
+		case ComponentTypes::Camera:
 			return "Camera";
 			break;
 
-		case Component::ComponentTypes::Script:
+		case ComponentTypes::Script:
 			return "Script";
 			break;
 
-		case Component::ComponentTypes::Button:
+		case ComponentTypes::Button:
 			return "Button";
 			break;
 
-		case Component::ComponentTypes::Canvas:
+		case ComponentTypes::Canvas:
 			return "Canvas";
+			break;
+
+		case ComponentTypes::Animation:
+			return "Animation";
 			break;
 
 		default:

@@ -85,9 +85,6 @@ namespace FlatEngine { namespace FlatGui {
 		style.DockingSeparatorSize = 1;
 		style.SeparatorTextAlign = ImVec2(0.5f, 0.0f);
 		style.SeparatorTextBorderSize = 1;
-		//style.ItemSpacing = { 0, 0 };
-		//style.FramePadding = { 0.0f, 0.0f };
-		//style.DisplayWindowPadding = { 0.0f, 0.0f };
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::window, Window::renderer);
 		ImGui_ImplSDLRenderer2_Init(Window::renderer);
@@ -104,10 +101,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		FlatEngine::CreateNewScene();
 		//FlatEngine::sceneManager->LoadScene("SavedScenes.json");
-
-		// Set up our WidgetsManager and our Scene view Canvases and buttons
-		//FlatEngine::widgetsManager->Scene_CreateCanvas(-1, -1, 0);
-		//FlatEngine::widgetsManager->Scene_CreateButton(-1, -1)
 	}
 
 
@@ -860,7 +853,7 @@ namespace FlatEngine { namespace FlatGui {
 								std::vector<std::shared_ptr<Button>> canvasButtons = canvas->GetButtons();
 
 								// _BlocksLayers Checkbox
-								ImGui::Checkbox("Active:", &_blocksLayers);
+								ImGui::Checkbox("Blocks Layers:", &_blocksLayers);
 								canvas->SetBlocksLayers(_blocksLayers);
 
 								// Text
@@ -899,6 +892,41 @@ namespace FlatEngine { namespace FlatGui {
 
 								ImGui::PopItemWidth();
 							}
+							else if (componentType == "Animation")
+							{
+								std::shared_ptr<FlatEngine::Animation> animation = std::static_pointer_cast<FlatEngine::Animation>(components[i]);
+
+								// Retrieve Canvas values
+								float ticksPerFrame = animation->GetTicksPerFrame();
+								std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
+
+								// Text
+								ImGui::Text("Ticks per frame: ");
+
+								// Set Ticks Per Frame
+								ImGui::SliderFloat("##ticksPerFrame", &ticksPerFrame, 0.5f, -FLT_MAX, "%.3f");
+								animation->SetTicksPerFrame(ticksPerFrame);
+
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+								// Total Frames Text
+								std::string totalFrames = "Total frames: " + std::to_string(frames.size());
+								ImGui::Text(totalFrames.c_str());
+
+								// Add Frame Button
+								if (ImGui::Button("Add Frame"))
+									animation->AddFrame();
+
+								// Add Frame Button
+								if (ImGui::Button("Play Animation"))
+									animation->Play();
+
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+							}
 
 							// Pops
 							ImGui::PopItemWidth();
@@ -926,6 +954,7 @@ namespace FlatEngine { namespace FlatGui {
 			std::shared_ptr<FlatEngine::Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
 			std::shared_ptr<FlatEngine::Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
 			std::shared_ptr<FlatEngine::Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
+			std::shared_ptr<FlatEngine::Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
 
 			// Render the Adding Components button
 			ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
@@ -979,7 +1008,13 @@ namespace FlatEngine { namespace FlatGui {
 						focusedObject->AddComponent(ComponentTypes::Canvas);
 						ImGui::CloseCurrentPopup();
 					}
-						
+				
+				if (animationComponent == nullptr)
+					if (ImGui::Button("Animation", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					{
+						focusedObject->AddComponent(ComponentTypes::Animation);
+						ImGui::CloseCurrentPopup();
+					}
 				
 				ImGui::EndListBox();
 
@@ -1589,14 +1624,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		return ImVec2(xPos, yPos);
 	}
-	
 
-	//ImVec2 FlatEngine::FlatGui::MousePositionInGameSpace()
-	//{
-	//	ImVec2 mousePos = ImGui::GetIO().MousePos;
-
-	//	return ImVec2(0,0);
-	//}
 
 	void FlatEngine::FlatGui::Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
 	{

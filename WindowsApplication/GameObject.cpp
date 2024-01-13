@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Button.h"
 #include "Canvas.h"
+#include "Animation.h"
 #include "WidgetsManager.h"
 
 
@@ -16,15 +17,16 @@ namespace FlatEngine
 		this->parentID = parentID;
 		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
 		this->components = {};
+		this->_isActive = true;
+		this->childrenIDs = std::vector<long>();
 		
 		// Increment GameObjectID counter in the scene for next GameObject
 		FlatEngine::sceneManager->GetLoadedScene()->IncrementGameObjectID();
 	}
 
-
 	GameObject::~GameObject()
 	{
-		// Delete all pointers
+		// Reset all pointers
 		for (int i = 0; i < this->components.size(); i++)
 		{
 			if (this->components[i] != nullptr)
@@ -34,6 +36,17 @@ namespace FlatEngine
 		}
 	}
 
+	// Copy Constructor
+	GameObject::GameObject(GameObject& original)
+	{
+		FlatEngine::LogString("Name: " + original.GetName());
+		this->ID = original.GetID();
+		this->parentID = original.GetParentID();
+		this->name = original.GetName();
+		this->components = original.GetComponents();
+		this->_isActive = original.IsActive();
+		this->childrenIDs = original.childrenIDs;
+	}
 
 	void GameObject::SetID(long ID)
 	{
@@ -68,6 +81,7 @@ namespace FlatEngine
 		std::shared_ptr <FlatEngine::ScriptComponent> scriptComponent;
 		std::shared_ptr <FlatEngine::Button> buttonComponent;
 		std::shared_ptr<FlatEngine::Canvas> canvasComponent;
+		std::shared_ptr<FlatEngine::Animation> animationComponent;
 
 		// Get next Component ID from the scene
 		std::shared_ptr<Scene> scene = FlatEngine::GetLoadedScene();
@@ -104,17 +118,24 @@ namespace FlatEngine
 			break;
 
 		case ComponentTypes::Button:
-			buttonComponent = std::make_shared < FlatEngine::Button>(nextID, this->ID);
+			buttonComponent = FlatEngine::uiManager->CreateButton(nextID, this->ID, 0);
 			this->components.push_back(buttonComponent);
 			scene->IncrementComponentID();
 			return buttonComponent;
 			break;
 
 		case ComponentTypes::Canvas:
-			canvasComponent = FlatEngine::widgetsManager->Game_CreateCanvas(nextID, this->ID, 0);
+			canvasComponent = FlatEngine::uiManager->CreateCanvas(nextID, this->ID, 0);
 			this->components.push_back(canvasComponent);
 			scene->IncrementComponentID();
 			return canvasComponent;
+			break;
+
+		case ComponentTypes::Animation:
+			animationComponent = std::make_shared<FlatEngine::Animation>(nextID, this->ID);
+			this->components.push_back(animationComponent);
+			scene->IncrementComponentID();
+			return animationComponent;
 			break;
 
 		default:
@@ -213,5 +234,15 @@ namespace FlatEngine
 	bool GameObject::HasChildren()
 	{
 		return this->childrenIDs.size() > 0;
+	}
+
+	void GameObject::SetActive(bool _isActive)
+	{
+		this->_isActive = _isActive;
+	}
+
+	bool GameObject::IsActive()
+	{
+		return this->_isActive;
 	}
 }

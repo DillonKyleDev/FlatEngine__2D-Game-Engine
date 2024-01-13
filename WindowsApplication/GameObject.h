@@ -16,6 +16,8 @@ namespace FlatEngine
 	public:
 		GameObject(long parentID = -1);
 		~GameObject();
+		// Copy Constructor
+		GameObject(GameObject& original);
 
 		void SetID(long ID);
 		long GetID();
@@ -31,10 +33,13 @@ namespace FlatEngine
 		void RemoveChild(long childID);
 		std::vector<long> GetChildren();
 		bool HasChildren();
+		void SetActive(bool _isActive);
+		bool IsActive();
 
 	private:
 		long ID;
 		long parentID;
+		bool _isActive;
 		std::string name;
 		std::vector<std::shared_ptr<Component>> components;
 		std::vector<long> childrenIDs;

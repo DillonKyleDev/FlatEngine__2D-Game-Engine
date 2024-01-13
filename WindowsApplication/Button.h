@@ -5,23 +5,24 @@
 #include "Window.h"
 #include "Texture.h"
 #include "Vector2.h"
+#include "GameObject.h"
+#include <functional>
+
 
 
 
 namespace FlatEngine
 {
-	typedef void (*CallbackFunction)(int params);
-
 	class Button : public Component
 	{
 	public:
 		Button(long myID, long parentID);
 		~Button();
 		
-		void OnMouseOver(CallbackFunction onMouseOver(int params));
-		void OnMouseLeave(CallbackFunction onMouseLeave(int params));
-		void OnMouseLeftClick(CallbackFunction onLeftClick(int params));
-		void OnMouseRightClick(CallbackFunction onRightClick(int params));
+		void OnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback);
+		void OnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback);
+		void OnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback);
+		void OnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 		void SetActive(bool _active);
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
@@ -36,6 +37,11 @@ namespace FlatEngine
 		bool MouseIsOver();
 		std::string GetData();
 
+		std::function<void(std::shared_ptr<GameObject>)> OnMouseOverFunction;
+		std::function<void(std::shared_ptr<GameObject>)> OnMouseLeaveFunction;
+		std::function<void(std::shared_ptr<GameObject>)> OnLeftClickFunction;
+		std::function<void(std::shared_ptr<GameObject>)> OnRightClickFunction;
+
 	private:
 		bool _mouseIsOver;
 		bool _hasMouseOverFired;
@@ -44,10 +50,5 @@ namespace FlatEngine
 		float activeHeight;
 		Vector2 activeOffset;
 		int activeLayer;
-
-		CallbackFunction OnMouseOverFunction;
-		CallbackFunction OnMouseLeaveFunction;
-		CallbackFunction OnLeftClickFunction;
-		CallbackFunction OnRightClickFunction;
 	};
 }

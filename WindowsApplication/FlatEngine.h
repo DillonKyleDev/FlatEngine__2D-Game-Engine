@@ -13,7 +13,9 @@
 #include "ScriptComponent.h"
 #include "GameLoop.h"
 #include "Canvas.h"
+#include "Animation.h"
 #include "WidgetsManager.h"
+#include "UIManager.h"
 
 
 //ImGui - SDL Renderer
@@ -40,6 +42,7 @@ namespace FlatEngine
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
+	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;
 
 	// ImU32 colors
 	extern ImU32 White;

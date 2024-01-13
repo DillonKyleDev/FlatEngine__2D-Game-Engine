@@ -63,7 +63,8 @@
         },
         {
             "children": [
-                3
+                3,
+                5
             ],
             "components": [
                 {
@@ -135,7 +136,7 @@
                 }
             ],
             "id": 3,
-            "name": "StartButton",
+            "name": "Trash",
             "parent": 2
         },
         {
@@ -165,6 +166,52 @@
             "id": 4,
             "name": "StartText",
             "parent": 3
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 12,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -15.5,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 13,
+                    "texture": "assets/images/Wolk.png",
+                    "texture_height": 64.0,
+                    "texture_width": 64.0,
+                    "type": "Sprite",
+                    "xOffset": 32.0,
+                    "yOffset": 32.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 6.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 1.2999999523162842,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 10.0,
+                    "id": 14,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "Up",
+                    "id": 15,
+                    "type": "Script"
+                }
+            ],
+            "id": 5,
+            "name": "Wolk",
+            "parent": 2
         }
     ]
 }

@@ -26,35 +26,26 @@ namespace FlatEngine
 
 	Button::~Button()
 	{
-
 	}
 
-	void Button::OnMouseOver(CallbackFunction onMouseOver(int params))
+	void Button::OnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{	
-		int mousePos = 233;
-		this->OnMouseOverFunction(mousePos);
+		this->OnMouseOverFunction = callback;
 	}
 
-	void Button::OnMouseLeave(CallbackFunction onMouseLeave(int params))
+	void Button::OnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		this->_mouseIsOver = false;
-		int mouseXPosition = 342;
-
-		this->OnMouseLeaveFunction = onMouseLeave(mouseXPosition);
+		this->OnMouseLeaveFunction = callback;
 	}
 
-	void Button::OnMouseLeftClick(CallbackFunction onLeftClick(int params))
+	void Button::OnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		int mouseXPosition = 342;
-
-		this->OnLeftClickFunction = onLeftClick(mouseXPosition);
+		this->OnLeftClickFunction = callback;
 	}
 
-	void Button::OnMouseRightClick(CallbackFunction onRightClick(int params))
+	void Button::OnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		int mouseXPosition = 342;
-
-		this->OnRightClickFunction = onRightClick(mouseXPosition);
+		this->OnRightClickFunction = callback;
 	}
 
 	void Button::SetActive(bool _active)

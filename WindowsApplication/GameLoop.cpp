@@ -16,9 +16,7 @@ namespace FlatEngine
 		this->deltaTime = 0;
 
 		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
-		this->buttonComponents = {};
-		//this->animationObjects = {};
-		this->scripts = {};
+		this->scripts = std::vector<std::shared_ptr<GameScript>>();
 
 		this->moverScript = nullptr;
 		this->upScript = nullptr;
@@ -27,31 +25,26 @@ namespace FlatEngine
 
 	GameLoop::~GameLoop()
 	{
-
 	}
 
 	void GameLoop::Start()
 	{
+		// Handle Game Time
 		this->_started = true;
 		this->_paused = false;
 		this->lastFrameTime = (float)SDL_GetTicks();
-
-		// Get Start "time" in Ticks ellapsed
 		this->startTime = SDL_GetTicks();
 		this->pausedTicks = 0;
-
 		this->gameObjects = FlatEngine::GetSceneObjects();
 
 		// Create our script instances
 		this->moverScript = std::make_shared<Mover>();
 		this->upScript = std::make_shared<Up>();
 		this->sinwaveScript = std::make_shared<Sinwave>();
-		// this->buttonScript = new ButtonScript();
-
 		this->scripts.push_back(moverScript);
 		this->scripts.push_back(upScript);
 		this->scripts.push_back(sinwaveScript);
-		// this->scripts.push_back(buttonScript);
+
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
@@ -61,6 +54,7 @@ namespace FlatEngine
 
 			for (int j = 0; j < components.size(); j++)
 			{
+				// For the script components, we need to go through and add their owned objects
 				if (components[j]->GetTypeString() == "Script")
 				{
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
@@ -78,18 +72,7 @@ namespace FlatEngine
 					{
 						sinwaveScript->AddEntity(this->gameObjects[i]);
 					}
-					// Add the Button GameObject(s) to the buttonScript;
-
 					// Add other script name checks here and add them to those script objects
-				}
-				// Also
-				if (components[j]->GetTypeString() == "Button")
-				{
-					this->buttonComponents.push_back(std::static_pointer_cast<Button>(components[j]));
-				}
-				if (components[j]->GetTypeString() == "Animation")
-				{
-					//this->animationComponents.push_back(components[j]);
 				}
 			}
 		}
@@ -104,17 +87,12 @@ namespace FlatEngine
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
 				scripts[i]->Start();
 		}
-
-		// In the Start() function of the buttonScript script:
-		// startButton->OnMouseOver(callbackFunctionFromScript);
-		// This will register the callback function inside the Button Component to be called during the gameloop when the button gets its event.
 	}
 
 
 	void GameLoop::Update()
 	{
 		this->AddFrame();
-
 
 		// The time that this function was called last (the last frame), this->lastFrameTime, is the marker for how long it has been 
 		// (in milliseconds) from that frame to this current one. That is deltaTime.
@@ -125,19 +103,29 @@ namespace FlatEngine
 
 		// Run all the script Update() functions
 		for (int i = 0; i < scripts.size(); i++)
-		{
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
 				scripts[i]->Update(this->deltaTime);
+
+
+		// TODO: Check here if the Game viewport is focused before getting the mouse data //
+		//
+		// Check for mouse over on all of our Game Buttons
+		if (FlatEngine::uiManager->CheckForMouseOver())
+		{
+			std::vector<std::shared_ptr<FlatEngine::Button>> hoveredButtons = FlatEngine::uiManager->GetHoveredButtons();
+			ImGuiIO inputOutput = ImGui::GetIO();
+
+			// Call the OnMouseOverFunction() in the top level button that is hovered
+			std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(FlatEngine::uiManager->GetTopLevelButton()->GetParentID());
+			FlatEngine::uiManager->GetTopLevelButton()->OnMouseOverFunction(thisObject);
+
+			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[0])
+				FlatEngine::uiManager->GetTopLevelButton()->OnLeftClickFunction(thisObject);
+			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[1])
+				FlatEngine::uiManager->GetTopLevelButton()->OnRightClickFunction(thisObject);
 		}
-
-
-		// Run logic for other gameplay components here too like hover and click events for Buttons and Animation components
-		// For all the Buttons:
-
-		// int params = 204;
-		// 
-		// If FlatEngine::AreColliding(ButtonPositions, MousePositions)
-			// button->OnMouseOverFunction(params);
 	}
 
 
@@ -151,10 +139,10 @@ namespace FlatEngine
 		this->pausedTicks = 0;
 		this->framesCounted = 0;
 
-		// Delete the script objects (MAY NOT BE REQUIRED NOW)
-		//this->moverScript = nullptr;
-		//this->upScript = nullptr;
-		//this->sinwaveScript = nullptr;
+		// Reset shared_ptrs
+		this->moverScript = nullptr;
+		this->upScript = nullptr;
+		this->sinwaveScript = nullptr;
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(FlatEngine::GetLoadedScene()->GetName());
