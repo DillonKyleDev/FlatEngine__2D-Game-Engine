@@ -31,6 +31,10 @@ namespace FlatEngine { namespace FlatGui {
 	std::unique_ptr<Texture> transformArrow(new Texture());
 	std::unique_ptr<Texture> cameraTexture(new Texture());
 
+
+	int maxSpriteLayers = 55;
+
+
 	// Frame Counter
 	int framesDrawn = 0;
 
@@ -654,6 +658,7 @@ namespace FlatEngine { namespace FlatGui {
 								strcpy_s(newPath, path.c_str());
 								float textureWidth = sprite->GetTextureWidth();
 								float textureHeight = sprite->GetTextureHeight();
+								int renderOrder = sprite->GetRenderOrder();
 
 								// Sprite Path Strings
 								std::string pathString = "Path: ";
@@ -667,6 +672,10 @@ namespace FlatEngine { namespace FlatGui {
 									sprite->SetTexture(newPath);
 								ImGui::Text(textureWidthString.c_str());
 								ImGui::Text(textureHeightString.c_str());
+
+								// Render Order
+								if (ImGui::SliderInt("Sprite Render Order", &renderOrder, 0, maxSpriteLayers, "%d"))
+									sprite->SetRenderOrder(renderOrder);
 
 								// Push Item Width Setting
 								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
@@ -1183,7 +1192,7 @@ namespace FlatEngine { namespace FlatGui {
 		// Create the splitter for the draw_list
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 		// 3 channels for now in this scene view. 0 = scene objects, 1 = other UI (camera icon, etc), 2 = transform arrow
-		drawSplitter->Split(draw_list, 3);
+		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
 
 		ImVec2 cameraPosition(0, 0);
 		float cameraWidth = 50;
@@ -1246,8 +1255,8 @@ namespace FlatEngine { namespace FlatGui {
 			float alphaValue = trunc(frustrumColor.w);
 			ImU32 frustrumColorU32 = (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
 
-			// Set drawing channel to 2 for top layer camera UI
-			drawSplitter->SetCurrentChannel(draw_list, 2);
+			// Set drawing channel to maxSpriteLayers + 2 for top layer camera UI
+			drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 			// Top frustrum
 			FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
@@ -1400,7 +1409,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
 		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, 4);
+		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
 
 		// Loop through scene objects
 		for (int i = 0; i < sceneObjects.size(); i++)
@@ -1449,12 +1458,17 @@ namespace FlatEngine { namespace FlatGui {
 				float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
 				Vector2 spriteOffset = spriteCasted->GetOffset();
 				bool _spriteScalesWithZoom = true;
+				int renderOrder = spriteCasted->GetRenderOrder();
 
 				// If there is a valid Texture loaded into the Sprite Component
 				if (spriteTexture != nullptr)
 				{
-					// Change to draw channel 0 for scene objects
-					drawSplitter->SetCurrentChannel(draw_list, 0);
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
 					// Draw the texture
 					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
 				}
@@ -1487,7 +1501,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
 
 				// Draw channel 2 for Lower UI
-				drawSplitter->SetCurrentChannel(draw_list, 2);
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
 				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
@@ -1517,7 +1531,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
 				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, 2);
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, FlatEngine::CanvasBorder, 3.0f, draw_list);
 			}
@@ -1540,7 +1554,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, 2);
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (_isActive)
 					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
@@ -1569,8 +1583,8 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 arrowOffset = { 0, arrowHeight };
 				bool _scalesWithZoom = false;
 
-				// Draw channel 3 for Upper UI Transform Arrow
-				drawSplitter->SetCurrentChannel(draw_list, 3);
+				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
 				FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
 			}
 		}
@@ -1634,6 +1648,7 @@ namespace FlatEngine { namespace FlatGui {
 				float textureHeight = (float)spriteCasted->GetTextureHeight();
 				Vector2 offset = spriteCasted->GetOffset();
 				bool _scalesWithZoom = true;
+				int renderOrder = spriteCasted->GetRenderOrder();
 
 				// Changing the scale here because things are rendering too large and I want them to start off smaller
 				Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
@@ -1656,7 +1671,10 @@ namespace FlatEngine { namespace FlatGui {
 
 				if (_isIntersecting)
 				{
-					drawSplitter->SetCurrentChannel(draw_list, 0);
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
 					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
 				}
 			}

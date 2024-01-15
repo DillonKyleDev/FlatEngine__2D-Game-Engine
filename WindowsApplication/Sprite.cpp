@@ -32,8 +32,9 @@ namespace FlatEngine
 			{ "texture_width", this->textureWidth },
 			{ "texture_height", this->textureHeight },
 			{ "xOffset", this->offset.x },
-			{ "yOffset", this->offset.y }
-		};
+			{ "yOffset", this->offset.y },
+			{ "renderOrder", this->renderOrder }
+,		};
 		std::string data = jsonData.dump();
 		return data;
 	}

@@ -112,6 +112,8 @@ namespace FlatEngine
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
 
+		extern int maxSpriteLayers;
+
 		// Icons
 		extern std::unique_ptr<Texture> expandIcon;
 		extern std::unique_ptr<Texture> expandFlippedIcon;

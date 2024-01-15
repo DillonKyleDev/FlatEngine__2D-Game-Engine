@@ -339,6 +339,7 @@ namespace FlatEngine
 						std::string path = "";
 						float xOffset = 0;
 						float yOffset = 0;
+						int renderOrder = 0;
 
 						// Load ID
 						if (currentObjectJson["components"][j].contains("id"))
@@ -364,10 +365,16 @@ namespace FlatEngine
 						else
 							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yOffset' in object: ");
 
+						if (currentObjectJson["components"][j].contains("renderOrder"))
+							renderOrder = currentObjectJson["components"][j]["renderOrder"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'renderOrder' in object: ");
+
 						newSprite->SetID(id);
 						newSprite->SetCollapsed(_isCollapsed);
 						newSprite->SetTexture(path);
 						newSprite->SetOffset(Vector2(xOffset, yOffset));
+						newSprite->SetRenderOrder(renderOrder);
 					}
 					else if (type == "Camera")
 					{

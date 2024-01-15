@@ -16,6 +16,7 @@
                 {
                     "_isCollapsed": false,
                     "id": 1,
+                    "renderOrder": 0,
                     "texture": "assets/images/fightingUIEmpty.png",
                     "texture_height": 250.0,
                     "texture_width": 450.0,
@@ -44,6 +45,7 @@
                 {
                     "_isCollapsed": false,
                     "id": 3,
+                    "renderOrder": 1,
                     "texture": "assets/images/Skeli.png",
                     "texture_height": 64.0,
                     "texture_width": 64.0,
@@ -72,6 +74,7 @@
                 {
                     "_isCollapsed": false,
                     "id": 5,
+                    "renderOrder": 2,
                     "texture": "assets/images/Player.png",
                     "texture_height": 27.0,
                     "texture_width": 47.0,
