@@ -1,60 +1,6 @@
 {
     "Scene GameObjects": [
         {
-            "children": [
-                1
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 12,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 22.5,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isCollapsed": false,
-                    "id": 13,
-                    "texture": "assets/images/Player.png",
-                    "texture_height": 27.0,
-                    "texture_width": 47.0,
-                    "type": "Sprite",
-                    "xOffset": 23.5,
-                    "yOffset": 13.5
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "activeHeight": 3.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 5.0,
-                    "id": 16,
-                    "type": "Button"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "Up",
-                    "id": 17,
-                    "type": "Script"
-                },
-                {
-                    "_isCollapsed": false,
-                    "id": 18,
-                    "ticksPerFrame": 10.0,
-                    "type": "Animation"
-                }
-            ],
-            "id": 0,
-            "name": "Player",
-            "parent": -1
-        },
-        {
             "children": [],
             "components": [
                 {
@@ -69,173 +15,144 @@
                 },
                 {
                     "_isCollapsed": false,
-                    "_isPrimaryCamera": true,
-                    "frustrumAlpha": 255.0,
-                    "frustrumBlue": 255.0,
-                    "frustrumGreen": 255.0,
-                    "frustrumRed": 255.0,
-                    "height": 30.0,
                     "id": 1,
-                    "type": "Camera",
-                    "width": 50.0,
-                    "zoom": 10.0
+                    "texture": "assets/images/fightingUIEmpty.png",
+                    "texture_height": 250.0,
+                    "texture_width": 450.0,
+                    "type": "Sprite",
+                    "xOffset": 225.0,
+                    "yOffset": 125.0
                 }
             ],
-            "id": 1,
-            "name": "Camera",
-            "parent": 0
-        },
-        {
-            "children": [
-                3,
-                5
-            ],
-            "components": [
-                {
-                    "_blocksLayers": true,
-                    "_isCollapsed": false,
-                    "height": 30.0,
-                    "id": 2,
-                    "layerNumber": 0,
-                    "type": "Canvas",
-                    "width": 50.0
-                },
-                {
-                    "_isCollapsed": false,
-                    "id": 15,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 2,
-            "name": "UI",
+            "id": 0,
+            "name": "Background",
             "parent": -1
         },
         {
-            "children": [
-                4
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 8,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "activeHeight": 4.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 18.0,
-                    "id": 9,
-                    "type": "Button"
-                },
-                {
-                    "_isCollapsed": false,
-                    "id": 10,
-                    "texture": "assets/images/SingleButton.png",
-                    "texture_height": 19.0,
-                    "texture_width": 89.0,
-                    "type": "Sprite",
-                    "xOffset": 44.5,
-                    "yOffset": 9.5
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "Up",
-                    "id": 11,
-                    "type": "Script"
-                }
-            ],
-            "id": 3,
-            "name": "Trash",
-            "parent": 2
-        },
-        {
             "children": [],
             "components": [
                 {
                     "_isCollapsed": false,
-                    "id": 11,
+                    "id": 2,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
+                    "xPos": -4.0,
+                    "xScale": -1.0,
+                    "yPos": 6.0,
                     "yScale": 1.0
                 },
                 {
                     "_isCollapsed": false,
-                    "id": 14,
-                    "texture": "assets/images/Trashcan.png",
-                    "texture_height": 11.0,
-                    "texture_width": 9.0,
-                    "type": "Sprite",
-                    "xOffset": 4.5,
-                    "yOffset": 5.5
-                }
-            ],
-            "id": 4,
-            "name": "StartText",
-            "parent": 3
-        },
-        {
-            "children": [],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 12,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": -15.5,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isCollapsed": false,
-                    "id": 13,
-                    "texture": "assets/images/Wolk.png",
+                    "id": 3,
+                    "texture": "assets/images/Skeli.png",
                     "texture_height": 64.0,
                     "texture_width": 64.0,
                     "type": "Sprite",
                     "xOffset": 32.0,
                     "yOffset": 32.0
+                }
+            ],
+            "id": 1,
+            "name": "Enemy",
+            "parent": -1
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 4,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -21.0,
+                    "xScale": 1.0,
+                    "yPos": 6.0,
+                    "yScale": 1.0
                 },
                 {
-                    "_isActive": true,
                     "_isCollapsed": false,
-                    "activeHeight": 6.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 1.2999999523162842,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 10.0,
-                    "id": 14,
-                    "type": "Button"
+                    "id": 5,
+                    "texture": "assets/images/Player.png",
+                    "texture_height": 27.0,
+                    "texture_width": 47.0,
+                    "type": "Sprite",
+                    "xOffset": 23.0,
+                    "yOffset": 13.5
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 8,
+                    "ticksPerFrame": 10.0,
+                    "type": "Animation"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "Up",
-                    "id": 15,
+                    "id": 9,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 5.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 38.599998474121094,
+                    "activeOffsetY": -10.600000381469727,
+                    "activeWidth": 5.5,
+                    "id": 10,
+                    "type": "Button"
                 }
             ],
-            "id": 5,
-            "name": "Wolk",
-            "parent": 2
+            "id": 2,
+            "name": "Player",
+            "parent": -1
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 6,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -1.5,
+                    "xScale": 1.0,
+                    "yPos": -1.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 22.5000057220459,
+                    "frustrumGreen": 22.5000057220459,
+                    "frustrumRed": 22.5000057220459,
+                    "height": 49.5,
+                    "id": 7,
+                    "type": "Camera",
+                    "width": 91.0,
+                    "zoom": 12.1899995803833
+                }
+            ],
+            "id": 3,
+            "name": "Camera",
+            "parent": -1
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "_isMusic": true,
+                    "id": 11,
+                    "path": "assets/audio/Ship.wav",
+                    "type": "Audio"
+                }
+            ],
+            "id": 4,
+            "name": "SoundEffect",
+            "parent": -1
         }
     ]
 }

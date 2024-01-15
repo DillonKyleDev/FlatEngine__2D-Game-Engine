@@ -51,11 +51,14 @@ void Up::Start()
 		std::shared_ptr<FlatEngine::GameObject> thisObject = this->GetEntities()[i];
 		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(thisObject->GetComponent(FlatEngine::ComponentTypes::Button));
 
-		// Register Mouse Events functions to the Button
-		button->OnMouseOver(UpOnMouseOver);
-		button->OnMouseLeave(UpOnMouseLeave);
-		button->OnMouseLeftClick(UpOnLeftClick);
-		button->OnMouseRightClick(UpOnRightClick);
+		if (button != nullptr)
+		{
+			// Register Mouse Events functions to the Button
+			button->OnMouseOver(UpOnMouseOver);
+			button->OnMouseLeave(UpOnMouseLeave);
+			button->OnMouseLeftClick(UpOnLeftClick);
+			button->OnMouseRightClick(UpOnRightClick);
+		}
 	}
 }
 

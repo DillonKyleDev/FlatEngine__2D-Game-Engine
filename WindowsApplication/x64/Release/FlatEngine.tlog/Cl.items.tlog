@@ -7,7 +7,10 @@ C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\im
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_draw.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_draw.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_tables.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_widgets.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Animation.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Animation.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\Attack.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Attack.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Button.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Button.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\ButtonScriptTemplate.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\ButtonScriptTemplate.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Camera.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Camera.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Component.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Component.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\GameScript.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\GameScript.obj
@@ -15,7 +18,7 @@ C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatEngine.cpp;C
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatGui.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\FlatGui.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\GameLoop.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\GameLoop.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\GameObject.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\GameObject.obj
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Layer.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Layer.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Canvas.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Canvas.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Logger.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Logger.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Mover.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Mover.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Scene.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Scene.obj
@@ -29,6 +32,7 @@ C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Texture.cpp;C:\U
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\TextureManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\TextureManager.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Transform.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Transform.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\Up.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Up.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\UIManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\UIManager.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Vector2.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Vector2.obj
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Widgets.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Widgets.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\WidgetsManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\WidgetsManager.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Window.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Window.obj

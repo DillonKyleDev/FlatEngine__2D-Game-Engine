@@ -31,24 +31,24 @@ namespace FlatEngine
 	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
 	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
 
-	//std::vector<std::shared_ptr<GameScript>> gameScripts = std::vector<std::shared_ptr<GameScript>>();
+	std::vector<std::shared_ptr<GameScript>> gameScripts = std::vector<std::shared_ptr<GameScript>>();
 
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
+		FlatEngine::FlatGui::Render(_hasQuit);
+
 		// If Release - Start the Game Loop
-		if (FlatEngine::_isDebugMode == false && !FlatEngine::GameLoopStarted())
+		if (FlatEngine::_isDebugMode == false && FlatEngine::GameLoopStarted() == false)
 		{
 			FlatEngine::StartGameLoop();
 		}
 
 		// Keeping track of the frames passed since we started the GameLoop
-		if (FlatEngine::GameLoopStarted() && !FlatEngine::GameLoopPaused())
+		if (FlatEngine::GameLoopStarted() && FlatEngine::GameLoopPaused() == false)
 		{
 			FlatEngine::GameLoopUpdate();
 		}
-
-		FlatEngine::FlatGui::Render(_hasQuit);
 	}
 
 	void FlatEngine::SetFocusedGameObjectID(long ID)

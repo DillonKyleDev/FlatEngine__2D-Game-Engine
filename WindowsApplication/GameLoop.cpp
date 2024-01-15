@@ -21,6 +21,7 @@ namespace FlatEngine
 		this->moverScript = nullptr;
 		this->upScript = nullptr;
 		this->sinwaveScript = nullptr;
+		this->attackScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -30,7 +31,6 @@ namespace FlatEngine
 	void GameLoop::Start()
 	{
 		// Handle Game Time
-		this->_started = true;
 		this->_paused = false;
 		this->lastFrameTime = (float)SDL_GetTicks();
 		this->startTime = SDL_GetTicks();
@@ -41,9 +41,11 @@ namespace FlatEngine
 		this->moverScript = std::make_shared<Mover>();
 		this->upScript = std::make_shared<Up>();
 		this->sinwaveScript = std::make_shared<Sinwave>();
+		this->attackScript = std::make_shared<Attack>();
 		this->scripts.push_back(moverScript);
 		this->scripts.push_back(upScript);
 		this->scripts.push_back(sinwaveScript);
+		this->scripts.push_back(attackScript);
 
 
 		// Find all script components on Scene GameObjects and add those GameObjects
@@ -58,19 +60,23 @@ namespace FlatEngine
 				if (components[j]->GetTypeString() == "Script")
 				{
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
-					std::string attatchedScript = script->GetAttachedScript();
+					std::string attachedScript = script->GetAttachedScript();
 
-					if (attatchedScript == "Mover")
+					if (attachedScript == "Mover")
 					{
 						moverScript->AddEntity(this->gameObjects[i]);
 					}
-					else if (attatchedScript == "Up")
+					else if (attachedScript == "Up")
 					{
 						upScript->AddEntity(this->gameObjects[i]);
 					}
-					else if (attatchedScript == "Sinwave")
+					else if (attachedScript == "Sinwave")
 					{
 						sinwaveScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Attack")
+					{
+						attackScript->AddEntity(this->gameObjects[i]);
 					}
 					// Add other script name checks here and add them to those script objects
 				}
@@ -87,6 +93,8 @@ namespace FlatEngine
 			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
 				scripts[i]->Start();
 		}
+
+		this->_started = true;
 	}
 
 

@@ -28,6 +28,7 @@ namespace FlatEngine
 	private:
 		bool _playing;
 		float ticksPerFrame;
+		int animationStartTime;
 		std::vector<std::shared_ptr<GameObject>> frames;
 	};
 }

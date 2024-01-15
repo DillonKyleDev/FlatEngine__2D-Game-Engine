@@ -96,6 +96,15 @@ namespace FlatEngine
 		return this->path;
 	}
 
+	void Sprite::SetRenderOrder(int order)
+	{
+		this->renderOrder = order;
+	}
+
+	int Sprite::GetRenderOrder()
+	{
+		return this->renderOrder;
+	}
 
 	void Sprite::RemoveTexture()
 	{

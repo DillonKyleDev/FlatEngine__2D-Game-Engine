@@ -68,8 +68,12 @@ namespace FlatEngine {
 				{
 					// Get the Buttons Transform data
 					std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->gameButtons[i]->GetParentID());
-					std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
-					Vector2 position = transform->GetPosition();
+					std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+					if (thisObject != nullptr)
+						transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
+					Vector2 position = Vector2(0, 0);
+					if (transform != nullptr)
+						position = transform->GetPosition();
 					float xPos = position.x;
 					float yPos = position.y;
 
@@ -86,6 +90,7 @@ namespace FlatEngine {
 
 					// Get Mouse Position in world space
 					ImVec2 mousePos = ImGui::GetIO().MousePos;
+					FlatEngine::LogFloat(mousePos.x, "Mouse Pos.x");
 					ImVec2 m_posWorld = FlatEngine::FlatGui::ViewportToWorld(mousePos);
 
 					// If Mouse and Button are colliding, add the hovered button

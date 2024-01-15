@@ -896,7 +896,7 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								std::shared_ptr<FlatEngine::Animation> animation = std::static_pointer_cast<FlatEngine::Animation>(components[i]);
 
-								// Retrieve Canvas values
+								// Retrieve Animation values
 								float ticksPerFrame = animation->GetTicksPerFrame();
 								std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
 
@@ -926,6 +926,62 @@ namespace FlatEngine { namespace FlatGui {
 								// Set cursor type
 								if (ImGui::IsItemHovered())
 									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+							}
+							else if (componentType == "Audio")
+							{
+								std::shared_ptr<FlatEngine::Audio> audio = std::static_pointer_cast<FlatEngine::Audio>(components[i]);
+
+								// Retrieve Audio values
+								std::string path = audio->GetPath();
+								bool _isMusic = audio->IsMusic();
+
+								// For path editing
+								char newPath[1024];
+								strcpy_s(newPath, path.c_str());
+								std::string pathString = "Path: ";
+								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+
+								// On Path editing, reload the effect
+								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+								std::string inputId = "##audioPath_" + std::to_string(audio->GetID());
+								if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
+								{
+									if (_isMusic)
+										audio->LoadMusic(newPath);
+									else
+										audio->LoadEffect(newPath);
+
+									audio->SetPath(newPath);
+								}
+								
+								// _isMusic checkbox, also reload the effect as music or chunk
+								std::string checkboxId = "Is Music##" + std::to_string(audio->GetID());
+								if (ImGui::Checkbox(checkboxId.c_str(), &_isMusic))
+								{
+									if (_isMusic)
+										audio->LoadMusic(newPath);
+									else
+										audio->LoadEffect(newPath);
+
+									audio->SetIsMusic(_isMusic);
+								}
+								
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+								// Play Audio
+								if (ImGui::Button("Play"))
+									audio->Play();
+								ImGui::SameLine(0, 5);
+								// Pause Audio
+								if (ImGui::Button("Pause"))
+									audio->Pause();
+								ImGui::SameLine(0, 5);
+								// Stop Audio
+								if (ImGui::Button("Stop"))
+									audio->Stop();
 							}
 
 							// Pops
@@ -1016,6 +1072,12 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::CloseCurrentPopup();
 					}
 				
+				if (ImGui::Button("Audio", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				{
+					focusedObject->AddComponent(ComponentTypes::Audio);
+					ImGui::CloseCurrentPopup();
+				}
+
 				ImGui::EndListBox();
 
 				// Pop button bg color styles
@@ -1028,7 +1090,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Unfocus GameObject first
 				int tempID = focusedObjectID;
 				FlatEngine::SetFocusedGameObjectID(-1);
-				FlatEngine::sceneManager->GetLoadedScene()->DeleteGameObject(tempID);
+				FlatEngine::DeleteGameObject(tempID);
 			}
 		}
 		ImGui::PopStyleColor();

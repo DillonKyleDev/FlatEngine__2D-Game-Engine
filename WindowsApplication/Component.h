@@ -22,6 +22,7 @@ namespace FlatEngine
 			Button,
 			Canvas,
 			Animation,
+			Audio,
 		};
 
 		Component();

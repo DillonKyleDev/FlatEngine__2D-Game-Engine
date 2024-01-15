@@ -6,6 +6,7 @@
 #include "Mover.h"
 #include "./scripts/Up.h"
 #include "./scripts/Sinwave.h"
+#include "./scripts/Attack.h"
 
 
 
@@ -46,6 +47,7 @@ namespace FlatEngine
 		std::shared_ptr<Mover> moverScript;
 		std::shared_ptr<Up> upScript;
 		std::shared_ptr<Sinwave> sinwaveScript;
+		std::shared_ptr<Attack> attackScript;
 	};
 }
 

@@ -19,6 +19,8 @@ namespace FlatEngine
 		float GetTextureWidth();
 		float GetTextureHeight();
 		std::string GetPath();
+		void SetRenderOrder(int order);
+		int GetRenderOrder();
 		void SetOffset(Vector2 offset);
 		Vector2 GetOffset();
 		void RemoveTexture();
@@ -26,6 +28,7 @@ namespace FlatEngine
 
 	private:
 		SDL_Texture* texture;
+		int renderOrder;
 		float textureWidth;
 		float textureHeight;
 		Vector2 offset;

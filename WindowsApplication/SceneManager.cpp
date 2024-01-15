@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "ScriptComponent.h"
+#include "Audio.h"
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -586,6 +587,86 @@ namespace FlatEngine
 						newCanvas->SetDimensions(canvasWidth, canvasHeight);
 						newCanvas->SetLayerNumber(layerNumber);
 						newCanvas->SetBlocksLayers(_blocksLayers);
+					}
+					else if (type == "Animation")
+					{
+						std::shared_ptr<Animation> newAnimation = std::static_pointer_cast<Animation>(loadedObject->AddComponent(ComponentTypes::Animation));
+
+						// Default values
+						long id = -1;
+						bool _isCollapsed = false;
+						bool _isPlaying = false;
+						float ticksPerFrame = 30;
+
+
+						// Load ID
+						if (currentObjectJson["components"][j].contains("id"))
+							id = currentObjectJson["components"][j]["id"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+						// Load _isCollapsed
+						if (currentObjectJson["components"][j].contains("_isCollapsed"))
+							_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+
+						if (currentObjectJson["components"][j].contains("_isPlaying"))
+							_isPlaying = currentObjectJson["components"][j]["_isPlaying"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isPlaying' in object: ");
+
+						if (currentObjectJson["components"][j].contains("ticksPerFrame"))
+							ticksPerFrame = currentObjectJson["components"][j]["ticksPerFrame"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'ticksPerFrame' in object: ");
+
+						// Assign values to the new Canvas
+						newAnimation->SetID(id);
+						newAnimation->SetCollapsed(_isCollapsed);
+						newAnimation->Stop();
+						newAnimation->SetTicksPerFrame(ticksPerFrame);
+					}
+					else if (type == "Audio")
+					{
+						std::shared_ptr<Audio> newAudio = std::static_pointer_cast<Audio>(loadedObject->AddComponent(ComponentTypes::Audio));
+
+						// Default values
+						long id = -1;
+						bool _isCollapsed = false;
+						bool _isMusic = false;
+						std::string path = "";
+
+
+						// Load ID
+						if (currentObjectJson["components"][j].contains("id"))
+							id = currentObjectJson["components"][j]["id"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+						// Load _isCollapsed
+						if (currentObjectJson["components"][j].contains("_isCollapsed"))
+							_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+
+						if (currentObjectJson["components"][j].contains("_isMusic"))
+							_isMusic = currentObjectJson["components"][j]["_isMusic"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isMusic' in object: ");
+
+						if (currentObjectJson["components"][j].contains("path"))
+							path = currentObjectJson["components"][j]["path"];
+						else
+							FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'path' in object: ");
+
+						// Assign values to the new Canvas
+						newAudio->SetID(id);
+						newAudio->SetCollapsed(_isCollapsed);
+						newAudio->SetPath(path);
+						newAudio->SetIsMusic(_isMusic);
+						if (_isMusic)
+							newAudio->LoadMusic(path);
+						else
+							newAudio->LoadEffect(path);
 					}
 				}
 				

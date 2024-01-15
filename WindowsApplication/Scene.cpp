@@ -86,7 +86,9 @@ namespace FlatEngine
 		// Must remove the primaryCamera pointer from the loaded scene before deleting the GameObject.
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
 		std::shared_ptr<Camera> primaryCamera = loadedScene->GetPrimaryCamera();
-		long cameraObjectID = FlatEngine::GetObjectById(primaryCamera->GetParentID())->GetID();
+		long cameraObjectID = -1;
+		if (primaryCamera != nullptr)
+			cameraObjectID = FlatEngine::GetObjectById(primaryCamera->GetParentID())->GetID();
 
 		// Check for children
 		if (objectToDelete->HasChildren())

@@ -6,6 +6,7 @@
 #include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
+#include "Audio.h"
 #include "WidgetsManager.h"
 
 
@@ -82,6 +83,7 @@ namespace FlatEngine
 		std::shared_ptr <FlatEngine::Button> buttonComponent;
 		std::shared_ptr<FlatEngine::Canvas> canvasComponent;
 		std::shared_ptr<FlatEngine::Animation> animationComponent;
+		std::shared_ptr<FlatEngine::Audio> audioComponent;
 
 		// Get next Component ID from the scene
 		std::shared_ptr<Scene> scene = FlatEngine::GetLoadedScene();
@@ -136,6 +138,13 @@ namespace FlatEngine
 			this->components.push_back(animationComponent);
 			scene->IncrementComponentID();
 			return animationComponent;
+			break;
+
+		case ComponentTypes::Audio:
+			audioComponent = std::make_shared<FlatEngine::Audio>(nextID, this->ID);
+			this->components.push_back(audioComponent);
+			scene->IncrementComponentID();
+			return audioComponent;
 			break;
 
 		default:

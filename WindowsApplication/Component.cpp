@@ -88,6 +88,10 @@ namespace FlatEngine
 			return "Animation";
 			break;
 
+		case ComponentTypes::Audio:
+			return "Audio";
+			break;
+
 		default:
 			return "Null";
 		}
