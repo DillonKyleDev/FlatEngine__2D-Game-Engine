@@ -78,9 +78,9 @@
     <IntDir>$(SolutionDir)\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)WindowsApplication;$(SolutionDir)vendors\ImGui_Docking\;$(SolutionDir)vendors\SDL2_image\include;$(SolutionDir)vendors\SDL_Text\include;$(SolutionDir)vendors\SDL2_2\include;$(SolutionDir)WindowsApplication\backends;$(SolutionDir)vendors\json_formatter\single_include\nlohmann;C:\Users\Dillon Kyle\source\repos\FlatEngine\vendors\SDL2_Mixer\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)vendors\ImGui_Docking\misc\cpp;$(SolutionDir)vendors\SDL2_image\lib\x64;$(SolutionDir)vendors\SDL_Text\lib\x64;$(SolutionDir)vendors\SDL2_2\lib\x64;C:\Users\Dillon Kyle\source\repos\FlatEngine\vendors\SDL2_Mixer\lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\WindowsApplication</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)WindowsApplication;$(SolutionDir)vendors\ImGui_Docking\;$(SolutionDir)vendors\SDL2_image\include;$(SolutionDir)vendors\SDL_Text\include;$(SolutionDir)vendors\SDL2_2\include;$(SolutionDir)WindowsApplication\backends;$(SolutionDir)vendors\json_formatter\single_include\nlohmann;$(SolutionDir)vendors\SDL2_Mixer\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)vendors\ImGui_Docking\misc\cpp;$(SolutionDir)vendors\SDL2_image\lib\x64;$(SolutionDir)vendors\SDL_Text\lib\x64;$(SolutionDir)vendors\SDL2_2\lib\x64;$(SolutionDir)vendors\SDL2_Mixer\lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\WindowsApplication\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,7 +139,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;d3d12.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;d3d12.lib;d3dcompiler.lib;dxgi.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
