@@ -17,6 +17,12 @@ void ButtonScriptTemplateOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thi
 	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
+void ButtonScriptTemplateOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
+{
+	FlatEngine::LogString("Mouse Enter... " + thisObject->GetName());
+	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
+}
+
 void ButtonScriptTemplateOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
 	FlatEngine::LogString("Mouse Leave... " + thisObject->GetName());
@@ -45,6 +51,7 @@ void ButtonScriptTemplate::Start()
 
 		// Register Mouse Events functions to the Button
 		button->OnMouseOver(ButtonScriptTemplateOnMouseOver);
+		button->OnMouseEnter(ButtonScriptTemplateOnMouseEnter);
 		button->OnMouseLeave(ButtonScriptTemplateOnMouseLeave);
 		button->OnMouseLeftClick(ButtonScriptTemplateOnLeftClick);
 		button->OnMouseRightClick(ButtonScriptTemplateOnRightClick);

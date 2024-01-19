@@ -1,0 +1,71 @@
+{
+    "Scene GameObjects": [
+        {
+            "children": [
+                8
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 19,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.600000023841858,
+                    "yPos": 0.0,
+                    "yScale": 1.600000023841858
+                }
+            ],
+            "id": 7,
+            "name": "UI",
+            "parent": -1
+        },
+        {
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 15,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 16,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "StartButton",
+                    "id": 17,
+                    "type": "Script"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 18,
+                    "renderOrder": 0,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                }
+            ],
+            "id": 8,
+            "name": "Start",
+            "parent": 7
+        }
+    ]
+}

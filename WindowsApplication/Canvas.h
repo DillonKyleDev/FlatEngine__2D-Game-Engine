@@ -8,7 +8,7 @@ namespace FlatEngine
 	class Canvas : public Component
 	{
 	public:
-		Canvas(long myID, long parentID, long canvasID);
+		Canvas(long myID = -1, long parentID = -1, long canvasID = -1);
 		~Canvas();
 
 		void AddButton(std::shared_ptr<FlatEngine::Button> button);

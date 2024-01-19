@@ -73,14 +73,19 @@ namespace FlatEngine
 		return FlatEngine::sceneManager->CreateNewScene();
 	}
 
-	void FlatEngine::SaveScene(std::shared_ptr<Scene> scene)
+	void FlatEngine::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
 	{
-		FlatEngine::sceneManager->SaveScene(scene);
+		FlatEngine::sceneManager->SaveScene(scene, filename);
 	}
 
 	void FlatEngine::LoadScene(std::string name)
 	{
+		FlatEngine::uiManager->ResetButtons();
 		FlatEngine::sceneManager->LoadScene(name);
+
+		// If the GameLoop is running, reinitialize the new scene's GameObjects
+		if (FlatEngine::GameLoopStarted())
+			FlatEngine::gameLoop->InitializeScriptObjects();
 	}
 	
 
@@ -234,11 +239,26 @@ namespace FlatEngine
 	// Helper
 	// 
 	//ImVec4 objectA(top, right, bottom, left), ImVec4 objectB(top, right, bottom, left)
-	bool FlatEngine::AreColliding(ImVec4 ObjectA, ImVec4 ObjectB)
+	bool FlatEngine::AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.x;
 		float A_RightEdge = ObjectA.y;
 		float A_BottomEdge = ObjectA.z;
+		float A_LeftEdge = ObjectA.w;
+
+		float B_TopEdge = ObjectB.x;
+		float B_RightEdge = ObjectB.y;
+		float B_BottomEdge = ObjectB.z;
+		float B_LeftEdge = ObjectB.w;
+
+		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
+	}
+
+	bool FlatEngine::AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB)
+	{
+		float A_TopEdge = ObjectA.z;
+		float A_RightEdge = ObjectA.y;
+		float A_BottomEdge = ObjectA.x;
 		float A_LeftEdge = ObjectA.w;
 
 		float B_TopEdge = ObjectB.x;

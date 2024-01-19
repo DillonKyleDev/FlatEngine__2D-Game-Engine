@@ -92,6 +92,10 @@ namespace FlatEngine
 			return "Audio";
 			break;
 
+		case ComponentTypes::Text:
+			return "Text";
+			break;
+
 		default:
 			return "Null";
 		}

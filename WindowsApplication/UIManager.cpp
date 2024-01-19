@@ -71,31 +71,28 @@ namespace FlatEngine {
 					std::shared_ptr<FlatEngine::Transform> transform = nullptr;
 					if (thisObject != nullptr)
 						transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
-					Vector2 position = Vector2(0, 0);
-					if (transform != nullptr)
-						position = transform->GetPosition();
-					float xPos = position.x;
-					float yPos = position.y;
 
-					// Get the buttons Button data
+					// Get the buttons active edges
 					std::shared_ptr<FlatEngine::Button> button = this->gameButtons[i];
-					float buttonWidth = button->GetActiveWidth();
-					float buttonHeight = button->GetActiveHeight();
-					Vector2 offset = button->GetActiveOffset();
+					ImVec4 activeEdges = button->GetActiveEdges();
 
-					float top = yPos + offset.y + buttonHeight / 2;
-					float bottom = yPos + offset.y - buttonHeight / 2;
-					float left = xPos + offset.x - buttonWidth / 2;
-					float right = xPos + offset.x + buttonWidth / 2;
-
-					// Get Mouse Position in world space
-					ImVec2 mousePos = ImGui::GetIO().MousePos;
-					FlatEngine::LogFloat(mousePos.x, "Mouse Pos.x");
-					ImVec2 m_posWorld = FlatEngine::FlatGui::ViewportToWorld(mousePos);
-
+					// Get Mouse Position in the viewport space
+					ImVec2 mousePos = ImGui::GetIO().MousePos;	
+					
 					// If Mouse and Button are colliding, add the hovered button
-					if (FlatEngine::AreColliding(ImVec4(top, right, bottom, left), ImVec4(m_posWorld.y, m_posWorld.x, m_posWorld.y, m_posWorld.x)))
+					if (FlatEngine::AreCollidingViewport(activeEdges, ImVec4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
 						this->AddHoveredButton(button);
+				}
+			}
+
+			// For Mouse Enter function
+			for (int i = 0; i < this->gameHoveredButtons.size(); i++)
+			{
+				// If the new vector has an item that's new from the last saved vector, fire OnMouseEnter() on that item
+				if (std::find(lastHovered.begin(), lastHovered.end(), this->gameHoveredButtons[i]) == lastHovered.end())
+				{
+					std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
+					this->gameHoveredButtons[i]->OnMouseEnterFunction(thisObject);
 				}
 			}
 
@@ -207,6 +204,11 @@ namespace FlatEngine {
 		std::vector<std::shared_ptr<Button>> UIManager::GetHoveredButtons()
 		{
 			return this->gameHoveredButtons;
+		}
+		void UIManager::ResetButtons()
+		{
+			this->gameHoveredButtons = std::vector<std::shared_ptr<Button>>();
+			this->gameButtons = std::vector<std::shared_ptr<Button>>();
 		}
 	}
 }

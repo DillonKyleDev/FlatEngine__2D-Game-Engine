@@ -11,6 +11,7 @@ Texture::Texture(std::string path)
 	this->textureHeight = 0;
 	if (path != "")
 		this->loadFromFile(path);
+	this->font = TTF_OpenFont("assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 }
 
 
@@ -232,4 +233,9 @@ void Texture::setDimensions(int width, int height)
 {
 	this->textureWidth = width;
 	this->textureHeight = height;
+}
+
+void Texture::setFont(std::string path)
+{
+	this->font = TTF_OpenFont(path.c_str(), 46);
 }

@@ -9,7 +9,7 @@ namespace FlatEngine
 	class Audio : public Component
 	{
 	public:
-		Audio(long myID, long parentID);
+		Audio(long myID = -1, long parentID = -1);
 		~Audio();
 
 		void LoadMusic(std::string path);

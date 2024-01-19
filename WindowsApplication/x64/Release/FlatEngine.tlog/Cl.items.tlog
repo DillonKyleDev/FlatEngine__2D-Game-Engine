@@ -30,6 +30,8 @@ C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\ScriptTe
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Settings.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Settings.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sound.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Sound.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sprite.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Sprite.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\StartButton.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\StartButton.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Text.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Text.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Texture.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Texture.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\TextureManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\TextureManager.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Transform.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Transform.obj

@@ -98,12 +98,17 @@ namespace FlatEngine { namespace FlatGui {
 		if (FlatEngine::_isDebugMode == false)
 		{
 			// Load in what is currently in SavedScenes.json
-			FlatEngine::sceneManager->LoadScene("SavedScenes.json");
+			FlatEngine::LoadScene("MainMenu.json");
 
+			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
+			// we don't want to have to include it in the final release build anyway.
+			io.IniFilename = NULL;
+
+			// Set fullscreen here for now
 			Window::SetFullscreen(true);
 		}
-
-		FlatEngine::CreateNewScene();
+		else 
+			FlatEngine::CreateNewScene();
 		//FlatEngine::sceneManager->LoadScene("SavedScenes.json");
 	}
 
@@ -226,16 +231,24 @@ namespace FlatEngine { namespace FlatGui {
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
+		std::string sceneText = "Scene: ";
+		static char filename[1024] = "MainMenu.json";
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
+
+		// Edit field
+		ImGui::Text(sceneText.c_str());
+		ImGui::SameLine(0, 5);
+		ImGui::InputText("##SceneName", filename, IM_ARRAYSIZE(filename), flags);
 
 		// MOVE THESE OUT INTO A FILE TOP BAR EVENTUALLY
 		if (ImGui::Button("Save Scene"))
 		{
-			FlatEngine::sceneManager->SaveScene(FlatEngine::sceneManager->GetLoadedScene());
+			FlatEngine::SaveScene(FlatEngine::GetLoadedScene(), filename);
 		}
 		ImGui::SameLine(0, 5);
 		if (ImGui::Button("Load Scene"))
 		{
-			FlatEngine::sceneManager->LoadScene("SavedScenes.json");
+			FlatEngine::sceneManager->LoadScene(filename);
 		}
 		if (ImGui::Button("Create New Game Object"))
 		{
@@ -674,6 +687,7 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text(textureHeightString.c_str());
 
 								// Render Order
+								ImGui::Text("Render order: ");
 								if (ImGui::SliderInt("Sprite Render Order", &renderOrder, 0, maxSpriteLayers, "%d"))
 									sprite->SetRenderOrder(renderOrder);
 
@@ -806,6 +820,7 @@ namespace FlatEngine { namespace FlatGui {
 								float activeWidth = button->GetActiveWidth();
 								float activeHeight = button->GetActiveHeight();
 								Vector2 activeOffset = button->GetActiveOffset();
+								int activeLayer = button->GetActiveLayer();
 
 								// Active Checkbox
 								ImGui::Checkbox("Active:", &_isActive);
@@ -992,6 +1007,92 @@ namespace FlatEngine { namespace FlatGui {
 								if (ImGui::Button("Stop"))
 									audio->Stop();
 							}
+							else if (componentType == "Text")
+							{
+								// Sprite path and texture dimension variables
+								std::shared_ptr<FlatEngine::Text> text = std::static_pointer_cast<FlatEngine::Text>(components[i]);
+
+	
+								// Text String Variables
+								std::string textText = text->GetText();
+								char newTextString[1024];
+								strcpy_s(newTextString, textText.c_str());
+								// Text Strings
+								std::string textString = "Text: ";
+								// Render Text String
+								ImGui::Text(textString.c_str());
+								ImGui::SameLine(0, 5);
+								if (ImGui::InputText("##textString", newTextString, IM_ARRAYSIZE(newTextString), flags))
+								{
+									text->SetText(newTextString);
+									text->LoadText();
+								}
+									
+
+								// Other variables
+								std::shared_ptr<Texture> texture = text->GetTexture();
+								float textureWidth = (float)texture->getWidth();
+								float textureHeight = (float)texture->getHeight();
+								int renderOrder = text->GetRenderOrder();
+								SDL_Color color = text->GetColor();
+
+								// Font Path Variables
+								std::string fontPath = text->GetFontPath();
+								char newPath[1024];
+								strcpy_s(newPath, fontPath.c_str());
+								// Font Path Strings
+								std::string pathString = "Font path: ";
+								// Render Font Path
+								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+								if (ImGui::InputText("##fontPath", newPath, IM_ARRAYSIZE(newPath), flags))
+									text->SetFontPath(newPath);
+
+								// Text Width and Height
+								std::string textureWidthString = "Text width: " + std::to_string(textureWidth);
+								std::string textureHeightString = "Text height: " + std::to_string(textureHeight);
+								ImGui::Text(textureWidthString.c_str());
+								ImGui::Text(textureHeightString.c_str());
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Text offset variables
+								Vector2 offset = text->GetOffset();
+								float xOffset = offset.x;
+								float yOffset = offset.y;
+								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+
+								// Render Drags for offset of texture editing
+								ImGui::Text("xOffset:");
+								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
+								ImGui::Text("yOffset:");
+								ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								ImGui::SameLine(0, 5);
+								ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+								// Set cursor type
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								// Set new offset values
+								text->SetOffset(Vector2(xOffset, yOffset));
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+
+								// Render Order
+								ImGui::Text("Render order: ");
+								if (ImGui::SliderInt("Text Render Order", &renderOrder, 0, maxSpriteLayers, "%d"))
+									text->SetRenderOrder(renderOrder);
+
+								// Push Item Width Setting
+								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+
+								// Pop Width Setting
+								ImGui::PopItemWidth();
+							}
 
 							// Pops
 							ImGui::PopItemWidth();
@@ -1087,6 +1188,12 @@ namespace FlatEngine { namespace FlatGui {
 					ImGui::CloseCurrentPopup();
 				}
 
+				if (ImGui::Button("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				{
+					focusedObject->AddComponent(ComponentTypes::Text);
+					ImGui::CloseCurrentPopup();
+				}
+
 				ImGui::EndListBox();
 
 				// Pop button bg color styles
@@ -1145,8 +1252,6 @@ namespace FlatEngine { namespace FlatGui {
 		// Set viewport dimensions for rendering objects in game view. We want this to always be centered in game view so we can get it every frame.
 		GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
 		GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
-
-
 
 		// This will catch our interactions
 		ImGui::InvisibleButton("GameViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
@@ -1222,13 +1327,14 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
 		Vector2 parentOffset(0, 0);
+		Vector2 parentScale(1, 1);
 
 		// Render Game Objects
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			// If this object doesn't have a parent, render it and then its children recursively
 			if (sceneObjects[i]->GetParentID() == -1)
-				FlatEngine::FlatGui::Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+				FlatEngine::FlatGui::Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 		}
 
@@ -1259,13 +1365,13 @@ namespace FlatEngine { namespace FlatGui {
 			drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 			// Top frustrum
-			FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Bottom frustrum
-			FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Left frustrum
-			FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Left frustrum
-			FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 
 			drawSplitter->Merge(draw_list);
 		}
@@ -1277,25 +1383,41 @@ namespace FlatEngine { namespace FlatGui {
 		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(primaryCamera->GetParentID());
 		std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
 		Vector2 offset = transform->GetPosition();
+		Vector2 scale = transform->GetScale();
 
 		// If the Primary Camera has a parent, get its offset recursively
 		if (parent->GetParentID() != -1)
-			FlatEngine::FlatGui::Game_GetParentOffset(parent, offset);
+			FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(parent, offset, scale);
 
 		return ImVec2(offset.x, offset.y);
 	}
 
 
-	void FlatEngine::FlatGui::Game_GetParentOffset(std::shared_ptr<GameObject> child, Vector2 &offset)
+	void FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2 &offset, Vector2 &scale)
 	{
-		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(child->GetParentID());
-		std::shared_ptr<Transform> parentTransform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
-		Vector2 parentPosition = parentTransform->GetPosition();
-		offset.x += parentPosition.x;
-		offset.y += parentPosition.y;
+		// Check if the child actually has a parent object
+		if (child->GetParentID() != -1)
+		{
+			std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(child->GetParentID());
+			std::shared_ptr<Transform> parentTransform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
+			Vector2 parentPosition = Vector2(0, 0);
+			Vector2 parentScale = Vector2(1, 1);
 
-		if (parent->GetParentID() != -1)
-			FlatEngine::FlatGui::Game_GetParentOffset(parent, offset);
+			if (parentTransform != nullptr)
+			{
+				parentPosition = parentTransform->GetPosition();
+				parentScale = parentTransform->GetScale();
+			}
+
+			offset.x += parentPosition.x;
+			offset.y += parentPosition.y;
+			scale.x *= parentScale.x;
+			scale.y *= parentScale.y;
+
+			// Check if the childs parent has a parent
+			if (parent->GetParentID() != -1)
+				FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(parent, offset, scale);
+		}
 	}
 
 
@@ -1380,8 +1502,6 @@ namespace FlatEngine { namespace FlatGui {
 	
 		FlatEngine::FlatGui::Scene_RenderObjects(scrolling, canvas_p0, canvas_sz);
 
-		// FlatEngine::FlatGui::Scene_RenderSceneCanvases();
-
 		// Reset WindowPadding
 		ImGui::PopStyleVar();
 		// Reset WindowBorder
@@ -1393,8 +1513,6 @@ namespace FlatEngine { namespace FlatGui {
 
 	void FlatEngine::FlatGui::Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
-		ImGui::ShowDemoWindow();
-
 		// Get currently loade scene
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
 		std::vector<std::shared_ptr<GameObject>> sceneObjects;
@@ -1419,9 +1537,10 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
 				Vector2 parentOffset(0, 0);
+				Vector2 parentScale(1, 1);
 
 				// Render self and children recursively
-				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	
@@ -1432,13 +1551,14 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper - Recursively draws scene objects and their children to the scene view
-	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
+	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Component> transformComponent = self->GetComponent(ComponentTypes::Transform);
 		std::shared_ptr<Component> spriteComponent = self->GetComponent(ComponentTypes::Sprite);
 		std::shared_ptr<Component> cameraComponent = self->GetComponent(ComponentTypes::Camera);
 		std::shared_ptr<Component> buttonComponent = self->GetComponent(ComponentTypes::Button);
 		std::shared_ptr<Component> canvasComponent = self->GetComponent(ComponentTypes::Canvas);
+		std::shared_ptr<Component> textComponent = self->GetComponent(ComponentTypes::Text);
 
 		// Check if each object has a Transform component
 		if (transformComponent != nullptr)
@@ -1446,12 +1566,12 @@ namespace FlatEngine { namespace FlatGui {
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
 			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
-			Vector2 transformScale = transformCasted->GetScale();
+			Vector2 transformScale = Vector2(transformCasted->GetScale().x * parentScale.x, transformCasted->GetScale().y * parentScale.y);
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
 			if (spriteComponent != nullptr)
 			{
-				// Cast the component to Sprite*
+				// Cast the component to Sprite shared_ptr
 				std::shared_ptr<Sprite> spriteCasted = std::static_pointer_cast<Sprite>(spriteComponent);
 				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
 				float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
@@ -1471,6 +1591,35 @@ namespace FlatEngine { namespace FlatGui {
 
 					// Draw the texture
 					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+				}
+			}
+
+			// If it has a text component, render that text texture at the objects transform position
+			if (textComponent != nullptr)
+			{
+				// Cast the component to Text shared_ptr
+				std::shared_ptr<Text> textCasted = std::static_pointer_cast<Text>(textComponent);
+				std::shared_ptr<Texture> textTexture = textCasted->GetTexture();
+				textCasted->LoadText();
+				SDL_Texture* texture = textTexture->getTexture();
+				float textWidth = (float)textTexture->getWidth();
+				float textHeight = (float)textTexture->getHeight();
+				int renderOrder = textCasted->GetRenderOrder();
+				Vector2 offset = textCasted->GetOffset();
+				bool _spriteScalesWithZoom = true;
+
+				
+				// If there is a valid Texture loaded into the Sprite Component
+				if (textTexture != nullptr)
+				{
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					// Draw the texture
+					FlatEngine::FlatGui::AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
 				}
 			}
 
@@ -1535,6 +1684,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, FlatEngine::CanvasBorder, 3.0f, draw_list);
 			}
+			
 
 			// Renders Button Component
 			if (buttonComponent != nullptr)
@@ -1546,10 +1696,10 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
 
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - activeWidth / 2, gridStep, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + activeWidth / 2, gridStep, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + activeHeight / 2, gridStep, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - activeHeight / 2, gridStep, true);
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * parentScale.x), gridStep, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * parentScale.x), gridStep, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * parentScale.y), gridStep, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * parentScale.y), gridStep, true);
 
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
@@ -1596,26 +1746,29 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
 				parentOffset.x += transformCasted->GetPosition().x;
 				parentOffset.y += transformCasted->GetPosition().y;
+				parentScale.x *= transformCasted->GetScale().x;
+				parentScale.y *= transformCasted->GetScale().y;
 			}
 
 			for (int c = 0; c < self->GetChildren().size(); c++)
 			{
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
-				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	}
 
 	// Helper - Recursively draws scene objects and their children to the game view
-	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 worldCenterPoint, ImVec2 canvas_p0, 
+	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0,
 		ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
 	{
 		// Get Components
 		std::shared_ptr<Component> transformComponent = self->GetComponent(Component::ComponentTypes::Transform);
 		std::shared_ptr<Component> spriteComponent = self->GetComponent(Component::ComponentTypes::Sprite);
 		std::shared_ptr<Component> animationComponent = self->GetComponent(Component::ComponentTypes::Animation);
-
+		std::shared_ptr<Component> textComponent = self->GetComponent(ComponentTypes::Text);
+		std::shared_ptr<Component> buttonComponent = self->GetComponent(ComponentTypes::Button);
 
 		// Animation component handling
 		if (animationComponent != nullptr)
@@ -1635,7 +1788,36 @@ namespace FlatEngine { namespace FlatGui {
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
 			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
-			Vector2 scale = transformCasted->GetScale();
+			Vector2 scale = Vector2(transformCasted->GetScale().x * parentScale.x, transformCasted->GetScale().y * parentScale.y);
+
+			// If it has a text component, render that text texture at the objects transform position
+			if (textComponent != nullptr)
+			{
+				// Cast the component to Text shared_ptr
+				std::shared_ptr<Text> textCasted = std::static_pointer_cast<Text>(textComponent);
+				std::shared_ptr<Texture> textTexture = textCasted->GetTexture();
+				textCasted->LoadText();
+				SDL_Texture* texture = textTexture->getTexture();
+				float textWidth = (float)textTexture->getWidth();
+				float textHeight = (float)textTexture->getHeight();
+				int renderOrder = textCasted->GetRenderOrder();
+				Vector2 offset = textCasted->GetOffset();
+				bool _spriteScalesWithZoom = true;
+
+
+				// If there is a valid Texture loaded into the Sprite Component
+				if (textTexture != nullptr)
+				{
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					// Draw the texture
+					FlatEngine::FlatGui::AddImageToDrawList(textTexture->getTexture(), position, worldCenterPoint, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, cameraZoom, draw_list);
+				}
+			}
 
 			// If it has a sprite component, render that sprite texture at the objects transform position
 			if (spriteComponent != nullptr)
@@ -1678,6 +1860,37 @@ namespace FlatEngine { namespace FlatGui {
 					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
 				}
 			}
+
+			// Renders Button Component
+			if (buttonComponent != nullptr)
+			{
+				std::shared_ptr<Button> button = std::static_pointer_cast<Button>(buttonComponent);
+
+				float activeWidth = button->GetActiveWidth();
+				float activeHeight = button->GetActiveHeight();
+				Vector2 activeOffset = button->GetActiveOffset();
+				bool _isActive = button->IsActive();
+
+				// Get Active Button bounds to check against later for mouse events
+				float activeLeft = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x - (activeWidth / 2 * scale.x), cameraZoom, false);
+				float activeRight = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x + (activeWidth / 2 * scale.x), cameraZoom, false);
+				float activeTop = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y + (activeHeight / 2 * scale.y), cameraZoom, true);
+				float activeBottom = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y - (activeHeight / 2 * scale.y), cameraZoom, true);
+
+				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+
+				// FOR DRAWING ACTIVE BUTTON RECTANGLE IN GAME VIEW
+				// 
+				//Vector2 topLeft = { activeLeft, activeTop };
+				//Vector2 bottomRight = { activeRight, activeBottom };
+
+				//drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				//if (_isActive)
+				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
+				//else
+				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+			}
 		}
 
 		if (self->HasChildren())
@@ -1687,13 +1900,15 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
 				parentOffset.x += transformCasted->GetPosition().x;
 				parentOffset.y += transformCasted->GetPosition().y;
+				parentScale.x *= transformCasted->GetScale().x;
+				parentScale.y *= transformCasted->GetScale().y;
 			}
 
 			for (int c = 0; c < self->GetChildren().size(); c++)
 			{
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
-				FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+				FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 			}
 		}
@@ -1703,15 +1918,26 @@ namespace FlatEngine { namespace FlatGui {
 	// Helper - Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
 	float FlatEngine::FlatGui::WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
 	{
-		if (_isYCoord)
-			return centerPoint + (-worldPosition * zoomFactor);
-		else
-			return centerPoint + (worldPosition * zoomFactor);
-	}
+		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
+		float scaleToScreenSizeBy = 1;
 
+		// If we're in Release mode, scale the Game Viewport to the window size
+		if (FlatEngine::_isDebugMode == true)
+			scaleToScreenSizeBy = GAME_VIEWPORT_HEIGHT / primaryCamera->GetHeight() * .05f;
+
+		if (_isYCoord)
+			return centerPoint + (-worldPosition * zoomFactor * scaleToScreenSizeBy);
+		else
+			return centerPoint + (worldPosition * zoomFactor * scaleToScreenSizeBy);
+	}
+	// Helper - Get a value from viewport position converted into world/grid position.
 	ImVec2 FlatEngine::FlatGui::ViewportToWorld(ImVec2 viewportPosition)
 	{
-		float zoom = FlatEngine::GetLoadedScene()->GetPrimaryCamera()->GetZoom();
+		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
+		float zoom = 10;
+
+		if (primaryCamera != nullptr)
+			zoom = primaryCamera->GetZoom();
 
 		float xPos = (viewportPosition.x - worldCenterPoint.x) / zoom;
 		float yPos = -(viewportPosition.y - worldCenterPoint.y) / zoom;

@@ -16,6 +16,11 @@ void AttackOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
 }
 
+void AttackOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
+{
+
+}
+
 void AttackOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
 }
@@ -49,6 +54,7 @@ void Attack::Start()
 		{
 			// Register Mouse Events functions to the Button
 			button->OnMouseOver(AttackOnMouseOver);
+			button->OnMouseEnter(AttackOnMouseEnter);
 			button->OnMouseLeave(AttackOnMouseLeave);
 			button->OnMouseLeftClick(AttackOnLeftClick);
 			button->OnMouseRightClick(AttackOnRightClick);

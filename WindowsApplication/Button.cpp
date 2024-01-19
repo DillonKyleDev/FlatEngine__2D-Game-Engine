@@ -33,6 +33,11 @@ namespace FlatEngine
 		this->OnMouseOverFunction = callback;
 	}
 
+	void Button::OnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
+	{
+		this->OnMouseEnterFunction = callback;
+	}
+
 	void Button::OnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnMouseLeaveFunction = callback;
@@ -76,7 +81,7 @@ namespace FlatEngine
 
 	void Button::SetActiveLayer(int layer)
 	{
-		if (layer > 0)
+		if (layer >= 0)
 			this->activeLayer = layer;
 		else
 			FlatEngine::LogString("Button active layer must be an integer greater than 0.");
@@ -114,6 +119,16 @@ namespace FlatEngine
 	bool Button::MouseIsOver()
 	{
 		return this->_mouseIsOver;
+	}
+
+	void Button::SetActiveEdges(ImVec4 edges)
+	{
+		this->activeEdges = edges;
+	}
+
+	ImVec4 Button::GetActiveEdges()
+	{
+		return this->activeEdges;
 	}
 
 	std::string Button::GetData()

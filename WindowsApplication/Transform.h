@@ -11,7 +11,7 @@ namespace FlatEngine
 	class Transform : public Component
 	{
 	public:
-		Transform(long myID, long parentID);
+		Transform(long myID = -1, long parentID = -1);
 		~Transform();
 		void SetPosition(Vector2 position);
 		void SetScale(Vector2 scale);

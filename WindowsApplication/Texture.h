@@ -36,12 +36,15 @@ public:
 	int getHeight();
 	//Set image dimensions
 	void setDimensions(int width, int height);
+	void setFont(std::string path);
 
 private:
 	//The actual hardware texture
 	SDL_Texture* texture;
 	//Loaded from file surface
 	SDL_Surface* surface;
+
+	TTF_Font* font;
 
 	//Image dimensions
 	int textureWidth;

@@ -32,6 +32,7 @@ namespace FlatEngine {
 			void RemoveHoveredButton(std::shared_ptr<Button> button);
 			std::shared_ptr<Button> GetTopLevelButton();
 			std::vector<std::shared_ptr<Button>> GetHoveredButtons();
+			void ResetButtons();
 
 		private:
 			long nextGameCanvasID;

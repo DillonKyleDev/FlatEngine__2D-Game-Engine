@@ -12,7 +12,7 @@ namespace FlatEngine
 	class Sprite : public Component
 	{
 	public:
-		Sprite(long myID, long parentID);
+		Sprite(long myID = -1, long parentID = -1);
 		~Sprite();
 		void SetTexture(std::string path);
 		SDL_Texture* GetTexture();

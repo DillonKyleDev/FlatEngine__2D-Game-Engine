@@ -10,8 +10,6 @@ namespace FlatEngine
 	}
 	Sound::~Sound()
 	{
-		Mix_FreeMusic(this->music);
-		Mix_FreeChunk(this->effect);
 		this->music = nullptr;
 		this->effect = nullptr;
 	}

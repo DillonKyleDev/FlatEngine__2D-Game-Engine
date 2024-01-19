@@ -13,12 +13,12 @@ namespace FlatEngine
 		this->textureHeight = 0;
 		this->offset = { 0,0 };
 		this->path = "";
+		this->renderOrder = 0;
 	}
 
 
 	Sprite::~Sprite()
 	{
-
 	}
 
 

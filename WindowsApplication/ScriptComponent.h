@@ -8,7 +8,7 @@ namespace FlatEngine
 	class ScriptComponent : public Component
 	{
 	public:
-		ScriptComponent(long myID, long parentID);
+		ScriptComponent(long myID = -1, long parentID = -1);
 		~ScriptComponent();
 
 		std::string GetData();

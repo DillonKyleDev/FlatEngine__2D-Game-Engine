@@ -9,7 +9,7 @@ namespace FlatEngine
 	class Animation : public Component
 	{
 	public:
-		Animation(long myID, long parentID);
+		Animation(long myID = -1, long parentID = -1);
 		~Animation();
 
 		void AddFrame();

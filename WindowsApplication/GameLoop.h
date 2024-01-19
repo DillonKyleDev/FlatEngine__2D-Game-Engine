@@ -7,6 +7,7 @@
 #include "./scripts/Up.h"
 #include "./scripts/Sinwave.h"
 #include "./scripts/Attack.h"
+#include "./scripts/StartButton.h"
 
 
 
@@ -19,6 +20,7 @@ namespace FlatEngine
 		~GameLoop();
 
 		void Start();
+		void InitializeScriptObjects();
 		void Update();
 		void Stop();
 		void Pause();
@@ -48,6 +50,7 @@ namespace FlatEngine
 		std::shared_ptr<Up> upScript;
 		std::shared_ptr<Sinwave> sinwaveScript;
 		std::shared_ptr<Attack> attackScript;
+		std::shared_ptr<StartButton> startButtonScript;
 	};
 }
 

@@ -14,6 +14,7 @@
 #include "GameLoop.h"
 #include "Canvas.h"
 #include "Animation.h"
+#include "Text.h"
 #include "WidgetsManager.h"
 #include "UIManager.h"
 #include "Audio.h"
@@ -60,7 +61,7 @@ namespace FlatEngine
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
 	extern std::shared_ptr<Scene> CreateNewScene();
-	extern void SaveScene(std::shared_ptr<Scene> scene);
+	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filename);
 	extern void LoadScene(std::string name);
 
 	// Scene Prettification
@@ -95,7 +96,8 @@ namespace FlatEngine
 
 	// Helper Functions
 	//
-	extern bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
+	extern bool AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB);
+	extern bool AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
 
 
@@ -113,6 +115,7 @@ namespace FlatEngine
 		extern ImVec4 singleItemColor;
 
 		extern int maxSpriteLayers;
+		extern float spriteScaleMultiplier;
 
 		// Icons
 		extern std::unique_ptr<Texture> expandIcon;
@@ -166,11 +169,11 @@ namespace FlatEngine
 		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 		// Recursive - For adding GameObjects and their children to the scene/game view
-		void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
-		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, ImVec2 worldCenterPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
+		void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
 		ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera);
 		// Recursive - For getting gameObjects total offset
-		void Game_GetParentOffset(std::shared_ptr<GameObject> child, Vector2& offset);
+		void Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2& offset, Vector2& scale);
 	}
 };
 
