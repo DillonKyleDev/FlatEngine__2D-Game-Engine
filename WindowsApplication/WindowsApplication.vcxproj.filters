@@ -177,6 +177,9 @@
     <ClCompile Include="scripts\StartButton.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\MainMenuButton.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -300,6 +303,9 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="scripts\StartButton.h">
+      <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MainMenuButton.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
   </ItemGroup>

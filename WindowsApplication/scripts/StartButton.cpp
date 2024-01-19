@@ -1,5 +1,6 @@
 #include "StartButton.h"
 #include "../FlatEngine.h"
+#include "../GameObject.h"
 
 
 StartButton::StartButton()
@@ -20,23 +21,20 @@ void StartButtonOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thisObject)
 
 void StartButtonOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
+	// Add button highlight
+	std::shared_ptr<FlatEngine::GameObject> buttonHighlight = FlatEngine::GetObjectByName("ButtonHighlight");
+	buttonHighlight->SetActive(true);
 	// Play Sound Effect
 	std::shared_ptr<FlatEngine::Sound> startHovered = std::make_shared<FlatEngine::Sound>();
 	startHovered->LoadEffect("assets/audio/StartHovered.wav");
 	startHovered->PlayEffect();
-
-	// Increase scale of button
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
-	static Vector2 originalScale = transform->GetScale();
-	transform->SetScale(Vector2(originalScale.x * 1.05f, originalScale.y * 1.05f));
 }
 
 void StartButtonOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	// Decrease scale of button
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
-	static Vector2 originalScale = transform->GetScale();
-	transform->SetScale(Vector2(originalScale.x / 1.05f, originalScale.y / 1.05f));
+	// Remove button highlight
+	std::shared_ptr<FlatEngine::GameObject> buttonHighlight = FlatEngine::GetObjectByName("ButtonHighlight");
+	buttonHighlight->SetActive(false);
 }
 
 void StartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -45,10 +43,6 @@ void StartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 	std::shared_ptr<FlatEngine::Sound> startClicked = std::make_shared<FlatEngine::Sound>();
 	startClicked->LoadEffect("assets/audio/StartClicked.wav");
 	startClicked->PlayEffect();
-
-	// Stop background music
-	if (startClicked->IsMusicPlaying())
-		startClicked->StopMusic();
 
 	// Load into fightingUI scene
 	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));

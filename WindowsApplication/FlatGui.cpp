@@ -481,6 +481,11 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), flags))
 				focusedObject->SetName(newName);
 
+			bool _isActive = focusedObject->IsActive();
+
+			if (ImGui::Checkbox("Active", &_isActive))
+				focusedObject->SetActive(_isActive);
+
 			// Components section
 			ImGui::Text("Components:");
 
@@ -1333,7 +1338,7 @@ namespace FlatEngine { namespace FlatGui {
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			// If this object doesn't have a parent, render it and then its children recursively
-			if (sceneObjects[i]->GetParentID() == -1)
+			if (sceneObjects[i]->GetParentID() == -1 && sceneObjects[i]->IsActive())
 				FlatEngine::FlatGui::Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 		}
@@ -1533,7 +1538,7 @@ namespace FlatEngine { namespace FlatGui {
 		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			// If this Scene Object doesn't have a parent, render it and all of its children
-			if (sceneObjects[i]->GetParentID() == -1)
+			if (sceneObjects[i]->GetParentID() == -1 && sceneObjects[i]->IsActive())
 			{
 				// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
 				Vector2 parentOffset(0, 0);
@@ -1696,10 +1701,10 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
 
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * parentScale.x), gridStep, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * parentScale.x), gridStep, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * parentScale.y), gridStep, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * parentScale.y), gridStep, true);
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), gridStep, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), gridStep, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), gridStep, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), gridStep, true);
 
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
@@ -1754,7 +1759,8 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
-				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+				if (child->IsActive())
+					FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	}
@@ -1908,8 +1914,9 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
-				FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
-					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
+				if (child->IsActive())
+					FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+						cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 			}
 		}
 	}
@@ -1922,7 +1929,7 @@ namespace FlatEngine { namespace FlatGui {
 		float scaleToScreenSizeBy = 1;
 
 		// If we're in Release mode, scale the Game Viewport to the window size
-		if (FlatEngine::_isDebugMode == true)
+		if (FlatEngine::_isDebugMode == true && primaryCamera != nullptr)
 			scaleToScreenSizeBy = GAME_VIEWPORT_HEIGHT / primaryCamera->GetHeight() * .05f;
 
 		if (_isYCoord)

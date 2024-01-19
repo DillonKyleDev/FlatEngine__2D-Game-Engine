@@ -17,6 +17,7 @@ namespace FlatEngine
 		void AddSceneObject(std::shared_ptr<GameObject> sceneObject);
 		std::vector<std::shared_ptr<GameObject>> GetSceneObjects();
 		std::shared_ptr<GameObject> GetObjectById(long ID);
+		std::shared_ptr<GameObject> GetObjectByName(std::string name);
 		std::shared_ptr<GameObject> CreateGameObject(long parentID = -1);
 		void DeleteGameObject(long sceneObjectID);
 		void DeleteChildrenAndSelf(std::shared_ptr<GameObject> objectToDelete); // Recursive

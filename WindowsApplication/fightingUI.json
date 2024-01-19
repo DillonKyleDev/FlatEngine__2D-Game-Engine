@@ -1,6 +1,7 @@
 {
     "Scene GameObjects": [
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -30,6 +31,7 @@
             "parent": -1
         },
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -59,6 +61,7 @@
             "parent": -1
         },
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -112,6 +115,7 @@
             "parent": -1
         },
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -131,11 +135,11 @@
                     "frustrumBlue": 22.5000057220459,
                     "frustrumGreen": 22.5000057220459,
                     "frustrumRed": 22.5000057220459,
-                    "height": 40.0,
+                    "height": 45.5,
                     "id": 7,
                     "type": "Camera",
                     "width": 54.0,
-                    "zoom": 10.0
+                    "zoom": 12.036999702453613
                 }
             ],
             "id": 3,
@@ -143,6 +147,7 @@
             "parent": -1
         },
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -158,6 +163,7 @@
             "parent": -1
         },
         {
+            "_isActive": true,
             "children": [],
             "components": [
                 {
@@ -185,6 +191,90 @@
             "id": 5,
             "name": "FightingUI",
             "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [
+                7
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 14,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -13.5,
+                    "xScale": 1.0,
+                    "yPos": -26.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 3.5,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 17.5,
+                    "id": 16,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "MainMenuButton",
+                    "id": 17,
+                    "type": "Script"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 19,
+                    "renderOrder": 4,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                }
+            ],
+            "id": 6,
+            "name": "MainMenuButton",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 20,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 21,
+                    "renderOrder": 4,
+                    "text": "Main Menu",
+                    "type": "Text",
+                    "xOffset": 121.0,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 7,
+            "name": "Text",
+            "parent": 6
         }
     ]
 }

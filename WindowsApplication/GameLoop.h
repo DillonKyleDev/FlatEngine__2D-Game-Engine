@@ -8,6 +8,7 @@
 #include "./scripts/Sinwave.h"
 #include "./scripts/Attack.h"
 #include "./scripts/StartButton.h"
+#include "./scripts/MainMenuButton.h"
 
 
 
@@ -44,6 +45,7 @@ namespace FlatEngine
 		float lastFrameTime;
 		float deltaTime;
 
+		std::string startedScene;
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
 		std::shared_ptr<Mover> moverScript;
@@ -51,6 +53,9 @@ namespace FlatEngine
 		std::shared_ptr<Sinwave> sinwaveScript;
 		std::shared_ptr<Attack> attackScript;
 		std::shared_ptr<StartButton> startButtonScript;
+		std::shared_ptr<MainMenuButton> mainMenuButtonScript;
+
+
 	};
 }
 

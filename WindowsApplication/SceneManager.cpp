@@ -140,6 +140,7 @@ namespace FlatEngine
 				json gameObjectJson = json::object({ 
 					{"name", objectName}, 
 					{"id", currentObject->GetID()},
+					{"_isActive", currentObject->IsActive()},
 					{"parent", currentObject->GetParentID()},
 					{"children", childrenArray}, 
 					{"components", componentsArray} 
@@ -177,6 +178,7 @@ namespace FlatEngine
 		// Start up a new scene
 		std::shared_ptr<Scene> freshScene(new Scene());
 		this->loadedScene = freshScene;
+		freshScene->SetName(fileName);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -220,6 +222,7 @@ namespace FlatEngine
 					// Default values
 					std::string loadedName = "Name";
 					long loadedID = -1;
+					bool _isActive = true;
 					long loadedParentID = -1;
 					std::vector<long> loadedChildrenIDs = std::vector<long>();
 
@@ -235,6 +238,11 @@ namespace FlatEngine
 						loadedID = currentObjectJson["id"];
 					else
 						FlatEngine::LogInt(i, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+					// Check _isActive key exists
+					if (currentObjectJson.contains("_isActive"))
+						_isActive = currentObjectJson["_isActive"];
+					else
+						FlatEngine::LogInt(i, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
 					// Check parent key exists
 					if (currentObjectJson.contains("parent"))
 						loadedParentID = currentObjectJson["parent"];
@@ -257,6 +265,7 @@ namespace FlatEngine
 					std::shared_ptr<GameObject> loadedObject(new GameObject());
 					loadedObject->SetName(loadedName);
 					loadedObject->SetID(loadedID);
+					loadedObject->SetActive(_isActive);
 					loadedObject->SetParentID(loadedParentID);
 
 					// Add children
@@ -613,9 +622,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = false;
-							bool _isPlaying = false;
 							float ticksPerFrame = 30;
-
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -627,12 +634,7 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
-
-							if (currentObjectJson["components"][j].contains("_isPlaying"))
-								_isPlaying = currentObjectJson["components"][j]["_isPlaying"];
-							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isPlaying' in object: ");
-
+							// Ticks Per Frame
 							if (currentObjectJson["components"][j].contains("ticksPerFrame"))
 								ticksPerFrame = currentObjectJson["components"][j]["ticksPerFrame"];
 							else

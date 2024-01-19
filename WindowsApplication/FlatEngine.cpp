@@ -14,6 +14,9 @@ namespace FlatEngine
 {
 	bool _isDebugMode = true;
 
+	// Audio
+	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
+
 	//Variables
 	long FlatEngine::FocusedGameObjectID = -1;
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
@@ -56,6 +59,7 @@ namespace FlatEngine
 		FlatEngine::FocusedGameObjectID = ID;
 	}
 
+
 	long FlatEngine::GetFocusedGameObjectID()
 	{
 		return FlatEngine::FocusedGameObjectID;
@@ -80,6 +84,9 @@ namespace FlatEngine
 
 	void FlatEngine::LoadScene(std::string name)
 	{
+		// Stop any playing music
+		soundController->StopMusic();
+		// Reset buttons in UIManager
 		FlatEngine::uiManager->ResetButtons();
 		FlatEngine::sceneManager->LoadScene(name);
 
@@ -116,6 +123,11 @@ namespace FlatEngine
 	std::shared_ptr<GameObject> GetObjectById(long objectID)
 	{
 		return FlatEngine::GetLoadedScene()->GetObjectById(objectID);
+	}
+
+	std::shared_ptr<GameObject> GetObjectByName(std::string name)
+	{
+		return FlatEngine::GetLoadedScene()->GetObjectByName(name);
 	}
 
 

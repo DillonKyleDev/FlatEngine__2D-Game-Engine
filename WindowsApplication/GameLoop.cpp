@@ -14,6 +14,7 @@ namespace FlatEngine
 		this->framesCounted = 0;
 		this->lastFrameTime = 0;
 		this->deltaTime = 0;
+		this->startedScene = "";
 
 		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		this->scripts = std::vector<std::shared_ptr<GameScript>>();
@@ -23,6 +24,7 @@ namespace FlatEngine
 		this->sinwaveScript = nullptr;
 		this->attackScript = nullptr;
 		this->startButtonScript = nullptr;
+		this->mainMenuButtonScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -43,17 +45,21 @@ namespace FlatEngine
 		this->sinwaveScript = std::make_shared<Sinwave>();
 		this->attackScript = std::make_shared<Attack>();
 		this->startButtonScript = std::make_shared<StartButton>();
+		this->mainMenuButtonScript = std::make_shared<MainMenuButton>();
 		this->scripts.push_back(moverScript);
 		this->scripts.push_back(upScript);
 		this->scripts.push_back(sinwaveScript);
 		this->scripts.push_back(attackScript);
 		this->scripts.push_back(startButtonScript);
+		this->scripts.push_back(mainMenuButtonScript);
 
+		// Initialize our scripts with the currently loaded scene
 		this->InitializeScriptObjects();
+		// Save the name of the scene we started with so we can load it back up when we stop
+		this->startedScene = FlatEngine::GetLoadedScene()->GetName();
 
 		this->_started = true;
 	}
-
 
 	void GameLoop::InitializeScriptObjects()
 	{
@@ -94,6 +100,10 @@ namespace FlatEngine
 					{
 						startButtonScript->AddEntity(this->gameObjects[i]);
 					}
+					else if (attachedScript == "MainMenuButton")
+					{
+						mainMenuButtonScript->AddEntity(this->gameObjects[i]);
+					}
 					// Add other script name checks here and add them to those script objects
 				}
 			}
@@ -110,7 +120,6 @@ namespace FlatEngine
 				scripts[i]->Start();
 		}
 	}
-
 
 	void GameLoop::Update()
 	{
@@ -166,7 +175,6 @@ namespace FlatEngine
 		}
 	}
 
-
 	void GameLoop::Stop()
 	{
 		this->_started = false;
@@ -183,7 +191,7 @@ namespace FlatEngine
 		this->sinwaveScript = nullptr;
 
 		// Load back up the saved version of the scene
-		FlatEngine::LoadScene(FlatEngine::GetLoadedScene()->GetName());
+		FlatEngine::LoadScene(this->startedScene);
 	}
 
 	void GameLoop::Pause()

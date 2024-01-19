@@ -35,10 +35,8 @@ namespace FlatEngine
 		return this->sceneObjects;
 	}
 
-
 	std::shared_ptr<GameObject> Scene::GetObjectById(long ID)
 	{
-		ID = ID;
 		for (int i = 0; i < this->sceneObjects.size(); i++)
 		{
 			if (ID == sceneObjects[i]->GetID())
@@ -49,6 +47,17 @@ namespace FlatEngine
 		return nullptr;
 	}
 
+	std::shared_ptr<GameObject> Scene::GetObjectByName(std::string name)
+	{
+		for (int i = 0; i < this->sceneObjects.size(); i++)
+		{
+			if (name == sceneObjects[i]->GetName())
+			{
+				return sceneObjects[i];
+			}
+		}
+		return nullptr;
+	}
 
 	std::shared_ptr<GameObject> Scene::CreateGameObject(long parentID)
 	{
@@ -78,7 +87,6 @@ namespace FlatEngine
 		// Check for children and delete those as well
 		Scene::DeleteChildrenAndSelf(objectToDelete);
 	}
-
 
 	// Recursive
 	void Scene::DeleteChildrenAndSelf(std::shared_ptr<GameObject> objectToDelete)
@@ -113,7 +121,6 @@ namespace FlatEngine
 			}
 		}
 	}
-
 
 	void Scene::IncrementGameObjectID()
 	{

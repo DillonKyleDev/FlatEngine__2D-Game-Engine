@@ -58,6 +58,9 @@ namespace FlatEngine
 	// Engine
 	extern void Run(bool &_hasQuit);
 
+	// Audio Managing
+	extern std::shared_ptr<Sound> soundController;
+
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
 	extern std::shared_ptr<Scene> CreateNewScene();
@@ -70,6 +73,7 @@ namespace FlatEngine
 	extern void DeleteGameObject(int sceneObjectID);
 	extern std::shared_ptr<Component> GetObjectComponent(long objectID, ComponentTypes type);
 	extern std::shared_ptr<GameObject> GetObjectById(long objectID);
+	extern std::shared_ptr<GameObject> GetObjectByName(std::string name);
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
