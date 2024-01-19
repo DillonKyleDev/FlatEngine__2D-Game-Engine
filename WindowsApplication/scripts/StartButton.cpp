@@ -46,7 +46,7 @@ void StartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 
 	// Load into fightingUI scene
 	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
-	FlatEngine::LoadScene("fightingUI.json");
+	FlatEngine::LoadScene("Level1.json");
 }
 
 void StartButtonOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
