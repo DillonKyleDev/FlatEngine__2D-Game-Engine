@@ -1,4 +1,6 @@
 .vs/
 bin/
 bin-int
-/scripts/
+WindowsApplication/scripts/
+WindowsApplication/assets/
+WindowsApplication/x64/
