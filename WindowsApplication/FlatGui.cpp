@@ -268,13 +268,13 @@ namespace FlatEngine { namespace FlatGui {
 
 			std::vector<std::shared_ptr<GameObject>> sceneObjects = FlatEngine::GetSceneObjects();
 
-			for (int i = 0; i < sceneObjects.size(); i++)
+			for (std::vector<std::shared_ptr<GameObject>>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 			{
 				// If this object does not have a parent we render it and all of its children.
-				if (sceneObjects[i]->GetParentID() == -1)
+				if ((*object)->GetParentID() == -1)
 				{
 					// Get Object name
-					std::shared_ptr<GameObject> currentObject = sceneObjects[i];
+					std::shared_ptr<GameObject> currentObject = (*object);
 					std::string name = currentObject->GetName();
 					const char* charName = name.c_str();
 
@@ -383,9 +383,9 @@ namespace FlatEngine { namespace FlatGui {
 			std::vector<long> childrenIDs = currentObject->GetChildren();
 
 			// Render SceneObject children
-			for (int j = 0; j < childrenIDs.size(); j++)
+			for (long childID : childrenIDs)
 			{
-				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(childrenIDs[j]);
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(childID);
 				std::string name = child->GetName();
 				const char* childName = name.c_str();
 

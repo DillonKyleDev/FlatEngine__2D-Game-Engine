@@ -27,7 +27,6 @@ namespace FlatEngine
 
 	SceneManager::~SceneManager()
 	{
-
 	}
 
 	std::shared_ptr<Scene> SceneManager::CreateNewScene()
