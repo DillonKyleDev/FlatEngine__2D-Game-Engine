@@ -120,9 +120,6 @@
     <ClCompile Include="scripts\ScriptTemplate.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Sinwave.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -156,9 +153,6 @@
     <ClCompile Include="Sound.cpp">
       <Filter>Source Files\Helper</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Attack.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
     <ClCompile Include="Audio.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -173,12 +167,6 @@
     </ClCompile>
     <ClCompile Include="Text.cpp">
       <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\StartButton.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\MainMenuButton.cpp">
-      <Filter>Source Files\scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +233,6 @@
     <ClInclude Include="scripts\Up.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Sinwave.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\ScriptTemplate.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
@@ -284,9 +269,6 @@
     <ClInclude Include="Audio.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Attack.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -301,12 +283,6 @@
     </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\StartButton.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\MainMenuButton.h">
-      <Filter>Header Files\scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

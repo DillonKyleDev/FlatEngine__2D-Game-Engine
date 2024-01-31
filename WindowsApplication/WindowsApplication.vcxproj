@@ -154,7 +154,6 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="scripts\MainMenuButton.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="scripts\ButtonScriptTemplate.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -197,6 +196,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="scripts\MainMenuButton.h" />
+    <ClInclude Include="scripts\Attack.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="scripts\ButtonScriptTemplate.h" />
     <ClInclude Include="Camera.h" />

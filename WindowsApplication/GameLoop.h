@@ -42,7 +42,6 @@ namespace FlatEngine
 		std::string startedScene;
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
-
 		std::shared_ptr<Up> upScript;
 	};
 }
