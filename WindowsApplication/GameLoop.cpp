@@ -19,12 +19,7 @@ namespace FlatEngine
 		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		this->scripts = std::vector<std::shared_ptr<GameScript>>();
 
-		this->moverScript = nullptr;
 		this->upScript = nullptr;
-		this->sinwaveScript = nullptr;
-		this->attackScript = nullptr;
-		this->startButtonScript = nullptr;
-		this->mainMenuButtonScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -40,18 +35,8 @@ namespace FlatEngine
 		this->pausedTicks = 0;
 
 		// Create our script instances
-		this->moverScript = std::make_shared<Mover>();
 		this->upScript = std::make_shared<Up>();
-		this->sinwaveScript = std::make_shared<Sinwave>();
-		this->attackScript = std::make_shared<Attack>();
-		this->startButtonScript = std::make_shared<StartButton>();
-		this->mainMenuButtonScript = std::make_shared<MainMenuButton>();
-		this->scripts.push_back(moverScript);
 		this->scripts.push_back(upScript);
-		this->scripts.push_back(sinwaveScript);
-		this->scripts.push_back(attackScript);
-		this->scripts.push_back(startButtonScript);
-		this->scripts.push_back(mainMenuButtonScript);
 
 		// Initialize our scripts with the currently loaded scene
 		this->InitializeScriptObjects();
@@ -80,29 +65,9 @@ namespace FlatEngine
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attachedScript = script->GetAttachedScript();
 
-					if (attachedScript == "Mover")
-					{
-						moverScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Up")
+					if (attachedScript == "Up")
 					{
 						upScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Sinwave")
-					{
-						sinwaveScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Attack")
-					{
-						attackScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "StartButton")
-					{
-						startButtonScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "MainMenuButton")
-					{
-						mainMenuButtonScript->AddEntity(this->gameObjects[i]);
 					}
 					// Add other script name checks here and add them to those script objects
 				}
@@ -186,9 +151,7 @@ namespace FlatEngine
 		this->framesCounted = 0;
 
 		// Reset shared_ptrs
-		this->moverScript = nullptr;
 		this->upScript = nullptr;
-		this->sinwaveScript = nullptr;
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(this->startedScene);

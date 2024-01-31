@@ -1,14 +1,8 @@
 #pragma once
 #include "SDL.h"
 #include "Button.h"
-//#include "Animation.h"
 #include "GameScript.h"
-#include "Mover.h"
 #include "./scripts/Up.h"
-#include "./scripts/Sinwave.h"
-#include "./scripts/Attack.h"
-#include "./scripts/StartButton.h"
-#include "./scripts/MainMenuButton.h"
 
 
 
@@ -48,14 +42,8 @@ namespace FlatEngine
 		std::string startedScene;
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
-		std::shared_ptr<Mover> moverScript;
+
 		std::shared_ptr<Up> upScript;
-		std::shared_ptr<Sinwave> sinwaveScript;
-		std::shared_ptr<Attack> attackScript;
-		std::shared_ptr<StartButton> startButtonScript;
-		std::shared_ptr<MainMenuButton> mainMenuButtonScript;
-
-
 	};
 }
 
