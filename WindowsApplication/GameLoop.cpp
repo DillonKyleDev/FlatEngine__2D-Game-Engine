@@ -20,6 +20,8 @@ namespace FlatEngine
 		this->scripts = std::vector<std::shared_ptr<GameScript>>();
 
 		this->upScript = nullptr;
+		this->gameBoardScript = nullptr;
+		this->pawnScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -36,7 +38,11 @@ namespace FlatEngine
 
 		// Create our script instances
 		this->upScript = std::make_shared<Up>();
+		this->gameBoardScript = std::make_shared<GameBoard>();
+		this->pawnScript = std::make_shared<Pawn>();
 		this->scripts.push_back(upScript);
+		this->scripts.push_back(gameBoardScript);
+		this->scripts.push_back(pawnScript);
 
 		// Initialize our scripts with the currently loaded scene
 		this->InitializeScriptObjects();
@@ -67,7 +73,15 @@ namespace FlatEngine
 
 					if (attachedScript == "Up")
 					{
-						upScript->AddEntity(this->gameObjects[i]);
+						this->upScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "GameBoard")
+					{
+						this->gameBoardScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Pawn")
+					{
+						this->pawnScript->AddEntity(this->gameObjects[i]);
 					}
 					// Add other script name checks here and add them to those script objects
 				}
@@ -152,6 +166,8 @@ namespace FlatEngine
 
 		// Reset shared_ptrs
 		this->upScript = nullptr;
+		this->gameBoardScript = nullptr;
+		this->pawnScript = nullptr;
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(this->startedScene);

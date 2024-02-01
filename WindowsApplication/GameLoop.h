@@ -3,6 +3,8 @@
 #include "Button.h"
 #include "GameScript.h"
 #include "./scripts/Up.h"
+#include "./scripts/GameBoard.h"
+#include "./scripts/Pawn.h"
 
 
 
@@ -43,6 +45,8 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
 		std::shared_ptr<Up> upScript;
+		std::shared_ptr<GameBoard> gameBoardScript;
+		std::shared_ptr<Pawn> pawnScript;
 	};
 }
 
