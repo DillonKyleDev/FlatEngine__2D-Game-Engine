@@ -6,7 +6,7 @@
 class Rook : public Piece
 {
 public:
-	Rook(long parentID);
+	Rook(long parentID = -1);
 	~Rook();
 
 	void Start();

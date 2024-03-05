@@ -6,7 +6,7 @@
 class Bishop : public Piece
 {
 public:
-	Bishop(long parentID);
+	Bishop(long parentID = -1);
 	~Bishop();
 
 	void Start();

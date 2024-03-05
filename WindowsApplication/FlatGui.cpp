@@ -1167,12 +1167,6 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::CloseCurrentPopup();
 					}
 
-				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Script);
-					ImGui::CloseCurrentPopup();
-				}
-
 				if (canvasComponent == nullptr)
 					if (ImGui::Button("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
@@ -1196,6 +1190,12 @@ namespace FlatEngine { namespace FlatGui {
 				if (ImGui::Button("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Text);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				{
+					focusedObject->AddComponent(ComponentTypes::Script);
 					ImGui::CloseCurrentPopup();
 				}
 

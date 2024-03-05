@@ -6,7 +6,7 @@
 class Knight : public Piece
 {
 public:
-	Knight(long parentID);
+	Knight(long parentID = -1);
 	~Knight();
 
 	void Start();

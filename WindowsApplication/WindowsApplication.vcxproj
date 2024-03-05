@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\01_hello_SDL\main.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdl2.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.cpp" />
@@ -154,6 +153,7 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="scripts\Bishop.cpp" />
     <ClCompile Include="scripts\King.cpp" />
     <ClCompile Include="scripts\Knight.cpp" />

@@ -6,7 +6,7 @@
 class King : public Piece
 {
 public:
-	King(long parentID);
+	King(long parentID = -1);
 	~King();
 
 	void Start();

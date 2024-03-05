@@ -40,7 +40,7 @@ bool Texture::loadFromFile(std::string path)
 	else
 	{
 		//Color key image **Whatever color you put in here it will treat as transparent**
-		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0, 0));
+		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 0));
 
 		//Create texture from surface pixels
 		newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), loadedSurface);
