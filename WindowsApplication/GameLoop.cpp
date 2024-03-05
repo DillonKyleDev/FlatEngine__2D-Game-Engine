@@ -64,11 +64,21 @@ namespace FlatEngine
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attachedScript = script->GetAttachedScript();
 
+
+					if (attachedScript == "Up")
+					{
+						std::shared_ptr<Up> upScript = std::make_shared<Up>();
+						upScript->SetOwner(this->gameObjects[i]);
+						this->activeScripts.push_back(upScript);
+					}
+
+
+
 					//if (attachedScript == "Up")
 					//{
 					//	upScript->AddEntity(this->gameObjects[i]);
 					//}
-					// else if (attachedScript == "OtherScriptName)
+					// else if (attachedScript == "OtherScriptName")
 					// Add other script name checks here and add them to those script objects
 				}
 			}
@@ -79,10 +89,16 @@ namespace FlatEngine
 
 
 		// After all the scripts have gotten all of their scene objects added to them, we can run their Start methods
-		for (int i = 0; i < scripts.size(); i++)
+		//for (int i = 0; i < scripts.size(); i++)
+		//{
+		//	if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+		//		scripts[i]->Start();
+		//}
+
+		for (int i = 0; i < activeScripts.size(); i++)
 		{
-			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
-				scripts[i]->Start();
+			activeScripts[i]->Awake();
+			activeScripts[i]->Start();
 		}
 	}
 
@@ -98,10 +114,15 @@ namespace FlatEngine
 
 
 		// Run all the script Update() functions
-		for (int i = 0; i < scripts.size(); i++)
-			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
-				scripts[i]->Update(this->deltaTime);
+		//for (int i = 0; i < scripts.size(); i++)
+		//	if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+		//		scripts[i]->Update(this->deltaTime);
 
+
+		for (int i = 0; i < activeScripts.size(); i++)
+		{
+			activeScripts[i]->Update(this->deltaTime);
+		}
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //
 		//

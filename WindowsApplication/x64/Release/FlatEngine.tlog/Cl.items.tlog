@@ -1,4 +1,3 @@
-C:\Users\Dillon Kyle\Desktop\01_hello_SDL\main.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\main.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_dx12.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_impl_dx12.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdl2.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_impl_sdl2.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_impl_sdlrenderer2.obj
@@ -9,8 +8,8 @@ C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\im
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_widgets.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Animation.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Animation.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Audio.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Audio.obj
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\Attack.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Attack.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Button.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Button.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\main.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\main.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\ButtonScriptTemplate.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\ButtonScriptTemplate.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Camera.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Camera.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Component.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Component.obj
@@ -25,12 +24,10 @@ C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Mover.cpp;C:\Use
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Scene.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Scene.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\SceneManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\SceneManager.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\ScriptComponent.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\ScriptComponent.obj
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\Sinwave.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Sinwave.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\ScriptTemplate.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\ScriptTemplate.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Settings.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Settings.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sound.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Sound.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Sprite.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Sprite.obj
-C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\StartButton.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\StartButton.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Text.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Text.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\Texture.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\Texture.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\TextureManager.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\TextureManager.obj

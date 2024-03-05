@@ -4,7 +4,7 @@
 //#include "Animation.h"
 #include "GameScript.h"
 //#include "Mover.h"
-//#include "./scripts/Up.h"
+#include "./scripts/Up.h"
 //#include "./scripts/Sinwave.h"
 //#include "./scripts/Attack.h"
 //#include "./scripts/StartButton.h"
@@ -48,6 +48,7 @@ namespace FlatEngine
 		std::string startedScene;
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
+		std::vector<std::shared_ptr<GameScript>> activeScripts;
 		//std::shared_ptr<Up> upScript;
 	};
 }

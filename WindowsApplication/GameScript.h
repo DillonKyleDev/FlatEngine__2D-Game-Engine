@@ -1,5 +1,8 @@
 #pragma once
+#ifndef GAME_OBJECT
+#define GAME_OBJECT
 #include "GameObject.h"
+#endif
 #include <string>
 #include <vector>
 #include <memory>
@@ -20,10 +23,13 @@ namespace FlatEngine
 		// right as the script string gets attached to the entity later.
 		void AddEntity(std::shared_ptr<GameObject> entity);
 		std::vector<std::shared_ptr<GameObject>> GetEntities();
+		void SetOwner(std::shared_ptr<GameObject> owner);
+		std::shared_ptr<GameObject> GetOwner();
 
 		bool _isActive;
 
 	private:
 		std::vector<std::shared_ptr<GameObject>> entities;
+		std::shared_ptr<GameObject> owner;
 	};
 }

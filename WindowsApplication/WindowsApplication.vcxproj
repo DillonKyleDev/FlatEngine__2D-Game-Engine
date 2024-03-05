@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dillon Kyle\Desktop\GameDev\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\01_hello_SDL\main.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdl2.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\backends\imgui_impl_sdlrenderer2.cpp" />
@@ -155,6 +154,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="scripts\ButtonScriptTemplate.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />

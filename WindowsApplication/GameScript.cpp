@@ -24,4 +24,14 @@ namespace FlatEngine
 	{
 		return this->entities;
 	}
+
+	void GameScript::SetOwner(std::shared_ptr<GameObject> owner)
+	{
+		this->owner = owner;
+	}
+
+	std::shared_ptr<GameObject> GameScript::GetOwner()
+	{
+		return this->owner;
+	}
 }

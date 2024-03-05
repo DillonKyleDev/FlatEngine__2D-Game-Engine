@@ -46,33 +46,27 @@ void UpOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 
 void Up::Start()
 {
-	for (int i = 0; i < this->GetEntities().size(); i++)
-	{
-		std::shared_ptr<FlatEngine::GameObject> thisObject = this->GetEntities()[i];
-		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(thisObject->GetComponent(FlatEngine::ComponentTypes::Button));
+	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(this->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
 
-		if (button != nullptr)
-		{
-			// Register Mouse Events functions to the Button
-			button->OnMouseOver(UpOnMouseOver);
-			button->OnMouseLeave(UpOnMouseLeave);
-			button->OnMouseLeftClick(UpOnLeftClick);
-			button->OnMouseRightClick(UpOnRightClick);
-		}
+	if (button != nullptr)
+	{
+		// Register Mouse Events functions to the Button
+		button->OnMouseOver(UpOnMouseOver);
+		button->OnMouseLeave(UpOnMouseLeave);
+		button->OnMouseLeftClick(UpOnLeftClick);
+		button->OnMouseRightClick(UpOnRightClick);
 	}
 }
 
 
 void Up::Update(float deltaTime)
 {
-	// For all entities attatched to this script:
-	for (int i = 0; i < this->GetEntities().size(); i++)
-	{
-		std::shared_ptr<FlatEngine::GameObject> thisObject = this->GetEntities()[i];
-		std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
-		Vector2 position = transform->GetPosition();
-		float xPos = position.x;
-		float yPos = position.y;
-	}
+	std::shared_ptr<FlatEngine::GameObject> owner = this->GetOwner();
+	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(owner->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
+	Vector2 position = transform->GetPosition();
+	float xPos = position.x;
+	float yPos = position.y;
+
+	transform->SetPosition(Vector2(xPos, yPos + .1));
 }
 

@@ -232,7 +232,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		std::string sceneText = "Scene: ";
-		static char filename[1024] = "MainMenu.json";
+		static char filename[1024] = "Test.json";
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 		// Edit field
@@ -1167,12 +1167,6 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::CloseCurrentPopup();
 					}
 
-				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Script);
-					ImGui::CloseCurrentPopup();
-				}
-
 				if (canvasComponent == nullptr)
 					if (ImGui::Button("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
@@ -1196,6 +1190,12 @@ namespace FlatEngine { namespace FlatGui {
 				if (ImGui::Button("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Text);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				{
+					focusedObject->AddComponent(ComponentTypes::Script);
 					ImGui::CloseCurrentPopup();
 				}
 
