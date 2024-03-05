@@ -98,7 +98,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FlatEngine::_isDebugMode == false)
 		{
 			// Load in what is currently in SavedScenes.json
-			FlatEngine::LoadScene("MainMenu.json");
+			FlatEngine::LoadScene("GameBoard.json");
 
 			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
 			// we don't want to have to include it in the final release build anyway.
@@ -232,7 +232,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		std::string sceneText = "Scene: ";
-		static char filename[1024] = "MainMenu.json";
+		static char filename[1024] = "GameBoard.json";
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 		// Edit field

@@ -6,7 +6,7 @@
 class Pawn : public Piece
 {
 public:
-	Pawn();
+	Pawn(long parentID);
 	~Pawn();
 
 	void Start();

@@ -21,6 +21,11 @@ namespace FlatEngine
 
 		this->upScript = nullptr;
 		this->gameBoardScript = nullptr;
+		this->kingScript = nullptr;
+		this->queenScript = nullptr;
+		this->knightScript = nullptr;
+		this->bishopScript = nullptr;
+		this->rookScript = nullptr;
 		this->pawnScript = nullptr;
 	}
 
@@ -39,9 +44,19 @@ namespace FlatEngine
 		// Create our script instances
 		this->upScript = std::make_shared<Up>();
 		this->gameBoardScript = std::make_shared<GameBoard>();
+		this->kingScript = std::make_shared<King>();
+		this->queenScript = std::make_shared<Queen>();
+		this->knightScript = std::make_shared<Knight>();
+		this->bishopScript = std::make_shared<Bishop>();
+		this->rookScript = std::make_shared<Rook>();
 		this->pawnScript = std::make_shared<Pawn>();
 		this->scripts.push_back(upScript);
 		this->scripts.push_back(gameBoardScript);
+		this->scripts.push_back(kingScript);
+		this->scripts.push_back(queenScript);
+		this->scripts.push_back(knightScript);
+		this->scripts.push_back(bishopScript);
+		this->scripts.push_back(rookScript);
 		this->scripts.push_back(pawnScript);
 
 		// Initialize our scripts with the currently loaded scene
@@ -78,6 +93,26 @@ namespace FlatEngine
 					else if (attachedScript == "GameBoard")
 					{
 						this->gameBoardScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "King")
+					{
+						this->kingScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Queen")
+					{
+						this->queenScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Knight")
+					{
+						this->knightScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Bishop")
+					{
+						this->bishopScript->AddEntity(this->gameObjects[i]);
+					}
+					else if (attachedScript == "Rook")
+					{
+						this->rookScript->AddEntity(this->gameObjects[i]);
 					}
 					else if (attachedScript == "Pawn")
 					{
@@ -167,6 +202,11 @@ namespace FlatEngine
 		// Reset shared_ptrs
 		this->upScript = nullptr;
 		this->gameBoardScript = nullptr;
+		this->kingScript = nullptr;
+		this->queenScript = nullptr;
+		this->knightScript = nullptr;
+		this->bishopScript = nullptr;
+		this->rookScript = nullptr;
 		this->pawnScript = nullptr;
 
 		// Load back up the saved version of the scene

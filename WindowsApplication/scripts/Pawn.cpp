@@ -1,7 +1,8 @@
 #include "Pawn.h"
 
-Pawn::Pawn()
+Pawn::Pawn(long parentID)
 {
+	this->CreatePieceObject(parentID);
 }
 
 Pawn::~Pawn()
