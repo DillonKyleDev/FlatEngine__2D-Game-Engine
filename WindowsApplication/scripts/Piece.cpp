@@ -5,9 +5,10 @@
 Piece::Piece()
 {
 	this->name = "";
-	this->level = 1;
 	this->spritePath = "";
 	this->pieceObject = nullptr;
+	this->pieceTransform = nullptr;
+	this->spriteOffsetY = 0;
 }
 
 Piece::~Piece()
@@ -27,6 +28,7 @@ void Piece::CreatePieceObject(long parentID)
 	this->pieceObject = FlatEngine::CreateGameObject(parentID);
 	this->pieceObject->AddComponent(FlatEngine::ComponentTypes::Transform);
 	this->pieceObject->AddComponent(FlatEngine::ComponentTypes::Sprite);
+	this->pieceTransform = std::static_pointer_cast<FlatEngine::Transform>(this->GetPieceObject()->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
 void Piece::SetSprite(std::string path)
@@ -53,4 +55,12 @@ std::string Piece::GetName()
 std::shared_ptr<FlatEngine::GameObject> Piece::GetPieceObject()
 {
 	return this->pieceObject;
+}
+
+void Piece::PlaceOnSquare(std::shared_ptr<FlatEngine::GameObject> boardLocation)
+{
+	std::shared_ptr<FlatEngine::Transform> squareTransform = std::static_pointer_cast<FlatEngine::Transform>(boardLocation->GetComponent(FlatEngine::ComponentTypes::Transform));
+	Vector2 squarePosition = squareTransform->GetPosition();
+
+	this->pieceTransform->SetPosition(squarePosition);
 }

@@ -15,12 +15,12 @@ public:
 	void Update(float deltaTime);
 	void SetBoardLocation(std::shared_ptr<FlatEngine::GameObject> boardLocation);
 	std::shared_ptr<FlatEngine::GameObject> GetBoardLocation();
-	void SetPiece(std::shared_ptr<FlatEngine::GameObject> piece);
-	std::shared_ptr<FlatEngine::GameObject> GetPiece();
+	void SetPiece(std::shared_ptr<Piece> piece);
+	std::shared_ptr<Piece> GetPiece();
 
 private:
 	std::string squareName;
 	std::shared_ptr<FlatEngine::GameObject> boardLocation;
-	std::shared_ptr<FlatEngine::GameObject> piece;
+	std::shared_ptr<Piece> piece;
 };
 

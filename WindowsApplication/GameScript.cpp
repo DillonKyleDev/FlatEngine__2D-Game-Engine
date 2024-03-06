@@ -13,7 +13,7 @@ namespace FlatEngine
 	GameScript::~GameScript()
 	{
 
-	}	
+	}
 
 	void GameScript::AddEntity(std::shared_ptr<GameObject> entity)
 	{
@@ -23,5 +23,15 @@ namespace FlatEngine
 	std::vector<std::shared_ptr<GameObject>> GameScript::GetEntities()
 	{
 		return this->entities;
+	}
+
+	void GameScript::SetOwner(std::shared_ptr<GameObject> owner)
+	{
+		this->owner = owner;
+	}
+
+	std::shared_ptr<GameObject> GameScript::GetOwner()
+	{
+		return this->owner;
 	}
 }

@@ -271,6 +271,8 @@ namespace FlatEngine
 					for (int c = 0; c < currentObjectJson["children"].size(); c++)
 					{
 						loadedObject->AddChild(loadedChildrenIDs[c]);
+						// VVV I don't think this is right but it fixed a duplicate ID bug temporarily VVV
+						freshScene->IncrementGameObjectID();
 					}
 
 					// Loop through the components in this GameObjects json

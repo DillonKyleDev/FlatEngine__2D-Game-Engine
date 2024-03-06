@@ -19,14 +19,7 @@ namespace FlatEngine
 		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		this->scripts = std::vector<std::shared_ptr<GameScript>>();
 
-		this->upScript = nullptr;
-		this->gameBoardScript = nullptr;
-		this->kingScript = nullptr;
-		this->queenScript = nullptr;
-		this->knightScript = nullptr;
-		this->bishopScript = nullptr;
-		this->rookScript = nullptr;
-		this->pawnScript = nullptr;
+		//this->upScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -40,24 +33,6 @@ namespace FlatEngine
 		this->lastFrameTime = (float)SDL_GetTicks();
 		this->startTime = SDL_GetTicks();
 		this->pausedTicks = 0;
-
-		// Create our script instances
-		this->upScript = std::make_shared<Up>();
-		this->gameBoardScript = std::make_shared<GameBoard>();
-		this->kingScript = std::make_shared<King>();
-		this->queenScript = std::make_shared<Queen>();
-		this->knightScript = std::make_shared<Knight>();
-		this->bishopScript = std::make_shared<Bishop>();
-		this->rookScript = std::make_shared<Rook>();
-		this->pawnScript = std::make_shared<Pawn>();
-		this->scripts.push_back(upScript);
-		this->scripts.push_back(gameBoardScript);
-		this->scripts.push_back(kingScript);
-		this->scripts.push_back(queenScript);
-		this->scripts.push_back(knightScript);
-		this->scripts.push_back(bishopScript);
-		this->scripts.push_back(rookScript);
-		this->scripts.push_back(pawnScript);
 
 		// Initialize our scripts with the currently loaded scene
 		this->InitializeScriptObjects();
@@ -86,39 +61,25 @@ namespace FlatEngine
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attachedScript = script->GetAttachedScript();
 
+
 					if (attachedScript == "Up")
 					{
-						this->upScript->AddEntity(this->gameObjects[i]);
+						std::shared_ptr<Up> upScript = std::make_shared<Up>();
+						upScript->SetOwner(this->gameObjects[i]);
+						this->activeScripts.push_back(upScript);
+					}
+					else if (attachedScript == "GameManager")
+					{
+						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
+						gameManagerScript->SetOwner(this->gameObjects[i]);
+						this->activeScripts.push_back(gameManagerScript);
 					}
 					else if (attachedScript == "GameBoard")
 					{
-						this->gameBoardScript->AddEntity(this->gameObjects[i]);
+						std::shared_ptr<GameBoard> gameBoardScript = std::make_shared<GameBoard>();
+						gameBoardScript->SetOwner(this->gameObjects[i]);
+						this->activeScripts.push_back(gameBoardScript);
 					}
-					else if (attachedScript == "King")
-					{
-						this->kingScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Queen")
-					{
-						this->queenScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Knight")
-					{
-						this->knightScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Bishop")
-					{
-						this->bishopScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Rook")
-					{
-						this->rookScript->AddEntity(this->gameObjects[i]);
-					}
-					else if (attachedScript == "Pawn")
-					{
-						this->pawnScript->AddEntity(this->gameObjects[i]);
-					}
-					// Add other script name checks here and add them to those script objects
 				}
 			}
 		}
@@ -126,12 +87,10 @@ namespace FlatEngine
 
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
-
-		// After all the scripts have gotten all of their scene objects added to them, we can run their Start methods
-		for (int i = 0; i < scripts.size(); i++)
+		for (int i = 0; i < activeScripts.size(); i++)
 		{
-			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
-				scripts[i]->Start();
+			activeScripts[i]->Awake();
+			activeScripts[i]->Start();
 		}
 	}
 
@@ -145,12 +104,10 @@ namespace FlatEngine
 		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
 		this->lastFrameTime = (float)SDL_GetTicks();
 
-
-		// Run all the script Update() functions
-		for (int i = 0; i < scripts.size(); i++)
-			if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
-				scripts[i]->Update(this->deltaTime);
-
+		for (int i = 0; i < activeScripts.size(); i++)
+		{
+			activeScripts[i]->Update(this->deltaTime);
+		}
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //
 		//
@@ -176,7 +133,7 @@ namespace FlatEngine
 			// Unclick check
 			if (!inputOutput.MouseDown[0])
 				_hasLeftClicked = false;
-				
+
 			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
 			if (inputOutput.MouseDown[1] && !_hasRightClicked)
 			{
@@ -198,16 +155,6 @@ namespace FlatEngine
 		this->countedTicks = SDL_GetTicks();
 		this->pausedTicks = 0;
 		this->framesCounted = 0;
-
-		// Reset shared_ptrs
-		this->upScript = nullptr;
-		this->gameBoardScript = nullptr;
-		this->kingScript = nullptr;
-		this->queenScript = nullptr;
-		this->knightScript = nullptr;
-		this->bishopScript = nullptr;
-		this->rookScript = nullptr;
-		this->pawnScript = nullptr;
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(this->startedScene);

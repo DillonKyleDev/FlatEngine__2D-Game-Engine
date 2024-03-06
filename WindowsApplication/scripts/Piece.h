@@ -18,12 +18,14 @@ public:
 	void SetName(std::string name);
 	std::string GetName();
 	std::shared_ptr<FlatEngine::GameObject> GetPieceObject();
+	void PlaceOnSquare(std::shared_ptr<FlatEngine::GameObject> boardLocation);
 
 
 private:
 	std::string name;
-	int level;
 	std::string spritePath;
 	std::shared_ptr<FlatEngine::GameObject> pieceObject;
+	std::shared_ptr<FlatEngine::Transform> pieceTransform;
+	float spriteOffsetY;
 };
 

@@ -26,13 +26,13 @@ std::shared_ptr<FlatEngine::GameObject> BoardSquare::GetBoardLocation()
 	return this->boardLocation;
 }
 
-void BoardSquare::SetPiece(std::shared_ptr<FlatEngine::GameObject> piece)
+void BoardSquare::SetPiece(std::shared_ptr<Piece> piece)
 {
 	this->piece = piece;
-	this->boardLocation->AddChild(this->piece->GetID());
+	this->piece->PlaceOnSquare(this->boardLocation);
 }
 
-std::shared_ptr<FlatEngine::GameObject> BoardSquare::GetPiece()
+std::shared_ptr<Piece> BoardSquare::GetPiece()
 {
 	return this->piece;
 }

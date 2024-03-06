@@ -31,13 +31,13 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 0.15600000321865082,
                     "yPos": 0.0,
-                    "yScale": 1.0
+                    "yScale": 0.15600000321865082
                 },
                 {
                     "_isCollapsed": false,
-                    "_isPrimaryCamera": false,
+                    "_isPrimaryCamera": true,
                     "frustrumAlpha": 255.0,
                     "frustrumBlue": 255.0,
                     "frustrumGreen": 255.0,
@@ -46,7 +46,7 @@
                     "id": 3,
                     "type": "Camera",
                     "width": 50.0,
-                    "zoom": 10.0
+                    "zoom": 67.93000030517578
                 },
                 {
                     "_isActive": true,
@@ -333,20 +333,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 16,
                     "renderOrder": 9,
-                    "texture": "assets/images/pieces/pawnB.png",
-                    "texture_height": 22.0,
-                    "texture_width": 12.0,
+                    "texture": "assets/images/pieces/rookB.png",
+                    "texture_height": 26.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 6.0,
-                    "yOffset": 11.0
+                    "xOffset": 8.0,
+                    "yOffset": 21.0
                 }
             ],
             "id": 19,
@@ -363,20 +363,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 18,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 20,
@@ -393,9 +393,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -423,9 +423,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -453,9 +453,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -483,9 +483,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -513,20 +513,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 28,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 25,
@@ -543,20 +543,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 30,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/rookW.png",
+                    "texture_height": 26.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 21.0
                 }
             ],
             "id": 26,
@@ -573,20 +573,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 32,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/knightB.png",
+                    "texture_height": 30.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 25.0
                 }
             ],
             "id": 27,
@@ -603,20 +603,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 34,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 28,
@@ -633,9 +633,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -663,9 +663,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -693,9 +693,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -723,9 +723,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -753,20 +753,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 44,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 33,
@@ -783,20 +783,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 46,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/knightW.png",
+                    "texture_height": 30.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 25.0
                 }
             ],
             "id": 34,
@@ -813,20 +813,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 48,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/bishopB.png",
+                    "texture_height": 32.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 27.0
                 }
             ],
             "id": 35,
@@ -843,20 +843,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 50,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 36,
@@ -873,9 +873,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -903,9 +903,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -933,9 +933,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -963,9 +963,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -993,20 +993,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 60,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 41,
@@ -1023,20 +1023,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 62,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/bishopW.png",
+                    "texture_height": 32.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 27.0
                 }
             ],
             "id": 42,
@@ -1053,20 +1053,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 64,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/queenB.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 29.0
                 }
             ],
             "id": 43,
@@ -1083,20 +1083,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 66,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 44,
@@ -1113,9 +1113,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1143,9 +1143,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1173,9 +1173,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1203,9 +1203,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1233,20 +1233,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 77,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 49,
@@ -1263,20 +1263,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": -0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 79,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/queenW.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 29.0
                 }
             ],
             "id": 50,
@@ -1293,20 +1293,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 82,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/kingB.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 29.0
                 }
             ],
             "id": 51,
@@ -1323,20 +1323,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 99,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/bishopB.png",
+                    "texture_height": 32.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 27.0
                 }
             ],
             "id": 52,
@@ -1353,20 +1353,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 116,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/knightB.png",
+                    "texture_height": 30.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 25.0
                 }
             ],
             "id": 53,
@@ -1383,20 +1383,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 14,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/rookB.png",
+                    "texture_height": 26.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 21.0
                 }
             ],
             "id": 54,
@@ -1413,20 +1413,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 84,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 55,
@@ -1443,9 +1443,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1473,9 +1473,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1503,9 +1503,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1533,9 +1533,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1563,20 +1563,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 94,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 60,
@@ -1593,20 +1593,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 96,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/kingW.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 29.0
                 }
             ],
             "id": 61,
@@ -1623,20 +1623,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 101,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 62,
@@ -1653,9 +1653,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1683,9 +1683,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1713,9 +1713,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1743,9 +1743,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1773,20 +1773,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 111,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 67,
@@ -1803,20 +1803,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 1.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 113,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/bishopW.png",
+                    "texture_height": 32.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 27.0
                 }
             ],
             "id": 68,
@@ -1833,20 +1833,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 118,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 69,
@@ -1863,9 +1863,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1893,9 +1893,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1923,9 +1923,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1953,9 +1953,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -1983,20 +1983,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 128,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 74,
@@ -2013,20 +2013,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 2.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 130,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/knightW.png",
+                    "texture_height": 30.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 25.0
                 }
             ],
             "id": 75,
@@ -2043,20 +2043,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 133,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnB.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 76,
@@ -2073,9 +2073,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -2103,9 +2103,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": -0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -2133,9 +2133,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 0.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -2163,9 +2163,9 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 1.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
@@ -2193,20 +2193,20 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 2.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 143,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/pawnW.png",
+                    "texture_height": 24.0,
+                    "texture_width": 14.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 7.0,
+                    "yOffset": 20.0
                 }
             ],
             "id": 81,
@@ -2223,25 +2223,41 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 3.5,
-                    "xScale": 1.0,
+                    "xScale": 0.8999999761581421,
                     "yPos": 3.5,
-                    "yScale": 1.0
+                    "yScale": 0.8999999761581421
                 },
                 {
                     "_isCollapsed": false,
                     "id": 145,
                     "renderOrder": 0,
-                    "texture": "",
-                    "texture_height": 0.0,
-                    "texture_width": 0.0,
+                    "texture": "assets/images/pieces/rookW.png",
+                    "texture_height": 26.0,
+                    "texture_width": 16.0,
                     "type": "Sprite",
-                    "xOffset": 0.0,
-                    "yOffset": 0.0
+                    "xOffset": 8.0,
+                    "yOffset": 21.0
                 }
             ],
             "id": 82,
             "name": "h8",
             "parent": 17
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "GameManager",
+                    "id": 142,
+                    "type": "Script"
+                }
+            ],
+            "id": 148,
+            "name": "GameManager",
+            "parent": -1
         }
     ]
 }

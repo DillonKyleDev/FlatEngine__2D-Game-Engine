@@ -1,4 +1,5 @@
 #include "GameBoard.h"
+#include "scripts/King.h"
 #include "../FlatEngine.h"
 
 
@@ -95,53 +96,47 @@ GameBoard::~GameBoard()
 
 void GameBoard::Start()
 {
-	// Create the Peices
-	for (std::shared_ptr<FlatEngine::GameObject> entity : this->GetEntities())
+	// Create all board squares and associate them with a square transform in engine
+	std::vector<long> childrenIDs = this->GetOwner()->GetChildren();
+	FlatEngine::LogString("Started GameBoard:");
+	// Positions GameObject
+	for (long childID : childrenIDs)
 	{
-		// Create all board squares and associate them with a square transform in engine
-		std::vector<long> childrenIDs = entity->GetChildren();
+		std::shared_ptr<FlatEngine::GameObject> child = FlatEngine::GetObjectById(childID);
 
-		// Positions GameObject
-		for (long childID : childrenIDs)
+		if (child->GetName() == "Positions")
 		{
-			std::shared_ptr<FlatEngine::GameObject> child = FlatEngine::GetObjectById(childID);
+			std::vector<long> grandChildrenIDs = child->GetChildren();
 
-			if (child->GetName() == "Positions")
+			// a, b, c, d, e, f, g, h
+			for (long gChildID : grandChildrenIDs)
 			{
-				std::vector<long> grandChildrenIDs = child->GetChildren();
+				std::shared_ptr<FlatEngine::GameObject> grandChild = FlatEngine::GetObjectById(gChildID);
+				std::vector<long> greatChildrenIDs = grandChild->GetChildren();
 
-				// a, b, c, d, e, f, g, h
-				for (long gChildID : grandChildrenIDs)
+				// a1, a2, a3, a4, a5, a6, a7, a8, b1, etc...
+				for (long greatIDs : greatChildrenIDs)
 				{
-					std::shared_ptr<FlatEngine::GameObject> grandChild = FlatEngine::GetObjectById(gChildID);
-					std::vector<long> greatChildrenIDs = grandChild->GetChildren();
-
-					// a1, a2, a3, a4, a5, a6, a7, a8, b1, etc...
-					for (long greatIDs : greatChildrenIDs)
-					{
-						std::shared_ptr<FlatEngine::GameObject> greatChild = FlatEngine::GetObjectById(greatIDs);						
-						std::shared_ptr<BoardSquare> square = std::make_shared<BoardSquare>();
-						square->SetBoardLocation(greatChild);
+					std::shared_ptr<FlatEngine::GameObject> greatChild = FlatEngine::GetObjectById(greatIDs);						
+					std::shared_ptr<BoardSquare> square = std::make_shared<BoardSquare>();
+					square->SetBoardLocation(greatChild);
 						
-						for (std::map<std::string, std::string>::iterator initialPos = this->initialPositions.begin(); initialPos != this->initialPositions.end(); initialPos++)
+					for (std::map<std::string, std::string>::iterator initialPos = this->initialPositions.begin(); initialPos != this->initialPositions.end(); initialPos++)
+					{
+						if (greatChild->GetName() == initialPos->first)
 						{
-							if (greatChild->GetName() == initialPos->first)
+							// If space should not be empty
+							if (initialPos->second != "empty")
 							{
-								// If space should not be empty
-								if (initialPos->second != "empty")
+								// Create a new piece
+								if (initialPos->second == "w_king")
 								{
-									// Create a new piece
-									if (initialPos->second == "w_king")
-									{
-										std::shared_ptr<FlatEngine::GameObject> piece = FlatEngine::CreateGameObject(greatChild->GetID());
-
-										FlatEngine::LogString("White King Found.");
-										std::shared_ptr<King> whiteKing = std::make_shared<King>(square->GetBoardLocation()->GetID());
-										whiteKing->SetName("White King");
-										whiteKing->SetSprite("assets/images/pieces/white_king.png");
+									FlatEngine::LogString("White King Found.");
+									std::shared_ptr<King> whiteKing = std::make_shared<King>(square->GetBoardLocation()->GetID());
+									whiteKing->SetName("White King");
+									whiteKing->SetSprite("assets/images/pieces/white_king.png");
 										
-										square->SetPiece(piece);
-									}
+									square->SetPiece(whiteKing);
 								}
 							}
 						}
