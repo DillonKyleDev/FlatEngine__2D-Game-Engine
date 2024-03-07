@@ -18,8 +18,6 @@ namespace FlatEngine
 
 		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		this->scripts = std::vector<std::shared_ptr<GameScript>>();
-
-		//this->upScript = nullptr;
 	}
 
 	GameLoop::~GameLoop()
@@ -66,19 +64,22 @@ namespace FlatEngine
 					{
 						std::shared_ptr<Up> upScript = std::make_shared<Up>();
 						upScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(upScript);
 						this->activeScripts.push_back(upScript);
-					}
-					else if (attachedScript == "GameManager")
-					{
-						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
-						gameManagerScript->SetOwner(this->gameObjects[i]);
-						this->activeScripts.push_back(gameManagerScript);
 					}
 					else if (attachedScript == "GameBoard")
 					{
 						std::shared_ptr<GameBoard> gameBoardScript = std::make_shared<GameBoard>();
 						gameBoardScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(gameBoardScript);
 						this->activeScripts.push_back(gameBoardScript);
+					}
+					else if (attachedScript == "GameManager")
+					{
+						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
+						gameManagerScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(gameManagerScript);
+						this->activeScripts.push_back(gameManagerScript);
 					}
 				}
 			}
@@ -119,26 +120,27 @@ namespace FlatEngine
 		{
 			std::vector<std::shared_ptr<FlatEngine::Button>> hoveredButtons = FlatEngine::uiManager->GetHoveredButtons();
 			ImGuiIO inputOutput = ImGui::GetIO();
+			std::shared_ptr<Button> topLevelButton = FlatEngine::uiManager->GetTopLevelButton();
 
 			// Call the OnMouseOverFunction() in the top level button that is hovered
 			std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(FlatEngine::uiManager->GetTopLevelButton()->GetParentID());
 			//FlatEngine::uiManager->GetTopLevelButton()->OnMouseOverFunction(thisObject);
 
 			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[0] && !_hasLeftClicked)
+			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
 			{
 				_hasLeftClicked = true;
-				FlatEngine::uiManager->GetTopLevelButton()->OnLeftClickFunction(thisObject);
+				topLevelButton->OnLeftClickFunction(thisObject);
 			}
 			// Unclick check
 			if (!inputOutput.MouseDown[0])
 				_hasLeftClicked = false;
 
 			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[1] && !_hasRightClicked)
+			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
 			{
 				_hasRightClicked = true;
-				FlatEngine::uiManager->GetTopLevelButton()->OnRightClickFunction(thisObject);
+				topLevelButton->OnRightClickFunction(thisObject);
 			}
 			// Unclick check
 			if (!inputOutput.MouseDown[1])

@@ -15,8 +15,11 @@ public:
 	void CreatePieceObject(long parentID);
 	void SetSprite(std::string path);
 	std::string GetSprite();
+	void SetSpriteOffsetY(float offsetY);
 	void SetName(std::string name);
 	std::string GetName();
+	void SetColor(std::string color);
+	std::string GetColor();
 	std::shared_ptr<FlatEngine::GameObject> GetPieceObject();
 	void PlaceOnSquare(std::shared_ptr<FlatEngine::GameObject> boardLocation);
 
@@ -27,5 +30,6 @@ private:
 	std::shared_ptr<FlatEngine::GameObject> pieceObject;
 	std::shared_ptr<FlatEngine::Transform> pieceTransform;
 	float spriteOffsetY;
+	std::string color;
 };
 

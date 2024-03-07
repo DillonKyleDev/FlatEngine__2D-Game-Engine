@@ -47,6 +47,18 @@ namespace FlatEngine
 		std::function<void(std::shared_ptr<GameObject>)> OnLeftClickFunction;
 		std::function<void(std::shared_ptr<GameObject>)> OnRightClickFunction;
 
+		bool MouseOverSet();
+		bool MouseEnterSet();
+		bool MouseLeaveSet();
+		bool LeftClickSet();
+		bool RightClickSet();
+
+		bool _mouseOverSet;
+		bool _mouseEnterSet;
+		bool _mouseLeaveSet;
+		bool _leftClickSet;
+		bool _rightClickSet;
+
 	private:
 		bool _mouseIsOver;
 		bool _hasMouseOverFired;

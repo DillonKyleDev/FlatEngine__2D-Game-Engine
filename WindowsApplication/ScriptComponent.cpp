@@ -13,6 +13,7 @@ namespace FlatEngine
 		this->SetID(myID);
 		this->SetParentID(parentID);
 		this->attachedScript = "";
+		this->scriptInstance = nullptr;
 	}
 
 	ScriptComponent::~ScriptComponent()
@@ -28,6 +29,16 @@ namespace FlatEngine
 	std::string ScriptComponent::GetAttachedScript()
 	{
 		return this->attachedScript;
+	}
+
+	void ScriptComponent::SetScriptInstance(std::shared_ptr<GameScript> script)
+	{
+		this->scriptInstance = script;
+	}
+
+	std::shared_ptr<GameScript> ScriptComponent::GetScriptInstance()
+	{
+		return this->scriptInstance;
 	}
 
 	bool ScriptComponent::IsActive()

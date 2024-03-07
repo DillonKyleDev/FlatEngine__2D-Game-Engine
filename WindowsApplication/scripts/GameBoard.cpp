@@ -1,5 +1,10 @@
 #include "GameBoard.h"
 #include "scripts/King.h"
+#include "scripts/Queen.h"
+#include "scripts/Rook.h"
+#include "scripts/Bishop.h"
+#include "scripts/Knight.h"
+#include "scripts/Pawn.h"
 #include "../FlatEngine.h"
 
 
@@ -13,80 +18,10 @@
 
 GameBoard::GameBoard()
 {
-	squares = std::map<std::string, BoardSquare>();
-	initialPositions = {
-		{ "a1", "w_rook" },
-		{ "a2", "w_pawn" },
-		{ "a3", "empty" },
-		{ "a4", "empty" },
-		{ "a5", "empty" },
-		{ "a6", "empty" },
-		{ "a7", "b_pawn" },
-		{ "a8", "b_rook" },
-		
-		{ "b1", "w_knight" },
-		{ "b2", "w_pawn" },
-		{ "b3", "empty" },
-		{ "b4", "empty" },
-		{ "b5", "empty" },
-		{ "b6", "empty" },
-		{ "b7", "b_pawn" },
-		{ "b8", "b_knight" },
-
-		{ "c1", "w_bishop" },
-		{ "c2", "w_pawn" },
-		{ "c3", "empty" },
-		{ "c4", "empty" },
-		{ "c5", "empty" },
-		{ "c6", "empty" },
-		{ "c7", "b_pawn" },
-		{ "c8", "b_bishop" },
-
-		{ "d1", "w_queen" },
-		{ "d2", "w_pawn" },
-		{ "d3", "empty" },
-		{ "d4", "empty" },
-		{ "d5", "empty" },
-		{ "d6", "empty" },
-		{ "d7", "b_pawn" },
-		{ "d8", "b_queen" },
-				
-		{ "e1", "w_king" },
-		{ "e2", "w_pawn" },
-		{ "e3", "empty" },
-		{ "e4", "empty" },
-		{ "e5", "empty" },
-		{ "e6", "empty" },
-		{ "e7", "b_pawn" },
-		{ "e8", "b_king" },
-
-		{ "f1", "w_bishop" },
-		{ "f2", "w_pawn" },
-		{ "f3", "empty" },
-		{ "f4", "empty" },
-		{ "f5", "empty" },
-		{ "f6", "empty" },
-		{ "f7", "b_pawn" },
-		{ "f8", "b_bishop" },
-
-		{ "g1", "w_knight" },
-		{ "g2", "w_pawn" },
-		{ "g3", "empty" },
-		{ "g4", "empty" },
-		{ "g5", "empty" },
-		{ "g6", "empty" },
-		{ "g7", "b_pawn" },
-		{ "g8", "b_knight" },
-
-		{ "h1", "w_rook" },
-		{ "h2", "w_pawn" },
-		{ "h3", "empty" },
-		{ "h4", "empty" },
-		{ "h5", "empty" },
-		{ "h6", "empty" },
-		{ "h7", "b_pawn" },
-		{ "h8", "b_rook" },
-	};
+	//std::vector<std::shared_ptr<FlatEngine::GameObject>> columns(8);
+	//std::vector<std::vector<std::shared_ptr<FlatEngine::GameObject>>> rows(8);
+	this->boardSquares = std::vector<std::vector<std::shared_ptr<FlatEngine::GameObject>>>();
+	this->squareIDs = std::vector<long>();
 }
 
 GameBoard::~GameBoard()
@@ -99,7 +34,8 @@ void GameBoard::Start()
 	// Create all board squares and associate them with a square transform in engine
 	std::vector<long> childrenIDs = this->GetOwner()->GetChildren();
 	FlatEngine::LogString("Started GameBoard:");
-	// Positions GameObject
+	
+	// Collect all in-engine board squares
 	for (long childID : childrenIDs)
 	{
 		std::shared_ptr<FlatEngine::GameObject> child = FlatEngine::GetObjectById(childID);
@@ -111,39 +47,245 @@ void GameBoard::Start()
 			// a, b, c, d, e, f, g, h
 			for (long gChildID : grandChildrenIDs)
 			{
-				std::shared_ptr<FlatEngine::GameObject> grandChild = FlatEngine::GetObjectById(gChildID);
-				std::vector<long> greatChildrenIDs = grandChild->GetChildren();
+				// a1, a2, a3, a4, etc...
+				std::shared_ptr<FlatEngine::GameObject> gchild = FlatEngine::GetObjectById(gChildID);
 
-				// a1, a2, a3, a4, a5, a6, a7, a8, b1, etc...
-				for (long greatIDs : greatChildrenIDs)
+				for (long ggChildID : gchild->GetChildren())
 				{
-					std::shared_ptr<FlatEngine::GameObject> greatChild = FlatEngine::GetObjectById(greatIDs);						
-					std::shared_ptr<BoardSquare> square = std::make_shared<BoardSquare>();
-					square->SetBoardLocation(greatChild);
-						
-					for (std::map<std::string, std::string>::iterator initialPos = this->initialPositions.begin(); initialPos != this->initialPositions.end(); initialPos++)
-					{
-						if (greatChild->GetName() == initialPos->first)
-						{
-							// If space should not be empty
-							if (initialPos->second != "empty")
-							{
-								// Create a new piece
-								if (initialPos->second == "w_king")
-								{
-									FlatEngine::LogString("White King Found.");
-									std::shared_ptr<King> whiteKing = std::make_shared<King>(square->GetBoardLocation()->GetID());
-									whiteKing->SetName("White King");
-									whiteKing->SetSprite("assets/images/pieces/white_king.png");
-										
-									square->SetPiece(whiteKing);
-								}
-							}
-						}
-					}
+					this->squareIDs.push_back(ggChildID);
 				}
 			}
 		}
+	}
+
+	int colCounter = 0;
+	int rowCounter = 0;
+
+	for (long squareID : this->squareIDs)
+	{
+		std::shared_ptr<FlatEngine::GameObject> squareObject = FlatEngine::GetObjectById(squareID);
+		std::vector<std::shared_ptr<FlatEngine::GameObject>> colVector;
+
+		// Create the buttons on each square and set their dimensions
+		std::shared_ptr<BoardSquare> square = std::make_shared<BoardSquare>();
+		square->SetBoardLocation(squareObject);
+		std::shared_ptr<FlatEngine::Button> squareButton = std::static_pointer_cast<FlatEngine::Button>(squareObject->AddComponent(FlatEngine::ComponentTypes::Button));
+		squareButton->SetActiveDimensions(7, 7);
+		squareButton->SetActive(false);
+
+		// BLACK PIECES
+		if (colCounter == 7)
+		{
+			if (rowCounter == 0)
+			{
+				// Black Rook
+				std::shared_ptr<Rook> blackRook = std::make_shared<Rook>(square->GetBoardLocation()->GetID());
+				blackRook->SetName("Rook_B");
+				blackRook->SetSprite("assets/images/pieces/rookB.png");
+				blackRook->SetSpriteOffsetY(21);
+				blackRook->SetColor("black");
+				square->SetPiece(blackRook);
+				squareObject->AddChild(blackRook->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 1)
+			{
+				// Black Knight
+				std::shared_ptr<Knight> blackKnight = std::make_shared<Knight>(square->GetBoardLocation()->GetID());
+				blackKnight->SetName("Knight_B");
+				blackKnight->SetSprite("assets/images/pieces/knightB.png");
+				blackKnight->SetSpriteOffsetY(25);
+				blackKnight->SetColor("black");
+				square->SetPiece(blackKnight);
+				squareObject->AddChild(blackKnight->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 2)
+			{
+				// Black Bishop
+				std::shared_ptr<Bishop> blackBishop = std::make_shared<Bishop>(square->GetBoardLocation()->GetID());
+				blackBishop->SetName("bishop_B");
+				blackBishop->SetSprite("assets/images/pieces/bishopB.png");
+				blackBishop->SetSpriteOffsetY(27);
+				blackBishop->SetColor("black");
+				square->SetPiece(blackBishop);
+				squareObject->AddChild(blackBishop->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 3)
+			{
+				// Black Queen
+				std::shared_ptr<Queen> blackQueen = std::make_shared<Queen>(square->GetBoardLocation()->GetID());
+				blackQueen->SetName("queen_B");
+				blackQueen->SetSprite("assets/images/pieces/queenB.png");
+				blackQueen->SetSpriteOffsetY(29);
+				blackQueen->SetColor("black");
+				square->SetPiece(blackQueen);
+				squareObject->AddChild(blackQueen->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 4)
+			{
+				// Black King
+				std::shared_ptr<King> blackKing = std::make_shared<King>(square->GetBoardLocation()->GetID());
+				blackKing->SetName("king_B");
+				blackKing->SetSprite("assets/images/pieces/kingB.png");
+				blackKing->SetSpriteOffsetY(29);
+				blackKing->SetColor("black");
+				square->SetPiece(blackKing);
+				squareObject->AddChild(blackKing->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 5)
+			{
+				// Black Bishop
+				std::shared_ptr<Bishop> blackBishop = std::make_shared<Bishop>(square->GetBoardLocation()->GetID());
+				blackBishop->SetName("bishop_B");
+				blackBishop->SetSprite("assets/images/pieces/bishopB.png");
+				blackBishop->SetSpriteOffsetY(27);
+				blackBishop->SetColor("black");
+				square->SetPiece(blackBishop);
+				squareObject->AddChild(blackBishop->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 6)
+			{
+				// Black Knight
+				std::shared_ptr<Knight> blackKnight = std::make_shared<Knight>(square->GetBoardLocation()->GetID());
+				blackKnight->SetName("Knight_B");
+				blackKnight->SetSprite("assets/images/pieces/knightB.png");
+				blackKnight->SetSpriteOffsetY(25);
+				blackKnight->SetColor("black");
+				square->SetPiece(blackKnight);
+				squareObject->AddChild(blackKnight->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 7)
+			{
+				// Black Rook	
+				std::shared_ptr<Rook> blackRook = std::make_shared<Rook>(square->GetBoardLocation()->GetID());
+				blackRook->SetName("Rook_B");
+				blackRook->SetSprite("assets/images/pieces/rookB.png");
+				blackRook->SetSpriteOffsetY(21);
+				blackRook->SetColor("black");
+				square->SetPiece(blackRook);
+				squareObject->AddChild(blackRook->GetPieceObject()->GetID());
+			}
+		}
+		else if (colCounter == 6)
+		{
+			std::shared_ptr<Pawn> blackPawn = std::make_shared<Pawn>(square->GetBoardLocation()->GetID());
+			blackPawn->SetName("Pawn_B");
+			blackPawn->SetSprite("assets/images/pieces/pawnB.png");
+			blackPawn->SetSpriteOffsetY(20);
+			blackPawn->SetColor("black");
+			square->SetPiece(blackPawn);
+			squareObject->AddChild(blackPawn->GetPieceObject()->GetID());
+		}
+
+		// WHITE PIECES
+		else if (colCounter == 1)
+		{
+			std::shared_ptr<Pawn> whitePawn = std::make_shared<Pawn>(square->GetBoardLocation()->GetID());
+			whitePawn->SetName("Pawn_W");
+			whitePawn->SetSprite("assets/images/pieces/pawnW.png");
+			whitePawn->SetSpriteOffsetY(20);
+			whitePawn->SetColor("white");
+			square->SetPiece(whitePawn);
+			squareObject->AddChild(whitePawn->GetPieceObject()->GetID());
+		}
+		else if (colCounter == 0)
+		{
+			if (rowCounter == 0)
+			{
+				// White Rook
+				std::shared_ptr<Rook> whiteRook = std::make_shared<Rook>(square->GetBoardLocation()->GetID());
+				whiteRook->SetName("Rook_W");
+				whiteRook->SetSprite("assets/images/pieces/rookW.png");
+				whiteRook->SetSpriteOffsetY(21);
+				whiteRook->SetColor("white");
+				square->SetPiece(whiteRook);
+				squareObject->AddChild(whiteRook->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 1)
+			{
+				// White Knight
+				std::shared_ptr<Knight> whiteKnight = std::make_shared<Knight>(square->GetBoardLocation()->GetID());
+				whiteKnight->SetName("Knight_W");
+				whiteKnight->SetSprite("assets/images/pieces/knightW.png");
+				whiteKnight->SetSpriteOffsetY(25);
+				whiteKnight->SetColor("white");
+				square->SetPiece(whiteKnight);
+				squareObject->AddChild(whiteKnight->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 2)
+			{
+				// White Bishop
+				std::shared_ptr<Bishop> whiteBishop = std::make_shared<Bishop>(square->GetBoardLocation()->GetID());
+				whiteBishop->SetName("bishop_W");
+				whiteBishop->SetSprite("assets/images/pieces/bishopW.png");
+				whiteBishop->SetSpriteOffsetY(27);
+				whiteBishop->SetColor("white");
+				square->SetPiece(whiteBishop);
+				squareObject->AddChild(whiteBishop->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 3)
+			{
+				// White Queen
+				std::shared_ptr<Queen> whiteQueen = std::make_shared<Queen>(square->GetBoardLocation()->GetID());
+				whiteQueen->SetName("queen_W");
+				whiteQueen->SetSprite("assets/images/pieces/queenW.png");
+				whiteQueen->SetSpriteOffsetY(29);
+				whiteQueen->SetColor("white");
+				square->SetPiece(whiteQueen);
+				squareObject->AddChild(whiteQueen->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 4)
+			{
+				// White King
+				std::shared_ptr<King> whiteKing = std::make_shared<King>(square->GetBoardLocation()->GetID());
+				whiteKing->SetName("king_W");
+				whiteKing->SetSprite("assets/images/pieces/kingW.png");
+				whiteKing->SetSpriteOffsetY(29);
+				whiteKing->SetColor("white");
+				square->SetPiece(whiteKing);
+				squareObject->AddChild(whiteKing->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 5)
+			{
+				// White Bishop
+				std::shared_ptr<Bishop> whiteBishop = std::make_shared<Bishop>(square->GetBoardLocation()->GetID());
+				whiteBishop->SetName("bishop_W");
+				whiteBishop->SetSprite("assets/images/pieces/bishopW.png");
+				whiteBishop->SetSpriteOffsetY(27);
+				whiteBishop->SetColor("white");
+				square->SetPiece(whiteBishop);
+				squareObject->AddChild(whiteBishop->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 6)
+			{
+				// White Knight
+				std::shared_ptr<Knight> whiteKnight = std::make_shared<Knight>(square->GetBoardLocation()->GetID());
+				whiteKnight->SetName("Knight_W");
+				whiteKnight->SetSprite("assets/images/pieces/knightW.png");
+				whiteKnight->SetSpriteOffsetY(25);
+				whiteKnight->SetColor("white");
+				square->SetPiece(whiteKnight);
+				squareObject->AddChild(whiteKnight->GetPieceObject()->GetID());
+			}
+			if (rowCounter == 7)
+			{
+				// White Rook	
+				std::shared_ptr<Rook> whiteRook = std::make_shared<Rook>(square->GetBoardLocation()->GetID());
+				whiteRook->SetName("Rook_W");
+				whiteRook->SetSprite("assets/images/pieces/rookW.png");
+				whiteRook->SetSpriteOffsetY(21);
+				whiteRook->SetColor("white");
+				square->SetPiece(whiteRook);
+				squareObject->AddChild(whiteRook->GetPieceObject()->GetID());
+			}
+		}
+
+		if (colCounter == 7)
+		{
+			rowCounter++;
+			colCounter = 0;
+		}
+		else
+			colCounter++;
 	}
 }
 

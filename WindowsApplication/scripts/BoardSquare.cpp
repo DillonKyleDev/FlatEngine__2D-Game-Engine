@@ -29,7 +29,7 @@ std::shared_ptr<FlatEngine::GameObject> BoardSquare::GetBoardLocation()
 void BoardSquare::SetPiece(std::shared_ptr<Piece> piece)
 {
 	this->piece = piece;
-	this->piece->PlaceOnSquare(this->boardLocation);
+	//this->piece->PlaceOnSquare(this->boardLocation);
 }
 
 std::shared_ptr<Piece> BoardSquare::GetPiece()

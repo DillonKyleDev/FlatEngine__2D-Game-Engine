@@ -1,6 +1,6 @@
 #pragma once
 #include "../GameScript.h"
-#include "BoardSquare.h"
+#include "GameBoard.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script
@@ -20,8 +20,19 @@ public:
 	void Start();
 	void Update(float deltaTime);
 
+	void SetWhiteActive(bool _isActive);
+	void SetBlackActive(bool _isActive);
+	void SelectPiece(std::shared_ptr<Piece> piece);
+	void DeselectPiece();
+	void CheckAvailableMoves();
+	void GreenHighlightSquare();
+	void RedHighlightSquare();
+	void MovePiece();
+	void RemovePiece();
+
 private:
 	std::string playerTurn;
-	std::vector<BoardSquare> squares;
+	std::shared_ptr<Piece> selectedPiece;
+	std::shared_ptr<GameBoard> gameBoard;
 };
 

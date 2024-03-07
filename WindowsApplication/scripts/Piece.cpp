@@ -42,6 +42,14 @@ std::string Piece::GetSprite()
 	return this->spritePath;
 }
 
+void Piece::SetSpriteOffsetY(float offsetY)
+{
+	this->spriteOffsetY = offsetY;
+	std::shared_ptr<FlatEngine::Sprite> spriteComponent = std::static_pointer_cast<FlatEngine::Sprite>(this->pieceObject->GetComponent(FlatEngine::ComponentTypes::Sprite));
+	float currentXOffset = spriteComponent->GetOffset().x;
+	spriteComponent->SetOffset(Vector2(currentXOffset, offsetY));
+}
+
 void Piece::SetName(std::string name)
 {
 	this->pieceObject->SetName(name);
@@ -50,6 +58,16 @@ void Piece::SetName(std::string name)
 std::string Piece::GetName()
 {
 	return this->pieceObject->GetName();
+}
+
+void Piece::SetColor(std::string color)
+{
+	this->color = color;
+}
+
+std::string Piece::GetColor()
+{
+	return this->color;
 }
 
 std::shared_ptr<FlatEngine::GameObject> Piece::GetPieceObject()

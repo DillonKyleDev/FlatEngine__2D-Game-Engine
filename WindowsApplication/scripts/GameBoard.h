@@ -1,5 +1,6 @@
 #pragma once
 #include "../GameScript.h"
+#include "../GameObject.h"
 #include <map>
 #include <string>
 #include "BoardSquare.h"
@@ -15,7 +16,7 @@ public:
 	void Update(float deltaTime);
 
 private:
-	std::map<std::string, BoardSquare> squares;
-	std::map<std::string, std::string> initialPositions;
+	std::vector<long> squareIDs;
+	std::vector<std::vector<std::shared_ptr<FlatEngine::GameObject>>> boardSquares;
 };
 
