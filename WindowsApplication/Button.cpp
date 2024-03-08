@@ -34,31 +34,31 @@ namespace FlatEngine
 	{
 	}
 
-	void Button::OnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{	
 		this->OnMouseOverFunction = callback;
 		this->_mouseOverSet = true;
 	}
 
-	void Button::OnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnMouseEnterFunction = callback;
 		this->_mouseEnterSet = true;
 	}
 
-	void Button::OnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnMouseLeaveFunction = callback;
 		this->_mouseLeaveSet = true;
 	}
 
-	void Button::OnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnLeftClickFunction = callback;
 		this->_leftClickSet = true;
 	}
 
-	void Button::OnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnRightClickFunction = callback;
 		this->_rightClickSet = true;
@@ -159,6 +159,14 @@ namespace FlatEngine
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
+	}
+	void Button::SetConnectedScript(std::string scriptName)
+	{
+		this->connectedScript = scriptName;
+	}
+	std::string Button::GetConnectedScript()
+	{
+		return this->connectedScript;
 	}
 	bool Button::MouseOverSet()
 	{

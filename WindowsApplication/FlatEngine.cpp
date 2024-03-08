@@ -14,6 +14,8 @@ namespace FlatEngine
 {
 	bool _isDebugMode = true;
 
+	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
+
 	// Audio
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 

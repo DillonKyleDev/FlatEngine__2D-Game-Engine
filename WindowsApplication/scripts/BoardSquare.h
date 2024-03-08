@@ -1,6 +1,6 @@
 #pragma once
-#include "../GameScript.h"
 #include "Piece.h"
+#include "../GameScript.h"
 #include "../Vector2.h"
 #include "../GameObject.h"
 

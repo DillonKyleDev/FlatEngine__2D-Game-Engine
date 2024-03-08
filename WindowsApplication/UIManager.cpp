@@ -81,7 +81,12 @@ namespace FlatEngine {
 					
 					// If Mouse and Button are colliding, add the hovered button
 					if (FlatEngine::AreCollidingViewport(activeEdges, ImVec4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+					{
 						this->AddHoveredButton(button);
+
+						//if (button->MouseOverSet())
+							//button->OnMouseOverFunction;
+					}
 				}
 			}
 
@@ -91,7 +96,7 @@ namespace FlatEngine {
 				// If the new vector has an item that's new from the last saved vector, fire OnMouseEnter() on that item
 				if (std::find(lastHovered.begin(), lastHovered.end(), this->gameHoveredButtons[i]) == lastHovered.end())
 				{
-					if (this->gameHoveredButtons[i]->MouseOverSet())
+					if (this->gameHoveredButtons[i]->MouseEnterSet())
 					{
 						std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
 						this->gameHoveredButtons[i]->OnMouseEnterFunction(thisObject);

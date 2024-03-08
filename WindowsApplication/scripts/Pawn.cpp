@@ -2,6 +2,7 @@
 
 Pawn::Pawn(long parentID)
 {
+	this->SetName("Pawn");
 	this->CreatePieceObject(parentID);
 }
 

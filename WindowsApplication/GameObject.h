@@ -5,8 +5,6 @@
 #include "Sprite.h"
 #include "Camera.h"
 
-
-
 namespace FlatEngine
 {
 	using ComponentTypes = Component::ComponentTypes;
@@ -26,7 +24,9 @@ namespace FlatEngine
 		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
 		std::shared_ptr<Component> GetComponent(ComponentTypes type);
+		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();
+		std::vector<std::shared_ptr<Component>> GetScriptInstances();
 		void SetParentID(long parentID);
 		long GetParentID();
 		void AddChild(long childID);

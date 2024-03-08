@@ -5,7 +5,7 @@
 
 Up::Up()
 {
-
+	this->SetName("Up");
 }
 
 Up::~Up()
@@ -54,10 +54,10 @@ void Up::Start()
 		if (button != nullptr)
 		{
 			// Register Mouse Events functions to the Button
-			button->OnMouseOver(UpOnMouseOver);
-			button->OnMouseLeave(UpOnMouseLeave);
-			button->OnMouseLeftClick(UpOnLeftClick);
-			button->OnMouseRightClick(UpOnRightClick);
+			button->SetOnMouseOver(UpOnMouseOver);
+			button->SetOnMouseLeave(UpOnMouseLeave);
+			button->SetOnMouseLeftClick(UpOnLeftClick);
+			button->SetOnMouseRightClick(UpOnRightClick);
 		}
 	}
 }

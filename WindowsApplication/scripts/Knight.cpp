@@ -2,6 +2,7 @@
 
 Knight::Knight(long parentID)
 {
+	this->SetName("Knight");
 	this->CreatePieceObject(parentID);
 }
 

@@ -15,6 +15,16 @@ namespace FlatEngine
 
 	}
 
+	void GameScript::SetName(std::string name)
+	{
+		this->name = name;
+	}
+
+	std::string GameScript::GetName()
+	{
+		return this->name;
+	}
+
 	void GameScript::AddEntity(std::shared_ptr<GameObject> entity)
 	{
 		this->entities.push_back(entity);

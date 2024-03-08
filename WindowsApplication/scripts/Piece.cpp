@@ -4,7 +4,7 @@
 
 Piece::Piece()
 {
-	this->name = "";
+	this->pieceName = "";
 	this->spritePath = "";
 	this->pieceObject = nullptr;
 	this->pieceTransform = nullptr;
@@ -35,6 +35,7 @@ void Piece::SetSprite(std::string path)
 {
 	std::shared_ptr<FlatEngine::Sprite> spriteComponent = std::static_pointer_cast<FlatEngine::Sprite>(this->pieceObject->GetComponent(FlatEngine::ComponentTypes::Sprite));
 	spriteComponent->SetTexture(path);
+	spriteComponent->SetRenderOrder(5);
 }
 
 std::string Piece::GetSprite()
@@ -50,7 +51,7 @@ void Piece::SetSpriteOffsetY(float offsetY)
 	spriteComponent->SetOffset(Vector2(currentXOffset, offsetY));
 }
 
-void Piece::SetName(std::string name)
+void Piece::SetPieceName(std::string name)
 {
 	this->pieceObject->SetName(name);
 }

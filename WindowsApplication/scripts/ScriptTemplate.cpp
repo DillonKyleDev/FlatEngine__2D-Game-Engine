@@ -12,7 +12,7 @@
 
 ScriptTemplate::ScriptTemplate()
 {
-
+	this->SetName("ScriptTemplate");
 }
 
 ScriptTemplate::~ScriptTemplate()

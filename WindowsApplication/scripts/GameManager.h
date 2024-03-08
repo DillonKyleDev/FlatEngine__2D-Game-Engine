@@ -1,6 +1,7 @@
 #pragma once
 #include "../GameScript.h"
 #include "GameBoard.h"
+#include "Piece.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script
@@ -22,7 +23,7 @@ public:
 
 	void SetWhiteActive(bool _isActive);
 	void SetBlackActive(bool _isActive);
-	void SelectPiece(std::shared_ptr<Piece> piece);
+	void SetSelectedPiece(std::shared_ptr<Piece> piece, std::shared_ptr<FlatEngine::GameObject> owner);
 	void DeselectPiece();
 	void CheckAvailableMoves();
 	void GreenHighlightSquare();
@@ -33,6 +34,7 @@ public:
 private:
 	std::string playerTurn;
 	std::shared_ptr<Piece> selectedPiece;
+	std::shared_ptr<FlatEngine::GameObject> selectedSquare;
 	std::shared_ptr<GameBoard> gameBoard;
 };
 

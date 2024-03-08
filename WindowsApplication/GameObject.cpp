@@ -204,9 +204,37 @@ namespace FlatEngine
 	}
 
 
+	std::vector<std::shared_ptr<Component>> GameObject::GetComponentsOfType(Component::ComponentTypes type)
+	{
+		std::vector<std::shared_ptr<Component>> componentsOfType = std::vector<std::shared_ptr<Component>>();
+
+		for (int i = 0; i < this->components.size(); i++)
+		{
+			if (this->components[i]->GetType() == type)
+			{
+				componentsOfType.push_back(this->components[i]);
+				
+			}
+		}
+
+		return componentsOfType;
+	}
+
+
 	std::vector<std::shared_ptr<Component>> &GameObject::GetComponents()
 	{
 		return this->components;
+	}
+
+	std::vector<std::shared_ptr<Component>> GameObject::GetScriptInstances()
+	{
+		std::vector<std::shared_ptr<Component>> scriptComponents = this->GetComponentsOfType(ComponentTypes::Script);
+		std::vector<std::shared_ptr<Component>> gameScripts;
+
+		for (std::shared_ptr<Component> script : scriptComponents)
+			gameScripts.push_back(script);
+		
+		return gameScripts;
 	}
 
 

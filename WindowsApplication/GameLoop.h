@@ -2,7 +2,8 @@
 #include "SDL.h"
 #include "Button.h"
 #include "GameScript.h"
-#include "./scripts/Up.h"
+#include "./scripts/BoardSquare.h"
+#include "./scripts/GameManager.h"
 #include "./scripts/GameManager.h"
 #include "./scripts/GameBoard.h"
 
@@ -40,12 +41,12 @@ namespace FlatEngine
 		// For deltaTime
 		float lastFrameTime;
 		float deltaTime;
+		std::shared_ptr<GameManager> gameManager;
 
 		std::string startedScene;
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
 		std::vector<std::shared_ptr<GameScript>> scripts;
 		std::vector<std::shared_ptr<GameScript>> activeScripts;
-		//std::shared_ptr<Up> upScript;
 	};
 }
 

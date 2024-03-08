@@ -2,6 +2,7 @@
 
 Queen::Queen(long parentID)
 {
+	this->SetName("Queen");
 	this->CreatePieceObject(parentID);
 }
 

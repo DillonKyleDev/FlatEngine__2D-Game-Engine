@@ -16,7 +16,7 @@ public:
 	void SetSprite(std::string path);
 	std::string GetSprite();
 	void SetSpriteOffsetY(float offsetY);
-	void SetName(std::string name);
+	void SetPieceName(std::string name);
 	std::string GetName();
 	void SetColor(std::string color);
 	std::string GetColor();
@@ -25,7 +25,7 @@ public:
 
 
 private:
-	std::string name;
+	std::string pieceName;
 	std::string spritePath;
 	std::shared_ptr<FlatEngine::GameObject> pieceObject;
 	std::shared_ptr<FlatEngine::Transform> pieceTransform;

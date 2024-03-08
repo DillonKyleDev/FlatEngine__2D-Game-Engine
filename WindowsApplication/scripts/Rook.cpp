@@ -2,6 +2,7 @@
 
 Rook::Rook(long parentID)
 {
+	this->SetName("Rook");
 	this->CreatePieceObject(parentID);
 }
 

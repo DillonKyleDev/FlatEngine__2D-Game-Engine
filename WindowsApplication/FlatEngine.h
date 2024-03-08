@@ -18,7 +18,7 @@
 #include "WidgetsManager.h"
 #include "UIManager.h"
 #include "Audio.h"
-
+#include "scripts/GameManager.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -32,6 +32,8 @@ namespace FlatEngine
 	using ComponentTypes = Component::ComponentTypes;
 
 	extern bool _isDebugMode;
+
+	extern std::shared_ptr<GameManager> gameManager;
 
 	// #### FLAGENGINE #### //
 	// 
