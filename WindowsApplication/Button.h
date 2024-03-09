@@ -5,10 +5,8 @@
 #include "Window.h"
 #include "Texture.h"
 #include "Vector2.h"
-#include "GameObject.h"
 #include <functional>
-
-
+#include "GameObject.h"
 
 
 namespace FlatEngine

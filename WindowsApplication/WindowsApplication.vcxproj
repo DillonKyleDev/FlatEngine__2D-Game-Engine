@@ -155,13 +155,6 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="scripts\GameManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="scripts\Bishop.cpp" />
-    <ClCompile Include="scripts\King.cpp" />
-    <ClCompile Include="scripts\Knight.cpp" />
-    <ClCompile Include="scripts\Queen.cpp" />
-    <ClCompile Include="scripts\Rook.cpp" />
-    <ClCompile Include="scripts\Pawn.cpp" />
-    <ClCompile Include="scripts\Piece.cpp" />
     <ClCompile Include="scripts\BoardSquare.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="scripts\GameBoard.cpp" />
@@ -186,7 +179,6 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="scripts\Up.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="WidgetsManager.cpp" />
@@ -205,13 +197,6 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="scripts\GameManager.h" />
-    <ClInclude Include="scripts\Bishop.h" />
-    <ClInclude Include="scripts\King.h" />
-    <ClInclude Include="scripts\Knight.h" />
-    <ClInclude Include="scripts\Queen.h" />
-    <ClInclude Include="scripts\Rook.h" />
-    <ClInclude Include="scripts\Pawn.h" />
-    <ClInclude Include="scripts\Piece.h" />
     <ClInclude Include="scripts\BoardSquare.h" />
     <ClInclude Include="scripts\GameBoard.h" />
     <ClInclude Include="scripts\MainMenuButton.h" />
@@ -236,7 +221,6 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="scripts\Up.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="WidgetsManager.h" />

@@ -1,8 +1,6 @@
 #pragma once
-#include "Piece.h"
 #include "../GameScript.h"
 #include "../Vector2.h"
-#include "../GameObject.h"
 
 
 class BoardSquare : public FlatEngine::GameScript
@@ -13,14 +11,18 @@ public:
 
 	void Start();
 	void Update(float deltaTime);
-	void SetBoardLocation(std::shared_ptr<FlatEngine::GameObject> boardLocation);
-	std::shared_ptr<FlatEngine::GameObject> GetBoardLocation();
-	void SetPiece(std::shared_ptr<Piece> piece);
-	std::shared_ptr<Piece> GetPiece();
+	void AssignPiece(std::string name, std::string spritePath, std::string color, float yOffset);
+	void RemovePiece();
+	std::vector<std::shared_ptr<BoardSquare>> GetAvailableMoves(std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares);
+
+	std::string pieceName;
+	std::string pieceColor;
+	std::string spritePath;
+	float spriteYOffset;
+	int column;
+	int row;
 
 private:
 	std::string squareName;
-	std::shared_ptr<FlatEngine::GameObject> boardLocation;
-	std::shared_ptr<Piece> piece;
 };
 

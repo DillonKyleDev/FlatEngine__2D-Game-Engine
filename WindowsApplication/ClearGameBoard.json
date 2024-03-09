@@ -74,14 +74,70 @@
         {
             "_isActive": true,
             "children": [
-                10,
-                11,
-                12,
-                13,
-                14,
-                15,
-                16,
-                17
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                52,
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                68,
+                53,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                54,
+                76,
+                77,
+                78,
+                79,
+                80,
+                81,
+                82
             ],
             "components": [
                 {
@@ -98,230 +154,6 @@
             "id": 9,
             "name": "Positions",
             "parent": 1
-        },
-        {
-            "_isActive": true,
-            "children": [
-                19,
-                20,
-                21,
-                22,
-                23,
-                24,
-                25,
-                26
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 5,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 10,
-            "name": "a",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                27,
-                28,
-                29,
-                30,
-                31,
-                32,
-                33,
-                34
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 6,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 11,
-            "name": "b",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                35,
-                36,
-                37,
-                38,
-                39,
-                40,
-                41,
-                42
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 7,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 12,
-            "name": "c",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                43,
-                44,
-                45,
-                46,
-                47,
-                48,
-                49,
-                50
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 11,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 13,
-            "name": "d",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                51,
-                55,
-                56,
-                57,
-                58,
-                59,
-                60,
-                61
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 80,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 14,
-            "name": "e",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                52,
-                62,
-                63,
-                64,
-                65,
-                66,
-                67,
-                68
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 97,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 15,
-            "name": "f",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                53,
-                69,
-                70,
-                71,
-                72,
-                73,
-                74,
-                75
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 114,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 16,
-            "name": "g",
-            "parent": 9
-        },
-        {
-            "_isActive": true,
-            "children": [
-                54,
-                76,
-                77,
-                78,
-                79,
-                80,
-                81,
-                82
-            ],
-            "components": [
-                {
-                    "_isCollapsed": false,
-                    "id": 131,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 17,
-            "name": "h",
-            "parent": 9
         },
         {
             "_isActive": true,
@@ -347,7 +179,7 @@
             ],
             "id": 19,
             "name": "a1",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -373,7 +205,7 @@
             ],
             "id": 20,
             "name": "a2",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -399,7 +231,7 @@
             ],
             "id": 21,
             "name": "a3",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -425,7 +257,7 @@
             ],
             "id": 22,
             "name": "a4",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -451,7 +283,7 @@
             ],
             "id": 23,
             "name": "a5",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -477,7 +309,7 @@
             ],
             "id": 24,
             "name": "a6",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -503,7 +335,7 @@
             ],
             "id": 25,
             "name": "a7",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -529,7 +361,7 @@
             ],
             "id": 26,
             "name": "a8",
-            "parent": 10
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -555,7 +387,7 @@
             ],
             "id": 27,
             "name": "b1",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -581,7 +413,7 @@
             ],
             "id": 28,
             "name": "b2",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -607,7 +439,7 @@
             ],
             "id": 29,
             "name": "b3",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -633,7 +465,7 @@
             ],
             "id": 30,
             "name": "b4",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -659,7 +491,7 @@
             ],
             "id": 31,
             "name": "b5",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -685,7 +517,7 @@
             ],
             "id": 32,
             "name": "b6",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -711,7 +543,7 @@
             ],
             "id": 33,
             "name": "b7",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -737,7 +569,7 @@
             ],
             "id": 34,
             "name": "b8",
-            "parent": 11
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -763,7 +595,7 @@
             ],
             "id": 35,
             "name": "c1",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -789,7 +621,7 @@
             ],
             "id": 36,
             "name": "c2",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -815,7 +647,7 @@
             ],
             "id": 37,
             "name": "c3",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -841,7 +673,7 @@
             ],
             "id": 38,
             "name": "c4",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -867,7 +699,7 @@
             ],
             "id": 39,
             "name": "c5",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -893,7 +725,7 @@
             ],
             "id": 40,
             "name": "c6",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -919,7 +751,7 @@
             ],
             "id": 41,
             "name": "c7",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -945,7 +777,7 @@
             ],
             "id": 42,
             "name": "c8",
-            "parent": 12
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -971,7 +803,7 @@
             ],
             "id": 43,
             "name": "d1",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -997,7 +829,7 @@
             ],
             "id": 44,
             "name": "d2",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1023,7 +855,7 @@
             ],
             "id": 45,
             "name": "d3",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1049,7 +881,7 @@
             ],
             "id": 46,
             "name": "d4",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1075,7 +907,7 @@
             ],
             "id": 47,
             "name": "d5",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1101,7 +933,7 @@
             ],
             "id": 48,
             "name": "d6",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1127,7 +959,7 @@
             ],
             "id": 49,
             "name": "d7",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1153,7 +985,7 @@
             ],
             "id": 50,
             "name": "d8",
-            "parent": 13
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1179,7 +1011,7 @@
             ],
             "id": 51,
             "name": "e1",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1205,7 +1037,7 @@
             ],
             "id": 52,
             "name": "f1",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1231,7 +1063,7 @@
             ],
             "id": 53,
             "name": "g1",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1257,7 +1089,7 @@
             ],
             "id": 54,
             "name": "h1",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1283,7 +1115,7 @@
             ],
             "id": 55,
             "name": "e2",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1309,7 +1141,7 @@
             ],
             "id": 56,
             "name": "e3",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1335,7 +1167,7 @@
             ],
             "id": 57,
             "name": "e4",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1361,7 +1193,7 @@
             ],
             "id": 58,
             "name": "e5",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1387,7 +1219,7 @@
             ],
             "id": 59,
             "name": "e6",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1413,7 +1245,7 @@
             ],
             "id": 60,
             "name": "e7",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1439,7 +1271,7 @@
             ],
             "id": 61,
             "name": "e8",
-            "parent": 14
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1465,7 +1297,7 @@
             ],
             "id": 62,
             "name": "f2",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1491,7 +1323,7 @@
             ],
             "id": 63,
             "name": "f3",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1517,7 +1349,7 @@
             ],
             "id": 64,
             "name": "f4",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1543,7 +1375,7 @@
             ],
             "id": 65,
             "name": "f5",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1569,7 +1401,7 @@
             ],
             "id": 66,
             "name": "f6",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1595,7 +1427,7 @@
             ],
             "id": 67,
             "name": "f7",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1621,7 +1453,7 @@
             ],
             "id": 68,
             "name": "f8",
-            "parent": 15
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1647,7 +1479,7 @@
             ],
             "id": 69,
             "name": "g2",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1673,7 +1505,7 @@
             ],
             "id": 70,
             "name": "g3",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1699,7 +1531,7 @@
             ],
             "id": 71,
             "name": "g4",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1725,7 +1557,7 @@
             ],
             "id": 72,
             "name": "g5",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1751,7 +1583,7 @@
             ],
             "id": 73,
             "name": "g6",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1777,7 +1609,7 @@
             ],
             "id": 74,
             "name": "g7",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1803,7 +1635,7 @@
             ],
             "id": 75,
             "name": "g8",
-            "parent": 16
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1829,7 +1661,7 @@
             ],
             "id": 76,
             "name": "h2",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1855,7 +1687,7 @@
             ],
             "id": 77,
             "name": "h3",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1881,7 +1713,7 @@
             ],
             "id": 78,
             "name": "h4",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1907,7 +1739,7 @@
             ],
             "id": 79,
             "name": "h5",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1933,7 +1765,7 @@
             ],
             "id": 80,
             "name": "h6",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1959,7 +1791,7 @@
             ],
             "id": 81,
             "name": "h7",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1985,7 +1817,7 @@
             ],
             "id": 82,
             "name": "h8",
-            "parent": 17
+            "parent": 9
         },
         {
             "_isActive": true,
@@ -1997,9 +1829,16 @@
                     "attachedScript": "GameManager",
                     "id": 142,
                     "type": "Script"
+                },
+                {
+                    "_isCollapsed": false,
+                    "_isMusic": true,
+                    "id": 135,
+                    "path": "assets/audio/MovePiece.wav",
+                    "type": "Audio"
                 }
             ],
-            "id": 148,
+            "id": 3,
             "name": "GameManager",
             "parent": -1
         }

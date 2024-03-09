@@ -927,7 +927,7 @@ namespace FlatEngine { namespace FlatGui {
 
 								// Retrieve Animation values
 								float ticksPerFrame = animation->GetTicksPerFrame();
-								std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
+								//std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
 
 								// Text
 								ImGui::Text("Ticks per frame: ");
@@ -941,8 +941,8 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
 								// Total Frames Text
-								std::string totalFrames = "Total frames: " + std::to_string(frames.size());
-								ImGui::Text(totalFrames.c_str());
+								//std::string totalFrames = "Total frames: " + std::to_string(frames.size());
+								//ImGui::Text(totalFrames.c_str());
 
 								// Add Frame Button
 								if (ImGui::Button("Add Frame"))

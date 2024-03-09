@@ -6,6 +6,12 @@
 BoardSquare::BoardSquare()
 {
 	this->SetName("BoardSquare");
+	pieceName = "";
+	pieceColor = "";
+	spritePath = "";
+	spriteYOffset = 0;
+	column = -1;
+	row = -1;
 }
 
 BoardSquare::~BoardSquare()
@@ -14,36 +20,27 @@ BoardSquare::~BoardSquare()
 
 void BoardSquareOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	FlatEngine::LogString("Mouse Over... " + thisObject->GetName());
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
 void BoardSquareOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	FlatEngine::LogString("Mouse Enter... " + thisObject->GetName());
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
 void BoardSquareOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	FlatEngine::LogString("Mouse Leave... " + thisObject->GetName());
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
 void BoardSquareOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
 	// Get board square from the object and get the piece inside the square
-
 	std::shared_ptr<FlatEngine::ScriptComponent> scriptComponent = std::static_pointer_cast<FlatEngine::ScriptComponent>(thisObject->GetComponent(FlatEngine::ComponentTypes::Script));
 	std::shared_ptr<BoardSquare> boardSquare = std::static_pointer_cast<BoardSquare>(scriptComponent->GetScriptInstance());
-	if (boardSquare->GetPiece() != nullptr)
-		FlatEngine::gameManager->SetSelectedPiece(boardSquare->GetPiece(), thisObject);
+	
+	FlatEngine::gameManager->SetSelectedSquare(boardSquare);
 }
 
 void BoardSquareOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	FlatEngine::LogString("Right Click... " + thisObject->GetName());
-	std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(FlatEngine::ComponentTypes::Transform));
 }
 
 
@@ -63,22 +60,27 @@ void BoardSquare::Update(float deltaTime)
 {
 }
 
-void BoardSquare::SetBoardLocation(std::shared_ptr<FlatEngine::GameObject> boardLocation)
+void BoardSquare::AssignPiece(std::string name, std::string path, std::string color, float yOffset)
 {
-	this->boardLocation = boardLocation;
+	pieceName = name;
+	pieceColor = color;
+	spritePath = path;
+	spriteYOffset = yOffset;
+	GetOwner()->GetFirstChild()->GetSpriteComponent()->SetTexture(spritePath);
+	Vector2 offset = GetOwner()->GetFirstChild()->GetSpriteComponent()->GetOffset();
+	GetOwner()->GetFirstChild()->GetSpriteComponent()->SetOffset(Vector2(offset.x, yOffset));
 }
 
-std::shared_ptr<FlatEngine::GameObject> BoardSquare::GetBoardLocation()
+void BoardSquare::RemovePiece()
 {
-	return this->boardLocation;
+	pieceName = "";
+	pieceColor = "";
+	spritePath = "assets/images/pieces/Clear.png";
+	spriteYOffset = 0;
+	GetOwner()->GetFirstChild()->GetSpriteComponent()->SetTexture(spritePath);
 }
 
-void BoardSquare::SetPiece(std::shared_ptr<Piece> piece)
+std::vector<std::shared_ptr<BoardSquare>> BoardSquare::GetAvailableMoves(std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares)
 {
-	this->piece = piece;
-}
-
-std::shared_ptr<Piece> BoardSquare::GetPiece()
-{
-	return this->piece;
+	return std::vector<std::shared_ptr<BoardSquare>>();
 }

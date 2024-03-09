@@ -51,9 +51,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\01_hello_SDL\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,9 +107,6 @@
     </ClCompile>
     <ClCompile Include="GameScript.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Up.cpp">
-      <Filter>Source Files\scripts</Filter>
     </ClCompile>
     <ClCompile Include="scripts\ScriptTemplate.cpp">
       <Filter>Source Files\scripts</Filter>
@@ -171,25 +165,10 @@
     <ClCompile Include="scripts\GameBoard.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Pawn.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Piece.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Rook.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Bishop.cpp">
+    <ClCompile Include="scripts\GameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Knight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\King.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Queen.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,9 +230,6 @@
     <ClInclude Include="GameScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Up.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\ScriptTemplate.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
@@ -314,25 +290,7 @@
     <ClInclude Include="scripts\BoardSquare.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Pawn.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Piece.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Rook.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Bishop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Knight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\King.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Queen.h">
+    <ClInclude Include="scripts\GameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

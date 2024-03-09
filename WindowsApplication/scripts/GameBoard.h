@@ -15,14 +15,17 @@ public:
 	void Start();
 	void Update(float deltaTime);
 
-	void InitializeBoard();
-	void SetupPieces();
-	void CreatePiece(std::shared_ptr<FlatEngine::GameObject> gameObject, std::shared_ptr<BoardSquare> boardSquare, std::shared_ptr<Piece> piece, std::string name, std::string spritePath, std::string color, float yOffset);
-
+	void TakePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom);
+	void MovePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom);
 	void SetupBoard();
+	std::vector<std::shared_ptr<BoardSquare>> GetBoardSquares();
+	std::vector<std::shared_ptr<BoardSquare>> GetWhiteSquares();
+	std::vector<std::shared_ptr<BoardSquare>> GetBlackSquares();
 
 private:
 	std::vector<long> squareIDs;
-	std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares;
+	std::vector<std::shared_ptr<BoardSquare>> boardSquares;
+	std::vector<std::shared_ptr<BoardSquare>> whiteSquares;
+	std::vector<std::shared_ptr<BoardSquare>> blackSquares;
 };
 

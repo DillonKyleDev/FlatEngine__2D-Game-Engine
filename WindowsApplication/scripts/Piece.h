@@ -2,6 +2,10 @@
 #include "../GameScript.h"
 
 
+#ifndef PIECE_H
+#define PIECE_H
+
+class BoardSquare;
 
 class Piece : public FlatEngine::GameScript
 {
@@ -22,7 +26,10 @@ public:
 	std::string GetColor();
 	std::shared_ptr<FlatEngine::GameObject> GetPieceObject();
 	void PlaceOnSquare(std::shared_ptr<FlatEngine::GameObject> boardLocation);
+	virtual std::vector<std::shared_ptr<BoardSquare>> GetPossibleMoves(std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares);
 
+	int colPosition;
+	int rowPosition;
 
 private:
 	std::string pieceName;
@@ -33,3 +40,4 @@ private:
 	std::string color;
 };
 
+#endif

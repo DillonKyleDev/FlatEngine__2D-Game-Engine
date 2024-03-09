@@ -13,7 +13,6 @@ namespace FlatEngine
 		this->_playing = false;
 		this->ticksPerFrame = 10;
 		this->animationStartTime = -1;
-		this->frames = std::vector<std::shared_ptr<GameObject>>();
 	}
 	Animation::~Animation()
 	{
@@ -54,12 +53,6 @@ namespace FlatEngine
 	{
 		return this->ticksPerFrame;
 	}
-
-	std::vector<std::shared_ptr<GameObject>> Animation::GetFrames()
-	{
-		return this->frames;
-	}
-
 
 	std::string Animation::GetData()
 	{

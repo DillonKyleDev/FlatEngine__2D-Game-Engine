@@ -2,6 +2,7 @@
 #include "../GameScript.h"
 #include "GameBoard.h"
 #include "Piece.h"
+#include "../Audio.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script
@@ -23,18 +24,21 @@ public:
 
 	void SetWhiteActive(bool _isActive);
 	void SetBlackActive(bool _isActive);
-	void SetSelectedPiece(std::shared_ptr<Piece> piece, std::shared_ptr<FlatEngine::GameObject> owner);
+	void SetSelectedSquare(std::shared_ptr<BoardSquare> square);
 	void DeselectPiece();
-	void CheckAvailableMoves();
-	void GreenHighlightSquare();
-	void RedHighlightSquare();
-	void MovePiece();
-	void RemovePiece();
+	void ActivateAvailableMoves();
+	void DeactivateAvailableMoves();
+
+	void PawnMoves();
 
 private:
 	std::string playerTurn;
-	std::shared_ptr<Piece> selectedPiece;
-	std::shared_ptr<FlatEngine::GameObject> selectedSquare;
+	std::shared_ptr<BoardSquare> selectedSquare;
 	std::shared_ptr<GameBoard> gameBoard;
+	std::vector<std::shared_ptr<BoardSquare>> availableMoves;
+	std::shared_ptr<FlatEngine::Audio> movePieceAudio;
+	bool _whitePiecesActive;
+	bool _blackPiecesActive;
+
 };
 

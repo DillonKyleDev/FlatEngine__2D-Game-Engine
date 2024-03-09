@@ -83,3 +83,8 @@ void Piece::PlaceOnSquare(std::shared_ptr<FlatEngine::GameObject> boardLocation)
 
 	this->pieceTransform->SetPosition(squarePosition);
 }
+
+std::vector<std::shared_ptr<BoardSquare>> Piece::GetPossibleMoves(std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares)
+{
+	return std::vector<std::shared_ptr<BoardSquare>>();
+}
