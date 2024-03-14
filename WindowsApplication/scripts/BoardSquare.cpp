@@ -7,11 +7,13 @@ BoardSquare::BoardSquare()
 {
 	this->SetName("BoardSquare");
 	pieceName = "";
+	pieceType = "";
 	pieceColor = "";
 	spritePath = "";
 	spriteYOffset = 0;
 	column = -1;
 	row = -1;
+	_hasMoved = false;
 }
 
 BoardSquare::~BoardSquare()
@@ -37,6 +39,8 @@ void BoardSquareOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 	std::shared_ptr<BoardSquare> boardSquare = std::static_pointer_cast<BoardSquare>(scriptComponent->GetScriptInstance());
 	
 	FlatEngine::gameManager->SetSelectedSquare(boardSquare);
+	FlatEngine::LogInt(boardSquare->column, "From BoardSquare.cpp: Column: ");
+	FlatEngine::LogInt(boardSquare->row, "From BoardSquare.cpp: Row: ");
 }
 
 void BoardSquareOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -63,6 +67,8 @@ void BoardSquare::Update(float deltaTime)
 void BoardSquare::AssignPiece(std::string name, std::string path, std::string color, float yOffset)
 {
 	pieceName = name;
+	pieceType = name;
+	pieceType.pop_back();
 	pieceColor = color;
 	spritePath = path;
 	spriteYOffset = yOffset;

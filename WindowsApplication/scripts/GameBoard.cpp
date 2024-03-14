@@ -1,10 +1,4 @@
 #include "GameBoard.h"
-#include "scripts/King.h"
-#include "scripts/Queen.h"
-#include "scripts/Rook.h"
-#include "scripts/Bishop.h"
-#include "scripts/Knight.h"
-#include "scripts/Pawn.h"
 #include "../FlatEngine.h"
 
 
@@ -23,8 +17,8 @@ void GameBoard::Awake()
 {
 	// Create all board squares and associate them with a square transform in engine
 	std::vector<long> childrenIDs = this->GetOwner()->GetChildren();
-	int colCounter = 0;
-	int rowCounter = 0;
+	int colCounter = 1;
+	int rowCounter = 1;
 
 	// Collect all in-engine board squares
 	for (long childID : childrenIDs)
@@ -70,13 +64,13 @@ void GameBoard::Awake()
 
 				this->boardSquares.push_back(boardSquare);
 
-				if (colCounter == 7)
+				if (rowCounter == 8)
 				{
-					rowCounter++;
-					colCounter = 0;
+					colCounter++;
+					rowCounter = 1;
 				}
 				else
-					colCounter++;
+					rowCounter++;
 			}
 		}
 	}
@@ -96,8 +90,6 @@ void GameBoard::TakePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr
 	movingTo->RemovePiece();
 	movingTo->AssignPiece(movingFrom->pieceName, movingFrom->spritePath, movingFrom->pieceColor, movingFrom->spriteYOffset);
 	movingFrom->RemovePiece();
-	FlatEngine::LogFloat(movingTo->column, "To Column: ");
-	FlatEngine::LogFloat(movingTo->row, "To Row: ");
 	// Deactivate the button
 	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(movingFrom->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
 	button->SetActive(false);
@@ -119,82 +111,82 @@ void GameBoard::SetupBoard()
 		std::shared_ptr<BoardSquare> square = boardSquares[i];
 
 		// BLACK PIECES
-		if (square->column == 7)
+		if (square->row == 8)
 		{
-			if (square->row == 0)
+			if (square->column == 1)
 			{
 				square->AssignPiece("Rook_B", "assets/images/pieces/rookB.png", "black", 21);
 			}
-			else if (square->row == 1)
+			else if (square->column == 2)
 			{
 				square->AssignPiece("Knight_B", "assets/images/pieces/knightB.png", "black", 25);
 			}
-			else if (square->row == 2)
+			else if (square->column == 3)
 			{
 				square->AssignPiece("Bishop_B", "assets/images/pieces/bishopB.png", "black", 27);
 			}
-			else if (square->row == 3)
+			else if (square->column == 4)
 			{
 				square->AssignPiece("Queen_B", "assets/images/pieces/queenB.png", "black", 29);
 			}
-			else if (square->row == 4)
+			else if (square->column == 5)
 			{
 				square->AssignPiece("King_B", "assets/images/pieces/kingB.png", "black", 29);
 			}
-			else if (square->row == 5)
+			else if (square->column == 6)
 			{
 				square->AssignPiece("Bishop_B", "assets/images/pieces/bishopB.png", "black", 27);
 			}
-			else if (square->row == 6)
+			else if (square->column == 7)
 			{
 				square->AssignPiece("Knight_B", "assets/images/pieces/knightB.png", "black", 25);
 			}
-			else if (square->row == 7)
+			else if (square->column == 8)
 			{
 				square->AssignPiece("Rook_B", "assets/images/pieces/rookB.png", "black", 21);
 			}
 		}
-		else if (square->column == 6)
+		else if (square->row == 7)
 		{
 			square->AssignPiece("Pawn_B", "assets/images/pieces/pawnB.png", "black", 20);
 		}
 
 		// WHITE PIECES
-		else if (square->column == 1)
+		else if (square->row == 2)
 		{
-			square->AssignPiece("Pawn_B", "assets/images/pieces/pawnW.png", "white", 20);
+			square->AssignPiece("Pawn_W", "assets/images/pieces/pawnW.png", "white", 20);
 		}
-		else if (square->column == 0)
+		else if (square->row == 1)
 		{
-			if (square->row == 0)
+			if (square->column == 1)
 			{
 				square->AssignPiece("Rook_W", "assets/images/pieces/rookW.png", "white", 21);
 			}
-			else if (square->row == 1)
+			else if (square->column == 2)
 			{
 				square->AssignPiece("Knight_W", "assets/images/pieces/knightW.png", "white", 25);
 			}
-			else if (square->row == 2)
+			else if (square->column == 3)
 			{
 				square->AssignPiece("Bishop_W", "assets/images/pieces/bishopW.png", "white", 27);
 			}
-			else if (square->row == 3)
+			else if (square->column == 4)
 			{
 				square->AssignPiece("Queen_W", "assets/images/pieces/queenW.png", "white", 29);
 			}
-			else if (square->row == 4)
+			else if (square->column == 5)
 			{
 				square->AssignPiece("King_W", "assets/images/pieces/kingW.png", "white", 29);
 			}
-			else if (square->row == 5)
+			else if (square->column == 6)
 			{
 				square->AssignPiece("Bishop_W", "assets/images/pieces/bishopW.png", "white", 27);
 			}
-			else if (square->row == 6)
+			else if (square->column == 7)
 			{
 				square->AssignPiece("Knight_W", "assets/images/pieces/knightW.png", "white", 25);
 			}
-			else if (square->row == 7)
+			else if (square->column == 8)
 			{	
 				square->AssignPiece("Rook_W", "assets/images/pieces/rookW.png", "white", 21);
 			}

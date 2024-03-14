@@ -16,13 +16,16 @@ public:
 	std::vector<std::shared_ptr<BoardSquare>> GetAvailableMoves(std::vector<std::vector<std::shared_ptr<BoardSquare>>> boardSquares);
 
 	std::string pieceName;
+	std::string pieceType;
 	std::string pieceColor;
 	std::string spritePath;
+	bool _hasMoved;
 	float spriteYOffset;
 	int column;
 	int row;
 
 private:
 	std::string squareName;
+
 };
 

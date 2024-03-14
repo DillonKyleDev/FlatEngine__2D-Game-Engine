@@ -1,7 +1,6 @@
 #pragma once
 #include "../GameScript.h"
 #include "GameBoard.h"
-#include "Piece.h"
 #include "../Audio.h"
 
 
@@ -25,11 +24,22 @@ public:
 	void SetWhiteActive(bool _isActive);
 	void SetBlackActive(bool _isActive);
 	void SetSelectedSquare(std::shared_ptr<BoardSquare> square);
-	void DeselectPiece();
 	void ActivateAvailableMoves();
 	void DeactivateAvailableMoves();
 
+	void CheckForCheck(std::shared_ptr<BoardSquare> king, bool& _kingChecked);
+
+
 	void PawnMoves();
+	void RookMoves();
+	void KnightMoves();
+	void BishopMoves();
+	void QueenMoves();
+	void KingMoves();
+	std::vector< std::shared_ptr<BoardSquare>> CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
+	std::vector< std::shared_ptr<BoardSquare>> CheckCol(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
+	std::vector< std::shared_ptr<BoardSquare>> CheckPosDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
+	std::vector< std::shared_ptr<BoardSquare>> CheckNegDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
 
 private:
 	std::string playerTurn;
@@ -39,6 +49,9 @@ private:
 	std::shared_ptr<FlatEngine::Audio> movePieceAudio;
 	bool _whitePiecesActive;
 	bool _blackPiecesActive;
-
+	std::shared_ptr<BoardSquare> whiteKing;
+	std::shared_ptr<BoardSquare> blackKing;
+	bool _whiteChecked;
+	bool _blackChecked;
 };
 

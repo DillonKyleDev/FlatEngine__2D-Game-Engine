@@ -40,7 +40,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	// Scene view
 	// The multiplier for gridstep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
-	float gridStep = 10;
+	float gridStep = 50;
 	float SCENE_VIEWPORT_WIDTH = 600;
 	float SCENE_VIEWPORT_HEIGHT = 400;
 	float DYNAMIC_VIEWPORT_WIDTH = 600;
