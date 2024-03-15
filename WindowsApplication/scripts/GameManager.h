@@ -28,6 +28,7 @@ public:
 	void DeactivateAvailableMoves();
 
 	void ChangeTurns();
+	void UpdateCheckmateCheck();
 	bool CheckForCheck(std::shared_ptr<BoardSquare> king);
 	bool CheckForCheckmate(std::shared_ptr<BoardSquare> king);
 	bool CheckMoveForStillchecked(std::shared_ptr<BoardSquare> moveFrom, std::shared_ptr<BoardSquare> moveTo, std::shared_ptr<BoardSquare> kingToCheck);
