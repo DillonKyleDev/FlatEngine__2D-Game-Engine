@@ -16,6 +16,19 @@ BoardSquare::BoardSquare()
 	_hasMoved = false;
 }
 
+BoardSquare::BoardSquare(std::shared_ptr<BoardSquare> toCopy)
+{
+	this->SetName("BoardSquare");
+	pieceName = toCopy->pieceName;
+	pieceType = toCopy->pieceType;
+	pieceColor = toCopy->pieceColor;
+	spritePath = toCopy->spritePath;
+	spriteYOffset = toCopy->spriteYOffset;
+	column = toCopy->column;
+	row = toCopy->row;
+	_hasMoved = toCopy->_hasMoved;
+}
+
 BoardSquare::~BoardSquare()
 {
 }
@@ -39,8 +52,6 @@ void BoardSquareOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 	std::shared_ptr<BoardSquare> boardSquare = std::static_pointer_cast<BoardSquare>(scriptComponent->GetScriptInstance());
 	
 	FlatEngine::gameManager->SetSelectedSquare(boardSquare);
-	FlatEngine::LogInt(boardSquare->column, "From BoardSquare.cpp: Column: ");
-	FlatEngine::LogInt(boardSquare->row, "From BoardSquare.cpp: Row: ");
 }
 
 void BoardSquareOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -68,7 +79,8 @@ void BoardSquare::AssignPiece(std::string name, std::string path, std::string co
 {
 	pieceName = name;
 	pieceType = name;
-	pieceType.pop_back();
+	if (pieceName.length() > 0)
+		pieceType.pop_back();
 	pieceColor = color;
 	spritePath = path;
 	spriteYOffset = yOffset;
@@ -81,6 +93,7 @@ void BoardSquare::RemovePiece()
 {
 	pieceName = "";
 	pieceColor = "";
+	pieceType = "";
 	spritePath = "assets/images/pieces/Clear.png";
 	spriteYOffset = 0;
 	GetOwner()->GetFirstChild()->GetSpriteComponent()->SetTexture(spritePath);

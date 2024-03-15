@@ -7,6 +7,7 @@ class BoardSquare : public FlatEngine::GameScript
 {
 public:
 	BoardSquare();
+	BoardSquare(std::shared_ptr<BoardSquare> toCopy);
 	~BoardSquare();
 
 	void Start();

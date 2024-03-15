@@ -180,6 +180,7 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="scripts\UndoButton.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="WidgetsManager.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h" />
+    <ClInclude Include="scripts\UndoButton.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="WidgetsManager.h" />
     <ClInclude Include="Window.h" />

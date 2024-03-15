@@ -171,6 +171,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\UndoButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -291,6 +294,9 @@
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
     <ClInclude Include="scripts\GameManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\UndoButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

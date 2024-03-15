@@ -17,6 +17,12 @@ GameManager::GameManager()
 	_blackPiecesActive = false;
 	_whiteChecked = false;
 	_blackChecked = false;
+	whiteKing = nullptr;
+	blackKing = nullptr;
+	fromSquare = nullptr;
+	toSquare = nullptr;
+	peiceDestroyed = nullptr;
+	_checkMate = false;
 }
 
 GameManager::~GameManager()
@@ -26,7 +32,7 @@ GameManager::~GameManager()
 void GameManager::Start()
 {
 	FlatEngine::LogString("GameManager instantiated on: " + this->GetOwner()->GetName());
-	this->gameBoard->SetupBoard();
+	gameBoard->SetupBoard();
 	SetWhiteActive(true);
 	SetBlackActive(false);
 	movePieceAudio = std::static_pointer_cast<FlatEngine::Audio>(GetOwner()->GetComponent(FlatEngine::ComponentTypes::Audio));
@@ -38,28 +44,74 @@ void GameManager::Update(float deltaTime)
 {
 	// Check for win conditions
 	// if no win conditions
-	std::shared_ptr<FlatEngine::Sprite> whiteKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(whiteKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
-	std::shared_ptr<FlatEngine::Sprite> blackKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(blackKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
-
-	if (_whiteChecked)
-		whiteKingSprite->SetTexture("assets/images/pieces/Checked.png");
-	else
-		whiteKingSprite->SetTexture("assets/images/pieces/Clear.png");
-	if (_blackChecked)
-		blackKingSprite->SetTexture("assets/images/pieces/Checked.png");
-	else
-		blackKingSprite->SetTexture("assets/images/pieces/Clear.png");
-
-	// Set correct piece buttons to active
-	if (this->playerTurn == "white" && !this->_whitePiecesActive)
+	if (!_checkMate)
 	{
-		SetWhiteActive(true);
-		SetBlackActive(false);
-	}
-	else if (this->playerTurn == "black" && !this->_blackPiecesActive)
-	{
-		SetWhiteActive(false);
-		SetBlackActive(true);
+		std::shared_ptr<FlatEngine::Sprite> whiteKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(whiteKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
+		std::shared_ptr<FlatEngine::Sprite> blackKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(blackKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
+
+		if (_whiteChecked)
+			whiteKingSprite->SetTexture("assets/images/pieces/Checked.png");
+		else if (whiteKing != nullptr && selectedSquare != nullptr && whiteKing->pieceName == selectedSquare->pieceName)
+			whiteKingSprite->SetTexture("assets/images/pieces/Selected.png");
+		else
+			whiteKingSprite->SetTexture("assets/images/pieces/Clear.png");
+
+		if (_blackChecked)
+			blackKingSprite->SetTexture("assets/images/pieces/Checked.png");
+		else if (blackKing != nullptr && selectedSquare != nullptr && blackKing->pieceName == selectedSquare->pieceName)
+			blackKingSprite->SetTexture("assets/images/pieces/Selected.png");
+		else
+			blackKingSprite->SetTexture("assets/images/pieces/Clear.png");
+
+		// Set correct piece buttons to active
+		if (this->playerTurn == "white" && !this->_whitePiecesActive)
+		{
+			_whiteChecked = CheckForCheck(whiteKing);
+			_blackChecked = CheckForCheck(blackKing);
+
+			if (_whiteChecked)
+			{
+				// Check for at least one move that will uncheck the white king
+				if (CheckForCheckmate(whiteKing))
+				{
+					// Game Over
+					FlatEngine::LogString("GameOVER!!!");
+					_checkMate = true;
+					SetWhiteActive(false);
+					SetBlackActive(false);
+				}
+			}
+
+			if (!_checkMate)
+			{
+				SetWhiteActive(true);
+				SetBlackActive(false);
+			}
+		}
+		else if (this->playerTurn == "black" && !this->_blackPiecesActive)
+		{
+			_whiteChecked = CheckForCheck(whiteKing);
+			_blackChecked = CheckForCheck(blackKing);
+
+			if (_blackChecked)
+			{
+				// Check for at least one move that will uncheck the black king
+				if (CheckForCheckmate(blackKing))
+				{
+					// Game Over
+					FlatEngine::LogString("GameOVER!!!");
+					_checkMate = true;
+					SetWhiteActive(false);
+					SetBlackActive(false);
+				}
+			}
+
+			if (!_checkMate)
+			{
+				SetWhiteActive(false);
+				SetBlackActive(true);
+			}
+		}
 	}
 }
 
@@ -133,6 +185,13 @@ void GameManager::SetSelectedSquare(std::shared_ptr<BoardSquare> square)
 	// If the square is a piece that has a different color (even an empty square)
 	else if (square->pieceColor != selectedSquare->pieceColor)
 	{
+		// Save square data for undo function
+		fromSquare = selectedSquare;
+		toSquare = square;
+		if (square->pieceColor != "")
+			peiceDestroyed = std::make_shared<BoardSquare>(square);
+		else
+			peiceDestroyed = nullptr;
 		// Take the piece
 		gameBoard->TakePiece(square, selectedSquare);
 		DeactivateAvailableMoves();
@@ -144,18 +203,7 @@ void GameManager::SetSelectedSquare(std::shared_ptr<BoardSquare> square)
 		else if (square->pieceName == "King_B")
 			blackKing = square;
 
-		// Change turns
-		this->selectedSquare = nullptr;
-		if (this->playerTurn == "white")
-		{
-			CheckForCheck(blackKing, _blackChecked);
-			this->playerTurn = "black";
-		}
-		else
-		{
-			CheckForCheck(whiteKing, _whiteChecked);
-			this->playerTurn = "white";
-		}
+		ChangeTurns();
 	}
 
 	if (selectedSquare != nullptr)
@@ -166,20 +214,32 @@ void GameManager::SetSelectedSquare(std::shared_ptr<BoardSquare> square)
 
 void GameManager::ActivateAvailableMoves()
 {
-	if (selectedSquare->pieceType == "Pawn_")
-		PawnMoves();
-	else if (selectedSquare->pieceType == "Rook_")
-		RookMoves();
-	else if (selectedSquare->pieceType == "Knight_")
-		KnightMoves();
-	else if (selectedSquare->pieceType == "Bishop_")
-		BishopMoves();
-	else if (selectedSquare->pieceType == "Queen_")
-		QueenMoves();
-	else if (selectedSquare->pieceType == "King_")
-		KingMoves();
+	std::vector<std::shared_ptr<BoardSquare>> unfilteredMoves;
+	std::vector<std::shared_ptr<BoardSquare>> filteredMoves;
 
-	for (std::shared_ptr<BoardSquare> square : availableMoves)
+	if (selectedSquare->pieceType == "Pawn_")
+		unfilteredMoves = PawnMoves(selectedSquare);
+	else if (selectedSquare->pieceType == "Rook_")
+		unfilteredMoves = RookMoves(selectedSquare);
+	else if (selectedSquare->pieceType == "Knight_")
+		unfilteredMoves = KnightMoves(selectedSquare);
+	else if (selectedSquare->pieceType == "Bishop_")
+		unfilteredMoves = BishopMoves(selectedSquare);
+	else if (selectedSquare->pieceType == "Queen_")
+		unfilteredMoves = QueenMoves(selectedSquare);
+	else if (selectedSquare->pieceType == "King_")
+		unfilteredMoves = KingMoves(selectedSquare);
+
+	// Make sure each move doesn't cause a check on the player moving
+	for (std::shared_ptr<BoardSquare> moveTo : unfilteredMoves)
+	{
+		if (playerTurn == "white" && !CheckMoveForStillchecked(selectedSquare, moveTo, whiteKing) || playerTurn == "black" && !CheckMoveForStillchecked(selectedSquare, moveTo, blackKing))
+		{
+			filteredMoves.push_back(moveTo);
+		}
+	}
+
+	for (std::shared_ptr<BoardSquare> square : filteredMoves)
 	{
 		// Change the sprite
 		std::shared_ptr<FlatEngine::Sprite> sprite = std::static_pointer_cast<FlatEngine::Sprite>(square->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
@@ -188,6 +248,8 @@ void GameManager::ActivateAvailableMoves()
 		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(square->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
 		button->SetActive(true);
 	}
+
+	availableMoves = filteredMoves;
 }
 
 void GameManager::DeactivateAvailableMoves()
@@ -198,7 +260,7 @@ void GameManager::DeactivateAvailableMoves()
 		{
 			// Change the sprite
 			std::shared_ptr<FlatEngine::Sprite> sprite = std::static_pointer_cast<FlatEngine::Sprite>(square->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
-			sprite->SetTexture("assets/images/pieces/clear.png");
+			sprite->SetTexture("assets/images/pieces/Clear.png");
 
 			if (square->pieceColor != playerTurn)
 			{
@@ -210,87 +272,176 @@ void GameManager::DeactivateAvailableMoves()
 	}
 }
 
-void GameManager::CheckForCheck(std::shared_ptr<BoardSquare> king, bool & _kingChecked)
+void GameManager::ChangeTurns()
 {
-	FlatEngine::LogString(whiteKing->pieceName);
-	std::vector<std::shared_ptr<BoardSquare>> connectedSquares;
-	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
-	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
+	// Change turns
+	this->selectedSquare = nullptr;
+	if (this->playerTurn == "white")
+	{
+		this->playerTurn = "black";
+	}
+	else
+	{
+		this->playerTurn = "white";
+	}
+}
 
-	std::vector<std::shared_ptr<BoardSquare>> squaresInSameRow;
-	std::vector<std::shared_ptr<BoardSquare>> squaresInSameCol;
-	std::vector<std::shared_ptr<BoardSquare>> squaresInPositiveDiag;
-	std::vector<std::shared_ptr<BoardSquare>> squaresInNegativeDiag;
+bool GameManager::CheckForCheck(std::shared_ptr<BoardSquare> king)
+{
+	std::vector<std::shared_ptr<BoardSquare>> squaresInLineOfSight;
+	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
 		if (boardSquare->row == king->row && boardSquare->column != king->column)
-			squaresInSameRow.push_back(boardSquare);
+			squaresInLineOfSight.push_back(boardSquare);
 		if (boardSquare->column == king->column)
-			squaresInSameCol.push_back(boardSquare);
+			squaresInLineOfSight.push_back(boardSquare);
 		if (boardSquare->row != king->row && boardSquare->column != king->column)
 		{
 			if (boardSquare->row - king->row == boardSquare->column - king->column)
-				squaresInPositiveDiag.push_back(boardSquare);
+				squaresInLineOfSight.push_back(boardSquare);
 			else if (boardSquare->row - king->row == king->column - boardSquare->column)
-				squaresInNegativeDiag.push_back(boardSquare);
+				squaresInLineOfSight.push_back(boardSquare);
 		}
 	}
 
-	bool _checked = false;
-
-	for (std::shared_ptr<BoardSquare> enemySquare : CheckRow(squaresInSameRow, availableSquares, king->row, king->column))
+	for (std::shared_ptr<BoardSquare> square : squaresInLineOfSight)
 	{
-		if (enemySquare->pieceColor == king->pieceColor && (enemySquare->pieceType == "Rook_" || enemySquare->pieceType == "Queen_"))
+		if (square->pieceColor != king->pieceColor && square->pieceName != "")
 		{
-			_kingChecked = true;
-			_checked = true;
+			if (square->pieceType == "Pawn_")
+			{
+				for (std::shared_ptr<BoardSquare> target : PawnMoves(square))
+				{
+					if (target->pieceName == king->pieceName)
+					{
+						return true;
+					}
+				}
+			}
 		}
 	}
 
-	if (!_checked)
-		_kingChecked = false;
+	return false;
+}
 
-	//CheckCol(squaresInSameCol, availableSquares, whiteKing->row, whiteKing->column);
-	//CheckPosDiag(squaresInPositiveDiag, availableSquares, whiteKing->row, whiteKing->column);
-	//CheckNegDiag(squaresInNegativeDiag, availableSquares, whiteKing->row, whiteKing->column);
+bool GameManager::CheckForCheckmate(std::shared_ptr<BoardSquare> king)
+{
+	if (playerTurn == "white")
+	{
+		for (std::shared_ptr<BoardSquare> square : gameBoard->GetWhiteSquares())
+		{
+			std::vector<std::shared_ptr<BoardSquare>> potentialMoves;
+
+			if (square->pieceType == "Pawn_")
+				potentialMoves = PawnMoves(square);
+			else if (square->pieceType == "Rook_")
+				potentialMoves = RookMoves(square);
+			else if (square->pieceType == "Knight_")
+				potentialMoves = KnightMoves(square);
+			else if (square->pieceType == "Bishop_")
+				potentialMoves = BishopMoves(square);
+			else if (square->pieceType == "Queen_")
+				potentialMoves = QueenMoves(square);
+			else if (square->pieceType == "King_")
+				potentialMoves = KingMoves(square);
+
+			for (std::shared_ptr<BoardSquare> moveTo : potentialMoves)
+			{
+				if (!CheckMoveForStillchecked(square, moveTo, king))
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool GameManager::CheckMoveForStillchecked(std::shared_ptr<BoardSquare> moveFrom, std::shared_ptr<BoardSquare> moveTo, std::shared_ptr<BoardSquare> kingToCheck)
+{
+	bool _stillChecked;
+	std::shared_ptr<BoardSquare> tempKingSquare;
+
+	// Save square data for undo function
+	fromSquareChecking = moveFrom;
+	toSquareChecking = moveTo;
+	if (moveTo->pieceColor != "")
+		peiceDestroyedChecking = std::make_shared<BoardSquare>(moveTo);
+	else
+		peiceDestroyedChecking = nullptr;
+
+	gameBoard->TakePiece(moveTo, moveFrom);
+
+	if (moveTo->pieceName == "King_W")
+		tempKingSquare = moveTo;
+	else if (moveTo->pieceName == "King_B")
+		tempKingSquare = moveTo;
+	else
+		tempKingSquare = kingToCheck;
+
+	_stillChecked = CheckForCheck(tempKingSquare);
+
+	UndoMoveChecking();
+
+	return _stillChecked;
+}
+
+void GameManager::UndoMove()
+{
+	gameBoard->TakePiece(fromSquare, toSquare);
+	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(fromSquare->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	button->SetActive(true);
+
+	if (peiceDestroyed != nullptr)
+		gameBoard->SpawnPiece(toSquare, peiceDestroyed);
+}
+
+void GameManager::UndoMoveChecking()
+{
+	gameBoard->TakePiece(fromSquareChecking, toSquareChecking);
+	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(fromSquareChecking->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	button->SetActive(true);
+
+	if (peiceDestroyedChecking != nullptr)
+		gameBoard->SpawnPiece(toSquareChecking, peiceDestroyedChecking);
 }
 
 
-void GameManager::PawnMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::PawnMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (selectedSquare->pieceColor == "white")
+		if (square->pieceColor == "white")
 		{
 			// Moving
-			if (boardSquare->column == selectedSquare->column &&
-				(boardSquare->row == selectedSquare->row + 1 || (boardSquare->row == selectedSquare->row + 2 && selectedSquare->_hasMoved == false)) &&
+			if (boardSquare->column == square->column &&
+				(boardSquare->row == square->row + 1 || (boardSquare->row == square->row + 2 && square->_hasMoved == false)) &&
 				boardSquare->pieceName == "")
 			{
 				availableSquares.push_back(boardSquare);
 			}
 			// For taking enemy piece
-			else if ((boardSquare->column == selectedSquare->column + 1 || boardSquare->column == selectedSquare->column - 1) && boardSquare->row == selectedSquare->row + 1 &&
+			else if ((boardSquare->column == square->column + 1 || boardSquare->column == square->column - 1) && boardSquare->row == square->row + 1 &&
 				boardSquare->pieceColor == "black")
 			{
 				availableSquares.push_back(boardSquare);
 			}
 		}
-		else // if (selectedSquare->pieceColor == "black")
+		else // if (square->pieceColor == "black")
 		{
 			// Moving
-			if (boardSquare->column == selectedSquare->column &&
-				(boardSquare->row == selectedSquare->row - 1 || (boardSquare->row == selectedSquare->row - 2 && selectedSquare->_hasMoved == false)) &&
+			if (boardSquare->column == square->column &&
+				(boardSquare->row == square->row - 1 || (boardSquare->row == square->row - 2 && square->_hasMoved == false)) &&
 				boardSquare->pieceName == "")
 			{
 				availableSquares.push_back(boardSquare);
 			}
 			// For taking enemy piece
-			else if ((boardSquare->column == selectedSquare->column + 1 || boardSquare->column == selectedSquare->column - 1) && boardSquare->row == selectedSquare->row - 1 &&
+			else if ((boardSquare->column == square->column + 1 || boardSquare->column == square->column - 1) && boardSquare->row == square->row - 1 &&
 				boardSquare->pieceColor == "white")
 			{
 				availableSquares.push_back(boardSquare);
@@ -298,10 +449,10 @@ void GameManager::PawnMoves()
 		}
 	}
 
-	availableMoves = availableSquares;
+	return availableSquares;
 }
 
-void GameManager::RookMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::RookMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
@@ -312,39 +463,37 @@ void GameManager::RookMoves()
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (boardSquare->row == selectedSquare->row && boardSquare->column != selectedSquare->column)
+		if (boardSquare->row == square->row && boardSquare->column != square->column)
 			squaresInSameRow.push_back(boardSquare);
-		else if (boardSquare->column == selectedSquare->column && boardSquare->row != selectedSquare->row)
+		else if (boardSquare->column == square->column && boardSquare->row != square->row)
 			squaresInSameCol.push_back(boardSquare);
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckCol(squaresInSameCol, availableSquares, selectedSquare->row, selectedSquare->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
 
-	availableMoves = availableSquares;
+	return availableSquares;
 }
 
-void GameManager::KnightMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::KnightMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
 
-	std::vector<std::shared_ptr<BoardSquare>> validSquares;
-
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (((boardSquare->row == selectedSquare->row + 1 && (boardSquare->column == selectedSquare->column - 2 || boardSquare->column == selectedSquare->column + 2)) ||
-			(boardSquare->row == selectedSquare->row - 1 && (boardSquare->column == selectedSquare->column - 2 || boardSquare->column == selectedSquare->column + 2)) ||
-			(boardSquare->row == selectedSquare->row + 2 && (boardSquare->column == selectedSquare->column - 1 || boardSquare->column == selectedSquare->column + 1)) ||
-			(boardSquare->row == selectedSquare->row - 2 && (boardSquare->column == selectedSquare->column - 1 || boardSquare->column == selectedSquare->column + 1))) &&
+		if (((boardSquare->row == square->row + 1 && (boardSquare->column == square->column - 2 || boardSquare->column == square->column + 2)) ||
+			(boardSquare->row == square->row - 1 && (boardSquare->column == square->column - 2 || boardSquare->column == square->column + 2)) ||
+			(boardSquare->row == square->row + 2 && (boardSquare->column == square->column - 1 || boardSquare->column == square->column + 1)) ||
+			(boardSquare->row == square->row - 2 && (boardSquare->column == square->column - 1 || boardSquare->column == square->column + 1))) &&
 			boardSquare->pieceColor != playerTurn)
-			validSquares.push_back(boardSquare);
+			availableSquares.push_back(boardSquare);
 	}
 
-	availableMoves = validSquares;
+	return availableSquares;
 }
 
-void GameManager::BishopMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::BishopMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
@@ -355,22 +504,22 @@ void GameManager::BishopMoves()
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (boardSquare->row != selectedSquare->row && boardSquare->column != selectedSquare->column)
+		if (boardSquare->row != square->row && boardSquare->column != square->column)
 		{
-			if (boardSquare->row - selectedSquare->row == boardSquare->column - selectedSquare->column)
+			if (boardSquare->row - square->row == boardSquare->column - square->column)
 				squaresInPositiveDiag.push_back(boardSquare);
-			else if (boardSquare->row - selectedSquare->row == selectedSquare->column - boardSquare->column)
+			else if (boardSquare->row - square->row == square->column - boardSquare->column)
 				squaresInNegativeDiag.push_back(boardSquare);
 		}
 	}
 
-	CheckPosDiag(squaresInPositiveDiag, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckNegDiag(squaresInNegativeDiag, availableSquares, selectedSquare->row, selectedSquare->column);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
 
-	availableMoves = availableSquares;
+	return availableSquares;
 }
 
-void GameManager::QueenMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::QueenMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
@@ -382,48 +531,60 @@ void GameManager::QueenMoves()
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (boardSquare->row == selectedSquare->row && boardSquare->column != selectedSquare->column)
+		if (boardSquare->row == square->row && boardSquare->column != square->column)
 			squaresInSameRow.push_back(boardSquare);
-		if (boardSquare->column == selectedSquare->column)
+		if (boardSquare->column == square->column)
 			squaresInSameCol.push_back(boardSquare);
-		if (boardSquare->row != selectedSquare->row && boardSquare->column != selectedSquare->column)
+		if (boardSquare->row != square->row && boardSquare->column != square->column)
 		{
-			if (boardSquare->row - selectedSquare->row == boardSquare->column - selectedSquare->column)
+			if (boardSquare->row - square->row == boardSquare->column - square->column)
 				squaresInPositiveDiag.push_back(boardSquare);
-			else if (boardSquare->row - selectedSquare->row == selectedSquare->column - boardSquare->column)
+			else if (boardSquare->row - square->row == square->column - boardSquare->column)
 				squaresInNegativeDiag.push_back(boardSquare);
 		}
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckCol(squaresInSameCol, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckPosDiag(squaresInPositiveDiag, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckNegDiag(squaresInNegativeDiag, availableSquares, selectedSquare->row, selectedSquare->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
 
-	availableMoves = availableSquares;
+	return availableSquares;
 }
 
-void GameManager::KingMoves()
+std::vector<std::shared_ptr<BoardSquare>> GameManager::KingMoves(std::shared_ptr<BoardSquare> square)
 {
 	std::vector<std::shared_ptr<BoardSquare>> availableSquares;
 	std::vector<std::shared_ptr<BoardSquare>> boardSquares = gameBoard->GetBoardSquares();
 
 	std::vector<std::shared_ptr<BoardSquare>> squaresInSameRow;
 	std::vector<std::shared_ptr<BoardSquare>> squaresInSameCol;
+	std::vector<std::shared_ptr<BoardSquare>> squaresInPositiveDiag;
+	std::vector<std::shared_ptr<BoardSquare>> squaresInNegativeDiag;
 
 
 	for (std::shared_ptr<BoardSquare> boardSquare : boardSquares)
 	{
-		if (boardSquare->row == selectedSquare->row && (boardSquare->column == selectedSquare->column - 1 || boardSquare->column == selectedSquare->column + 1) && boardSquare->pieceColor != playerTurn)
+		if (boardSquare->row == square->row && (boardSquare->column == square->column - 1 || boardSquare->column == square->column + 1) && boardSquare->pieceColor != playerTurn)
 			squaresInSameRow.push_back(boardSquare);
-		if (boardSquare->column == selectedSquare->column && (boardSquare->row == selectedSquare->row - 1 || boardSquare->row == selectedSquare->row + 1) && boardSquare->pieceColor != playerTurn)
+		else if (boardSquare->column == square->column && (boardSquare->row == square->row - 1 || boardSquare->row == square->row + 1) && boardSquare->pieceColor != playerTurn)
 			squaresInSameCol.push_back(boardSquare);
+		else if (boardSquare->row == square->row + 1 && boardSquare->column == square->column + 1)
+			squaresInPositiveDiag.push_back(boardSquare);
+		else if (boardSquare->row == square->row + 1 && boardSquare->column == square->column - 1)
+			squaresInNegativeDiag.push_back(boardSquare);
+		else if (boardSquare->row == square->row - 1 && boardSquare->column == square->column + 1)
+			squaresInNegativeDiag.push_back(boardSquare);
+		else if (boardSquare->row == square->row - 1 && boardSquare->column == square->column - 1)
+			squaresInPositiveDiag.push_back(boardSquare);
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, selectedSquare->row, selectedSquare->column);
-	CheckCol(squaresInSameCol, availableSquares, selectedSquare->row, selectedSquare->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
 
-	availableMoves = availableSquares;
+	return availableSquares;
 }
 
 std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col)

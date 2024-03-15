@@ -1841,6 +1841,54 @@
             "id": 3,
             "name": "GameManager",
             "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 136,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 4.800000190734863,
+                    "xScale": 0.15000000596046448,
+                    "yPos": -3.7799999713897705,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 137,
+                    "renderOrder": 0,
+                    "texture": "assets/images/pieces/UndoButton.png",
+                    "texture_height": 15.0,
+                    "texture_width": 32.0,
+                    "type": "Sprite",
+                    "xOffset": 16.0,
+                    "yOffset": 7.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 3.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 6.5,
+                    "id": 138,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "UndoButton",
+                    "id": 139,
+                    "type": "Script"
+                }
+            ],
+            "id": 133,
+            "name": "UndoButton",
+            "parent": -1
         }
     ]
 }

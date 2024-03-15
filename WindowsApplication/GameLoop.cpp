@@ -83,6 +83,13 @@ namespace FlatEngine
 						this->gameManager = gameManagerScript;
 						FlatEngine::gameManager = gameManagerScript;
 					}
+					else if (attachedScript == "UndoButton")
+					{
+						std::shared_ptr<UndoButton> undoButtonScript = std::make_shared<UndoButton>();
+						undoButtonScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(undoButtonScript);
+						this->activeScripts.push_back(undoButtonScript);
+					}
 				}
 			}
 		}

@@ -93,14 +93,24 @@ void GameBoard::TakePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr
 	// Deactivate the button
 	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(movingFrom->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
 	button->SetActive(false);
-
 }
 
 void GameBoard::MovePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom)
 {
-	movingTo->RemovePiece();
 	movingTo->AssignPiece(movingFrom->pieceName, movingFrom->spritePath, movingFrom->pieceColor, movingFrom->spriteYOffset);
 	movingFrom->RemovePiece();
+	// Deactivate the button
+	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(movingFrom->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	button->SetActive(false);
+}
+
+void GameBoard::SpawnPiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> peiceToSpawn)
+{
+	if (movingTo->pieceName != "")
+		movingTo->RemovePiece();
+	movingTo->AssignPiece(peiceToSpawn->pieceName, peiceToSpawn->spritePath, peiceToSpawn->pieceColor, peiceToSpawn->spriteYOffset);
+	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(movingTo->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	button->SetActive(true);
 }
 
 
