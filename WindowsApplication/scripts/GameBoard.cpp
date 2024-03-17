@@ -104,13 +104,13 @@ void GameBoard::MovePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr
 	button->SetActive(false);
 }
 
-void GameBoard::SpawnPiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> peiceToSpawn)
+void GameBoard::SpawnPiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> peiceToSpawn, bool _setActive)
 {
 	if (movingTo->pieceName != "")
 		movingTo->RemovePiece();
 	movingTo->AssignPiece(peiceToSpawn->pieceName, peiceToSpawn->spritePath, peiceToSpawn->pieceColor, peiceToSpawn->spriteYOffset);
 	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(movingTo->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
-	button->SetActive(true);
+	button->SetActive(_setActive);
 }
 
 

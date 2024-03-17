@@ -157,7 +157,7 @@ void GameManager::SetSelectedSquare(std::shared_ptr<BoardSquare> square)
 			blackKing = square;
 
 		ChangeTurns();
-		UpdateCheckmateCheck();
+		//UpdateCheckmateCheck();
 	}
 
 	if (selectedSquare != nullptr)
@@ -310,6 +310,12 @@ bool GameManager::CheckForCheck(std::shared_ptr<BoardSquare> king)
 			else if (boardSquare->row - king->row == king->column - boardSquare->column)
 				squaresInLineOfSight.push_back(boardSquare);
 		}
+		if (((boardSquare->row == king->row + 1 && (boardSquare->column == king->column - 2 || boardSquare->column == king->column + 2)) ||
+			(boardSquare->row == king->row - 1 && (boardSquare->column == king->column - 2 || boardSquare->column == king->column + 2)) ||
+			(boardSquare->row == king->row + 2 && (boardSquare->column == king->column - 1 || boardSquare->column == king->column + 1)) ||
+			(boardSquare->row == king->row - 2 && (boardSquare->column == king->column - 1 || boardSquare->column == king->column + 1))) &&
+			boardSquare->pieceColor != king->pieceColor)
+			squaresInLineOfSight.push_back(boardSquare);
 	}
 
 	for (std::shared_ptr<BoardSquare> square : squaresInLineOfSight)
@@ -400,6 +406,32 @@ bool GameManager::CheckForCheckmate(std::shared_ptr<BoardSquare> king)
 			}
 		}
 	}
+	else
+	{
+		for (std::shared_ptr<BoardSquare> square : gameBoard->GetBlackSquares())
+		{
+			std::vector<std::shared_ptr<BoardSquare>> potentialMoves;
+
+			if (square->pieceType == "Pawn_")
+				potentialMoves = PawnMoves(square);
+			else if (square->pieceType == "Rook_")
+				potentialMoves = RookMoves(square);
+			else if (square->pieceType == "Knight_")
+				potentialMoves = KnightMoves(square);
+			else if (square->pieceType == "Bishop_")
+				potentialMoves = BishopMoves(square);
+			else if (square->pieceType == "Queen_")
+				potentialMoves = QueenMoves(square);
+			else if (square->pieceType == "King_")
+				potentialMoves = KingMoves(square);
+
+			for (std::shared_ptr<BoardSquare> moveTo : potentialMoves)
+			{
+				if (!CheckMoveForStillchecked(square, moveTo, king))
+					return false;
+			}
+		}
+	}
 
 	return true;
 }
@@ -440,17 +472,24 @@ void GameManager::UndoMove()
 	button->SetActive(true);
 
 	if (peiceDestroyed != nullptr)
-		gameBoard->SpawnPiece(toSquare, peiceDestroyed);
+	{
+		bool _setActive = true;
+		gameBoard->SpawnPiece(toSquare, peiceDestroyed, _setActive);
+	}
 }
 
 void GameManager::UndoMoveChecking()
 {
 	gameBoard->TakePiece(fromSquareChecking, toSquareChecking);
-	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(fromSquareChecking->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
-	button->SetActive(true);
+	std::shared_ptr<FlatEngine::Button> fromSquareButton = std::static_pointer_cast<FlatEngine::Button>(fromSquareChecking->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	fromSquareButton->SetActive(true);
+	std::shared_ptr<FlatEngine::Button> toSquareButton = std::static_pointer_cast<FlatEngine::Button>(toSquareChecking->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
 
 	if (peiceDestroyedChecking != nullptr)
-		gameBoard->SpawnPiece(toSquareChecking, peiceDestroyedChecking);
+	{
+		bool _setActive = false;
+		gameBoard->SpawnPiece(toSquareChecking, peiceDestroyedChecking, _setActive);
+	}
 }
 
 std::vector<std::shared_ptr<BoardSquare>> GameManager::PawnMoves(std::shared_ptr<BoardSquare> square)
@@ -514,8 +553,8 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::RookMoves(std::shared_ptr
 			squaresInSameCol.push_back(boardSquare);
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
-	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column, square->pieceColor);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column, square->pieceColor);
 
 	return availableSquares;
 }
@@ -531,7 +570,7 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::KnightMoves(std::shared_p
 			(boardSquare->row == square->row - 1 && (boardSquare->column == square->column - 2 || boardSquare->column == square->column + 2)) ||
 			(boardSquare->row == square->row + 2 && (boardSquare->column == square->column - 1 || boardSquare->column == square->column + 1)) ||
 			(boardSquare->row == square->row - 2 && (boardSquare->column == square->column - 1 || boardSquare->column == square->column + 1))) &&
-			boardSquare->pieceColor != playerTurn)
+			boardSquare->pieceColor != square->pieceColor)
 			availableSquares.push_back(boardSquare);
 	}
 
@@ -558,8 +597,8 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::BishopMoves(std::shared_p
 		}
 	}
 
-	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
-	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column, square->pieceColor);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column, square->pieceColor);
 
 	return availableSquares;
 }
@@ -589,10 +628,10 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::QueenMoves(std::shared_pt
 		}
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
-	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
-	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
-	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column, square->pieceColor);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column, square->pieceColor);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column, square->pieceColor);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column, square->pieceColor);
 
 	return availableSquares;
 }
@@ -624,15 +663,15 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::KingMoves(std::shared_ptr
 			squaresInPositiveDiag.push_back(boardSquare);
 	}
 
-	CheckRow(squaresInSameRow, availableSquares, square->row, square->column);
-	CheckCol(squaresInSameCol, availableSquares, square->row, square->column);
-	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column);
-	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column);
+	CheckRow(squaresInSameRow, availableSquares, square->row, square->column, square->pieceColor);
+	CheckCol(squaresInSameCol, availableSquares, square->row, square->column, square->pieceColor);
+	CheckPosDiag(squaresInPositiveDiag, availableSquares, square->row, square->column, square->pieceColor);
+	CheckNegDiag(squaresInNegativeDiag, availableSquares, square->row, square->column, square->pieceColor);
 
 	return availableSquares;
 }
 
-std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col)
+std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor)
 {
 	bool _leftEdgeFound = false;
 	bool _rightEdgeFound = false;
@@ -645,7 +684,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< st
 			if (!_leftEdgeFound && col - i > 0 && boardSquare->column == col - i)
 			{
 				_leftEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 					availableSquares.push_back(boardSquare);
 				if (boardSquare->pieceColor != "")
 					enemySquares.push_back(boardSquare);
@@ -654,7 +693,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< st
 			if (!_rightEdgeFound && col + i < 9 && boardSquare->column == col + i)
 			{
 				_rightEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 					availableSquares.push_back(boardSquare);
 				if (boardSquare->pieceColor != "")
 					enemySquares.push_back(boardSquare);
@@ -665,7 +704,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckRow(std::vector< st
 	return enemySquares;
 }
 
-std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckCol(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col)
+std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckCol(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor)
 {
 	bool _topEdgeFound = false;
 	bool _bottomEdgeFound = false;
@@ -678,7 +717,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckCol(std::vector< st
 			if (!_topEdgeFound && row + i < 9 && boardSquare->row == row + i)
 			{
 				_topEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 				{
 					availableSquares.push_back(boardSquare);
 					if (boardSquare->pieceColor != "")
@@ -689,7 +728,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckCol(std::vector< st
 			if (!_bottomEdgeFound && row - i > 0 && boardSquare->row == row - i)
 			{
 				_bottomEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 				{
 					availableSquares.push_back(boardSquare);
 					if (boardSquare->pieceColor != "")
@@ -702,7 +741,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckCol(std::vector< st
 	return enemySquares;
 }
 
-std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckPosDiag(std::vector<std::shared_ptr<BoardSquare>> squares, std::vector<std::shared_ptr<BoardSquare>>& availableSquares, int row, int col)
+std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckPosDiag(std::vector<std::shared_ptr<BoardSquare>> squares, std::vector<std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor)
 {
 	bool _topEdgeFound = false;
 	bool _bottomEdgeFound = false;
@@ -715,7 +754,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckPosDiag(std::vector
 			if (!_topEdgeFound && row + i < 9 && (boardSquare->row == row + i && boardSquare->column == col + i))
 			{
 				_topEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 				{
 					availableSquares.push_back(boardSquare);
 					if (boardSquare->pieceColor != "")
@@ -726,7 +765,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckPosDiag(std::vector
 			if (!_bottomEdgeFound && row - i > 0 && (boardSquare->row == row - i && boardSquare->column == col - i))
 			{
 				_bottomEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
 				{
 					availableSquares.push_back(boardSquare);
 					if (boardSquare->pieceColor != "")
@@ -739,7 +778,7 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckPosDiag(std::vector
 	return enemySquares;
 }
 
-std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckNegDiag(std::vector<std::shared_ptr<BoardSquare>> squares, std::vector<std::shared_ptr<BoardSquare>>& availableSquares, int row, int col)
+std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckNegDiag(std::vector<std::shared_ptr<BoardSquare>> squares, std::vector<std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor)
 {
 	bool _topEdgeFound = false;
 	bool _bottomEdgeFound = false;
@@ -752,15 +791,24 @@ std::vector< std::shared_ptr<BoardSquare>> GameManager::CheckNegDiag(std::vector
 			if (!_topEdgeFound && row + i < 9 && (boardSquare->row == row + i && boardSquare->column == col - i))
 			{
 				_topEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
+				{
 					availableSquares.push_back(boardSquare);
+					if (boardSquare->pieceColor != "")
+						enemySquares.push_back(boardSquare);
+				}
+
 			}
 
 			if (!_bottomEdgeFound && row - i > 0 && (boardSquare->row == row - i && boardSquare->column == col + i))
 			{
 				_bottomEdgeFound = boardSquare->pieceName != "";
-				if (boardSquare->pieceColor != playerTurn)
+				if (boardSquare->pieceColor != pieceColor)
+				{
 					availableSquares.push_back(boardSquare);
+					if (boardSquare->pieceColor != "")
+						enemySquares.push_back(boardSquare);
+				}
 			}
 		}
 	}

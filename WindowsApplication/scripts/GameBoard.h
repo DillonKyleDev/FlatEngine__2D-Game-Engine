@@ -17,7 +17,7 @@ public:
 
 	void TakePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom);
 	void MovePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom);
-	void SpawnPiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> peiceToSpawn);
+	void SpawnPiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> peiceToSpawn, bool _setActive);
 	void SetupBoard();
 	std::vector<std::shared_ptr<BoardSquare>> GetBoardSquares();
 	std::vector<std::shared_ptr<BoardSquare>> GetWhiteSquares();

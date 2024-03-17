@@ -41,10 +41,10 @@ public:
 	std::vector<std::shared_ptr<BoardSquare>> BishopMoves(std::shared_ptr<BoardSquare> square);
 	std::vector<std::shared_ptr<BoardSquare>> QueenMoves(std::shared_ptr<BoardSquare> square);
 	std::vector<std::shared_ptr<BoardSquare>> KingMoves(std::shared_ptr<BoardSquare> square);
-	std::vector< std::shared_ptr<BoardSquare>> CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
-	std::vector< std::shared_ptr<BoardSquare>> CheckCol(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
-	std::vector< std::shared_ptr<BoardSquare>> CheckPosDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
-	std::vector< std::shared_ptr<BoardSquare>> CheckNegDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col);
+	std::vector< std::shared_ptr<BoardSquare>> CheckRow(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor);
+	std::vector< std::shared_ptr<BoardSquare>> CheckCol(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor);
+	std::vector< std::shared_ptr<BoardSquare>> CheckPosDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor);
+	std::vector< std::shared_ptr<BoardSquare>> CheckNegDiag(std::vector< std::shared_ptr<BoardSquare>> squares, std::vector< std::shared_ptr<BoardSquare>>& availableSquares, int row, int col, std::string pieceColor);
 
 private:
 	std::string playerTurn;
