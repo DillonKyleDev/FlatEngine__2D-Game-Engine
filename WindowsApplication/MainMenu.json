@@ -142,9 +142,9 @@
                     "fontSize": 40,
                     "id": 17,
                     "renderOrder": 0,
-                    "text": "Le",
+                    "text": "Simple",
                     "type": "Text",
-                    "xOffset": 24.5,
+                    "xOffset": 71.5,
                     "yOffset": 27.0
                 }
             ],
@@ -256,8 +256,8 @@
                     "id": 16,
                     "renderOrder": 0,
                     "texture": "assets/images/HighlightedButton2.png",
-                    "texture_height": 19.0,
-                    "texture_width": 89.0,
+                    "texture_height": 0.0,
+                    "texture_width": 0.0,
                     "type": "Sprite",
                     "xOffset": 44.5,
                     "yOffset": 9.5

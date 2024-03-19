@@ -102,6 +102,11 @@ void GameManager::PauseGame()
 	}
 }
 
+std::string GameManager::GetCurrentTurn()
+{
+	return playerTurn;
+}
+
 void GameManager::SetWhiteActive(bool _isActive)
 {
 	for (std::shared_ptr<BoardSquare> whiteSquare : this->gameBoard->GetWhiteSquares())

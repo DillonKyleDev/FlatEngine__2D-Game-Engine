@@ -13,10 +13,13 @@ AI::~AI()
 
 void AI::Start()
 {
-
+	turnColor = "black";
 }
 
 void AI::Update(float deltaTime)
 {
+	if (FlatEngine::gameManager->GetCurrentTurn() == turnColor)
+	{
 
+	}
 }

@@ -21,6 +21,7 @@ public:
 	void Start();
 	void Update(float deltaTime);
 	void PauseGame();
+	std::string GetCurrentTurn();
 
 	void SetWhiteActive(bool _isActive);
 	void SetBlackActive(bool _isActive);

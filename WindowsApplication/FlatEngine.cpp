@@ -12,7 +12,7 @@
 
 namespace FlatEngine
 {
-	bool _isDebugMode = true;
+	bool _isDebugMode = false;
 	bool _closeProgram = false;
 
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
