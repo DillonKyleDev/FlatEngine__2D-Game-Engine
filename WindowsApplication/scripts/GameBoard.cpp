@@ -84,7 +84,6 @@ void GameBoard::Update(float deltaTime)
 {
 }
 
-
 void GameBoard::TakePiece(std::shared_ptr<BoardSquare> movingTo, std::shared_ptr<BoardSquare> movingFrom)
 {
 	movingTo->RemovePiece();

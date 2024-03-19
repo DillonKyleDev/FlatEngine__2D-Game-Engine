@@ -20,6 +20,7 @@ public:
 
 	void Start();
 	void Update(float deltaTime);
+	void PauseGame();
 
 	void SetWhiteActive(bool _isActive);
 	void SetBlackActive(bool _isActive);
@@ -68,5 +69,10 @@ private:
 	std::shared_ptr<BoardSquare> peiceDestroyedChecking;
 
 	bool _checkMate;
+	bool _paused;
+
+	std::shared_ptr<FlatEngine::GameObject> pauseScreen;
+	std::shared_ptr<FlatEngine::GameObject> blackWinsScreen;
+	std::shared_ptr<FlatEngine::GameObject> whiteWinsScreen;
 };
 

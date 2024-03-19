@@ -13,6 +13,7 @@
 namespace FlatEngine
 {
 	bool _isDebugMode = true;
+	bool _closeProgram = false;
 
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
 
@@ -41,6 +42,7 @@ namespace FlatEngine
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
+		_hasQuit = FlatEngine::_closeProgram;
 		FlatEngine::FlatGui::Render(_hasQuit);
 
 		// If Release - Start the Game Loop
@@ -54,6 +56,11 @@ namespace FlatEngine
 		{
 			FlatEngine::GameLoopUpdate();
 		}
+	}
+
+	void FlatEngine::CloseProgram()
+	{
+		FlatEngine::_closeProgram = true;
 	}
 
 	void FlatEngine::SetFocusedGameObjectID(long ID)

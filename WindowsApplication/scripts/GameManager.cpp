@@ -23,6 +23,10 @@ GameManager::GameManager()
 	toSquare = nullptr;
 	peiceDestroyed = nullptr;
 	_checkMate = false;
+	_paused = false;
+	pauseScreen = nullptr;
+	blackWinsScreen = nullptr;
+	whiteWinsScreen = nullptr;
 }
 
 GameManager::~GameManager()
@@ -31,20 +35,22 @@ GameManager::~GameManager()
 
 void GameManager::Start()
 {
-	FlatEngine::LogString("GameManager instantiated on: " + this->GetOwner()->GetName());
 	gameBoard->SetupBoard();
 	SetWhiteActive(true);
 	SetBlackActive(false);
 	movePieceAudio = std::static_pointer_cast<FlatEngine::Audio>(GetOwner()->GetComponent(FlatEngine::ComponentTypes::Audio));
 	movePieceAudio->SetIsMusic(false);
 	movePieceAudio->LoadEffect("assets/audio/MovePiece.wav");
+	pauseScreen = FlatEngine::GetObjectByName("PauseScreen");
+	blackWinsScreen = FlatEngine::GetObjectByName("BlackWins");
+	whiteWinsScreen = FlatEngine::GetObjectByName("WhiteWins");
 }
 
 void GameManager::Update(float deltaTime)
 {
 	// Check for win conditions
 	// if no win conditions
-	if (!_checkMate)
+	if (!_checkMate && !_paused)
 	{
 		std::shared_ptr<FlatEngine::Sprite> whiteKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(whiteKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
 		std::shared_ptr<FlatEngine::Sprite> blackKingSprite = std::static_pointer_cast<FlatEngine::Sprite>(blackKing->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Sprite));
@@ -65,6 +71,34 @@ void GameManager::Update(float deltaTime)
 			blackKingSprite->SetTexture("assets/images/pieces/Selected.png");
 		else
 			blackKingSprite->SetTexture("assets/images/pieces/Clear.png");
+	}
+}
+
+void GameManager::PauseGame()
+{
+	_paused = !_paused;
+	pauseScreen->SetActive(_paused);
+	movePieceAudio->Play();
+
+	if (!_paused)
+	{	
+		if (playerTurn == "white")
+		{
+			SetWhiteActive(true);
+			SetBlackActive(false);
+		}
+		else if (playerTurn == "black")
+		{
+			SetWhiteActive(false);
+			SetBlackActive(true);
+		}
+	}
+	else
+	{
+		if (playerTurn == "white")
+			SetWhiteActive(false);
+		else if (playerTurn == "black")
+			SetBlackActive(false);
 	}
 }
 
@@ -157,7 +191,6 @@ void GameManager::SetSelectedSquare(std::shared_ptr<BoardSquare> square)
 			blackKing = square;
 
 		ChangeTurns();
-		//UpdateCheckmateCheck();
 	}
 
 	if (selectedSquare != nullptr)
@@ -253,7 +286,7 @@ void GameManager::UpdateCheckmateCheck()
 			if (CheckForCheckmate(whiteKing))
 			{
 				// Game Over
-				FlatEngine::LogString("GameOVER!!!");
+				blackWinsScreen->SetActive(true);
 				_checkMate = true;
 				SetWhiteActive(false);
 				SetBlackActive(false);
@@ -277,7 +310,7 @@ void GameManager::UpdateCheckmateCheck()
 			if (CheckForCheckmate(blackKing))
 			{
 				// Game Over
-				FlatEngine::LogString("GameOVER!!!");
+				whiteWinsScreen->SetActive(true);
 				_checkMate = true;
 				SetWhiteActive(false);
 				SetBlackActive(false);

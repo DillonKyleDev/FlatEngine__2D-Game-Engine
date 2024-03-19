@@ -1246,6 +1246,10 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::Begin("Game View", &_open, flags);
 
+		if (ImGui::IsWindowFocused())
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+				FlatEngine::gameManager->PauseGame();
+
 		static bool opt_enable_context_menu = true;
 
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();  

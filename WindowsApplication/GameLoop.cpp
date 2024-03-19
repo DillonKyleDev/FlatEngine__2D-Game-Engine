@@ -90,6 +90,34 @@ namespace FlatEngine
 						script->SetScriptInstance(undoButtonScript);
 						this->activeScripts.push_back(undoButtonScript);
 					}
+					else if (attachedScript == "StartButton")
+					{
+						std::shared_ptr<StartButton> startButtonScript = std::make_shared<StartButton>();
+						startButtonScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(startButtonScript);
+						this->activeScripts.push_back(startButtonScript);
+					}
+					else if (attachedScript == "RestartButton")
+					{
+						std::shared_ptr<RestartButton> restartButtonScript = std::make_shared<RestartButton>();
+						restartButtonScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(restartButtonScript);
+						this->activeScripts.push_back(restartButtonScript);
+					}
+					else if (attachedScript == "QuitButton")
+					{
+						std::shared_ptr<QuitButton> quitButtonScript = std::make_shared<QuitButton>();
+						quitButtonScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(quitButtonScript);
+						this->activeScripts.push_back(quitButtonScript);
+					}
+					else if (attachedScript == "AI")
+					{
+						std::shared_ptr<AI> AIScript = std::make_shared<AI>();
+						AIScript->SetOwner(this->gameObjects[i]);
+						script->SetScriptInstance(AIScript);
+						this->activeScripts.push_back(AIScript);
+					}
 				}
 			}
 		}

@@ -292,6 +292,7 @@ namespace FlatEngine
 		return this->components;
 	}
 
+
 	std::vector<std::shared_ptr<Component>> GameObject::GetScriptInstances()
 	{
 		std::vector<std::shared_ptr<Component>> scriptComponents = this->GetComponentsOfType(ComponentTypes::Script);
@@ -356,6 +357,14 @@ namespace FlatEngine
 	void GameObject::SetActive(bool _isActive)
 	{
 		this->_isActive = _isActive;
+		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(GetComponent(FlatEngine::ComponentTypes::Button));
+		if (button != nullptr)
+			button->SetActive(_isActive);
+
+		for (long child : GetChildren())
+		{
+			FlatEngine::GetObjectById(child)->SetActive(_isActive);
+		}
 	}
 
 	bool GameObject::IsActive()

@@ -1836,6 +1836,13 @@
                     "id": 135,
                     "path": "assets/audio/MovePiece.wav",
                     "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "AI",
+                    "id": 140,
+                    "type": "Script"
                 }
             ],
             "id": 3,
@@ -1889,6 +1896,878 @@
             "id": 133,
             "name": "UndoButton",
             "parent": -1
+        },
+        {
+            "_isActive": false,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 141,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.10000000149011612,
+                    "yPos": 0.5,
+                    "yScale": 0.10000000149011612
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 142,
+                    "renderOrder": 6,
+                    "text": "Checkmate",
+                    "type": "Text",
+                    "xOffset": 122.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 134,
+            "name": "Checkmate",
+            "parent": -1
+        },
+        {
+            "_isActive": false,
+            "children": [
+                155,
+                157,
+                158,
+                159,
+                161
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 148,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": -0.5,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 135,
+            "name": "WhiteWins",
+            "parent": -1
+        },
+        {
+            "_isActive": false,
+            "children": [
+                156,
+                171,
+                172,
+                173,
+                175
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 144,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": -0.5,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 136,
+            "name": "BlackWins",
+            "parent": -1
+        },
+        {
+            "_isActive": false,
+            "children": [
+                139,
+                140,
+                143,
+                154
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 176,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": -0.5,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 138,
+            "name": "PauseScreen",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 151,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 10.0,
+                    "yPos": 0.0,
+                    "yScale": 10.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 152,
+                    "renderOrder": 6,
+                    "texture": "assets/images/pieces/Pause_bg.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 139,
+            "name": "Background",
+            "parent": 138
+        },
+        {
+            "_isActive": true,
+            "children": [
+                141
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 153,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": 0.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 154,
+                    "renderOrder": 7,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 155,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "RestartButton",
+                    "id": 156,
+                    "type": "Script"
+                }
+            ],
+            "id": 140,
+            "name": "Restart",
+            "parent": 138
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 167,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 168,
+                    "renderOrder": 8,
+                    "text": "Restart",
+                    "type": "Text",
+                    "xOffset": 87.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 141,
+            "name": "RestartText",
+            "parent": 140
+        },
+        {
+            "_isActive": true,
+            "children": [
+                144
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 158,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": -1.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 159,
+                    "renderOrder": 7,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 161,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "QuitButton",
+                    "id": 162,
+                    "type": "Script"
+                }
+            ],
+            "id": 143,
+            "name": "Quit",
+            "parent": 138
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 169,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 170,
+                    "renderOrder": 8,
+                    "text": "Quit",
+                    "type": "Text",
+                    "xOffset": 51.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 144,
+            "name": "QuitText",
+            "parent": 143
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 170,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.10000000149011612,
+                    "yPos": 2.0,
+                    "yScale": 0.10000000149011612
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 171,
+                    "renderOrder": 0,
+                    "text": "Paused",
+                    "type": "Text",
+                    "xOffset": 75.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 154,
+            "name": "PausedText",
+            "parent": 138
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 172,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 10.0,
+                    "yPos": 0.0,
+                    "yScale": 10.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 173,
+                    "renderOrder": 5,
+                    "texture": "assets/images/pieces/Checkmate_bg.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 155,
+            "name": "Background",
+            "parent": 135
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 174,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 10.0,
+                    "yPos": 0.0,
+                    "yScale": 10.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 175,
+                    "renderOrder": 5,
+                    "texture": "assets/images/pieces/Checkmate_bg.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 156,
+            "name": "Background",
+            "parent": 136
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 176,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.11999999731779099,
+                    "yPos": 2.0,
+                    "yScale": 0.11999999731779099
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 177,
+                    "renderOrder": 5,
+                    "text": "Checkmate",
+                    "type": "Text",
+                    "xOffset": 122.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 157,
+            "name": "CheckmateText",
+            "parent": 135
+        },
+        {
+            "_isActive": true,
+            "children": [
+                160
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 178,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": 0.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 179,
+                    "renderOrder": 5,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 180,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "RestartButton",
+                    "id": 181,
+                    "type": "Script"
+                }
+            ],
+            "id": 158,
+            "name": "Restart",
+            "parent": 135
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 183,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.07500000298023224,
+                    "yPos": 1.0,
+                    "yScale": 0.07500000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 185,
+                    "renderOrder": 5,
+                    "text": "White Wins",
+                    "type": "Text",
+                    "xOffset": 125.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 159,
+            "name": "WhiteWinsText",
+            "parent": 135
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 186,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 187,
+                    "renderOrder": 6,
+                    "text": "Restart",
+                    "type": "Text",
+                    "xOffset": 87.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 160,
+            "name": "RestartText",
+            "parent": 158
+        },
+        {
+            "_isActive": true,
+            "children": [
+                162
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 188,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": -1.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 189,
+                    "renderOrder": 5,
+                    "texture": "assets/images/SingleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 190,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "QuitButton",
+                    "id": 191,
+                    "type": "Script"
+                }
+            ],
+            "id": 161,
+            "name": "Quit",
+            "parent": 135
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 192,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 193,
+                    "renderOrder": 5,
+                    "text": "Quit",
+                    "type": "Text",
+                    "xOffset": 51.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 162,
+            "name": "QuitText",
+            "parent": 161
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 191,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.11999999731779099,
+                    "yPos": 2.0,
+                    "yScale": 0.11999999731779099
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 192,
+                    "renderOrder": 6,
+                    "text": "Checkmate",
+                    "type": "Text",
+                    "xOffset": 122.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 171,
+            "name": "CheckmateText",
+            "parent": 136
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 193,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.07500000298023224,
+                    "yPos": 1.0,
+                    "yScale": 0.07500000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 194,
+                    "renderOrder": 6,
+                    "text": "Black Wins",
+                    "type": "Text",
+                    "xOffset": 124.0,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 172,
+            "name": "BlackWinsText",
+            "parent": 136
+        },
+        {
+            "_isActive": true,
+            "children": [
+                174
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 195,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": 0.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 196,
+                    "renderOrder": 5,
+                    "texture": "assets/images/singleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 197,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "RestartButton",
+                    "id": 198,
+                    "type": "Script"
+                }
+            ],
+            "id": 173,
+            "name": "Restart",
+            "parent": 136
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 200,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 201,
+                    "renderOrder": 6,
+                    "text": "Restart",
+                    "type": "Text",
+                    "xOffset": 87.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 174,
+            "name": "RestartText",
+            "parent": 173
+        },
+        {
+            "_isActive": true,
+            "children": [
+                176
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 202,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.20000000298023224,
+                    "yPos": -1.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 4.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.0,
+                    "id": 203,
+                    "type": "Button"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 204,
+                    "renderOrder": 6,
+                    "texture": "assets/images/singleButton.png",
+                    "texture_height": 19.0,
+                    "texture_width": 89.0,
+                    "type": "Sprite",
+                    "xOffset": 44.5,
+                    "yOffset": 9.5
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "QuitButton",
+                    "id": 205,
+                    "type": "Script"
+                }
+            ],
+            "id": 175,
+            "name": "Quit",
+            "parent": 136
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 206,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.30000001192092896,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 207,
+                    "renderOrder": 6,
+                    "text": "Quit",
+                    "type": "Text",
+                    "xOffset": 51.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 176,
+            "name": "QuitText",
+            "parent": 175
         }
     ]
 }

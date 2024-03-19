@@ -84,8 +84,11 @@ namespace FlatEngine {
 					{
 						this->AddHoveredButton(button);
 
-						//if (button->MouseOverSet())
-							//button->OnMouseOverFunction;
+						if (button->MouseOverSet())
+						{
+							std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(button->GetParentID());
+							button->OnMouseOverFunction(thisObject);
+						}
 					}
 				}
 			}
@@ -110,7 +113,7 @@ namespace FlatEngine {
 				// If the new vector is missing an item from the last saved vector, fire OnMouseLeave() on that item
 				if (std::find(this->gameHoveredButtons.begin(), this->gameHoveredButtons.end(), lastHovered[i]) == this->gameHoveredButtons.end())
 				{
-					if (this->gameHoveredButtons.size() > 0 && this->gameHoveredButtons[i]->MouseLeaveSet())
+					if (lastHovered.size() > 0 && lastHovered[i]->MouseLeaveSet())
 					{
 						std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
 						lastHovered[i]->OnMouseLeaveFunction(thisObject);

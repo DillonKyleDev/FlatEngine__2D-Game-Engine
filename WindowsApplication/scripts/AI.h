@@ -1,5 +1,5 @@
-#include "ScriptTemplate.h"
-#include "../FlatEngine.h"
+#pragma once
+#include "../GameScript.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script
@@ -10,22 +10,13 @@
 // In GameLoop::Update(); call the GameScript::Update(); method on the new class object pointer.
 
 
-ScriptTemplate::ScriptTemplate()
+class AI : public FlatEngine::GameScript
 {
-	this->SetName("ScriptTemplate");
-}
+public:
+	AI();
+	~AI();
 
-ScriptTemplate::~ScriptTemplate()
-{
+	void Start();
+	void Update(float deltaTime);
+};
 
-}
-
-void ScriptTemplate::Start()
-{
-	FlatEngine::LogString("ScriptTemplate instantiated on: " + this->GetOwner()->GetName());
-}
-
-void ScriptTemplate::Update(float deltaTime)
-{
-
-}

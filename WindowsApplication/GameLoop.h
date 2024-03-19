@@ -7,6 +7,10 @@
 #include "./scripts/GameManager.h"
 #include "./scripts/GameBoard.h"
 #include "./scripts/UndoButton.h"
+#include "./scripts/StartButton.h"
+#include "./scripts/RestartButton.h"
+#include "./scripts/QuitButton.h"
+#include "./scripts/AI.h"
 
 
 
