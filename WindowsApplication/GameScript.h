@@ -1,5 +1,8 @@
 #pragma once
+#ifndef GAME_OBJECT
+#define GAME_OBJECT
 #include "GameObject.h"
+#endif
 #include <string>
 #include <vector>
 #include <memory>

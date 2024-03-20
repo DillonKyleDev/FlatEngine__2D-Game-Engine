@@ -60,6 +60,7 @@ namespace FlatEngine
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attachedScript = script->GetAttachedScript();
 
+<<<<<<< HEAD
 					if (attachedScript == "GameBoard")
 					{
 						std::shared_ptr<GameBoard> gameBoardScript = std::make_shared<GameBoard>();
@@ -118,6 +119,24 @@ namespace FlatEngine
 						script->SetScriptInstance(AIScript);
 						this->activeScripts.push_back(AIScript);
 					}
+=======
+
+					if (attachedScript == "Up")
+					{
+						std::shared_ptr<Up> upScript = std::make_shared<Up>();
+						upScript->SetOwner(this->gameObjects[i]);
+						this->activeScripts.push_back(upScript);
+					}
+
+
+
+					//if (attachedScript == "Up")
+					//{
+					//	upScript->AddEntity(this->gameObjects[i]);
+					//}
+					// else if (attachedScript == "OtherScriptName")
+					// Add other script name checks here and add them to those script objects
+>>>>>>> 6974453e988b22781865c7731372dceb003c11ee
 				}
 			}
 		}
@@ -125,6 +144,17 @@ namespace FlatEngine
 
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
+<<<<<<< HEAD
+=======
+
+		// After all the scripts have gotten all of their scene objects added to them, we can run their Start methods
+		//for (int i = 0; i < scripts.size(); i++)
+		//{
+		//	if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+		//		scripts[i]->Start();
+		//}
+
+>>>>>>> 6974453e988b22781865c7731372dceb003c11ee
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			activeScripts[i]->Awake();
@@ -141,6 +171,20 @@ namespace FlatEngine
 		this->deltaTime = (float)SDL_GetTicks() - this->lastFrameTime;
 		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
 		this->lastFrameTime = (float)SDL_GetTicks();
+
+<<<<<<< HEAD
+		for (int i = 0; i < activeScripts.size(); i++)
+		{
+			activeScripts[i]->Update(this->deltaTime);
+		}
+=======
+
+		// Run all the script Update() functions
+		//for (int i = 0; i < scripts.size(); i++)
+		//	if (scripts[i]->GetEntities().size() > 0 && scripts[i]->_isActive)
+		//		scripts[i]->Update(this->deltaTime);
+
+>>>>>>> 6974453e988b22781865c7731372dceb003c11ee
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{

@@ -334,6 +334,7 @@
     <None Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\.gitignore">
       <Filter>imgui</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\LICENSE.txt">

@@ -6,6 +6,7 @@
 #include "Camera.h"
 //#include "Button.h"
 
+
 namespace FlatEngine
 {
 	using ComponentTypes = Component::ComponentTypes;
@@ -47,6 +48,7 @@ namespace FlatEngine
 		bool HasChildren();
 		void SetActive(bool _isActive);
 		bool IsActive();
+		//void AddScriptInstance(std::shared_ptr<GameScript> script);
 
 	private:
 		long ID;
@@ -55,5 +57,6 @@ namespace FlatEngine
 		std::string name;
 		std::vector<std::shared_ptr<Component>> components;
 		std::vector<long> childrenIDs;
+		//std::vector<std::shared_ptr<GameScript>> scripts;
 	};
 }

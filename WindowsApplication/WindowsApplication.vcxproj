@@ -240,6 +240,7 @@
     <None Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\.editorconfig" />
     <None Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\.gitattributes" />
     <None Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\.gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\LICENSE.txt" />

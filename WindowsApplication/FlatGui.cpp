@@ -232,7 +232,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		std::string sceneText = "Scene: ";
-		static char filename[1024] = "MainMenu.json";
+		static char filename[1024] = "Test.json";
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 		// Edit field
