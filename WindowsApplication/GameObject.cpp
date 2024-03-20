@@ -1,13 +1,12 @@
 #include "GameObject.h"
 #include "FlatEngine.h"
-#include "Transform.h"
-#include "Sprite.h"
-#include "Camera.h"
-#include "Button.h"
+//#include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
 #include "Audio.h"
 #include "Text.h"
+//#include "ScriptComponent.h"
+//#include "GameScript.h"
 #include "WidgetsManager.h"
 
 
@@ -203,10 +202,106 @@ namespace FlatEngine
 		return nullptr;
 	}
 
+	std::shared_ptr<Transform> GameObject::GetTransformComponent()
+	{
+		std::shared_ptr<FlatEngine::Transform> transformComponent = std::static_pointer_cast<FlatEngine::Transform>(this->GetComponent(FlatEngine::ComponentTypes::Transform));
+		return transformComponent;
+	}
+
+	std::shared_ptr<Sprite> GameObject::GetSpriteComponent()
+	{
+		std::shared_ptr<FlatEngine::Sprite> spriteComponent = std::static_pointer_cast<FlatEngine::Sprite>(this->GetComponent(FlatEngine::ComponentTypes::Sprite));
+		return spriteComponent;
+	}
+
+	std::shared_ptr<Camera> GameObject::GetCameraComponent()
+	{
+		std::shared_ptr<FlatEngine::Camera> cameraComponent = std::static_pointer_cast<FlatEngine::Camera>(this->GetComponent(FlatEngine::ComponentTypes::Camera));
+		return cameraComponent;
+	}
+
+	//std::shared_ptr<Animation> GameObject::GetAnimationComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::Animation> animationComponent = std::static_pointer_cast<FlatEngine::Animation>(this->GetComponent(FlatEngine::ComponentTypes::Animation));
+	//	return animationComponent;
+	//}
+
+	//std::shared_ptr<Audio> GameObject::GetAudioComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::Audio> audioComponent = std::static_pointer_cast<FlatEngine::Audio>(this->GetComponent(FlatEngine::ComponentTypes::Audio));
+	//	return audioComponent;
+	//}
+
+	//std::shared_ptr<Button> GameObject::GetButtonComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::Button> buttonComponent = std::static_pointer_cast<FlatEngine::Button>(this->GetComponent(FlatEngine::ComponentTypes::Button));
+	//	return buttonComponent;
+	//}
+
+	//std::shared_ptr<Canvas> GameObject::GetCanvasComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::Canvas> canvasComponent = std::static_pointer_cast<FlatEngine::Canvas>(this->GetComponent(FlatEngine::ComponentTypes::Canvas));
+	//	return canvasComponent;
+	//}
+
+	//std::shared_ptr<ScriptComponent> GameObject::GetScriptComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::ScriptComponent> scriptComponent = std::static_pointer_cast<FlatEngine::ScriptComponent>(this->GetComponent(FlatEngine::ComponentTypes::Script));
+	//	return scriptComponent;
+	//}
+
+	//std::shared_ptr<Text> GameObject::GetTextComponent()
+	//{
+	//	std::shared_ptr<FlatEngine::Text> textComponent = std::static_pointer_cast<FlatEngine::Text>(this->GetComponent(FlatEngine::ComponentTypes::Text));
+	//	return textComponent;
+	//}
+
+	//std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)
+	//{
+	//	for (int i = 0; i < this->components.size(); i++)
+	//	{
+	//		if (this->components[i]->GetType() == ComponentTypes::Script)
+	//		{
+	//			std::shared_ptr<FlatEngine::ScriptComponent> scriptComponent = std::static_pointer_cast<FlatEngine::ScriptComponent>(this->GetComponent(FlatEngine::ComponentTypes::Script));
+	//			if (scriptComponent->GetAttachedScript() == scriptName)
+	//				return scriptComponent->GetScriptInstance();
+	//		}
+	//	}
+	//}
+
+
+	std::vector<std::shared_ptr<Component>> GameObject::GetComponentsOfType(Component::ComponentTypes type)
+	{
+		std::vector<std::shared_ptr<Component>> componentsOfType = std::vector<std::shared_ptr<Component>>();
+
+		for (int i = 0; i < this->components.size(); i++)
+		{
+			if (this->components[i]->GetType() == type)
+			{
+				componentsOfType.push_back(this->components[i]);
+				
+			}
+		}
+
+		return componentsOfType;
+	}
+
 
 	std::vector<std::shared_ptr<Component>> &GameObject::GetComponents()
 	{
 		return this->components;
+	}
+
+
+	std::vector<std::shared_ptr<Component>> GameObject::GetScriptInstances()
+	{
+		std::vector<std::shared_ptr<Component>> scriptComponents = this->GetComponentsOfType(ComponentTypes::Script);
+		std::vector<std::shared_ptr<Component>> gameScripts;
+
+		for (std::shared_ptr<Component> script : scriptComponents)
+			gameScripts.push_back(script);
+		
+		return gameScripts;
 	}
 
 
@@ -242,6 +337,11 @@ namespace FlatEngine
 		}
 	}
 
+	std::shared_ptr<GameObject> GameObject::GetFirstChild()
+	{
+		return FlatEngine::GetObjectById(this->childrenIDs[0]);
+	}
+
 
 	std::vector<long> GameObject::GetChildren()
 	{
@@ -257,6 +357,14 @@ namespace FlatEngine
 	void GameObject::SetActive(bool _isActive)
 	{
 		this->_isActive = _isActive;
+		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(GetComponent(FlatEngine::ComponentTypes::Button));
+		if (button != nullptr)
+			button->SetActive(_isActive);
+
+		for (long child : GetChildren())
+		{
+			FlatEngine::GetObjectById(child)->SetActive(_isActive);
+		}
 	}
 
 	bool GameObject::IsActive()

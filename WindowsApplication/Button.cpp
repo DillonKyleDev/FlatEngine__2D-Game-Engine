@@ -1,6 +1,6 @@
 #include "Button.h"
 #include "FlatEngine.h"
-
+#include "GameObject.h"
 
 namespace FlatEngine
 {
@@ -22,35 +22,46 @@ namespace FlatEngine
 		this->OnMouseLeaveFunction = nullptr;
 		this->OnLeftClickFunction = nullptr;
 		this->OnRightClickFunction = nullptr;
+
+		this->_mouseOverSet = false;
+		this->_mouseEnterSet = false;
+		this->_mouseLeaveSet = false;
+		this->_leftClickSet = false;
+		this->_rightClickSet = false;
 	}
 
 	Button::~Button()
 	{
 	}
 
-	void Button::OnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{	
 		this->OnMouseOverFunction = callback;
+		this->_mouseOverSet = true;
 	}
 
-	void Button::OnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnMouseEnterFunction = callback;
+		this->_mouseEnterSet = true;
 	}
 
-	void Button::OnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnMouseLeaveFunction = callback;
+		this->_mouseLeaveSet = true;
 	}
 
-	void Button::OnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnLeftClickFunction = callback;
+		this->_leftClickSet = true;
 	}
 
-	void Button::OnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Button::SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
 		this->OnRightClickFunction = callback;
+		this->_rightClickSet = true;
 	}
 
 	void Button::SetActive(bool _active)
@@ -148,5 +159,33 @@ namespace FlatEngine
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
+	}
+	void Button::SetConnectedScript(std::string scriptName)
+	{
+		this->connectedScript = scriptName;
+	}
+	std::string Button::GetConnectedScript()
+	{
+		return this->connectedScript;
+	}
+	bool Button::MouseOverSet()
+	{
+		return this->_mouseOverSet;
+	}
+	bool Button::MouseEnterSet()
+	{
+		return this->_mouseEnterSet;
+	}
+	bool Button::MouseLeaveSet()
+	{
+		return this->_mouseLeaveSet;
+	}
+	bool Button::LeftClickSet()
+	{
+		return this->_leftClickSet;
+	}
+	bool Button::RightClickSet()
+	{
+		return this->_rightClickSet;
 	}
 }

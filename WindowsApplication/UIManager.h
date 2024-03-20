@@ -3,6 +3,7 @@
 #include <vector>
 #include "Canvas.h"
 #include "Button.h"
+#include "./scripts/GameManager.h"
 
 
 

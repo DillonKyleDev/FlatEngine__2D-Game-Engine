@@ -18,7 +18,7 @@
 #include "WidgetsManager.h"
 #include "UIManager.h"
 #include "Audio.h"
-
+#include "scripts/GameManager.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -32,6 +32,9 @@ namespace FlatEngine
 	using ComponentTypes = Component::ComponentTypes;
 
 	extern bool _isDebugMode;
+	extern bool _closeProgram;
+
+	extern std::shared_ptr<GameManager> gameManager;
 
 	// #### FLAGENGINE #### //
 	// 
@@ -57,6 +60,7 @@ namespace FlatEngine
 
 	// Engine
 	extern void Run(bool &_hasQuit);
+	extern void CloseProgram();
 
 	// Audio Managing
 	extern std::shared_ptr<Sound> soundController;

@@ -4,7 +4,7 @@
 
 ButtonScriptTemplate::ButtonScriptTemplate()
 {
-
+	this->SetName("ButtonScriptTemplate");
 }
 
 ButtonScriptTemplate::~ButtonScriptTemplate()
@@ -50,11 +50,11 @@ void ButtonScriptTemplate::Start()
 		std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(thisObject->GetComponent(FlatEngine::ComponentTypes::Button));
 
 		// Register Mouse Events functions to the Button
-		button->OnMouseOver(ButtonScriptTemplateOnMouseOver);
-		button->OnMouseEnter(ButtonScriptTemplateOnMouseEnter);
-		button->OnMouseLeave(ButtonScriptTemplateOnMouseLeave);
-		button->OnMouseLeftClick(ButtonScriptTemplateOnLeftClick);
-		button->OnMouseRightClick(ButtonScriptTemplateOnRightClick);
+		button->SetOnMouseOver(ButtonScriptTemplateOnMouseOver);
+		button->SetOnMouseEnter(ButtonScriptTemplateOnMouseEnter);
+		button->SetOnMouseLeave(ButtonScriptTemplateOnMouseLeave);
+		button->SetOnMouseLeftClick(ButtonScriptTemplateOnLeftClick);
+		button->SetOnMouseRightClick(ButtonScriptTemplateOnRightClick);
 	}
 }
 

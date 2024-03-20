@@ -12,7 +12,7 @@
 
 ScriptTemplate::ScriptTemplate()
 {
-
+	this->SetName("ScriptTemplate");
 }
 
 ScriptTemplate::~ScriptTemplate()
@@ -22,21 +22,10 @@ ScriptTemplate::~ScriptTemplate()
 
 void ScriptTemplate::Start()
 {
-	for (int i = 0; i < this->GetEntities().size(); i++)
-	{
-		FlatEngine::LogString("ScriptTemplate instantiated on: " + this->GetEntities()[i]->GetName());
-	}
+	FlatEngine::LogString("ScriptTemplate instantiated on: " + this->GetOwner()->GetName());
 }
 
 void ScriptTemplate::Update(float deltaTime)
 {
-	std::vector<std::shared_ptr<FlatEngine::GameObject>> attatchedEntities = this->GetEntities();
-	for (int i = 0; i < attatchedEntities.size(); i++)
-	{
-		std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(attatchedEntities[i]->GetComponent(FlatEngine::Component::ComponentTypes::Transform));
-		Vector2 position = transform->GetPosition();
-		float xPos = position.x;
-		float yPos = position.y;
-		transform->SetPosition(Vector2(xPos, yPos + 1));
-	}
+
 }

@@ -40,7 +40,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	// Scene view
 	// The multiplier for gridstep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
-	float gridStep = 10;
+	float gridStep = 50;
 	float SCENE_VIEWPORT_WIDTH = 600;
 	float SCENE_VIEWPORT_HEIGHT = 400;
 	float DYNAMIC_VIEWPORT_WIDTH = 600;
@@ -927,7 +927,7 @@ namespace FlatEngine { namespace FlatGui {
 
 								// Retrieve Animation values
 								float ticksPerFrame = animation->GetTicksPerFrame();
-								std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
+								//std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
 
 								// Text
 								ImGui::Text("Ticks per frame: ");
@@ -941,8 +941,8 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
 								// Total Frames Text
-								std::string totalFrames = "Total frames: " + std::to_string(frames.size());
-								ImGui::Text(totalFrames.c_str());
+								//std::string totalFrames = "Total frames: " + std::to_string(frames.size());
+								//ImGui::Text(totalFrames.c_str());
 
 								// Add Frame Button
 								if (ImGui::Button("Add Frame"))
@@ -1245,6 +1245,10 @@ namespace FlatEngine { namespace FlatGui {
 		bool _open = true;
 
 		ImGui::Begin("Game View", &_open, flags);
+
+		if (ImGui::IsWindowFocused())
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+				FlatEngine::gameManager->PauseGame();
 
 		static bool opt_enable_context_menu = true;
 

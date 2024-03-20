@@ -1,6 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "GameObject.h"
 
 
 
@@ -19,7 +18,6 @@ namespace FlatEngine
 		bool IsPlaying();
 		void SetTicksPerFrame(float ticksPerFrame);
 		float GetTicksPerFrame();
-		std::vector<std::shared_ptr<GameObject>> GetFrames();
 		std::string GetData();
 
 		// Test Animations
@@ -29,7 +27,6 @@ namespace FlatEngine
 		bool _playing;
 		float ticksPerFrame;
 		int animationStartTime;
-		std::vector<std::shared_ptr<GameObject>> frames;
 	};
 }
 

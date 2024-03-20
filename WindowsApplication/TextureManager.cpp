@@ -4,25 +4,12 @@ namespace TextureManager
 {
 	//Set text color as black
 	SDL_Color textColor = { 0, 0, 0, 225 };
-	//In memory text stream
-	std::stringstream timeText;
-
 	//Font
 	TTF_Font* font;
-	//Texture that we'll generate to from the font
-	Texture fontTexture;
-
-	//dot Texture
-	Texture dot;
-	Texture dots;
-	Texture button;
-
-	//Buttons
-	//Button goldButton;
 
 	bool LoadTextures()
 	{
-		font = TTF_OpenFont("C:/Users/Dillon Kyle/fonts/Cinzel/Cinzel-Black.ttf", 46);
+		font = TTF_OpenFont("assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 		if (font == NULL)
 		{
 			printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -31,22 +18,8 @@ namespace TextureManager
 		//Loading success flag
 		bool success = true;
 
-		//Load png
-		dot.loadFromFile("assets/images/Dot.png");
-		dots.loadFromFile("assets/images/Dots.png");
-		button.loadFromFile("assets/images/SingleButton.png");
-		button.setDimensions(button.getWidth() * 3, button.getHeight() * 3);
-
 		//Render the text image
 		SDL_Color textColor = { 0, 0, 0 };
-		if (!fontTexture.loadFromRenderedText("Call Ally", textColor, font))
-		{
-			printf("Failed to render text texture!\n");
-			success = false;
-		}
-
-		//For Buttons
-		//goldButton.setSpriteTexture("assets/images/SingleButton.png");
 
 		return success;
 	}
@@ -64,25 +37,9 @@ namespace TextureManager
 		SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(renderer);
 
-		//Apply the image
-		//dot->blitSurface(Window::screenSurface);
-		//Update the surface
-		//SDL_UpdateWindowSurface(Window::window);
-
-		//Render pngs
-		dot.render(centerX, centerY);
-		dots.render(centerX, centerY);
-
-		//Render current frame
-
-		//Window::Render();
-
-		//Render buttons
-		//goldButton.render();
-
 		//Update the screen
-		SDL_RenderPresent(renderer);
-		fontTexture.render((winWidth - fontTexture.getWidth()) / 2, (winHeight - fontTexture.getHeight()) / 2);
+		//SDL_RenderPresent(renderer);
+		//fontTexture.render((winWidth - fontTexture.getWidth()) / 2, (winHeight - fontTexture.getHeight()) / 2);
 	}
 
 	void Cleanup()
@@ -91,5 +48,4 @@ namespace TextureManager
 		TTF_CloseFont(font);
 		font = NULL;
 	}
-
 }

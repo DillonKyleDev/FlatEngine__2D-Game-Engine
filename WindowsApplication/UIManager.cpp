@@ -81,7 +81,15 @@ namespace FlatEngine {
 					
 					// If Mouse and Button are colliding, add the hovered button
 					if (FlatEngine::AreCollidingViewport(activeEdges, ImVec4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+					{
 						this->AddHoveredButton(button);
+
+						if (button->MouseOverSet())
+						{
+							std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(button->GetParentID());
+							button->OnMouseOverFunction(thisObject);
+						}
+					}
 				}
 			}
 
@@ -91,8 +99,11 @@ namespace FlatEngine {
 				// If the new vector has an item that's new from the last saved vector, fire OnMouseEnter() on that item
 				if (std::find(lastHovered.begin(), lastHovered.end(), this->gameHoveredButtons[i]) == lastHovered.end())
 				{
-					std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
-					this->gameHoveredButtons[i]->OnMouseEnterFunction(thisObject);
+					if (this->gameHoveredButtons[i]->MouseEnterSet())
+					{
+						std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
+						this->gameHoveredButtons[i]->OnMouseEnterFunction(thisObject);
+					}
 				}
 			}
 
@@ -102,8 +113,11 @@ namespace FlatEngine {
 				// If the new vector is missing an item from the last saved vector, fire OnMouseLeave() on that item
 				if (std::find(this->gameHoveredButtons.begin(), this->gameHoveredButtons.end(), lastHovered[i]) == this->gameHoveredButtons.end())
 				{
-					std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
-					lastHovered[i]->OnMouseLeaveFunction(thisObject);
+					if (lastHovered.size() > 0 && lastHovered[i]->MouseLeaveSet())
+					{
+						std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
+						lastHovered[i]->OnMouseLeaveFunction(thisObject);
+					}
 				}
 			}
 
@@ -146,7 +160,7 @@ namespace FlatEngine {
 
 		std::shared_ptr<Button> UIManager::CreateButton(long ID, long parentID, int layerNumber)
 		{
-			std::shared_ptr<FlatEngine::Button> newGameButton(new FlatEngine::Button(ID, parentID));
+			std::shared_ptr<FlatEngine::Button> newGameButton = std::make_shared<FlatEngine::Button>(ID, parentID);
 			newGameButton->SetActiveLayer(layerNumber);
 			this->gameButtons.push_back(newGameButton);
 			this->IncrementCanvasID();
