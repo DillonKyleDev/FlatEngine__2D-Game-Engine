@@ -1,0 +1,59 @@
+{
+    "Scene GameObjects": [
+        {
+            "components": [
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": false,
+                    "activeHeight": 3.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 5.0,
+                    "attachedScript": "",
+                    "type": "Button"
+                },
+                {
+                    "texture": "WindowsApplication/assets/images/Player.png",
+                    "texture_height": 27.0,
+                    "texture_width": 47.0,
+                    "type": "Sprite",
+                    "xOffset": 23.5,
+                    "yOffset": 13.5
+                }
+            ],
+            "name": "Player"
+        },
+        {
+            "components": [
+                {
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 62.500003814697266,
+                    "frustrumGreen": 62.500003814697266,
+                    "frustrumRed": 62.500003814697266,
+                    "height": 12.5,
+                    "type": "Camera",
+                    "width": 22.5,
+                    "zoom": 21.402999877929688
+                },
+                {
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "name": "Camera"
+        }
+    ]
+}

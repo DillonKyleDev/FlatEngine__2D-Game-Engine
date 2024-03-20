@@ -122,6 +122,9 @@ namespace FlatEngine
 			}
 		}
 
+
+		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
+
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			activeScripts[i]->Awake();
@@ -138,11 +141,6 @@ namespace FlatEngine
 		this->deltaTime = (float)SDL_GetTicks() - this->lastFrameTime;
 		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
 		this->lastFrameTime = (float)SDL_GetTicks();
-
-		for (int i = 0; i < activeScripts.size(); i++)
-		{
-			activeScripts[i]->Update(this->deltaTime);
-		}
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
