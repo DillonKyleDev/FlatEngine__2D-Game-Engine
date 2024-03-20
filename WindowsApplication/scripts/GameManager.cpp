@@ -540,11 +540,11 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::PawnMoves(std::shared_ptr
 		if (square->pieceColor == "white")
 		{
 			// Moving
-			if (boardSquare->column == square->column &&
-				(boardSquare->row == square->row + 1 || (boardSquare->row == square->row + 2 && square->_hasMoved == false)) &&
-				boardSquare->pieceName == "")
+			if (boardSquare->column == square->column && boardSquare->row == square->row + 1 && boardSquare->pieceName == "")
 			{
 				availableSquares.push_back(boardSquare);
+				if (!square->_hasMoved)
+					CheckWhitePawnJump(boardSquare, availableSquares);
 			}
 			// For taking enemy piece
 			else if ((boardSquare->column == square->column + 1 || boardSquare->column == square->column - 1) && boardSquare->row == square->row + 1 &&
@@ -556,11 +556,11 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::PawnMoves(std::shared_ptr
 		else // if (square->pieceColor == "black")
 		{
 			// Moving
-			if (boardSquare->column == square->column &&
-				(boardSquare->row == square->row - 1 || (boardSquare->row == square->row - 2 && square->_hasMoved == false)) &&
-				boardSquare->pieceName == "")
+			if (boardSquare->column == square->column && boardSquare->row == square->row - 1 &&	boardSquare->pieceName == "")
 			{
 				availableSquares.push_back(boardSquare);
+				if (!square->_hasMoved)
+					CheckBlackPawnJump(boardSquare, availableSquares);
 			}
 			// For taking enemy piece
 			else if ((boardSquare->column == square->column + 1 || boardSquare->column == square->column - 1) && boardSquare->row == square->row - 1 &&
@@ -572,6 +572,20 @@ std::vector<std::shared_ptr<BoardSquare>> GameManager::PawnMoves(std::shared_ptr
 	}
 
 	return availableSquares;
+}
+
+void GameManager::CheckWhitePawnJump(std::shared_ptr<BoardSquare> square, std::vector< std::shared_ptr<BoardSquare>>& availableSquares)
+{
+	for (std::shared_ptr<BoardSquare> boardSquare : gameBoard->GetBoardSquares())
+		if (boardSquare->column == square->column && boardSquare->row == square->row + 1 && boardSquare->pieceName == "")
+			availableSquares.push_back(boardSquare);
+}
+
+void GameManager::CheckBlackPawnJump(std::shared_ptr<BoardSquare> square, std::vector< std::shared_ptr<BoardSquare>>& availableSquares)
+{
+	for (std::shared_ptr<BoardSquare> boardSquare : gameBoard->GetBoardSquares())
+		if (boardSquare->column == square->column && boardSquare->row == square->row - 1 && boardSquare->pieceName == "")
+			availableSquares.push_back(boardSquare);
 }
 
 std::vector<std::shared_ptr<BoardSquare>> GameManager::RookMoves(std::shared_ptr<BoardSquare> square)
