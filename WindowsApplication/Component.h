@@ -24,6 +24,10 @@ namespace FlatEngine
 			Animation,
 			Audio,
 			Text,
+			BoxCollider,
+			CircleCollider,
+			RigidBody,
+			CharacterController,
 		};
 
 		Component();

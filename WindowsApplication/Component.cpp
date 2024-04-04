@@ -96,6 +96,22 @@ namespace FlatEngine
 			return "Text";
 			break;
 
+		case ComponentTypes::BoxCollider:
+			return "BoxCollider";
+			break;
+
+		case ComponentTypes::CircleCollider:
+			return "CircleCollider";
+			break;
+
+		case ComponentTypes::RigidBody:
+			return "RigidBody";
+			break;
+
+		case ComponentTypes::CharacterController:
+			return "CharacterController";
+			break;
+
 		default:
 			return "Null";
 		}

@@ -1,7 +1,7 @@
 #pragma once
 #include "Sound.h"
 #include "Component.h"
-
+#include <string>
 
 
 namespace FlatEngine
@@ -25,6 +25,7 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
+		std::string soundName;
 		std::shared_ptr<Sound> sound;
 		std::string path;
 		bool _isMusic;
