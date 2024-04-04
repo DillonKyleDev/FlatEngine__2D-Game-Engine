@@ -18,10 +18,9 @@ namespace FlatEngine
 		this->activeLayer = 0;
 
 		// Initialize callback functions to nullptr
-		this->OnMouseOverFunction = nullptr;
-		this->OnMouseLeaveFunction = nullptr;
-		this->OnLeftClickFunction = nullptr;
-		this->OnRightClickFunction = nullptr;
+		this->OnActiveCollisionFunction = nullptr;
+		this->OnCollisionEnterFunction = nullptr;
+		this->OnCollisionLeaveFunction = nullptr;
 
 		this->_mouseOverSet = false;
 		this->_mouseEnterSet = false;
@@ -34,34 +33,22 @@ namespace FlatEngine
 	{
 	}
 
-	void BoxCollider::SetOnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void BoxCollider::SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnMouseOverFunction = callback;
+		this->OnActiveCollisionFunction = callback;
 		this->_mouseOverSet = true;
 	}
 
-	void BoxCollider::SetOnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void BoxCollider::SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnMouseEnterFunction = callback;
+		this->OnCollisionEnterFunction = callback;
 		this->_mouseEnterSet = true;
 	}
 
-	void BoxCollider::SetOnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void BoxCollider::SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnMouseLeaveFunction = callback;
+		this->OnCollisionLeaveFunction = callback;
 		this->_mouseLeaveSet = true;
-	}
-
-	void BoxCollider::SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
-	{
-		this->OnLeftClickFunction = callback;
-		this->_leftClickSet = true;
-	}
-
-	void BoxCollider::SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
-	{
-		this->OnRightClickFunction = callback;
-		this->_rightClickSet = true;
 	}
 
 	void BoxCollider::SetActive(bool _active)

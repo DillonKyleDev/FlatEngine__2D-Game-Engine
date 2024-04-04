@@ -20,9 +20,9 @@ namespace FlatEngine
 		BoxCollider(long myID = -1, long parentID = -1);
 		~BoxCollider();
 
-		void SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>)> callback);
-		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>)> callback);
-		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>)> callback);
+		void SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
+		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
+		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
 		//void SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 		//void SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 
@@ -45,11 +45,9 @@ namespace FlatEngine
 		void SetConnectedScript(std::string scriptName);
 		std::string GetConnectedScript();
 
-		std::function<void(std::shared_ptr<GameObject>)> OnMouseOverFunction;
-		std::function<void(std::shared_ptr<GameObject>)> OnMouseEnterFunction;
-		std::function<void(std::shared_ptr<GameObject>)> OnMouseLeaveFunction;
-		std::function<void(std::shared_ptr<GameObject>)> OnLeftClickFunction;
-		std::function<void(std::shared_ptr<GameObject>)> OnRightClickFunction;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollisionFunction;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnterFunction;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionLeaveFunction;
 
 		bool MouseOverSet();
 		bool MouseEnterSet();
