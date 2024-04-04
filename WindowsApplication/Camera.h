@@ -11,6 +11,8 @@ using namespace nlohmann::literals;
 
 namespace FlatEngine 
 {
+	class Transform;
+
 	class Camera : public Component
 	{
 	public:

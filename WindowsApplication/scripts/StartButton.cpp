@@ -1,6 +1,7 @@
 #include "StartButton.h"
 #include "../Button.h"
 #include "../FlatEngine.h"
+#include "../Sprite.h"
 
 StartButton::StartButton()
 {

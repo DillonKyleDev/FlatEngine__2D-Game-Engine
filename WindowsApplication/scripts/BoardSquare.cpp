@@ -2,6 +2,7 @@
 #include "../GameScript.h"
 #include "../Button.h"
 #include "../FlatEngine.h"
+#include "../Sprite.h"
 
 BoardSquare::BoardSquare()
 {

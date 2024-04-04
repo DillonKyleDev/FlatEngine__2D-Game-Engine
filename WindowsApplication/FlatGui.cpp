@@ -3,6 +3,8 @@
 #include "SceneManager.h"
 #include "Logger.h"
 #include "ScriptComponent.h"
+#include "Transform.h"
+#include "Sprite.h"
 #include <cmath>
 
 

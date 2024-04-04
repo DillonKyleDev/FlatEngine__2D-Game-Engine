@@ -1,5 +1,6 @@
 #include "GameBoard.h"
 #include "../FlatEngine.h"
+#include "../Sprite.h"
 
 
 GameBoard::GameBoard()

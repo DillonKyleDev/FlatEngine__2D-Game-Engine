@@ -207,7 +207,6 @@
     <ClInclude Include="scripts\GameManager.h" />
     <ClInclude Include="scripts\BoardSquare.h" />
     <ClInclude Include="scripts\GameBoard.h" />
-    <ClInclude Include="scripts\MainMenuButton.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="scripts\ButtonScriptTemplate.h" />
     <ClInclude Include="Camera.h" />

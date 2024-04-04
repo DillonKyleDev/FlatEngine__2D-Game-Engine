@@ -296,9 +296,6 @@
     <ClInclude Include="Text.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MainMenuButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\GameBoard.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>

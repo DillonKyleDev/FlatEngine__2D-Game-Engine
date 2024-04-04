@@ -54,7 +54,7 @@ namespace FlatEngine
 
 			for (int j = 0; j < components.size(); j++)
 			{
-				// For the script components, we need to go through and add their owned objects
+				// For the script components, loop through and save to a vector, assign respective owners
 				if (components[j]->GetTypeString() == "Script")
 				{
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);

@@ -1,6 +1,8 @@
 #include "GameManager.h"
 #include "../FlatEngine.h"
 #include "../ScriptComponent.h"
+#include "../Sprite.h"
+#include "../Transform.h"
 
 
 GameManager::GameManager()

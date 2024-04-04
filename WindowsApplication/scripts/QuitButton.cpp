@@ -2,6 +2,7 @@
 #include "../Button.h"
 #include "../FlatEngine.h"
 #include "../Audio.h"
+#include "../Sprite.h"
 
 QuitButton::QuitButton()
 {

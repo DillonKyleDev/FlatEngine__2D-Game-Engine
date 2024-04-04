@@ -7,10 +7,13 @@
 #include "Vector2.h"
 #include <functional>
 #include "GameObject.h"
+#include <imgui.h>
 
 
 namespace FlatEngine
 {
+	//class GameObject;
+
 	class Button : public Component
 	{
 	public:

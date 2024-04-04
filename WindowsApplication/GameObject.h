@@ -1,13 +1,21 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Transform.h"
-#include "Sprite.h"
-#include "Camera.h"
-//#include "Button.h"
+#include "Component.h"
 
 namespace FlatEngine
 {
+	class Button;
+	class Canvas;
+	class ScriptComponent;
+	class Animation;
+	class Sprite;
+	class Camera;
+	class Audio;
+	class Transform;
+	class Text;
+	class GameScript;
+
 	using ComponentTypes = Component::ComponentTypes;
 
 	class GameObject
@@ -28,13 +36,13 @@ namespace FlatEngine
 		std::shared_ptr<Transform> GetTransformComponent();
 		std::shared_ptr<Sprite> GetSpriteComponent();
 		std::shared_ptr<Camera> GetCameraComponent();
-		//std::shared_ptr<Animation> GetAnimationComponent();
-		//std::shared_ptr<Audio> GetAudioComponent();
-		//std::shared_ptr<Button> GetButtonComponent();
-		//std::shared_ptr<Canvas> GetCanvasComponent();
-		//std::shared_ptr<ScriptComponent> GetScriptComponent();
-		//std::shared_ptr<Text> GetTextComponent();
-		//std::shared_ptr<GameScript> GetGameScriptByName(std::string scriptName);
+		std::shared_ptr<Animation> GetAnimationComponent();
+		std::shared_ptr<Audio> GetAudioComponent();
+		std::shared_ptr<Button> GetButtonComponent();
+		std::shared_ptr<Canvas> GetCanvasComponent();
+		std::shared_ptr<ScriptComponent> GetScriptComponent();
+		std::shared_ptr<Text> GetTextComponent();
+		std::shared_ptr<GameScript> GetGameScriptByName(std::string scriptName);
 		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();
 		std::vector<std::shared_ptr<Component>> GetScriptInstances();
