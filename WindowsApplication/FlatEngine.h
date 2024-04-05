@@ -19,6 +19,7 @@
 #include "UIManager.h"
 #include "Audio.h"
 #include "scripts/GameManager.h"
+#include "Process.h"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -92,11 +93,11 @@ namespace FlatEngine
 	extern void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList);
 
 	// Profiler
-	extern std::map<std::string, float> m_processMap;
-	extern std::map<std::string, float> m_processMapPrevious;
+	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
 	extern bool _logProfilerOutput;
 
-	extern void AddProfilerProcess(std::string name, float hangTime);
+	extern void AddProfilerProcess(std::shared_ptr<Process> process);
+	extern void AddProcessData(std::string processName, float data);
 
 	// Game Loop Prettification
 	extern void StartGameLoop();
@@ -147,6 +148,9 @@ namespace FlatEngine
 		extern bool _firstSceneRenderPass;
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
+
+		// Profiler
+		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
 
 		// Settings
 		extern int iconTransparency;

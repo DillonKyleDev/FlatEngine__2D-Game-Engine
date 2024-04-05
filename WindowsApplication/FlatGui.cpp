@@ -12,6 +12,9 @@
 #include <Commdlg.h>
 #include "implot.h"
 #include "implot_internal.h"
+#include <deque>
+#include "Process.h"
+
 
 
 /*
@@ -443,7 +446,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderToolbar()
 	{
-		ImGui::Begin("Toolbar");
+		ImGui::Begin("Gameloop Control Panel");
 
 		if (ImGui::Button("Start"))
 		{
@@ -1819,19 +1822,47 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Animated Properties", ImVec2(0, 0), padding_child_flags);
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, innerWindowColor);
+		//ImGui::PushItemWidth(50);
+		ImGui::BeginChild("Animated Properties", ImVec2(ImGui::GetContentRegionMax().x / 3, 0), padding_child_flags | ImGuiChildFlags_ResizeX);
 		ImGui::PopStyleColor();
 		ImGui::Text("Properties");
 		ImGui::EndChild(); // Animator Properties
+		//ImGui::PopItemWidth();
 
-		ImGui::SameLine(0,0);
+		//ImGui::End();
+		ImGui::SameLine(0,5);
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild("Frames", ImVec2(0, 0), padding_child_flags);
+		//ImGui::Begin("Animator Timeline");
+		// Push Item Width
+		//ImGui::PushItemWidth(ImGui::GetContentRegionMax().x * 2 / 3 - 5);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild("Timeline Events", ImVec2(0, 0), padding_child_flags);
 		ImGui::PopStyleColor();
-		ImGui::Text("Frames");
-		ImGui::EndChild(); // Frames
+
+			ImGui::Text("xPos:");
+			ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
+			ImGui::Text("yPos:");
+			ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
+			ImGui::Text("Rotation:");
+
+			// Render text for scales
+			ImGui::Text("Scale x:");
+			ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
+			ImGui::Text("Scale y:");
+
+	
+			// Set cursor type
+			if (ImGui::IsItemHovered())
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+			ImGui::SameLine(0, 5);
+			// Set cursor type
+			if (ImGui::IsItemHovered())
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+		ImGui::EndChild();
+		// Pop Width Setting
+		//ImGui::PopItemWidth();
 
 		ImGui::End(); // Animator
 	}
@@ -2393,41 +2424,78 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::BeginChild("Profiler Container", ImVec2(0, 0), padding_child_flags);
 		ImGui::PopStyleColor();
 
-		ImGui::Checkbox("Log Output", &_logProfilerOutput);
-
 		std::vector<float> dataPoints = std::vector<float>();
-		std::map<std::string, float>::iterator it = m_processMap.begin();
+		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
 		int processCounter = 1;
 
-		if (m_processMap.size() > 0)
-			while (it != m_processMap.end())
-			{
-				std::string scriptName = it->first;
-				float hangTime = it->second + 1;
-				dataPoints.push_back(hangTime);
 
-				++it;
+		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
+			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
+		static bool anim = true;
+		static int offset = 0;
+		ImGui::Checkbox("Animate", &anim);
+		if (anim)
+			offset = (offset + 1) % 100;
 
-				if (_logProfilerOutput)
+
+		static int tickCounter = 0;
+
+		if (ImGui::BeginTable("##table", 3, flags, ImVec2(-1, 0))) {
+			ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+			ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+			ImGui::TableSetupColumn("Hang Time");
+			ImGui::TableHeadersRow();
+			ImPlot::PushColormap(ImPlotColormap_Cool);
+
+			if (profilerProcesses.size() > 0)
+				while (it != profilerProcesses.end())
 				{
-					LogString("Process " + std::to_string(processCounter) + " : Script name : " + scriptName);
-					LogFloat(hangTime, "Time Ellapsed: ");
+					std::string processName = (*it)->GetProcessName();
+					std::vector<float> hangTimeVector = (*it)->GetHangTimeData();
+					std::deque<float> rawDataVector = (*it)->GetRawData();
+					++it;
+
+					float* dataArray;
+
+					if (hangTimeVector.size() > 0)
+					{
+						dataArray = &hangTimeVector.front();
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::Text(std::to_string(processCounter).c_str());
+						ImGui::SameLine(0, 5);
+						ImGui::Text(processName.c_str());
+						ImGui::TableSetColumnIndex(1);
+						ImGui::Text("%.3f ms", rawDataVector.front());
+						ImGui::TableSetColumnIndex(2);
+						ImGui::PushID(processCounter);
+						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor(rawDataVector.front()), ImVec2(-1, 35));
+						ImGui::PopID();
+					}
+
+					processCounter++;
 				}
 
-				processCounter++;
-			}
-			
-		float* barData = &dataPoints[0];
-		if (gameLoop->IsStarted())
-			if (ImPlot::BeginPlot("Ellapsed Time Per Script Update Function")) {
-				ImPlot::PlotBars("Runtime Tracker", barData, dataPoints.size());
-				ImPlot::EndPlot();
-			}
+			ImPlot::PopColormap();
+			ImGui::EndTable();
+		}
 
 		ImGui::EndChild(); // Profiler Container
 		ImGui::End(); // Profiler
+	}
 
-		m_processMap.clear();
+
+	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
+		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0, 0));
+		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) {
+			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
+			ImPlot::SetupAxesLimits(0, count - 1, min_v, max_v, ImGuiCond_Always);
+			ImPlot::SetNextLineStyle(col);
+			ImPlot::SetNextFillStyle(col, 0.25);
+			ImPlot::PlotLine(id, values, count, 1, 0, ImPlotLineFlags_Shaded, offset);
+			ImPlot::EndPlot();
+		}
+		ImPlot::PopStyleVar();
 	}
 
 

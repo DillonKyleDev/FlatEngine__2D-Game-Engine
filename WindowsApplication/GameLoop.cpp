@@ -1,5 +1,6 @@
 #include "GameLoop.h"
 #include "FlatEngine.h"
+#include "Process.h"
 
 
 namespace FlatEngine
@@ -127,6 +128,9 @@ namespace FlatEngine
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
+			// Create a new Process for each script
+			std::shared_ptr<Process> newProcess = std::make_shared<Process>(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
+			AddProfilerProcess(newProcess);
 			activeScripts[i]->Awake();
 			activeScripts[i]->Start();
 		}
@@ -151,7 +155,7 @@ namespace FlatEngine
 			// Get hang time of each script update function for profiler
 			float hangTime = (float)SDL_GetTicks() - timeStart;
 
-			FlatEngine::AddProfilerProcess(activeScripts[i]->GetName(), hangTime);
+			AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
 		}
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //

@@ -1,6 +1,5 @@
 #include "FlatEngine.h"
 
-
 /*
 ######################################
 ######							######
@@ -29,8 +28,7 @@ namespace FlatEngine
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
 
 	// Profiler
-	std::map<std::string, float> m_processMap = std::map<std::string, float>();
-	std::map<std::string, float> m_processMapPrevious = std::map<std::string, float>();
+	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
 
 	// Colors
 	ImU32 White = IM_COL32(255, 255, 255, 255);
@@ -47,7 +45,7 @@ namespace FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
 		// Save a copy of the old process map values
-		m_processMap.emplace("Run Start", 0);
+		//AddProfilerProcess("Run Start", 0);
 
 		_hasQuit = FlatEngine::_closeProgram;
 		FlatEngine::FlatGui::Render(_hasQuit);
@@ -216,9 +214,18 @@ namespace FlatEngine
 		logger->DrawPoint(point, color, drawList);
 	}
 
-	void AddProfilerProcess(std::string name, float hangTime)
+	void AddProfilerProcess(std::shared_ptr<Process> process)
 	{
-		m_processMap.emplace(name, hangTime);
+		profilerProcesses.push_back(process);
+	}
+
+	void AddProcessData(std::string processName, float data)
+	{
+		for (std::shared_ptr<Process> process : profilerProcesses)
+		{
+			if (process->GetProcessName() == processName)
+				process->AddHangTimeData(data);
+		}
 	}
 
 	// Game Loop prettification
