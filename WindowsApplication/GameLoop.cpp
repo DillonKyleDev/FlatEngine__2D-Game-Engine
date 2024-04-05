@@ -144,7 +144,14 @@ namespace FlatEngine
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
+			// Save time before script update
+			float timeStart = (float)SDL_GetTicks();
 			activeScripts[i]->Update(this->deltaTime);
+
+			// Get hang time of each script update function for profiler
+			float hangTime = (float)SDL_GetTicks() - timeStart;
+
+			FlatEngine::AddProfilerProcess(activeScripts[i]->GetName(), hangTime);
 		}
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //

@@ -5,13 +5,13 @@
 
 GameBoard::GameBoard()
 {
+	this->SetName("GameBoard");
 	this->boardSquares = std::vector<std::shared_ptr<BoardSquare>>();
 	this->squareIDs = std::vector<long>();
 }
 
 GameBoard::~GameBoard()
 {
-	this->SetName("GameBoard");
 }
 
 void GameBoard::Awake()

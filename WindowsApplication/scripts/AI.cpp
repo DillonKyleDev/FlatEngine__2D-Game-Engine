@@ -18,8 +18,4 @@ void AI::Start()
 
 void AI::Update(float deltaTime)
 {
-	if (FlatEngine::gameManager->GetCurrentTurn() == turnColor)
-	{
-
-	}
 }

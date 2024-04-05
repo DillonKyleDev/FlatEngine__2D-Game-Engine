@@ -6,7 +6,7 @@
 
 BoardSquare::BoardSquare()
 {
-	this->SetName("BoardSquare");
+	SetName("BoardSquare");
 	pieceName = "";
 	pieceType = "";
 	pieceColor = "";
@@ -19,7 +19,7 @@ BoardSquare::BoardSquare()
 
 BoardSquare::BoardSquare(std::shared_ptr<BoardSquare> toCopy)
 {
-	this->SetName("BoardSquare");
+	SetName("BoardSquare");
 	pieceName = toCopy->pieceName;
 	pieceType = toCopy->pieceType;
 	pieceColor = toCopy->pieceColor;

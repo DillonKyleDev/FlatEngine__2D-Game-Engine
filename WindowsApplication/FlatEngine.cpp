@@ -20,13 +20,17 @@ namespace FlatEngine
 	// Audio
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 
-	//Variables
+	// Managers
 	long FlatEngine::FocusedGameObjectID = -1;
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
+
+	// Profiler
+	std::map<std::string, float> m_processMap = std::map<std::string, float>();
+	std::map<std::string, float> m_processMapPrevious = std::map<std::string, float>();
 
 	// Colors
 	ImU32 White = IM_COL32(255, 255, 255, 255);
@@ -42,6 +46,9 @@ namespace FlatEngine
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
 	{
+		// Save a copy of the old process map values
+		m_processMap.emplace("Run Start", 0);
+
 		_hasQuit = FlatEngine::_closeProgram;
 		FlatEngine::FlatGui::Render(_hasQuit);
 
@@ -209,6 +216,10 @@ namespace FlatEngine
 		logger->DrawPoint(point, color, drawList);
 	}
 
+	void AddProfilerProcess(std::string name, float hangTime)
+	{
+		m_processMap.emplace(name, hangTime);
+	}
 
 	// Game Loop prettification
 	void FlatEngine::StartGameLoop()

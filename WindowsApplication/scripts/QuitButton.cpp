@@ -6,6 +6,7 @@
 
 QuitButton::QuitButton()
 {
+	this->SetName("QuitButton");
 }
 
 QuitButton::~QuitButton()

@@ -11,5 +11,4 @@ public:
 	void Update(float deltaTime);
 
 private:
-
 };

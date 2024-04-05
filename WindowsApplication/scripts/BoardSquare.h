@@ -27,6 +27,5 @@ public:
 
 private:
 	std::string squareName;
-
 };
 

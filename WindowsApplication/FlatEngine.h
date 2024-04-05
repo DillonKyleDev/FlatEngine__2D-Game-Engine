@@ -91,6 +91,13 @@ namespace FlatEngine
 	extern void DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList);
 	extern void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList);
 
+	// Profiler
+	extern std::map<std::string, float> m_processMap;
+	extern std::map<std::string, float> m_processMapPrevious;
+	extern bool _logProfilerOutput;
+
+	extern void AddProfilerProcess(std::string name, float hangTime);
+
 	// Game Loop Prettification
 	extern void StartGameLoop();
 	extern void GameLoopUpdate();
@@ -145,6 +152,15 @@ namespace FlatEngine
 		extern int iconTransparency;
 		extern bool _clearBufferEveryFrame;
 
+		// Window Visibility
+		extern bool _showSceneView;
+		extern bool _showGameView;
+		extern bool _showHierarchy;
+		extern bool _showInspector;
+		extern bool _showAnimator;
+		extern bool _showLogger;
+		extern bool _showProfiler;
+
 		// Game view
 		extern float GAME_VIEWPORT_WIDTH;
 		extern 	float GAME_VIEWPORT_HEIGHT;
@@ -155,6 +171,9 @@ namespace FlatEngine
 		// Gui Rendering
 		extern void SetupImGui();
 		extern void Render(bool& quit);
+		extern void MainMenuBar();
+		extern bool OpenSaveFileExplorer();
+		extern bool OpenLoadFileExplorer();
 		extern void AddViewports();
 		extern void RenderToolbar();
 		extern void RenderHierarchy();
@@ -165,6 +184,7 @@ namespace FlatEngine
 		extern void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 		extern void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderLog();
+		extern void RenderProfiler();
 		extern void Cleanup();
 
 		// Helper Functions

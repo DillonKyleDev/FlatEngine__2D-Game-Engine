@@ -68,6 +68,8 @@ namespace FlatEngine
 
 	void SceneManager::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
 	{
+		loadedScenePath = filename;
+
 		// Declare file and input stream
 		std::ofstream file_obj;
 		std::ifstream ifstream(filename);
@@ -169,22 +171,29 @@ namespace FlatEngine
 		file_obj.close();
 	}
 
-	void SceneManager::LoadScene(std::string fileName)
+	void SceneManager::SaveCurrentScene()
 	{
+		SaveScene(loadedScene, loadedScenePath);
+	}
+
+	void SceneManager::LoadScene(std::string filename)
+	{
+		loadedScenePath = filename;
+
 		// Remove loaded scene from memory
 		this->loadedScene = nullptr;
 
 		// Start up a new scene
 		std::shared_ptr<Scene> freshScene(new Scene());
 		this->loadedScene = freshScene;
-		freshScene->SetName(fileName);
+		freshScene->SetName(filename);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
-		std::ifstream ifstream(fileName);
+		std::ifstream ifstream(filename);
 
 		// Open file in in mode
-		file_obj.open(fileName, std::ios::in);
+		file_obj.open(filename, std::ios::in);
 
 		// Variable to save the current file data into
 		std::string fileContent = "";

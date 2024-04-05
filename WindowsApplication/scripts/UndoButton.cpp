@@ -4,6 +4,7 @@
 
 UndoButton::UndoButton()
 {
+	this->SetName("UndoButton");
 }
 
 UndoButton::~UndoButton()

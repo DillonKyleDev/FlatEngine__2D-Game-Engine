@@ -1,7 +1,79 @@
-﻿  TextureManager.cpp
+﻿  imgui_impl_dx12.cpp
+  imgui_impl_sdl2.cpp
+  imgui_impl_sdlrenderer2.cpp
+  BoxCollider.cpp
+  QuitButton.cpp
+  RestartButton.cpp
+  AI.cpp
+  Animation.cpp
+  Audio.cpp
+  GameManager.cpp
+  main.cpp
+  BoardSquare.cpp
+  Button.cpp
+  GameBoard.cpp
+  ButtonScriptTemplate.cpp
+  Camera.cpp
+  Component.cpp
+  GameScript.cpp
+  FlatEngine.cpp
+  FlatGui.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(4537,18): warning C4244: '=': conversion from 'wchar_t' to 'char', possible loss of data
+  (compiling source file 'FlatGui.cpp')
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(4537,18):
+  the template instantiation context (the oldest one first) is
+  	C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatGui.cpp(345,16):
+  	see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  		C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatGui.cpp(345,16):
+  		see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'FlatEngine::FlatGui::OpenSaveFileExplorer'
+  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xstring(2600,17):
+  	see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned __int64
+          ]
+  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xstring(2756,18):
+  	see reference to function template instantiation '_OutIt *std::_Copy_n_unchecked4<wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)' being compiled
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  Compiling...
+  GameLoop.cpp
+  GameObject.cpp
+  Canvas.cpp
+  Logger.cpp
+  Scene.cpp
+  SceneManager.cpp
+  ScriptComponent.cpp
+  ScriptTemplate.cpp
+  Sound.cpp
+  Sprite.cpp
+  StartButton.cpp
+  Text.cpp
+  Texture.cpp
+  TextureManager.cpp
+  Transform.cpp
+  UIManager.cpp
+  UndoButton.cpp
+  WidgetsManager.cpp
+  Window.cpp
   Generating code
-  3 of 5661 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    54 functions had inline decision re-evaluated but remain unchanged
+  1924 of 5762 functions (33.4%) were compiled, the rest were copied from previous compilation.
+    82 functions were new in current compilation
+    609 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   WindowsApplication.vcxproj -> C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\FlatEngine.exe

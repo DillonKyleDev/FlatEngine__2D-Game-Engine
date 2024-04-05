@@ -5,6 +5,7 @@
 
 StartButton::StartButton()
 {
+	SetName("StartButton");
 }
 
 StartButton::~StartButton()
@@ -31,7 +32,7 @@ void StartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
 	std::shared_ptr<FlatEngine::Audio> clickedAudio = std::static_pointer_cast<FlatEngine::Audio>(thisObject->GetComponent(FlatEngine::ComponentTypes::Audio));
 	clickedAudio->Play();
-	FlatEngine::LoadScene("ClearGameBoard.json");
+	FlatEngine::LoadScene("scenes/ClearGameBoard.json");
 }
 
 void StartButtonOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -55,4 +56,8 @@ void StartButton::Start()
 
 void StartButton::Update(float deltaTime)
 {
+	//for (int i = 0; i < 100000; i++)
+	//{
+	//	int j = 1 + i;
+	//}
 }

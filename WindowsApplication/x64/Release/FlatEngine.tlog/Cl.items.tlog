@@ -6,6 +6,7 @@ C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\im
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_draw.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_draw.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_tables.obj
 C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\imgui_widgets.obj
+C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\BoxCollider.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\BoxCollider.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\QuitButton.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\QuitButton.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\RestartButton.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\RestartButton.obj
 C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\scripts\AI.cpp;C:\Users\Dillon Kyle\source\repos\FlatEngine\WindowsApplication\x64\Release\AI.obj

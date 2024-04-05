@@ -152,6 +152,9 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="implot.cpp" />
+    <ClCompile Include="implot_demo.cpp" />
+    <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="scripts\QuitButton.cpp" />
     <ClCompile Include="scripts\RestartButton.cpp" />
     <ClCompile Include="scripts\AI.cpp" />
@@ -201,6 +204,8 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="implot.h" />
+    <ClInclude Include="implot_internal.h" />
     <ClInclude Include="scripts\QuitButton.h" />
     <ClInclude Include="scripts\RestartButton.h" />
     <ClInclude Include="scripts\AI.h" />

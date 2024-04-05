@@ -6,6 +6,12 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include <cmath>
+#include <Windows.h>
+#include <string>
+#include <shobjidl.h> 
+#include <Commdlg.h>
+#include "implot.h"
+#include "implot_internal.h"
 
 
 /*
@@ -54,8 +60,17 @@ namespace FlatEngine { namespace FlatGui {
 	// Eventually move these over to Settings() once there is enough to save between sessions //
 	int iconTransparency = 100;
 	bool _clearBufferEveryFrame = true;
-
 	float spriteScaleMultiplier = 0.2f;
+	bool _logProfilerOutput = false;
+
+	// Window Visibility
+	bool _showSceneView = true;
+	bool _showGameView = true;
+	bool _showHierarchy = true;
+	bool _showInspector = true;
+	bool _showAnimator = false;
+	bool _showLogger = true;
+	bool _showProfiler = true;
 
 	// Game view default values
 	float GAME_VIEWPORT_WIDTH = 600;
@@ -69,11 +84,12 @@ namespace FlatEngine { namespace FlatGui {
 	using ComponentTypes = Component::ComponentTypes;
 
 
-	void FlatEngine::FlatGui::SetupImGui()
+	void SetupImGui()
 	{
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -115,7 +131,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::Render(bool& quit)
+	void Render(bool& quit)
 	{
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -141,11 +157,11 @@ namespace FlatEngine { namespace FlatGui {
 		if (FlatEngine::_isDebugMode == false)
 		{
 			// Just Add GameView
-			FlatEngine::FlatGui::Game_RenderView();
+			Game_RenderView();
 		}
 		// Else add FlatEngine viewports
 		else
-			FlatEngine::FlatGui::AddViewports();
+			AddViewports();
 
 		// Rendering
 		ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -158,19 +174,279 @@ namespace FlatEngine { namespace FlatGui {
 		SDL_RenderPresent(Window::renderer);
 	}
 
-
-	void FlatEngine::FlatGui::AddViewports()
+	void MainMenuBar()
 	{
-		FlatEngine::FlatGui::RenderToolbar();
-		FlatEngine::FlatGui::RenderHierarchy();
-		FlatEngine::FlatGui::RenderInspector();
-		FlatEngine::FlatGui::Game_RenderView();
-		FlatEngine::FlatGui::Scene_RenderView();
-		FlatEngine::FlatGui::RenderLog();
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				//ImGui::MenuItem("Main menu", NULL, false, false);
+				if (ImGui::MenuItem("New"))
+					sceneManager->CreateNewScene();
+
+				if (ImGui::MenuItem("Open", "Ctrl+O"))
+					OpenLoadFileExplorer();
+
+				if (ImGui::BeginMenu("Open Recent"))
+				{
+					ImGui::MenuItem("fish_hat.c");
+					ImGui::MenuItem("fish_hat.inl");
+					ImGui::MenuItem("fish_hat.h");
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::MenuItem("Save", "Ctrl+S"))
+					sceneManager->SaveCurrentScene();
+
+				if (ImGui::MenuItem("Save As..")) 
+					OpenSaveFileExplorer();
+
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Options"))
+				{
+					static bool enabled = true;
+					ImGui::MenuItem("Enabled", "", &enabled);
+					ImGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Border);
+					for (int i = 0; i < 10; i++)
+						ImGui::Text("Scrolling Text %d", i);
+					ImGui::EndChild();
+					static float f = 0.5f;
+					static int n = 0;
+					ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+					ImGui::InputFloat("Input", &f, 0.1f);
+					ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+					ImGui::EndMenu();
+				}
+
+				// Here we demonstrate appending again to the "Options" menu (which we already created above)
+				// Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
+				// In a real code-base using it would make senses to use this feature from very different code locations.
+				//if (ImGui::BeginMenu("Options")) // <-- Append!
+				//{
+				//	static bool b = true;
+				//	ImGui::Checkbox("SomeOption", &b);
+				//	ImGui::EndMenu();
+				//}
+
+				//if (ImGui::BeginMenu("Disabled", false)) // Disabled
+				//{
+				//	IM_ASSERT(0);
+				//}
+				//if (ImGui::MenuItem("Checked", NULL, true)) {}
+				//if (ImGui::MenuItem("Checked", NULL, false)) {}
+
+				ImGui::Separator();
+				if (ImGui::MenuItem("Quit", "Alt+F4"))
+					CloseProgram();
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+				ImGui::Separator();
+				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("View"))
+			{
+				if (ImGui::BeginMenu("Windows"))
+				{
+					if (ImGui::MenuItem("Scene View", NULL, _showSceneView))
+						_showSceneView = !_showSceneView;
+					if (ImGui::MenuItem("Game View", NULL, _showGameView))
+						_showGameView = !_showGameView;
+					if (ImGui::MenuItem("Hierarchy", NULL, _showHierarchy))
+						_showHierarchy = !_showHierarchy;
+					if (ImGui::MenuItem("Inspector", NULL, _showInspector))
+						_showInspector = !_showInspector;
+					if (ImGui::MenuItem("Animator", NULL, _showAnimator))
+						_showAnimator = !_showAnimator;
+					if (ImGui::MenuItem("Logger", NULL, _showLogger))
+						_showLogger = !_showLogger;
+					if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
+						_showProfiler = !_showProfiler;
+					
+					ImGui::EndMenu();
+				}
+				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+				ImGui::Separator();
+				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		/*bool show_demo_window = true;
+		if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);*/
+	}
+
+	bool OpenSaveFileExplorer()
+	{
+		std::string sSelectedFile;
+		std::string sFilePath;
+		HRESULT hr = 0;
+		wchar_t* pSaveFileName = NULL;
+		IShellItem* pShellItem = NULL;
+		wchar_t* ppszName = NULL;
+		
+		//  CREATE FILE OBJECT INSTANCE
+		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		if (FAILED(f_SysHr))
+			return false;
+
+		// CREATE FileSaveDialog OBJECT
+		 IFileSaveDialog* f_FileSystem = NULL;
+		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
+		if (FAILED(f_SysHr)) {
+			CoUninitialize();
+			return false;
+		}
+
+		//  SHOW OPEN FILE DIALOG WINDOW
+		f_SysHr = f_FileSystem->Show(NULL);
+		if (FAILED(f_SysHr)) {
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
+		IShellItem* f_Files;
+		f_SysHr = f_FileSystem->GetResult(&f_Files);
+		if (FAILED(f_SysHr)) {
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  STORE AND CONVERT THE FILE NAME
+		PWSTR f_Path;
+		f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
+		if (FAILED(f_SysHr)) {
+			f_Files->Release();
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  FORMAT AND STORE THE FILE PATH
+		std::wstring path(f_Path);
+		std::string c(path.begin(), path.end());
+		sFilePath = c;
+
+		//  FORMAT STRING FOR EXECUTABLE NAME
+		const size_t slash = sFilePath.find_last_of("/\\");
+		sSelectedFile = sFilePath.substr(slash + 1);
+
+		// Save the scene
+		std::shared_ptr<Scene> currentScene = sceneManager->GetLoadedScene();
+		sceneManager->SaveScene(currentScene, sFilePath);
+
+		//  SUCCESS, CLEAN UP
+		CoTaskMemFree(f_Path);
+		f_Files->Release();
+		f_FileSystem->Release();
+		CoUninitialize();
+		return TRUE;
+	}
+
+	bool OpenLoadFileExplorer()
+	{
+		std::string sSelectedFile;
+		std::string sFilePath;
+		HRESULT hr = 0;
+		wchar_t* pSaveFileName = NULL;
+		IShellItem* pShellItem = NULL;
+		wchar_t* ppszName = NULL;
+
+		//  CREATE FILE OBJECT INSTANCE
+		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		if (FAILED(f_SysHr))
+			return false;
+
+		// CREATE FileOpenDialog OBJECT
+		IFileOpenDialog* f_FileSystem;
+		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
+		if (FAILED(f_SysHr)) {
+			CoUninitialize();
+			return false;
+		}
+
+		//  SHOW OPEN FILE DIALOG WINDOW
+		f_SysHr = f_FileSystem->Show(NULL);
+		if (FAILED(f_SysHr)) {
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
+		IShellItem* f_Files;
+		f_SysHr = f_FileSystem->GetResult(&f_Files);
+		if (FAILED(f_SysHr)) {
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  STORE AND CONVERT THE FILE NAME
+		PWSTR f_Path;
+		f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
+		if (FAILED(f_SysHr)) {
+			f_Files->Release();
+			f_FileSystem->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		//  FORMAT AND STORE THE FILE PATH
+		std::wstring path(f_Path);
+		std::string c(path.begin(), path.end());
+		sFilePath = c;
+
+		//  FORMAT STRING FOR EXECUTABLE NAME
+		const size_t slash = sFilePath.find_last_of("/\\");
+		sSelectedFile = sFilePath.substr(slash + 1);
+
+		// Load the scene
+		sceneManager->LoadScene(sFilePath);
+
+		//  SUCCESS, CLEAN UP
+		CoTaskMemFree(f_Path);
+		f_Files->Release();
+		f_FileSystem->Release();
+		CoUninitialize();
+		return TRUE;
 	}
 
 
-	void FlatEngine::FlatGui::RenderToolbar()
+	void AddViewports()
+	{
+		MainMenuBar();
+		RenderToolbar();
+		if (_showHierarchy)
+			RenderHierarchy();
+		if (_showInspector)
+			RenderInspector();
+		if (_showGameView)
+			Game_RenderView();
+		if (_showSceneView)
+			Scene_RenderView();
+		if (_showLogger)
+			RenderLog();
+		if (_showProfiler)
+			RenderProfiler();
+	}
+
+
+	void RenderToolbar()
 	{
 		ImGui::Begin("Toolbar");
 
@@ -212,7 +488,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderHierarchy()
+	void RenderHierarchy()
 	{
 		ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeX;
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -236,26 +512,6 @@ namespace FlatEngine { namespace FlatGui {
 		std::string sceneText = "Scene: ";
 		static char filename[1024] = "MainMenu.json";
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
-
-		// Edit field
-		ImGui::Text(sceneText.c_str());
-		ImGui::SameLine(0, 5);
-		ImGui::InputText("##SceneName", filename, IM_ARRAYSIZE(filename), flags);
-
-		// MOVE THESE OUT INTO A FILE TOP BAR EVENTUALLY
-		if (ImGui::Button("Save Scene"))
-		{
-			FlatEngine::SaveScene(FlatEngine::GetLoadedScene(), filename);
-		}
-		ImGui::SameLine(0, 5);
-		if (ImGui::Button("Load Scene"))
-		{
-			FlatEngine::sceneManager->LoadScene(filename);
-		}
-		if (ImGui::Button("Create New Game Object"))
-		{
-			FlatEngine::CreateGameObject();
-		}
 
 		// Scene Objects in Hierarchy
 		{
@@ -282,9 +538,9 @@ namespace FlatEngine { namespace FlatGui {
 
 					// If the object has children call the recursive AddObjectWithChild();
 					if (currentObject->HasChildren())
-						FlatEngine::FlatGui::AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete);
+						AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete);
 					else
-						FlatEngine::FlatGui::AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete);
+						AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete);
 
 					// Push Item Spacing
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
@@ -332,7 +588,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper function for Hierarchy child rendering (Recursive)
-	void FlatEngine::FlatGui::AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
+	void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
@@ -396,9 +652,9 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::PopStyleColor();
 
 				if (child->HasChildren())
-					FlatEngine::FlatGui::AddObjectWithChild(child, childName, node_clicked, queuedForDelete);
+					AddObjectWithChild(child, childName, node_clicked, queuedForDelete);
 				else
-					FlatEngine::FlatGui::AddObjectWithoutChild(child, childName, node_clicked, queuedForDelete);
+					AddObjectWithoutChild(child, childName, node_clicked, queuedForDelete);
 			}
 
 			ImGui::TreePop(); // TreeNode Closer
@@ -409,7 +665,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper function for Hierarchy child rendering
-	void FlatEngine::FlatGui::AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
+	void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
@@ -458,7 +714,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderInspector()
+	void RenderInspector()
 	{
 		ImGui::Begin("Inspector Window");
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
@@ -1223,7 +1479,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::Game_RenderView()
+	void Game_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -1270,7 +1526,7 @@ namespace FlatEngine { namespace FlatGui {
 		const bool is_active = ImGui::IsItemActive();   // Held
 
 		// Render GameObjects in game view
-		FlatEngine::FlatGui::Game_RenderObjects(canvas_p0, canvas_sz);
+		Game_RenderObjects(canvas_p0, canvas_sz);
 
 		ImGui::End();
 
@@ -1283,7 +1539,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
@@ -1328,7 +1584,7 @@ namespace FlatEngine { namespace FlatGui {
 			frustrumColor = primaryCamera->GetFrustrumColor();
 			
 			// Get the cameras position including all of its parents transforms offsets using the recusive Game_GetTotalCameraOffset();
-			cameraPosition = FlatEngine::FlatGui::Game_GetTotalCameraOffset(primaryCamera);
+			cameraPosition = Game_GetTotalCameraOffset(primaryCamera);
 		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
@@ -1345,7 +1601,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			// If this object doesn't have a parent, render it and then its children recursively
 			if (sceneObjects[i]->GetParentID() == -1 && sceneObjects[i]->IsActive())
-				FlatEngine::FlatGui::Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+				Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 					cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 		}
 
@@ -1376,20 +1632,20 @@ namespace FlatEngine { namespace FlatGui {
 			drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 			// Top frustrum
-			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Bottom frustrum
-			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Left frustrum
-			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 			// Left frustrum
-			//FlatEngine::FlatGui::AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
+			//AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, cameraZoom, draw_list, frustrumColorU32);
 
 			drawSplitter->Merge(draw_list);
 		}
 	}
 
 
-	ImVec2 FlatEngine::FlatGui::Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
+	ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
 	{
 		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(primaryCamera->GetParentID());
 		std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
@@ -1398,13 +1654,13 @@ namespace FlatEngine { namespace FlatGui {
 
 		// If the Primary Camera has a parent, get its offset recursively
 		if (parent->GetParentID() != -1)
-			FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(parent, offset, scale);
+			Game_GetTotalOffsetAndScale(parent, offset, scale);
 
 		return ImVec2(offset.x, offset.y);
 	}
 
 
-	void FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2 &offset, Vector2 &scale)
+	void Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2 &offset, Vector2 &scale)
 	{
 		// Check if the child actually has a parent object
 		if (child->GetParentID() != -1)
@@ -1427,12 +1683,12 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Check if the childs parent has a parent
 			if (parent->GetParentID() != -1)
-				FlatEngine::FlatGui::Game_GetTotalOffsetAndScale(parent, offset, scale);
+				Game_GetTotalOffsetAndScale(parent, offset, scale);
 		}
 	}
 
 
-	void FlatEngine::FlatGui::Scene_RenderView()
+	void Scene_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -1509,9 +1765,9 @@ namespace FlatEngine { namespace FlatGui {
 			scrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		FlatEngine::FlatGui::Scene_RenderGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, gridStep);
+		Scene_RenderGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, gridStep);
 	
-		FlatEngine::FlatGui::Scene_RenderObjects(scrolling, canvas_p0, canvas_sz);
+		Scene_RenderObjects(scrolling, canvas_p0, canvas_sz);
 
 		// Reset WindowPadding
 		ImGui::PopStyleVar();
@@ -1522,7 +1778,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
 	{
 		// Get currently loade scene
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
@@ -1551,7 +1807,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 parentScale(1, 1);
 
 				// Render self and children recursively
-				FlatEngine::FlatGui::Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+				Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	
@@ -1562,7 +1818,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper - Recursively draws scene objects and their children to the scene view
-	void FlatEngine::FlatGui::Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
+	void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Component> transformComponent = self->GetComponent(ComponentTypes::Transform);
 		std::shared_ptr<Component> spriteComponent = self->GetComponent(ComponentTypes::Sprite);
@@ -1601,7 +1857,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
 				}
 			}
 
@@ -1630,7 +1886,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					FlatEngine::FlatGui::AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
 				}
 			}
 
@@ -1669,7 +1925,7 @@ namespace FlatEngine { namespace FlatGui {
 				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
 
 				// Draw actual camera icon
-				FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+				AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 
@@ -1746,7 +2002,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				FlatEngine::FlatGui::AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
+				AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
 			}
 		}
 
@@ -1766,13 +2022,13 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
 				if (child->IsActive())
-					FlatEngine::FlatGui::Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+					Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	}
 
 	// Helper - Recursively draws scene objects and their children to the game view
-	void FlatEngine::FlatGui::Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0,
+	void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0,
 		ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
 	{
 		// Get Components
@@ -1827,7 +2083,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					FlatEngine::FlatGui::AddImageToDrawList(textTexture->getTexture(), position, worldCenterPoint, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, cameraZoom, draw_list);
+					AddImageToDrawList(textTexture->getTexture(), position, worldCenterPoint, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, cameraZoom, draw_list);
 				}
 			}
 
@@ -1869,7 +2125,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					FlatEngine::FlatGui::AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
+					AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, cameraZoom, draw_list);
 				}
 			}
 
@@ -1921,7 +2177,7 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
 				if (child->IsActive())
-					FlatEngine::FlatGui::Game_RenderSelfThenChildren(child, parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+					Game_RenderSelfThenChildren(child, parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 						cameraPosition, cameraWidth, cameraHeight, cameraZoom);
 			}
 		}
@@ -1929,7 +2185,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 	// Helper - Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
-	float FlatEngine::FlatGui::WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
+	float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
 	{
 		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
 		float scaleToScreenSizeBy = 1;
@@ -1944,7 +2200,7 @@ namespace FlatEngine { namespace FlatGui {
 			return centerPoint + (worldPosition * zoomFactor * scaleToScreenSizeBy);
 	}
 	// Helper - Get a value from viewport position converted into world/grid position.
-	ImVec2 FlatEngine::FlatGui::ViewportToWorld(ImVec2 viewportPosition)
+	ImVec2 ViewportToWorld(ImVec2 viewportPosition)
 	{
 		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
 		float zoom = 10;
@@ -1959,7 +2215,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
@@ -2032,7 +2288,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
+	void AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
 		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
@@ -2066,7 +2322,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void FlatEngine::FlatGui::RenderLog()
+	void RenderLog()
 	{
 		ImGui::Begin("Debug Log");
 		
@@ -2106,11 +2362,57 @@ namespace FlatEngine { namespace FlatGui {
 		}
 	}
 
+	void RenderProfiler()
+	{
+		ImGui::Begin("Profiler");
 
-	void FlatEngine::FlatGui::Cleanup()
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild("Profiler Container", ImVec2(0, 0), padding_child_flags);
+		ImGui::PopStyleColor();
+
+		ImGui::Checkbox("Log Output", &_logProfilerOutput);
+
+		std::vector<float> dataPoints = std::vector<float>();
+		std::map<std::string, float>::iterator it = m_processMap.begin();
+		int processCounter = 1;
+		if (m_processMap.size() > 0)
+			while (it != m_processMap.end())
+			{
+				std::string scriptName = it->first;
+				float hangTime = it->second + 1;
+				dataPoints.push_back(hangTime);
+
+				++it;
+
+				if (_logProfilerOutput)
+				{
+					LogString("Process " + std::to_string(processCounter) + " : Script name : " + scriptName);
+					LogFloat(hangTime, "Time Ellapsed: ");
+				}
+
+				processCounter++;
+			}
+			
+		float* barData = &dataPoints[0];
+		if (ImPlot::BeginPlot("Ellapsed Time Per Script Update Function")) {
+			ImPlot::PlotBars("My Bar Plot", barData, dataPoints.size());
+			ImPlot::EndPlot();
+		}
+
+		ImGui::EndChild(); // Profiler Container
+		ImGui::End(); // Profiler
+
+		m_processMap.clear();
+	}
+
+
+	void Cleanup()
 	{
 		ImGui_ImplSDLRenderer2_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
+		ImPlot::DestroyContext();
 		ImGui::DestroyContext();
 	}
 }
@@ -2462,9 +2764,9 @@ namespace FlatEngine { namespace FlatGui {
 	//ImGui_ImplSDL2_NewFrame();
 	//ImGui::NewFrame();
 
-
-	//if (show_demo_window)
-	//ImGui::ShowDemoWindow(&show_demo_window);
+//bool show_demo_window = true;
+//	if (show_demo_window)
+//	ImGui::ShowDemoWindow(&show_demo_window);
 
 
 	//// Rendering
@@ -2513,7 +2815,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 // DirectX12 Handle Events
-//void FlatEngine::FlatGui::HandleEvents(SDL_Event event, bool& quit)
+//void HandleEvents(SDL_Event event, bool& quit)
 //{
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.

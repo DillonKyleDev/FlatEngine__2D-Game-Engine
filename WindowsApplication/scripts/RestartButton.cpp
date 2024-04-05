@@ -6,7 +6,7 @@
 
 RestartButton::RestartButton()
 {
-
+	this->SetName("RestartButton");
 }
 
 RestartButton::~RestartButton()
