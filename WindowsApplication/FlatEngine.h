@@ -183,6 +183,7 @@ namespace FlatEngine
 		extern void Scene_RenderView();
 		extern void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 		extern void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
+		extern void RenderAnimator();
 		extern void RenderLog();
 		extern void RenderProfiler();
 		extern void Cleanup();

@@ -10,6 +10,7 @@ namespace FlatEngine
 		this->SetType(ComponentTypes::Animation);
 		this->SetID(myID);
 		this->SetParentID(parentID);
+		animationName = "";
 		this->_playing = false;
 		this->ticksPerFrame = 10;
 		this->animationStartTime = -1;
@@ -69,6 +70,16 @@ namespace FlatEngine
 		return data;
 	}
 
+	void Animation::SetAnimationName(std::string name)
+	{
+		animationName = name;
+	}
+
+	std::string Animation::GetAnimationName()
+	{
+		return animationName;
+	}
+
 
 	void Animation::LerpToCenter()
 	{
@@ -107,4 +118,22 @@ namespace FlatEngine
 		else
 			this->Stop();
 	}
+
+
+	// Hook this up in the same way the Button components work
+	// Just have each script call the SetPlayAnimation and do a custom
+	// Animation on the passed GameObject.  Then, to play
+	// The animation just call the function pointer in the
+	// Animation component. 
+	// Add the ability to change each animation comps name
+	// so each script will only target the animation it
+	void Animation::SetPlayAnimation(std::function<void(std::shared_ptr<GameObject>)> callback)
+	{
+		this->PlayAnimationFunction = callback;
+	}
 }
+
+// On second thought
+// Animation components should handle the entire animation
+// within the component. Maybe we have each one somehow create
+// it's own json file with 

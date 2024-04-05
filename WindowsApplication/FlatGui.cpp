@@ -68,7 +68,7 @@ namespace FlatEngine { namespace FlatGui {
 	bool _showGameView = true;
 	bool _showHierarchy = true;
 	bool _showInspector = true;
-	bool _showAnimator = false;
+	bool _showAnimator = true;
 	bool _showLogger = true;
 	bool _showProfiler = true;
 
@@ -127,9 +127,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		else 
 			FlatEngine::CreateNewScene();
-		//FlatEngine::sceneManager->LoadScene("SavedScenes.json");
 	}
-
 
 	void Render(bool& quit)
 	{
@@ -187,13 +185,13 @@ namespace FlatEngine { namespace FlatGui {
 				if (ImGui::MenuItem("Open", "Ctrl+O"))
 					OpenLoadFileExplorer();
 
-				if (ImGui::BeginMenu("Open Recent"))
-				{
-					ImGui::MenuItem("fish_hat.c");
-					ImGui::MenuItem("fish_hat.inl");
-					ImGui::MenuItem("fish_hat.h");
-					ImGui::EndMenu();
-				}
+				//if (ImGui::BeginMenu("Open Recent"))
+				//{
+				//	ImGui::MenuItem("fish_hat.c");
+				//	ImGui::MenuItem("fish_hat.inl");
+				//	ImGui::MenuItem("fish_hat.h");
+				//	ImGui::EndMenu();
+				//}
 
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 					sceneManager->SaveCurrentScene();
@@ -201,22 +199,22 @@ namespace FlatEngine { namespace FlatGui {
 				if (ImGui::MenuItem("Save As..")) 
 					OpenSaveFileExplorer();
 
-				ImGui::Separator();
-				if (ImGui::BeginMenu("Options"))
-				{
-					static bool enabled = true;
-					ImGui::MenuItem("Enabled", "", &enabled);
-					ImGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Border);
-					for (int i = 0; i < 10; i++)
-						ImGui::Text("Scrolling Text %d", i);
-					ImGui::EndChild();
-					static float f = 0.5f;
-					static int n = 0;
-					ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-					ImGui::InputFloat("Input", &f, 0.1f);
-					ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-					ImGui::EndMenu();
-				}
+				//ImGui::Separator();
+				//if (ImGui::BeginMenu("Options"))
+				//{
+				//	static bool enabled = true;
+				//	ImGui::MenuItem("Enabled", "", &enabled);
+				//	ImGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Border);
+				//	for (int i = 0; i < 10; i++)
+				//		ImGui::Text("Scrolling Text %d", i);
+				//	ImGui::EndChild();
+				//	static float f = 0.5f;
+				//	static int n = 0;
+				//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+				//	ImGui::InputFloat("Input", &f, 0.1f);
+				//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+				//	ImGui::EndMenu();
+				//}
 
 				// Here we demonstrate appending again to the "Options" menu (which we already created above)
 				// Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
@@ -272,11 +270,6 @@ namespace FlatEngine { namespace FlatGui {
 					
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-				ImGui::Separator();
-				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -439,6 +432,8 @@ namespace FlatEngine { namespace FlatGui {
 			Game_RenderView();
 		if (_showSceneView)
 			Scene_RenderView();
+		if (_showAnimator)
+			RenderAnimator();
 		if (_showLogger)
 			RenderLog();
 		if (_showProfiler)
@@ -509,9 +504,10 @@ namespace FlatEngine { namespace FlatGui {
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
-		std::string sceneText = "Scene: ";
-		static char filename[1024] = "MainMenu.json";
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
+
+		if (ImGui::Button("Add New GameObject"))
+			CreateGameObject(-1);
 
 		// Scene Objects in Hierarchy
 		{
@@ -1817,6 +1813,30 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
+	void RenderAnimator()
+	{
+		ImGui::Begin("Animator");
+
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild("Animated Properties", ImVec2(0, 0), padding_child_flags);
+		ImGui::PopStyleColor();
+		ImGui::Text("Properties");
+		ImGui::EndChild(); // Animator Properties
+
+		ImGui::SameLine(0,0);
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGui::BeginChild("Frames", ImVec2(0, 0), padding_child_flags);
+		ImGui::PopStyleColor();
+		ImGui::Text("Frames");
+		ImGui::EndChild(); // Frames
+
+		ImGui::End(); // Animator
+	}
+
+
 	// Helper - Recursively draws scene objects and their children to the scene view
 	void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList *draw_list, ImDrawListSplitter* drawSplitter)
 	{
@@ -2362,6 +2382,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 	}
 
+
 	void RenderProfiler()
 	{
 		ImGui::Begin("Profiler");
@@ -2377,6 +2398,7 @@ namespace FlatEngine { namespace FlatGui {
 		std::vector<float> dataPoints = std::vector<float>();
 		std::map<std::string, float>::iterator it = m_processMap.begin();
 		int processCounter = 1;
+
 		if (m_processMap.size() > 0)
 			while (it != m_processMap.end())
 			{
@@ -2396,10 +2418,11 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			
 		float* barData = &dataPoints[0];
-		if (ImPlot::BeginPlot("Ellapsed Time Per Script Update Function")) {
-			ImPlot::PlotBars("My Bar Plot", barData, dataPoints.size());
-			ImPlot::EndPlot();
-		}
+		if (gameLoop->IsStarted())
+			if (ImPlot::BeginPlot("Ellapsed Time Per Script Update Function")) {
+				ImPlot::PlotBars("Runtime Tracker", barData, dataPoints.size());
+				ImPlot::EndPlot();
+			}
 
 		ImGui::EndChild(); // Profiler Container
 		ImGui::End(); // Profiler
