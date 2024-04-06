@@ -22,7 +22,7 @@ namespace FlatEngine
 	// Managers
 	long FlatEngine::FocusedGameObjectID = -1;
 
-	std::string FocusedAnimation = "-select animation-";
+	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
 	std::vector<std::string> animationPaths = std::vector<std::string>();
 
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
@@ -83,12 +83,12 @@ namespace FlatEngine
 		return FlatEngine::FocusedGameObjectID;
 	}
 
-	void SetFocusedAnimation(std::string animation)
+	void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation)
 	{
 		FocusedAnimation = animation;
 	}
 
-	std::string GetFocusedAnimation()
+	std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation()
 	{
 		return FocusedAnimation;
 	}

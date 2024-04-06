@@ -1783,26 +1783,23 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimator()
 	{
-		static bool _hasBeenPushed = false;
-		if (!_hasBeenPushed)
-		{
-			animationPaths.clear();
-			animationPaths.push_back("-select animation-");
-			animationPaths.push_back("TestAnimation.json");
-			_hasBeenPushed = true;
-		}
-
-		Animation::S_AnimationProperties loadedAnimation;
-
 		// Create S_AnimationProperties struct to store the properties of the json file in
-		Animation::S_AnimationProperties animationProperties;
+		std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+		animationProperties->animationName = "New Animation";
+
 		Animation::S_Transform transformProperties;
 		transformProperties.time = 5;
-		transformProperties.xMove = 3;
-		transformProperties.yMove = 8;
+		transformProperties.xMove = 0;
+		transformProperties.yMove = 0;
 		transformProperties.xScale = 0;
 		transformProperties.yScale = 0;
-		animationProperties.transformProperties.push_back(transformProperties);
+
+		Animation::S_Sprite spriteProperties;
+		spriteProperties.time = 5;
+		spriteProperties.path = "";
+		spriteProperties.xOffset = 0;
+		spriteProperties.yOffset = 0;
+
 
 
 		ImGui::Begin("Animator");
@@ -1817,8 +1814,8 @@ namespace FlatEngine { namespace FlatGui {
 
 		std::string animationName = "-No Animation Selected-";
 
-		if (GetFocusedAnimation() != "-select animation-")
-			animationName = GetFocusedAnimation();
+		if (GetFocusedAnimation()->animationName != "")
+			animationName = GetFocusedAnimation()->animationName;
 
 
 		////////////////
@@ -1852,38 +1849,23 @@ namespace FlatEngine { namespace FlatGui {
 			std::string animationFilePath = OpenLoadFileExplorer();
 			if (animationFilePath != "")
 			{
-				CreateNewAnimationFile(animationFilePath);
-				loadedAnimation = LoadAnimationFile(animationFilePath);
-				LogString(loadedAnimation.animationPath);
-				SetFocusedAnimation(loadedAnimation.animationPath);
+				SetFocusedAnimation(LoadAnimationFile(animationFilePath));
 			}
 		}
 
-		//ImGui::Text("Select Animation");
-		const char* animations = animationPaths.front().c_str();
-		static std::string current_animation = animationPaths.front();
-		//ImGui::Combo("##animation", &current_animation, animations, animationPaths.size());
-
-		if (ImGui::BeginCombo("##Select Animations", current_animation.c_str()))
+		if (ImGui::Button("Save Animation"))
 		{
-			for (std::string animationPath : animationPaths)
+			std::string animationFilePath = OpenSaveFileExplorer();
+			if (animationFilePath != "")
 			{
-				bool is_selected = (current_animation == animationPath); // You can store your selection however you want, outside or inside your objects
-				if (ImGui::Selectable(animationPath.c_str(), is_selected))
-					current_animation = animationPath;
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
+				SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
 			}
-			ImGui::EndCombo();
-
-			SetFocusedAnimation(current_animation);
 		}
-
 
 		//ImGui::SameLine(0, 5);
 		ImGui::EndChild();
 
-		if (GetFocusedAnimation() != "-select animation-")
+		if (GetFocusedAnimation()->animationName != "")
 		{
 			static std::string selected_property = "";
 
@@ -1899,6 +1881,10 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::Button("Add"))
 			{
 				// Add property to animation object
+				if (properties[current_property] == "Transform")
+					GetFocusedAnimation()->transformProperties.push_back(transformProperties);
+				else if (properties[current_property] == "Sprite")
+					GetFocusedAnimation()->spriteProperties.push_back(spriteProperties);
 			}
 			ImGui::EndChild();
 
@@ -1909,41 +1895,38 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
-			// for (property : this animations properties)
 
+			ImGuiTreeNodeFlags node_flags;
+			static std::string node_clicked = "";
 
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 
-			//ImGuiTreeNodeFlags node_flags;
-
+			///// Transform Node
 			//// If this node is selected, use the nodeFlag_selected to highlight it
-			//if (selected_property == currentObject->GetID())
-			//	node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-			//else
-			//	node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
-
+			if (node_clicked == "Transform")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 			//// TreeNode Opener - No TreePop because it's a leaf
-			//ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+			if (GetFocusedAnimation()->transformProperties.size() > 0)
+				ImGui::TreeNodeEx((void*)(intptr_t)0, node_flags, "Transform");
+			if (ImGui::IsItemClicked())
+				node_clicked = "Transform";
 
-			//// Setting the focus to this GameObject
-			//if (ImGui::IsItemClicked())
-			//{
-			//	node_clicked = currentObject->GetID();
-			//	FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
-			//}
-			//// Drag and Drop Functionality
-			//if (ImGui::BeginDragDropSource())
-			//{
-			//	ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-			//	ImGui::Text("This is a drag and drop source");
-			//	ImGui::EndDragDropSource();
-			//}
+			///// Sprite Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Sprite")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->spriteProperties.size() > 0)
+				ImGui::TreeNodeEx((void*)(intptr_t)0, node_flags, "Sprite");
+			if (ImGui::IsItemClicked())
+				node_clicked = "Sprite";
 
-			//ImGui::PopStyleVar();
-
+			ImGui::PopStyleVar();
 			ImGui::EndListBox();
-		
 		}
 		
 		ImGui::Separator();
@@ -2649,7 +2632,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path)
+	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -2669,8 +2652,7 @@ namespace FlatEngine { namespace FlatGui {
 		//std::vector<Animation::S_Transform>::iterator transformIterator = propertiesObject.transformProperties.begin();
 		//std::map<Animation::Properties, Animation::S_Sprite>::iterator transformIterator = propertiesObject.spriteProperties.begin();
 
-
-		for (Animation::S_Transform transformProp : propertiesObject.transformProperties)
+		for (Animation::S_Transform transformProp : propertiesObject->transformProperties)
 		{
 			// Declare components array json object for components
 			json transformPropertiesArray = json::array();
@@ -2691,12 +2673,18 @@ namespace FlatEngine { namespace FlatGui {
 			transformPropertiesArray.push_back(json::parse(data));
 
 			// Create Animation Property Json data object
+			json animationName = json::object({
+				{ "Name", propertiesObject->animationName }
+			});
+
+			// Create Animation Property Json data object
 			json animationProperty = json::object({
-				{ "Property Name", "Transform" },
+				{ "Property", "Transform" },
 				{ "Frames", transformPropertiesArray }
 			});
 
 			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationName);
 			animationProperties.push_back(animationProperty);
 		}
 		//else
@@ -2714,13 +2702,15 @@ namespace FlatEngine { namespace FlatGui {
 		file_obj.close();
 	}
 
-	Animation::S_AnimationProperties LoadAnimationFile(std::string path)
+
+	std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path)
 	{
-		Animation::S_AnimationProperties animationProperties;
+		std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
 		Animation::S_Transform transformProperties;
+		Animation::S_Sprite spriteProperties;
 
 		// Save the path to the animationProperties struct
-		animationProperties.animationPath = path;
+		animationProperties->animationPath = path;
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -2756,37 +2746,59 @@ namespace FlatEngine { namespace FlatGui {
 				//auto properties = fileContentJson["Animation Properties"];
 				//std::string name = properties[0]["name"];
 
+				// Set default values
+				animationProperties->animationName = "New Animation";
+
 				// Loop through the saved Properties in the JSON file
 				for (int i = 0; i < fileContentJson["Animation Properties"].size(); i++)
 				{
-					// Set default values
-					std::string propertyName = "Property Name";
-
-
 					// Get data from the loaded object
 					json currentObjectJson = fileContentJson["Animation Properties"][i];
 
 					// Check name key exists
-					if (currentObjectJson.contains("Property Name"))
-						propertyName = currentObjectJson["Property Name"];
-					else
-						FlatEngine::LogInt(i, "FlatGui::LoadAnimationFile() - Saved animation json does not contain a value for 'Property Name' in object: ");
-					// Check ID key exists
-					if (currentObjectJson.contains("Frames"))
-						for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+					if (currentObjectJson.contains("Name"))
+						animationProperties->animationName = currentObjectJson["Name"];
+					// Check name Property Name key exists
+					if (currentObjectJson.contains("Property"))
+					{
+						if (currentObjectJson["Property"] == "Transform")
 						{
-							Animation::S_Transform transformFrames = {};
-							transformFrames.time = currentObjectJson["Frames"][f]["time"];
-							transformFrames.xMove = currentObjectJson["Frames"][f]["xMove"];
-							transformFrames.yMove = currentObjectJson["Frames"][f]["yMove"];
-							transformFrames.xScale = currentObjectJson["Frames"][f]["xScale"];
-							transformFrames.yScale = currentObjectJson["Frames"][f]["yScale"];
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Transform transformFrames = {};
+									transformFrames.time = currentObjectJson["Frames"][f]["time"];
+									transformFrames.xMove = currentObjectJson["Frames"][f]["xMove"];
+									transformFrames.yMove = currentObjectJson["Frames"][f]["yMove"];
+									transformFrames.xScale = currentObjectJson["Frames"][f]["xScale"];
+									transformFrames.yScale = currentObjectJson["Frames"][f]["yScale"];
 
-							// Save the data to the animationProperties struct
-							animationProperties.transformProperties.push_back(transformFrames);
+									// Save the data to the animationProperties struct
+									animationProperties->transformProperties.push_back(transformFrames);
+								}
+							}
 						}
-					else
-						FlatEngine::LogInt(i, "FlatGui::LoadAnimationFile() - Saved animation json does not contain a value for 'Frames' in object : ");
+						else if (currentObjectJson["Property"] == "Sprite")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Sprite spriteFrames = {};
+									spriteFrames.time = currentObjectJson["Frames"][f]["time"];
+									spriteFrames.xOffset = currentObjectJson["Frames"][f]["xOffset"];
+									spriteFrames.yOffset = currentObjectJson["Frames"][f]["yOffset"];
+									spriteFrames.path = currentObjectJson["Frames"][f]["path"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->spriteProperties.push_back(spriteFrames);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

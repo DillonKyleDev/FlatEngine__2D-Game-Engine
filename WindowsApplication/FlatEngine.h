@@ -45,10 +45,11 @@ namespace FlatEngine
 	extern long FocusedGameObjectID;
 	extern void SetFocusedGameObjectID(long ID);
 	extern long GetFocusedGameObjectID();
+
 	// Focused Animation
-	extern std::string FocusedAnimation;
-	extern void SetFocusedAnimation(std::string animation);
-	extern std::string GetFocusedAnimation();
+	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
+	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
+	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
 	extern std::vector<std::string> animationPaths;
 
 	extern FlatEngine::SceneManager *sceneManager;
@@ -158,8 +159,8 @@ namespace FlatEngine
 
 		// Animation Manager
 		extern void CreateNewAnimationFile(std::string path);
-		extern void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path);
-		extern Animation::S_AnimationProperties LoadAnimationFile(std::string path);
+		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
+		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
 
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);

@@ -41,10 +41,10 @@ namespace FlatEngine
 		};
 
 		struct S_AnimationProperties {
-			std::string animationPath;
-			std::vector<S_Transform> transformProperties;
-			std::map<Properties, S_Transform> transformProps;
-			std::map<Properties, S_Sprite> spriteProperties;
+			std::string animationName = "";
+			std::string animationPath = "";
+			std::vector<S_Transform> transformProperties = std::vector<S_Transform>();
+			std::vector<S_Sprite> spriteProperties = std::vector<S_Sprite>();
 		};
 
 		Animation(long myID = -1, long parentID = -1);
