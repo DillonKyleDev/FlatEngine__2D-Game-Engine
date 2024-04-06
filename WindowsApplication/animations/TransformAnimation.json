@@ -1,0 +1,16 @@
+{
+    "Animation Properties": [
+        {
+            "Frames": [
+                {
+                    "time": 5.0,
+                    "xMove": 3.0,
+                    "xScale": 0.0,
+                    "yMove": 8.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property Name": "Transform"
+        }
+    ]
+}

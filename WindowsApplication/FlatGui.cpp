@@ -14,6 +14,9 @@
 #include "implot_internal.h"
 #include <deque>
 #include "Process.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 
 
@@ -34,6 +37,7 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 innerWindowColor = ImVec4(float(0.19), float(0.19), float(0.19), float(1));
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 white = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
 	
 	// Icons
 	std::unique_ptr<Texture> expandIcon(new Texture());
@@ -181,61 +185,28 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				//ImGui::MenuItem("Main menu", NULL, false, false);
 				if (ImGui::MenuItem("New"))
 					sceneManager->CreateNewScene();
 
 				if (ImGui::MenuItem("Open", "Ctrl+O"))
-					OpenLoadFileExplorer();
+				{
+					// Load the scene
+					std::string scenePath = OpenLoadFileExplorer();
+					sceneManager->LoadScene(scenePath);
+				}
 
-				//if (ImGui::BeginMenu("Open Recent"))
-				//{
-				//	ImGui::MenuItem("fish_hat.c");
-				//	ImGui::MenuItem("fish_hat.inl");
-				//	ImGui::MenuItem("fish_hat.h");
-				//	ImGui::EndMenu();
-				//}
-
+					// Save the scene
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 					sceneManager->SaveCurrentScene();
 
-				if (ImGui::MenuItem("Save As..")) 
-					OpenSaveFileExplorer();
-
-				//ImGui::Separator();
-				//if (ImGui::BeginMenu("Options"))
-				//{
-				//	static bool enabled = true;
-				//	ImGui::MenuItem("Enabled", "", &enabled);
-				//	ImGui::BeginChild("child", ImVec2(0, 60), ImGuiChildFlags_Border);
-				//	for (int i = 0; i < 10; i++)
-				//		ImGui::Text("Scrolling Text %d", i);
-				//	ImGui::EndChild();
-				//	static float f = 0.5f;
-				//	static int n = 0;
-				//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-				//	ImGui::InputFloat("Input", &f, 0.1f);
-				//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-				//	ImGui::EndMenu();
-				//}
-
-				// Here we demonstrate appending again to the "Options" menu (which we already created above)
-				// Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
-				// In a real code-base using it would make senses to use this feature from very different code locations.
-				//if (ImGui::BeginMenu("Options")) // <-- Append!
-				//{
-				//	static bool b = true;
-				//	ImGui::Checkbox("SomeOption", &b);
-				//	ImGui::EndMenu();
-				//}
-
-				//if (ImGui::BeginMenu("Disabled", false)) // Disabled
-				//{
-				//	IM_ASSERT(0);
-				//}
-				//if (ImGui::MenuItem("Checked", NULL, true)) {}
-				//if (ImGui::MenuItem("Checked", NULL, false)) {}
-
+				if (ImGui::MenuItem("Save As.."))
+				{
+					// Save the scene
+					std::string scenePath = OpenSaveFileExplorer();
+					std::shared_ptr<Scene> currentScene = sceneManager->GetLoadedScene();
+					sceneManager->SaveScene(currentScene, scenePath);
+				}
+					
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", "Alt+F4"))
 					CloseProgram();
@@ -278,12 +249,13 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndMainMenuBar();
 		}
 
-		/*bool show_demo_window = true;
+		bool show_demo_window = true;
 		if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);*/
+		ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
-	bool OpenSaveFileExplorer()
+
+	std::string OpenSaveFileExplorer()
 	{
 		std::string sSelectedFile;
 		std::string sFilePath;
@@ -294,15 +266,15 @@ namespace FlatEngine { namespace FlatGui {
 		
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (FAILED(f_SysHr))
-			return false;
+		//if (FAILED(f_SysHr))
+			//return false;
 
 		// CREATE FileSaveDialog OBJECT
 		 IFileSaveDialog* f_FileSystem = NULL;
 		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
 		if (FAILED(f_SysHr)) {
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
@@ -310,7 +282,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
@@ -319,7 +291,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  STORE AND CONVERT THE FILE NAME
@@ -329,7 +301,7 @@ namespace FlatEngine { namespace FlatGui {
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  FORMAT AND STORE THE FILE PATH
@@ -341,19 +313,15 @@ namespace FlatEngine { namespace FlatGui {
 		const size_t slash = sFilePath.find_last_of("/\\");
 		sSelectedFile = sFilePath.substr(slash + 1);
 
-		// Save the scene
-		std::shared_ptr<Scene> currentScene = sceneManager->GetLoadedScene();
-		sceneManager->SaveScene(currentScene, sFilePath);
-
 		//  SUCCESS, CLEAN UP
 		CoTaskMemFree(f_Path);
 		f_Files->Release();
 		f_FileSystem->Release();
 		CoUninitialize();
-		return TRUE;
+		return sFilePath;
 	}
 
-	bool OpenLoadFileExplorer()
+	std::string OpenLoadFileExplorer()
 	{
 		std::string sSelectedFile;
 		std::string sFilePath;
@@ -364,15 +332,15 @@ namespace FlatEngine { namespace FlatGui {
 
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		if (FAILED(f_SysHr))
-			return false;
+		//if (FAILED(f_SysHr))
+			//return false;
 
 		// CREATE FileOpenDialog OBJECT
 		IFileOpenDialog* f_FileSystem;
 		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
 		if (FAILED(f_SysHr)) {
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
@@ -380,7 +348,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
@@ -389,7 +357,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  STORE AND CONVERT THE FILE NAME
@@ -399,7 +367,7 @@ namespace FlatEngine { namespace FlatGui {
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
-			return false;
+			//return false;
 		}
 
 		//  FORMAT AND STORE THE FILE PATH
@@ -411,15 +379,12 @@ namespace FlatEngine { namespace FlatGui {
 		const size_t slash = sFilePath.find_last_of("/\\");
 		sSelectedFile = sFilePath.substr(slash + 1);
 
-		// Load the scene
-		sceneManager->LoadScene(sFilePath);
-
 		//  SUCCESS, CLEAN UP
 		CoTaskMemFree(f_Path);
 		f_Files->Release();
 		f_FileSystem->Release();
 		CoUninitialize();
-		return TRUE;
+		return sFilePath;
 	}
 
 
@@ -1818,51 +1783,210 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimator()
 	{
+		static bool _hasBeenPushed = false;
+		if (!_hasBeenPushed)
+		{
+			animationPaths.clear();
+			animationPaths.push_back("-select animation-");
+			animationPaths.push_back("TestAnimation.json");
+			_hasBeenPushed = true;
+		}
+
+		// Create S_AnimationProperties struct to store the properties of the json file in
+		Animation::S_AnimationProperties animationProperties;
+		Animation::S_Transform transformProperties;
+		transformProperties.time = 5;
+		transformProperties.xMove = 3;
+		transformProperties.yMove = 8;
+		transformProperties.xScale = 0;
+		transformProperties.yScale = 0;
+		animationProperties.transformProperties.push_back(transformProperties);
+
+		
+
 		ImGui::Begin("Animator");
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, innerWindowColor);
-		//ImGui::PushItemWidth(50);
+		// Animated Properties BeginChild()
+		//
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
 		ImGui::BeginChild("Animated Properties", ImVec2(ImGui::GetContentRegionMax().x / 3, 0), padding_child_flags | ImGuiChildFlags_ResizeX);
 		ImGui::PopStyleColor();
-		ImGui::Text("Properties");
-		ImGui::EndChild(); // Animator Properties
-		//ImGui::PopItemWidth();
 
-		//ImGui::End();
+		std::string animationName = "-No Animation Selected-";
+
+		if (GetFocusedAnimation() != "-select animation-")
+			animationName = GetFocusedAnimation();
+
+
+		////////////////
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, white);
+		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+		ImGui::BeginChild(animationName.c_str(), ImVec2(0, 0), child_flags);
+		ImGui::PopStyleColor();
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(1, 9, 0, 255));
+		ImGui::Text(animationName.c_str());
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::Separator();
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGui::BeginChild("Select Animation", ImVec2(0, 0), child_flags);
+		ImGui::SameLine(0, 5);
+
+		if (ImGui::Button("Create New Animation"))
+		{
+			std::string animationFilePath = OpenSaveFileExplorer();
+			CreateNewAnimationFile(animationFilePath);
+			SaveAnimationFile(animationProperties, animationFilePath);
+		}
+
+		ImGui::PopStyleColor();
+		//ImGui::Text("Select Animation");
+		const char* animations = animationPaths.front().c_str();
+		static std::string current_animation = animationPaths.front();
+		//ImGui::Combo("##animation", &current_animation, animations, animationPaths.size());
+
+		if (ImGui::BeginCombo("##Select Animations", current_animation.c_str()))
+		{
+			for (std::string animationPath : animationPaths)
+			{
+				bool is_selected = (current_animation == animationPath); // You can store your selection however you want, outside or inside your objects
+				if (ImGui::Selectable(animationPath.c_str(), is_selected))
+					current_animation = animationPath;
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+
+			SetFocusedAnimation(current_animation);
+		}
+
+
+		//ImGui::SameLine(0, 5);
+		ImGui::EndChild();
+
+		if (GetFocusedAnimation() != "-select animation-")
+		{
+			static std::string selected_property = "";
+
+			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+			ImGui::BeginChild("Properties Bar", ImVec2(0, 0), child_flags);
+			ImGui::PopStyleColor();
+			ImGui::Text("Add Properties");
+			const char* properties[] = { "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
+			static int current_property = 0;
+			ImGui::Combo("##properties", &current_property, properties, IM_ARRAYSIZE(properties));
+			ImGui::SameLine(0, 5);
+			if (ImGui::Button("Add"))
+			{
+				// Add property to animation object
+			}
+			ImGui::EndChild();
+
+
+			//////// List properties on this animation
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
+			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+			// for (property : this animations properties)
+
+
+
+			//ImGuiTreeNodeFlags node_flags;
+
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			//if (selected_property == currentObject->GetID())
+			//	node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			//else
+			//	node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+			//// TreeNode Opener - No TreePop because it's a leaf
+			//ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+
+			//// Setting the focus to this GameObject
+			//if (ImGui::IsItemClicked())
+			//{
+			//	node_clicked = currentObject->GetID();
+			//	FlatEngine::SetFocusedGameObjectID(currentObject->GetID());
+			//}
+			//// Drag and Drop Functionality
+			//if (ImGui::BeginDragDropSource())
+			//{
+			//	ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
+			//	ImGui::Text("This is a drag and drop source");
+			//	ImGui::EndDragDropSource();
+			//}
+
+			ImGui::PopStyleVar();
+
+			ImGui::EndListBox();
+		
+		}
+		
+		ImGui::Separator();
+		////////////////
+
+
+
+
+		////////////////
+		// Give background color and padding
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
+		ImGui::BeginChild("Properties", ImVec2(0, 0), child_flags);
+		ImGui::PopStyleColor();
+
+		// Push Item Width
+		ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
+		ImGui::Text("xPos:");
+		ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
+		ImGui::Text("yPos:");
+		ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
+		ImGui::Text("Rotation:");
+		ImGui::PopItemWidth();
+
+		ImGui::EndChild(); // Properties
+		////////////////
+
+
+		// Animator Properties EndChild()
+		ImGui::EndChild();
+
+
+
 		ImGui::SameLine(0,5);
 
-		//ImGui::Begin("Animator Timeline");
-		// Push Item Width
-		//ImGui::PushItemWidth(ImGui::GetContentRegionMax().x * 2 / 3 - 5);
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
+
+
+
+		// Timeline Events BeginChild()
+		// 
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 		ImGui::BeginChild("Timeline Events", ImVec2(0, 0), padding_child_flags);
 		ImGui::PopStyleColor();
 
-			ImGui::Text("xPos:");
-			ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
-			ImGui::Text("yPos:");
-			ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
-			ImGui::Text("Rotation:");
-
-			// Render text for scales
-			ImGui::Text("Scale x:");
-			ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-			ImGui::Text("Scale y:");
-
-	
-			// Set cursor type
-			if (ImGui::IsItemHovered())
-				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-			ImGui::SameLine(0, 5);
-			// Set cursor type
-			if (ImGui::IsItemHovered())
-				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
+		////////////////
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, white);
+		ImGui::BeginChild("Animation Timeline", ImVec2(0, 0), child_flags);
+		ImGui::PopStyleColor();
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(1, 9, 0, 255));
+		ImGui::Text("Animation Timeline");
+		ImGui::PopStyleColor();
 		ImGui::EndChild();
-		// Pop Width Setting
-		//ImGui::PopItemWidth();
+		////////////////
+
+
+		// Timeline Events BeginChild()
+		//
+		ImGui::EndChild();
+
+
 
 		ImGui::End(); // Animator
 	}
@@ -2424,11 +2548,6 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::BeginChild("Profiler Container", ImVec2(0, 0), padding_child_flags);
 		ImGui::PopStyleColor();
 
-		std::vector<float> dataPoints = std::vector<float>();
-		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
-		int processCounter = 1;
-
-
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
 		static bool anim = true;
@@ -2437,13 +2556,13 @@ namespace FlatEngine { namespace FlatGui {
 		if (anim)
 			offset = (offset + 1) % 100;
 
-
-		static int tickCounter = 0;
+		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
+		int processCounter = 1;
 
 		if (ImGui::BeginTable("##table", 3, flags, ImVec2(-1, 0))) {
 			ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-			ImGui::TableSetupColumn("Hang Time");
+			ImGui::TableSetupColumn("Hang Time Visualization");
 			ImGui::TableHeadersRow();
 			ImPlot::PushColormap(ImPlotColormap_Cool);
 
@@ -2482,6 +2601,101 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::EndChild(); // Profiler Container
 		ImGui::End(); // Profiler
+	}
+
+
+	void CreateNewAnimationFile(std::string path)
+	{
+		// Declare file and input stream
+		std::ofstream file_obj;
+
+		// Delete old contents of the file
+		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open(path, std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json animationObjectsJsonArray;
+
+		// Set animationObjectsJsonArray to empty
+		animationObjectsJsonArray.push_back("NULL");
+
+		// Create the GameObjects json object and add the empty array as the content
+		json newFileObject = json::object({ {"Animation Properties", animationObjectsJsonArray } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
+	}
+
+
+	void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path)
+	{
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Delete old contents of the file
+		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open(path, std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json animationProperties;
+
+		// Iterate through each of the maps of properties in the propertiesObject
+		//std::vector<Animation::S_Transform>::iterator transformIterator = propertiesObject.transformProperties.begin();
+		//std::map<Animation::Properties, Animation::S_Sprite>::iterator transformIterator = propertiesObject.spriteProperties.begin();
+
+
+		for (Animation::S_Transform transformProp : propertiesObject.transformProperties)
+		{
+			// Declare components array json object for components
+			json transformPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", transformProp.time },
+				{ "xMove", transformProp.xMove },
+				{ "yMove", transformProp.yMove },
+				{ "xScale", transformProp.xScale },
+				{ "yScale", transformProp.yScale }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			transformPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property Name", "Transform" },
+				{ "Frames", transformPropertiesArray }
+			});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		//else
+		//{
+		//	sceneObjectsJsonArray.push_back("NULL");
+		//}
+
+		// Recreate the Animation Property json object and add the array as the content
+		json newFileObject = json::object({ {"Animation Properties", animationProperties } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
 	}
 
 

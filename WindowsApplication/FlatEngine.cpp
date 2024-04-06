@@ -21,6 +21,10 @@ namespace FlatEngine
 
 	// Managers
 	long FlatEngine::FocusedGameObjectID = -1;
+
+	std::string FocusedAnimation = "-select animation-";
+	std::vector<std::string> animationPaths = std::vector<std::string>();
+
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
@@ -77,6 +81,16 @@ namespace FlatEngine
 	long FlatEngine::GetFocusedGameObjectID()
 	{
 		return FlatEngine::FocusedGameObjectID;
+	}
+
+	void SetFocusedAnimation(std::string animation)
+	{
+		FocusedAnimation = animation;
+	}
+
+	std::string GetFocusedAnimation()
+	{
+		return FocusedAnimation;
 	}
 
 

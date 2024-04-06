@@ -40,9 +40,16 @@ namespace FlatEngine
 	// #### FLAGENGINE #### //
 	// 
 	// Variables
+	// 
+	// Focused GameObject
 	extern long FocusedGameObjectID;
 	extern void SetFocusedGameObjectID(long ID);
 	extern long GetFocusedGameObjectID();
+	// Focused Animation
+	extern std::string FocusedAnimation;
+	extern void SetFocusedAnimation(std::string animation);
+	extern std::string GetFocusedAnimation();
+	extern std::vector<std::string> animationPaths;
 
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
@@ -149,6 +156,10 @@ namespace FlatEngine
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
 
+		// Animation Manager
+		extern void CreateNewAnimationFile(std::string path);
+		extern void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path2);
+
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
 
@@ -176,8 +187,8 @@ namespace FlatEngine
 		extern void SetupImGui();
 		extern void Render(bool& quit);
 		extern void MainMenuBar();
-		extern bool OpenSaveFileExplorer();
-		extern bool OpenLoadFileExplorer();
+		extern std::string OpenSaveFileExplorer();
+		extern std::string OpenLoadFileExplorer();
 		extern void AddViewports();
 		extern void RenderToolbar();
 		extern void RenderHierarchy();
