@@ -1,19 +1,31 @@
 {
     "Animation Properties": [
         {
-            "Name": "TransformAnimation"
+            "Length": 0.0,
+            "Name": "New Animation"
         },
         {
             "Frames": [
                 {
-                    "time": 5.0,
-                    "xMove": 3.0,
+                    "time": 0.0,
+                    "xMove": 0.0,
                     "xScale": 0.0,
-                    "yMove": 8.0,
+                    "yMove": 0.0,
                     "yScale": 0.0
                 }
             ],
             "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "path": "",
+                    "time": 0.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
         }
     ]
 }

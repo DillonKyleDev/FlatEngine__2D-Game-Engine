@@ -1,6 +1,8 @@
 #include "Animation.h"
 #include "FlatEngine.h"
 #include "Transform.h"
+#include "Sprite.h"
+#include "Vector2.h"
 
 
 namespace FlatEngine
@@ -12,6 +14,7 @@ namespace FlatEngine
 		this->SetParentID(parentID);
 		animationName = "";
 		animationProperties = {};
+		animationPath = "";
 		this->_playing = false;
 		this->ticksPerFrame = 10;
 		this->animationStartTime = -1;
@@ -22,11 +25,7 @@ namespace FlatEngine
 
 	void Animation::AddFrame()
 	{
-		//std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->GetParentID());
-		//std::shared_ptr<GameObject> copiedState = std::make_shared<GameObject>(*thisObject);
-		//this->frames.push_back(copiedState);
 
-		//FlatEngine::LogString("From Add Frame. Added: " + frames[0]->GetName());
 	}
 
 	void Animation::Play()
@@ -62,8 +61,7 @@ namespace FlatEngine
 			{ "type", "Animation" },
 			{ "id", this->GetID() },
 			{ "_isCollapsed", this->IsCollapsed() },
-			{ "ticksPerFrame", this->ticksPerFrame },
-			/*{ "frames", this->frames },*/
+			{ "ticksPerFrame", this->ticksPerFrame }
 		};
 
 		std::string data = jsonData.dump();
@@ -79,6 +77,17 @@ namespace FlatEngine
 	std::string Animation::GetAnimationName()
 	{
 		return animationName;
+	}
+
+	void Animation::SetAnimationPath(std::string path)
+	{
+		animationPath = path;
+		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(path);
+	}
+
+	std::string Animation::GetAnimationPath()
+	{
+		return animationPath;
 	}
 
 
@@ -120,8 +129,44 @@ namespace FlatEngine
 			this->Stop();
 	}
 
-	void Animation::SetPlayAnimation(std::function<void(std::shared_ptr<GameObject>)> callback)
+	void Animation::PlayAnimation()
 	{
-		this->PlayAnimationFunction = callback;
+		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(animationPath);
+		std::shared_ptr<S_AnimationProperties> props = animationProperties;
+
+		// While the animation is not over
+		if (props->animationLength > FlatEngine::GetEllapsedGameTime() - animationStartTime)
+		{
+			// Transform Animation Frames
+			for (const S_Transform &transformFrame : props->transformProperties)
+			{ 
+				// Save original position
+				std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+				static Vector2 startingPoint = transform->GetPosition();
+				static Vector2 startingScale = transform->GetScale();
+
+				if (animationStartTime + transformFrame.time > FlatEngine::GetEllapsedGameTime())
+				{
+					transform->SetPosition(Vector2(startingPoint.x + transformFrame.xMove, startingPoint.y + transformFrame.yMove));
+					transform->SetScale(Vector2(startingScale.x + transformFrame.xScale, startingScale.y + transformFrame.yScale));
+				}
+			}
+			// Sprite Animation Frames
+			for (const S_Sprite& spriteFrame : props->spriteProperties)
+			{
+				std::shared_ptr<FlatEngine::Sprite> sprite = GetParent()->GetSpriteComponent();
+
+				if (animationStartTime + spriteFrame.time > FlatEngine::GetEllapsedGameTime())
+				{
+					if (spriteFrame.path != "")
+						sprite->SetTexture(spriteFrame.path);
+					
+					Vector2 spriteOffset = sprite->GetOffset();
+					sprite->SetOffset(Vector2(spriteOffset.x + spriteFrame.xOffset, spriteOffset.y + spriteFrame.yOffset));
+				}
+			}
+		}
+		else
+			this->Stop();
 	}
 }

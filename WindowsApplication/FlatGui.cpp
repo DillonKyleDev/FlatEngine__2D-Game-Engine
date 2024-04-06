@@ -38,13 +38,28 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 white = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
+	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
 	
 	// Icons
-	std::unique_ptr<Texture> expandIcon(new Texture());
-	std::unique_ptr<Texture> expandFlippedIcon(new Texture());
-	std::unique_ptr<Texture> trashIcon(new Texture());
-	std::unique_ptr<Texture> transformArrow(new Texture());
-	std::unique_ptr<Texture> cameraTexture(new Texture());
+	std::unique_ptr<Texture> expandIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> expandFlippedIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> trashIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> openFileIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> newFileIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> saveFileIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> transformArrow = std::make_unique<Texture>();
+	std::unique_ptr<Texture> cameraTexture = std::make_unique<Texture>();
+
+	ImVec2 uv0 = ImVec2(0.0f, 0.0f);
+	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
+	ImVec4 tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+	ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+	SDL_Texture* expandTexture = nullptr;
+	SDL_Texture* expandFlippedTexture = nullptr;
+	SDL_Texture* trashTexture = nullptr;
+	SDL_Texture* openFileTexture = nullptr;
+	SDL_Texture* newFileTexture = nullptr;
+	SDL_Texture* saveFileTexture = nullptr;
 
 
 	int maxSpriteLayers = 55;
@@ -136,6 +151,51 @@ namespace FlatEngine { namespace FlatGui {
 			FlatEngine::CreateNewScene();
 	}
 
+	void CreateIcons()
+	{
+		uv0 = ImVec2(0.0f, 0.0f);
+		uv1 = ImVec2(1.0f, 1.0f);
+		tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+		bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+		// Expander Icons
+		expandIcon->loadFromFile("assets/images/Expand.png");
+		expandTexture = expandIcon->getTexture();
+		expandFlippedIcon->loadFromFile("assets/images/ExpandFlipped.png");
+		expandFlippedTexture = expandFlippedIcon->getTexture();
+		float expandWidth = (float)expandIcon->getWidth();
+		float expandHeight = (float)expandIcon->getHeight();
+		// Trashcan Icon
+		trashIcon->loadFromFile("assets/images/Trashcan.png");
+		trashTexture = trashIcon->getTexture();
+		//float trashWidth = (float)trashIcon->getWidth();
+		//float trashHeight = (float)trashIcon->getHeight();
+
+		// Open File Icon
+		openFileIcon->loadFromFile("assets/images/OpenFileIcon.png");
+		openFileTexture = openFileIcon->getTexture();
+		//float openFileWidth = (float)openFileIcon->getWidth();
+		//float openFileHeight = (float)openFileIcon->getHeight();
+		//ImVec2 openFileSize = ImVec2(12, 12);
+		//ImVec4 openFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+		//std::string openFileID = "##openFileIconAnimator";
+		// New File Icon
+		newFileIcon->loadFromFile("assets/images/NewFileIcon.png");
+		newFileTexture = newFileIcon->getTexture();
+		//float newFileWidth = (float)newFileIcon->getWidth();
+		//float newFileHeight = (float)newFileIcon->getHeight();
+		//ImVec2 newFileSize = ImVec2(12, 12);
+		//ImVec4 newFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+		//std::string newFileID = "##newFileIconAnimator";
+		// Save File Icon
+		saveFileIcon->loadFromFile("assets/images/SaveIcon.png");
+		saveFileTexture = saveFileIcon->getTexture();
+		//float saveFileWidth = (float)saveFileIcon->getWidth();
+		//float saveFileHeight = (float)saveFileIcon->getHeight();
+		//ImVec2 saveFileSize = ImVec2(12, 12);
+		//ImVec4 saveFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+		//std::string saveFileID = "##saveFileIconAnimator";
+	}
+
 	void Render(bool& quit)
 	{
 		SDL_Event event;
@@ -185,10 +245,10 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New"))
+				if (ImGui::MenuItem("New Scene"))
 					sceneManager->CreateNewScene();
 
-				if (ImGui::MenuItem("Open", "Ctrl+O"))
+				if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 				{
 					// Load the scene
 					std::string scenePath = OpenLoadFileExplorer();
@@ -196,10 +256,10 @@ namespace FlatEngine { namespace FlatGui {
 				}
 
 					// Save the scene
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 					sceneManager->SaveCurrentScene();
 
-				if (ImGui::MenuItem("Save As.."))
+				if (ImGui::MenuItem("Save Scene As.."))
 				{
 					// Save the scene
 					std::string scenePath = OpenSaveFileExplorer();
@@ -715,20 +775,14 @@ namespace FlatEngine { namespace FlatGui {
 
 			if (components.size() > 0)
 			{
-				// Get Expander and Trashcan icons for components
-				// Expanders
-				expandIcon->loadFromFile("assets/images/Expand.png");
-				SDL_Texture* expandTexture = expandIcon->getTexture();
-				expandFlippedIcon->loadFromFile("assets/images/ExpandFlipped.png");
-				SDL_Texture* expandFlippedTexture = expandFlippedIcon->getTexture();
-				float expandWidth = (float)expandIcon->getWidth();
-				float expandHeight = (float)expandIcon->getHeight();
-				// Trashcan
-				trashIcon->loadFromFile("assets/images/Trashcan.png");
-				SDL_Texture* trashTexture = trashIcon->getTexture();
-				float trashWidth = (float)trashIcon->getWidth();
-				float trashHeight = (float)trashIcon->getHeight();
+				// Get Expander, Trashcan, and open file icons for components
+
 				long queuedForDelete = -1;
+				// Open File Icon
+				openFileIcon->loadFromFile("assets/images/OpenFileIcon.png");
+				SDL_Texture* openFileTexture = openFileIcon->getTexture();
+				float openFileWidth = (float)openFileIcon->getWidth();
+				float openFileHeight = (float)openFileIcon->getHeight();
 
 				// Flags for child padding and dimensions
 				ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
@@ -753,27 +807,20 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::Text(componentType.c_str());
 
 						// Same Line
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - (expandWidth + childPadding + 20), 5); // Add the expander icon on the same line
+						ImGui::SameLine(ImGui::GetContentRegionMax().x - (16 + childPadding + 20), 5); // Add the expander icon on the same line
 
 						// Pushes	
 						ImGui::PushItemWidth(-1.0f);
 						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
 
-						// Expand Icon Button
-						ImVec2 expandSize = ImVec2(expandWidth, expandHeight);
-						ImVec2 uv0 = ImVec2(0.0f, 0.0f);
-						ImVec2 uv1 = ImVec2(1.0f, 1.0f);
-						ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
-						ImVec4 expand_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 						std::string expandID = "##expandIcon-" + i;
-						// Trashcan Icon Button
-						ImVec2 trashSize = ImVec2(trashWidth, trashHeight);
-						ImVec4 trash_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 						std::string trashcanID = "##trashIcon-" + i;
+						std::string openFileID = "##openFileIcon-" + i;
+
 
 						// Trash Can Icon for removing Component from Focused Object
-						if (ImGui::ImageButton(trashcanID.c_str(), trashTexture, trashSize, uv0, uv1, bg_col, trash_tint_col))
+						if (ImGui::ImageButton(trashcanID.c_str(), trashTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 							queuedForDelete = components[i]->GetID();
 								
 						// Set Mouse Cursor
@@ -785,7 +832,7 @@ namespace FlatEngine { namespace FlatGui {
 						// Draw Expand Icon for expanding/collapsing current component information
 						if (_isCollapsed)
 						{
-							if (ImGui::ImageButton(expandID.c_str(), expandTexture, expandSize, uv0, uv1, bg_col, expand_tint_col))
+							if (ImGui::ImageButton(expandID.c_str(), expandTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 								components[i]->SetCollapsed(!_isCollapsed);
 							// Set Mouse Cursor
 							if (ImGui::IsItemHovered())
@@ -793,7 +840,7 @@ namespace FlatEngine { namespace FlatGui {
 						}
 						else
 						{
-							if (ImGui::ImageButton(expandID.c_str(), expandFlippedTexture, expandSize, uv0, uv1, bg_col, expand_tint_col))
+							if (ImGui::ImageButton(expandID.c_str(), expandFlippedTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 								components[i]->SetCollapsed(!_isCollapsed);
 							// Set Mouse Cursor
 							if (ImGui::IsItemHovered())
@@ -907,6 +954,19 @@ namespace FlatEngine { namespace FlatGui {
 
 								// Render Sprite Path
 								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+								
+								if (ImGui::ImageButton(openFileID.c_str(), openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+								{
+									std::string assetPath = OpenLoadFileExplorer();
+									strcpy_s(newPath, assetPath.c_str());
+									sprite->SetTexture(newPath);
+								}
+
+								// Set Mouse Cursor
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
 								ImGui::SameLine(0, 5);
 								if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
 									sprite->SetTexture(newPath);
@@ -1146,6 +1206,31 @@ namespace FlatEngine { namespace FlatGui {
 							else if (componentType == "Animation")
 							{
 								std::shared_ptr<FlatEngine::Animation> animation = std::static_pointer_cast<FlatEngine::Animation>(components[i]);
+
+								std::string path = animation->GetAnimationPath();
+								char newPath[1024];
+								strcpy_s(newPath, path.c_str());
+
+								// Sprite Animation Path String
+								std::string pathString = "Path: ";
+								std::string buttonID = openFileID + "animation";
+								// Render Animation Path
+								ImGui::Text(pathString.c_str());
+								ImGui::SameLine(0, 5);
+
+								if (ImGui::ImageButton(buttonID.c_str(), openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+								{
+									std::string assetPath = OpenLoadFileExplorer();
+									strcpy_s(newPath, assetPath.c_str());
+									animation->SetAnimationPath(newPath);
+								}
+								// Set Mouse Cursor
+								if (ImGui::IsItemHovered())
+									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+								ImGui::SameLine(0, 5);
+								if (ImGui::InputText("##animationPath", newPath, IM_ARRAYSIZE(newPath), flags))
+									animation->SetAnimationPath(newPath);
+
 
 								// Retrieve Animation values
 								float ticksPerFrame = animation->GetTicksPerFrame();
@@ -1783,28 +1868,10 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimator()
 	{
-		// Create S_AnimationProperties struct to store the properties of the json file in
-		std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-		animationProperties->animationName = "New Animation";
-
-		Animation::S_Transform transformProperties;
-		transformProperties.time = 5;
-		transformProperties.xMove = 0;
-		transformProperties.yMove = 0;
-		transformProperties.xScale = 0;
-		transformProperties.yScale = 0;
-
-		Animation::S_Sprite spriteProperties;
-		spriteProperties.time = 5;
-		spriteProperties.path = "";
-		spriteProperties.xOffset = 0;
-		spriteProperties.yOffset = 0;
-
-
-
 		ImGui::Begin("Animator");
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+
 
 		// Animated Properties BeginChild()
 		//
@@ -1832,19 +1899,24 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 		ImGui::BeginChild("Select Animation", ImVec2(0, 0), child_flags);
 		ImGui::PopStyleColor();
-		ImGui::SameLine(0, 5);
 
-		if (ImGui::Button("Create New Animation"))
+		ImGui::Text("Manage Animation:");
+		ImGui::SameLine(0, 15);
+		if (ImGui::ImageButton("##NewAnimationFile", newFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
 			std::string animationFilePath = OpenSaveFileExplorer();
 			if (animationFilePath != "")
 			{
+				// Create S_AnimationProperties struct to store the properties of the json file in
+				std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+				animationProperties->animationName = "New Animation";
+
 				CreateNewAnimationFile(animationFilePath);
 				SaveAnimationFile(animationProperties, animationFilePath);
 			}
 		}
-
-		if (ImGui::Button("Open Animation"))
+		ImGui::SameLine(0, 5);
+		if (ImGui::ImageButton("##OpenAnimationFile", openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
 			std::string animationFilePath = OpenLoadFileExplorer();
 			if (animationFilePath != "")
@@ -1852,8 +1924,8 @@ namespace FlatEngine { namespace FlatGui {
 				SetFocusedAnimation(LoadAnimationFile(animationFilePath));
 			}
 		}
-
-		if (ImGui::Button("Save Animation"))
+		ImGui::SameLine(0, 5);
+		if (ImGui::ImageButton("#SaveAnimationFile", saveFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
 			std::string animationFilePath = OpenSaveFileExplorer();
 			if (animationFilePath != "")
@@ -1862,8 +1934,9 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 
-		//ImGui::SameLine(0, 5);
+
 		ImGui::EndChild();
+
 
 		if (GetFocusedAnimation()->animationName != "")
 		{
@@ -1882,9 +1955,65 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				// Add property to animation object
 				if (properties[current_property] == "Transform")
+				{
+					Animation::S_Transform transformProperties;
 					GetFocusedAnimation()->transformProperties.push_back(transformProperties);
+				}
 				else if (properties[current_property] == "Sprite")
+				{
+					Animation::S_Sprite spriteProperties;
 					GetFocusedAnimation()->spriteProperties.push_back(spriteProperties);
+				}
+				else if (properties[current_property] == "Camera")
+				{
+					Animation::S_Camera cameraProperties;
+					GetFocusedAnimation()->cameraProperties.push_back(cameraProperties);
+				}
+				else if (properties[current_property] == "Script")
+				{
+					Animation::S_Script scriptProperties;
+					GetFocusedAnimation()->scriptProperties.push_back(scriptProperties);
+				}
+				else if (properties[current_property] == "Button")
+				{
+					Animation::S_Button buttonProperties;
+					GetFocusedAnimation()->buttonProperties.push_back(buttonProperties);
+				}
+				else if (properties[current_property] == "Canvas")
+				{
+					Animation::S_Canvas canvasProperties;
+					GetFocusedAnimation()->canvasProperties.push_back(canvasProperties);
+				}
+				else if (properties[current_property] == "Audio")
+				{
+					Animation::S_Audio audioProperties;
+					GetFocusedAnimation()->audioProperties.push_back(audioProperties);
+				}
+				else if (properties[current_property] == "Text")
+				{
+					Animation::S_Text textProperties;
+					GetFocusedAnimation()->textProperties.push_back(textProperties);
+				}
+				else if (properties[current_property] == "BoxCollider")
+				{
+					Animation::S_BoxCollider boxColliderProperties;
+					GetFocusedAnimation()->boxColliderProperties.push_back(boxColliderProperties);
+				}
+				else if (properties[current_property] == "CircleCollider")
+				{
+					Animation::S_CircleCollider circleColliderProperties;
+					GetFocusedAnimation()->circleColliderProperties.push_back(circleColliderProperties);
+				}
+				else if (properties[current_property] == "RigidBody")
+				{
+					Animation::S_RigidBody rigidBodyProperties;
+					GetFocusedAnimation()->rigidBodyProperties.push_back(rigidBodyProperties);
+				}
+				else if (properties[current_property] == "CharacterController")
+				{
+					Animation::S_CharacterController characterControllerProperties;
+					GetFocusedAnimation()->characterControllerProperties.push_back(characterControllerProperties);
+				}					
 			}
 			ImGui::EndChild();
 
@@ -1909,7 +2038,7 @@ namespace FlatEngine { namespace FlatGui {
 				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 			//// TreeNode Opener - No TreePop because it's a leaf
 			if (GetFocusedAnimation()->transformProperties.size() > 0)
-				ImGui::TreeNodeEx((void*)(intptr_t)0, node_flags, "Transform");
+				ImGui::TreeNodeEx((void*)(intptr_t)"TransformNode", node_flags, "Transform");
 			if (ImGui::IsItemClicked())
 				node_clicked = "Transform";
 
@@ -1921,37 +2050,156 @@ namespace FlatEngine { namespace FlatGui {
 				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 			//// TreeNode Opener - No TreePop because it's a leaf
 			if (GetFocusedAnimation()->spriteProperties.size() > 0)
-				ImGui::TreeNodeEx((void*)(intptr_t)0, node_flags, "Sprite");
-			if (ImGui::IsItemClicked())
-				node_clicked = "Sprite";
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"SpriteNode", node_flags, "Sprite");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Sprite";
+			}
+
+
+			///// Camera Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Camera")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->cameraProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"CameraNode", node_flags, "Camera");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Camera";
+			}
+
+			///// Script Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Script")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->scriptProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"ScriptNode", node_flags, "Script");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Script";
+			}
+
+			///// Button Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Button")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->buttonProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"ButtonNode", node_flags, "Button");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Button";
+			}
+
+			///// Canvas Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Canvas")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->canvasProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"CanvasNode", node_flags, "Canvas");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Canvas";
+			}
+
+			///// Audio Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Audio")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->audioProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"AudioNode", node_flags, "Audio");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Audio";
+			}
+
+			///// Text Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "Text")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->textProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"TextNode", node_flags, "Text");
+				if (ImGui::IsItemClicked())
+					node_clicked = "Text";
+			}
+
+			///// BoxCollider Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "BoxCollider")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->boxColliderProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"BoxColliderNode", node_flags, "BoxCollider");
+				if (ImGui::IsItemClicked())
+					node_clicked = "BoxCollider";
+			}
+
+			///// CircleCollider Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "CircleCollider")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->circleColliderProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"CircleColliderNode", node_flags, "CircleCollider");
+				if (ImGui::IsItemClicked())
+					node_clicked = "CircleCollider";
+			}
+
+			///// RigidBody Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "RigidBody")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->rigidBodyProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"RigidBodyNode", node_flags, "RigidBody");
+				if (ImGui::IsItemClicked())
+					node_clicked = "RigidBody";
+			}
+
+			///// CharacterController Node
+			//// If this node is selected, use the nodeFlag_selected to highlight it
+			if (node_clicked == "CharacterController")
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			else
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			//// TreeNode Opener - No TreePop because it's a leaf
+			if (GetFocusedAnimation()->characterControllerProperties.size() > 0)
+			{
+				ImGui::TreeNodeEx((void*)(intptr_t)"CharacterControllerNode", node_flags, "CharacterController");
+				if (ImGui::IsItemClicked())
+					node_clicked = "CharacterController";
+			}
 
 			ImGui::PopStyleVar();
 			ImGui::EndListBox();
 		}
-		
-		ImGui::Separator();
-		////////////////
-
-
-
-
-		////////////////
-		// Give background color and padding
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
-		ImGui::BeginChild("Properties", ImVec2(0, 0), child_flags);
-		ImGui::PopStyleColor();
-
-		// Push Item Width
-		ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
-		ImGui::Text("xPos:");
-		ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
-		ImGui::Text("yPos:");
-		ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
-		ImGui::Text("Rotation:");
-		ImGui::PopItemWidth();
-
-		ImGui::EndChild(); // Properties
-		////////////////
 
 
 		// Animator Properties EndChild()
@@ -2220,7 +2468,7 @@ namespace FlatEngine { namespace FlatGui {
 			
 			// If animation component is playing, play the animation
 			if (animationCasted != nullptr && animationCasted->IsPlaying())
-				animationCasted->LerpToCenter();
+				animationCasted->PlayAnimation();
 		}
 
 
@@ -2648,9 +2896,13 @@ namespace FlatEngine { namespace FlatGui {
 		// Array that will hold our gameObject json objects
 		json animationProperties;
 
-		// Iterate through each of the maps of properties in the propertiesObject
-		//std::vector<Animation::S_Transform>::iterator transformIterator = propertiesObject.transformProperties.begin();
-		//std::map<Animation::Properties, Animation::S_Sprite>::iterator transformIterator = propertiesObject.spriteProperties.begin();
+		// Create Animation Property Json data object
+		json animationName = json::object({
+			{ "Name", propertiesObject->animationName },
+			{ "Length", propertiesObject->animationLength }
+		});
+		animationProperties.push_back(animationName);
+
 
 		for (Animation::S_Transform transformProp : propertiesObject->transformProperties)
 		{
@@ -2673,18 +2925,40 @@ namespace FlatEngine { namespace FlatGui {
 			transformPropertiesArray.push_back(json::parse(data));
 
 			// Create Animation Property Json data object
-			json animationName = json::object({
-				{ "Name", propertiesObject->animationName }
-			});
-
-			// Create Animation Property Json data object
 			json animationProperty = json::object({
 				{ "Property", "Transform" },
 				{ "Frames", transformPropertiesArray }
 			});
 
 			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationName);
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Sprite spriteProp : propertiesObject->spriteProperties)
+		{
+			// Declare components array json object for components
+			json spritePropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", spriteProp.time },
+				{ "path", spriteProp.path },
+				{ "xOffset", spriteProp.xOffset },
+				{ "yOffset", spriteProp.yOffset }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			spritePropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Sprite" },
+				{ "Frames", spritePropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
 		//else
@@ -2742,9 +3016,9 @@ namespace FlatEngine { namespace FlatGui {
 
 			if (fileContentJson["Animation Properties"][0] != "NULL")
 			{
-				//Getting data from the json 
-				//auto properties = fileContentJson["Animation Properties"];
-				//std::string name = properties[0]["name"];
+				// Getting data from the json 
+				// auto properties = fileContentJson["Animation Properties"];
+				// std::string name = properties[0]["name"];
 
 				// Set default values
 				animationProperties->animationName = "New Animation";
@@ -2758,6 +3032,9 @@ namespace FlatEngine { namespace FlatGui {
 					// Check name key exists
 					if (currentObjectJson.contains("Name"))
 						animationProperties->animationName = currentObjectJson["Name"];
+					// Check length key exists
+					if (currentObjectJson.contains("Length"))
+						animationProperties->animationLength = currentObjectJson["Length"];
 					// Check name Property Name key exists
 					if (currentObjectJson.contains("Property"))
 					{

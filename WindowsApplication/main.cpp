@@ -109,6 +109,7 @@ int main(int argc, char* args[])
 	else
 	{
 		FlatEngine::FlatGui::SetupImGui();
+		FlatEngine::FlatGui::CreateIcons();
 
 		//Load media
 		if (!loadMedia())

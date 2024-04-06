@@ -1,5 +1,5 @@
 #include "Component.h"
-
+#include "FlatEngine.h"
 
 namespace FlatEngine
 {
@@ -26,6 +26,11 @@ namespace FlatEngine
 	long Component::GetParentID()
 	{
 		return this->parentID;
+	}
+
+	std::shared_ptr<GameObject> Component::GetParent()
+	{
+		return GetObjectById(parentID);
 	}
 
 

@@ -10,6 +10,8 @@ using namespace nlohmann::literals;
 
 namespace FlatEngine
 {
+	class GameObject;
+
 	class Component
 	{
 	public:
@@ -38,6 +40,7 @@ namespace FlatEngine
 		long GetID();
 		void SetParentID(long ID);
 		long GetParentID();
+		std::shared_ptr<GameObject> GetParent();
 		bool IsCollapsed();
 		void SetCollapsed(bool collapsed);
 

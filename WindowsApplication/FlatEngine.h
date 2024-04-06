@@ -5,6 +5,7 @@
 #include <vector>
 #include "SDL.h"
 #include <SDL_syswm.h>
+#include <SDL_image.h>
 #include <imgui.h>
 #include "Window.h"
 #include "GameObject.h"
@@ -119,7 +120,6 @@ namespace FlatEngine
 	extern float GetDeltaTime();
 
 	// Helper Functions
-	//
 	extern bool AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern bool AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
@@ -145,8 +145,22 @@ namespace FlatEngine
 		extern std::unique_ptr<Texture> expandIcon;
 		extern std::unique_ptr<Texture> expandFlippedIcon;
 		extern std::unique_ptr<Texture> trashIcon;
+		extern std::unique_ptr<Texture> openFileIcon;
+		extern std::unique_ptr<Texture> newFileIcon;
+		extern std::unique_ptr<Texture> saveFileIcon;
 		extern std::unique_ptr<Texture> transformArrow;
 		extern std::unique_ptr<Texture> cameraTexture;
+		extern SDL_Texture* expandTexture;
+		extern SDL_Texture* expandFlippedTexture;
+		extern SDL_Texture* trashTexture;
+		extern SDL_Texture* openFileTexture;
+		extern SDL_Texture* newFileTexture;
+		extern SDL_Texture* saveFileTexture;
+
+		extern ImVec2 uv0;
+		extern ImVec2 uv1;
+		extern ImVec4 tint_col;
+		extern ImVec4 bg_col;
 
 		// Scene view
 		extern float SCENE_VIEWPORT_WIDTH;
@@ -187,6 +201,7 @@ namespace FlatEngine
 
 		// Gui Rendering
 		extern void SetupImGui();
+		extern void CreateIcons();
 		extern void Render(bool& quit);
 		extern void MainMenuBar();
 		extern std::string OpenSaveFileExplorer();

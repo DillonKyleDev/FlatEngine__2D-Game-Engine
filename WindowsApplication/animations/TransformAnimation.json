@@ -1,19 +1,67 @@
 {
     "Animation Properties": [
         {
+            "Length": 10000.0,
             "Name": "TransformAnimation"
         },
         {
             "Frames": [
                 {
-                    "time": 5.0,
+                    "time": 1000.0,
                     "xMove": 3.0,
                     "xScale": 0.0,
-                    "yMove": 8.0,
+                    "yMove": 2.0,
+                    "yScale": 0.0
+                },
+                {
+                    "time": 1000.0,
+                    "xMove": 3.0,
+                    "xScale": 0.0,
+                    "yMove": 2.0,
+                    "yScale": 0.0
+                },
+                {
+                    "time": 1500.0,
+                    "xMove": 3.0,
+                    "xScale": 0.0,
+                    "yMove": 30.0,
+                    "yScale": 0.0
+                },
+                {
+                    "time": 2000.0,
+                    "xMove": 3.0,
+                    "xScale": 0.0,
+                    "yMove": 3.0,
+                    "yScale": 0.0
+                },
+                {
+                    "time": 2500.0,
+                    "xMove": 3.0,
+                    "xScale": 2.0,
+                    "yMove": 3.0,
+                    "yScale": 0.0
+                },
+                {
+                    "time": 3000.0,
+                    "xMove": 3.0,
+                    "xScale": 3.0,
+                    "yMove": 3.0,
                     "yScale": 0.0
                 }
+
             ],
             "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "path": "",
+                    "time": 5.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
         }
     ]
 }
