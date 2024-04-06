@@ -266,15 +266,15 @@ namespace FlatEngine { namespace FlatGui {
 		
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		//if (FAILED(f_SysHr))
-			//return false;
+		if (FAILED(f_SysHr))
+		return "";
 
 		// CREATE FileSaveDialog OBJECT
 		 IFileSaveDialog* f_FileSystem = NULL;
 		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
 		if (FAILED(f_SysHr)) {
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
@@ -282,7 +282,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
@@ -291,7 +291,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  STORE AND CONVERT THE FILE NAME
@@ -301,7 +301,7 @@ namespace FlatEngine { namespace FlatGui {
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  FORMAT AND STORE THE FILE PATH
@@ -332,15 +332,15 @@ namespace FlatEngine { namespace FlatGui {
 
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		//if (FAILED(f_SysHr))
-			//return false;
+		if (FAILED(f_SysHr))
+		return "";
 
 		// CREATE FileOpenDialog OBJECT
 		IFileOpenDialog* f_FileSystem;
 		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
 		if (FAILED(f_SysHr)) {
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
@@ -348,7 +348,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
@@ -357,7 +357,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FAILED(f_SysHr)) {
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  STORE AND CONVERT THE FILE NAME
@@ -367,7 +367,7 @@ namespace FlatEngine { namespace FlatGui {
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
-			//return false;
+			return "";
 		}
 
 		//  FORMAT AND STORE THE FILE PATH
@@ -1792,6 +1792,8 @@ namespace FlatEngine { namespace FlatGui {
 			_hasBeenPushed = true;
 		}
 
+		Animation::S_AnimationProperties loadedAnimation;
+
 		// Create S_AnimationProperties struct to store the properties of the json file in
 		Animation::S_AnimationProperties animationProperties;
 		Animation::S_Transform transformProperties;
@@ -1802,7 +1804,6 @@ namespace FlatEngine { namespace FlatGui {
 		transformProperties.yScale = 0;
 		animationProperties.transformProperties.push_back(transformProperties);
 
-		
 
 		ImGui::Begin("Animator");
 
@@ -1833,16 +1834,31 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::Separator();
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 		ImGui::BeginChild("Select Animation", ImVec2(0, 0), child_flags);
+		ImGui::PopStyleColor();
 		ImGui::SameLine(0, 5);
 
 		if (ImGui::Button("Create New Animation"))
 		{
 			std::string animationFilePath = OpenSaveFileExplorer();
-			CreateNewAnimationFile(animationFilePath);
-			SaveAnimationFile(animationProperties, animationFilePath);
+			if (animationFilePath != "")
+			{
+				CreateNewAnimationFile(animationFilePath);
+				SaveAnimationFile(animationProperties, animationFilePath);
+			}
 		}
 
-		ImGui::PopStyleColor();
+		if (ImGui::Button("Open Animation"))
+		{
+			std::string animationFilePath = OpenLoadFileExplorer();
+			if (animationFilePath != "")
+			{
+				CreateNewAnimationFile(animationFilePath);
+				loadedAnimation = LoadAnimationFile(animationFilePath);
+				LogString(loadedAnimation.animationPath);
+				SetFocusedAnimation(loadedAnimation.animationPath);
+			}
+		}
+
 		//ImGui::Text("Select Animation");
 		const char* animations = animationPaths.front().c_str();
 		static std::string current_animation = animationPaths.front();
@@ -1924,7 +1940,7 @@ namespace FlatEngine { namespace FlatGui {
 			//	ImGui::EndDragDropSource();
 			//}
 
-			ImGui::PopStyleVar();
+			//ImGui::PopStyleVar();
 
 			ImGui::EndListBox();
 		
@@ -2696,6 +2712,86 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Close the file
 		file_obj.close();
+	}
+
+	Animation::S_AnimationProperties LoadAnimationFile(std::string path)
+	{
+		Animation::S_AnimationProperties animationProperties;
+		Animation::S_Transform transformProperties;
+
+		// Save the path to the animationProperties struct
+		animationProperties.animationPath = path;
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Open file in in mode
+		file_obj.open(path, std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		if (file_obj.good())
+		{
+			// Go from string to json object
+			json fileContentJson = json::parse(fileContent);
+
+			if (fileContentJson["Animation Properties"][0] != "NULL")
+			{
+				//Getting data from the json 
+				//auto properties = fileContentJson["Animation Properties"];
+				//std::string name = properties[0]["name"];
+
+				// Loop through the saved Properties in the JSON file
+				for (int i = 0; i < fileContentJson["Animation Properties"].size(); i++)
+				{
+					// Set default values
+					std::string propertyName = "Property Name";
+
+
+					// Get data from the loaded object
+					json currentObjectJson = fileContentJson["Animation Properties"][i];
+
+					// Check name key exists
+					if (currentObjectJson.contains("Property Name"))
+						propertyName = currentObjectJson["Property Name"];
+					else
+						FlatEngine::LogInt(i, "FlatGui::LoadAnimationFile() - Saved animation json does not contain a value for 'Property Name' in object: ");
+					// Check ID key exists
+					if (currentObjectJson.contains("Frames"))
+						for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+						{
+							Animation::S_Transform transformFrames = {};
+							transformFrames.time = currentObjectJson["Frames"][f]["time"];
+							transformFrames.xMove = currentObjectJson["Frames"][f]["xMove"];
+							transformFrames.yMove = currentObjectJson["Frames"][f]["yMove"];
+							transformFrames.xScale = currentObjectJson["Frames"][f]["xScale"];
+							transformFrames.yScale = currentObjectJson["Frames"][f]["yScale"];
+
+							// Save the data to the animationProperties struct
+							animationProperties.transformProperties.push_back(transformFrames);
+						}
+					else
+						FlatEngine::LogInt(i, "FlatGui::LoadAnimationFile() - Saved animation json does not contain a value for 'Frames' in object : ");
+				}
+			}
+		}
+
+		return animationProperties;
 	}
 
 

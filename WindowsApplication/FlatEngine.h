@@ -158,7 +158,8 @@ namespace FlatEngine
 
 		// Animation Manager
 		extern void CreateNewAnimationFile(std::string path);
-		extern void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path2);
+		extern void SaveAnimationFile(Animation::S_AnimationProperties propertiesObject, std::string path);
+		extern Animation::S_AnimationProperties LoadAnimationFile(std::string path);
 
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
