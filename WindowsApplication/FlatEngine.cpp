@@ -255,7 +255,10 @@ namespace FlatEngine
 
 	void FlatEngine::PauseGameLoop()
 	{
-		gameLoop->Pause();
+		if (gameLoop->IsPaused())
+			gameLoop->Unpause();
+		else
+			gameLoop->Pause();
 	}
 
 	void FlatEngine::StopGameLoop()

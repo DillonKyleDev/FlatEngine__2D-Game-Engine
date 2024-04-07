@@ -142,6 +142,9 @@ namespace FlatEngine
 		extern float spriteScaleMultiplier;
 
 		// Icons
+		extern std::unique_ptr<Texture> playIcon;
+		extern std::unique_ptr<Texture> pauseIcon;
+		extern std::unique_ptr<Texture> stopIcon;
 		extern std::unique_ptr<Texture> expandIcon;
 		extern std::unique_ptr<Texture> expandFlippedIcon;
 		extern std::unique_ptr<Texture> trashIcon;
@@ -150,6 +153,9 @@ namespace FlatEngine
 		extern std::unique_ptr<Texture> saveFileIcon;
 		extern std::unique_ptr<Texture> transformArrow;
 		extern std::unique_ptr<Texture> cameraTexture;
+		extern SDL_Texture* playTexture;
+		extern SDL_Texture* pauseTexture;
+		extern SDL_Texture* stopTexture;		
 		extern SDL_Texture* expandTexture;
 		extern SDL_Texture* expandFlippedTexture;
 		extern SDL_Texture* trashTexture;

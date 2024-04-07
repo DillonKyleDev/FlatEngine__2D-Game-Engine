@@ -45,6 +45,9 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
 	
 	// Icons
+	std::unique_ptr<Texture> playIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> pauseIcon = std::make_unique<Texture>();
+	std::unique_ptr<Texture> stopIcon = std::make_unique<Texture>();
 	std::unique_ptr<Texture> expandIcon = std::make_unique<Texture>();
 	std::unique_ptr<Texture> expandFlippedIcon = std::make_unique<Texture>();
 	std::unique_ptr<Texture> trashIcon = std::make_unique<Texture>();
@@ -58,6 +61,10 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
 	ImVec4 tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 	ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+	
+	SDL_Texture* playTexture = nullptr;
+	SDL_Texture* pauseTexture = nullptr;
+	SDL_Texture* stopTexture = nullptr;
 	SDL_Texture* expandTexture = nullptr;
 	SDL_Texture* expandFlippedTexture = nullptr;
 	SDL_Texture* trashTexture = nullptr;
@@ -161,21 +168,32 @@ namespace FlatEngine { namespace FlatGui {
 		uv1 = ImVec2(1.0f, 1.0f);
 		tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 		bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+
+		// Play Icon
+		playIcon->loadFromFile("assets/images/icons/PlayIcon.png");
+		playTexture = playIcon->getTexture();
+		// Pause Icon
+		pauseIcon->loadFromFile("assets/images/icons/PauseIcon.png");
+		pauseTexture = pauseIcon->getTexture();
+		// Stop Icon
+		stopIcon->loadFromFile("assets/images/icons/StopIcon.png");
+		stopTexture = stopIcon->getTexture();
+
 		// Expander Icons
-		expandIcon->loadFromFile("assets/images/Expand.png");
+		expandIcon->loadFromFile("assets/images/icons/Expand.png");
 		expandTexture = expandIcon->getTexture();
-		expandFlippedIcon->loadFromFile("assets/images/ExpandFlipped.png");
+		expandFlippedIcon->loadFromFile("assets/images/icons/ExpandFlipped.png");
 		expandFlippedTexture = expandFlippedIcon->getTexture();
 		float expandWidth = (float)expandIcon->getWidth();
 		float expandHeight = (float)expandIcon->getHeight();
 		// Trashcan Icon
-		trashIcon->loadFromFile("assets/images/Trashcan.png");
+		trashIcon->loadFromFile("assets/images/icons/Trashcan.png");
 		trashTexture = trashIcon->getTexture();
 		//float trashWidth = (float)trashIcon->getWidth();
 		//float trashHeight = (float)trashIcon->getHeight();
 
 		// Open File Icon
-		openFileIcon->loadFromFile("assets/images/OpenFileIcon.png");
+		openFileIcon->loadFromFile("assets/images/icons/OpenFileIcon.png");
 		openFileTexture = openFileIcon->getTexture();
 		//float openFileWidth = (float)openFileIcon->getWidth();
 		//float openFileHeight = (float)openFileIcon->getHeight();
@@ -183,7 +201,7 @@ namespace FlatEngine { namespace FlatGui {
 		//ImVec4 openFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 		//std::string openFileID = "##openFileIconAnimator";
 		// New File Icon
-		newFileIcon->loadFromFile("assets/images/NewFileIcon.png");
+		newFileIcon->loadFromFile("assets/images/icons/NewFileIcon.png");
 		newFileTexture = newFileIcon->getTexture();
 		//float newFileWidth = (float)newFileIcon->getWidth();
 		//float newFileHeight = (float)newFileIcon->getHeight();
@@ -191,7 +209,7 @@ namespace FlatEngine { namespace FlatGui {
 		//ImVec4 newFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 		//std::string newFileID = "##newFileIconAnimator";
 		// Save File Icon
-		saveFileIcon->loadFromFile("assets/images/SaveIcon.png");
+		saveFileIcon->loadFromFile("assets/images/icons/SaveIcon.png");
 		saveFileTexture = saveFileIcon->getTexture();
 		//float saveFileWidth = (float)saveFileIcon->getWidth();
 		//float saveFileHeight = (float)saveFileIcon->getHeight();
@@ -477,20 +495,62 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		ImGui::Begin("Gameloop Control Panel");
 
-		if (ImGui::Button("Start"))
+		std::string playID = "##PlayGameloopIcon";
+		std::string pauseID = "##PauseGameloopIcon";
+		std::string stopID = "##StopGameloopIcon";
+		ImVec4 gameloopControl_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
+		ImVec4 gameloopControl_bg_col = ImVec4(.50f, .50f, .5f, 1.0f);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_DisabledAlpha, 0.4f);
+
+		if (gameLoop->IsStarted() && !gameLoop->IsPaused())
 		{
-			FlatEngine::StartGameLoop();
+			ImGui::BeginDisabled();
+			ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			ImGui::EndDisabled();
 		}
+		else
+		{
+			if (ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
+				StartGameLoop();
+			if (ImGui::IsItemHovered())
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		}
+
 		ImGui::SameLine(0, 5);
-		if (ImGui::Button("Pause"))
+
+		if (!gameLoop->IsStarted())
 		{
-			FlatEngine::PauseGameLoop();
+			ImGui::BeginDisabled();
+			ImGui::ImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			ImGui::EndDisabled();
 		}
+		else
+		{
+			if (ImGui::ImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
+				PauseGameLoop();
+			if (ImGui::IsItemHovered())
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		}
+
+
 		ImGui::SameLine(0, 5);
-		if (ImGui::Button("Stop"))
+
+		if (!gameLoop->IsStarted())
 		{
-			FlatEngine::StopGameLoop();
+			ImGui::BeginDisabled();
+			ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			ImGui::EndDisabled();
 		}
+		else
+		{
+			if (ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
+				StopGameLoop();
+			if (ImGui::IsItemHovered())
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		}
+
+		ImGui::PopStyleVar();
 
 		if (FlatEngine::GameLoopStarted())
 		{
