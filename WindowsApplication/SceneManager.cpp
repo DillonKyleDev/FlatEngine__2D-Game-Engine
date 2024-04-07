@@ -632,7 +632,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = false;
-							float ticksPerFrame = 30;
+							std::string path = "";
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -645,16 +645,16 @@ namespace FlatEngine
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
 							// Ticks Per Frame
-							if (currentObjectJson["components"][j].contains("ticksPerFrame"))
-								ticksPerFrame = currentObjectJson["components"][j]["ticksPerFrame"];
+							if (currentObjectJson["components"][j].contains("path"))
+								path = currentObjectJson["components"][j]["path"];
 							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'ticksPerFrame' in object: ");
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'path' in object: ");
 
 							// Assign values to the new Canvas
 							newAnimation->SetID(id);
 							newAnimation->SetCollapsed(_isCollapsed);
 							newAnimation->Stop();
-							newAnimation->SetTicksPerFrame(ticksPerFrame);
+							newAnimation->SetAnimationPath(path);
 						}
 						else if (type == "Audio")
 						{

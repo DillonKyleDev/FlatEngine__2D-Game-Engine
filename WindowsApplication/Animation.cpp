@@ -61,7 +61,7 @@ namespace FlatEngine
 			{ "type", "Animation" },
 			{ "id", this->GetID() },
 			{ "_isCollapsed", this->IsCollapsed() },
-			{ "ticksPerFrame", this->ticksPerFrame }
+			{ "path", this->animationPath }
 		};
 
 		std::string data = jsonData.dump();
@@ -144,11 +144,27 @@ namespace FlatEngine
 				std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 				static Vector2 startingPoint = transform->GetPosition();
 				static Vector2 startingScale = transform->GetScale();
+				Vector2 currentPos = transform->GetPosition();
+				Vector2 currentScale = transform->GetScale();
 
 				if (animationStartTime + transformFrame.time > FlatEngine::GetEllapsedGameTime())
 				{
-					transform->SetPosition(Vector2(startingPoint.x + transformFrame.xMove, startingPoint.y + transformFrame.yMove));
-					transform->SetScale(Vector2(startingScale.x + transformFrame.xScale, startingScale.y + transformFrame.yScale));
+					switch (transformFrame.transformInterpType)
+					{
+						case Lerp:
+						{
+							transform->SetPosition(FlatEngine::Lerp(currentPos, Vector2(currentPos.x + transformFrame.xMove, currentPos.y + transformFrame.yMove), transformFrame.transformSpeed));			
+							break;
+						}
+					}
+					switch (transformFrame.scaleInterpType)
+					{
+						case Lerp:
+						{
+							transform->SetScale(FlatEngine::Lerp(currentScale, Vector2(currentScale.x + transformFrame.xScale, currentScale.y + transformFrame.yScale), transformFrame.scaleSpeed));
+							break;
+						}
+					}
 				}
 			}
 			// Sprite Animation Frames

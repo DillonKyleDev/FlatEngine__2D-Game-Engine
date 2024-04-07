@@ -25,8 +25,16 @@ namespace FlatEngine
 			CharacterController
 		};
 
+		enum InterpType {
+			Lerp,
+		};
+
 		// Property structs
 		struct S_Transform {
+			InterpType transformInterpType = Lerp;
+			float transformSpeed = 0.1f;
+			InterpType scaleInterpType = Lerp;
+			float scaleSpeed = 0.1f;
 			float time = 0;
 			float xMove = 0;
 			float yMove = 0;
@@ -34,6 +42,8 @@ namespace FlatEngine
 			float yScale = 0;
 		};
 		struct S_Sprite {
+			InterpType interpType = Lerp;
+			float speed = 0.1f;
 			float time = 0;
 			std::string path = "";
 			float xOffset = 0;
@@ -74,6 +84,8 @@ namespace FlatEngine
 			bool _isActive = true;
 		};
 		struct S_RigidBody {
+			InterpType interpType = Lerp;
+			float speed = 0.1f;
 			float time = 0;
 			bool _isActive = true;
 			float gravityScale = 1;

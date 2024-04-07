@@ -17,7 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include "ImSequencer.h"
 
 
 /*
@@ -38,6 +38,10 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 white = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
+	ImVec4 lighter = ImVec4(float(0.8), float(0.8), float(0.8), float(1));
+	ImVec4 light = ImVec4(float(0.7), float(0.7), float(0.7), float(1));
+	ImVec4 dark = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
+	ImVec4 darker = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
 	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
 	
 	// Icons
@@ -2013,7 +2017,7 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					Animation::S_CharacterController characterControllerProperties;
 					GetFocusedAnimation()->characterControllerProperties.push_back(characterControllerProperties);
-				}					
+				}
 			}
 			ImGui::EndChild();
 
@@ -2207,7 +2211,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 
-		ImGui::SameLine(0,5);
+		ImGui::SameLine(0, 5);
 
 
 
@@ -2228,6 +2232,32 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild();
 		////////////////
 
+
+		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
+		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
+		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
+		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
+		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
+		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		static ImVec2 scrolling = ImVec2(0, 0);
+
+		// Get Input and Output
+		ImGuiIO& inputOutput = ImGui::GetIO();
+
+		// This will catch our interactions
+		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		const bool is_active = ImGui::IsItemActive();   // Held
+
+		// For panning the scene view
+		const float mouse_threshold_for_pan = 0.0f;
+		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+		{
+			scrolling.x += inputOutput.MouseDelta.x;
+			//scrolling.y += inputOutput.MouseDelta.y;
+		}
+
+		RenderAnimationTimelineGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, 50);
 
 		// Timeline Events BeginChild()
 		//
@@ -2911,6 +2941,10 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Get the objects fields
 			json jsonData = {
+				{ "transformInterpType", transformProp.transformInterpType },
+				{ "transformSpeed", transformProp.transformSpeed },
+				{ "scaleInterpType", transformProp.scaleInterpType },
+				{ "scaleSpeed", transformProp.scaleSpeed },
 				{ "time", transformProp.time },
 				{ "xMove", transformProp.xMove },
 				{ "yMove", transformProp.yMove },
@@ -2940,6 +2974,8 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Get the objects fields
 			json jsonData = {
+				{ "interpType", spriteProp.interpType },
+				{ "speed", spriteProp.speed },
 				{ "time", spriteProp.time },
 				{ "path", spriteProp.path },
 				{ "xOffset", spriteProp.xOffset },
@@ -3046,6 +3082,12 @@ namespace FlatEngine { namespace FlatGui {
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
 									Animation::S_Transform transformFrames = {};
+									if (currentObjectJson["Frames"][f]["transformInterpType"] == "Lerp")
+										transformFrames.transformInterpType = Animation::InterpType::Lerp;
+									transformFrames.transformSpeed = currentObjectJson["Frames"][f]["transformSpeed"];
+									if (currentObjectJson["Frames"][f]["scaleInterpType"] == "Lerp")
+										transformFrames.scaleInterpType = Animation::InterpType::Lerp;
+									transformFrames.scaleSpeed = currentObjectJson["Frames"][f]["scaleSpeed"];
 									transformFrames.time = currentObjectJson["Frames"][f]["time"];
 									transformFrames.xMove = currentObjectJson["Frames"][f]["xMove"];
 									transformFrames.yMove = currentObjectJson["Frames"][f]["yMove"];
@@ -3060,11 +3102,16 @@ namespace FlatEngine { namespace FlatGui {
 						else if (currentObjectJson["Property"] == "Sprite")
 						{
 							// Check Frames key exists
+
+
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
 									Animation::S_Sprite spriteFrames = {};
+									if (currentObjectJson["Frames"][f]["interpType"] == "Lerp")
+										spriteFrames.interpType = Animation::InterpType::Lerp;
+									spriteFrames.speed = currentObjectJson["Frames"][f]["speed"];
 									spriteFrames.time = currentObjectJson["Frames"][f]["time"];
 									spriteFrames.xOffset = currentObjectJson["Frames"][f]["xOffset"];
 									spriteFrames.yOffset = currentObjectJson["Frames"][f]["yOffset"];
@@ -3095,6 +3142,84 @@ namespace FlatEngine { namespace FlatGui {
 			ImPlot::EndPlot();
 		}
 		ImPlot::PopStyleVar();
+	}
+
+
+	void RenderAnimationTimelineGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	{
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x*255, darker.y * 255, darker.z * 255, 255));
+
+		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
+		// one of those gridstep locations. We get the total grid steps that will render given the current viewport
+		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
+		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
+		// point and for that point. We need to update this value every pass of the scene view because the gridStep
+		// value will change over time and we need to keep these in sync.          
+		// 
+		//                   V
+		// |  |  |  |  |  |  |  |  |  |  |  |  |
+
+		// X = 0 starts the drawing at the left most edge of the entire app window.
+
+		// Draw vertical grid lines
+		for (float x = trunc(fmodf(scrolling.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
+		{
+			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
+		}
+		for (float x = trunc(fmodf(scrolling.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
+		{
+			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(light.x * 255, light.y * 255, light.z * 255, 255), 1.0f, draw_list);
+		}
+		// Draw horizontal grid lines
+		for (float y = trunc(fmodf(scrolling.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
+		{
+			if (y > canvas_p0.y)
+				FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
+		}
+
+
+		// Draw our x and y axis blue and green lines
+		//
+		float divX = trunc(scrolling.x / gridStep);
+		float modX = fmodf(scrolling.x, gridStep);
+		float offsetX = (gridStep * divX) + modX;
+		float divY = trunc(scrolling.y / gridStep);
+		float modY = fmodf(scrolling.y, gridStep);
+		float offsetY = (gridStep * divY) + modY;
+
+		// Blue, green and pink colors for axis and center
+		ImU32 xColor = IM_COL32(1, 210, 35, 255);
+		ImU32 yColor = IM_COL32(1, 1, 255, 255);
+		ImU32 centerColor = IM_COL32(255, 1, 247, 255);
+
+		// x axis bounds check + color change (lighten) if out of bounds
+		if (offsetX > canvas_p1.x - 1)
+		{
+			offsetX = canvas_p1.x - 1;
+			xColor = IM_COL32(1, 210, 35, 100);
+		}
+		else if (offsetX < canvas_p0.x)
+		{
+			offsetX = canvas_p0.x;
+			xColor = IM_COL32(1, 210, 35, 100);
+		}
+		// y axis bounds check + color change (lighten) if out of bounds
+		if (offsetY > canvas_p1.y - 1)
+		{
+			offsetY = canvas_p1.y - 1;
+			yColor = IM_COL32(1, 1, 255, 150);
+		}
+		else if (offsetY < canvas_p0.y)
+		{
+			offsetY = canvas_p0.y;
+			yColor = IM_COL32(1, 1, 255, 150);
+		}
+
+		// Draw the axis and center point
+		FlatEngine::DrawLine(ImVec2(offsetX, canvas_p0.y/2), ImVec2(offsetX, canvas_p1.y/2), xColor, 1.0f, draw_list);
+		FlatEngine::DrawLine(ImVec2(canvas_p0.x/2, offsetY), ImVec2(canvas_p1.x/2, offsetY), yColor, 1.0f, draw_list);
+		FlatEngine::DrawPoint(ImVec2(scrolling.x, scrolling.y), centerColor, draw_list);
 	}
 
 

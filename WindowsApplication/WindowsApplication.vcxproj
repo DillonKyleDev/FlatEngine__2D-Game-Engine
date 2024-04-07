@@ -155,6 +155,7 @@
     <ClCompile Include="implot.cpp" />
     <ClCompile Include="implot_demo.cpp" />
     <ClCompile Include="implot_items.cpp" />
+    <ClCompile Include="ImSequencer.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="scripts\QuitButton.cpp" />
     <ClCompile Include="scripts\RestartButton.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="implot.h" />
     <ClInclude Include="implot_internal.h" />
+    <ClInclude Include="ImSequencer.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="scripts\QuitButton.h" />
     <ClInclude Include="scripts\RestartButton.h" />

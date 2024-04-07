@@ -28,8 +28,21 @@
                 {
                     "_isCollapsed": false,
                     "id": 2,
-                    "ticksPerFrame": 10.0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
                     "type": "Animation"
+                },
+                {
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 3,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 10.0
                 }
             ],
             "id": 0,

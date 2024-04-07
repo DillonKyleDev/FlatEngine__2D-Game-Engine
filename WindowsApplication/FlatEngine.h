@@ -175,6 +175,7 @@ namespace FlatEngine
 		extern void CreateNewAnimationFile(std::string path);
 		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
 		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
+		extern void RenderAnimationTimelineGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
