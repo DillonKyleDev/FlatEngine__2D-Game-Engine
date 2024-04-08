@@ -131,6 +131,8 @@ namespace FlatEngine
 	//
 	namespace FlatGui
 	{
+		extern int animationTime;
+
 		// General window variables
 		extern bool _editingValue;
 		extern float childPadding;

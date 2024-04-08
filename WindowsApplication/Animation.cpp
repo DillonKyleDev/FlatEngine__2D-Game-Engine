@@ -28,11 +28,11 @@ namespace FlatEngine
 
 	}
 
-	void Animation::Play()
+	void Animation::Play(int startTime)
 	{
 		this->_playing = true;
 		// Start animation timer
-		this->animationStartTime = FlatEngine::GetEllapsedGameTime();
+		this->animationStartTime = startTime;
 	}
 
 	void Animation::Stop()
@@ -129,17 +129,22 @@ namespace FlatEngine
 			this->Stop();
 	}
 
-	void Animation::PlayAnimation()
+	void Animation::PlayAnimation(int ellapsedTime)
 	{
 		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(animationPath);
 		std::shared_ptr<S_AnimationProperties> props = animationProperties;
 
 		// While the animation is not over
-		if (props->animationLength > FlatEngine::GetEllapsedGameTime() - animationStartTime)
+		if (props->animationLength > ellapsedTime - animationStartTime)
 		{
 			// Transform Animation Frames
 			for (const S_Transform &transformFrame : props->transformProperties)
 			{ 
+				
+				int timeLeft = transformFrame.time - ellapsedTime - animationStartTime;
+				LogFloat(timeLeft, "Time LEft: ");
+				float percentDone = ellapsedTime / transformFrame.time;
+
 				// Save original position
 				std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 				static Vector2 startingPoint = transform->GetPosition();
@@ -147,13 +152,17 @@ namespace FlatEngine
 				Vector2 currentPos = transform->GetPosition();
 				Vector2 currentScale = transform->GetScale();
 
-				if (animationStartTime + transformFrame.time > FlatEngine::GetEllapsedGameTime())
+				if (animationStartTime + transformFrame.time > ellapsedTime)
 				{
 					switch (transformFrame.transformInterpType)
 					{
 						case Lerp:
 						{
-							transform->SetPosition(FlatEngine::Lerp(currentPos, Vector2(currentPos.x + transformFrame.xMove, currentPos.y + transformFrame.yMove), transformFrame.transformSpeed));			
+							LogFloat(percentDone, "Percent done: ");
+							float correctedX = (startingPoint.x + transformFrame.xMove * percentDone);
+							float correctedY = (startingPoint.y + transformFrame.yMove * percentDone);
+							//transform->SetPosition(FlatEngine::Lerp(currentPos, Vector2(currentPos.x + correctedX, currentPos.y + correctedX), transformFrame.transformSpeed));
+							transform->SetPosition(Vector2(correctedX, correctedY));
 							break;
 						}
 					}
@@ -172,7 +181,7 @@ namespace FlatEngine
 			{
 				std::shared_ptr<FlatEngine::Sprite> sprite = GetParent()->GetSpriteComponent();
 
-				if (animationStartTime + spriteFrame.time > FlatEngine::GetEllapsedGameTime())
+				if (animationStartTime + spriteFrame.time > ellapsedTime)
 				{
 					if (spriteFrame.path != "")
 						sprite->SetTexture(spriteFrame.path);

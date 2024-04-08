@@ -117,7 +117,7 @@ namespace FlatEngine
 		~Animation();
 
 		void AddFrame();
-		void Play();
+		void Play(int startTime);
 		void Stop();
 
 		bool IsPlaying();
@@ -131,7 +131,7 @@ namespace FlatEngine
 
 		// Test Animations
 		void LerpToCenter();
-		void PlayAnimation();
+		void PlayAnimation(int ellapsedTime);
 
 	private:
 		std::shared_ptr<S_AnimationProperties> animationProperties;

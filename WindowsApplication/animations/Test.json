@@ -7,70 +7,15 @@
         {
             "Frames": [
                 {
-                    "time": 1000.0,
-                    "xMove": 1.0,
-                    "xScale": 0.0,
-                    "yMove": 1,
-                    "yScale": 0.0,
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
-                },
-                {
-                    "time": 2000.0,
-                    "xMove": 1.0,
-                    "xScale": 0.0,
-                    "yMove": 1.0,
-                    "yScale": 0.0,
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
-                },
-                {
-                    "time": 3000.0,
-                    "xMove": 1.0,
-                    "xScale": 0.0,
-                    "yMove": 1.0,
-                    "yScale": 0.0,
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
-                },
-                {
-                    "time": 4000.0,
-                    "xMove": 1.0,
-                    "xScale": 0.0,
-                    "yMove": 1.0,
-                    "yScale": 1.0,
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
-                },
-                {
-                    "time": 5000.0,
-                    "xMove": 1.0,
-                    "xScale": 1.0,
-                    "yMove": 1.0,
-                    "yScale": 1.0,
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
-                },
-                {
                     "time": 6000.0,
-                    "xMove": 1.0,
-                    "xScale": 1.0,
-                    "yMove": 1.0,
-                    "yScale": 1.0,
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
                     "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 10.0,
+                    "xScale": 0.0,
+                    "yMove": 1.0,
+                    "yScale": 0.0
                 }
             ],
             "Property": "Transform"
@@ -87,6 +32,101 @@
                 }
             ],
             "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "_isPrimaryCamera": false,
+                    "time": 0.0
+                }
+            ],
+            "Property": "Camera"
+        },
+        {
+            "Frames": [
+                {
+                    "path": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Script"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "Button"
+        },
+        {
+            "Frames": [
+                {
+                    "time": 0.0
+                }
+            ],
+            "Property": "Canvas"
+        },
+        {
+            "Frames": [
+                {
+                    "_isMusic": false,
+                    "path": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Audio"
+        },
+        {
+            "Frames": [
+                {
+                    "color": "",
+                    "path": "",
+                    "text": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Text"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "BoxCollider"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "CircleCollider"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "gravityScale": 1.0,
+                    "interpType": 0,
+                    "speed": 0.10000000149011612,
+                    "time": 0.0
+                }
+            ],
+            "Property": "RigidBody"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "CharacterController"
         }
     ]
 }

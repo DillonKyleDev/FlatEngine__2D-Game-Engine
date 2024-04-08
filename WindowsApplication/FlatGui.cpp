@@ -31,6 +31,8 @@
 
 namespace FlatEngine { namespace FlatGui {
 
+	int animationTime = 0;
+
 	// For window styles
 	float childPadding = 8;
 	ImVec4 outerWindowColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
@@ -1314,10 +1316,11 @@ namespace FlatEngine { namespace FlatGui {
 								// Add Frame Button
 								if (ImGui::Button("Add Frame"))
 									animation->AddFrame();
-
-								// Add Frame Button
+								
+								ImGui::SliderInt("Animation Time", &animationTime, 0, 5999);
+								// Play Animation Button
 								if (ImGui::Button("Play Animation"))
-									animation->Play();
+									animation->Play(0);
 
 								// Set cursor type
 								if (ImGui::IsItemHovered())
@@ -1928,7 +1931,8 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimator()
 	{
-		ImGui::Begin("Animator");
+		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
+		ImGui::Begin("Animator", 0, 16 | 8);
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
@@ -2006,73 +2010,105 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::BeginChild("Properties Bar", ImVec2(0, 0), child_flags);
 			ImGui::PopStyleColor();
 			ImGui::Text("Add Properties");
-			const char* properties[] = { "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
+			const char* properties[] = { "Add Property", "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
+			std::vector<std::string> props = std::vector<std::string>();
 			static int current_property = 0;
-			ImGui::Combo("##properties", &current_property, properties, IM_ARRAYSIZE(properties));
+			//ImGui::BeginCombo("##properties", &current_property, &props.front(), props.size());
+			if (ImGui::BeginCombo("##properties", properties[current_property]))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(properties); n++)
+				{
+					if (GetFocusedAnimation()->transformProperties.size() == 0 && properties[n] == "Transform" ||
+						GetFocusedAnimation()->spriteProperties.size() == 0 && properties[n] == "Sprite" || 
+						GetFocusedAnimation()->cameraProperties.size() == 0 && properties[n] == "Camera" || 
+						GetFocusedAnimation()->scriptProperties.size() == 0 && properties[n] == "Script" || 
+						GetFocusedAnimation()->buttonProperties.size() == 0 && properties[n] == "Button" ||
+						GetFocusedAnimation()->canvasProperties.size() == 0 && properties[n] == "Canvas" ||
+						GetFocusedAnimation()->audioProperties.size() == 0 && properties[n] == "Audio" ||
+						GetFocusedAnimation()->textProperties.size() == 0 && properties[n] == "Text" ||
+						GetFocusedAnimation()->boxColliderProperties.size() == 0 && properties[n] == "BoxCollider" ||
+						GetFocusedAnimation()->circleColliderProperties.size() == 0 && properties[n] == "CircleCollider" ||
+						GetFocusedAnimation()->rigidBodyProperties.size() == 0 && properties[n] == "RigidBody" ||
+						GetFocusedAnimation()->characterControllerProperties.size() == 0 && properties[n] == "CharacterController"
+						)
+					{
+						bool is_selected = (properties[current_property] == properties[n]); // You can store your selection however you want, outside or inside your objects
+						if (ImGui::Selectable(properties[n], is_selected))
+							current_property = n;
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
 			ImGui::SameLine(0, 5);
 			if (ImGui::Button("Add"))
 			{
 				// Add property to animation object
-				if (properties[current_property] == "Transform")
+				if (properties[current_property] == "Transform" && GetFocusedAnimation()->transformProperties.size() == 0)
 				{
 					Animation::S_Transform transformProperties;
 					GetFocusedAnimation()->transformProperties.push_back(transformProperties);
 				}
-				else if (properties[current_property] == "Sprite")
+				else if (properties[current_property] == "Sprite" && GetFocusedAnimation()->spriteProperties.size() == 0)
 				{
 					Animation::S_Sprite spriteProperties;
 					GetFocusedAnimation()->spriteProperties.push_back(spriteProperties);
 				}
-				else if (properties[current_property] == "Camera")
+				else if (properties[current_property] == "Camera" && GetFocusedAnimation()->cameraProperties.size() == 0)
 				{
 					Animation::S_Camera cameraProperties;
 					GetFocusedAnimation()->cameraProperties.push_back(cameraProperties);
 				}
-				else if (properties[current_property] == "Script")
+				else if (properties[current_property] == "Script" && GetFocusedAnimation()->scriptProperties.size() == 0)
 				{
 					Animation::S_Script scriptProperties;
 					GetFocusedAnimation()->scriptProperties.push_back(scriptProperties);
 				}
-				else if (properties[current_property] == "Button")
+				else if (properties[current_property] == "Button" && GetFocusedAnimation()->buttonProperties.size() == 0)
 				{
 					Animation::S_Button buttonProperties;
 					GetFocusedAnimation()->buttonProperties.push_back(buttonProperties);
 				}
-				else if (properties[current_property] == "Canvas")
+				else if (properties[current_property] == "Canvas" && GetFocusedAnimation()->canvasProperties.size() == 0)
 				{
 					Animation::S_Canvas canvasProperties;
 					GetFocusedAnimation()->canvasProperties.push_back(canvasProperties);
 				}
-				else if (properties[current_property] == "Audio")
+				else if (properties[current_property] == "Audio" && GetFocusedAnimation()->audioProperties.size() == 0)
 				{
 					Animation::S_Audio audioProperties;
 					GetFocusedAnimation()->audioProperties.push_back(audioProperties);
 				}
-				else if (properties[current_property] == "Text")
+				else if (properties[current_property] == "Text" && GetFocusedAnimation()->textProperties.size() == 0)
 				{
 					Animation::S_Text textProperties;
 					GetFocusedAnimation()->textProperties.push_back(textProperties);
 				}
-				else if (properties[current_property] == "BoxCollider")
+				else if (properties[current_property] == "BoxCollider" && GetFocusedAnimation()->boxColliderProperties.size() == 0)
 				{
 					Animation::S_BoxCollider boxColliderProperties;
 					GetFocusedAnimation()->boxColliderProperties.push_back(boxColliderProperties);
 				}
-				else if (properties[current_property] == "CircleCollider")
+				else if (properties[current_property] == "CircleCollider" && GetFocusedAnimation()->circleColliderProperties.size() == 0)
 				{
 					Animation::S_CircleCollider circleColliderProperties;
 					GetFocusedAnimation()->circleColliderProperties.push_back(circleColliderProperties);
 				}
-				else if (properties[current_property] == "RigidBody")
+				else if (properties[current_property] == "RigidBody" && GetFocusedAnimation()->rigidBodyProperties.size() == 0)
 				{
 					Animation::S_RigidBody rigidBodyProperties;
 					GetFocusedAnimation()->rigidBodyProperties.push_back(rigidBodyProperties);
 				}
-				else if (properties[current_property] == "CharacterController")
+				else if (properties[current_property] == "CharacterController" && GetFocusedAnimation()->characterControllerProperties.size() == 0)
 				{
 					Animation::S_CharacterController characterControllerProperties;
 					GetFocusedAnimation()->characterControllerProperties.push_back(characterControllerProperties);
 				}
+
+				// Reset selector box to default
+				current_property = 0;
 			}
 			ImGui::EndChild();
 
@@ -2308,7 +2344,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{
 			scrolling.x += inputOutput.MouseDelta.x;
-			//scrolling.y += inputOutput.MouseDelta.y;
+			scrolling.y += inputOutput.MouseDelta.y;
 		}
 
 		static float animatorGridStep = 50;
@@ -2332,6 +2368,10 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (scrolling.x > 0)
 			scrolling.x = 0;
+		if (scrolling.y > 0)
+			scrolling.y = 0;
+		if (scrolling.y < -1500)
+			scrolling.y = -1500;
 
 		ImVec2 zeroPoint = ImVec2(0, 0);
 
@@ -2341,18 +2381,350 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Get all keyFramePip positions
 		//
-		int propertyCounter = -2;
+		float propertyYPos = -0.5f; // Value in grid space
+		int propertyCounter = 0;    // For values in screenspace below
 		float animationLength = GetFocusedAnimation()->animationLength;
 
-		for (Animation::S_Transform &transformFrame : GetFocusedAnimation()->transformProperties)
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		LogFloat(scrolling.y, "Scrolling y");
+		LogFloat(animatorGridStep, "Grid step: ");
+		// Draw colored box for transform keyframes
+		if (GetFocusedAnimation()->transformProperties.size() > 0)
 		{
-			// Get keyFrame time and convert to seconds
-			float keyFrameX = transformFrame.time / 1000;
-			Vector2 keyFramePos = Vector2(keyFrameX, propertyCounter);
-			RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 transformRectColor = IM_COL32(214, 8, 118, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, transformRectColor);
+
+			// Draw pips
+			for (Animation::S_Transform& transformFrame : GetFocusedAnimation()->transformProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = transformFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
 		}
-		propertyCounter--;
-		
+
+		// Draw colored box for sprite keyframes
+		if (GetFocusedAnimation()->spriteProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 spriteRectColor = IM_COL32(83, 214, 8, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, spriteRectColor);
+
+			// Draw pips
+			for (Animation::S_Sprite& spriteFrame : GetFocusedAnimation()->spriteProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = spriteFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for camera keyframes
+		if (GetFocusedAnimation()->cameraProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 cameraRectColor = IM_COL32(206, 108, 4, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, cameraRectColor);
+
+			// Draw pips
+			for (Animation::S_Camera& cameraFrame : GetFocusedAnimation()->cameraProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = cameraFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for script keyframes
+		if (GetFocusedAnimation()->scriptProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 scriptRectColor = IM_COL32(4, 159, 206, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, scriptRectColor);
+
+			// Draw pips
+			for (Animation::S_Script& scriptFrame : GetFocusedAnimation()->scriptProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = scriptFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for button keyframes
+		if (GetFocusedAnimation()->buttonProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 buttonRectColor = IM_COL32(152, 16, 198, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, buttonRectColor);
+
+			// Draw pips
+			for (Animation::S_Button& buttonFrame : GetFocusedAnimation()->buttonProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = buttonFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for canvas keyframes
+		if (GetFocusedAnimation()->canvasProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 canvasRectColor = IM_COL32(224, 81, 15, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, canvasRectColor);
+
+			// Draw pips
+			for (Animation::S_Canvas& canvasFrame : GetFocusedAnimation()->canvasProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = canvasFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for audio keyframes
+		if (GetFocusedAnimation()->audioProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 audioRectColor = IM_COL32(237, 244, 14, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, audioRectColor);
+
+			// Draw pips
+			for (Animation::S_Audio& audioFrame : GetFocusedAnimation()->audioProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = audioFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for text keyframes
+		if (GetFocusedAnimation()->textProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 textRectColor = IM_COL32(15, 224, 200, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, textRectColor);
+
+			// Draw pips
+			for (Animation::S_Text& textFrame : GetFocusedAnimation()->textProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = textFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for boxCollider keyframes
+		if (GetFocusedAnimation()->boxColliderProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 boxColliderRectColor = IM_COL32(224, 158, 15, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, boxColliderRectColor);
+
+			// Draw pips
+			for (Animation::S_BoxCollider& boxColliderFrame : GetFocusedAnimation()->boxColliderProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = boxColliderFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for circleCollider keyframes
+		if (GetFocusedAnimation()->circleColliderProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 circleColliderRectColor = IM_COL32(11, 42, 183, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, circleColliderRectColor);
+
+			// Draw pips
+			for (Animation::S_CircleCollider& circleColliderFrame : GetFocusedAnimation()->circleColliderProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = circleColliderFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for rigidBody keyframes
+		if (GetFocusedAnimation()->rigidBodyProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 rigidBodyRectColor = IM_COL32(166, 11, 183, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, rigidBodyRectColor);
+
+			// Draw pips
+			for (Animation::S_RigidBody& rigidBodyFrame : GetFocusedAnimation()->rigidBodyProperties)
+			{
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = rigidBodyFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
+
+		// Draw colored box for characterController keyframes
+		if (GetFocusedAnimation()->characterControllerProperties.size() > 0)
+		{
+			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
+			float bottomYPos = topYPos + animatorGridStep;
+			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos > canvas_p1.y)
+				topYPos = canvas_p1.y;
+			if (bottomYPos > canvas_p1.y)
+				bottomYPos = canvas_p1.y;
+			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
+			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			ImU32 characterControllerRectColor = IM_COL32(85, 183, 11, 100);
+			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, characterControllerRectColor);
+
+			// Draw pips
+			for (Animation::S_CharacterController& characterControllerFrame : GetFocusedAnimation()->characterControllerProperties)
+			{
+				LogFloat(zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6, "PropertyPos: ");
+				LogFloat(canvas_p0.y);
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = characterControllerFrame.time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+					RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
 		
 		// Timeline Events BeginChild()
 		//
@@ -2656,7 +3028,7 @@ namespace FlatEngine { namespace FlatGui {
 			
 			// If animation component is playing, play the animation
 			if (animationCasted != nullptr && animationCasted->IsPlaying())
-				animationCasted->PlayAnimation();
+				animationCasted->PlayAnimation(animationTime);
 		}
 
 
@@ -3206,10 +3578,271 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		//else
-		//{
-		//	sceneObjectsJsonArray.push_back("NULL");
-		//}
+		for (Animation::S_Camera cameraProp : propertiesObject->cameraProperties)
+		{
+			// Declare components array json object for components
+			json cameraPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", cameraProp.time },
+				{ "_isPrimaryCamera", cameraProp._isPrimaryCamera }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			cameraPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Camera" },
+				{ "Frames", cameraPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Script scriptProp : propertiesObject->scriptProperties)
+		{
+			// Declare components array json object for components
+			json scriptPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", scriptProp.time },
+				{ "path", scriptProp.path }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			scriptPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Script" },
+				{ "Frames", scriptPropertiesArray }
+			});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Button buttonProp : propertiesObject->buttonProperties)
+		{
+			// Declare components array json object for components
+			json buttonPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", buttonProp.time },
+				{ "_isActive", buttonProp._isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			buttonPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Button" },
+				{ "Frames", buttonPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Canvas canvasProp : propertiesObject->canvasProperties)
+		{
+			// Declare components array json object for components
+			json canvasPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", canvasProp.time }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			canvasPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Canvas" },
+				{ "Frames", canvasPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Audio audioProp : propertiesObject->audioProperties)
+		{
+			// Declare components array json object for components
+			json audioPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", audioProp.time },
+				{ "path", audioProp.path },
+				{ "_isMusic", audioProp._isMusic }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			audioPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Audio" },
+				{ "Frames", audioPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_Text textProp : propertiesObject->textProperties)
+		{
+			// Declare components array json object for components
+			json textPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", textProp.time },
+				{ "path", textProp.path },
+				{ "text", textProp.text },
+				{ "color", textProp.color }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			textPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Text" },
+				{ "Frames", textPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_BoxCollider boxColliderProp : propertiesObject->boxColliderProperties)
+		{
+			// Declare components array json object for components
+			json boxColliderPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", boxColliderProp.time },
+				{ "_isActive", boxColliderProp._isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			boxColliderPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "BoxCollider" },
+				{ "Frames", boxColliderPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_CircleCollider circleColliderProp : propertiesObject->circleColliderProperties)
+		{
+			// Declare components array json object for components
+			json circleColliderPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", circleColliderProp.time },
+				{ "_isActive", circleColliderProp._isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			circleColliderPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "CircleCollider" },
+				{ "Frames", circleColliderPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_RigidBody rigidBodyProp : propertiesObject->rigidBodyProperties)
+		{
+			// Declare components array json object for components
+			json rigidBodyPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", rigidBodyProp.time },
+				{ "interpType", rigidBodyProp.interpType },
+				{ "speed", rigidBodyProp.speed },
+				{ "_isActive", rigidBodyProp._isActive },
+				{ "gravityScale", rigidBodyProp.gravityScale },
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			rigidBodyPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "RigidBody" },
+				{ "Frames", rigidBodyPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (Animation::S_CharacterController characterControllerProp : propertiesObject->characterControllerProperties)
+		{
+			// Declare components array json object for components
+			json characterControllerPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", characterControllerProp.time },
+				{ "_isActive", characterControllerProp._isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			characterControllerPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "CharacterController" },
+				{ "Frames", characterControllerPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
 
 		// Recreate the Animation Property json object and add the array as the content
 		json newFileObject = json::object({ {"Animation Properties", animationProperties } });
@@ -3328,6 +3961,175 @@ namespace FlatEngine { namespace FlatGui {
 
 									// Save the data to the animationProperties struct
 									animationProperties->spriteProperties.push_back(spriteFrames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Camera")
+						{
+							// Check Frames key exists
+
+
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Camera cameraFrames = {};
+									cameraFrames._isPrimaryCamera = currentObjectJson["Frames"][f]["_isPrimaryCamera"];
+									cameraFrames.time = currentObjectJson["Frames"][f]["time"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->cameraProperties.push_back(cameraFrames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Script")
+						{
+							// Check Frames key exists
+
+
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Script frames = {};
+									frames.path = currentObjectJson["Frames"][f]["path"];
+									frames.time = currentObjectJson["Frames"][f]["time"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->scriptProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Button")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Button frames = {};
+									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+									frames.time = currentObjectJson["Frames"][f]["time"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->buttonProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Canvas")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Canvas frames = {};					
+									frames.time = currentObjectJson["Frames"][f]["time"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->canvasProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Audio")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Audio frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames.path = currentObjectJson["Frames"][f]["path"];
+									frames._isMusic = currentObjectJson["Frames"][f]["_isMusic"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->audioProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Text")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_Text frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames.path = currentObjectJson["Frames"][f]["path"];
+									frames.text = currentObjectJson["Frames"][f]["text"];
+									frames.color = currentObjectJson["Frames"][f]["color"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->textProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "BoxCollider")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_BoxCollider frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->boxColliderProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "CircleCollider")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_CircleCollider frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->circleColliderProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "RigidBody")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_RigidBody frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+									frames.interpType = currentObjectJson["Frames"][f]["interpType"];
+									frames.speed = currentObjectJson["Frames"][f]["speed"];
+									frames.gravityScale = currentObjectJson["Frames"][f]["gravityScale"];
+									
+									// Save the data to the animationProperties struct
+									animationProperties->rigidBodyProperties.push_back(frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "CharacterController")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Animation::S_CharacterController frames = {};
+									frames.time = currentObjectJson["Frames"][f]["time"];
+									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->characterControllerProperties.push_back(frames);
 								}
 							}
 						}
@@ -3645,7 +4447,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// Renders the camera
-			if (cameraComponent != nullptr)
+			if (cameraComponent != nullptr && false)
 			{
 				std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(cameraComponent);
 				float cameraWidth = camera->GetWidth();
