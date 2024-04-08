@@ -142,17 +142,18 @@ namespace FlatEngine
 		extern float spriteScaleMultiplier;
 
 		// Icons
-		extern std::unique_ptr<Texture> playIcon;
-		extern std::unique_ptr<Texture> pauseIcon;
-		extern std::unique_ptr<Texture> stopIcon;
-		extern std::unique_ptr<Texture> expandIcon;
-		extern std::unique_ptr<Texture> expandFlippedIcon;
-		extern std::unique_ptr<Texture> trashIcon;
-		extern std::unique_ptr<Texture> openFileIcon;
-		extern std::unique_ptr<Texture> newFileIcon;
-		extern std::unique_ptr<Texture> saveFileIcon;
-		extern std::unique_ptr<Texture> transformArrow;
-		extern std::unique_ptr<Texture> cameraTexture;
+		extern std::shared_ptr<Texture> playIcon;
+		extern std::shared_ptr<Texture> pauseIcon;
+		extern std::shared_ptr<Texture> stopIcon;
+		extern std::shared_ptr<Texture> expandIcon;
+		extern std::shared_ptr<Texture> expandFlippedIcon;
+		extern std::shared_ptr<Texture> trashIcon;
+		extern std::shared_ptr<Texture> openFileIcon;
+		extern std::shared_ptr<Texture> newFileIcon;
+		extern std::shared_ptr<Texture> saveFileIcon;
+		extern std::shared_ptr<Texture> transformArrow;
+		extern std::shared_ptr<Texture> cameraTexture;
+		extern std::shared_ptr<Texture> keyFrameIcon;
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
 		extern SDL_Texture* stopTexture;		
@@ -162,6 +163,7 @@ namespace FlatEngine
 		extern SDL_Texture* openFileTexture;
 		extern SDL_Texture* newFileTexture;
 		extern SDL_Texture* saveFileTexture;
+		extern SDL_Texture* keyFrameTexture;
 
 		extern ImVec2 uv0;
 		extern ImVec2 uv1;
@@ -181,7 +183,11 @@ namespace FlatEngine
 		extern void CreateNewAnimationFile(std::string path);
 		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
 		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
-		extern void RenderAnimationTimelineGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderAnimationTimelineGrid(ImVec2 &zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderAnimationTimelineKeyFrames(Vector2& pipPosition, ImVec2 zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderAnimationPreviewGrid(ImVec2 &centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderAnimationPreviewObject(ImVec2 centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep, std::shared_ptr<GameObject> animatedObject);
+		extern void AnimationPreview_RenderSelfThenChildren(ImVec2& centerPoint, std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
@@ -196,6 +202,7 @@ namespace FlatEngine
 		extern bool _showHierarchy;
 		extern bool _showInspector;
 		extern bool _showAnimator;
+		extern bool _showAnimationPreview;
 		extern bool _showLogger;
 		extern bool _showProfiler;
 
@@ -223,13 +230,14 @@ namespace FlatEngine
 		extern void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 		extern void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderAnimator();
+		extern void RenderAnimationPreview();
 		extern void RenderLog();
 		extern void RenderProfiler();
 		extern void Cleanup();
 
 		// Helper Functions
 		//
-		extern void AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
+		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 		extern ImVec2 ViewportToWorld(ImVec2 viewportPosition);

@@ -45,17 +45,18 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
 	
 	// Icons
-	std::unique_ptr<Texture> playIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> pauseIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> stopIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> expandIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> expandFlippedIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> trashIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> openFileIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> newFileIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> saveFileIcon = std::make_unique<Texture>();
-	std::unique_ptr<Texture> transformArrow = std::make_unique<Texture>();
-	std::unique_ptr<Texture> cameraTexture = std::make_unique<Texture>();
+	std::shared_ptr<Texture> playIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> pauseIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> stopIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> expandIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> expandFlippedIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> trashIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> openFileIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> newFileIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> saveFileIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
+	std::shared_ptr<Texture> cameraTexture = std::make_shared<Texture>();
+	std::shared_ptr<Texture> keyFrameIcon = std::make_shared<Texture>();;
 
 	ImVec2 uv0 = ImVec2(0.0f, 0.0f);
 	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
@@ -71,6 +72,7 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* openFileTexture = nullptr;
 	SDL_Texture* newFileTexture = nullptr;
 	SDL_Texture* saveFileTexture = nullptr;
+	SDL_Texture* keyFrameTexture = nullptr;
 
 
 	int maxSpriteLayers = 55;
@@ -102,6 +104,7 @@ namespace FlatEngine { namespace FlatGui {
 	bool _showHierarchy = true;
 	bool _showInspector = true;
 	bool _showAnimator = true;
+	bool _showAnimationPreview = true;
 	bool _showLogger = true;
 	bool _showProfiler = true;
 
@@ -189,9 +192,6 @@ namespace FlatEngine { namespace FlatGui {
 		// Trashcan Icon
 		trashIcon->loadFromFile("assets/images/icons/Trashcan.png");
 		trashTexture = trashIcon->getTexture();
-		//float trashWidth = (float)trashIcon->getWidth();
-		//float trashHeight = (float)trashIcon->getHeight();
-
 		// Open File Icon
 		openFileIcon->loadFromFile("assets/images/icons/OpenFileIcon.png");
 		openFileTexture = openFileIcon->getTexture();
@@ -203,19 +203,10 @@ namespace FlatEngine { namespace FlatGui {
 		// New File Icon
 		newFileIcon->loadFromFile("assets/images/icons/NewFileIcon.png");
 		newFileTexture = newFileIcon->getTexture();
-		//float newFileWidth = (float)newFileIcon->getWidth();
-		//float newFileHeight = (float)newFileIcon->getHeight();
-		//ImVec2 newFileSize = ImVec2(12, 12);
-		//ImVec4 newFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
-		//std::string newFileID = "##newFileIconAnimator";
-		// Save File Icon
 		saveFileIcon->loadFromFile("assets/images/icons/SaveIcon.png");
 		saveFileTexture = saveFileIcon->getTexture();
-		//float saveFileWidth = (float)saveFileIcon->getWidth();
-		//float saveFileHeight = (float)saveFileIcon->getHeight();
-		//ImVec2 saveFileSize = ImVec2(12, 12);
-		//ImVec4 saveFile_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
-		//std::string saveFileID = "##saveFileIconAnimator";
+		keyFrameIcon->loadFromFile("assets/images/icons/KeyFrameIcon.png");
+		keyFrameTexture = keyFrameIcon->getTexture();
 	}
 
 	void Render(bool& quit)
@@ -319,11 +310,28 @@ namespace FlatEngine { namespace FlatGui {
 						_showInspector = !_showInspector;
 					if (ImGui::MenuItem("Animator", NULL, _showAnimator))
 						_showAnimator = !_showAnimator;
+					if (ImGui::MenuItem("Animation Preview", NULL, _showAnimationPreview))
+						_showAnimationPreview = !_showAnimationPreview;
 					if (ImGui::MenuItem("Logger", NULL, _showLogger))
 						_showLogger = !_showLogger;
 					if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
 						_showProfiler = !_showProfiler;
 					
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Settings"))
+			{
+				if (ImGui::BeginMenu("Widgets"))
+				{
+					if (ImGui::BeginMenu("Scene View Icon Transparency"))
+					{
+						// Icon transparency slider
+						ImGui::SliderInt("Scene View Icon Transparency", &iconTransparency, 0, 255, "%d");
+
+						ImGui::EndMenu();
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
@@ -484,6 +492,8 @@ namespace FlatEngine { namespace FlatGui {
 			Scene_RenderView();
 		if (_showAnimator)
 			RenderAnimator();
+		if (_showAnimationPreview)
+			RenderAnimationPreview();
 		if (_showLogger)
 			RenderLog();
 		if (_showProfiler)
@@ -493,7 +503,8 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderToolbar()
 	{
-		ImGui::Begin("Gameloop Control Panel");
+		bool _controlPanelWindow = false;
+		ImGui::Begin("Gameloop Control Panel", &_controlPanelWindow, ImGuiDockNodeFlags_NoTabBar);
 
 		std::string playID = "##PlayGameloopIcon";
 		std::string pauseID = "##PauseGameloopIcon";
@@ -502,6 +513,10 @@ namespace FlatEngine { namespace FlatGui {
 		ImVec4 gameloopControl_bg_col = ImVec4(.50f, .50f, .5f, 1.0f);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_DisabledAlpha, 0.4f);
+
+		auto windowWidth = ImGui::GetWindowSize().x;
+
+		ImGui::SetCursorPosX((windowWidth - 100) * 0.5f);
 
 		if (gameLoop->IsStarted() && !gameLoop->IsPaused())
 		{
@@ -551,25 +566,6 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		ImGui::PopStyleVar();
-
-		if (FlatEngine::GameLoopStarted())
-		{
-			framesDrawn++;
-			int ellapsedTime = FlatEngine::GetEllapsedGameTime();
-			std::string timeString = "Ellapsed Time: " + std::to_string(ellapsedTime / 1000);
-			std::string fpsString = "Average FPS: " + std::to_string(FlatEngine::GetAverageFps());
-			std::string deltaTimeString = "deltaTime: " + std::to_string(FlatEngine::GetDeltaTime());
-
-			ImGui::SameLine(0, 5);
-			ImGui::Text(timeString.c_str());
-			ImGui::SameLine(0, 5);
-			ImGui::Text(fpsString.c_str());
-			ImGui::SameLine(0, 5);
-			ImGui::Text(deltaTimeString.c_str());
-		}
-
-		// Icon transparency slider
-		ImGui::SliderInt("Scene View Icon Transparency", &iconTransparency, 0, 255, "%d");
 
 		ImGui::End();
 	}
@@ -1936,7 +1932,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
-
 		// Animated Properties BeginChild()
 		//
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
@@ -2085,7 +2080,7 @@ namespace FlatEngine { namespace FlatGui {
 			//////// List properties on this animation
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
-			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
+			ImGui::BeginListBox("##AnimationProperties", ImVec2(-FLT_MIN, -FLT_MIN));
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
 
@@ -2275,7 +2270,6 @@ namespace FlatEngine { namespace FlatGui {
 
 
 
-
 		// Timeline Events BeginChild()
 		// 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
@@ -2305,7 +2299,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiIO& inputOutput = ImGui::GetIO();
 
 		// This will catch our interactions
-		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		ImGui::InvisibleButton("Animator Timeline", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
 		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 
@@ -2317,8 +2311,49 @@ namespace FlatEngine { namespace FlatGui {
 			//scrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		RenderAnimationTimelineGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, 50);
+		static float animatorGridStep = 50;
 
+		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+		float scrollInput = inputOutput.MouseWheel;
+		float weight = 0.08f;
+
+		// Change scrolling offset based on mouse position and weight
+		if (is_hovered)
+		{
+			if (scrollInput > 0)
+			{
+				animatorGridStep += 1;
+			}
+			else if (scrollInput < 0 && animatorGridStep > 2)
+			{
+				animatorGridStep -= 1;
+			}
+		}
+
+		if (scrolling.x > 0)
+			scrolling.x = 0;
+
+		ImVec2 zeroPoint = ImVec2(0, 0);
+
+
+		RenderAnimationTimelineGrid(zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+
+
+		// Get all keyFramePip positions
+		//
+		int propertyCounter = -2;
+		float animationLength = GetFocusedAnimation()->animationLength;
+
+		for (Animation::S_Transform &transformFrame : GetFocusedAnimation()->transformProperties)
+		{
+			// Get keyFrame time and convert to seconds
+			float keyFrameX = transformFrame.time / 1000;
+			Vector2 keyFramePos = Vector2(keyFrameX, propertyCounter);
+			RenderAnimationTimelineKeyFrames(keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+		}
+		propertyCounter--;
+		
+		
 		// Timeline Events BeginChild()
 		//
 		ImGui::EndChild();
@@ -2326,6 +2361,69 @@ namespace FlatEngine { namespace FlatGui {
 
 
 		ImGui::End(); // Animator
+	}
+
+
+	void RenderAnimationPreview()
+	{
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+
+		ImGui::Begin("Animation Preview");
+		// Animation Preview BeginChild()
+		// 
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), padding_child_flags);
+		ImGui::PopStyleColor();
+
+		////////////////
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, white);
+		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), child_flags);
+		ImGui::PopStyleColor();
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(1, 9, 0, 255));
+		ImGui::Text("Animation Preview");
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+		////////////////
+
+
+		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
+		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
+		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
+		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
+		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
+		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		static ImVec2 scrolling = ImVec2(0, 0);
+
+		// Get Input and Output
+		ImGuiIO& inputOutput = ImGui::GetIO();
+
+		// This will catch our interactions
+		ImGui::InvisibleButton("AnimationPreview", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		const bool is_active = ImGui::IsItemActive();   // Held
+
+		// For panning the scene view
+		const float mouse_threshold_for_pan = 0.0f;
+		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+		{
+			scrolling.x += inputOutput.MouseDelta.x;
+			scrolling.y += inputOutput.MouseDelta.y;
+		}
+
+		ImVec2 centerPoint = ImVec2(0, 0);
+
+		RenderAnimationPreviewGrid(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, 50);
+
+		std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(GetFocusedGameObjectID());
+
+		if (focusedObject != nullptr)
+			RenderAnimationPreviewObject(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, 50, focusedObject);
+
+		// Animation Preview EndChild()
+		//
+		ImGui::EndChild();
+		ImGui::End();
 	}
 
 
@@ -2755,6 +2853,8 @@ namespace FlatEngine { namespace FlatGui {
 			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(200, 200, 200, 40), 1.0f, draw_list);
 		}
 
+		// For making grid go with window, add  + canvas_p0.x and  + canvas_p0.y to trunc(fmodf(scrolling.x ..., gridStep
+
 
 		// Draw our x and y axis blue and green lines
 		//
@@ -2800,7 +2900,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
+	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
 		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
@@ -2831,6 +2931,8 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Render sprite to viewport
 		draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
+
+		return renderStart;
 	}
 
 
@@ -2889,9 +2991,56 @@ namespace FlatEngine { namespace FlatGui {
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
 		static bool anim = true;
 		static int offset = 0;
+
+		std::string ellapsedTime = "---";
+		std::string averageFPS = "---";
+		std::string deltaTime = "---";
+
+		if (FlatEngine::GameLoopStarted())
+		{
+			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTime() / 1000);
+			averageFPS = std::to_string(FlatEngine::GetAverageFps());
+			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
+		}
+
+		if (ImGui::BeginTable("##RuntimeData", 2, flags, ImVec2(-1, 0))) {
+	
+			ImGui::TableSetupColumn("RUNTIME PROCESS");
+			ImGui::TableSetupColumn("DATA");
+			ImGui::TableHeadersRow();
+
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Ellapsed Game Time (sec)");
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(ellapsedTime.c_str());
+			ImGui::PushID("EllapsedTime");
+			ImGui::PopID();
+
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Average FPS");
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(averageFPS.c_str());
+			ImGui::PushID("AverageFPS");
+			ImGui::PopID();
+
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("deltaTime (ms)");
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(deltaTime.c_str());
+			ImGui::PushID("deltaTime");
+			ImGui::PopID();
+
+			ImGui::EndTable();
+		}
+
+
 		ImGui::Checkbox("Animate", &anim);
 		if (anim)
 			offset = (offset + 1) % 100;
+
 
 		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
 		int processCounter = 1;
@@ -3205,7 +3354,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	void RenderAnimationTimelineGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	void RenderAnimationTimelineGrid(ImVec2& zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x*255, darker.y * 255, darker.z * 255, 255));
@@ -3223,16 +3372,16 @@ namespace FlatEngine { namespace FlatGui {
 		// X = 0 starts the drawing at the left most edge of the entire app window.
 
 		// Draw vertical grid lines
-		for (float x = trunc(fmodf(scrolling.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
+		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
 		{
 			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
 		}
-		for (float x = trunc(fmodf(scrolling.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
+		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
 		{
 			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(light.x * 255, light.y * 255, light.z * 255, 255), 1.0f, draw_list);
 		}
 		// Draw horizontal grid lines
-		for (float y = trunc(fmodf(scrolling.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
+		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
 		{
 			if (y > canvas_p0.y)
 				FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
@@ -3276,11 +3425,362 @@ namespace FlatEngine { namespace FlatGui {
 			yColor = IM_COL32(1, 1, 255, 150);
 		}
 
-		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(offsetX, canvas_p0.y/2), ImVec2(offsetX, canvas_p1.y/2), xColor, 1.0f, draw_list);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x/2, offsetY), ImVec2(canvas_p1.x/2, offsetY), yColor, 1.0f, draw_list);
-		FlatEngine::DrawPoint(ImVec2(scrolling.x, scrolling.y), centerColor, draw_list);
+		zeroPoint = ImVec2(offsetX + scrolling.x, offsetY + scrolling.y);
+		//FlatEngine::DrawPoint(ImVec2(offsetX + 5, offsetY + 5), centerColor, draw_list);
+		//AddImageToDrawList(playTexture, Vector2(0, 0), ImVec2(offsetX + 5, offsetY + 5), 10, 10, Vector2(5,5), Vector2(1,1), false, 50, draw_list);
 	}
+
+
+	void RenderAnimationTimelineKeyFrames(Vector2 &pipPosition, ImVec2 zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	{
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		float spriteTextureWidth = 10;
+		float spriteTextureHeight = 10;
+		Vector2 spriteOffset = Vector2(5,5);
+		bool _spriteScalesWithZoom = false;
+		int renderOrder = 1;
+
+		// If there is a valid Texture loaded into the Sprite Component
+		if (keyFrameTexture != nullptr)
+		{
+			ImVec2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), false, gridStep, draw_list);
+			ImGui::SetCursorScreenPos(pipStartingPoint);
+
+			ImGui::InvisibleButton("KeyFramePip", ImVec2(12,12), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
+			const bool _isClicked = ImGui::IsItemClicked();
+			const bool _isHovered = ImGui::IsItemHovered(); // Hovered
+			const bool _isActive = ImGui::IsItemActive();   // Held
+			
+			
+			LogString(std::to_string(_isClicked) + "Is Clicked: ");
+			if (_isHovered)
+				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+			if (_isClicked)
+				LogString("KeyFrame Clicked!");
+		}
+	}
+
+
+	void RenderAnimationPreviewGrid(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	{
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x * 255, darker.y * 255, darker.z * 255, 255));
+
+		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
+		// one of those gridstep locations. We get the total grid steps that will render given the current viewport
+		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
+		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
+		// point and for that point. We need to update this value every pass of the scene view because the gridStep
+		// value will change over time and we need to keep these in sync.          
+		// 
+		//                   V
+		// |  |  |  |  |  |  |  |  |  |  |  |  |
+
+		// X = 0 starts the drawing at the left most edge of the entire app window.
+
+		// Draw vertical grid lines
+		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
+		{
+			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
+		}
+		// Draw horizontal grid lines
+		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep)
+		{
+			if (y > canvas_p0.y)
+				FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
+		}
+
+
+		// Draw our x and y axis blue and green lines
+		//
+		float divX = trunc(scrolling.x / gridStep);
+		float modX = fmodf(scrolling.x, gridStep);
+		float offsetX = (gridStep * divX) + modX + canvas_p0.x + (trunc(400 / gridStep) / 2 * gridStep);
+		float divY = trunc(scrolling.y / gridStep);
+		float modY = fmodf(scrolling.y, gridStep);
+		float offsetY = (gridStep * divY) + modY + canvas_p0.y + (trunc(400 / gridStep) / 2 * gridStep);
+
+		// Blue, green and pink colors for axis and center
+		ImU32 xColor = IM_COL32(1, 210, 35, 255);
+		ImU32 yColor = IM_COL32(1, 1, 255, 255);
+		ImU32 centerColor = IM_COL32(255, 1, 247, 255);
+
+		// x axis bounds check + color change (lighten) if out of bounds
+		if (offsetX > canvas_p1.x - 1)
+		{
+			offsetX = canvas_p1.x - 1;
+			xColor = IM_COL32(1, 210, 35, 100);
+		}
+		else if (offsetX < canvas_p0.x)
+		{
+			offsetX = canvas_p0.x;
+			xColor = IM_COL32(1, 210, 35, 100);
+		}
+		// y axis bounds check + color change (lighten) if out of bounds
+		if (offsetY > canvas_p1.y - 1)
+		{
+			offsetY = canvas_p1.y - 1;
+			yColor = IM_COL32(1, 1, 255, 150);
+		}
+		else if (offsetY < canvas_p0.y)
+		{
+			offsetY = canvas_p0.y;
+			yColor = IM_COL32(1, 1, 255, 150);
+		}
+
+		centerPoint = ImVec2(offsetX, offsetY);
+
+		// Draw the axis and center point
+		FlatEngine::DrawLine(ImVec2(offsetX, canvas_p0.y), ImVec2(offsetX, canvas_p1.y), xColor, 1.0f, draw_list);
+		FlatEngine::DrawLine(ImVec2(canvas_p0.x, offsetY), ImVec2(canvas_p1.x, offsetY), yColor, 1.0f, draw_list);
+		FlatEngine::DrawPoint(ImVec2(offsetX, offsetY), centerColor, draw_list);
+	}
+
+
+	void RenderAnimationPreviewObject(ImVec2 centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep, std::shared_ptr<GameObject> animatedObject)
+	{
+		// Split our drawlist into multiple channels for different rendering orders
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
+
+		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
+		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
+
+		// If this Scene Object doesn't have a parent, render it and all of its children
+		if (animatedObject->GetParentID() == -1 && animatedObject->IsActive())
+		{
+			// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
+			Vector2 parentOffset(0, 0);
+			Vector2 parentScale(1, 1);
+
+			// Render self and children recursively
+			AnimationPreview_RenderSelfThenChildren(centerPoint, animatedObject, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+		}
+
+		drawSplitter->Merge(draw_list);
+		delete drawSplitter;
+		drawSplitter = nullptr;
+	}
+
+
+
+	void AnimationPreview_RenderSelfThenChildren(ImVec2& centerPoint, std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	{
+		std::shared_ptr<Component> transformComponent = self->GetComponent(ComponentTypes::Transform);
+		std::shared_ptr<Component> spriteComponent = self->GetComponent(ComponentTypes::Sprite);
+		std::shared_ptr<Component> cameraComponent = self->GetComponent(ComponentTypes::Camera);
+		std::shared_ptr<Component> buttonComponent = self->GetComponent(ComponentTypes::Button);
+		std::shared_ptr<Component> canvasComponent = self->GetComponent(ComponentTypes::Canvas);
+		std::shared_ptr<Component> textComponent = self->GetComponent(ComponentTypes::Text);
+
+		// Check if each object has a Transform component
+		if (transformComponent != nullptr)
+		{
+			float divX = trunc(scrolling.x / 50);
+			float modX = fmodf(scrolling.x, 50);
+			float offsetX = (50 * divX) + modX + canvas_p0.x + (trunc(400 / 50) / 2 * 50);
+			float divY = trunc(scrolling.y / 50);
+			float modY = fmodf(scrolling.y, 50);
+			float offsetY = (50 * divY) + modY + canvas_p0.y + (trunc(400 / 50) / 2 * 50);
+
+			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
+			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
+			//position = Vector2(position.x + offsetX, position.y + offsetY);
+			Vector2 transformScale = Vector2(transformCasted->GetScale().x * parentScale.x, transformCasted->GetScale().y * parentScale.y);
+
+			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
+			if (spriteComponent != nullptr)
+			{
+				// Cast the component to Sprite shared_ptr
+				std::shared_ptr<Sprite> spriteCasted = std::static_pointer_cast<Sprite>(spriteComponent);
+				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
+				float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
+				float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
+				Vector2 spriteOffset = spriteCasted->GetOffset();
+				bool _spriteScalesWithZoom = true;
+				int renderOrder = spriteCasted->GetRenderOrder();
+
+				// If there is a valid Texture loaded into the Sprite Component
+				if (spriteTexture != nullptr)
+				{
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					// Draw the texture
+					AddImageToDrawList(spriteTexture, position, centerPoint, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, 50, draw_list);
+				}
+			}
+
+			// If it has a text component, render that text texture at the objects transform position
+			if (textComponent != nullptr)
+			{
+				// Cast the component to Text shared_ptr
+				std::shared_ptr<Text> textCasted = std::static_pointer_cast<Text>(textComponent);
+				std::shared_ptr<Texture> textTexture = textCasted->GetTexture();
+				textCasted->LoadText();
+				SDL_Texture* texture = textTexture->getTexture();
+				float textWidth = (float)textTexture->getWidth();
+				float textHeight = (float)textTexture->getHeight();
+				int renderOrder = textCasted->GetRenderOrder();
+				Vector2 offset = textCasted->GetOffset();
+				bool _spriteScalesWithZoom = true;
+
+
+				// If there is a valid Texture loaded into the Sprite Component
+				if (textTexture != nullptr)
+				{
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					// Draw the texture
+					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, 50, draw_list);
+				}
+			}
+
+			// Renders the camera
+			if (cameraComponent != nullptr)
+			{
+				std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(cameraComponent);
+				float cameraWidth = camera->GetWidth();
+				float cameraHeight = camera->GetHeight();
+
+				float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, 50);
+				float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, 50);
+				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), 50);
+				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), 50);
+
+				ImVec2 topLeftCorner = ImVec2(cameraLeftEdge, cameraTopEdge);
+				ImVec2 bottomRightCorner = ImVec2(cameraRightEdge, cameraBottomEdge);
+				ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
+				ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
+
+				cameraTexture->loadFromFile("assets/images/camera.png");
+				SDL_Texture* texture = cameraTexture->getTexture();
+				float cameraTextureWidth = (float)cameraTexture->getWidth() * 3;
+				float cameraTextureHeight = (float)cameraTexture->getHeight() * 3;
+				bool _scalesWithZoom = false;
+				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
+				Vector2 cameraTextureScale = { 1, 1 };
+				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
+
+				// Draw channel 2 for Lower UI
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				// Draw a rectangle to the scene view to represent the camera frustrum
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+
+				// Draw actual camera icon
+				AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, 50, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+			}
+
+
+			// Renders Canvas Component
+			if (canvasComponent != nullptr)
+			{
+				std::shared_ptr<Canvas> canvas = std::static_pointer_cast<Canvas>(canvasComponent);
+
+				float activeWidth = canvas->GetWidth();
+				float activeHeight = canvas->GetHeight();
+				int layerNumber = canvas->GetLayerNumber();
+				bool _blocksLayers = canvas->GetBlocksLayers();
+
+				float canvasLeft = WorldToViewport(scrolling.x, position.x - activeWidth / 2, 50, false);
+				float canvasRight = WorldToViewport(scrolling.x, position.x + activeWidth / 2, 50, false);
+				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, 50, true);
+				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, 50, true);
+
+				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
+				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
+
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, FlatEngine::CanvasBorder, 3.0f, draw_list);
+			}
+
+
+			// Renders Button Component
+			if (buttonComponent != nullptr)
+			{
+				std::shared_ptr<Button> button = std::static_pointer_cast<Button>(buttonComponent);
+
+				float activeWidth = button->GetActiveWidth();
+				float activeHeight = button->GetActiveHeight();
+				Vector2 activeOffset = button->GetActiveOffset();
+				bool _isActive = button->IsActive();
+
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), 50, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), 50, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), 50, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), 50, true);
+
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
+
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				if (_isActive)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
+				else
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+			}
+
+
+			// Renders Transform Arrow // 
+			//
+			// Should be last in line here to be rendered top-most
+			// 
+			// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
+			// render the focused objects TransformArrow for moving it within the scene view
+			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
+			{
+				// Get focused GameObject and transformArrow png
+				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+				transformArrow->loadFromFile("assets/images/transformArrow.png");
+				SDL_Texture* texture = transformArrow->getTexture();
+				// * 3 because the texture is so small. If we change the scale, it will change the render starting
+				// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
+				float arrowWidth = (float)transformArrow->getWidth() * 3;
+				float arrowHeight = (float)transformArrow->getHeight() * 3;
+				Vector2 arrowScale = { 1, 1 };
+				Vector2 arrowOffset = { 0, arrowHeight };
+				bool _scalesWithZoom = false;
+
+				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
+				AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, 50, draw_list, IM_COL32(255, 255, 255, 255));
+			}
+		}
+
+		if (self->HasChildren())
+		{
+			if (transformComponent != nullptr)
+			{
+				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
+				parentOffset.x += transformCasted->GetPosition().x;
+				parentOffset.y += transformCasted->GetPosition().y;
+				parentScale.x *= transformCasted->GetScale().x;
+				parentScale.y *= transformCasted->GetScale().y;
+			}
+
+			for (int c = 0; c < self->GetChildren().size(); c++)
+			{
+				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
+
+				if (child->IsActive())
+					AnimationPreview_RenderSelfThenChildren(centerPoint, child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+			}
+		}
+	}
+
 
 
 	void Cleanup()
