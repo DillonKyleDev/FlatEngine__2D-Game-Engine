@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "SceneManager.h"
 #include <SDL_mixer.h>
+#include "Logger.h"
 
 //Main loop flag
 bool _hasQuit = false;

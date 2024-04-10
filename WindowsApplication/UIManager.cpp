@@ -1,6 +1,8 @@
 #include "UIManager.h"
 #include "FlatEngine.h"
+#include "Transform.h"
 #include <algorithm>
+#include <memory>
 
 
 namespace FlatEngine {

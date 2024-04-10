@@ -3,21 +3,24 @@
 #include <deque>
 #include <vector>
 
-class Process
+
+namespace FlatEngine
 {
-public:
-	Process(std::string name);
-	~Process();
+	class Process
+	{
+	public:
+		Process(std::string name);
+		~Process();
 
-	std::string GetProcessName();
-	void AddHangTimeData(float hangTime);
-	std::deque<float> GetRawData();
-	std::vector<float> GetHangTimeData();
+		std::string GetProcessName();
+		void AddHangTimeData(float hangTime);
+		std::deque<float> GetRawData();
+		std::vector<float> GetHangTimeData();
 
-private:
-	std::string processName;
-	std::deque<float> rawHangTimeData;
-	std::vector<float> snapShotData;
-	int tickCounter;
-};
-
+	private:
+		std::string processName;
+		std::deque<float> rawHangTimeData;
+		std::vector<float> snapShotData;
+		int tickCounter;
+	};
+}

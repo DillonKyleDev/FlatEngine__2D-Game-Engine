@@ -1,4 +1,7 @@
 #include "FlatEngine.h"
+#include "UIManager.h"
+#include "Logger.h"
+#include "Scene.h"
 
 /*
 ######################################

@@ -4,8 +4,10 @@
 #include "WidgetsManager.h"
 
 #include "Transform.h"
+#include "Scene.h"
 #include "Sprite.h"
 #include "Camera.h"
+#include "Text.h"
 
 
 namespace FlatEngine

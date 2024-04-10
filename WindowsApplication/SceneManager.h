@@ -1,8 +1,11 @@
 #pragma once
-#include "Scene.h"
+#include <string>
+#include <memory>
 
 namespace FlatEngine
 {
+	class Scene;
+
 	class SceneManager
 	{
 	public:

@@ -8,19 +8,16 @@
 #include <SDL_image.h>
 #include <imgui.h>
 #include "Window.h"
-#include "GameObject.h"
+
 #include "SceneManager.h"
-#include "Logger.h"
 #include "ScriptComponent.h"
 #include "GameLoop.h"
-#include "Canvas.h"
+
 #include "Animation.h"
-#include "Text.h"
 #include "WidgetsManager.h"
 #include "UIManager.h"
-#include "Audio.h"
 #include "scripts/GameManager.h"
-#include "Process.h"
+//#include "Process.h" Might need this after deleting some other include
 
 //ImGui - SDL Renderer
 #pragma once
@@ -31,6 +28,11 @@
 
 namespace FlatEngine
 {
+	class GameObject;
+	class UIManager;
+	class Logger;
+	class Scene;
+
 	using ComponentTypes = Component::ComponentTypes;
 
 	extern bool _isDebugMode;

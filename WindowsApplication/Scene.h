@@ -1,11 +1,13 @@
 #pragma once
 #include <vector>
-#include "GameObject.h"
-#include "Camera.h"
-
+#include <string>
+#include <memory>
 
 namespace FlatEngine
 {
+	class GameObject;
+	class Camera;
+
 	class Scene
 	{
 	public:

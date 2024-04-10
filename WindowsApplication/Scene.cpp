@@ -1,14 +1,17 @@
 #include "Scene.h"
 #include "FlatEngine.h"
+#include "Camera.h"
 
 
 namespace FlatEngine
 {
 	Scene::Scene()
 	{
-        this->name = "New Scene";
-        this->sceneObjects = std::vector< std::shared_ptr<GameObject>>();
-		this->primaryCamera;
+		this->name = "New Scene";
+		this->sceneObjects = std::vector< std::shared_ptr<GameObject>>();
+		this->primaryCamera = nullptr;
+		this->nextGameObjectID = 0;
+		this->nextComponentID = 0;
 	}
 
 	Scene::~Scene()

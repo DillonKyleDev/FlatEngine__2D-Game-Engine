@@ -1,6 +1,7 @@
 #include "GameLoop.h"
 #include "FlatEngine.h"
 #include "Process.h"
+#include "Scene.h"
 
 
 namespace FlatEngine
