@@ -10,6 +10,7 @@ namespace FlatEngine
 	{
 	public:
 		Audio(long myID = -1, long parentID = -1);
+		Audio(std::shared_ptr<Audio> toCopy);
 		~Audio();
 
 		void LoadMusic(std::string path);

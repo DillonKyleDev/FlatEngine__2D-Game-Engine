@@ -16,6 +16,19 @@ namespace FlatEngine {
 		this->height = 30;
 	}
 
+	Canvas::Canvas(std::shared_ptr<Canvas> toCopy)
+	{
+		this->SetType(ComponentTypes::Canvas);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->canvasID = toCopy->canvasID;
+		this->buttons = toCopy->GetButtons();
+		this->layerNumber = toCopy->GetLayerNumber();
+		this->_blocksLayers = toCopy->GetBlocksLayers();
+		this->width = toCopy->GetWidth();
+		this->height = toCopy->GetHeight();
+	}
+
 	Canvas::~Canvas()
 	{
 	}

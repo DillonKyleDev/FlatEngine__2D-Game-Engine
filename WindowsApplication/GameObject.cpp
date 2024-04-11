@@ -8,13 +8,20 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Text.h"
+#include "BoxCollider.h"
+#include "ScriptComponent.h"
+#include "Text.h"
+#include "Animation.h"
+#include "Audio.h"
+#include "Button.h"
+#include "Canvas.h"
 
 
 namespace FlatEngine
 {
 	GameObject::GameObject(long parentID)
 	{
-		this->ID = FlatEngine::sceneManager->GetLoadedScene()->GetNextGameObjectID();
+		this->ID = FlatEngine::GetLoadedScene()->GetNextGameObjectID();
 		this->parentID = parentID;
 		this->name = "New GameObject (" + std::to_string(this->ID) + ")";
 		this->components = {};
@@ -22,7 +29,76 @@ namespace FlatEngine
 		this->childrenIDs = std::vector<long>();
 		
 		// Increment GameObjectID counter in the scene for next GameObject
-		FlatEngine::sceneManager->GetLoadedScene()->IncrementGameObjectID();
+		FlatEngine::GetLoadedScene()->IncrementGameObjectID();
+	}
+
+	// Copy Constructor
+	GameObject::GameObject(std::shared_ptr<GameObject> toCopy)
+	{
+		SetParentID(toCopy->GetParentID());
+		SetID(GetNextGameObjectID());
+		SetName(toCopy->GetName());
+		SetActive(toCopy->IsActive());
+		childrenIDs = toCopy->childrenIDs;
+
+		for (long ID : childrenIDs)
+		{
+			AddChild(ID);
+		}
+		
+		for (std::shared_ptr<Component> component : toCopy->GetComponents())
+		{
+			if (component->GetTypeString() == "Transform")
+			{
+				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Sprite")
+			{
+				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Animation")
+			{
+				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Audio")
+			{
+				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Button")
+			{
+				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "BoxCollider")
+			{
+				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Camera")
+			{
+				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Canvas")
+			{
+				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Script")
+			{
+				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component));
+				this->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Text")
+			{
+				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component));
+				this->components.push_back(newComponent);
+			}
+		}
 	}
 
 	GameObject::~GameObject()
@@ -37,17 +113,6 @@ namespace FlatEngine
 		}
 	}
 
-	// Copy Constructor
-	GameObject::GameObject(GameObject& original)
-	{
-		FlatEngine::LogString("Name: " + original.GetName());
-		this->ID = original.GetID();
-		this->parentID = original.GetParentID();
-		this->name = original.GetName();
-		this->components = original.GetComponents();
-		this->_isActive = original.IsActive();
-		this->childrenIDs = original.childrenIDs;
-	}
 
 	void GameObject::SetID(long ID)
 	{

@@ -22,10 +22,10 @@ namespace FlatEngine
 	{
 	public:
 		GameObject(long parentID = -1);
-		~GameObject();
 		// Copy Constructor
-		GameObject(GameObject& original);
-
+		GameObject(std::shared_ptr<GameObject> toCopy);
+		~GameObject();
+	
 		void SetID(long ID);
 		long GetID();
 		void SetName(std::string name);

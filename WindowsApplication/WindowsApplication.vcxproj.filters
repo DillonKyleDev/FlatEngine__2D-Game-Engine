@@ -213,9 +213,6 @@
     <ClCompile Include="GameView.cpp">
       <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
-    <ClCompile Include="SceneView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
@@ -229,6 +226,9 @@
       <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\FlatEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneView.cpp">
       <Filter>Source Files\FlatEngine</Filter>
     </ClCompile>
   </ItemGroup>

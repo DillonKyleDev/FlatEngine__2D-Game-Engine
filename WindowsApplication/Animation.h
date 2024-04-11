@@ -114,6 +114,7 @@ namespace FlatEngine
 		};
 
 		Animation(long myID = -1, long parentID = -1);
+		Animation(std::shared_ptr<Animation> toCopy);
 		~Animation();
 
 		void AddFrame();

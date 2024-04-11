@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "Process.h"
 #include "Scene.h"
+#include "./scripts/GameManager.h"
 
 
 namespace FlatEngine

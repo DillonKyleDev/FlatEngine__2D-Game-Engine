@@ -51,9 +51,9 @@ namespace FlatEngine
 
 	// Focused Animation
 	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
+	extern std::shared_ptr<GameObject> objectForFocusedAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
-	extern std::vector<std::string> animationPaths;
 
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
@@ -80,6 +80,8 @@ namespace FlatEngine
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
 	extern std::shared_ptr<Scene> CreateNewScene();
+	extern long GetNextComponentID();
+	extern long GetNextGameObjectID();
 	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filename);
 	extern void LoadScene(std::string name);
 
@@ -106,7 +108,6 @@ namespace FlatEngine
 	// Profiler
 	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
 	extern bool _logProfilerOutput;
-
 	extern void AddProfilerProcess(std::shared_ptr<Process> process);
 	extern void AddProcessData(std::string processName, float data);
 
@@ -189,8 +190,6 @@ namespace FlatEngine
 		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
 		extern void RenderAnimationTimelineGrid(ImVec2 &zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
 		extern void RenderAnimationTimelineKeyFrames(Vector2& pipPosition, ImVec2 zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void RenderAnimationPreviewGrid(ImVec2 &centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void RenderAnimationPreviewObject(ImVec2 centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep, std::shared_ptr<GameObject> animatedObject);
 		extern void AnimationPreview_RenderSelfThenChildren(ImVec2& centerPoint, std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Profiler
@@ -231,13 +230,15 @@ namespace FlatEngine
 		extern void Game_RenderView();
 		extern void Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void Scene_RenderView();
-		extern void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz);
 		extern void RenderAnimator();
 		extern void RenderAnimationPreview();
 		extern void RenderLog();
 		extern void RenderProfiler();
 		extern void Cleanup();
+
+		extern void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset);
+		extern void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz);
+		extern void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Helper Functions
 		//

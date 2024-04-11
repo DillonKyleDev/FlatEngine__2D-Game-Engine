@@ -19,6 +19,20 @@ namespace FlatEngine
 		this->ticksPerFrame = 10;
 		this->animationStartTime = -1;
 	}
+
+	Animation::Animation(std::shared_ptr<Animation> toCopy)
+	{
+		this->SetType(ComponentTypes::Animation);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		animationName = toCopy->GetAnimationName();
+		animationProperties = toCopy->animationProperties;
+		animationPath = toCopy->GetAnimationPath();
+		this->_playing = false;
+		this->ticksPerFrame = toCopy->GetTicksPerFrame();
+		this->animationStartTime = toCopy->animationStartTime;
+	}
+
 	Animation::~Animation()
 	{
 	}

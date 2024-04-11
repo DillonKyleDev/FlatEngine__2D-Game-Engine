@@ -24,13 +24,11 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::Begin("Scene View");
 
-		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
 		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-
 		static ImVec2 scrolling(0, 0);
 
 		// Set initial viewport dimensions for rendering scene view grid and objects
@@ -40,14 +38,9 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				SCENE_VIEWPORT_WIDTH = canvas_sz.x;
 				SCENE_VIEWPORT_HEIGHT = canvas_sz.y;
-
-				// We offset this from the beginning so our canvas shows our axis in the middle of the screen.
-				scrolling = ImVec2((SCENE_VIEWPORT_WIDTH / 2) + canvas_p0.x, (SCENE_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
-
 				_sceneHasBeenSet = true;
 			}
 		}
-
 		_firstSceneRenderPass = false;
 
 		// For calculating scrolling mouse position and what vector to zoom to
@@ -94,22 +87,11 @@ namespace FlatEngine { namespace FlatGui {
 			scrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		Scene_RenderGrid(scrolling, canvas_p0, canvas_p1, canvas_sz, gridStep);
+		static ImVec2 centerPoint = ImVec2(0, 0);
 
-		Scene_RenderObjects(scrolling, canvas_p0, canvas_sz);
+		RenderGridView(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
 
-		// Reset WindowPadding
-		ImGui::PopStyleVar();
-		// Reset WindowBorder
-		ImGui::PopStyleVar();
-
-		ImGui::End();
-	}
-
-
-	void Scene_RenderObjects(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz)
-	{
-		// Get currently loade scene
+		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
 		std::vector<std::shared_ptr<GameObject>> sceneObjects;
 
@@ -118,31 +100,14 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			sceneObjects = std::vector<std::shared_ptr<GameObject>>();
 
-		// Split our drawlist into multiple channels for different rendering orders
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
+		RenderViewObjects(sceneObjects, centerPoint, canvas_p0, canvas_sz);
 
-		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
+		// Reset WindowPadding
+		ImGui::PopStyleVar();
+		// Reset WindowBorder
+		ImGui::PopStyleVar();
 
-		// Loop through scene objects
-		for (int i = 0; i < sceneObjects.size(); i++)
-		{
-			// If this Scene Object doesn't have a parent, render it and all of its children
-			if (sceneObjects[i]->GetParentID() == -1 && sceneObjects[i]->IsActive())
-			{
-				// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
-				Vector2 parentOffset(0, 0);
-				Vector2 parentScale(1, 1);
-
-				// Render self and children recursively
-				Scene_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
-			}
-		}
-
-		drawSplitter->Merge(draw_list);
-		delete drawSplitter;
-		drawSplitter = nullptr;
+		ImGui::End();
 	}
 
 	// Helper - Recursively draws scene objects and their children to the scene view
@@ -354,81 +319,5 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 	}
-
-
-	void Scene_RenderGrid(ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
-	{
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-
-		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
-		// one of those gridstep locations. We get the total grid steps that will render given the current viewport
-		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
-		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
-		// point and for that point. We need to update this value every pass of the scene view because the gridStep
-		// value will change over time and we need to keep these in sync.          
-		// 
-		//                   V
-		// |  |  |  |  |  |  |  |  |  |  |  |  |
-
-		// X = 0 starts the drawing at the left most edge of the entire app window.
-
-		// Draw horizontal grid lines
-		for (float x = trunc(fmodf(scrolling.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
-		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(200, 200, 200, 40), 1.0f, draw_list);
-		}
-		// Draw vertical grid lines
-		for (float y = trunc(fmodf(scrolling.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep)
-		{
-			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(200, 200, 200, 40), 1.0f, draw_list);
-		}
-
-		// For making grid go with window, add  + canvas_p0.x and  + canvas_p0.y to trunc(fmodf(scrolling.x ..., gridStep
-
-
-		// Draw our x and y axis blue and green lines
-		//
-		float divX = trunc(scrolling.x / gridStep);
-		float modX = fmodf(scrolling.x, gridStep);
-		float offsetX = (gridStep * divX) + modX;
-		float divY = trunc(scrolling.y / gridStep);
-		float modY = fmodf(scrolling.y, gridStep);
-		float offsetY = (gridStep * divY) + modY;
-
-		// Blue, green and pink colors for axis and center
-		ImU32 xColor = IM_COL32(1, 210, 35, 255);
-		ImU32 yColor = IM_COL32(1, 1, 255, 255);
-		ImU32 centerColor = IM_COL32(255, 1, 247, 255);
-
-		// x axis bounds check + color change (lighten) if out of bounds
-		if (offsetX > canvas_p1.x - 1)
-		{
-			offsetX = canvas_p1.x - 1;
-			xColor = IM_COL32(1, 210, 35, 100);
-		}
-		else if (offsetX < canvas_p0.x)
-		{
-			offsetX = canvas_p0.x;
-			xColor = IM_COL32(1, 210, 35, 100);
-		}
-		// y axis bounds check + color change (lighten) if out of bounds
-		if (offsetY > canvas_p1.y - 1)
-		{
-			offsetY = canvas_p1.y - 1;
-			yColor = IM_COL32(1, 1, 255, 150);
-		}
-		else if (offsetY < canvas_p0.y)
-		{
-			offsetY = canvas_p0.y;
-			yColor = IM_COL32(1, 1, 255, 150);
-		}
-
-		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(offsetX, canvas_p0.y), ImVec2(offsetX, canvas_p1.y), xColor, 1.0f, draw_list);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x, offsetY), ImVec2(canvas_p1.x, offsetY), yColor, 1.0f, draw_list);
-		FlatEngine::DrawPoint(ImVec2(scrolling.x, scrolling.y), centerColor, draw_list);
-	}
-
 }
 }

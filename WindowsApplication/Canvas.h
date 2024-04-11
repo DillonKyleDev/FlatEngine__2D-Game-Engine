@@ -9,6 +9,7 @@ namespace FlatEngine
 	{
 	public:
 		Canvas(long myID = -1, long parentID = -1, long canvasID = -1);
+		Canvas(std::shared_ptr<Canvas> toCopy);
 		~Canvas();
 
 		void AddButton(std::shared_ptr<FlatEngine::Button> button);

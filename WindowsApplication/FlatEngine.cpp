@@ -18,21 +18,18 @@ namespace FlatEngine
 	bool _closeProgram = false;
 
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
-
-	// Audio
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
-
-	// Managers
 	long FlatEngine::FocusedGameObjectID = -1;
-
-	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
-	std::vector<std::string> animationPaths = std::vector<std::string>();
 
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
+
+	// Animator
+	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
+	std::shared_ptr<GameObject> objectForFocusedAnimation = nullptr;
 
 	// Profiler
 	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
@@ -45,8 +42,6 @@ namespace FlatEngine
 	ImU32 ActiveButtonColor = IM_COL32(50, 230, 50, 130);
 	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
 	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
-
-	std::vector<std::shared_ptr<GameScript>> gameScripts = std::vector<std::shared_ptr<GameScript>>();
 
 	// FlatEngine
 	void FlatEngine::Run(bool& _hasQuit)
@@ -78,8 +73,10 @@ namespace FlatEngine
 	void FlatEngine::SetFocusedGameObjectID(long ID)
 	{
 		FlatEngine::FocusedGameObjectID = ID;
+		// Create a copy of the focused GameObject to be used for the animator window.
+		if (FlatGui::_showAnimator && ID != -1)
+			objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID));
 	}
-
 
 	long FlatEngine::GetFocusedGameObjectID()
 	{
@@ -106,6 +103,32 @@ namespace FlatEngine
 	std::shared_ptr<Scene> FlatEngine::CreateNewScene()
 	{
 		return FlatEngine::sceneManager->CreateNewScene();
+	}
+
+	long GetNextComponentID()
+	{
+		long nextID = -1;
+		std::shared_ptr<Scene> loadedScene = GetLoadedScene();
+		if (loadedScene != nullptr)
+		{
+			nextID = loadedScene->GetNextComponentID();
+			GetLoadedScene()->IncrementComponentID();
+		}
+
+		return nextID;
+	}
+
+	long GetNextGameObjectID()
+	{
+		long nextID = -1;
+		std::shared_ptr<Scene> loadedScene = GetLoadedScene();
+		if (loadedScene != nullptr)
+		{
+			nextID = loadedScene->GetNextGameObjectID();
+			GetLoadedScene()->IncrementGameObjectID();
+		}
+
+		return nextID;
 	}
 
 	void FlatEngine::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
@@ -162,7 +185,7 @@ namespace FlatEngine
 	}
 
 
-	// Logging
+	// Logging Abstraction
 	void FlatEngine::LogString(std::string line)
 	{
 		logger->LogString(line);
@@ -231,19 +254,6 @@ namespace FlatEngine
 		logger->DrawPoint(point, color, drawList);
 	}
 
-	void AddProfilerProcess(std::shared_ptr<Process> process)
-	{
-		profilerProcesses.push_back(process);
-	}
-
-	void AddProcessData(std::string processName, float data)
-	{
-		for (std::shared_ptr<Process> process : profilerProcesses)
-		{
-			if (process->GetProcessName() == processName)
-				process->AddHangTimeData(data);
-		}
-	}
 
 	// Game Loop prettification
 	void FlatEngine::StartGameLoop()

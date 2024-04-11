@@ -1,5 +1,5 @@
 #include "Audio.h"
-
+#include "FlatEngine.h"
 
 namespace FlatEngine
 {
@@ -9,6 +9,16 @@ namespace FlatEngine
 		this->SetID(myID);
 		this->SetParentID(parentID);
 		this->sound = std::make_shared<Sound>();
+		this->_isMusic = false;
+	}
+
+	Audio::Audio(std::shared_ptr<Audio> toCopy)
+	{
+		this->SetType(ComponentTypes::Audio);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->_isMusic = toCopy->IsMusic();
+		this->sound = toCopy->sound;
 	}
 
 	Audio::~Audio()

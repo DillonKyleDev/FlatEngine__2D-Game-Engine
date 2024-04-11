@@ -1,5 +1,5 @@
 #include "Sprite.h"
-
+#include "FlatEngine.h"
 
 namespace FlatEngine
 {
@@ -14,6 +14,19 @@ namespace FlatEngine
 		this->offset = { 0,0 };
 		this->path = "";
 		this->renderOrder = 0;
+	}
+
+	Sprite::Sprite(std::shared_ptr<Sprite> toCopy)
+	{
+		this->SetType(Component::ComponentTypes::Sprite);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->texture = toCopy->GetTexture();
+		this->textureWidth = toCopy->GetTextureWidth();
+		this->textureHeight = toCopy->GetTextureHeight();
+		this->offset = toCopy->GetOffset();
+		this->path = toCopy->GetPath();
+		this->renderOrder = toCopy->GetRenderOrder();
 	}
 
 

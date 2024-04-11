@@ -2,9 +2,26 @@
 #include "implot.h"
 #include "Process.h"
 
-namespace FlatEngine { namespace FlatGui {
+namespace FlatEngine { 
+	
+	void AddProfilerProcess(std::shared_ptr<Process> process)
+	{
+		profilerProcesses.push_back(process);
+	}
 
-	void RenderProfiler()
+	void AddProcessData(std::string processName, float data)
+	{
+		for (std::shared_ptr<Process> process : profilerProcesses)
+		{
+			if (process->GetProcessName() == processName)
+				process->AddHangTimeData(data);
+		}
+	}
+
+	
+	namespace FlatGui {
+
+		void RenderProfiler()
 	{
 		ImGui::Begin("Profiler");
 
@@ -116,7 +133,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::End(); // Profiler
 	}
 
-	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
+		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
 		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0, 0));
 		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) {
 			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
@@ -128,5 +145,5 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		ImPlot::PopStyleVar();
 	}
-}
+	}
 }

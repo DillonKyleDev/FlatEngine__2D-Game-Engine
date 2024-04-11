@@ -13,6 +13,7 @@ namespace FlatEngine
 	{
 	public:
 		Sprite(long myID = -1, long parentID = -1);
+		Sprite(std::shared_ptr<Sprite> toCopy);
 		~Sprite();
 		void SetTexture(std::string path);
 		SDL_Texture* GetTexture();

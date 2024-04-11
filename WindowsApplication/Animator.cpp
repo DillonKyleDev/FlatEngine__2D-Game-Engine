@@ -16,6 +16,8 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
 
 
+
+
 	void RenderAnimator()
 	{
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
@@ -846,13 +848,26 @@ namespace FlatEngine { namespace FlatGui {
 		////////////////
 
 
-		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
 		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 		static ImVec2 scrolling = ImVec2(0, 0);
+		static ImVec2 viewPortDimensions = ImVec2(0, 0);
+		static bool _firstRenderPassDone = false;
+		static bool _viewportSizeTaken = false;
+
+		// Set initial viewport dimensions once
+		if (_firstRenderPassDone)
+		{
+			if (!_viewportSizeTaken)
+			{
+				viewPortDimensions = ImVec2(canvas_sz.x, canvas_sz.y);
+			}
+			_viewportSizeTaken = true;
+		}
+		_firstRenderPassDone = true;
 
 		// Get Input and Output
 		ImGuiIO& inputOutput = ImGui::GetIO();
@@ -872,12 +887,17 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImVec2 centerPoint = ImVec2(0, 0);
 
-		RenderAnimationPreviewGrid(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, 50);
+		RenderGridView(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(50,50), ImVec2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
 		std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(GetFocusedGameObjectID());
 
 		if (focusedObject != nullptr)
-			RenderAnimationPreviewObject(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, 50, focusedObject);
+		{
+			std::vector<std::shared_ptr<GameObject>> focusedObjectVector;
+			focusedObjectVector.push_back(objectForFocusedAnimation);
+		
+			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz);
+		}
 
 		// Animation Preview EndChild()
 		//
@@ -988,106 +1008,6 @@ namespace FlatEngine { namespace FlatGui {
 			if (_isClicked)
 				LogString("KeyFrame Clicked!");
 		}
-	}
-
-	void RenderAnimationPreviewGrid(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
-	{
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x * 255, darker.y * 255, darker.z * 255, 255));
-
-		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
-		// one of those gridstep locations. We get the total grid steps that will render given the current viewport
-		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
-		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
-		// point and for that point. We need to update this value every pass of the scene view because the gridStep
-		// value will change over time and we need to keep these in sync.          
-		// 
-		//                   V
-		// |  |  |  |  |  |  |  |  |  |  |  |  |
-
-		// X = 0 starts the drawing at the left most edge of the entire app window.
-
-		// Draw vertical grid lines
-		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
-		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
-		}
-		// Draw horizontal grid lines
-		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep)
-		{
-			if (y > canvas_p0.y)
-				FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(dark.x * 255, dark.y * 255, dark.z * 255, 255), 1.0f, draw_list);
-		}
-
-
-		// Draw our x and y axis blue and green lines
-		//
-		float divX = trunc(scrolling.x / gridStep);
-		float modX = fmodf(scrolling.x, gridStep);
-		float offsetX = (gridStep * divX) + modX + canvas_p0.x + (trunc(400 / gridStep) / 2 * gridStep);
-		float divY = trunc(scrolling.y / gridStep);
-		float modY = fmodf(scrolling.y, gridStep);
-		float offsetY = (gridStep * divY) + modY + canvas_p0.y + (trunc(400 / gridStep) / 2 * gridStep);
-
-		// Blue, green and pink colors for axis and center
-		ImU32 xColor = IM_COL32(1, 210, 35, 255);
-		ImU32 yColor = IM_COL32(1, 1, 255, 255);
-		ImU32 centerColor = IM_COL32(255, 1, 247, 255);
-
-		// x axis bounds check + color change (lighten) if out of bounds
-		if (offsetX > canvas_p1.x - 1)
-		{
-			offsetX = canvas_p1.x - 1;
-			xColor = IM_COL32(1, 210, 35, 100);
-		}
-		else if (offsetX < canvas_p0.x)
-		{
-			offsetX = canvas_p0.x;
-			xColor = IM_COL32(1, 210, 35, 100);
-		}
-		// y axis bounds check + color change (lighten) if out of bounds
-		if (offsetY > canvas_p1.y - 1)
-		{
-			offsetY = canvas_p1.y - 1;
-			yColor = IM_COL32(1, 1, 255, 150);
-		}
-		else if (offsetY < canvas_p0.y)
-		{
-			offsetY = canvas_p0.y;
-			yColor = IM_COL32(1, 1, 255, 150);
-		}
-
-		centerPoint = ImVec2(offsetX, offsetY);
-
-		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(offsetX, canvas_p0.y), ImVec2(offsetX, canvas_p1.y), xColor, 1.0f, draw_list);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x, offsetY), ImVec2(canvas_p1.x, offsetY), yColor, 1.0f, draw_list);
-		FlatEngine::DrawPoint(ImVec2(offsetX, offsetY), centerColor, draw_list);
-	}
-
-	void RenderAnimationPreviewObject(ImVec2 centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep, std::shared_ptr<GameObject> animatedObject)
-	{
-		// Split our drawlist into multiple channels for different rendering orders
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
-
-		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
-
-		// If this Scene Object doesn't have a parent, render it and all of its children
-		if (animatedObject->GetParentID() == -1 && animatedObject->IsActive())
-		{
-			// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
-			Vector2 parentOffset(0, 0);
-			Vector2 parentScale(1, 1);
-
-			// Render self and children recursively
-			AnimationPreview_RenderSelfThenChildren(centerPoint, animatedObject, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
-		}
-
-		drawSplitter->Merge(draw_list);
-		delete drawSplitter;
-		drawSplitter = nullptr;
 	}
 
 	void AnimationPreview_RenderSelfThenChildren(ImVec2& centerPoint, std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)

@@ -1,5 +1,5 @@
 #include "Transform.h"
-
+#include "FlatEngine.h"
 
 namespace FlatEngine
 {
@@ -13,6 +13,18 @@ namespace FlatEngine
 		this->scale.x = 1;
 		this->scale.y = 1;
 		this->rotation = 0;
+	}
+
+	Transform::Transform(std::shared_ptr<Transform> toCopy)
+	{
+		this->SetType(ComponentTypes::Transform);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->position.x = toCopy->GetPosition().x;
+		this->position.y = toCopy->GetPosition().y;
+		this->scale.x = toCopy->GetScale().x;
+		this->scale.y = toCopy->GetScale().y;
+		this->rotation = toCopy->GetRotation();
 	}
 
 

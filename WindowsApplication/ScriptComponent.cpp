@@ -1,4 +1,5 @@
 #include "ScriptComponent.h"
+#include "FlatEngine.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,8 +13,19 @@ namespace FlatEngine
 		this->SetType(Component::ComponentTypes::Script);
 		this->SetID(myID);
 		this->SetParentID(parentID);
+		this->_isActive = true;
 		this->attachedScript = "";
 		this->scriptInstance = nullptr;
+	}
+
+	ScriptComponent::ScriptComponent(std::shared_ptr<ScriptComponent> toCopy)
+	{
+		this->SetType(Component::ComponentTypes::Script);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->_isActive = toCopy->IsActive();
+		this->attachedScript = toCopy->GetAttachedScript();
+		this->scriptInstance = toCopy->GetScriptInstance();
 	}
 
 	ScriptComponent::~ScriptComponent()

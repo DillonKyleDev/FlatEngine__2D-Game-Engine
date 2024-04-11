@@ -9,6 +9,7 @@ namespace FlatEngine
 	{
 	public:
 		ScriptComponent(long myID = -1, long parentID = -1);
+		ScriptComponent(std::shared_ptr<ScriptComponent> toCopy);
 		~ScriptComponent();
 
 		std::string GetData();

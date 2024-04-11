@@ -29,6 +29,31 @@ namespace FlatEngine
 		this->_rightClickSet = false;
 	}
 
+	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy)
+	{
+		this->SetType(ComponentTypes::Button);
+		this->SetID(GetNextComponentID());
+		this->SetParentID(toCopy->GetParentID());
+		this->_mouseIsOver = false;
+		this->_hasMouseOverFired = false;
+		this->_active = toCopy->IsActive();
+		this->activeWidth = toCopy->GetActiveWidth();
+		this->activeHeight = toCopy->GetActiveHeight();
+		this->activeOffset = toCopy->GetActiveOffset();
+		this->activeLayer = toCopy->GetActiveLayer();
+
+		// Initialize callback functions to nullptr
+		this->OnActiveCollisionFunction = nullptr;
+		this->OnCollisionEnterFunction = nullptr;
+		this->OnCollisionLeaveFunction = nullptr;
+
+		this->_mouseOverSet = false;
+		this->_mouseEnterSet = false;
+		this->_mouseLeaveSet = false;
+		this->_leftClickSet = false;
+		this->_rightClickSet = false;
+	}
+
 	BoxCollider::~BoxCollider()
 	{
 	}
