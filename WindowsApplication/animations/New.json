@@ -1,8 +1,72 @@
 {
-    "Animation Properties": [
+    "Scene GameObjects": [
         {
-            "Length": 0.0,
-            "Name": "New Animation"
+            "_isActive": true,
+            "children": [
+                1
+            ],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 0,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 1,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\frustrumVisible.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 2,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
+                    "type": "Animation"
+                }
+            ],
+            "id": 0,
+            "name": "Parent",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 6,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 7,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Camera.png",
+                    "texture_height": 33.0,
+                    "texture_width": 34.0,
+                    "type": "Sprite",
+                    "xOffset": 17.0,
+                    "yOffset": 16.5
+                }
+            ],
+            "id": 1,
+            "name": "Child",
+            "parent": 0
         }
     ]
 }

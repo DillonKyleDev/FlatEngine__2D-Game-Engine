@@ -58,6 +58,7 @@ namespace FlatEngine { namespace FlatGui {
 	bool _showInspector = true;
 	bool _showAnimator = true;
 	bool _showAnimationPreview = true;
+	bool _showKeyFrameEditor = true;
 	bool _showLogger = true;
 	bool _showProfiler = true;
 
@@ -303,6 +304,8 @@ namespace FlatEngine { namespace FlatGui {
 			RenderAnimator();
 		if (_showAnimationPreview)
 			RenderAnimationPreview();
+		if (_showKeyFrameEditor)
+			RenderKeyFrameEditor();
 		if (_showLogger)
 			RenderLog();
 		if (_showProfiler)
@@ -527,7 +530,6 @@ namespace FlatEngine { namespace FlatGui {
 				AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
-
 			// Renders Canvas Component
 			if (canvasComponent != nullptr)
 			{
@@ -581,10 +583,7 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Renders Transform Arrow // 
 			//
-			// Should be last in line here to be rendered top-most
-			// 
-			// If a sceneObject is focused and the currently focused object is the same as this loop iteration,
-			// render the focused objects TransformArrow for moving it within the scene view
+			// Should be last in line here to be rendered top-most -- If this obect is focused
 			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
 			{
 				// Get focused GameObject and transformArrow png
@@ -621,7 +620,7 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
 				if (child->IsActive())
-					Scene_RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+					RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
 			}
 		}
 	}
@@ -743,22 +742,22 @@ namespace FlatEngine { namespace FlatGui {
 		animationProperties.push_back(animationName);
 
 
-		for (Animation::S_Transform transformProp : propertiesObject->transformProperties)
+		for (std::shared_ptr<Animation::S_Transform> transformProp : propertiesObject->transformProperties)
 		{
 			// Declare components array json object for components
 			json transformPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "transformInterpType", transformProp.transformInterpType },
-				{ "transformSpeed", transformProp.transformSpeed },
-				{ "scaleInterpType", transformProp.scaleInterpType },
-				{ "scaleSpeed", transformProp.scaleSpeed },
-				{ "time", transformProp.time },
-				{ "xMove", transformProp.xMove },
-				{ "yMove", transformProp.yMove },
-				{ "xScale", transformProp.xScale },
-				{ "yScale", transformProp.yScale }
+				{ "transformInterpType", transformProp->transformInterpType },
+				{ "transformSpeed", transformProp->transformSpeed },
+				{ "scaleInterpType", transformProp->scaleInterpType },
+				{ "scaleSpeed", transformProp->scaleSpeed },
+				{ "time", transformProp->time },
+				{ "xMove", transformProp->xMove },
+				{ "yMove", transformProp->yMove },
+				{ "xScale", transformProp->xScale },
+				{ "yScale", transformProp->yScale }
 			};
 
 			// Dumped json object with required data for saving
@@ -776,19 +775,19 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Sprite spriteProp : propertiesObject->spriteProperties)
+		for (std::shared_ptr<Animation::S_Sprite> spriteProp : propertiesObject->spriteProperties)
 		{
 			// Declare components array json object for components
 			json spritePropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "interpType", spriteProp.interpType },
-				{ "speed", spriteProp.speed },
-				{ "time", spriteProp.time },
-				{ "path", spriteProp.path },
-				{ "xOffset", spriteProp.xOffset },
-				{ "yOffset", spriteProp.yOffset }
+				{ "interpType", spriteProp->interpType },
+				{ "speed", spriteProp->speed },
+				{ "time", spriteProp->time },
+				{ "path", spriteProp->path },
+				{ "xOffset", spriteProp->xOffset },
+				{ "yOffset", spriteProp->yOffset }
 			};
 
 			// Dumped json object with required data for saving
@@ -806,15 +805,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Camera cameraProp : propertiesObject->cameraProperties)
+		for (std::shared_ptr<Animation::S_Camera> cameraProp : propertiesObject->cameraProperties)
 		{
 			// Declare components array json object for components
 			json cameraPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", cameraProp.time },
-				{ "_isPrimaryCamera", cameraProp._isPrimaryCamera }
+				{ "time", cameraProp->time },
+				{ "_isPrimaryCamera", cameraProp->_isPrimaryCamera }
 			};
 
 			// Dumped json object with required data for saving
@@ -832,15 +831,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Script scriptProp : propertiesObject->scriptProperties)
+		for (std::shared_ptr<Animation::S_Script> scriptProp : propertiesObject->scriptProperties)
 		{
 			// Declare components array json object for components
 			json scriptPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", scriptProp.time },
-				{ "path", scriptProp.path }
+				{ "time", scriptProp->time },
+				{ "path", scriptProp->path }
 			};
 
 			// Dumped json object with required data for saving
@@ -858,15 +857,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Button buttonProp : propertiesObject->buttonProperties)
+		for (std::shared_ptr<Animation::S_Button> buttonProp : propertiesObject->buttonProperties)
 		{
 			// Declare components array json object for components
 			json buttonPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", buttonProp.time },
-				{ "_isActive", buttonProp._isActive }
+				{ "time", buttonProp->time },
+				{ "_isActive", buttonProp->_isActive }
 			};
 
 			// Dumped json object with required data for saving
@@ -884,14 +883,14 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Canvas canvasProp : propertiesObject->canvasProperties)
+		for (std::shared_ptr<Animation::S_Canvas> canvasProp : propertiesObject->canvasProperties)
 		{
 			// Declare components array json object for components
 			json canvasPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", canvasProp.time }
+				{ "time", canvasProp->time }
 			};
 
 			// Dumped json object with required data for saving
@@ -909,16 +908,16 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Audio audioProp : propertiesObject->audioProperties)
+		for (std::shared_ptr<Animation::S_Audio> audioProp : propertiesObject->audioProperties)
 		{
 			// Declare components array json object for components
 			json audioPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", audioProp.time },
-				{ "path", audioProp.path },
-				{ "_isMusic", audioProp._isMusic }
+				{ "time", audioProp->time },
+				{ "path", audioProp->path },
+				{ "_isMusic", audioProp->_isMusic }
 			};
 
 			// Dumped json object with required data for saving
@@ -936,17 +935,17 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_Text textProp : propertiesObject->textProperties)
+		for (std::shared_ptr<Animation::S_Text> textProp : propertiesObject->textProperties)
 		{
 			// Declare components array json object for components
 			json textPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", textProp.time },
-				{ "path", textProp.path },
-				{ "text", textProp.text },
-				{ "color", textProp.color }
+				{ "time", textProp->time },
+				{ "path", textProp->path },
+				{ "text", textProp->text },
+				{ "color", textProp->color }
 			};
 
 			// Dumped json object with required data for saving
@@ -964,15 +963,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_BoxCollider boxColliderProp : propertiesObject->boxColliderProperties)
+		for (std::shared_ptr<Animation::S_BoxCollider> boxColliderProp : propertiesObject->boxColliderProperties)
 		{
 			// Declare components array json object for components
 			json boxColliderPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", boxColliderProp.time },
-				{ "_isActive", boxColliderProp._isActive }
+				{ "time", boxColliderProp->time },
+				{ "_isActive", boxColliderProp->_isActive }
 			};
 
 			// Dumped json object with required data for saving
@@ -990,15 +989,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_CircleCollider circleColliderProp : propertiesObject->circleColliderProperties)
+		for (std::shared_ptr<Animation::S_CircleCollider> circleColliderProp : propertiesObject->circleColliderProperties)
 		{
 			// Declare components array json object for components
 			json circleColliderPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", circleColliderProp.time },
-				{ "_isActive", circleColliderProp._isActive }
+				{ "time", circleColliderProp->time },
+				{ "_isActive", circleColliderProp->_isActive }
 			};
 
 			// Dumped json object with required data for saving
@@ -1016,18 +1015,18 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_RigidBody rigidBodyProp : propertiesObject->rigidBodyProperties)
+		for (std::shared_ptr<Animation::S_RigidBody> rigidBodyProp : propertiesObject->rigidBodyProperties)
 		{
 			// Declare components array json object for components
 			json rigidBodyPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", rigidBodyProp.time },
-				{ "interpType", rigidBodyProp.interpType },
-				{ "speed", rigidBodyProp.speed },
-				{ "_isActive", rigidBodyProp._isActive },
-				{ "gravityScale", rigidBodyProp.gravityScale },
+				{ "time", rigidBodyProp->time },
+				{ "interpType", rigidBodyProp->interpType },
+				{ "speed", rigidBodyProp->speed },
+				{ "_isActive", rigidBodyProp->_isActive },
+				{ "gravityScale", rigidBodyProp->gravityScale },
 			};
 
 			// Dumped json object with required data for saving
@@ -1045,15 +1044,15 @@ namespace FlatEngine { namespace FlatGui {
 			// Finally, add the Animation Property json to the animationProperties
 			animationProperties.push_back(animationProperty);
 		}
-		for (Animation::S_CharacterController characterControllerProp : propertiesObject->characterControllerProperties)
+		for (std::shared_ptr<Animation::S_CharacterController> characterControllerProp : propertiesObject->characterControllerProperties)
 		{
 			// Declare components array json object for components
 			json characterControllerPropertiesArray = json::array();
 
 			// Get the objects fields
 			json jsonData = {
-				{ "time", characterControllerProp.time },
-				{ "_isActive", characterControllerProp._isActive }
+				{ "time", characterControllerProp->time },
+				{ "_isActive", characterControllerProp->_isActive }
 			};
 
 			// Dumped json object with required data for saving
@@ -1085,8 +1084,8 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path)
 	{
 		std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-		Animation::S_Transform transformProperties;
-		Animation::S_Sprite spriteProperties;
+		std::shared_ptr<Animation::S_Transform> transformProperties;
+		std::shared_ptr<Animation::S_Sprite > spriteProperties;
 
 		// Save the path to the animationProperties struct
 		animationProperties->animationPath = path;
@@ -1150,18 +1149,19 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Transform transformFrames = {};
+									std::shared_ptr<Animation::S_Transform> transformFrames = std::make_shared<Animation::S_Transform>();
+									transformFrames->name = "Transform";
 									if (currentObjectJson["Frames"][f]["transformInterpType"] == "Lerp")
-										transformFrames.transformInterpType = Animation::InterpType::Lerp;
-									transformFrames.transformSpeed = currentObjectJson["Frames"][f]["transformSpeed"];
+										transformFrames->transformInterpType = Animation::InterpType::Lerp;
+									transformFrames->transformSpeed = currentObjectJson["Frames"][f]["transformSpeed"];
 									if (currentObjectJson["Frames"][f]["scaleInterpType"] == "Lerp")
-										transformFrames.scaleInterpType = Animation::InterpType::Lerp;
-									transformFrames.scaleSpeed = currentObjectJson["Frames"][f]["scaleSpeed"];
-									transformFrames.time = currentObjectJson["Frames"][f]["time"];
-									transformFrames.xMove = currentObjectJson["Frames"][f]["xMove"];
-									transformFrames.yMove = currentObjectJson["Frames"][f]["yMove"];
-									transformFrames.xScale = currentObjectJson["Frames"][f]["xScale"];
-									transformFrames.yScale = currentObjectJson["Frames"][f]["yScale"];
+										transformFrames->scaleInterpType = Animation::InterpType::Lerp;
+									transformFrames->scaleSpeed = currentObjectJson["Frames"][f]["scaleSpeed"];
+									transformFrames->time = currentObjectJson["Frames"][f]["time"];
+									transformFrames->xMove = currentObjectJson["Frames"][f]["xMove"];
+									transformFrames->yMove = currentObjectJson["Frames"][f]["yMove"];
+									transformFrames->xScale = currentObjectJson["Frames"][f]["xScale"];
+									transformFrames->yScale = currentObjectJson["Frames"][f]["yScale"];
 
 									// Save the data to the animationProperties struct
 									animationProperties->transformProperties.push_back(transformFrames);
@@ -1171,20 +1171,19 @@ namespace FlatEngine { namespace FlatGui {
 						else if (currentObjectJson["Property"] == "Sprite")
 						{
 							// Check Frames key exists
-
-
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Sprite spriteFrames = {};
+									std::shared_ptr<Animation::S_Sprite> spriteFrames = std::make_shared<Animation::S_Sprite>();
+									spriteFrames->name = "Sprite";
 									if (currentObjectJson["Frames"][f]["interpType"] == "Lerp")
-										spriteFrames.interpType = Animation::InterpType::Lerp;
-									spriteFrames.speed = currentObjectJson["Frames"][f]["speed"];
-									spriteFrames.time = currentObjectJson["Frames"][f]["time"];
-									spriteFrames.xOffset = currentObjectJson["Frames"][f]["xOffset"];
-									spriteFrames.yOffset = currentObjectJson["Frames"][f]["yOffset"];
-									spriteFrames.path = currentObjectJson["Frames"][f]["path"];
+										spriteFrames->interpType = Animation::InterpType::Lerp;
+									spriteFrames->speed = currentObjectJson["Frames"][f]["speed"];
+									spriteFrames->time = currentObjectJson["Frames"][f]["time"];
+									spriteFrames->xOffset = currentObjectJson["Frames"][f]["xOffset"];
+									spriteFrames->yOffset = currentObjectJson["Frames"][f]["yOffset"];
+									spriteFrames->path = currentObjectJson["Frames"][f]["path"];
 
 									// Save the data to the animationProperties struct
 									animationProperties->spriteProperties.push_back(spriteFrames);
@@ -1200,9 +1199,10 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Camera cameraFrames = {};
-									cameraFrames._isPrimaryCamera = currentObjectJson["Frames"][f]["_isPrimaryCamera"];
-									cameraFrames.time = currentObjectJson["Frames"][f]["time"];
+									std::shared_ptr<Animation::S_Camera> cameraFrames = std::make_shared<Animation::S_Camera>();
+									cameraFrames->name = "Camera";
+									cameraFrames->_isPrimaryCamera = currentObjectJson["Frames"][f]["_isPrimaryCamera"];
+									cameraFrames->time = currentObjectJson["Frames"][f]["time"];
 
 									// Save the data to the animationProperties struct
 									animationProperties->cameraProperties.push_back(cameraFrames);
@@ -1212,18 +1212,17 @@ namespace FlatEngine { namespace FlatGui {
 						else if (currentObjectJson["Property"] == "Script")
 						{
 							// Check Frames key exists
-
-
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Script frames = {};
-									frames.path = currentObjectJson["Frames"][f]["path"];
-									frames.time = currentObjectJson["Frames"][f]["time"];
+									std::shared_ptr<Animation::S_Script> Frames = std::make_shared<Animation::S_Script>();
+									Frames->name = "Script";
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->time = currentObjectJson["Frames"][f]["time"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->scriptProperties.push_back(frames);
+									animationProperties->scriptProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1233,13 +1232,14 @@ namespace FlatEngine { namespace FlatGui {
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
-								{
-									Animation::S_Button frames = {};
-									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
-									frames.time = currentObjectJson["Frames"][f]["time"];
+								{					
+									std::shared_ptr<Animation::S_Button> Frames = std::make_shared<Animation::S_Button>();
+									Frames->name = "Button";
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+									Frames->time = currentObjectJson["Frames"][f]["time"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->buttonProperties.push_back(frames);
+									animationProperties->buttonProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1250,11 +1250,12 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Canvas frames = {};					
-									frames.time = currentObjectJson["Frames"][f]["time"];
+									std::shared_ptr<Animation::S_Canvas> Frames = std::make_shared<Animation::S_Canvas>();
+									Frames->name = "Canvas";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->canvasProperties.push_back(frames);
+									animationProperties->canvasProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1265,13 +1266,14 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Audio frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames.path = currentObjectJson["Frames"][f]["path"];
-									frames._isMusic = currentObjectJson["Frames"][f]["_isMusic"];
+									std::shared_ptr<Animation::S_Audio> Frames = std::make_shared<Animation::S_Audio>();
+									Frames->name = "Audio";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->_isMusic = currentObjectJson["Frames"][f]["_isMusic"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->audioProperties.push_back(frames);
+									animationProperties->audioProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1282,14 +1284,15 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_Text frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames.path = currentObjectJson["Frames"][f]["path"];
-									frames.text = currentObjectJson["Frames"][f]["text"];
-									frames.color = currentObjectJson["Frames"][f]["color"];
+									std::shared_ptr<Animation::S_Text> Frames = std::make_shared<Animation::S_Text>();
+									Frames->name = "Text";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->text = currentObjectJson["Frames"][f]["text"];
+									Frames->color = currentObjectJson["Frames"][f]["color"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->textProperties.push_back(frames);
+									animationProperties->textProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1300,12 +1303,13 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_BoxCollider frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+									std::shared_ptr<Animation::S_BoxCollider> Frames = std::make_shared<Animation::S_BoxCollider>();
+									Frames->name = "BoxCollider";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->boxColliderProperties.push_back(frames);
+									animationProperties->boxColliderProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1316,12 +1320,13 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_CircleCollider frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+									std::shared_ptr<Animation::S_CircleCollider> Frames = std::make_shared<Animation::S_CircleCollider>();
+									Frames->name = "CircleCollider";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->circleColliderProperties.push_back(frames);
+									animationProperties->circleColliderProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1332,15 +1337,16 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_RigidBody frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
-									frames.interpType = currentObjectJson["Frames"][f]["interpType"];
-									frames.speed = currentObjectJson["Frames"][f]["speed"];
-									frames.gravityScale = currentObjectJson["Frames"][f]["gravityScale"];
+									std::shared_ptr<Animation::S_RigidBody> Frames = std::make_shared<Animation::S_RigidBody>();
+									Frames->name = "RigidBody";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+									Frames->interpType = currentObjectJson["Frames"][f]["interpType"];
+									Frames->speed = currentObjectJson["Frames"][f]["speed"];
+									Frames->gravityScale = currentObjectJson["Frames"][f]["gravityScale"];
 									
 									// Save the data to the animationProperties struct
-									animationProperties->rigidBodyProperties.push_back(frames);
+									animationProperties->rigidBodyProperties.push_back(Frames);
 								}
 							}
 						}
@@ -1351,12 +1357,13 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
 								{
-									Animation::S_CharacterController frames = {};
-									frames.time = currentObjectJson["Frames"][f]["time"];
-									frames._isActive = currentObjectJson["Frames"][f]["_isActive"];
+									std::shared_ptr<Animation::S_CharacterController> Frames = std::make_shared<Animation::S_CharacterController>();
+									Frames->name = "CharacterController";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
 
 									// Save the data to the animationProperties struct
-									animationProperties->characterControllerProperties.push_back(frames);
+									animationProperties->characterControllerProperties.push_back(Frames);
 								}
 							}
 						}

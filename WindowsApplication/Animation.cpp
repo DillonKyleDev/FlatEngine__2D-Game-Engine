@@ -145,6 +145,7 @@ namespace FlatEngine
 
 	void Animation::PlayAnimation(int ellapsedTime)
 	{
+		// NEED TO SORT ANIATION FRAMES BY TIME AND PLAY THEM IN THEIR OWN WINDOWS
 		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(animationPath);
 		std::shared_ptr<S_AnimationProperties> props = animationProperties;
 
@@ -152,12 +153,12 @@ namespace FlatEngine
 		if (props->animationLength > ellapsedTime - animationStartTime)
 		{
 			// Transform Animation Frames
-			for (const S_Transform &transformFrame : props->transformProperties)
+			for (const std::shared_ptr<S_Transform> &transformFrame : props->transformProperties)
 			{ 
 				
-				int timeLeft = transformFrame.time - ellapsedTime - animationStartTime;
+				int timeLeft = transformFrame->time - ellapsedTime - animationStartTime;
 				LogFloat(timeLeft, "Time LEft: ");
-				float percentDone = ellapsedTime / transformFrame.time;
+				float percentDone = ellapsedTime / transformFrame->time;
 
 				// Save original position
 				std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
@@ -166,42 +167,42 @@ namespace FlatEngine
 				Vector2 currentPos = transform->GetPosition();
 				Vector2 currentScale = transform->GetScale();
 
-				if (animationStartTime + transformFrame.time > ellapsedTime)
+				if (animationStartTime + transformFrame->time > ellapsedTime)
 				{
-					switch (transformFrame.transformInterpType)
+					switch (transformFrame->transformInterpType)
 					{
 						case Lerp:
 						{
 							LogFloat(percentDone, "Percent done: ");
-							float correctedX = (startingPoint.x + transformFrame.xMove * percentDone);
-							float correctedY = (startingPoint.y + transformFrame.yMove * percentDone);
-							//transform->SetPosition(FlatEngine::Lerp(currentPos, Vector2(currentPos.x + correctedX, currentPos.y + correctedX), transformFrame.transformSpeed));
+							float correctedX = (startingPoint.x + transformFrame->xMove * percentDone);
+							float correctedY = (startingPoint.y + transformFrame->yMove * percentDone);
+							//transform->SetPosition(FlatEngine::Lerp(currentPos, Vector2(currentPos.x + correctedX, currentPos.y + correctedX), transformFrame->transformSpeed));
 							transform->SetPosition(Vector2(correctedX, correctedY));
 							break;
 						}
 					}
-					switch (transformFrame.scaleInterpType)
+					switch (transformFrame->scaleInterpType)
 					{
 						case Lerp:
 						{
-							transform->SetScale(FlatEngine::Lerp(currentScale, Vector2(currentScale.x + transformFrame.xScale, currentScale.y + transformFrame.yScale), transformFrame.scaleSpeed));
+							transform->SetScale(FlatEngine::Lerp(currentScale, Vector2(currentScale.x + transformFrame->xScale, currentScale.y + transformFrame->yScale), transformFrame->scaleSpeed));
 							break;
 						}
 					}
 				}
 			}
 			// Sprite Animation Frames
-			for (const S_Sprite& spriteFrame : props->spriteProperties)
+			for (const std::shared_ptr<S_Sprite>& spriteFrame : props->spriteProperties)
 			{
 				std::shared_ptr<FlatEngine::Sprite> sprite = GetParent()->GetSpriteComponent();
 
-				if (animationStartTime + spriteFrame.time > ellapsedTime)
+				if (animationStartTime + spriteFrame->time > ellapsedTime)
 				{
-					if (spriteFrame.path != "")
-						sprite->SetTexture(spriteFrame.path);
+					if (spriteFrame->path != "")
+						sprite->SetTexture(spriteFrame->path);
 					
 					Vector2 spriteOffset = sprite->GetOffset();
-					sprite->SetOffset(Vector2(spriteOffset.x + spriteFrame.xOffset, spriteOffset.y + spriteFrame.yOffset));
+					sprite->SetOffset(Vector2(spriteOffset.x + spriteFrame->xOffset, spriteOffset.y + spriteFrame->yOffset));
 				}
 			}
 		}

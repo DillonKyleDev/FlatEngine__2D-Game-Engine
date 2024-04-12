@@ -1,7 +1,7 @@
 {
     "Animation Properties": [
         {
-            "Length": 6000.0,
+            "Length": 10.0,
             "Name": "New Animation"
         },
         {
@@ -12,9 +12,9 @@
                     "time": 6000.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
-                    "xMove": 10.0,
+                    "xMove": 5.0,
                     "xScale": 0.0,
-                    "yMove": 1.0,
+                    "yMove": 0.0,
                     "yScale": 0.0
                 }
             ],
@@ -26,7 +26,7 @@
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
-                    "time": 0.0,
+                    "time": 12040.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -36,97 +36,67 @@
         {
             "Frames": [
                 {
-                    "_isPrimaryCamera": false,
-                    "time": 0.0
-                }
-            ],
-            "Property": "Camera"
-        },
-        {
-            "Frames": [
-                {
-                    "path": "",
-                    "time": 0.0
-                }
-            ],
-            "Property": "Script"
-        },
-        {
-            "Frames": [
-                {
-                    "_isActive": true,
-                    "time": 0.0
-                }
-            ],
-            "Property": "Button"
-        },
-        {
-            "Frames": [
-                {
-                    "time": 0.0
-                }
-            ],
-            "Property": "Canvas"
-        },
-        {
-            "Frames": [
-                {
-                    "_isMusic": false,
-                    "path": "",
-                    "time": 0.0
-                }
-            ],
-            "Property": "Audio"
-        },
-        {
-            "Frames": [
-                {
-                    "color": "",
-                    "path": "",
-                    "text": "",
-                    "time": 0.0
-                }
-            ],
-            "Property": "Text"
-        },
-        {
-            "Frames": [
-                {
-                    "_isActive": true,
-                    "time": 0.0
-                }
-            ],
-            "Property": "BoxCollider"
-        },
-        {
-            "Frames": [
-                {
-                    "_isActive": true,
-                    "time": 0.0
-                }
-            ],
-            "Property": "CircleCollider"
-        },
-        {
-            "Frames": [
-                {
-                    "_isActive": true,
-                    "gravityScale": 1.0,
                     "interpType": 0,
+                    "path": "",
                     "speed": 0.10000000149011612,
-                    "time": 0.0
+                    "time": 1960.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
                 }
             ],
-            "Property": "RigidBody"
+            "Property": "Sprite"
         },
         {
             "Frames": [
                 {
-                    "_isActive": true,
-                    "time": 0.0
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\SingleButton.png",
+                    "speed": 0.10000000149011612,
+                    "time": 4020.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
                 }
             ],
-            "Property": "CharacterController"
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 6000.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Camera.png",
+                    "speed": 0.10000000149011612,
+                    "time": 8000.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 10060.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
         }
     ]
 }

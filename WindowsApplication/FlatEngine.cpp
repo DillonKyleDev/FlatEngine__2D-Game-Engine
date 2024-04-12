@@ -2,6 +2,8 @@
 #include "UIManager.h"
 #include "Logger.h"
 #include "Scene.h"
+#include "Transform.h"
+#include "Vector2.h"
 
 /*
 ######################################
@@ -30,6 +32,7 @@ namespace FlatEngine
 	// Animator
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
 	std::shared_ptr<GameObject> objectForFocusedAnimation = nullptr;
+	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
 
 	// Profiler
 	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
@@ -73,9 +76,25 @@ namespace FlatEngine
 	void FlatEngine::SetFocusedGameObjectID(long ID)
 	{
 		FlatEngine::FocusedGameObjectID = ID;
-		// Create a copy of the focused GameObject to be used for the animator window.
-		if (FlatGui::_showAnimator && ID != -1)
-			objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID));
+		std::shared_ptr<GameObject> focusedObject = GetObjectById(ID);
+		std::shared_ptr<Animation> animationComponent = focusedObject->GetAnimationComponent();
+		std::string animationPath = "";
+
+		if (animationComponent != nullptr)
+			animationPath = animationComponent->GetAnimationPath();
+	
+
+		// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
+		if (FlatGui::_showAnimator && ID != -1 && FocusedAnimation != nullptr &&
+			animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
+		{
+			std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
+			objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, -1);
+			std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
+			transform->SetPosition(Vector2(0,0));
+			animatorObjects.push_back(objectForFocusedAnimation);
+			GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects);
+		}
 	}
 
 	long FlatEngine::GetFocusedGameObjectID()

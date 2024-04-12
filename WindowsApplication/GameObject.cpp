@@ -27,24 +27,33 @@ namespace FlatEngine
 		this->components = {};
 		this->_isActive = true;
 		this->childrenIDs = std::vector<long>();
-		
+	
 		// Increment GameObjectID counter in the scene for next GameObject
 		FlatEngine::GetLoadedScene()->IncrementGameObjectID();
 	}
 
 	// Copy Constructor
-	GameObject::GameObject(std::shared_ptr<GameObject> toCopy)
+	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& objectVector, long parentID)
 	{
-		SetParentID(toCopy->GetParentID());
+		SetParentID(parentID);
 		SetID(GetNextGameObjectID());
 		SetName(toCopy->GetName());
 		SetActive(toCopy->IsActive());
-		childrenIDs = toCopy->childrenIDs;
 
-		for (long ID : childrenIDs)
+		for (long childID : toCopy->childrenIDs)
 		{
-			AddChild(ID);
+			std::shared_ptr<GameObject> childToCopy = GetObjectById(childID);
+			// Probably not assigning children right here. Original component with 1 child endsd up with 2 somehow
+			std::shared_ptr<GameObject> newChild = std::make_shared<GameObject>(childToCopy, objectVector, GetID());
+			objectVector.push_back(newChild);
+			AddChild(newChild->GetID());
+			std::vector<long> childrenIDs = childToCopy->GetChildren();
+
+			for (long gChildID : childrenIDs) {
+				RecursiveChildrenCopy(newChild, objectVector, gChildID);
+			}
 		}
+
 		
 		for (std::shared_ptr<Component> component : toCopy->GetComponents())
 		{
@@ -98,6 +107,20 @@ namespace FlatEngine
 				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component));
 				this->components.push_back(newComponent);
 			}
+		}
+	}
+
+	void GameObject::RecursiveChildrenCopy(std::shared_ptr<GameObject> &parent, std::vector<std::shared_ptr<GameObject>> &objectVector, long childID)
+	{
+		std::shared_ptr<GameObject> childToCopy = GetObjectById(childID);
+		std::shared_ptr<GameObject> newChild = std::make_shared<GameObject>(childToCopy, objectVector, parent->GetID());
+		objectVector.push_back(newChild);
+		parent->AddChild(newChild->GetID());
+		std::vector<long> childrenIDs = childToCopy->GetChildren();
+
+		for (long gChildID : childrenIDs)
+		{
+			RecursiveChildrenCopy(newChild, objectVector, gChildID);
 		}
 	}
 

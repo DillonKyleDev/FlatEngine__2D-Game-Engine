@@ -7,11 +7,12 @@ namespace FlatEngine
 {
 	Scene::Scene()
 	{
-		this->name = "New Scene";
-		this->sceneObjects = std::vector< std::shared_ptr<GameObject>>();
-		this->primaryCamera = nullptr;
-		this->nextGameObjectID = 0;
-		this->nextComponentID = 0;
+		name = "New Scene";
+		sceneObjects = std::vector< std::shared_ptr<GameObject>>();
+		animatorPreviewObjects = std::vector< std::shared_ptr<GameObject>>();
+		primaryCamera = nullptr;
+		nextGameObjectID = 0;
+		nextComponentID = 0;
 	}
 
 	Scene::~Scene()
@@ -20,31 +21,48 @@ namespace FlatEngine
 
     void Scene::SetName(std::string name)
     {
-        this->name = name;
+        name = name;
     }
 
 	std::string Scene::GetName()
 	{
-		return this->name;
+		return name;
 	}
 
 	void Scene::AddSceneObject(std::shared_ptr<GameObject> sceneObject)
 	{
-		this->sceneObjects.push_back(sceneObject);
+		sceneObjects.push_back(sceneObject);
 	}
 
 	std::vector<std::shared_ptr<GameObject>> Scene::GetSceneObjects()
 	{
-		return this->sceneObjects;
+		return sceneObjects;
+	}
+
+	void Scene::SetAnimatorPreviewObjects(std::vector<std::shared_ptr<GameObject>> previewObjects)
+	{
+		animatorPreviewObjects = previewObjects;
+	}
+
+	std::vector<std::shared_ptr<GameObject>> &Scene::GetAnimatorPreviewObjects()
+	{
+		return animatorPreviewObjects;
 	}
 
 	std::shared_ptr<GameObject> Scene::GetObjectById(long ID)
 	{
-		for (int i = 0; i < this->sceneObjects.size(); i++)
+		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
 		{
-			if (ID == sceneObjects[i]->GetID())
+			if (ID == sceneObject->GetID())
 			{
-				return sceneObjects[i];
+				return sceneObject;
+			}
+		}
+		for (std::shared_ptr<GameObject> animPreviewObject : animatorPreviewObjects)
+		{
+			if (ID == animPreviewObject->GetID())
+			{
+				return animPreviewObject;
 			}
 		}
 		return nullptr;
@@ -52,11 +70,18 @@ namespace FlatEngine
 
 	std::shared_ptr<GameObject> Scene::GetObjectByName(std::string name)
 	{
-		for (int i = 0; i < this->sceneObjects.size(); i++)
+		for (int i = 0; i < sceneObjects.size(); i++)
 		{
 			if (name == sceneObjects[i]->GetName())
 			{
 				return sceneObjects[i];
+			}
+		}
+		for (std::shared_ptr<GameObject> animPreviewObject : animatorPreviewObjects)
+		{
+			if (name == animPreviewObject->GetName())
+			{
+				return animPreviewObject;
 			}
 		}
 		return nullptr;
@@ -65,7 +90,7 @@ namespace FlatEngine
 	std::shared_ptr<GameObject> Scene::CreateGameObject(long parentID)
 	{
 		std::shared_ptr<GameObject> newObject(new GameObject(parentID));
-		this->AddSceneObject(newObject);
+		AddSceneObject(newObject);
 		return newObject;
 	}
 
@@ -73,11 +98,11 @@ namespace FlatEngine
 	{
 		std::shared_ptr<GameObject> objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
 
-		// If this GameObject was the primary camera, unset it as the primaryCamera and set this->primaryCamera to nullptr
-		if (this->primaryCamera != nullptr && this->primaryCamera->GetParentID() == objectToDelete->GetID())
+		// If this GameObject was the primary camera, unset it as the primaryCamera and set primaryCamera to nullptr
+		if (primaryCamera != nullptr && primaryCamera->GetParentID() == objectToDelete->GetID())
 		{
-			this->primaryCamera->SetPrimaryCamera(false);
-			this->primaryCamera = nullptr;
+			primaryCamera->SetPrimaryCamera(false);
+			primaryCamera = nullptr;
 		}
 
 		// Check for a parent and remove the child object reference
@@ -112,37 +137,37 @@ namespace FlatEngine
 			}
 		}
 		// Then delete this GameObject
-		for (int i = 0; i < this->sceneObjects.size(); i++)
+		for (int i = 0; i < sceneObjects.size(); i++)
 		{
-			if (this->sceneObjects[i]->GetID() == objectToDelete->GetID())
+			if (sceneObjects[i]->GetID() == objectToDelete->GetID())
 			{
 				// Remove the primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
 				if (objectToDelete->GetID() == cameraObjectID)
 					loadedScene->RemovePrimaryCamera();
 
-				this->sceneObjects.erase(this->sceneObjects.begin() + i);
+				sceneObjects.erase(sceneObjects.begin() + i);
 			}
 		}
 	}
 
 	void Scene::IncrementGameObjectID()
 	{
-		this->nextGameObjectID += 1;
+		nextGameObjectID += 1;
 	}
 
 	long Scene::GetNextGameObjectID()
 	{
-		return this->nextGameObjectID;
+		return nextGameObjectID;
 	}
 
 	void  Scene::IncrementComponentID()
 	{
-		this->nextComponentID += 1;
+		nextComponentID += 1;
 	}
 
 	long  Scene::GetNextComponentID()
 	{
-		return this->nextComponentID;
+		return nextComponentID;
 	}
 
 	void Scene::SetPrimaryCamera(std::shared_ptr<Camera> camera)
@@ -150,13 +175,13 @@ namespace FlatEngine
 		if (camera != nullptr)
 		{
 			// Remove the old primaryCamera
-			if (this->primaryCamera != nullptr)
+			if (primaryCamera != nullptr)
 			{
-				this->primaryCamera->SetPrimaryCamera(false);
+				primaryCamera->SetPrimaryCamera(false);
 			}
 
-			this->primaryCamera = camera;
-			this->primaryCamera->SetPrimaryCamera(true);
+			primaryCamera = camera;
+			primaryCamera->SetPrimaryCamera(true);
 		}
 		else
 		{
@@ -166,11 +191,11 @@ namespace FlatEngine
 
 	void Scene::RemovePrimaryCamera()
 	{
-		this->primaryCamera = nullptr;
+		primaryCamera = nullptr;
 	}
 
 	std::shared_ptr<Camera> Scene::GetPrimaryCamera()
 	{
-		return this->primaryCamera;
+		return primaryCamera;
 	}
 }

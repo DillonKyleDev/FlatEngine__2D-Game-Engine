@@ -18,6 +18,8 @@ namespace FlatEngine
 		std::string GetName();
 		void AddSceneObject(std::shared_ptr<GameObject> sceneObject);
 		std::vector<std::shared_ptr<GameObject>> GetSceneObjects();
+		void SetAnimatorPreviewObjects(std::vector<std::shared_ptr<GameObject>> previewObjects);
+		std::vector<std::shared_ptr<GameObject>> &GetAnimatorPreviewObjects();
 		std::shared_ptr<GameObject> GetObjectById(long ID);
 		std::shared_ptr<GameObject> GetObjectByName(std::string name);
 		std::shared_ptr<GameObject> CreateGameObject(long parentID = -1);
@@ -34,6 +36,7 @@ namespace FlatEngine
 	private:
 		std::string name;
 		std::vector<std::shared_ptr<GameObject>> sceneObjects;
+		std::vector<std::shared_ptr<GameObject>> animatorPreviewObjects;
 		std::shared_ptr<Camera> primaryCamera;
 		long nextGameObjectID;
 		long nextComponentID;

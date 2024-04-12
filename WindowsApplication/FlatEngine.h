@@ -52,6 +52,7 @@ namespace FlatEngine
 	// Focused Animation
 	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
 	extern std::shared_ptr<GameObject> objectForFocusedAnimation;
+	extern std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
 
@@ -188,9 +189,6 @@ namespace FlatEngine
 		extern void CreateNewAnimationFile(std::string path);
 		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
 		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
-		extern void RenderAnimationTimelineGrid(ImVec2 &zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void RenderAnimationTimelineKeyFrames(Vector2& pipPosition, ImVec2 zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
-		extern void AnimationPreview_RenderSelfThenChildren(ImVec2& centerPoint, std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Profiler
 		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size);
@@ -206,6 +204,7 @@ namespace FlatEngine
 		extern bool _showInspector;
 		extern bool _showAnimator;
 		extern bool _showAnimationPreview;
+		extern bool _showKeyFrameEditor;
 		extern bool _showLogger;
 		extern bool _showProfiler;
 
@@ -232,6 +231,8 @@ namespace FlatEngine
 		extern void Scene_RenderView();
 		extern void RenderAnimator();
 		extern void RenderAnimationPreview();
+		extern void RenderAnimationTimelineGrid(ImVec2& zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep);
+		extern void RenderKeyFrameEditor();
 		extern void RenderLog();
 		extern void RenderProfiler();
 		extern void Cleanup();
@@ -250,7 +251,6 @@ namespace FlatEngine
 		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
 		// Recursive - For adding GameObjects and their children to the scene/game view
-		void Scene_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
 		ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera);
 		// Recursive - For getting gameObjects total offset

@@ -23,8 +23,10 @@ namespace FlatEngine
 	public:
 		GameObject(long parentID = -1);
 		// Copy Constructor
-		GameObject(std::shared_ptr<GameObject> toCopy);
+		GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>> &objectVector, long parentID = -1);
 		~GameObject();
+
+		void RecursiveChildrenCopy(std::shared_ptr<GameObject>& parent, std::vector<std::shared_ptr<GameObject>> &objectVector, long childID);
 	
 		void SetID(long ID);
 		long GetID();

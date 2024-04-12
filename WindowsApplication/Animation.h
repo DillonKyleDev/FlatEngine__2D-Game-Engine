@@ -30,68 +30,61 @@ namespace FlatEngine
 		};
 
 		// Property structs
-		struct S_Transform {
+
+		struct S_Property {
+			float time = 0;
+			std::string name;
+		};
+		struct S_Transform : public S_Property {
 			InterpType transformInterpType = Lerp;
 			float transformSpeed = 0.1f;
 			InterpType scaleInterpType = Lerp;
 			float scaleSpeed = 0.1f;
-			float time = 0;
 			float xMove = 0;
 			float yMove = 0;
 			float xScale = 0;
 			float yScale = 0;
 		};
-		struct S_Sprite {
+		struct S_Sprite : public S_Property {
 			InterpType interpType = Lerp;
 			float speed = 0.1f;
-			float time = 0;
 			std::string path = "";
 			float xOffset = 0;
 			float yOffset = 0;
 		};
-		struct S_Camera {
-			float time = 0;
+		struct S_Camera : public S_Property {
 			bool _isPrimaryCamera = false;
 		};
-		struct S_Script {
-			float time = 0;
+		struct S_Script : public S_Property {
 			std::string path = "";
 		};
-		struct S_Button {
-			float time = 0;
+		struct S_Button : public S_Property {
 			bool _isActive = true;
 		};
-		struct S_Canvas {
-			float time = 0;
+		struct S_Canvas : public S_Property {
 		};
-		struct S_Audio {
-			float time = 0;
+		struct S_Audio : public S_Property {
 			std::string path = "";
 			bool _isMusic = false;
 		};
-		struct S_Text {
-			float time = 0;
+		struct S_Text : public S_Property {
 			std::string path = "";
 			std::string text = "";
 			std::string color = "";
 		};
-		struct S_BoxCollider {
-			float time = 0;
+		struct S_BoxCollider : public S_Property {
 			bool _isActive = true;
 		};
-		struct S_CircleCollider {
-			float time = 0;
+		struct S_CircleCollider : public S_Property {
 			bool _isActive = true;
 		};
-		struct S_RigidBody {
+		struct S_RigidBody : public S_Property {
 			InterpType interpType = Lerp;
 			float speed = 0.1f;
-			float time = 0;
 			bool _isActive = true;
 			float gravityScale = 1;
 		};
-		struct S_CharacterController {
-			float time = 0;
+		struct S_CharacterController : public S_Property {
 			bool _isActive = true;
 		};
 
@@ -99,18 +92,18 @@ namespace FlatEngine
 			std::string animationName = "";
 			std::string animationPath = "";
 			float animationLength = 0;
-			std::vector<S_Transform> transformProperties = std::vector<S_Transform>();
-			std::vector<S_Sprite> spriteProperties = std::vector<S_Sprite>();
-			std::vector<S_Camera> cameraProperties = std::vector<S_Camera>();
-			std::vector<S_Script> scriptProperties = std::vector<S_Script>();
-			std::vector<S_Button> buttonProperties = std::vector<S_Button>();
-			std::vector<S_Canvas> canvasProperties = std::vector<S_Canvas>();
-			std::vector<S_Audio> audioProperties = std::vector<S_Audio>();
-			std::vector<S_Text> textProperties = std::vector<S_Text>();
-			std::vector<S_BoxCollider> boxColliderProperties = std::vector<S_BoxCollider>();
-			std::vector<S_CircleCollider> circleColliderProperties = std::vector<S_CircleCollider>();
-			std::vector<S_RigidBody> rigidBodyProperties = std::vector<S_RigidBody>();
-			std::vector<S_CharacterController> characterControllerProperties = std::vector<S_CharacterController>();
+			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
+			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector< std::shared_ptr<S_Sprite>>();
+			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector< std::shared_ptr<S_Camera>>();
+			std::vector<std::shared_ptr<S_Script>> scriptProperties = std::vector< std::shared_ptr<S_Script>>();
+			std::vector<std::shared_ptr<S_Button>> buttonProperties = std::vector< std::shared_ptr<S_Button>>();
+			std::vector<std::shared_ptr<S_Canvas>> canvasProperties = std::vector< std::shared_ptr<S_Canvas>>();
+			std::vector<std::shared_ptr<S_Audio>> audioProperties = std::vector< std::shared_ptr<S_Audio>>();
+			std::vector<std::shared_ptr<S_Text>> textProperties = std::vector< std::shared_ptr<S_Text>>();
+			std::vector<std::shared_ptr<S_BoxCollider>> boxColliderProperties = std::vector< std::shared_ptr<S_BoxCollider>>();
+			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProperties = std::vector< std::shared_ptr<S_CircleCollider>>();
+			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProperties = std::vector< std::shared_ptr<S_RigidBody>>();
+			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProperties = std::vector< std::shared_ptr<S_CharacterController>>();
 		};
 
 		Animation(long myID = -1, long parentID = -1);
