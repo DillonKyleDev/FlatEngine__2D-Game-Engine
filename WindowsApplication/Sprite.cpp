@@ -16,11 +16,11 @@ namespace FlatEngine
 		this->renderOrder = 0;
 	}
 
-	Sprite::Sprite(std::shared_ptr<Sprite> toCopy)
+	Sprite::Sprite(std::shared_ptr<Sprite> toCopy, long newParentID)
 	{
 		this->SetType(Component::ComponentTypes::Sprite);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->texture = toCopy->GetTexture();
 		this->textureWidth = toCopy->GetTextureWidth();
 		this->textureHeight = toCopy->GetTextureHeight();

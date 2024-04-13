@@ -39,7 +39,7 @@ namespace FlatEngine
 		// Initialize our scripts with the currently loaded scene
 		this->InitializeScriptObjects();
 		// Save the name of the scene we started with so we can load it back up when we stop
-		this->startedScene = FlatEngine::GetLoadedScene()->GetName();
+		this->startedScene = FlatEngine::GetLoadedScenePath();
 
 		this->_started = true;
 	}

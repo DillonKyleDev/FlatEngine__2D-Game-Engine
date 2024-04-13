@@ -1,0 +1,76 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 0,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 1,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\idle.png",
+                    "texture_height": 23.0,
+                    "texture_width": 13.0,
+                    "type": "Sprite",
+                    "xOffset": 6.5,
+                    "yOffset": 11.5
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 2,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\dance.json",
+                    "type": "Animation"
+                }
+            ],
+            "id": 0,
+            "name": "Dancer",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isCollapsed": false,
+                    "id": 3,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 4,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\frustrumVisible.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 5,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
+                    "type": "Animation"
+                }
+            ],
+            "id": 1,
+            "name": "Square",
+            "parent": -1
+        }
+    ]
+}

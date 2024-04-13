@@ -18,7 +18,7 @@ namespace FlatEngine
 	{
 	public:
 		Button(long myID = -1, long parentID = -1);
-		Button(std::shared_ptr<Button> toCopy);
+		Button(std::shared_ptr<Button> toCopy, long newParentID);
 		~Button();
 		
 		void SetOnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback);

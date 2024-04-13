@@ -18,7 +18,7 @@ namespace FlatEngine
 	{
 	public:
 		BoxCollider(long myID = -1, long parentID = -1);
-		BoxCollider(std::shared_ptr<BoxCollider> toCopy);
+		BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID);
 		~BoxCollider();
 
 		void SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);

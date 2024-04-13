@@ -10,7 +10,7 @@ namespace FlatEngine
 	{
 	public:
 		Text(long myID = -1, long parentID = -1);
-		Text(std::shared_ptr<Text> toCopy);
+		Text(std::shared_ptr<Text> toCopy, long newParentID);
 		~Text();
 
 		void LoadText();

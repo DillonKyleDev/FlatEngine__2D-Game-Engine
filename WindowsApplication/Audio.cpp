@@ -12,11 +12,11 @@ namespace FlatEngine
 		this->_isMusic = false;
 	}
 
-	Audio::Audio(std::shared_ptr<Audio> toCopy)
+	Audio::Audio(std::shared_ptr<Audio> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Audio);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->_isMusic = toCopy->IsMusic();
 		this->sound = toCopy->sound;
 	}

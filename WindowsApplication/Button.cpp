@@ -30,11 +30,11 @@ namespace FlatEngine
 		this->_rightClickSet = false;
 	}
 
-	Button::Button(std::shared_ptr<Button> toCopy)
+	Button::Button(std::shared_ptr<Button> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Button);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->_mouseIsOver = false;
 		this->_hasMouseOverFired = false;
 		this->_active = toCopy->IsActive();

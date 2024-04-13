@@ -18,11 +18,11 @@ namespace FlatEngine
 		this->scriptInstance = nullptr;
 	}
 
-	ScriptComponent::ScriptComponent(std::shared_ptr<ScriptComponent> toCopy)
+	ScriptComponent::ScriptComponent(std::shared_ptr<ScriptComponent> toCopy, long newParentID)
 	{
 		this->SetType(Component::ComponentTypes::Script);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->_isActive = toCopy->IsActive();
 		this->attachedScript = toCopy->GetAttachedScript();
 		this->scriptInstance = toCopy->GetScriptInstance();
@@ -30,7 +30,6 @@ namespace FlatEngine
 
 	ScriptComponent::~ScriptComponent()
 	{
-
 	}
 
 	void ScriptComponent::SetAttachedScript(std::string script)

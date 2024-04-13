@@ -29,11 +29,11 @@ namespace FlatEngine
 		this->_rightClickSet = false;
 	}
 
-	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy)
+	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Button);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->_mouseIsOver = false;
 		this->_hasMouseOverFired = false;
 		this->_active = toCopy->IsActive();

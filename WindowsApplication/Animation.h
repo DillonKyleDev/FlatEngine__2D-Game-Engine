@@ -92,6 +92,7 @@ namespace FlatEngine
 			std::string animationName = "";
 			std::string animationPath = "";
 			float animationLength = 0;
+			bool _isSorted = false;
 			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
 			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector< std::shared_ptr<S_Sprite>>();
 			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector< std::shared_ptr<S_Camera>>();
@@ -104,10 +105,54 @@ namespace FlatEngine
 			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProperties = std::vector< std::shared_ptr<S_CircleCollider>>();
 			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProperties = std::vector< std::shared_ptr<S_RigidBody>>();
 			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProperties = std::vector< std::shared_ptr<S_CharacterController>>();
+
+			void SortKeyFrames() 
+			{
+				float lastKeyFrameEndTime = 0;
+
+				bool _didntSwapTransform = false;
+				while (!_didntSwapTransform)
+				{
+					_didntSwapTransform = true;
+					for (std::vector<std::shared_ptr<S_Transform>>::iterator keyFrame = transformProperties.begin(); keyFrame != transformProperties.end(); keyFrame++)
+					{
+						std::vector<std::shared_ptr<S_Transform>>::iterator keyFrame2 = keyFrame + 1;
+						if (keyFrame2 != transformProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
+						{
+							std::swap(*keyFrame, *keyFrame2);
+							_didntSwapTransform = false;
+						}
+					}
+				}
+				if (transformProperties.size() > 0)
+					lastKeyFrameEndTime = transformProperties.back()->time;
+
+				bool _didntSwapSprite = false;
+				while (!_didntSwapSprite)
+				{
+					_didntSwapSprite = true;
+					for (std::vector<std::shared_ptr<S_Sprite>>::iterator keyFrame = spriteProperties.begin(); keyFrame != spriteProperties.end(); keyFrame++)
+					{
+						std::vector<std::shared_ptr<S_Sprite>>::iterator keyFrame2 = keyFrame + 1;
+						if (keyFrame2 != spriteProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
+						{
+							std::swap(*keyFrame, *keyFrame2);
+							_didntSwapSprite = false;
+						}
+					}
+				}
+				if (spriteProperties.size() > 0 && spriteProperties.back()->time > lastKeyFrameEndTime)
+				{
+					lastKeyFrameEndTime = spriteProperties.back()->time;
+					animationLength = lastKeyFrameEndTime;
+				}
+				
+				_isSorted = true;
+			};
 		};
 
 		Animation(long myID = -1, long parentID = -1);
-		Animation(std::shared_ptr<Animation> toCopy);
+		Animation(std::shared_ptr<Animation> toCopy, long newParentID);
 		~Animation();
 
 		void AddFrame();

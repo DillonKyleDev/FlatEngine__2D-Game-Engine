@@ -523,10 +523,10 @@ namespace FlatEngine { namespace FlatGui {
 								if (ImGui::Button("Add Frame"))
 									animation->AddFrame();
 
-								ImGui::SliderInt("Animation Time", &animationTime, 0, 5999);
+								//ImGui::SliderInt("Animation Time", &previewAnimationTime, 0, 12000);
 								// Play Animation Button
 								if (ImGui::Button("Play Animation"))
-									animation->Play(0);
+									animation->Play(GetEllapsedGameTime());
 
 								// Set cursor type
 								if (ImGui::IsItemHovered())

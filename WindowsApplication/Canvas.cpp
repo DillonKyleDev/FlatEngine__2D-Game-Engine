@@ -16,11 +16,11 @@ namespace FlatEngine {
 		this->height = 30;
 	}
 
-	Canvas::Canvas(std::shared_ptr<Canvas> toCopy)
+	Canvas::Canvas(std::shared_ptr<Canvas> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Canvas);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->canvasID = toCopy->canvasID;
 		this->buttons = toCopy->GetButtons();
 		this->layerNumber = toCopy->GetLayerNumber();

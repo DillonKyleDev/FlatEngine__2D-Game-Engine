@@ -19,11 +19,11 @@ namespace FlatEngine
 		this->frustrumColor = ImVec4(255,255,255,255);
 	}
 
-	Camera::Camera(std::shared_ptr<Camera> toCopy)
+	Camera::Camera(std::shared_ptr<Camera> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Camera);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->_isPrimaryCamera = toCopy->IsPrimary();
 		this->width = toCopy->GetWidth();
 		this->height = toCopy->GetHeight();
@@ -33,7 +33,6 @@ namespace FlatEngine
 
 	Camera::~Camera()
 	{
-
 	}
 
 	void Camera::FollowTarget(FlatEngine::Transform transform, float ease)

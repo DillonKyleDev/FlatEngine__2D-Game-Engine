@@ -53,6 +53,8 @@ namespace FlatEngine
 	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
 	extern std::shared_ptr<GameObject> objectForFocusedAnimation;
 	extern std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit;
+	extern int previewAnimationTime;
+	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
 
@@ -81,6 +83,7 @@ namespace FlatEngine
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
 	extern std::shared_ptr<Scene> CreateNewScene();
+	std::string GetLoadedScenePath();
 	extern long GetNextComponentID();
 	extern long GetNextGameObjectID();
 	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filename);
@@ -135,8 +138,6 @@ namespace FlatEngine
 	//
 	namespace FlatGui
 	{
-		extern int animationTime;
-
 		// General window variables
 		extern bool _editingValue;
 		extern float childPadding;
@@ -160,6 +161,7 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> transformArrow;
 		extern std::shared_ptr<Texture> cameraTexture;
 		extern std::shared_ptr<Texture> keyFrameIcon;
+		extern std::shared_ptr<Texture> timelineScrubberIcon;
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
 		extern SDL_Texture* stopTexture;		
@@ -170,6 +172,7 @@ namespace FlatEngine
 		extern SDL_Texture* newFileTexture;
 		extern SDL_Texture* saveFileTexture;
 		extern SDL_Texture* keyFrameTexture;
+		extern SDL_Texture* timelineScrubberTexture;
 
 		extern ImVec2 uv0;
 		extern ImVec2 uv1;

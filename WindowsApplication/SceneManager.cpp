@@ -24,6 +24,7 @@ namespace FlatEngine
 	SceneManager::SceneManager()
 	{
 		this->loadedScene;
+		animatorPreviewObjects = std::vector<std::shared_ptr<GameObject>>();
 	}
 
 	SceneManager::~SceneManager()
@@ -796,6 +797,18 @@ namespace FlatEngine
 	std::shared_ptr<Scene> SceneManager::GetLoadedScene()
 	{
 		return this->loadedScene;
+	}
+	std::string SceneManager::GetLoadedScenePath()
+	{
+		return loadedScenePath;
+	}
+	void SceneManager::SaveAnimationPreviewObjects()
+	{
+		animatorPreviewObjects = loadedScene->GetAnimatorPreviewObjects();
+	}
+	void SceneManager::LoadAnimationPreviewObjects()
+	{
+		loadedScene->SetAnimatorPreviewObjects(animatorPreviewObjects);
 	}
 }
 

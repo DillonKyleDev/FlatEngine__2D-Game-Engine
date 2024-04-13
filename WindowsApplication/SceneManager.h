@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include "GameObject.h"
 
 namespace FlatEngine
 {
@@ -17,10 +18,14 @@ namespace FlatEngine
 		void SaveCurrentScene();
 		void LoadScene(std::string name);
 		std::shared_ptr<Scene> GetLoadedScene();
+		std::string GetLoadedScenePath();
+		void SaveAnimationPreviewObjects();
+		void LoadAnimationPreviewObjects();
 
 	private:
 		std::shared_ptr<Scene> loadedScene;
 		std::string loadedScenePath;
+		std::vector<std::shared_ptr<GameObject>> animatorPreviewObjects;
 	};
 }
 

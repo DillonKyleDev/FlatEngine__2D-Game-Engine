@@ -8,13 +8,14 @@
 
 namespace FlatEngine { namespace FlatGui {
 
-	int animationTime = 0;
 	ImVec4 darker = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
 	ImVec4 lighter = ImVec4(float(0.8), float(0.8), float(0.8), float(1));
 	ImVec4 light = ImVec4(float(0.7), float(0.7), float(0.7), float(1));
 	ImVec4 dark = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
 	ImVec4 white = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
 	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
+	ImVec4 scrubberBackground = ImVec4(float(0.32), float(0.22), float(0.19), float(1));
+	ImVec4 scrubberBackgroundDark = ImVec4(float(0.12), float(0.02), float(0.0), float(1));
 
 
 	void RenderAnimator()
@@ -275,25 +276,87 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 		ImGui::EndChild();
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, darker);
-		ImGui::BeginChild("Property Header", ImVec2(0, 0), child_flags);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
+		ImGui::BeginChild("Property Header", ImVec2(0, 30), child_flags);
 		ImGui::PushStyleColor(ImGuiCol_Text, light);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 		ImGui::Text("Property Selected: ");
 		ImGui::PopStyleColor();
 		ImGui::SameLine(0, 5);
 		ImGui::PushStyleColor(ImGuiCol_Text, white);
+
 		ImGui::Text(node_clicked.c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-
 		if (node_clicked != "")
 		{
+			
 			ImGui::SameLine(0, 10);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 			if (ImGui::Button("Add Keyframe##"))
 				L_PushBackKeyFrame(node_clicked);
 		}
+		ImGui::EndChild();
+
+		// Save zero point for rendering the scrubber slider
+		ImVec2 scrubberZeroPoint = ImGui::GetCursorScreenPos();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, scrubberBackground);
+		ImGui::BeginChild("Timeline Scrubber", ImVec2(0,33), child_flags);
+		ImGui::PopStyleColor();
+		
+
+		// Render animator scrubber
+		static float scrubberTime = previewAnimationTime / 1000;
+		static Vector2 keyFramePos = Vector2(scrubberTime, -.05);
+		static float animatorGridStep = 50;
+
+		auto L_RenderAnimationScrubber = [](Vector2& pipPosition, ImVec2 zeroPoint, float gridStep)
+			{
+				std::string ID = "TimelineScrubber";
+				ImDrawList* draw_list = ImGui::GetWindowDrawList();
+				float spriteTextureWidth = 14;
+				float spriteTextureHeight = 26;
+				Vector2 spriteOffset = Vector2(spriteTextureWidth / 2, 0);
+
+				// If there is a valid Texture loaded into the Sprite Component
+				if (keyFrameTexture != nullptr)
+				{
+					ImVec2 pipStartingPoint = AddImageToDrawList(timelineScrubberTexture, pipPosition, zeroPoint, spriteTextureWidth, spriteTextureHeight, spriteOffset, Vector2(1, 1), false, gridStep, draw_list);					
+					ImGui::SetCursorScreenPos(pipStartingPoint);
+					ImGui::InvisibleButton(ID.c_str(), ImVec2(spriteTextureWidth, spriteTextureHeight), ImGuiButtonFlags_MouseButtonLeft | 4096);
+					const bool _isClicked = ImGui::IsItemClicked();
+					const bool _isHovered = ImGui::IsItemHovered();
+					const bool _isActive = ImGui::IsItemActive();   // Held
+
+					if (_isActive || _isHovered)
+					{
+						// Mouse Hover Tooltip - Mouse Over Tooltip
+						std::string keyTimeText = "Time: " + std::to_string(pipPosition.x) + " sec";
+						ImVec2 m = ImGui::GetIO().MousePos;
+						ImGui::SetNextWindowPos(ImVec2(m.x + 15, m.y + 5));
+						ImGui::Begin("ScrubberTooltip", NULL, ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+						ImGui::Text(keyTimeText.c_str());
+						ImGui::End();
+						ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+					}
+
+					if (_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0))
+					{
+						ImGuiIO& inputOutput = ImGui::GetIO();
+						if (pipPosition.x + inputOutput.MouseDelta.x / gridStep >= 0)
+						{
+							pipPosition.x += inputOutput.MouseDelta.x / gridStep;
+							previewAnimationTime = pipPosition.x * 1000;
+						}
+					}
+				}
+			};
+
+		L_RenderAnimationScrubber(keyFramePos, scrubberZeroPoint, animatorGridStep);
 
 		ImGui::EndChild();
+		// Get Back to here
 
 		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
@@ -305,7 +368,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Get Input and Output
 		ImGuiIO& inputOutput = ImGui::GetIO();
-
 		
 		// This will catch our interactions
 		// 4096 is ImGuiButtonFlags_AllowOverlap but it's not working here for some reason
@@ -313,7 +375,7 @@ namespace FlatEngine { namespace FlatGui {
 		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 
-		// For panning the scene view
+		// For panning
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{
@@ -321,7 +383,6 @@ namespace FlatEngine { namespace FlatGui {
 			scrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		static float animatorGridStep = 50;
 		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
 		float scrollInput = inputOutput.MouseWheel;
 		float weight = 0.08f;
@@ -362,6 +423,11 @@ namespace FlatEngine { namespace FlatGui {
 				color = IM_COL32(rectColor.x, rectColor.y, rectColor.z, 20);
 		
 			// prevents being drawn off screen and introducing scrollbar
+			if (topYPos < canvas_p0.y)
+				topYPos = canvas_p0.y;
+			if (bottomYPos < canvas_p0.y)
+				bottomYPos = canvas_p0.y;
+
 			if (topYPos > canvas_p1.y)
 				topYPos = canvas_p1.y;
 			if (bottomYPos > canvas_p1.y)
@@ -387,6 +453,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (keyFrameTexture != nullptr)
 			{
 				ImVec2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), false, gridStep, draw_list);
+
 				ImGui::SetCursorScreenPos(pipStartingPoint);
 				std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
 				ImGui::InvisibleButton(pipID.c_str(), ImVec2(12, 12), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
@@ -419,8 +486,7 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					node_clicked = ID;
 					selectedKeyFrameToEdit = keyFrame;
-				}
-					
+				}	
 			}
 		};
 
@@ -440,7 +506,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -459,7 +525,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -478,7 +544,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -497,7 +563,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -516,7 +582,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -535,7 +601,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -554,7 +620,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -573,7 +639,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -592,7 +658,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -611,7 +677,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -630,7 +696,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -649,7 +715,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y)
+				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
@@ -684,6 +750,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild();
 		////////////////
 
+		ImGui::Checkbox("Preview Animation", &_playPreviewAnimation);
 
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
 		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -726,18 +793,31 @@ namespace FlatEngine { namespace FlatGui {
 
 		RenderGridView(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(50,50), ImVec2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
-		std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(GetFocusedGameObjectID());
-
-		if (focusedObject != nullptr && objectForFocusedAnimation != nullptr)
+		if (objectForFocusedAnimation != nullptr)
 		{
 			std::vector<std::shared_ptr<GameObject>> focusedObjectVector;
 			focusedObjectVector.push_back(objectForFocusedAnimation);
 		
+			static bool _animationStarted = false;
+
+			// Animate the focused object
+			if (_playPreviewAnimation)
+			{
+				if (!objectForFocusedAnimation->GetAnimationComponent()->IsPlaying())
+					objectForFocusedAnimation->GetAnimationComponent()->Play(previewAnimationTime);
+					
+				LogFloat(previewAnimationTime, "Animation time: ");
+				std::shared_ptr<Animation> animation = objectForFocusedAnimation->GetAnimationComponent();
+
+				// If animation component is playing, play the animation
+				if (animation != nullptr && animation->IsPlaying())
+					animation->PlayAnimation(previewAnimationTime);
+			}
+
 			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz);
 		}
 
 		// Animation Preview EndChild()
-		//
 		ImGui::EndChild();
 		ImGui::End();
 	}

@@ -33,6 +33,8 @@ namespace FlatEngine
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
 	std::shared_ptr<GameObject> objectForFocusedAnimation = nullptr;
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
+	int previewAnimationTime = 0;
+	bool _playPreviewAnimation = true;
 
 	// Profiler
 	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
@@ -47,7 +49,7 @@ namespace FlatEngine
 	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
 
 	// FlatEngine
-	void FlatEngine::Run(bool& _hasQuit)
+	void Run(bool& _hasQuit)
 	{
 		// Save a copy of the old process map values
 		//AddProfilerProcess("Run Start", 0);
@@ -68,14 +70,14 @@ namespace FlatEngine
 		}
 	}
 
-	void FlatEngine::CloseProgram()
+	void CloseProgram()
 	{
 		FlatEngine::_closeProgram = true;
 	}
 
-	void FlatEngine::SetFocusedGameObjectID(long ID)
+	void SetFocusedGameObjectID(long ID)
 	{
-		FlatEngine::FocusedGameObjectID = ID;
+		FocusedGameObjectID = ID;
 		std::shared_ptr<GameObject> focusedObject = GetObjectById(ID);
 		std::shared_ptr<Animation> animationComponent = focusedObject->GetAnimationComponent();
 		std::string animationPath = "";
@@ -97,7 +99,7 @@ namespace FlatEngine
 		}
 	}
 
-	long FlatEngine::GetFocusedGameObjectID()
+	long GetFocusedGameObjectID()
 	{
 		return FlatEngine::FocusedGameObjectID;
 	}
@@ -114,14 +116,19 @@ namespace FlatEngine
 
 
 	// Scene Manager Prettification
-	std::shared_ptr<Scene> FlatEngine::GetLoadedScene()
+	std::shared_ptr<Scene> GetLoadedScene()
 	{
-		return FlatEngine::sceneManager->GetLoadedScene();
+		return sceneManager->GetLoadedScene();
 	}
 
-	std::shared_ptr<Scene> FlatEngine::CreateNewScene()
+	std::shared_ptr<Scene> CreateNewScene()
 	{
 		return FlatEngine::sceneManager->CreateNewScene();
+	}
+
+	std::string GetLoadedScenePath()
+	{
+		return sceneManager->GetLoadedScenePath();
 	}
 
 	long GetNextComponentID()
@@ -150,27 +157,29 @@ namespace FlatEngine
 		return nextID;
 	}
 
-	void FlatEngine::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
+	void SaveScene(std::shared_ptr<Scene> scene, std::string filename)
 	{
 		FlatEngine::sceneManager->SaveScene(scene, filename);
 	}
 
-	void FlatEngine::LoadScene(std::string name)
+	void LoadScene(std::string name)
 	{
 		// Stop any playing music
 		soundController->StopMusic();
 		// Reset buttons in UIManager
-		FlatEngine::uiManager->ResetButtons();
-		FlatEngine::sceneManager->LoadScene(name);
+		uiManager->ResetButtons();
+		sceneManager->SaveAnimationPreviewObjects();
+		sceneManager->LoadScene(name);
+		sceneManager->LoadAnimationPreviewObjects();
 
 		// If the GameLoop is running, reinitialize the new scene's GameObjects
-		if (FlatEngine::GameLoopStarted())
-			FlatEngine::gameLoop->InitializeScriptObjects();
+		if (GameLoopStarted())
+			gameLoop->InitializeScriptObjects();
 	}
 	
 
 	// Scene Prettification
-	std::vector<std::shared_ptr<GameObject>> FlatEngine::GetSceneObjects()
+	std::vector<std::shared_ptr<GameObject>> GetSceneObjects()
 	{
 		if (FlatEngine::GetLoadedScene() != nullptr)
 			return FlatEngine::GetLoadedScene()->GetSceneObjects();
@@ -178,24 +187,24 @@ namespace FlatEngine
 			return std::vector<std::shared_ptr<GameObject>>();
 	}
 
-	std::shared_ptr<GameObject> FlatEngine::CreateGameObject(long parentID)
+	std::shared_ptr<GameObject> CreateGameObject(long parentID)
 	{
 		return FlatEngine::GetLoadedScene()->CreateGameObject(parentID);
 	}
 
-	void FlatEngine::DeleteGameObject(int sceneObjectID)
+	void DeleteGameObject(int sceneObjectID)
 	{
 		FlatEngine::GetLoadedScene()->DeleteGameObject(sceneObjectID);
 	}
 
-	std::shared_ptr<Component> FlatEngine::GetObjectComponent(long objectID, ComponentTypes type)
+	std::shared_ptr<Component> GetObjectComponent(long objectID, ComponentTypes type)
 	{
 		return FlatEngine::GetLoadedScene()->GetObjectById(objectID)->GetComponent(type);
 	}
 
 	std::shared_ptr<GameObject> GetObjectById(long objectID)
 	{
-		return FlatEngine::GetLoadedScene()->GetObjectById(objectID);
+		return GetLoadedScene()->GetObjectById(objectID);
 	}
 
 	std::shared_ptr<GameObject> GetObjectByName(std::string name)
@@ -205,27 +214,27 @@ namespace FlatEngine
 
 
 	// Logging Abstraction
-	void FlatEngine::LogString(std::string line)
+	void LogString(std::string line)
 	{
 		logger->LogString(line);
 	}
 
-	void FlatEngine::LogFloat(float var, std::string line)
+	void LogFloat(float var, std::string line)
 	{
 		logger->LogFloat(var, line);
 	}
 
-	void FlatEngine::LogInt(int var, std::string line)
+	void LogInt(int var, std::string line)
 	{
 		logger->LogInt(var, line);
 	}
 
-	void FlatEngine::LogVector2(Vector2 vector, std::string line)
+	void LogVector2(Vector2 vector, std::string line)
 	{
 		logger->LogVector2(vector, line);
 	}
 
-	void FlatEngine::DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
 			startingPoint.x = canvas_p0.x;
@@ -239,7 +248,7 @@ namespace FlatEngine
 		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void FlatEngine::DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
 			startingPoint.x = canvas_p0.x;
@@ -253,39 +262,39 @@ namespace FlatEngine
 		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void FlatEngine::DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
 	{
 		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void FlatEngine::DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
 	{
 		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void FlatEngine::DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList)
+	void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList)
 	{
 		logger->DrawPoint(point, color, drawList);
 	}
 
-	void FlatEngine::DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList)
+	void DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList)
 	{
 		logger->DrawPoint(point, color, drawList);
 	}
 
 
 	// Game Loop prettification
-	void FlatEngine::StartGameLoop()
+	void StartGameLoop()
 	{
 		gameLoop->Start();
 	}
 
-	void FlatEngine::GameLoopUpdate()
+	void GameLoopUpdate()
 	{
 		gameLoop->Update();
 	}
 
-	void FlatEngine::PauseGameLoop()
+	void PauseGameLoop()
 	{
 		if (gameLoop->IsPaused())
 			gameLoop->Unpause();
@@ -293,41 +302,40 @@ namespace FlatEngine
 			gameLoop->Pause();
 	}
 
-	void FlatEngine::StopGameLoop()
+	void StopGameLoop()
 	{
 		gameLoop->Stop();
 	}
 
-	int FlatEngine::GetEllapsedGameTime()
+	int GetEllapsedGameTime()
 	{
 		return gameLoop->TimeEllapsed();
 	}
 
-	bool FlatEngine::GameLoopStarted()
+	bool GameLoopStarted()
 	{
 		return gameLoop->IsStarted();
 	}
 
-	bool FlatEngine::GameLoopPaused()
+	bool GameLoopPaused()
 	{
 		return gameLoop->IsPaused();
 	}
 
-	float FlatEngine::GetAverageFps()
+	float GetAverageFps()
 	{
 		return gameLoop->GetAverageFps();
 	}
 
-	float FlatEngine::GetDeltaTime()
+	float GetDeltaTime()
 	{
 		return gameLoop->GetDeltaTime();
 	}
 
 
 	// Helper
-	// 
 	//ImVec4 objectA(top, right, bottom, left), ImVec4 objectB(top, right, bottom, left)
-	bool FlatEngine::AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB)
+	bool AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.x;
 		float A_RightEdge = ObjectA.y;
@@ -342,7 +350,7 @@ namespace FlatEngine
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 
-	bool FlatEngine::AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB)
+	bool AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.z;
 		float A_RightEdge = ObjectA.y;
@@ -357,7 +365,7 @@ namespace FlatEngine
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 
-	Vector2 FlatEngine::Lerp(Vector2 startPos, Vector2 endPos, float ease)
+	Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease)
 	{
 		Vector2 difference = Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
 		Vector2 easedDiff = Vector2(difference.x * ease, difference.y * ease);

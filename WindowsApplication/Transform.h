@@ -13,7 +13,7 @@ namespace FlatEngine
 	{
 	public:
 		Transform(long myID = -1, long parentID = -1);
-		Transform(std::shared_ptr<Transform> toCopy);
+		Transform(std::shared_ptr<Transform> toCopy, long newParentID);
 		~Transform();
 		void SetPosition(Vector2 position);
 		void SetScale(Vector2 scale);

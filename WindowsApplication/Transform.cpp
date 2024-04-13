@@ -15,11 +15,11 @@ namespace FlatEngine
 		this->rotation = 0;
 	}
 
-	Transform::Transform(std::shared_ptr<Transform> toCopy)
+	Transform::Transform(std::shared_ptr<Transform> toCopy, long newParentID)
 	{
 		this->SetType(ComponentTypes::Transform);
 		this->SetID(GetNextComponentID());
-		this->SetParentID(toCopy->GetParentID());
+		this->SetParentID(newParentID);
 		this->position.x = toCopy->GetPosition().x;
 		this->position.y = toCopy->GetPosition().y;
 		this->scale.x = toCopy->GetScale().x;
@@ -27,11 +27,9 @@ namespace FlatEngine
 		this->rotation = toCopy->GetRotation();
 	}
 
-
 	Transform::~Transform()
 	{
 	}
-
 
 	std::string Transform::GetData()
 	{

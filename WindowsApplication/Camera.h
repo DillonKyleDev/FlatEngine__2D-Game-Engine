@@ -17,7 +17,7 @@ namespace FlatEngine
 	{
 	public:
 		Camera(long myID = -1, long parentID = -1);
-		Camera(std::shared_ptr<Camera> toCopy);
+		Camera(std::shared_ptr<Camera> toCopy, long newParentID);
 		~Camera();
 
 		void FollowTarget(FlatEngine::Transform transform, float ease);

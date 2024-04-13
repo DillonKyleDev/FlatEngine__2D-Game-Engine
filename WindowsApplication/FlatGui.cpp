@@ -312,7 +312,6 @@ namespace FlatEngine { namespace FlatGui {
 			RenderProfiler();
 	}
 
-
 	void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -422,32 +421,29 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
-		std::shared_ptr<Component> transformComponent = self->GetComponent(ComponentTypes::Transform);
-		std::shared_ptr<Component> spriteComponent = self->GetComponent(ComponentTypes::Sprite);
-		std::shared_ptr<Component> cameraComponent = self->GetComponent(ComponentTypes::Camera);
-		std::shared_ptr<Component> buttonComponent = self->GetComponent(ComponentTypes::Button);
-		std::shared_ptr<Component> canvasComponent = self->GetComponent(ComponentTypes::Canvas);
-		std::shared_ptr<Component> textComponent = self->GetComponent(ComponentTypes::Text);
+		std::shared_ptr<Transform> transform = self->GetTransformComponent();
+		std::shared_ptr<Sprite> sprite = self->GetSpriteComponent();
+		std::shared_ptr<Camera> camera = self->GetCameraComponent();
+		std::shared_ptr<Button> button = self->GetButtonComponent();
+		std::shared_ptr<Canvas> canvas = self->GetCanvasComponent();
+		std::shared_ptr<Text> text = self->GetTextComponent();
 
 		// Check if each object has a Transform component
-		if (transformComponent != nullptr)
+		if (transform != nullptr)
 		{
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-			std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
-			Vector2 position = Vector2(transformCasted->GetPosition().x + parentOffset.x, transformCasted->GetPosition().y + parentOffset.y);
-			Vector2 transformScale = Vector2(transformCasted->GetScale().x * parentScale.x, transformCasted->GetScale().y * parentScale.y);
+			Vector2 position = Vector2(transform->GetPosition().x + parentOffset.x, transform->GetPosition().y + parentOffset.y);
+			Vector2 transformScale = Vector2(transform->GetScale().x * parentScale.x, transform->GetScale().y * parentScale.y);
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
-			if (spriteComponent != nullptr)
+			if (sprite != nullptr)
 			{
-				// Cast the component to Sprite shared_ptr
-				std::shared_ptr<Sprite> spriteCasted = std::static_pointer_cast<Sprite>(spriteComponent);
-				SDL_Texture* spriteTexture = spriteCasted->GetTexture();
-				float spriteTextureWidth = (float)spriteCasted->GetTextureWidth();
-				float spriteTextureHeight = (float)spriteCasted->GetTextureHeight();
-				Vector2 spriteOffset = spriteCasted->GetOffset();
+				SDL_Texture* spriteTexture = sprite->GetTexture();
+				float spriteTextureWidth = (float)sprite->GetTextureWidth();
+				float spriteTextureHeight = (float)sprite->GetTextureHeight();
+				Vector2 spriteOffset = sprite->GetOffset();
 				bool _spriteScalesWithZoom = true;
-				int renderOrder = spriteCasted->GetRenderOrder();
+				int renderOrder = sprite->GetRenderOrder();
 
 				// If there is a valid Texture loaded into the Sprite Component
 				if (spriteTexture != nullptr)
@@ -464,17 +460,15 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// If it has a text component, render that text texture at the objects transform position
-			if (textComponent != nullptr)
+			if (text != nullptr)
 			{
-				// Cast the component to Text shared_ptr
-				std::shared_ptr<Text> textCasted = std::static_pointer_cast<Text>(textComponent);
-				std::shared_ptr<Texture> textTexture = textCasted->GetTexture();
-				textCasted->LoadText();
+				std::shared_ptr<Texture> textTexture = text->GetTexture();
+				text->LoadText();
 				SDL_Texture* texture = textTexture->getTexture();
 				float textWidth = (float)textTexture->getWidth();
 				float textHeight = (float)textTexture->getHeight();
-				int renderOrder = textCasted->GetRenderOrder();
-				Vector2 offset = textCasted->GetOffset();
+				int renderOrder = text->GetRenderOrder();
+				Vector2 offset = text->GetOffset();
 				bool _spriteScalesWithZoom = true;
 
 
@@ -493,9 +487,8 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// Renders the camera
-			if (cameraComponent != nullptr)
+			if (camera != nullptr)
 			{
-				std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(cameraComponent);
 				float cameraWidth = camera->GetWidth();
 				float cameraHeight = camera->GetHeight();
 
@@ -531,10 +524,8 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// Renders Canvas Component
-			if (canvasComponent != nullptr)
+			if (canvas != nullptr)
 			{
-				std::shared_ptr<Canvas> canvas = std::static_pointer_cast<Canvas>(canvasComponent);
-
 				float activeWidth = canvas->GetWidth();
 				float activeHeight = canvas->GetHeight();
 				int layerNumber = canvas->GetLayerNumber();
@@ -555,10 +546,8 @@ namespace FlatEngine { namespace FlatGui {
 
 
 			// Renders Button Component
-			if (buttonComponent != nullptr)
+			if (button != nullptr)
 			{
-				std::shared_ptr<Button> button = std::static_pointer_cast<Button>(buttonComponent);
-
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
 				Vector2 activeOffset = button->GetActiveOffset();
@@ -606,13 +595,12 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (self->HasChildren())
 		{
-			if (transformComponent != nullptr)
+			if (transform != nullptr)
 			{
-				std::shared_ptr<Transform> transformCasted = std::static_pointer_cast<Transform>(transformComponent);
-				parentOffset.x += transformCasted->GetPosition().x;
-				parentOffset.y += transformCasted->GetPosition().y;
-				parentScale.x *= transformCasted->GetScale().x;
-				parentScale.y *= transformCasted->GetScale().y;
+				parentOffset.x += transform->GetPosition().x;
+				parentOffset.y += transform->GetPosition().y;
+				parentScale.x *= transform->GetScale().x;
+				parentScale.y *= transform->GetScale().y;
 			}
 
 			for (int c = 0; c < self->GetChildren().size(); c++)

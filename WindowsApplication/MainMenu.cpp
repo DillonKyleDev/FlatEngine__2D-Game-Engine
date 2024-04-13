@@ -89,10 +89,6 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			ImGui::EndMainMenuBar();
 		}
-
-		bool show_demo_window = true;
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
 	}
 }
 }

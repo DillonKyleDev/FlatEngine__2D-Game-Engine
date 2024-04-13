@@ -16,7 +16,8 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> saveFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
 	std::shared_ptr<Texture> cameraTexture = std::make_shared<Texture>();
-	std::shared_ptr<Texture> keyFrameIcon = std::make_shared<Texture>();;
+	std::shared_ptr<Texture> keyFrameIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> timelineScrubberIcon = std::make_shared<Texture>();
 
 	ImVec2 uv0 = ImVec2(0.0f, 0.0f);
 	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
@@ -33,6 +34,7 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* newFileTexture = nullptr;
 	SDL_Texture* saveFileTexture = nullptr;
 	SDL_Texture* keyFrameTexture = nullptr;
+	SDL_Texture* timelineScrubberTexture = nullptr;
 
 	void CreateIcons()
 	{
@@ -76,6 +78,9 @@ namespace FlatEngine { namespace FlatGui {
 		saveFileTexture = saveFileIcon->getTexture();
 		keyFrameIcon->loadFromFile("assets/images/icons/KeyFrameIcon.png");
 		keyFrameTexture = keyFrameIcon->getTexture();
+
+		timelineScrubberIcon->loadFromFile("assets/images/icons/timelineScrubber.png");
+		timelineScrubberTexture = timelineScrubberIcon->getTexture();
 	}
 }	
 }

@@ -53,58 +53,57 @@ namespace FlatEngine
 				RecursiveChildrenCopy(newChild, objectVector, gChildID);
 			}
 		}
-
 		
 		for (std::shared_ptr<Component> component : toCopy->GetComponents())
 		{
 			if (component->GetTypeString() == "Transform")
 			{
-				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component));
+				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Sprite")
 			{
-				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component));
+				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Animation")
 			{
-				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component));
+				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Audio")
 			{
-				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component));
+				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Button")
 			{
-				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component));
+				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "BoxCollider")
 			{
-				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component));
+				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Camera")
 			{
-				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component));
+				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Canvas")
 			{
-				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component));
+				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Script")
 			{
-				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component));
+				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 			if (component->GetTypeString() == "Text")
 			{
-				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component));
+				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component), GetID());
 				this->components.push_back(newComponent);
 			}
 		}
@@ -121,6 +120,61 @@ namespace FlatEngine
 		for (long gChildID : childrenIDs)
 		{
 			RecursiveChildrenCopy(newChild, objectVector, gChildID);
+		}
+
+
+		for (std::shared_ptr<Component> component : parent->GetComponents())
+		{
+			if (component->GetTypeString() == "Transform")
+			{
+				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Sprite")
+			{
+				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Animation")
+			{
+				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Audio")
+			{
+				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Button")
+			{
+				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "BoxCollider")
+			{
+				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Camera")
+			{
+				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Canvas")
+			{
+				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Script")
+			{
+				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
+			if (component->GetTypeString() == "Text")
+			{
+				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component), GetID());
+				parent->components.push_back(newComponent);
+			}
 		}
 	}
 

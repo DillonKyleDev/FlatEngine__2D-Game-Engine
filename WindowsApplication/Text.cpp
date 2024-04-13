@@ -20,11 +20,11 @@ namespace FlatEngine
 		offset = Vector2((float)texture->getWidth() / 2, (float)texture->getHeight() / 2);
 	}
 
-	Text::Text(std::shared_ptr<Text> toCopy)
+	Text::Text(std::shared_ptr<Text> toCopy, long newParentID)
 	{
 		SetType(Component::ComponentTypes::Text);
 		this->SetID(GetNextComponentID());
-		SetParentID(toCopy->GetParentID());
+		SetParentID(newParentID);
 		fontPath = toCopy->GetFontPath();
 		fontSize = toCopy->GetFontSize();
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
