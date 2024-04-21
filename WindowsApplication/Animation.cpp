@@ -39,7 +39,6 @@ namespace FlatEngine
 
 	void Animation::AddFrame()
 	{
-
 	}
 
 	void Animation::Play(int startTime)
@@ -149,14 +148,18 @@ namespace FlatEngine
 		std::shared_ptr<S_AnimationProperties> props = animationProperties;
 
 		if (!props->_isSorted)
-		{
 			props->SortKeyFrames();
-			LogFloat(props->animationLength, "Animation Length: ");
-		}
+
+		LogFloat(props->animationLength, "Animation Length: ");
+		LogFloat(ellapsedTime, "Ellapsed Time: ");
+		LogFloat(animationStartTime, "Start Time: ");
+		if (props->_loop)
+			LogString("Looping on");
 
 		static float lastTransformAnimationFrameEnd = 0;
 		static float lastSpriteAnimationFrameEnd = 0;
 		static float currentKeyFrame = animationStartTime;
+		static Vector2 lastFrameTransform = Vector2(0, 0);
 
 		// While the animation is not over
 		if (props->animationLength > ellapsedTime - animationStartTime)
@@ -164,47 +167,31 @@ namespace FlatEngine
 			// Transform Animation Frames
 			for (std::vector<std::shared_ptr<S_Transform>>::iterator transformFrame = props->transformProperties.begin(); transformFrame != props->transformProperties.end();)
 			{ 
-				if (ellapsedTime < (*transformFrame)->time)
+				if (ellapsedTime < animationStartTime + (*transformFrame)->time)
 				{
 					std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = transformFrame;
 					if (transformFrame - 1 >= props->transformProperties.begin())
 						lastFrame = transformFrame - 1;
 
 					int timeLeft = (*transformFrame)->time - ellapsedTime - animationStartTime;
-					float percentDone = (ellapsedTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
-
+					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
+					lastFrameTransform = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
+					LogFloat(lastFrameTransform.x, "Last Frame Transform.x: ");
+					LogFloat(lastFrameTransform.y, "Last Frame Transform.y: ");
 					// Save original position
 					std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-					static Vector2 startingPoint = transform->GetPosition();
-					static Vector2 startingScale = transform->GetScale();
-
-					// Before signaling that we've changed keyframes, save the current position to be referenced by the current keyframe instead of the very first starting point
-					if ((*transformFrame)->time > currentKeyFrame)
-						startingPoint = transform->GetPosition();
-					else if ((*transformFrame)->time < currentKeyFrame)
-						startingPoint = Vector2(transform->GetPosition().x - (*transformFrame)->xMove, transform->GetPosition().y - (*transformFrame)->yMove);
-					// Then signal the change to a new keyframe
-					currentKeyFrame = (*transformFrame)->time;
 
 					switch ((*transformFrame)->transformInterpType)
 					{
 						case Lerp:
 						{
-							float correctedX = (startingPoint.x + (*transformFrame)->xMove * percentDone);
-							float correctedY = (startingPoint.y + (*transformFrame)->yMove * percentDone);
+							float correctedX = (lastFrameTransform.x + ((*transformFrame)->xMove - lastFrameTransform.x) * percentDone);
+							float correctedY = (lastFrameTransform.y + ((*transformFrame)->yMove - lastFrameTransform.y) * percentDone);
 
 							transform->SetPosition(Vector2(correctedX, correctedY));
 							break;
 						}
 					}
-					//switch ((*transformFrame)->scaleInterpType)
-					//{
-					//	case Lerp:
-					//	{
-					//		transform->SetScale(FlatEngine::Lerp(1, Vector2(1 + (*transformFrame)->xScale, 1 + (*transformFrame)->yScale), (*transformFrame)->scaleSpeed));
-					//		break;
-					//	}
-					//}
 					break;
 				}
 				transformFrame = transformFrame + 1;
@@ -212,7 +199,7 @@ namespace FlatEngine
 			// Sprite Animation Frames
 			for (const std::shared_ptr<S_Sprite>& spriteFrame : props->spriteProperties)
 			{
-				if (ellapsedTime < spriteFrame->time)
+				if (ellapsedTime < animationStartTime + spriteFrame->time)
 				{
 					std::shared_ptr<FlatEngine::Sprite> sprite = GetParent()->GetSpriteComponent();
 
@@ -224,6 +211,10 @@ namespace FlatEngine
 					break;
 				}
 			}
+		}
+		else if (props->_loop)
+		{
+			animationStartTime = ellapsedTime;
 		}
 		else
 			this->Stop();

@@ -85,6 +85,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild(); // Select Animation
 
 		std::shared_ptr<Animation::S_AnimationProperties> animProps = GetFocusedAnimation();
+
 		const char* properties[] = { "Add Property", "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
 		static int current_property = 0;
 		static std::string node_clicked = "";
@@ -169,6 +170,16 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (animProps->animationName != "")
 		{
+			std::shared_ptr<Animation> animation = nullptr;
+			if (objectForFocusedAnimation != nullptr)
+				animation = objectForFocusedAnimation->GetAnimationComponent();
+
+			if (ImGui::Checkbox("Loop Animation", &animProps->_loop) && animation != nullptr && animation->IsPlaying())
+			{
+				animation->Stop();
+				animation->Play(GetEngineTime());
+			}
+
 			static std::string selected_property = "";
 			
 			ImGui::Separator();
@@ -277,7 +288,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild();
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
-		ImGui::BeginChild("Property Header", ImVec2(0, 30), child_flags);
+		ImGui::BeginChild("Property Header", ImVec2(0, 60), child_flags);
 		ImGui::PushStyleColor(ImGuiCol_Text, light);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 		ImGui::Text("Property Selected: ");
@@ -290,12 +301,74 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 		if (node_clicked != "")
 		{
-			
 			ImGui::SameLine(0, 10);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 			if (ImGui::Button("Add Keyframe##"))
 				L_PushBackKeyFrame(node_clicked);
 		}
+		
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		if (objectForFocusedAnimation != nullptr)
+		{
+			// Animate the focused object
+			std::shared_ptr<Animation> animation = objectForFocusedAnimation->GetAnimationComponent();
+			std::string playID = "##playAnimationPreview";
+			std::string stopID = "##StopGameloopIcon";
+			bool _isPreviewing = animation->IsPlaying();
+
+			// Play Button
+			if (_isPreviewing)
+			{
+				ImGui::BeginDisabled();
+				ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(14, 14), uv0, uv1, bg_col, tint_col);
+				ImGui::EndDisabled();
+			}
+			else
+			{
+				if (ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(14, 14), uv0, uv1, bg_col, tint_col))
+				{
+					if (animation != nullptr)
+					{
+						previewAnimationStartTime = GetEngineTime();
+						previewAnimationTime = GetEngineTime();
+						animation->Play(previewAnimationStartTime);
+						_isPreviewing = true;
+					}
+				}
+				if (ImGui::IsItemHovered())
+					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+			}
+
+			ImGui::SameLine(0, 5);
+
+			// Stop button
+			if (!_isPreviewing)
+			{
+				ImGui::BeginDisabled();
+				ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+				ImGui::EndDisabled();
+			}
+			else
+			{
+				if (ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
+				{
+					animation->Stop();
+					_isPreviewing = false;
+					previewAnimationTime = 0;
+				}
+				if (ImGui::IsItemHovered())
+					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+			}
+
+			ImGui::SameLine(0, 5);
+
+			ImGui::PushStyleColor(ImGuiCol_Text, lighter);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			ImGui::Text("Preview Animation");
+			ImGui::PopStyleColor();
+		}
+
 		ImGui::EndChild();
 
 		// Save zero point for rendering the scrubber slider
@@ -311,6 +384,7 @@ namespace FlatEngine { namespace FlatGui {
 		static Vector2 keyFramePos = Vector2(scrubberTime, -.05);
 		static float animatorGridStep = 50;
 
+		// Lambda
 		auto L_RenderAnimationScrubber = [](Vector2& pipPosition, ImVec2 zeroPoint, float gridStep)
 			{
 				std::string ID = "TimelineScrubber";
@@ -723,6 +797,7 @@ namespace FlatEngine { namespace FlatGui {
 			propertyCounter++;
 		}
 
+
 		// Timeline Events BeginChild()
 		ImGui::EndChild();
 		ImGui::End(); // Animator
@@ -797,21 +872,18 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			std::vector<std::shared_ptr<GameObject>> focusedObjectVector;
 			focusedObjectVector.push_back(objectForFocusedAnimation);
-		
-			static bool _animationStarted = false;
-
+	
 			// Animate the focused object
 			if (_playPreviewAnimation)
-			{
-				if (!objectForFocusedAnimation->GetAnimationComponent()->IsPlaying())
-					objectForFocusedAnimation->GetAnimationComponent()->Play(previewAnimationTime);
-					
-				LogFloat(previewAnimationTime, "Animation time: ");
+			{				
 				std::shared_ptr<Animation> animation = objectForFocusedAnimation->GetAnimationComponent();
 
 				// If animation component is playing, play the animation
 				if (animation != nullptr && animation->IsPlaying())
+				{
+					previewAnimationTime = GetEngineTime();
 					animation->PlayAnimation(previewAnimationTime);
+				}
 			}
 
 			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz);

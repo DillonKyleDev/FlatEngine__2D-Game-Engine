@@ -2,6 +2,7 @@
     "Animation Properties": [
         {
             "Length": 10.0,
+            "Loop": true,
             "Name": "New Animation"
         },
         {
@@ -73,7 +74,7 @@
                 {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "time": 10020.0,
+                    "time": 10000.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
                     "xMove": 0.0,
@@ -89,7 +90,7 @@
                 {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "time": 12000.0,
+                    "time": 0.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
                     "xMove": 0.0,

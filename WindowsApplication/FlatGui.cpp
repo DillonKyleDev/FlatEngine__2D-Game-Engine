@@ -725,7 +725,8 @@ namespace FlatEngine { namespace FlatGui {
 		// Create Animation Property Json data object
 		json animationName = json::object({
 			{ "Name", propertiesObject->animationName },
-			{ "Length", propertiesObject->animationLength }
+			{ "Length", propertiesObject->animationLength },
+			{ "Loop", propertiesObject->_loop }
 		});
 		animationProperties.push_back(animationName);
 
@@ -1121,18 +1122,16 @@ namespace FlatEngine { namespace FlatGui {
 					// Get data from the loaded object
 					json currentObjectJson = fileContentJson["Animation Properties"][i];
 
-					// Check name key exists
 					if (currentObjectJson.contains("Name"))
 						animationProperties->animationName = currentObjectJson["Name"];
-					// Check length key exists
 					if (currentObjectJson.contains("Length"))
 						animationProperties->animationLength = currentObjectJson["Length"];
-					// Check name Property Name key exists
+					if (currentObjectJson.contains("Loop"))
+						animationProperties->_loop = currentObjectJson["Loop"];
 					if (currentObjectJson.contains("Property"))
 					{
 						if (currentObjectJson["Property"] == "Transform")
-						{
-							// Check Frames key exists
+						{							
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1157,8 +1156,7 @@ namespace FlatEngine { namespace FlatGui {
 							}
 						}
 						else if (currentObjectJson["Property"] == "Sprite")
-						{
-							// Check Frames key exists
+						{						
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1180,9 +1178,6 @@ namespace FlatEngine { namespace FlatGui {
 						}
 						else if (currentObjectJson["Property"] == "Camera")
 						{
-							// Check Frames key exists
-
-
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1191,15 +1186,13 @@ namespace FlatEngine { namespace FlatGui {
 									cameraFrames->name = "Camera";
 									cameraFrames->_isPrimaryCamera = currentObjectJson["Frames"][f]["_isPrimaryCamera"];
 									cameraFrames->time = currentObjectJson["Frames"][f]["time"];
-
-									// Save the data to the animationProperties struct
+				
 									animationProperties->cameraProperties.push_back(cameraFrames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "Script")
 						{
-							// Check Frames key exists
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1208,15 +1201,13 @@ namespace FlatEngine { namespace FlatGui {
 									Frames->name = "Script";
 									Frames->path = currentObjectJson["Frames"][f]["path"];
 									Frames->time = currentObjectJson["Frames"][f]["time"];
-
-									// Save the data to the animationProperties struct
+									
 									animationProperties->scriptProperties.push_back(Frames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "Button")
-						{
-							// Check Frames key exists
+						{							
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1226,14 +1217,12 @@ namespace FlatEngine { namespace FlatGui {
 									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
 									Frames->time = currentObjectJson["Frames"][f]["time"];
 
-									// Save the data to the animationProperties struct
 									animationProperties->buttonProperties.push_back(Frames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "Canvas")
-						{
-							// Check Frames key exists
+						{							
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1241,15 +1230,13 @@ namespace FlatEngine { namespace FlatGui {
 									std::shared_ptr<Animation::S_Canvas> Frames = std::make_shared<Animation::S_Canvas>();
 									Frames->name = "Canvas";
 									Frames->time = currentObjectJson["Frames"][f]["time"];
-
-									// Save the data to the animationProperties struct
+									
 									animationProperties->canvasProperties.push_back(Frames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "Audio")
-						{
-							// Check Frames key exists
+						{							
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1259,15 +1246,13 @@ namespace FlatEngine { namespace FlatGui {
 									Frames->time = currentObjectJson["Frames"][f]["time"];
 									Frames->path = currentObjectJson["Frames"][f]["path"];
 									Frames->_isMusic = currentObjectJson["Frames"][f]["_isMusic"];
-
-									// Save the data to the animationProperties struct
+									
 									animationProperties->audioProperties.push_back(Frames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "Text")
-						{
-							// Check Frames key exists
+						{							
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1278,15 +1263,13 @@ namespace FlatEngine { namespace FlatGui {
 									Frames->path = currentObjectJson["Frames"][f]["path"];
 									Frames->text = currentObjectJson["Frames"][f]["text"];
 									Frames->color = currentObjectJson["Frames"][f]["color"];
-
-									// Save the data to the animationProperties struct
+									
 									animationProperties->textProperties.push_back(Frames);
 								}
 							}
 						}
 						else if (currentObjectJson["Property"] == "BoxCollider")
-						{
-							// Check Frames key exists
+						{						
 							if (currentObjectJson.contains("Frames"))
 							{
 								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
@@ -1295,8 +1278,7 @@ namespace FlatEngine { namespace FlatGui {
 									Frames->name = "BoxCollider";
 									Frames->time = currentObjectJson["Frames"][f]["time"];
 									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
-
-									// Save the data to the animationProperties struct
+									
 									animationProperties->boxColliderProperties.push_back(Frames);
 								}
 							}

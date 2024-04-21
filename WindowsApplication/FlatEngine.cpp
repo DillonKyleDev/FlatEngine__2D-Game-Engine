@@ -33,6 +33,7 @@ namespace FlatEngine
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
 	std::shared_ptr<GameObject> objectForFocusedAnimation = nullptr;
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
+	int previewAnimationStartTime = 0;
 	int previewAnimationTime = 0;
 	bool _playPreviewAnimation = true;
 
@@ -73,6 +74,11 @@ namespace FlatEngine
 	void CloseProgram()
 	{
 		FlatEngine::_closeProgram = true;
+	}
+
+	int GetEngineTime()
+	{
+		return SDL_GetTicks();
 	}
 
 	void SetFocusedGameObjectID(long ID)

@@ -93,6 +93,7 @@ namespace FlatEngine
 			std::string animationPath = "";
 			float animationLength = 0;
 			bool _isSorted = false;
+			bool _loop = false;
 			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
 			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector< std::shared_ptr<S_Sprite>>();
 			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector< std::shared_ptr<S_Camera>>();
@@ -144,9 +145,10 @@ namespace FlatEngine
 				if (spriteProperties.size() > 0 && spriteProperties.back()->time > lastKeyFrameEndTime)
 				{
 					lastKeyFrameEndTime = spriteProperties.back()->time;
-					animationLength = lastKeyFrameEndTime;
 				}
 				
+				animationLength = lastKeyFrameEndTime;
+
 				_isSorted = true;
 			};
 		};

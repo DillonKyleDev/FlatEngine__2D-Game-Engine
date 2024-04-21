@@ -53,6 +53,7 @@ namespace FlatEngine
 	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
 	extern std::shared_ptr<GameObject> objectForFocusedAnimation;
 	extern std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit;
+	extern int previewAnimationStartTime;
 	extern int previewAnimationTime;
 	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
@@ -76,6 +77,7 @@ namespace FlatEngine
 	// Engine
 	extern void Run(bool &_hasQuit);
 	extern void CloseProgram();
+	extern int GetEngineTime();
 
 	// Audio Managing
 	extern std::shared_ptr<Sound> soundController;
