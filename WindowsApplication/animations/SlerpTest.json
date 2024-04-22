@@ -1,0 +1,73 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 1,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 2000.0,
+                    "transformInterpType": 1,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 4.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 1,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 2160.0,
+                    "transformInterpType": 1,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 4.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        }
+    ]
+}

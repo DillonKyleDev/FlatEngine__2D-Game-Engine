@@ -125,6 +125,9 @@ namespace FlatEngine { namespace FlatGui {
 				quit = true;
 		}
 
+		// Create icons
+		CreateIcons();
+
 		// Start the Dear ImGui frame
 		ImGui_ImplSDLRenderer2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
@@ -1138,8 +1141,10 @@ namespace FlatEngine { namespace FlatGui {
 								{
 									std::shared_ptr<Animation::S_Transform> transformFrames = std::make_shared<Animation::S_Transform>();
 									transformFrames->name = "Transform";
-									if (currentObjectJson["Frames"][f]["transformInterpType"] == "Lerp")
+									if (currentObjectJson["Frames"][f]["transformInterpType"] == Animation::InterpType::Lerp)
 										transformFrames->transformInterpType = Animation::InterpType::Lerp;
+									if (currentObjectJson["Frames"][f]["transformInterpType"] == Animation::InterpType::Slerp)
+										transformFrames->transformInterpType = Animation::InterpType::Slerp;
 									transformFrames->transformSpeed = currentObjectJson["Frames"][f]["transformSpeed"];
 									if (currentObjectJson["Frames"][f]["scaleInterpType"] == "Lerp")
 										transformFrames->scaleInterpType = Animation::InterpType::Lerp;

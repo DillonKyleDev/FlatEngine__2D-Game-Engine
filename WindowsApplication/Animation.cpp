@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Vector2.h"
+#include <cmath>
 
 
 namespace FlatEngine
@@ -176,9 +177,6 @@ namespace FlatEngine
 					int timeLeft = (*transformFrame)->time - ellapsedTime - animationStartTime;
 					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
 					lastFrameTransform = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
-					LogFloat(lastFrameTransform.x, "Last Frame Transform.x: ");
-					LogFloat(lastFrameTransform.y, "Last Frame Transform.y: ");
-					// Save original position
 					std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 
 					switch ((*transformFrame)->transformInterpType)
@@ -187,6 +185,28 @@ namespace FlatEngine
 						{
 							float correctedX = (lastFrameTransform.x + ((*transformFrame)->xMove - lastFrameTransform.x) * percentDone);
 							float correctedY = (lastFrameTransform.y + ((*transformFrame)->yMove - lastFrameTransform.y) * percentDone);
+
+							transform->SetPosition(Vector2(correctedX, correctedY));
+							break;
+						}
+						case Slerp:
+						{
+							float slerpYValue = ((percentDone) * 2) - 1;
+							float slerpedPercentDone;
+
+							if (percentDone <= .50f)
+							{
+								slerpedPercentDone = sqrt(1 - slerpYValue * slerpYValue) / 2;
+							}
+							else
+							{
+								slerpedPercentDone = 1 - (sqrt(1 - slerpYValue * slerpYValue) / 2);
+							}
+
+							LogFloat(slerpYValue, "Slerped Y Value: ");
+							LogFloat(slerpedPercentDone, "Slerped %: ");
+							float correctedX = (lastFrameTransform.x + ((*transformFrame)->xMove - lastFrameTransform.x) * slerpedPercentDone);
+							float correctedY = (lastFrameTransform.y + ((*transformFrame)->yMove - lastFrameTransform.y) * slerpedPercentDone);
 
 							transform->SetPosition(Vector2(correctedX, correctedY));
 							break;

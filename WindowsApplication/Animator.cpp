@@ -49,6 +49,9 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 
 		ImGui::Text("Manage Animation:");
+
+		static std::string animationFilePath = "";
+
 		ImGui::SameLine(0, 15);
 		if (ImGui::ImageButton("##NewAnimationFile", newFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
@@ -64,9 +67,10 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 		ImGui::SameLine(0, 5);
-		if (ImGui::ImageButton("##OpenAnimationFile", openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+		
+		if (ImGui::ImageButton("#OpenAnim", openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
-			std::string animationFilePath = OpenLoadFileExplorer();
+			animationFilePath = OpenLoadFileExplorer();
 			if (animationFilePath != "")
 			{
 				SetFocusedAnimation(LoadAnimationFile(animationFilePath));
@@ -75,11 +79,12 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::SameLine(0, 5);
 		if (ImGui::ImageButton("#SaveAnimationFile", saveFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
 		{
-			std::string animationFilePath = OpenSaveFileExplorer();
-			if (animationFilePath != "")
-			{
-				SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
-			}
+			//std::string animationFilePath = OpenSaveFileExplorer();
+			//if (animationFilePath != "")
+			//{
+			//	SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
+			//}
+			SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
 		}
 
 		ImGui::EndChild(); // Select Animation
@@ -1017,6 +1022,40 @@ namespace FlatEngine { namespace FlatGui {
 				// Assign the new slider values to the sprites pivotPoint
 				transform->xScale = xScale;
 				transform->yScale = yScale;
+
+				// Interpolation type
+				const char* interpType[] = { "-Select-", "Lerp", "Slerp" };
+				static int current_type = 0;
+				static std::string node_clicked = "";
+				static std::string selected_property = "";
+				
+				// Get already saved interpType to show up in the combo select as default
+				if (transform->transformInterpType == Animation::Lerp)
+					current_type = 1;
+				else if (transform->transformInterpType == Animation::Slerp)
+					current_type = 2;
+
+				ImGui::Separator();
+				ImGui::Text("Interpolation Type");
+				if (ImGui::BeginCombo("##interpolationType", interpType[current_type]))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(interpType); n++)
+					{
+						bool is_selected = (interpType[current_type] == interpType[n]);
+						if (ImGui::Selectable(interpType[n], is_selected))
+						{
+							current_type = n;
+							if (interpType[n] == "Lerp")
+								transform->transformInterpType = Animation::Lerp;
+							else if (interpType[n] == "Slerp")
+								transform->transformInterpType = Animation::Slerp;
+						}
+							
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
 			}
 			else if (selectedKeyFrameToEdit->name == "Sprite")
 			{

@@ -47,8 +47,6 @@ namespace FlatEngine { namespace FlatGui {
 
 				long queuedForDelete = -1;
 				// Open File Icon
-				openFileIcon->loadFromFile("assets/images/OpenFileIcon.png");
-				SDL_Texture* openFileTexture = openFileIcon->getTexture();
 				float openFileWidth = (float)openFileIcon->getWidth();
 				float openFileHeight = (float)openFileIcon->getHeight();
 

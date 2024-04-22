@@ -10,12 +10,12 @@
                 {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "time": 8020.0,
+                    "time": 4020.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
-                    "xMove": 0.0,
+                    "xMove": -3.0,
                     "xScale": 0.0,
-                    "yMove": -11.0,
+                    "yMove": -4.0,
                     "yScale": 0.0
                 }
             ],
@@ -26,10 +26,26 @@
                 {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "time": 6000.0,
+                    "time": 3020.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
-                    "xMove": -10.5,
+                    "xMove": -3.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 980.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 3.0,
                     "xScale": 0.0,
                     "yMove": 0.0,
                     "yScale": 0.0
@@ -45,9 +61,9 @@
                     "time": 2000.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
-                    "xMove": 9.0,
+                    "xMove": 3.0,
                     "xScale": 0.0,
-                    "yMove": 0.0,
+                    "yMove": 4.0,
                     "yScale": 0.0
                 }
             ],
@@ -58,23 +74,7 @@
                 {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
-                    "time": 4020.0,
-                    "transformInterpType": 0,
-                    "transformSpeed": 0.10000000149011612,
-                    "xMove": 0.0,
-                    "xScale": 0.0,
-                    "yMove": 10.5,
-                    "yScale": 0.0
-                }
-            ],
-            "Property": "Transform"
-        },
-        {
-            "Frames": [
-                {
-                    "scaleInterpType": 0,
-                    "scaleSpeed": 0.10000000149011612,
-                    "time": 10000.0,
+                    "time": 5020.0,
                     "transformInterpType": 0,
                     "transformSpeed": 0.10000000149011612,
                     "xMove": 0.0,
@@ -116,6 +116,84 @@
                 }
             ],
             "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\idle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 0.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\idle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 5000.00048828125,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\rightidle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 3979.5927734375,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\leftidle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 2979.5927734375,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\rightidle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 2000.0003662109375,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\leftidle.png",
+                    "speed": 0.10000000149011612,
+                    "time": 979.591796875,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
         }
     ]
 }

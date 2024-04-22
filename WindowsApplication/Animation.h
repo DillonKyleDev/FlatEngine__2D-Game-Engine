@@ -27,6 +27,7 @@ namespace FlatEngine
 
 		enum InterpType {
 			Lerp,
+			Slerp
 		};
 
 		// Property structs
