@@ -2,6 +2,7 @@
 #include "../Button.h"
 #include "../FlatEngine.h"
 #include "../Sprite.h"
+#include "../Audio.h"
 
 StartButton::StartButton()
 {

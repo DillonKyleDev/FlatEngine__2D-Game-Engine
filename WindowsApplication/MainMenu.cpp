@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "imgui.h"
+#include "Scene.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -9,14 +10,53 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("New Project.."))
+				{
+					// First, save current project
+					SaveProject(loadedProject, loadedProject->GetPath());
+					// Then Create New Project and open it
+					std::shared_ptr<Project> newProject = std::make_shared<Project>();
+					std::string projectPath = OpenSaveFileExplorer();
+					SaveProject(newProject, projectPath);
+					OpenProject(projectPath);
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Open Project"))
+				{
+					// Open Project
+					std::string projectPath = OpenLoadFileExplorer();
+					OpenProject(projectPath);
+				}
+				if (ImGui::MenuItem("Save Project"))
+				{
+					// Save Project
+					std::string projectPath = loadedProject->GetPath();
+					SaveProject(loadedProject, projectPath);
+				}
+				if (ImGui::MenuItem("Save Project As.."))
+				{
+					// Save Project As...
+					std::string projectPath = OpenSaveFileExplorer();
+					SaveProject(loadedProject, projectPath);
+				}
+
+				ImGui::Separator();
+
 				if (ImGui::MenuItem("New Scene"))
-					sceneManager->CreateNewScene();
+				{
+					// First Save Loaded scene
+					sceneManager->SaveCurrentScene();
+					std::shared_ptr<Scene> newScene = sceneManager->CreateNewScene();
+					sceneManager->LoadScene(newScene->GetPath());
+					loadedProject->SetLoadedScenePath(newScene->GetPath());
+				}
 
 				if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 				{
 					// Load the scene
 					std::string scenePath = OpenLoadFileExplorer();
 					sceneManager->LoadScene(scenePath);
+					loadedProject->SetLoadedScenePath(scenePath);
 				}
 
 				// Save the scene

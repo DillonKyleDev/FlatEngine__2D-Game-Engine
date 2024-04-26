@@ -9,9 +9,11 @@
 #include <imgui.h>
 #include "Window.h"
 
+#include "Project.h"
 #include "SceneManager.h"
 #include "ScriptComponent.h"
 #include "GameLoop.h"
+#include "Sound.h."
 
 #include "Animation.h"
 #include "WidgetsManager.h"
@@ -81,6 +83,11 @@ namespace FlatEngine
 
 	// Audio Managing
 	extern std::shared_ptr<Sound> soundController;
+
+	// Project Management
+	extern std::shared_ptr<Project> loadedProject;
+	extern void OpenProject(std::string path);
+	extern void SaveProject(std::shared_ptr<Project> project, std::string path);
 
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
@@ -189,6 +196,7 @@ namespace FlatEngine
 		extern bool _firstSceneRenderPass;
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
+		extern ImVec2 sceneViewScrolling;
 
 		// Animation Manager
 		extern void CreateNewAnimationFile(std::string path);

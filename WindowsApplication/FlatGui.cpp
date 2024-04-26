@@ -109,12 +109,16 @@ namespace FlatEngine { namespace FlatGui {
 			// Set fullscreen here for now
 			Window::SetFullscreen(true);
 		}
-		else 
-			FlatEngine::CreateNewScene();
+		else
+			CreateNewScene();
 	}
 
 	void Render(bool& quit)
 	{
+		static bool _firstPassDone = false;
+		static bool _hasOpenedLastProject = false;
+
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
@@ -123,10 +127,33 @@ namespace FlatEngine { namespace FlatGui {
 				quit = true;
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::window))
 				quit = true;
-		}
+			if (event.type == SDL_KEYDOWN)
+			{
+				//Select surfaces based on key press
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_UP:
+					LogString("Up pressed");
+					break;
 
-		// Create icons
-		CreateIcons();
+				case SDLK_DOWN:
+					LogString("Down pressed");
+					break;
+
+				case SDLK_LEFT:
+					LogString("Left pressed");
+					break;
+
+				case SDLK_RIGHT:
+					LogString("Right pressed");
+					break;
+
+				default:
+					
+					break;
+				}
+			}
+		}
 
 		// Start the Dear ImGui frame
 		ImGui_ImplSDLRenderer2_NewFrame();
@@ -157,6 +184,16 @@ namespace FlatEngine { namespace FlatGui {
 		SDL_RenderClear(Window::renderer);
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 		SDL_RenderPresent(Window::renderer);
+
+
+		// Open Project by default
+		if (_firstPassDone && !_hasOpenedLastProject)
+		{
+			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
+			_hasOpenedLastProject = true;
+		}
+
+		_firstPassDone = true;
 	}
 
 	std::string OpenSaveFileExplorer()

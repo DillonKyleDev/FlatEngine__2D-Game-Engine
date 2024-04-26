@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Text.h"
+#include "Audio.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -11,7 +12,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::Begin("Inspector");
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 		ImGui::BeginChild("Inspector Background", ImVec2(0, 0), padding_child_flags);
 
@@ -61,7 +62,7 @@ namespace FlatEngine { namespace FlatGui {
 						bool _isCollapsed = components[i]->IsCollapsed();
 
 						// Component Name
-						ImGui::Separator();
+						//ImGui::Separator();
 						std::string componentType = components[i]->GetTypeString();
 						// Get Component ID in to keep the child unique
 						std::string componentID = componentType + std::to_string(components[i]->GetID());
@@ -683,8 +684,8 @@ namespace FlatEngine { namespace FlatGui {
 
 					ImGui::EndChild();
 
-					if (i == components.size() - 1)
-						ImGui::Separator();
+					//if (i == components.size() - 1)
+					//	ImGui::Separator();
 				}
 
 				if (queuedForDelete != -1)

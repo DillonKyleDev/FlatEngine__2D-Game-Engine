@@ -16,6 +16,8 @@ namespace FlatEngine
 
 		void SetName(std::string name);
 		std::string GetName();
+		void SetPath(std::string path);
+		std::string GetPath();
 		void AddSceneObject(std::shared_ptr<GameObject> sceneObject);
 		std::vector<std::shared_ptr<GameObject>> GetSceneObjects();
 		void SetAnimatorPreviewObjects(std::vector<std::shared_ptr<GameObject>> previewObjects);
@@ -35,6 +37,7 @@ namespace FlatEngine
 
 	private:
 		std::string name;
+		std::string path;
 		std::vector<std::shared_ptr<GameObject>> sceneObjects;
 		std::vector<std::shared_ptr<GameObject>> animatorPreviewObjects;
 		std::shared_ptr<Camera> primaryCamera;

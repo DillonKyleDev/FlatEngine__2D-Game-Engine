@@ -31,7 +31,7 @@ namespace FlatEngine
 
 	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Button);
+		this->SetType(ComponentTypes::BoxCollider);
 		this->SetID(GetNextComponentID());
 		this->SetParentID(newParentID);
 		this->_mouseIsOver = false;

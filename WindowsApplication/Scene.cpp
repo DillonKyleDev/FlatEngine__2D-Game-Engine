@@ -8,6 +8,7 @@ namespace FlatEngine
 	Scene::Scene()
 	{
 		name = "New Scene";
+		path = "";
 		sceneObjects = std::vector< std::shared_ptr<GameObject>>();
 		animatorPreviewObjects = std::vector< std::shared_ptr<GameObject>>();
 		primaryCamera = nullptr;
@@ -27,6 +28,16 @@ namespace FlatEngine
 	std::string Scene::GetName()
 	{
 		return name;
+	}
+
+	void Scene::SetPath(std::string scenePath)
+	{
+		path = scenePath;
+	}
+
+	std::string Scene::GetPath()
+	{
+		return path;
 	}
 
 	void Scene::AddSceneObject(std::shared_ptr<GameObject> sceneObject)

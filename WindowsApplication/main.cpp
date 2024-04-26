@@ -110,6 +110,8 @@ int main(int argc, char* args[])
 	else
 	{
 		FlatEngine::FlatGui::SetupImGui();
+		// Create icons
+		FlatEngine::FlatGui::CreateIcons();
 
 		//Load media
 		if (!loadMedia())

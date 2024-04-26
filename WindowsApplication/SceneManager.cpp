@@ -804,7 +804,8 @@ namespace FlatEngine
 	}
 	void SceneManager::SaveAnimationPreviewObjects()
 	{
-		animatorPreviewObjects = loadedScene->GetAnimatorPreviewObjects();
+		if (loadedScene->GetAnimatorPreviewObjects().size() > 0)
+			animatorPreviewObjects = loadedScene->GetAnimatorPreviewObjects();
 	}
 	void SceneManager::LoadAnimationPreviewObjects()
 	{

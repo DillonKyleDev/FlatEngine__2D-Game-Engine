@@ -74,6 +74,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (animationFilePath != "")
 			{
 				SetFocusedAnimation(LoadAnimationFile(animationFilePath));
+				loadedProject->SetLoadedPreviewAnimationPath(animationFilePath);
 			}
 		}
 		ImGui::SameLine(0, 5);

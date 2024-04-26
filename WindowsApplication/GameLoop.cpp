@@ -63,21 +63,7 @@ namespace FlatEngine
 					std::shared_ptr<ScriptComponent> script = std::static_pointer_cast<ScriptComponent>(components[j]);
 					std::string attachedScript = script->GetAttachedScript();
 
-					if (attachedScript == "GameBoard")
-					{
-						std::shared_ptr<GameBoard> gameBoardScript = std::make_shared<GameBoard>();
-						gameBoardScript->SetOwner(this->gameObjects[i]);
-						script->SetScriptInstance(gameBoardScript);
-						this->activeScripts.push_back(gameBoardScript);
-					}
-					else if (attachedScript == "BoardSquare")
-					{
-						std::shared_ptr<BoardSquare> boardSquare = std::make_shared<BoardSquare>();
-						boardSquare->SetOwner(this->gameObjects[i]);
-						script->SetScriptInstance(boardSquare);
-						this->activeScripts.push_back(boardSquare);
-					}
-					else if (attachedScript == "GameManager")
+					if (attachedScript == "GameManager")
 					{
 						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
 						gameManagerScript->SetOwner(this->gameObjects[i]);
@@ -85,13 +71,6 @@ namespace FlatEngine
 						this->activeScripts.push_back(gameManagerScript);
 						this->gameManager = gameManagerScript;
 						FlatEngine::gameManager = gameManagerScript;
-					}
-					else if (attachedScript == "UndoButton")
-					{
-						std::shared_ptr<UndoButton> undoButtonScript = std::make_shared<UndoButton>();
-						undoButtonScript->SetOwner(this->gameObjects[i]);
-						script->SetScriptInstance(undoButtonScript);
-						this->activeScripts.push_back(undoButtonScript);
 					}
 					else if (attachedScript == "StartButton")
 					{
@@ -113,13 +92,6 @@ namespace FlatEngine
 						quitButtonScript->SetOwner(this->gameObjects[i]);
 						script->SetScriptInstance(quitButtonScript);
 						this->activeScripts.push_back(quitButtonScript);
-					}
-					else if (attachedScript == "AI")
-					{
-						std::shared_ptr<AI> AIScript = std::make_shared<AI>();
-						AIScript->SetOwner(this->gameObjects[i]);
-						script->SetScriptInstance(AIScript);
-						this->activeScripts.push_back(AIScript);
 					}
 				}
 			}

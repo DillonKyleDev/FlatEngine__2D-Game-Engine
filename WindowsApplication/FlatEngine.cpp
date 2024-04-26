@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Transform.h"
 #include "Vector2.h"
+#include <fstream>
 
 /*
 ######################################
@@ -28,6 +29,9 @@ namespace FlatEngine
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
+
+	// Loaded Project
+	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
 
 	// Animator
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
@@ -120,6 +124,116 @@ namespace FlatEngine
 		return FocusedAnimation;
 	}
 
+	
+	// Project Management
+	void OpenProject(std::string path)
+	{
+		std::shared_ptr<Project> newProject = std::make_shared<Project>();
+		newProject->SetPath(path);
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Open file in in mode
+		file_obj.open(path, std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		if (file_obj.good())
+		{
+			// Go from string to json object
+			json fileContentJson = json::parse(fileContent);
+
+			if (fileContentJson["Project Properties"][0] != "NULL")
+			{
+				// Getting data from the json 
+				// auto properties = fileContentJson["Animation Properties"];
+				// std::string name = properties[0]["name"];
+
+				// Loop through the saved Properties in the JSON file
+				for (int i = 0; i < fileContentJson["Project Properties"].size(); i++)
+				{
+					// Get data from the loaded object
+					json currentObjectJson = fileContentJson["Project Properties"][i];
+
+					if (currentObjectJson.contains("path"))
+						newProject->SetPath(currentObjectJson["path"]);
+					if (currentObjectJson.contains("loadedScenePath"))
+						newProject->SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
+					if (currentObjectJson.contains("loadedAnimationPath"))
+						newProject->SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
+
+					Vector2 sceneViewScroll = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewScrollingX"))				
+						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
+					if (currentObjectJson.contains("sceneViewScrollingY"))
+						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
+
+					newProject->SetSceneViewScrolling(sceneViewScroll);
+				}
+			}
+		}
+
+		loadedProject = newProject;
+		
+		LoadScene(loadedProject->GetLoadedScenePath());
+		SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
+		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
+		//FlatGui::sceneViewScrolling = ImVec2(scrolling.x, scrolling.y);
+	}
+
+	void SaveProject(std::shared_ptr<Project> project, std::string path)
+	{
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Delete old contents of the file
+		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open(path, std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json projectProperties;
+		Vector2 sceneViewScrolling = project->GetSceneViewScrolling();
+
+		// Create Animation Property Json data object
+		json animationName = json::object({
+			{ "path", path },
+			{ "loadedScenePath", project->GetLoadedScenePath()},
+			{ "loadedAnimationPath", project->GetLoadedPreviewAnimationPath()},
+			{ "sceneViewScrollingX", sceneViewScrolling.x },
+			{ "sceneViewScrollingY", sceneViewScrolling.y },
+		});
+		projectProperties.push_back(animationName);
+
+		// Recreate the Animation Property json object and add the array as the content
+		json newFileObject = json::object({ {"Project Properties", projectProperties } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
+	}
+
 
 	// Scene Manager Prettification
 	std::shared_ptr<Scene> GetLoadedScene()
@@ -174,7 +288,8 @@ namespace FlatEngine
 		soundController->StopMusic();
 		// Reset buttons in UIManager
 		uiManager->ResetButtons();
-		sceneManager->SaveAnimationPreviewObjects();
+		if (sceneManager->GetLoadedScene() != nullptr)
+			sceneManager->SaveAnimationPreviewObjects();
 		sceneManager->LoadScene(name);
 		sceneManager->LoadAnimationPreviewObjects();
 

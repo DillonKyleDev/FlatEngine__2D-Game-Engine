@@ -16,6 +16,7 @@ namespace FlatEngine { namespace FlatGui {
 	float DYNAMIC_VIEWPORT_HEIGHT = 400;
 	bool _firstSceneRenderPass = true;
 	bool _sceneHasBeenSet = false;
+	ImVec2 sceneViewScrolling = ImVec2(0,0);
 
 	void Scene_RenderView()
 	{
@@ -29,7 +30,6 @@ namespace FlatEngine { namespace FlatGui {
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-		static ImVec2 scrolling(0, 0);
 
 		// Set initial viewport dimensions for rendering scene view grid and objects
 		if (!_firstSceneRenderPass)
@@ -67,14 +67,14 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (scrollInput > 0)
 			{
-				scrolling.x -= trunc(signedMousePosX * weight);
-				scrolling.y -= trunc(signedMousePosY * weight);
+				sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+				sceneViewScrolling.y -= trunc(signedMousePosY * weight);
 				gridStep += 1;
 			}
 			else if (scrollInput < 0 && gridStep > 2)
 			{
-				scrolling.x += trunc(signedMousePosX * weight);
-				scrolling.y += trunc(signedMousePosY * weight);
+				sceneViewScrolling.x += trunc(signedMousePosX * weight);
+				sceneViewScrolling.y += trunc(signedMousePosY * weight);
 				gridStep -= 1;
 			}
 		}
@@ -83,13 +83,13 @@ namespace FlatEngine { namespace FlatGui {
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{
-			scrolling.x += inputOutput.MouseDelta.x;
-			scrolling.y += inputOutput.MouseDelta.y;
+			sceneViewScrolling.x += inputOutput.MouseDelta.x;
+			sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
 		static ImVec2 centerPoint = ImVec2(0, 0);
 
-		RenderGridView(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
+		RenderGridView(centerPoint, sceneViewScrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
 
 		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
