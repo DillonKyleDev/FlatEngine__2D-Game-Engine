@@ -24,6 +24,9 @@ namespace FlatEngine
 	bool _isDebugMode = true;
 	bool _closeProgram = false;
 
+	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
+	int JOYSTICK_DEAD_ZONE = 8000;
+
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 	long FlatEngine::FocusedGameObjectID = -1;
@@ -66,6 +69,31 @@ namespace FlatEngine
 		// Save a copy of the old process map values
 		//AddProfilerProcess("Run Start", 0);
 
+		// Manage Controllers
+		static int controllersConnected = 0;
+		if (SDL_NumJoysticks() != controllersConnected)
+		{
+			// Clean up old gamepads
+			for (SDL_Joystick* gamepad : gamepads)
+			{
+				SDL_JoystickClose(gamepad);
+				gamepad = NULL;
+			}
+
+			controllersConnected = SDL_NumJoysticks();
+			for (int i = 0; i < controllersConnected; i++)
+			{
+				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
+				if (gamepad == NULL)
+					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+				else
+				{
+					LogString("Gamepad connected...");
+					gamepads.push_back(gamepad);
+				}
+			}
+		}
+
 		_hasQuit = FlatEngine::_closeProgram;
 		FlatEngine::FlatGui::Render(_hasQuit);
 
@@ -84,6 +112,13 @@ namespace FlatEngine
 
 	void CloseProgram()
 	{
+		// Clean up old gamepads
+		for (SDL_Joystick* gamepad : gamepads)
+		{
+			SDL_JoystickClose(gamepad);
+			gamepad = NULL;
+		}
+
 		FlatEngine::_closeProgram = true;
 	}
 

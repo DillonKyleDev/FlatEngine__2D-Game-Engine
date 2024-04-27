@@ -16,14 +16,14 @@ bool init()
 	bool success = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
 	}
 	else
 	{
-		FlatEngine::logger->LogString("SDL initialized...");
+		FlatEngine::logger->LogString("SDL initialized... - Video - Audio - Joystick -");
 
 		//Set texture filtering to linear
 		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
@@ -70,7 +70,6 @@ bool init()
 						FlatEngine::LogSeparator();
 						FlatEngine::LogString("Begin Logging...");
 						FlatEngine::LogSeparator();
-						//Initialize next thing
 					}
 				}
 			}

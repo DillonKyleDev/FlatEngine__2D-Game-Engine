@@ -42,6 +42,40 @@ namespace FlatEngine
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
 
+	// Controller Management
+	extern std::vector<SDL_Joystick*> gamepads;
+	extern int JOYSTICK_DEAD_ZONE;
+
+	enum XboxButtons {
+		A,
+		B,
+		X,
+		Y,
+		LB,
+		RB,
+		ScreenShot,
+		Start,
+		LS,
+		RS,
+		Home,
+		Tray,
+	};
+	enum XboxHats {
+		Up = 1,
+		Down = 4,
+		Left = 8,
+		Right = 2,
+		
+	};
+	enum XboxAxis {
+		LeftXAxis = 0,
+		LeftYAxis = 1,
+		RightXAxis = 2,
+		RightYAxis = 3,
+		LT = 4,
+		RT = 5
+	};
+
 	extern std::shared_ptr<GameManager> gameManager;
 
 	// #### FLAGENGINE #### //
@@ -93,7 +127,7 @@ namespace FlatEngine
 	extern void OpenProject(std::string path);
 	extern void SaveProject(std::shared_ptr<Project> project, std::string path);
 
-	// Context Management
+	// Controls Context Management
 	extern std::vector<std::shared_ptr<MappingContext>> mappingContexts;
 	extern void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context);
 	extern void InitializeMappingContexts();

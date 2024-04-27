@@ -77,7 +77,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 
 		// Setup Dear ImGui style
@@ -679,12 +679,147 @@ namespace FlatEngine { namespace FlatGui {
 					break;
 				}
 			}
+			else if (event.type == SDL_JOYAXISMOTION)
+			{
+				// Joystick Direction
+				static int leftXDir = 0;
+				static int leftYDir = 0;
+				static int rightXDir = 0;
+				static int rightYDir = 0;
 
-			//for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-			//	if (mappingContext->GetKeyBinding("SDLK_a") != "")
-			//		LogFloat((float)mappingContext->GetInputAction("SDLK_a").type);
+				// Axis (analogs)
+				if (event.jaxis.which == 0)
+				{
+					switch (event.jaxis.axis)
+					{
+					case XboxAxis::LeftXAxis:
+						// Left of dead zone
+						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+							leftXDir = event.jaxis.value;
+						// Right of dead zone
+						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+							leftXDir = event.jaxis.value;
+						else
+							leftXDir = 0;
+						break;
+					case XboxAxis::LeftYAxis:
+						// Below dead zone
+						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+							leftYDir = event.jaxis.value * -1;
+						// Above dead zone
+						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+							leftYDir = event.jaxis.value * -1;
+						else
+							leftYDir = 0;
+						break;
+					case XboxAxis::RightXAxis:
+						// Left of dead zone
+						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+							rightXDir = event.jaxis.value;
+						// Right of dead zone
+						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+							rightXDir = event.jaxis.value;
+						else
+							rightXDir = 0;
+						break;
+					case XboxAxis::RightYAxis:
+						// Below dead zone
+						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+							rightYDir = event.jaxis.value * -1;
+						// Above dead zone
+						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+							rightYDir = event.jaxis.value * -1;
+						else
+							rightYDir = 0;
+						break;
+					case XboxAxis::LT:
+						LogFloat(event.jaxis.value, "Left Trigger: ");
+						break;
+					case XboxAxis::RT:
+						LogFloat(event.jaxis.value, "Rght Trigger: ");
+						break;
+					}
 
-			
+					//Calculate angle
+					float leftJoystickAngle = atan2((float)leftYDir, (float)leftYDir) * (180 / M_PI);
+
+					//Correct angle
+					if (leftXDir == 0 && leftYDir == 0)
+						leftJoystickAngle = 0;
+
+					//LogFloat(leftJoystickAngle, "Left Joystic Angle: ");
+					LogFloat(leftXDir, "Left X: ");
+					LogFloat(leftYDir, "Left Y: ");
+					LogFloat(rightXDir, "Right X: ");
+					LogFloat(rightYDir, "Right Y: ");
+				}
+			}
+			// Buttons
+			else if (event.type == SDL_JOYBUTTONDOWN)
+			{
+				switch (event.jbutton.button)
+				{
+				case XboxButtons::A:
+					LogString("A");
+					break;
+				case XboxButtons::B:
+					LogString("B");
+					break;
+				case XboxButtons::X:
+					LogString("X");
+					break;
+				case XboxButtons::Y:
+					LogString("Y");
+					break;
+				case XboxButtons::LB:
+					LogString("LB");
+					break;
+				case XboxButtons::RB:
+					LogString("RB");
+					break;
+				case XboxButtons::ScreenShot:
+					LogString("ScreenShot");
+					break;
+				case XboxButtons::Start:
+					LogString("Start");
+					break;
+				case XboxButtons::LS:
+					LogString("LS");
+					break;
+				case XboxButtons::RS:
+					LogString("RS");
+					break;
+				case XboxButtons::Home:
+					LogString("Home");
+					break;
+				case XboxButtons::Tray:
+					LogString("Tray");
+					break;
+				default:
+					break;
+				}
+			}
+			// Hats
+			else if (event.type == SDL_JOYHATMOTION)
+			{
+				switch (event.jhat.value)
+				{
+				case XboxHats::Up:
+					LogString("Up");
+					break;
+				case XboxHats::Down:
+					LogString("Down");
+					break;
+				case XboxHats::Left:
+					LogString("Left");
+					break;
+				case XboxHats::Right:
+					LogString("Right");
+					break;
+				default:
+					break;
+				}
+			}
 		}
 	}
 
