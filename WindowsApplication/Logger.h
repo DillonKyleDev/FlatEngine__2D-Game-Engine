@@ -13,6 +13,7 @@ namespace FlatEngine
 		~Logger();
 
 		void LogString(std::string line);
+		void LogSeparator();
 		void LogFloat(float variable, std::string line = "");
 		void LogInt(int variable, std::string line = "");
 		void LogVector2(Vector2 vector, std::string line = "");

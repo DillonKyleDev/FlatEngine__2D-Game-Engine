@@ -20,6 +20,8 @@
 #include "UIManager.h"
 #include "scripts/GameManager.h"
 //#include "Process.h" Might need this after deleting some other include
+#include "MappingContext.h"
+#include "json.hpp"
 
 //ImGui - SDL Renderer
 #pragma once
@@ -81,6 +83,8 @@ namespace FlatEngine
 	extern void CloseProgram();
 	extern int GetEngineTime();
 
+	extern json LoadFileData(std::string filepath);
+
 	// Audio Managing
 	extern std::shared_ptr<Sound> soundController;
 
@@ -88,6 +92,13 @@ namespace FlatEngine
 	extern std::shared_ptr<Project> loadedProject;
 	extern void OpenProject(std::string path);
 	extern void SaveProject(std::shared_ptr<Project> project, std::string path);
+
+	// Context Management
+	extern std::vector<std::shared_ptr<MappingContext>> mappingContexts;
+	extern void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context);
+	extern void InitializeMappingContexts();
+	extern void ClearIAContextBindings();
+	extern std::shared_ptr<MappingContext> GetMappingContext(std::string contextName);
 
 	// Scene Manager Prettification
 	extern std::shared_ptr<Scene> GetLoadedScene();
@@ -108,6 +119,7 @@ namespace FlatEngine
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
+	extern void LogSeparator();
 	extern void LogFloat(float var, std::string line = "");
 	extern void LogInt(int var, std::string line = "");
 	extern void LogVector2(Vector2 vector, std::string line = "");
@@ -198,6 +210,8 @@ namespace FlatEngine
 		extern float gridStep;
 		extern ImVec2 sceneViewScrolling;
 
+		extern void RunOnceAfterInitialization();
+
 		// Animation Manager
 		extern void CreateNewAnimationFile(std::string path);
 		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
@@ -232,6 +246,7 @@ namespace FlatEngine
 		extern void SetupImGui();
 		extern void CreateIcons();
 		extern void Render(bool& quit);
+		extern void HandleEvents(bool& quit);
 		extern void MainMenuBar();
 		extern std::string OpenSaveFileExplorer();
 		extern std::string OpenLoadFileExplorer();

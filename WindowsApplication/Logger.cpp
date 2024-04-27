@@ -19,6 +19,12 @@ namespace FlatEngine
 		this->log->appendf(line.c_str());
 	}
 
+	void Logger::LogSeparator()
+	{
+		std::string line = "------------------------------------------------------------------------------------\n";
+		log->appendf(line.c_str());
+	}
+
 	void Logger::LogFloat(float variable, std::string line)
 	{
 		line = line + std::to_string(variable) + "\n";
@@ -85,7 +91,7 @@ namespace FlatEngine
 
 	namespace FlatGui {
 
-		bool _clearBufferEveryFrame = true;
+		bool _clearBufferEveryFrame = false;
 		bool _logProfilerOutput = false;
 
 		void RenderLog()

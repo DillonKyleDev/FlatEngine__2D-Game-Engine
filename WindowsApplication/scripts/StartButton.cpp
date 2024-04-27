@@ -4,6 +4,10 @@
 #include "../Sprite.h"
 #include "../Audio.h"
 
+#include "../MappingContext.h"
+#include "../Transform.h"
+#include "../Vector2.h"
+
 StartButton::StartButton()
 {
 	SetName("StartButton");
@@ -19,21 +23,21 @@ void StartButtonOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thisObject)
 
 void StartButtonOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	thisObject->GetSpriteComponent()->SetTexture("assets/images/SingleButtonHovered.png");
-	std::shared_ptr<FlatEngine::Audio> clickedAudio = std::static_pointer_cast<FlatEngine::Audio>(thisObject->GetComponent(FlatEngine::ComponentTypes::Audio));
-	clickedAudio->Play();
+	//thisObject->GetSpriteComponent()->SetTexture("assets/images/SingleButtonHovered.png");
+	//std::shared_ptr<FlatEngine::Audio> clickedAudio = thisObject->GetAudioComponent();
+	//clickedAudio->Play();
 }
 
 void StartButtonOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	thisObject->GetSpriteComponent()->SetTexture("assets/images/SingleButton.png");
+	//thisObject->GetSpriteComponent()->SetTexture("assets/images/SingleButton.png");
 }
 
 void StartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	std::shared_ptr<FlatEngine::Audio> clickedAudio = std::static_pointer_cast<FlatEngine::Audio>(thisObject->GetComponent(FlatEngine::ComponentTypes::Audio));
-	clickedAudio->Play();
-	FlatEngine::LoadScene("scenes/ClearGameBoard.json");
+	//std::shared_ptr<FlatEngine::Audio> clickedAudio = thisObject->GetAudioComponent();
+	//clickedAudio->Play();
+	//FlatEngine::LoadScene("scenes/ClearGameBoard.json");
 }
 
 void StartButtonOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -42,23 +46,40 @@ void StartButtonOnRightClick(std::shared_ptr<FlatEngine::GameObject> thisObject)
 
 void StartButton::Start()
 {
-	std::shared_ptr<FlatEngine::Audio> clickedAudio = std::static_pointer_cast<FlatEngine::Audio>(GetOwner()->AddComponent(FlatEngine::ComponentTypes::Audio));
-	clickedAudio->LoadEffect("assets/audio/StartHovered.wav");
-	clickedAudio->SetIsMusic(false);
+	std::shared_ptr<FlatEngine::Audio> clickedAudio = GetOwner()->GetAudioComponent();
+	//clickedAudio->LoadEffect("assets/audio/StartHovered.wav");
+	//clickedAudio->SetIsMusic(false);
 	
-	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(this->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	//std::shared_ptr<FlatEngine::Button> button = GetOwner()->GetButtonComponent();
 	// Register Mouse Events functions to the Button
-	button->SetOnMouseOver(StartButtonOnMouseOver);
-	button->SetOnMouseEnter(StartButtonOnMouseEnter);
-	button->SetOnMouseLeave(StartButtonOnMouseLeave);
-	button->SetOnMouseLeftClick(StartButtonOnLeftClick);
-	button->SetOnMouseRightClick(StartButtonOnRightClick);
+	//button->SetOnMouseOver(StartButtonOnMouseOver);
+	//button->SetOnMouseEnter(StartButtonOnMouseEnter);
+	//button->SetOnMouseLeave(StartButtonOnMouseLeave);
+	//button->SetOnMouseLeftClick(StartButtonOnLeftClick);
+	//button->SetOnMouseRightClick(StartButtonOnRightClick);
 }
 
 void StartButton::Update(float deltaTime)
 {
-	//for (int i = 0; i < 100000; i++)
-	//{
-	//	int j = 1 + i;
-	//}
+	// Get Mapping Context
+	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("TestContext1");
+	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
+
+	if (mappingContext->GetInputAction("IA_Left").type != 0)
+		transform->SetPosition(Vector2(transform->GetPosition().x - 0.05f, transform->GetPosition().y));
+	if (mappingContext->GetInputAction("IA_Right").type != 0)
+		transform->SetPosition(Vector2(transform->GetPosition().x + 0.05f, transform->GetPosition().y));
+	if (mappingContext->GetInputAction("IA_Down").type != 0)
+		transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y - 0.05f));
+	if (mappingContext->GetInputAction("IA_Up").type != 0)
+		transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y + 0.05f));
+
+	if (mappingContext->Fired("IA_Left"))
+		FlatEngine::LogString("Left Fired!");
+	if (mappingContext->Fired("IA_Right"))
+		FlatEngine::LogString("Right Fired!");
+	if (mappingContext->Fired("IA_Down"))
+		FlatEngine::LogString("Down Fired!");
+	if (mappingContext->Fired("IA_Up"))
+		FlatEngine::LogString("Up Fired!");
 }

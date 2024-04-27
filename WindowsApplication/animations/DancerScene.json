@@ -71,6 +71,43 @@
             "id": 1,
             "name": "Square",
             "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "StartButton",
+                    "id": 6,
+                    "type": "Script"
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 7,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isCollapsed": false,
+                    "id": 8,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Pieces\\kingB.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "yOffset": 17.0
+                }
+            ],
+            "id": 2,
+            "name": "New GameObject (2)",
+            "parent": -1
         }
     ]
 }

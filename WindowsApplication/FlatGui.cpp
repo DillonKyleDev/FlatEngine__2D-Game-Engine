@@ -18,9 +18,10 @@
 #include <sstream>
 #include "ImSequencer.h"
 #include "Text.h"
-
 #include "Scene.h"
 #include "Camera.h"
+
+#include "MappingContext.h"
 
 
 /*
@@ -113,47 +114,28 @@ namespace FlatEngine { namespace FlatGui {
 			CreateNewScene();
 	}
 
+	void RunOnceAfterInitialization()
+	{
+		static bool _initialized = false;
+		static bool _hasRunOnce = false;
+
+		if (_initialized && !_hasRunOnce)
+		{
+			// Initialize Mapping Contexts
+			InitializeMappingContexts();
+
+			// Open Project by default
+			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
+			
+			_hasRunOnce = true;
+		}
+
+		_initialized = true;
+	}
+
 	void Render(bool& quit)
 	{
-		static bool _firstPassDone = false;
-		static bool _hasOpenedLastProject = false;
-
-
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			ImGui_ImplSDL2_ProcessEvent(&event);
-			if (event.type == SDL_QUIT)
-				quit = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::window))
-				quit = true;
-			if (event.type == SDL_KEYDOWN)
-			{
-				//Select surfaces based on key press
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_UP:
-					LogString("Up pressed");
-					break;
-
-				case SDLK_DOWN:
-					LogString("Down pressed");
-					break;
-
-				case SDLK_LEFT:
-					LogString("Left pressed");
-					break;
-
-				case SDLK_RIGHT:
-					LogString("Right pressed");
-					break;
-
-				default:
-					
-					break;
-				}
-			}
-		}
+		HandleEvents(quit);
 
 		// Start the Dear ImGui frame
 		ImGui_ImplSDLRenderer2_NewFrame();
@@ -185,15 +167,525 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 		SDL_RenderPresent(Window::renderer);
 
+		// For things we only want to execute once after complete initialization
+		RunOnceAfterInitialization();
+	}
 
-		// Open Project by default
-		if (_firstPassDone && !_hasOpenedLastProject)
+	void HandleEvents(bool &quit)
+	{
+		// Unfire all keybinds that were fired in the last frame then clear the saved keys
+		static std::vector<std::string> firedKeys = std::vector<std::string>();
+		for (std::string keybind : firedKeys)
+			for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+				mappingContext->UnFireEvent(keybind);
+		firedKeys.clear();
+
+
+		SDL_Event event;
+		//if (SDL_PollEvent(&event))
+		while (SDL_PollEvent(&event))
 		{
-			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
-			_hasOpenedLastProject = true;
-		}
+			ImGui_ImplSDL2_ProcessEvent(&event);
+			if (event.type == SDL_QUIT)
+				quit = true;
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::window))
+				quit = true;
+			if (event.type == SDL_KEYDOWN)
+			{
+				// Send event to context inputAction
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_SPACE:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_SPACE") != "" && mappingContext->GetKeyBoundEvent("SDLK_SPACE").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_SPACE", event);
+							firedKeys.push_back("SDLK_SPACE");
+						}
+					break;
 
-		_firstPassDone = true;
+				case SDLK_UP:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_UP") != "" && mappingContext->GetKeyBoundEvent("SDLK_UP").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_UP", event);
+							firedKeys.push_back("SDLK_UP");
+						}
+					break;
+
+				case SDLK_DOWN:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_DOWN") != "" && mappingContext->GetKeyBoundEvent("SDLK_DOWN").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_DOWN", event);
+							firedKeys.push_back("SDLK_DOWN");
+						}
+					break;
+
+				case SDLK_LEFT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_LEFT") != "" && mappingContext->GetKeyBoundEvent("SDLK_LEFT").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_LEFT", event);
+							firedKeys.push_back("SDLK_LEFT");
+						}
+					break;
+
+				case SDLK_RIGHT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_RIGHT") != "" && mappingContext->GetKeyBoundEvent("SDLK_RIGHT").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_RIGHT", event);
+							firedKeys.push_back("SDLK_RIGHT");
+						}
+					break;
+
+				case SDLK_a:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_a") != "" && mappingContext->GetKeyBoundEvent("SDLK_a").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_a", event);
+							firedKeys.push_back("SDLK_a");
+						}
+					break;
+
+				case SDLK_b:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_b") != "" && mappingContext->GetKeyBoundEvent("SDLK_b").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_b", event);
+							firedKeys.push_back("SDLK_b");
+						}
+					break;
+
+				case SDLK_c:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_c") != "" && mappingContext->GetKeyBoundEvent("SDLK_c").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_c", event);
+							firedKeys.push_back("SDLK_c");
+						}
+					break;
+
+				case SDLK_d:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_d") != "" && mappingContext->GetKeyBoundEvent("SDLK_d").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_d", event);
+							firedKeys.push_back("SDLK_d");
+						}
+					break;
+
+				case SDLK_e:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_e") != "" && mappingContext->GetKeyBoundEvent("SDLK_e").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_e", event);
+							firedKeys.push_back("SDLK_e");
+						}
+					break;
+
+				case SDLK_f:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_f") != "" && mappingContext->GetKeyBoundEvent("SDLK_f").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_f", event);
+							firedKeys.push_back("SDLK_f");
+						}
+					break;
+
+				case SDLK_g:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_g") != "" && mappingContext->GetKeyBoundEvent("SDLK_g").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_g", event);
+							firedKeys.push_back("SDLK_g");
+						}
+					break;
+
+				case SDLK_h:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_h") != "" && mappingContext->GetKeyBoundEvent("SDLK_h").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_h", event);
+							firedKeys.push_back("SDLK_h");
+						}
+					break;
+
+				case SDLK_i:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_i") != "" && mappingContext->GetKeyBoundEvent("SDLK_i").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_i", event);
+							firedKeys.push_back("SDLK_i");
+						}
+					break;
+
+				case SDLK_j:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_j") != "" && mappingContext->GetKeyBoundEvent("SDLK_j").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_j", event);
+							firedKeys.push_back("SDLK_j");
+						}
+					break;
+
+				case SDLK_k:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_k") != "" && mappingContext->GetKeyBoundEvent("SDLK_k").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_k", event);
+							firedKeys.push_back("SDLK_k");
+						}
+					break;
+
+				case SDLK_l:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_l") != "" && mappingContext->GetKeyBoundEvent("SDLK_l").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_l", event);
+							firedKeys.push_back("SDLK_l");
+						}
+					break;
+
+				case SDLK_m:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_m") != "" && mappingContext->GetKeyBoundEvent("SDLK_m").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_m", event);
+							firedKeys.push_back("SDLK_m");
+						}
+					break;
+
+				case SDLK_n:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_n") != "" && mappingContext->GetKeyBoundEvent("SDLK_n").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_n", event);
+							firedKeys.push_back("SDLK_n");
+						}
+					break;
+
+				case SDLK_o:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_o") != "" && mappingContext->GetKeyBoundEvent("SDLK_o").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_o", event);
+							firedKeys.push_back("SDLK_o");
+						}
+					break;
+
+				case SDLK_p:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_p") != "" && mappingContext->GetKeyBoundEvent("SDLK_p").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_p", event);
+							firedKeys.push_back("SDLK_p");
+						}
+					break;
+
+				case SDLK_q:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_q") != "" && mappingContext->GetKeyBoundEvent("SDLK_q").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_q", event);
+							firedKeys.push_back("SDLK_q");
+						}
+					break;
+
+				case SDLK_r:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_r") != "" && mappingContext->GetKeyBoundEvent("SDLK_r").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_r", event);
+							firedKeys.push_back("SDLK_r");
+						}
+					break;
+
+				case SDLK_s:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_s") != "" && mappingContext->GetKeyBoundEvent("SDLK_s").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_s", event);
+							firedKeys.push_back("SDLK_s");
+						}
+					break;
+
+				case SDLK_t:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_t") != "" && mappingContext->GetKeyBoundEvent("SDLK_t").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_t", event);
+							firedKeys.push_back("SDLK_t");
+						}
+					break;
+
+				case SDLK_u:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_u") != "" && mappingContext->GetKeyBoundEvent("SDLK_u").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_u", event);
+							firedKeys.push_back("SDLK_u");
+						}
+					break;
+
+				case SDLK_v:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_v") != "" && mappingContext->GetKeyBoundEvent("SDLK_v").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_v", event);
+							firedKeys.push_back("SDLK_v");
+						}
+					break;
+
+				case SDLK_w:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_w") != "" && mappingContext->GetKeyBoundEvent("SDLK_w").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_w", event);
+							firedKeys.push_back("SDLK_w");
+						}
+					break;
+
+				case SDLK_x:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_x") != "" && mappingContext->GetKeyBoundEvent("SDLK_x").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_x", event);
+							firedKeys.push_back("SDLK_x");
+						}
+					break;
+
+				case SDLK_y:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_y") != "" && mappingContext->GetKeyBoundEvent("SDLK_y").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_y", event);
+							firedKeys.push_back("SDLK_y");
+						}
+					break;
+
+				case SDLK_z:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_z") != "" && mappingContext->GetKeyBoundEvent("SDLK_z").type == 0)
+						{
+							mappingContext->OnInputEvent("SDLK_z", event);
+							firedKeys.push_back("SDLK_z");
+						}
+					break;
+
+				default:
+
+					break;
+				}
+			}
+			else if (event.type == SDL_KEYUP)
+			{
+				// Clear Mapping Context Events of buttons that are released
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_SPACE:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_SPACE") != "")
+							mappingContext->ClearInputActionEvent("SDLK_SPACE");
+					break;
+
+				case SDLK_UP:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_UP") != "")
+							mappingContext->ClearInputActionEvent("SDLK_UP");
+					break;
+
+				case SDLK_DOWN:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_DOWN") != "")
+							mappingContext->ClearInputActionEvent("SDLK_DOWN");
+					break;
+
+				case SDLK_LEFT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_LEFT") != "")
+						{
+							mappingContext->ClearInputActionEvent("SDLK_LEFT");
+							mappingContext->UnFireEvent("SDLK_LEFT");
+						}
+							
+					break;
+
+				case SDLK_RIGHT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_RIGHT") != "")
+							mappingContext->ClearInputActionEvent("SDLK_RIGHT");
+					break;
+
+				case SDLK_a:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_a") != "")
+							mappingContext->ClearInputActionEvent("SDLK_a");
+					break;
+
+				case SDLK_b:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_b") != "")
+							mappingContext->ClearInputActionEvent("SDLK_b");
+					break;
+
+				case SDLK_c:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_c") != "")
+							mappingContext->ClearInputActionEvent("SDLK_c");
+					break;
+
+				case SDLK_d:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_d") != "")
+							mappingContext->ClearInputActionEvent("SDLK_d");
+					break;
+
+				case SDLK_e:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_e") != "")
+							mappingContext->ClearInputActionEvent("SDLK_e");
+					break;
+
+				case SDLK_f:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_f") != "")
+							mappingContext->ClearInputActionEvent("SDLK_f");
+					break;
+
+				case SDLK_g:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_g") != "")
+							mappingContext->ClearInputActionEvent("SDLK_g");
+					break;
+
+				case SDLK_h:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_h") != "")
+							mappingContext->ClearInputActionEvent("SDLK_h");
+					break;
+
+				case SDLK_i:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_i") != "")
+							mappingContext->ClearInputActionEvent("SDLK_i");
+					break;
+
+				case SDLK_j:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_j") != "")
+							mappingContext->ClearInputActionEvent("SDLK_j");
+					break;
+
+				case SDLK_k:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_k") != "")
+							mappingContext->ClearInputActionEvent("SDLK_k");
+					break;
+
+				case SDLK_l:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_l") != "")
+							mappingContext->ClearInputActionEvent("SDLK_l");
+					break;
+
+				case SDLK_m:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_m") != "")
+							mappingContext->ClearInputActionEvent("SDLK_m");
+					break;
+
+				case SDLK_n:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_n") != "")
+							mappingContext->ClearInputActionEvent("SDLK_n");
+					break;
+
+				case SDLK_o:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_o") != "")
+							mappingContext->ClearInputActionEvent("SDLK_o");
+					break;
+
+				case SDLK_p:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_p") != "")
+							mappingContext->ClearInputActionEvent("SDLK_p");
+					break;
+
+				case SDLK_q:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_q") != "")
+							mappingContext->ClearInputActionEvent("SDLK_q");
+					break;
+
+				case SDLK_r:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_r") != "")
+							mappingContext->ClearInputActionEvent("SDLK_r");
+					break;
+
+				case SDLK_s:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_s") != "")
+							mappingContext->ClearInputActionEvent("SDLK_s");
+					break;
+
+				case SDLK_t:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_t") != "")
+							mappingContext->ClearInputActionEvent("SDLK_t");
+					break;
+
+				case SDLK_u:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_u") != "")
+							mappingContext->ClearInputActionEvent("SDLK_u");
+					break;
+
+				case SDLK_v:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_v") != "")
+							mappingContext->ClearInputActionEvent("SDLK_v");
+					break;
+
+				case SDLK_w:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_w") != "")
+							mappingContext->ClearInputActionEvent("SDLK_w");
+					break;
+
+				case SDLK_x:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_x") != "")
+							mappingContext->ClearInputActionEvent("SDLK_x");
+					break;
+
+				case SDLK_y:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_y") != "")
+							mappingContext->ClearInputActionEvent("SDLK_y");
+					break;
+
+				case SDLK_z:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("SDLK_z") != "")
+							mappingContext->ClearInputActionEvent("SDLK_z");
+					break;
+
+				default:
+
+					break;
+				}
+			}
+
+			//for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+			//	if (mappingContext->GetKeyBinding("SDLK_a") != "")
+			//		LogFloat((float)mappingContext->GetInputAction("SDLK_a").type);
+
+			
+		}
 	}
 
 	std::string OpenSaveFileExplorer()

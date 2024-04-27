@@ -108,9 +108,6 @@
     <ClCompile Include="GameScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\ScriptTemplate.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
     <ClCompile Include="ScriptComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -143,9 +140,6 @@
     </ClCompile>
     <ClCompile Include="Audio.cpp">
       <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\ButtonScriptTemplate.cpp">
-      <Filter>Source Files\scripts</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>Source Files\Managers</Filter>
@@ -225,6 +219,9 @@
     <ClCompile Include="CharacterController.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="MappingContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -284,9 +281,6 @@
     <ClInclude Include="GameScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\ScriptTemplate.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -322,9 +316,6 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\ButtonScriptTemplate.h">
-      <Filter>Header Files\scripts</Filter>
     </ClInclude>
     <ClInclude Include="UIManager.h">
       <Filter>Header Files\Managers</Filter>
@@ -367,6 +358,9 @@
     </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MappingContext.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

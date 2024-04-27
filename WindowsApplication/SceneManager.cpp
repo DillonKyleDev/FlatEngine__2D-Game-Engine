@@ -76,25 +76,6 @@ namespace FlatEngine
 		std::ofstream file_obj;
 		std::ifstream ifstream(filename);
 
-		// Open file in in mode
-		file_obj.open(filename, std::ios::in);
-
-		// Variable to save the current file data into
-		std::string fileContent = "";
-
-		// Loop through the file line by line and save the data
-		if (file_obj)
-		{
-			std::string line;
-			while (!ifstream.eof()) {
-				std::getline(ifstream, line);
-				fileContent.append(line + "\n");
-			}
-		}
-
-		// Close the file after reading
-		file_obj.close();
-
 		// Delete old contents of the file
 		file_obj.open(filename, std::ofstream::out | std::ofstream::trunc);
 		file_obj.close();

@@ -117,6 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\Dillon Kyle\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\misc\debuggers;C:\Users\Dillon Kyle\source\repos\WindowsApplication;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication\backends;C:\Users\Dillon Kyle\source\repos\WindowsApplication\WindowsApplication;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,6 +164,7 @@
     <ClCompile Include="ImSequencer.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MappingContext.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Project.cpp" />
@@ -174,7 +176,6 @@
     <ClCompile Include="scripts\GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Button.cpp" />
-    <ClCompile Include="scripts\ButtonScriptTemplate.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameScript.cpp" />
@@ -187,7 +188,6 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
-    <ClCompile Include="scripts\ScriptTemplate.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -217,6 +217,7 @@
     <ClInclude Include="implot.h" />
     <ClInclude Include="implot_internal.h" />
     <ClInclude Include="ImSequencer.h" />
+    <ClInclude Include="MappingContext.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Project.h" />
     <ClInclude Include="scripts\QuitButton.h" />
@@ -225,7 +226,6 @@
     <ClInclude Include="Audio.h" />
     <ClInclude Include="scripts\GameManager.h" />
     <ClInclude Include="Button.h" />
-    <ClInclude Include="scripts\ButtonScriptTemplate.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameScript.h" />
@@ -237,7 +237,6 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScriptComponent.h" />
-    <ClInclude Include="scripts\ScriptTemplate.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />

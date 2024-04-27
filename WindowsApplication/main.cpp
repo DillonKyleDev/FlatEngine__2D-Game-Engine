@@ -67,6 +67,9 @@ bool init()
 					{
 						FlatEngine::LogString("SDL_mixer initialized...");
 						FlatEngine::LogString("Ready...");
+						FlatEngine::LogSeparator();
+						FlatEngine::LogString("Begin Logging...");
+						FlatEngine::LogSeparator();
 						//Initialize next thing
 					}
 				}
