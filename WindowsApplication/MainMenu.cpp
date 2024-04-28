@@ -101,12 +101,16 @@ namespace FlatEngine { namespace FlatGui {
 						_showInspector = !_showInspector;
 					if (ImGui::MenuItem("Animator", NULL, _showAnimator))
 						_showAnimator = !_showAnimator;
+					if (ImGui::MenuItem("Key Frame Editor", NULL, _showKeyFrameEditor))
+						_showKeyFrameEditor = !_showKeyFrameEditor;
 					if (ImGui::MenuItem("Animation Preview", NULL, _showAnimationPreview))
 						_showAnimationPreview = !_showAnimationPreview;
 					if (ImGui::MenuItem("Logger", NULL, _showLogger))
 						_showLogger = !_showLogger;
 					if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
 						_showProfiler = !_showProfiler;
+					if (ImGui::MenuItem("Mapping Context Editor", NULL, _showMappingContextEditor))
+						_showMappingContextEditor = !_showMappingContextEditor;
 
 					ImGui::EndMenu();
 				}

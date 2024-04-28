@@ -4,6 +4,36 @@
 
 namespace FlatEngine {
 
+	enum XboxButtons {
+		A,
+		B,
+		X,
+		Y,
+		LB,
+		RB,
+		ScreenShot,
+		Start,
+		LS,
+		RS,
+		Home,
+		Tray,
+	};
+	enum XboxHats {
+		Up = 1,
+		Down = 4,
+		Left = 8,
+		Right = 2,
+
+	};
+	enum XboxAxis {
+		LeftXAxis = 0,
+		LeftYAxis = 1,
+		RightXAxis = 2,
+		RightYAxis = 3,
+		LT = 4,
+		RT = 5
+	};
+
 	class MappingContext
 	{
 	public:
@@ -12,8 +42,12 @@ namespace FlatEngine {
 
 		void SetName(std::string name);
 		std::string GetName();
+		void SetPath(std::string path);
+		std::string GetPath();
 		void AddKeyBinding(std::string keyBinding, std::string actionName);
+		void RemoveKeyBinding(std::string keyBinding);
 		void SetKeyBindings(std::map<std::string, std::string> keyBindings);
+		void SetKeyBinding(std::string keyBinding, std::string actionName);
 		std::string GetKeyBinding(std::string keyBinding);
 		void CreateInputActionBindings();
 		void AddInputAction(std::string keyBinding, std::string actionName);
@@ -30,6 +64,7 @@ namespace FlatEngine {
 
 	private:
 		std::string name;
+		std::string path;
 		std::map<std::string, std::string> keyBindings;
 		std::map<std::string, SDL_Event> inputActionBindings;
 		std::map<std::string, bool> actionFiredBool;

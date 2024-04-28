@@ -57,11 +57,12 @@ namespace FlatEngine { namespace FlatGui {
 	bool _showGameView = true;
 	bool _showHierarchy = true;
 	bool _showInspector = true;
-	bool _showAnimator = true;
-	bool _showAnimationPreview = true;
-	bool _showKeyFrameEditor = true;
+	bool _showAnimator = false;
+	bool _showAnimationPreview = false;
+	bool _showKeyFrameEditor = false;
 	bool _showLogger = true;
 	bool _showProfiler = true;
+	bool _showMappingContextEditor = false;
 
 	ImVec2 worldCenterPoint = ImVec2(0, 0);
 
@@ -190,6 +191,7 @@ namespace FlatEngine { namespace FlatGui {
 				quit = true;
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::window))
 				quit = true;
+			// Keyboard Keys Down
 			if (event.type == SDL_KEYDOWN)
 			{
 				// Send event to context inputAction
@@ -479,6 +481,7 @@ namespace FlatEngine { namespace FlatGui {
 					break;
 				}
 			}
+			// Keyboard Keys Up
 			else if (event.type == SDL_KEYUP)
 			{
 				// Clear Mapping Context Events of buttons that are released
@@ -679,121 +682,228 @@ namespace FlatEngine { namespace FlatGui {
 					break;
 				}
 			}
+			// Axis (analog inputs)
 			else if (event.type == SDL_JOYAXISMOTION)
 			{
-				// Joystick Direction
-				static int leftXDir = 0;
-				static int leftYDir = 0;
-				static int rightXDir = 0;
-				static int rightYDir = 0;
-
 				// Axis (analogs)
-				if (event.jaxis.which == 0)
+				//if (event.jaxis.which == 0)
+				//{
+				switch (event.jaxis.axis)
 				{
-					switch (event.jaxis.axis)
-					{
-					case XboxAxis::LeftXAxis:
-						// Left of dead zone
-						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
-							leftXDir = event.jaxis.value;
-						// Right of dead zone
-						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
-							leftXDir = event.jaxis.value;
-						else
-							leftXDir = 0;
-						break;
-					case XboxAxis::LeftYAxis:
-						// Below dead zone
-						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
-							leftYDir = event.jaxis.value * -1;
-						// Above dead zone
-						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
-							leftYDir = event.jaxis.value * -1;
-						else
-							leftYDir = 0;
-						break;
-					case XboxAxis::RightXAxis:
-						// Left of dead zone
-						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
-							rightXDir = event.jaxis.value;
-						// Right of dead zone
-						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
-							rightXDir = event.jaxis.value;
-						else
-							rightXDir = 0;
-						break;
-					case XboxAxis::RightYAxis:
-						// Below dead zone
-						if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
-							rightYDir = event.jaxis.value * -1;
-						// Above dead zone
-						else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
-							rightYDir = event.jaxis.value * -1;
-						else
-							rightYDir = 0;
-						break;
-					case XboxAxis::LT:
-						LogFloat(event.jaxis.value, "Left Trigger: ");
-						break;
-					case XboxAxis::RT:
-						LogFloat(event.jaxis.value, "Rght Trigger: ");
-						break;
-					}
-
-					//Calculate angle
-					float leftJoystickAngle = atan2((float)leftYDir, (float)leftYDir) * (180 / M_PI);
-
-					//Correct angle
-					if (leftXDir == 0 && leftYDir == 0)
-						leftJoystickAngle = 0;
-
-					//LogFloat(leftJoystickAngle, "Left Joystic Angle: ");
-					LogFloat(leftXDir, "Left X: ");
-					LogFloat(leftYDir, "Left Y: ");
-					LogFloat(rightXDir, "Right X: ");
-					LogFloat(rightYDir, "Right Y: ");
+				case XboxAxis::LeftXAxis:
+					// Left of dead zone or right of dead zone
+					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+						event.jaxis.value = 0;
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LeftJoystickX") != "")
+							mappingContext->OnInputEvent("XInput_LeftJoystickX", event);
+					break;
+				case XboxAxis::LeftYAxis:
+					// Below dead zone or Above dead zone
+					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+						event.jaxis.value = 0;
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LeftJoystickY") != "")
+							mappingContext->OnInputEvent("XInput_LeftJoystickY", event);
+					break;
+				case XboxAxis::RightXAxis:
+					// Left of dead zone or Right of dead zone
+					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+						event.jaxis.value = 0;
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
+							mappingContext->OnInputEvent("XInput_RightJoystick", event);
+					break;
+				case XboxAxis::RightYAxis:
+					// Below dead zone or Above dead zone
+					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+						event.jaxis.value = 0;
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
+							mappingContext->OnInputEvent("XInput_RightJoystick", event);
+					break;
+				case XboxAxis::LT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LT") != "")
+							mappingContext->OnInputEvent("XInput_LT", event);
+					break;
+				case XboxAxis::RT:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RT") != "")
+							mappingContext->OnInputEvent("XInput_RT", event);
+					break;
 				}
 			}
-			// Buttons
+			// Buttons Down
 			else if (event.type == SDL_JOYBUTTONDOWN)
 			{
 				switch (event.jbutton.button)
 				{
 				case XboxButtons::A:
-					LogString("A");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_A") != "")
+						{
+							mappingContext->OnInputEvent("XInput_A", event);
+							firedKeys.push_back("XInput_A");
+						}
+							
 					break;
 				case XboxButtons::B:
-					LogString("B");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_B") != "")
+						{
+							mappingContext->OnInputEvent("XInput_B", event);
+							firedKeys.push_back("XInput_B");
+						}
 					break;
 				case XboxButtons::X:
-					LogString("X");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_X") != "")
+						{
+							mappingContext->OnInputEvent("XInput_X", event);
+							firedKeys.push_back("XInput_X");
+						}
 					break;
 				case XboxButtons::Y:
-					LogString("Y");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Y") != "")
+						{
+							mappingContext->OnInputEvent("XInput_Y", event);
+							firedKeys.push_back("XInput_Y");
+						}
 					break;
 				case XboxButtons::LB:
-					LogString("LB");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LB") != "")
+						{
+							mappingContext->OnInputEvent("XInput_LB", event);
+							firedKeys.push_back("XInput_LB");
+						}
 					break;
 				case XboxButtons::RB:
-					LogString("RB");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RB") != "")
+						{
+							mappingContext->OnInputEvent("XInput_RB", event);
+							firedKeys.push_back("XInput_RB");
+						}
 					break;
 				case XboxButtons::ScreenShot:
-					LogString("ScreenShot");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
+						{
+							mappingContext->OnInputEvent("XInput_ScreenShot", event);
+							firedKeys.push_back("XInput_ScreenShot");
+						}
 					break;
 				case XboxButtons::Start:
-					LogString("Start");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Start") != "")
+						{
+							mappingContext->OnInputEvent("XInput_Start", event);
+							firedKeys.push_back("XInput_Start");
+						}
 					break;
 				case XboxButtons::LS:
-					LogString("LS");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LS") != "")
+						{
+							mappingContext->OnInputEvent("XInput_LS", event);
+							firedKeys.push_back("XInput_LS");
+						}
 					break;
 				case XboxButtons::RS:
-					LogString("RS");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RS") != "")
+						{
+							mappingContext->OnInputEvent("XInput_RS", event);
+							firedKeys.push_back("XInput_RS");
+						}
 					break;
 				case XboxButtons::Home:
-					LogString("Home");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Home") != "")
+						{
+							mappingContext->OnInputEvent("XInput_Home", event);
+							firedKeys.push_back("XInput_Home");
+						}
 					break;
 				case XboxButtons::Tray:
-					LogString("Tray");
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
+						{
+							mappingContext->OnInputEvent("XInput_Tray", event);
+							firedKeys.push_back("XInput_Tray");
+						}
+					break;
+				default:
+					break;
+				}
+			}
+			// Buttons Up
+			else if (event.type == SDL_JOYBUTTONUP)
+			{
+				switch (event.jbutton.button)
+				{
+				case XboxButtons::A:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_A") != "")
+							mappingContext->ClearInputActionEvent("XInput_A");
+					break;
+				case XboxButtons::B:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_B") != "")
+							mappingContext->ClearInputActionEvent("XInput_B");
+					break;
+				case XboxButtons::X:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_X") != "")
+							mappingContext->ClearInputActionEvent("XInput_X");
+					break;
+				case XboxButtons::Y:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Y") != "")
+							mappingContext->ClearInputActionEvent("XInput_Y");
+					break;
+				case XboxButtons::LB:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LB") != "")
+							mappingContext->ClearInputActionEvent("XInput_LB");
+					break;
+				case XboxButtons::RB:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RB") != "")
+							mappingContext->ClearInputActionEvent("XInput_RB");
+					break;
+				case XboxButtons::ScreenShot:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
+							mappingContext->ClearInputActionEvent("XInput_ScreenShot");
+					break;
+				case XboxButtons::Start:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)						
+						if (mappingContext->GetKeyBinding("XInput_Start") != "")
+							mappingContext->ClearInputActionEvent("XInput_Start");
+					break;
+				case XboxButtons::LS:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_LS") != "")
+							mappingContext->ClearInputActionEvent("XInput_LS");
+					break;
+				case XboxButtons::RS:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_RS") != "")
+							mappingContext->ClearInputActionEvent("XInput_RS");
+					break;
+				case XboxButtons::Home:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Home") != "")
+							mappingContext->ClearInputActionEvent("XInput_Home");
+					break;
+				case XboxButtons::Tray:
+					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
+						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
+							mappingContext->ClearInputActionEvent("XInput_Tray");
 					break;
 				default:
 					break;
@@ -805,7 +915,9 @@ namespace FlatEngine { namespace FlatGui {
 				switch (event.jhat.value)
 				{
 				case XboxHats::Up:
-					LogString("Up");
+					LogFloat(event.jhat.type, "Hat Type: ");
+					LogFloat(event.jhat.value, "Hat Value: ");
+					LogFloat(event.jhat.hat, "Hat hat: ");
 					break;
 				case XboxHats::Down:
 					LogString("Down");
@@ -977,6 +1089,8 @@ namespace FlatEngine { namespace FlatGui {
 			RenderLog();
 		if (_showProfiler)
 			RenderProfiler();
+		if (_showMappingContextEditor)
+			RenderMappingContextEditor();
 	}
 
 	void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset)

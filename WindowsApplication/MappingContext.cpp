@@ -8,8 +8,33 @@ namespace FlatEngine {
 	{
 		name = "";
 		keyBindings = std::map<std::string, std::string>();
+
+		// XInput
+		keyBindings.emplace("XInput_A", "");
+		keyBindings.emplace("XInput_B", "");
+		keyBindings.emplace("XInput_X", "");
+		keyBindings.emplace("XInput_Y", "");	
+		keyBindings.emplace("XInput_LB", "");
+		keyBindings.emplace("XInput_RB", "");
+		keyBindings.emplace("XInput_ScreenShot", "");
+		keyBindings.emplace("XInput_Start", "");
+		keyBindings.emplace("XInput_LS", "");
+		keyBindings.emplace("XInput_RS", "");
+		keyBindings.emplace("XInput_Home", "");
+		keyBindings.emplace("XInput_Tray", "");
+		keyBindings.emplace("XInput_DPadUp", "");
+		keyBindings.emplace("XInput_DPadDown", "");
+		keyBindings.emplace("XInput_DPadLeft", "");
+		keyBindings.emplace("XInput_DPadRight", "");
+		keyBindings.emplace("XInput_LeftJoystickX", "");
+		keyBindings.emplace("XInput_LeftJoystickY", "");
+		keyBindings.emplace("XInput_RightJoystick", "");
+		keyBindings.emplace("XInput_LT", "");
+		keyBindings.emplace("XInput_RT", "");
+
+		//// Keyboard + Mouse
 		// Directions
-		keyBindings.emplace("SDLK_UP", "IA_Jump");
+		keyBindings.emplace("SDLK_UP", "");
 		keyBindings.emplace("SDLK_DOWN", "");
 		keyBindings.emplace("SDLK_LEFT", "");
 		keyBindings.emplace("SDLK_RIGHT", "");
@@ -40,6 +65,7 @@ namespace FlatEngine {
 		keyBindings.emplace("SDLK_x", "");
 		keyBindings.emplace("SDLK_y", "");
 		keyBindings.emplace("SDLK_z", "");
+
 		inputActionBindings = std::map<std::string, SDL_Event>();
 		actionFiredBool = std::map<std::string, bool>();
 	}
@@ -58,6 +84,16 @@ namespace FlatEngine {
 		return name;
 	}
 
+	void MappingContext::SetPath(std::string filepath)
+	{
+		path = filepath;
+	}
+
+	std::string MappingContext::GetPath()
+	{
+		return path;
+	}
+
 	void MappingContext::AddKeyBinding(std::string keyBinding, std::string actionName)
 	{
 		if (keyBindings.count(keyBinding) == 0)
@@ -71,10 +107,23 @@ namespace FlatEngine {
 			actionFiredBool.at(actionName) = false;
 	}
 
+	void MappingContext::RemoveKeyBinding(std::string keyBinding)
+	{
+		keyBindings.at(keyBinding) = "";
+	}
+
 	void MappingContext::SetKeyBindings(std::map<std::string, std::string> newKeyBindings)
 	{
 		keyBindings = newKeyBindings;
 		CreateInputActionBindings();
+	}
+
+	void MappingContext::SetKeyBinding(std::string keyBinding, std::string actionName)
+	{
+		// Erase old Input Action binding
+		if (inputActionBindings.count(keyBindings.at(keyBinding)) > 0)
+			inputActionBindings.erase(keyBindings.at(keyBinding));
+		keyBindings.at(keyBinding) = actionName;
 	}
 
 	std::string MappingContext::GetKeyBinding(std::string keyBinding)
@@ -101,8 +150,14 @@ namespace FlatEngine {
 
 	void MappingContext::AddInputAction(std::string keyBinding, std::string actionName)
 	{
+		// Remove old Input Action on the old keyBinding if there was one
+		if (keyBindings.at(keyBinding) != "")
+			inputActionBindings.erase(keyBindings.at(keyBinding));
+
 		SDL_Event emptyEvent = SDL_Event();
+		// Update the keyBinding with new Input Action name
 		keyBindings.at(keyBinding) = actionName;
+		// Create new Input Action with new Input Action name
 		inputActionBindings.emplace(actionName, emptyEvent);
 	}
 
@@ -130,7 +185,10 @@ namespace FlatEngine {
 
 	bool MappingContext::Fired(std::string actionName)
 	{
-		return actionFiredBool.at(actionName);
+		if (actionFiredBool.count(actionName) > 0)
+			return actionFiredBool.at(actionName);
+		else 
+			return false;
 	}
 
 	void MappingContext::ClearInputActionEvents()
@@ -193,6 +251,28 @@ namespace FlatEngine {
 	{
 		json jsonData = {
 			{ "name", name },
+
+			{ "XInput_A", keyBindings.at("XInput_A") },
+			{ "XInput_B", keyBindings.at("XInput_B") },
+			{ "XInput_X", keyBindings.at("XInput_X") },
+			{ "XInput_Y", keyBindings.at("XInput_Y") },
+			{ "XInput_LB", keyBindings.at("XInput_LB") },
+			{ "XInput_RB", keyBindings.at("XInput_RB") },
+			{ "XInput_ScreenShot", keyBindings.at("XInput_ScreenShot") },
+			{ "XInput_Start", keyBindings.at("XInput_Start") },
+			{ "XInput_LS", keyBindings.at("XInput_LS") },
+			{ "XInput_RS", keyBindings.at("XInput_RS") },
+			{ "XInput_Home", keyBindings.at("XInput_Home") },
+			{ "XInput_Tray", keyBindings.at("XInput_Tray") },
+			{ "XInput_DPadUp", keyBindings.at("XInput_DPadUp") },
+			{ "XInput_DPadDown", keyBindings.at("XInput_DPadDown") },
+			{ "XInput_DPadLeft", keyBindings.at("XInput_DPadLeft") },
+			{ "XInput_DPadRight", keyBindings.at("XInput_DPadRight") },
+			{ "XInput_LeftJoystick", keyBindings.at("XInput_LeftJoystick") },
+			{ "XInput_RightJoystick", keyBindings.at("XInput_RightJoystick") },
+			{ "XInput_LT", keyBindings.at("XInput_LT") },
+			{ "XInput_RT", keyBindings.at("XInput_RT") },
+
 			{ "SDLK_UP", keyBindings.at("SDLK_UP") },
 			{ "SDLK_DOWN", keyBindings.at("SDLK_DOWN") },
 			{ "SDLK_LEFT", keyBindings.at("SDLK_LEFT") },

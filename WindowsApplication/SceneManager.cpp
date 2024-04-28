@@ -779,15 +779,18 @@ namespace FlatEngine
 	{
 		return this->loadedScene;
 	}
+	
 	std::string SceneManager::GetLoadedScenePath()
 	{
 		return loadedScenePath;
 	}
+	
 	void SceneManager::SaveAnimationPreviewObjects()
 	{
 		if (loadedScene->GetAnimatorPreviewObjects().size() > 0)
 			animatorPreviewObjects = loadedScene->GetAnimatorPreviewObjects();
 	}
+	
 	void SceneManager::LoadAnimationPreviewObjects()
 	{
 		loadedScene->SetAnimatorPreviewObjects(animatorPreviewObjects);

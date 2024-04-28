@@ -21,7 +21,7 @@ namespace FlatEngine {
 	
 	namespace FlatGui {
 
-		void RenderProfiler()
+	void RenderProfiler()
 	{
 		ImGui::Begin("Profiler");
 
@@ -47,7 +47,8 @@ namespace FlatEngine {
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 		}
 
-		if (ImGui::BeginTable("##RuntimeData", 2, flags, ImVec2(-1, 0))) {
+		if (ImGui::BeginTable("##RuntimeData", 2, flags, ImVec2(-1, 0))) 
+		{
 
 			ImGui::TableSetupColumn("RUNTIME PROCESS");
 			ImGui::TableSetupColumn("DATA");
@@ -89,7 +90,8 @@ namespace FlatEngine {
 		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
 		int processCounter = 1;
 
-		if (ImGui::BeginTable("##table", 3, flags, ImVec2(-1, 0))) {
+		if (ImGui::BeginTable("##table", 3, flags, ImVec2(-1, 0))) 
+		{
 			ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			ImGui::TableSetupColumn("Hang Time Visualization");
@@ -133,7 +135,7 @@ namespace FlatEngine {
 		ImGui::End(); // Profiler
 	}
 
-		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
+	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
 		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0, 0));
 		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) {
 			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
@@ -145,5 +147,5 @@ namespace FlatEngine {
 		}
 		ImPlot::PopStyleVar();
 	}
-	}
+}
 }

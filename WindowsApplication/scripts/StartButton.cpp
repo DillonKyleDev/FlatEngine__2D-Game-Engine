@@ -62,24 +62,30 @@ void StartButton::Start()
 void StartButton::Update(float deltaTime)
 {
 	// Get Mapping Context
-	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("TestContext1");
+	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
 	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
 
-	if (mappingContext->GetInputAction("IA_Left").type != 0)
-		transform->SetPosition(Vector2(transform->GetPosition().x - 0.05f, transform->GetPosition().y));
-	if (mappingContext->GetInputAction("IA_Right").type != 0)
-		transform->SetPosition(Vector2(transform->GetPosition().x + 0.05f, transform->GetPosition().y));
-	if (mappingContext->GetInputAction("IA_Down").type != 0)
-		transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y - 0.05f));
-	if (mappingContext->GetInputAction("IA_Up").type != 0)
-		transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y + 0.05f));
+	if (mappingContext->Fired("IA_Jump"))
+		FlatEngine::LogString("Jumped!");
 
-	if (mappingContext->Fired("IA_Left"))
-		FlatEngine::LogString("Left Fired!");
-	if (mappingContext->Fired("IA_Right"))
-		FlatEngine::LogString("Right Fired!");
-	if (mappingContext->Fired("IA_Down"))
-		FlatEngine::LogString("Down Fired!");
-	if (mappingContext->Fired("IA_Up"))
-		FlatEngine::LogString("Up Fired!");
+
+	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
+	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
+	static int XDir = 0;
+	static int YDir = 0;
+
+	if (moveX.type != 0)
+		XDir = moveX.jaxis.value;
+	if (moveY.type != 0)
+		YDir = moveY.jaxis.value;
+
+	FlatEngine::LogFloat(XDir, "XPos: ");
+	FlatEngine::LogFloat(YDir, "YPos: ");
+	SDL_Event castSpell2 = mappingContext->GetInputAction("IA_Cast_Spell_2");
+
+	if (castSpell2.type != 0)
+		FlatEngine::LogFloat(castSpell2.jaxis.value, "Trigger: ");
+
+	transform->SetPosition(Vector2(transform->GetPosition().x + XDir * 0.000004f, transform->GetPosition().y));
+	transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y + YDir * -0.000004f));
 }

@@ -165,6 +165,7 @@
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MappingContext.cpp" />
+    <ClCompile Include="MappingContextEditor.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Project.cpp" />

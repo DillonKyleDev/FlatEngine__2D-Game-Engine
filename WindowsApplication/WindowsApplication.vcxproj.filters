@@ -222,6 +222,9 @@
     <ClCompile Include="MappingContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MappingContextEditor.cpp">
+      <Filter>Source Files\FlatEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">

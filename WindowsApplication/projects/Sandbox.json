@@ -1,7 +1,17 @@
 {
     "Project Properties": [
         {
-            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\SlerpTest.json",
+            "_showAnimationPreview": false,
+            "_showAnimator": true,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": true,
+            "_showProfiler": false,
+            "_showSceneView": true,
+            "loadedAnimationPath": "",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\DancerScene.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "sceneViewScrollingX": 0.0,

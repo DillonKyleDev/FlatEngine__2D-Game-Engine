@@ -25,7 +25,7 @@ namespace FlatEngine
 	bool _closeProgram = false;
 
 	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
-	int JOYSTICK_DEAD_ZONE = 8000;
+	int JOYSTICK_DEAD_ZONE = 4000;
 
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
@@ -247,6 +247,7 @@ namespace FlatEngine
 					// Get data from the loaded object
 					json currentObjectJson = fileContentJson["Project Properties"][i];
 
+					// Open items
 					if (currentObjectJson.contains("path"))
 						newProject->SetPath(currentObjectJson["path"]);
 					if (currentObjectJson.contains("loadedScenePath"))
@@ -254,13 +255,35 @@ namespace FlatEngine
 					if (currentObjectJson.contains("loadedAnimationPath"))
 						newProject->SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
 
+					// Scene Scrolling
 					Vector2 sceneViewScroll = Vector2(0, 0);
 					if (currentObjectJson.contains("sceneViewScrollingX"))				
 						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
 					if (currentObjectJson.contains("sceneViewScrollingY"))
 						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
-
 					newProject->SetSceneViewScrolling(sceneViewScroll);
+
+					// Show/hide windows
+					if (currentObjectJson.contains("_showSceneView"))
+						FlatGui::_showSceneView = currentObjectJson["_showSceneView"];
+					if (currentObjectJson.contains("_showGameView"))
+						FlatGui::_showGameView = currentObjectJson["_showGameView"];
+					if (currentObjectJson.contains("_showHierarchy"))
+						FlatGui::_showHierarchy = currentObjectJson["_showHierarchy"];
+					if (currentObjectJson.contains("_showInspector"))
+						FlatGui::_showInspector = currentObjectJson["_showInspector"];
+					if (currentObjectJson.contains("_showAnimator"))
+						FlatGui::_showAnimator = currentObjectJson["_showAnimator"];
+					if (currentObjectJson.contains("_showAnimationPreview"))
+						FlatGui::_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+					if (currentObjectJson.contains("_showKeyFrameEditor"))
+						FlatGui::_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+					if (currentObjectJson.contains("_showLogger"))
+						FlatGui::_showLogger = currentObjectJson["_showLogger"];
+					if (currentObjectJson.contains("_showProfiler"))
+						FlatGui::_showProfiler = currentObjectJson["_showProfiler"];
+					if (currentObjectJson.contains("_showMappingContextEditor"))
+						FlatGui::_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
 				}
 			}
 		}
@@ -297,6 +320,16 @@ namespace FlatEngine
 			{ "loadedAnimationPath", project->GetLoadedPreviewAnimationPath()},
 			{ "sceneViewScrollingX", sceneViewScrolling.x },
 			{ "sceneViewScrollingY", sceneViewScrolling.y },
+			{ "_showSceneView", FlatGui::_showSceneView },
+			{ "_showGameView", FlatGui::_showGameView },
+			{ "_showHierarchy", FlatGui::_showHierarchy },
+			{ "_showInspector", FlatGui::_showInspector },
+			{ "_showAnimator", FlatGui::_showAnimator },
+			{ "_showAnimationPreview", FlatGui::_showAnimationPreview },
+			{ "_showKeyFrameEditor", FlatGui::_showKeyFrameEditor },
+			{ "_showLogger", FlatGui::_showLogger },
+			{ "_showProfiler", FlatGui::_showProfiler },
+			{ "_showMappingContextEditor", FlatGui::_showMappingContextEditor }
 		});
 		projectProperties.push_back(animationName);
 
@@ -350,6 +383,8 @@ namespace FlatEngine
 
 	void InitializeMappingContexts()
 	{
+		mappingContexts.clear();
+
 		std::string path = "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\mappingContext";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
@@ -365,7 +400,32 @@ namespace FlatEngine
 				auto mappings = contextData["Mapping Context"][0];
 				
 				newContext->SetName(mappings["name"]);
+				newContext->SetPath(entry.path().string());
 				
+				// XInput
+				newContext->AddKeyBinding("XInput_A", mappings["XInput_A"]);
+				newContext->AddKeyBinding("XInput_B", mappings["XInput_B"]);
+				newContext->AddKeyBinding("XInput_X", mappings["XInput_X"]);
+				newContext->AddKeyBinding("XInput_Y", mappings["XInput_Y"]);
+				newContext->AddKeyBinding("XInput_LB", mappings["XInput_LB"]);
+				newContext->AddKeyBinding("XInput_RB", mappings["XInput_RB"]);
+				newContext->AddKeyBinding("XInput_ScreenShot", mappings["XInput_ScreenShot"]);
+				newContext->AddKeyBinding("XInput_Start", mappings["XInput_Start"]);
+				newContext->AddKeyBinding("XInput_LS", mappings["XInput_LS"]);
+				newContext->AddKeyBinding("XInput_RS", mappings["XInput_RS"]);
+				newContext->AddKeyBinding("XInput_Home", mappings["XInput_Home"]);
+				newContext->AddKeyBinding("XInput_Tray", mappings["XInput_Tray"]);
+				newContext->AddKeyBinding("XInput_DPadUp", mappings["XInput_DPadUp"]);
+				newContext->AddKeyBinding("XInput_DPadDown", mappings["XInput_DPadDown"]);
+				newContext->AddKeyBinding("XInput_DPadLeft", mappings["XInput_DPadLeft"]);
+				newContext->AddKeyBinding("XInput_DPadRight", mappings["XInput_DPadRight"]);
+				newContext->AddKeyBinding("XInput_LeftJoystickX", mappings["XInput_LeftJoystickX"]);
+				newContext->AddKeyBinding("XInput_LeftJoystickY", mappings["XInput_LeftJoystickY"]);
+				newContext->AddKeyBinding("XInput_RightJoystick", mappings["XInput_RightJoystick"]);
+				newContext->AddKeyBinding("XInput_LT", mappings["XInput_LT"]);
+				newContext->AddKeyBinding("XInput_RT", mappings["XInput_RT"]);
+
+				//// Keyboard + Mouse
 				// Directional
 				newContext->AddKeyBinding("SDLK_UP", mappings["SDLK_UP"]);
 				newContext->AddKeyBinding("SDLK_DOWN", mappings["SDLK_DOWN"]);
@@ -402,16 +462,10 @@ namespace FlatEngine
 				// After all keys are set, create their Input Action bindings
 				newContext->CreateInputActionBindings();
 
-				SDL_Event pressEvent = newContext->GetInputAction("SDLK_a");
-
 				// Add context to context managing vector
 				mappingContexts.push_back(newContext);
 			}
 		}
-
-		//std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
-		//SaveMappingContext("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\mappingContext\\MC_TestContext.json", newContext);
-		//SaveMappingContext("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\mappingContext\\MC_TestContext - Copy.json", newContext);
 	}
 
 	void ClearIAContextBindings()
