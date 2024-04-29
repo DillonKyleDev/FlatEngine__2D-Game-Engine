@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Text.h"
 #include "Audio.h"
+#include "CharacterController.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -12,7 +13,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::Begin("Inspector");
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 		ImGui::BeginChild("Inspector Background", ImVec2(0, 0), padding_child_flags);
 
@@ -39,6 +40,8 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Components section
 			ImGui::Text("Components:");
+			ImGui::Separator();
+			ImGui::Separator();
 
 			std::vector<std::shared_ptr<Component>> components = focusedObject->GetComponents();
 
@@ -71,6 +74,8 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 						ImGui::BeginChild(componentID.c_str(), ImVec2(0, 0), child_flags);
 						ImGui::PopStyleColor();
+
+						// Component Name
 						ImGui::Text(componentType.c_str());
 
 						// Same Line
@@ -113,6 +118,9 @@ namespace FlatEngine { namespace FlatGui {
 							if (ImGui::IsItemHovered())
 								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 						}
+
+						ImGui::Separator();
+						ImGui::Separator();
 
 
 						// Pops
@@ -673,6 +681,102 @@ namespace FlatEngine { namespace FlatGui {
 								// Pop Width Setting
 								ImGui::PopItemWidth();
 							}
+							else if (componentType == "CharacterController")
+							{
+								// Get Character Controller
+								std::shared_ptr<CharacterController> characterController = std::static_pointer_cast<CharacterController>(components[i]);
+								float walkSpeed = characterController->GetWalkSpeed();
+								float runSpeed = characterController->GetRunSpeed();
+								float gravity = characterController->GetGravity();
+								bool _isMoving = characterController->IsMoving();
+								float velocity = characterController->GetVelocity();
+
+								static ImGuiSliderFlags sliderFlags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
+									ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable ;
+
+								if (ImGui::BeginTable("##CharacterControllerProps", 2, tableFlags, ImVec2(-1, 0)))
+								{
+
+									ImGui::TableSetupColumn("##PROPERTY");
+									ImGui::TableSetupColumn("##DATA");
+									
+
+									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x / 2);
+									ImGui::TableHeadersRow();
+									ImGui::TableNextRow();
+
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Walk Speed");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
+									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+									if (ImGui::DragFloat("##walkSpeedSlider", &walkSpeed, 0.01f, 0.0f, 20, "%.3f", sliderFlags))
+										characterController->SetWalkSpeed(walkSpeed);
+									ImGui::PopStyleColor();
+									// Set cursor type
+									if (ImGui::IsItemHovered())
+										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+									ImGui::PushID("WalkSpeed");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Run Speed");
+									ImGui::TableSetColumnIndex(1);									
+									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
+									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+									if (ImGui::DragFloat("##runSpeedSlider", &runSpeed, 0.01f, 0.0f, 20, "%.3f", sliderFlags))
+										characterController->SetRunSpeed(runSpeed);
+									ImGui::PopStyleColor();
+									// Set cursor type
+									if (ImGui::IsItemHovered())
+										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+									ImGui::PushID("RunSpeed");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Gravity");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
+									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+									if (ImGui::DragFloat("##gravitySlider", &gravity, 0.05f, 0.0f, 100, "%.3f", sliderFlags))
+										characterController->SetGravity(gravity);
+									ImGui::PopStyleColor();
+									// Set cursor type
+									if (ImGui::IsItemHovered())
+										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+									ImGui::PushID("Gravity");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Velocity");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::Text(std::to_string(velocity).c_str());
+									ImGui::PushID("Velocity");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Is Moving");
+									ImGui::TableSetColumnIndex(1);
+									std::string isMoving = "false";
+									if (characterController->IsMoving())
+										isMoving = "true";
+									ImGui::Text(isMoving.c_str());
+									ImGui::PushID("IsMoving");
+									ImGui::PopID();
+
+									ImGui::EndTable();
+								}
+							}
 
 							// Pops
 							ImGui::PopItemWidth();
@@ -683,9 +787,6 @@ namespace FlatEngine { namespace FlatGui {
 					}
 
 					ImGui::EndChild();
-
-					//if (i == components.size() - 1)
-					//	ImGui::Separator();
 				}
 
 				if (queuedForDelete != -1)
@@ -696,11 +797,12 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// For checking if SceneObject has these components yet
-			std::shared_ptr<FlatEngine::Component> transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
-			std::shared_ptr<FlatEngine::Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
-			std::shared_ptr<FlatEngine::Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
-			std::shared_ptr<FlatEngine::Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
-			std::shared_ptr<FlatEngine::Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
+			std::shared_ptr<Component> transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
+			std::shared_ptr<Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
+			std::shared_ptr<Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
+			std::shared_ptr<Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
+			std::shared_ptr<Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
+			std::shared_ptr<Component> characterController = focusedObject->GetComponent(ComponentTypes::CharacterController);
 
 			// Render the Adding Components button
 			ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
@@ -773,6 +875,13 @@ namespace FlatEngine { namespace FlatGui {
 					focusedObject->AddComponent(ComponentTypes::Script);
 					ImGui::CloseCurrentPopup();
 				}
+
+				if (characterController == nullptr)
+					if (ImGui::Button("Character Controller", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					{
+						focusedObject->AddComponent(ComponentTypes::CharacterController);
+						ImGui::CloseCurrentPopup();
+					}
 
 				ImGui::EndListBox();
 

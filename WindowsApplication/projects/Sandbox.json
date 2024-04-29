@@ -9,7 +9,7 @@
             "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": true,
-            "_showProfiler": false,
+            "_showProfiler": true,
             "_showSceneView": true,
             "loadedAnimationPath": "",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\DancerScene.json",

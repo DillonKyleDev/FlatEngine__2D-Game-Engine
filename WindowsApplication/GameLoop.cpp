@@ -179,6 +179,13 @@ namespace FlatEngine
 		this->pausedTicks = 0;
 		this->framesCounted = 0;
 
+		// Delete script processes
+		for (int i = 0; i < activeScripts.size(); i++)
+			RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
+
+		// Release all active scripts
+		activeScripts.clear();
+
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(this->startedScene);
 	}

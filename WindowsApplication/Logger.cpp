@@ -117,6 +117,9 @@ namespace FlatEngine
 				log->clear(); lines = 0;
 			}
 
+			ImGui::Separator();
+			ImGui::Separator();
+
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 			ImGui::BeginChild("Log", ImVec2(0, 0), padding_child_flags);
 			ImGui::TextUnformatted(log->begin(), log->end());

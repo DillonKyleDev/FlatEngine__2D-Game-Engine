@@ -14,10 +14,21 @@ namespace FlatEngine {
 		std::string GetData();
 		void MoveToward(Vector2 direction);
 		void MoveTo(Vector2 location);
-		
+		void SetWalkSpeed(float speed);
+		float GetWalkSpeed();
+		void SetRunSpeed(float speed);
+		float GetRunSpeed();
+		void SetGravity(float gravity);
+		float GetGravity();
+		void SetMoving(bool _isMoving);
+		bool IsMoving();
+		void SetVelocity(float velocity);
+		float GetVelocity();
 
 	private:
-		float moveSpeed;
+		float walkSpeed;
+		float runSpeed;
+		float gravity;
 		bool _isMoving;
 		float velocity;
 	};

@@ -37,8 +37,8 @@ namespace FlatEngine { namespace FlatGui {
 
 	// For window styles
 	float childPadding = 8;
-	ImVec4 outerWindowColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
-	ImVec4 innerWindowColor = ImVec4(float(0.19), float(0.19), float(0.19), float(1));
+	ImVec4 outerWindowColor = ImVec4(float(0.2), float(0.2), float(0.2), float(0));
+	ImVec4 innerWindowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 

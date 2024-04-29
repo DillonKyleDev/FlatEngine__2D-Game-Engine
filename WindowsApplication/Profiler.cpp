@@ -18,6 +18,21 @@ namespace FlatEngine {
 		}
 	}
 
+	void RemoveProfilerProcess(std::string  toRemove)
+	{
+		std::vector<std::shared_ptr<Process>>::iterator iter = profilerProcesses.begin();
+
+		while (iter != profilerProcesses.end())
+		{
+			if ((*iter)->GetProcessName() == toRemove)
+			{
+				profilerProcesses.erase(iter);
+				return;
+			}
+			iter++;
+		}
+	}
+
 	
 	namespace FlatGui {
 

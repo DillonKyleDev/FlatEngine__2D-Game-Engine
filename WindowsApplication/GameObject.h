@@ -15,6 +15,7 @@ namespace FlatEngine
 	class Transform;
 	class Text;
 	class GameScript;
+	class CharacterController;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -44,6 +45,7 @@ namespace FlatEngine
 		std::shared_ptr<Canvas> GetCanvasComponent();
 		std::shared_ptr<ScriptComponent> GetScriptComponent();
 		std::shared_ptr<Text> GetTextComponent();
+		std::shared_ptr<CharacterController> GetCharacterController();
 		std::shared_ptr<GameScript> GetGameScriptByName(std::string scriptName);
 		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();

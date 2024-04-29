@@ -13,6 +13,7 @@
 #include "ScriptComponent.h"
 #include "Audio.h"
 #include "Text.h"
+#include "CharacterController.h"
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -762,6 +763,60 @@ namespace FlatEngine
 							newText->SetOffset(offset);
 							newText->SetRenderOrder(renderOrder);
 							newText->LoadText();
+						}
+						else if (type == "CharacterController")
+						{
+							std::shared_ptr<CharacterController> newCharacterController = std::static_pointer_cast<CharacterController>(loadedObject->AddComponent(ComponentTypes::CharacterController));
+
+							// Default values
+							long id = -1;
+							bool _isCollapsed = true;
+							float walkSpeed = 1;
+							float runSpeed = 2;
+							float gravity = 1;
+							bool _isMoving = false;
+							float velocity = 0;
+
+							// Load ID
+							if (currentObjectJson["components"][j].contains("id"))
+								id = currentObjectJson["components"][j]["id"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+							// Load _isCollapsed
+							if (currentObjectJson["components"][j].contains("_isCollapsed"))
+								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// CharacterController Properties
+							if (currentObjectJson["components"][j].contains("walkSpeed"))
+								walkSpeed = currentObjectJson["components"][j]["walkSpeed"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'walkSpeed' in object: ");
+							if (currentObjectJson["components"][j].contains("runSpeed"))
+								runSpeed = currentObjectJson["components"][j]["runSpeed"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'runSpeed' in object: ");
+							if (currentObjectJson["components"][j].contains("gravity"))
+								gravity = currentObjectJson["components"][j]["gravity"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'gravity' in object: ");
+							if (currentObjectJson["components"][j].contains("_isMoving"))
+								_isMoving = currentObjectJson["components"][j]["_isMoving"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isMoving' in object: ");
+							// Font RGBA values
+							if (currentObjectJson["components"][j].contains("velocity"))
+								velocity = currentObjectJson["components"][j]["velocity"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'velocity' in object: ");
+						
+							newCharacterController->SetID(id);
+							newCharacterController->SetCollapsed(_isCollapsed);
+							newCharacterController->SetWalkSpeed(walkSpeed);
+							newCharacterController->SetRunSpeed(runSpeed);
+							newCharacterController->SetGravity(gravity);
+							newCharacterController->SetMoving(_isMoving);
+							newCharacterController->SetVelocity(velocity);
 						}
 					}
 

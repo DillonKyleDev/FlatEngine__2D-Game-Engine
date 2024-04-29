@@ -106,13 +106,8 @@
                 },
                 {
                     "_isCollapsed": false,
-                    "_isMoving": false,
-                    "gravity": 1.0,
                     "id": 9,
-                    "runSpeed": 1.0,
-                    "type": "CharacterController",
-                    "velocity": 0.0,
-                    "walkSpeed": 0.10999999940395355
+                    "type": "CharacterController"
                 }
             ],
             "id": 2,

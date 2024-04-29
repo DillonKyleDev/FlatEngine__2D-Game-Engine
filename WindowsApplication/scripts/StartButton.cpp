@@ -3,6 +3,7 @@
 #include "../FlatEngine.h"
 #include "../Sprite.h"
 #include "../Audio.h"
+#include "../CharacterController.h"
 
 #include "../MappingContext.h"
 #include "../Transform.h"
@@ -63,29 +64,21 @@ void StartButton::Update(float deltaTime)
 {
 	// Get Mapping Context
 	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
-	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
+	std::shared_ptr<FlatEngine::CharacterController> characterController = GetOwner()->GetCharacterController();
 
 	if (mappingContext->Fired("IA_Jump"))
 		FlatEngine::LogString("Jumped!");
 
-
 	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
 	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
-	static int XDir = 0;
-	static int YDir = 0;
+	static int xDir = 0;
+	static int yDir = 0;
 
 	if (moveX.type != 0)
-		XDir = moveX.jaxis.value;
+		xDir = moveX.jaxis.value;
 	if (moveY.type != 0)
-		YDir = moveY.jaxis.value;
+		yDir = moveY.jaxis.value;
 
-	FlatEngine::LogFloat(XDir, "XPos: ");
-	FlatEngine::LogFloat(YDir, "YPos: ");
-	SDL_Event castSpell2 = mappingContext->GetInputAction("IA_Cast_Spell_2");
-
-	if (castSpell2.type != 0)
-		FlatEngine::LogFloat(castSpell2.jaxis.value, "Trigger: ");
-
-	transform->SetPosition(Vector2(transform->GetPosition().x + XDir * 0.000004f, transform->GetPosition().y));
-	transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y + YDir * -0.000004f));
+	if (characterController != nullptr)
+		characterController->MoveToward(Vector2(xDir, yDir));
 }

@@ -11,17 +11,14 @@ namespace FlatEngine
 		this->_isCollapsed = false;
 	}
 
-
 	Component::~Component()
 	{
 	}
-
 
 	void Component::SetParentID(long parentID)
 	{
 		this->parentID = parentID;
 	}
-
 
 	long Component::GetParentID()
 	{
@@ -32,7 +29,6 @@ namespace FlatEngine
 	{
 		return GetObjectById(parentID);
 	}
-
 
 	void Component::SetType(ComponentTypes type)
 	{
@@ -58,7 +54,6 @@ namespace FlatEngine
 	{
 		return this->_isCollapsed;
 	}
-
 
 	std::string Component::GetTypeString()
 	{
@@ -127,10 +122,8 @@ namespace FlatEngine
 		this->_isCollapsed = collapsed;
 	}
 
-
 	std::string Component::GetData()
 	{
 		return "{}";
 	}
-
 }

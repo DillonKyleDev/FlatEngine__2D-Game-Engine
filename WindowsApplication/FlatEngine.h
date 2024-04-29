@@ -139,6 +139,7 @@ namespace FlatEngine
 	extern bool _logProfilerOutput;
 	extern void AddProfilerProcess(std::shared_ptr<Process> process);
 	extern void AddProcessData(std::string processName, float data);
+	extern void RemoveProfilerProcess(std::string toRemove);
 
 	// Game Loop Prettification
 	extern void StartGameLoop();
