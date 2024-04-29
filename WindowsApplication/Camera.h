@@ -4,9 +4,6 @@
 #include "Component.h"
 #include "json.hpp"
 #include <imgui.h>
-using json = nlohmann::json;
-using namespace nlohmann::literals;
-
 
 
 namespace FlatEngine 

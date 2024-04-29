@@ -32,11 +32,11 @@ bool init()
 			printf("Warning: Linear texture filtering not enabled!");
 		}
 
-		char t[] = "Window Title";
+		char t[] = "FlatEngine";
 		char* title = &(t[0]);
 
 		//Initialize Window::window
-		if (Window::Init(title, 600, 400))
+		if (Window::Init(title, 1920, 1080))
 		{
 			FlatEngine::LogString("Window initialized...");
 

@@ -1,6 +1,7 @@
 #include "CharacterController.h"
 #include "FlatEngine.h"
 #include "Transform.h"
+#include "RigidBody.h"
 
 
 namespace FlatEngine {
@@ -12,8 +13,9 @@ namespace FlatEngine {
 		walkSpeed = 1;
 		runSpeed = 2;
 		gravity = 1;
-		_isMoving = false;
 		velocity = 0;
+		_isMoving = false;
+		_isGrounded = false;
 	}
 
 	// Copy constructor
@@ -22,11 +24,12 @@ namespace FlatEngine {
 		SetType(ComponentTypes::CharacterController);
 		SetID(FlatEngine::GetNextComponentID());
 		SetParentID(newParentID);
-		walkSpeed = 1;
-		runSpeed = 2;
-		gravity = 1;
-		_isMoving = false;
-		velocity = 0;
+		walkSpeed = toCopy->GetWalkSpeed();
+		runSpeed = toCopy->GetWalkSpeed();
+		gravity = toCopy->GetGravity();
+		velocity = toCopy->GetVelocity();
+		_isMoving = toCopy->IsMoving();
+		_isGrounded = toCopy->IsGrounded();
 	}
 
 	CharacterController::~CharacterController()
@@ -53,8 +56,7 @@ namespace FlatEngine {
 
 	void CharacterController::MoveToward(Vector2 direction)
 	{
-		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-
+		std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetParent()->GetRigidBody();
 		float normalizedX = direction.x / 32760;
 		float normalizedY = direction.y / 32760;
 
@@ -67,11 +69,7 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		LogFloat(normalizedX, "normX: ");
-		LogFloat(normalizedY, "normY: ");
-
-		transform->SetPosition(Vector2(transform->GetPosition().x + normalizedX * walkSpeed, transform->GetPosition().y));
-		transform->SetPosition(Vector2(transform->GetPosition().x, transform->GetPosition().y - normalizedY * walkSpeed));
+		rigidBody->Move(Vector2(normalizedX, normalizedY));
 	}
 
 	void CharacterController::MoveTo(Vector2 location)
@@ -126,5 +124,13 @@ namespace FlatEngine {
 	float CharacterController::GetVelocity()
 	{
 		return velocity;
+	}
+	void CharacterController::SetIsGrounded(bool _grounded)
+	{
+		_isGrounded = _grounded;
+	}
+	bool CharacterController::IsGrounded()
+	{
+		return _isGrounded;
 	}
 }

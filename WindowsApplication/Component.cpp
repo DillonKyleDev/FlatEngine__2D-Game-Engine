@@ -9,6 +9,7 @@ namespace FlatEngine
 		this->ID = -1;
 		this->parentID = -1;
 		this->_isCollapsed = false;
+		_isActive = true;
 	}
 
 	Component::~Component()
@@ -120,6 +121,16 @@ namespace FlatEngine
 	void Component::SetCollapsed(bool collapsed)
 	{
 		this->_isCollapsed = collapsed;
+	}
+
+	void Component::SetActive(bool _active)
+	{
+		_isActive = _active;
+	}
+
+	bool Component::IsActive()
+	{
+		return _isActive;
 	}
 
 	std::string Component::GetData()

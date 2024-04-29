@@ -43,6 +43,8 @@ namespace FlatEngine
 		std::shared_ptr<GameObject> GetParent();
 		bool IsCollapsed();
 		void SetCollapsed(bool collapsed);
+		void SetActive(bool _active);
+		bool IsActive();
 
 		ComponentTypes GetType();
 		std::string GetTypeString();
@@ -53,5 +55,6 @@ namespace FlatEngine
 		long ID;
 		long parentID;
 		bool _isCollapsed;
+		bool _isActive;
 	};
 }

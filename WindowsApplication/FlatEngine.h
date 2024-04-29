@@ -36,6 +36,7 @@ namespace FlatEngine
 	class UIManager;
 	class Logger;
 	class Scene;
+	class RigidBody;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -67,11 +68,13 @@ namespace FlatEngine
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
 
+	// Managers
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;
+	extern std::vector<RigidBody> rigidBodies;
 
 	// ImU32 colors
 	extern ImU32 White;

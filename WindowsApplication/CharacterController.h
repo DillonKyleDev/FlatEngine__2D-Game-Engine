@@ -24,6 +24,8 @@ namespace FlatEngine {
 		bool IsMoving();
 		void SetVelocity(float velocity);
 		float GetVelocity();
+		void SetIsGrounded(bool _grounded);
+		bool IsGrounded();
 
 	private:
 		float walkSpeed;
@@ -31,6 +33,7 @@ namespace FlatEngine {
 		float gravity;
 		bool _isMoving;
 		float velocity;
+		bool _isGrounded;
 	};
 }
 

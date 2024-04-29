@@ -416,6 +416,12 @@ namespace FlatEngine
 		return characterController;
 	}
 
+	std::shared_ptr<RigidBody> GameObject::GetRigidBody()
+	{
+		std::shared_ptr<RigidBody> rigidBody = std::static_pointer_cast<RigidBody>(this->GetComponent(ComponentTypes::RigidBody));
+		return rigidBody;
+	}
+
 	std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)
 	{
 		for (int i = 0; i < this->components.size(); i++)
