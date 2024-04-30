@@ -4,7 +4,9 @@ namespace FlatEngine { namespace FlatGui {
 	void RenderToolbar()
 	{
 		bool _controlPanelWindow = false;
+		PushWindowStyles();
 		ImGui::Begin("Gameloop Control Panel", &_controlPanelWindow, ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None);
+		PopWindowStyles();
 
 		std::string playID = "##PlayGameloopIcon";
 		std::string pauseID = "##PauseGameloopIcon";
@@ -21,32 +23,22 @@ namespace FlatEngine { namespace FlatGui {
 		if (gameLoop->IsStarted() && !gameLoop->IsPaused())
 		{
 			ImGui::BeginDisabled();
-			ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16));
 			ImGui::EndDisabled();
 		}
-		else
-		{
-			if (ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
-				StartGameLoop();
-			if (ImGui::IsItemHovered())
-				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-		}
+		else if (RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16)))
+			StartGameLoop();
 
 		ImGui::SameLine(0, 5);
 
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
-			ImGui::ImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16));
 			ImGui::EndDisabled();
 		}
-		else
-		{
-			if (ImGui::ImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
-				PauseGameLoop();
-			if (ImGui::IsItemHovered())
-				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-		}
+		else if (RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16)))
+			PauseGameLoop();
 
 
 		ImGui::SameLine(0, 5);
@@ -54,16 +46,11 @@ namespace FlatEngine { namespace FlatGui {
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
-			ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+			RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16));
 			ImGui::EndDisabled();
 		}
-		else
-		{
-			if (ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
-				StopGameLoop();
-			if (ImGui::IsItemHovered())
-				ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-		}
+		else if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16)))
+			StopGameLoop();
 
 		ImGui::PopStyleVar();
 

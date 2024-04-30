@@ -39,7 +39,9 @@ namespace FlatEngine { namespace FlatGui {
 
 		bool _open = true;
 
+		PushWindowStyles();
 		ImGui::Begin("Game View", &_open, flags);
+		PopWindowStyles();
 
 		if (ImGui::IsWindowFocused())
 			if (ImGui::IsKeyPressed(ImGuiKey_Escape))

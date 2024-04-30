@@ -14,6 +14,7 @@
 #include "ScriptComponent.h"
 #include "GameLoop.h"
 #include "Sound.h."
+#include "RigidBody.h"
 
 #include "Animation.h"
 #include "WidgetsManager.h"
@@ -36,7 +37,6 @@ namespace FlatEngine
 	class UIManager;
 	class Logger;
 	class Scene;
-	class RigidBody;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -167,12 +167,43 @@ namespace FlatEngine
 	//
 	namespace FlatGui
 	{
-		// General window variables
+		// Global variables
 		extern bool _editingValue;
 		extern float childPadding;
+
+		// Colors
+		extern ImVec4 transparentColor;
 		extern ImVec4 outerWindowColor;
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
+		extern ImVec4 windowTitleBg;
+		extern ImVec4 componentBorderColor;
+		// Input
+		extern ImVec4 inputColor;
+		// Combos
+		extern ImVec4 comboBgColor;
+		extern ImVec4 comboHoveredColor;
+		extern ImVec4 comboSelectableColor;
+		extern ImVec4 comboArrowColor;
+		extern ImVec4 comboArrowHoveredColor;
+		extern ImVec4 comboSelectedColor;
+		extern ImVec4 comboHighlightedColor;
+		// Buttons
+		extern ImVec4 buttonColor;
+		extern ImVec4 buttonHoveredColor;
+		extern ImVec4 buttonActiveColor;
+		extern ImVec4 imageButtonColor;
+		extern ImVec4 imageButtonHoveredColor;
+		extern ImVec4 imageButtonActiveColor;
+		// Sliders/Drags
+		extern ImVec4 sliderColor;
+		extern ImVec4 sliderHoveredColor;
+		extern ImVec4 sliderActiveColor;
+		extern ImVec4 dragColor;
+		extern ImVec4 dragHoveredColor;
+		extern ImVec4 dragActiveColor;
+		// Checkboxes
+		extern ImVec4 checkboxBg;
 
 		extern int maxSpriteLayers;
 		extern float spriteScaleMultiplier;
@@ -281,6 +312,18 @@ namespace FlatEngine
 
 		// Helper Functions
 		//
+		// 
+		// ImGui Wrappers
+		extern void PushWindowStyles();
+		extern void PopWindowStyles();
+		extern void PushComboStyles();
+		extern void PopComboStyles();
+		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
+		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(12, 12), ImVec4 bgColor = imageButtonColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
+		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
+		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		
+		
 		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);

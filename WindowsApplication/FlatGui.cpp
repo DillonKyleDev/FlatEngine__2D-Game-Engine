@@ -37,10 +37,42 @@ namespace FlatEngine { namespace FlatGui {
 
 	// For window styles
 	float childPadding = 8;
+
+	// Global Colors
+	ImVec4 transparentColor = ImVec4(float(0.0), float(0.0), float(0.0), float(0));
+
 	ImVec4 outerWindowColor = ImVec4(float(0.2), float(0.2), float(0.2), float(0));
 	ImVec4 innerWindowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 windowTitleBg = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 componentBorderColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 inputColor = ImVec4(float(0.2), float(0.2), float(0.20), float(1));
+	// Combos
+	ImVec4 comboBgColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
+	ImVec4 comboHoveredColor = ImVec4(float(0.25), float(0.25), float(0.25), float(1));
+	ImVec4 comboSelectableColor = ImVec4(float(0.34), float(.34), float(.4), float(1));
+	ImVec4 comboSelectedColor = ImVec4(float(0.45), float(0.45), float(0.50), float(1));
+	ImVec4 comboHighlightedColor = ImVec4(float(0.25), float(0.25), float(0.28), float(1));
+	ImVec4 comboArrowColor = ImVec4(float(0.11), float(0.11), float(0.13), float(1));
+	ImVec4 comboArrowHoveredColor = ImVec4(float(0.15), float(0.15), float(0.16), float(1));
+	// Buttons
+	ImVec4 buttonColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
+	ImVec4 buttonHoveredColor = ImVec4(float(0.3), float(0.35), float(0.55), float(1));
+	ImVec4 buttonActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 imageButtonColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 imageButtonHoveredColor = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
+	ImVec4 imageButtonActiveColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
+	// Sliders/Drags
+	ImVec4 sliderColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 sliderHoveredColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 sliderActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 dragColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 dragHoveredColor = ImVec4(float(0.45), float(0.45), float(0.45), float(1));
+	ImVec4 dragActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	// Checkboxes
+	extern ImVec4 checkboxBg = ImVec4(float(0.09), float(0.09), float(0.9), float(1));
+
 
 	// For rendering sprites
 	int maxSpriteLayers = 55;
@@ -1409,6 +1441,7 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			return centerPoint + (worldPosition * zoomFactor * scaleToScreenSizeBy);
 	}
+
 	// Helper - Get a value from viewport position converted into world/grid position.
 	ImVec2 ViewportToWorld(ImVec2 viewportPosition)
 	{
@@ -1423,6 +1456,81 @@ namespace FlatEngine { namespace FlatGui {
 
 		return ImVec2(xPos, yPos);
 	}
+	
+	void PushWindowStyles()
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_Tab, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TabActive, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TabHovered, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_NavHighlight, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, windowTitleBg);
+	}
+
+	void PopWindowStyles()
+	{
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
+	void PushComboStyles()
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, comboArrowColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, comboArrowHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, comboBgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, comboHoveredColor);
+		// For Selectables
+		ImGui::PushStyleColor(ImGuiCol_Header, comboSelectableColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, comboSelectedColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, comboHighlightedColor);
+	}
+
+	void PopComboStyles()
+	{
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		// For Selectables
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
 
 	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
 	{
@@ -1457,6 +1565,85 @@ namespace FlatEngine { namespace FlatGui {
 		draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
 
 		return renderStart;
+	}
+
+	bool RenderButton(std::string text, ImVec2 size, ImVec4 color, ImVec4 hoverColor, ImVec4 activeColor)
+	{
+		bool _isClicked;
+
+		ImGui::PushStyleColor(ImGuiCol_Button, color);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
+
+		if (size.x != 0 || size.y != 0)
+			_isClicked = ImGui::Button(text.c_str(), size);
+		else
+			_isClicked = ImGui::Button(text.c_str());
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		return _isClicked;
+	}
+
+	bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size, ImVec4 bgColor, ImVec4 hoverColor, ImVec4 activeColor)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
+
+		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uv0, uv1, bg_col, tint_col);
+
+		// Set Mouse Cursor
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		return _isClicked;
+	}
+
+	bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max)
+	{
+		//ImGui::PushStyleColor(ImGuiCol_SliderGrab, sliderColor);
+		//ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, sliderActiveColor);
+		//
+		//ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		//bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
+		//
+		//ImGui::PopStyleColor();
+
+		return false;
+	}
+
+	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
+	{
+		ImGui::PushStyleColor(ImGuiCol_SliderGrab, dragColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, dragActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
+
+		if (width != 0)
+			ImGui::SetNextItemWidth(width);
+		else
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
+		// Set cursor type
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		return _sliderChanged;
 	}
 
 	void CreateNewAnimationFile(std::string path)

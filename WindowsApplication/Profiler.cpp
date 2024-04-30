@@ -38,7 +38,9 @@ namespace FlatEngine {
 
 	void RenderProfiler()
 	{
+		PushWindowStyles();
 		ImGui::Begin("Profiler");
+		PopWindowStyles();
 
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 

@@ -96,7 +96,9 @@ namespace FlatEngine
 
 		void RenderLog()
 		{
+			PushWindowStyles();
 			ImGui::Begin("Debug Log");
+			PopWindowStyles();
 
 			if (ImGui::Checkbox("Clear buffer after every frame", &_clearBufferEveryFrame))
 				FlatEngine::logger->ClearBuffer();
@@ -112,10 +114,8 @@ namespace FlatEngine
 
 			ImGui::Text("Log buffer contents : % d bytes", log->size());
 			ImGui::SameLine(0, 10);
-			if (ImGui::Button("Clear"))
-			{
+			if (RenderButton("Clear"))
 				log->clear(); lines = 0;
-			}
 
 			ImGui::Separator();
 			ImGui::Separator();

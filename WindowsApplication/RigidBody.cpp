@@ -8,13 +8,14 @@ namespace FlatEngine {
 		SetType(ComponentTypes::RigidBody);
 		SetID(myID);
 		SetParentID(parentID);
-		float mass;
-		float angularDrag;
-		float gravity;
-		float velocity;
-		bool _isMoving;
-		bool _isContinious;
-		bool _isGrounded;
+		mass = 1;
+		angularDrag = 1;
+		gravity = 1;
+		velocity = 0;
+		_isMoving = false;
+		_isContinious = false;
+		_isGrounded = false;
+		_isKinematic = false;
 	}
 
 	RigidBody::RigidBody(std::shared_ptr<RigidBody> toCopy, long newParentID)
@@ -29,6 +30,7 @@ namespace FlatEngine {
 		_isMoving = toCopy->IsMoving();
 		_isContinious = toCopy->IsContinuous();
 		_isGrounded = toCopy->IsGrounded();
+		_isKinematic = toCopy->IsKinematic();
 	}
 
 	RigidBody::~RigidBody()

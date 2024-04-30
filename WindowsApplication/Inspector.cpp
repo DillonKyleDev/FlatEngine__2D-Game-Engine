@@ -10,7 +10,10 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderInspector()
 	{
+		PushWindowStyles();
 		ImGui::Begin("Inspector");
+		PopWindowStyles();
+
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
@@ -30,8 +33,11 @@ namespace FlatEngine { namespace FlatGui {
 			// Edit field
 			ImGui::Text(nameLabel.c_str());
 			ImGui::SameLine(0, 5);
+
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), flags))
 				focusedObject->SetName(newName);
+			ImGui::PopStyleColor();
 
 			bool _isActive = focusedObject->IsActive();
 
@@ -65,24 +71,37 @@ namespace FlatEngine { namespace FlatGui {
 						bool _isCollapsed = components[i]->IsCollapsed();
 
 						// Component Name
-						//ImGui::Separator();
 						std::string componentType = components[i]->GetTypeString();
 						// Get Component ID in to keep the child unique
 						std::string componentID = componentType + std::to_string(components[i]->GetID());
 
 						// Begin Component Child
 						ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+						ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
+						ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+						
 						ImGui::BeginChild(componentID.c_str(), ImVec2(0, 0), child_flags);
+
 						ImGui::PopStyleColor();
+						ImGui::PopStyleColor();
+						ImGui::PopStyleVar();
+
+						auto wPos = ImGui::GetWindowPos();
+						auto wSize = ImGui::GetWindowSize();
+						ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, {wPos.x + wSize.x - 2, wPos.y + wSize.y - 2}, ImColor(componentBorderColor.x, componentBorderColor.y, componentBorderColor.z, componentBorderColor.w));
 
 						// Component Name
+						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
 						ImGui::Text(componentType.c_str());
+						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 5));
 
 						// Same Line
 						ImGui::SameLine(ImGui::GetContentRegionMax().x - (16 + childPadding + 20), 5); // Add the expander icon on the same line
 
 						// Pushes	
 						ImGui::PushItemWidth(-1.0f);
+						
+						ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
 						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
 
@@ -92,41 +111,35 @@ namespace FlatEngine { namespace FlatGui {
 
 
 						// Trash Can Icon for removing Component from Focused Object
-						if (ImGui::ImageButton(trashcanID.c_str(), trashTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+						if (RenderImageButton(trashcanID.c_str(), trashTexture))
 							queuedForDelete = components[i]->GetID();
-
-						// Set Mouse Cursor
-						if (ImGui::IsItemHovered())
-							ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
 						ImGui::SameLine(0, 5);
 
 						// Draw Expand Icon for expanding/collapsing current component information
 						if (_isCollapsed)
 						{
-							if (ImGui::ImageButton(expandID.c_str(), expandTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+							if (RenderImageButton(expandID.c_str(), expandTexture))
 								components[i]->SetCollapsed(!_isCollapsed);
-							// Set Mouse Cursor
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 						}
 						else
-						{
-							if (ImGui::ImageButton(expandID.c_str(), expandFlippedTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+							if (RenderImageButton(expandID.c_str(), expandFlippedTexture))
 								components[i]->SetCollapsed(!_isCollapsed);
-							// Set Mouse Cursor
-							if (ImGui::IsItemHovered())
-								ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-						}
 
-						ImGui::Separator();
-						ImGui::Separator();
+
+						if (!_isCollapsed)
+						{
+							ImGui::Separator();
+							ImGui::Separator();
+						}
 
 
 						// Pops
 						ImGui::PopStyleColor();
 						ImGui::PopStyleVar();
 						ImGui::PopItemWidth();
+						ImGui::PopStyleColor();
+					
 
 
 						// Render Component
@@ -152,64 +165,71 @@ namespace FlatEngine { namespace FlatGui {
 								float scaleX = scale.x;
 								float scaleY = scale.y;
 								float rotation = transform->GetRotation();
-								static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 
-								// Push Item Width
-								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable;
 
-								// Drags for position editing
-								//
-								// Render Text for Positions + Rotation
-								ImGui::Text("xPos:");
-								ImGui::SameLine(ImGui::GetContentRegionMax().x / 3 + 5, 0);
-								ImGui::Text("yPos:");
-								ImGui::SameLine((ImGui::GetContentRegionMax().x / 3 * 2) + 5, 0);
-								ImGui::Text("Rotation:");
+								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
+								{					
+									ImGui::TableSetupColumn("##PROPERTY");
+									ImGui::TableSetupColumn("##VALUE");
+									ImGui::TableNextRow();								
 
-								// Render Drags for Positions + Rotation
-								ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##rotation", &rotation, 1.0f, -360, 360, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+									// Position X
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("X Position");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##xPosDrag", 0, xPos, 0.5f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("xPosition");
+									ImGui::PopID();
 
-								// Assign the new slider values to the transforms position
-								transform->SetPosition(Vector2(xPos, yPos));
-								transform->SetRotation(rotation);
+									// Position Y
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Y Position");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##yPosDrag", 0, yPos, 0.5f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("yPosition");
+									ImGui::PopID();
 
-								// Render Drags for scale of transform
-								// Push
-								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+									transform->SetPosition(Vector2(xPos, yPos));
 
-								// Render text for scales
-								ImGui::Text("Scale x:");
-								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-								ImGui::Text("Scale y:");
+									// Rotation
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Rotation");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##rotationDrag", 0, rotation, 1.0f, -360, 360);
+									transform->SetRotation(rotation);
+									ImGui::PushID("rotationDrag");
+									ImGui::PopID();
 
-								// Render Drags for scales
-								ImGui::DragFloat("##xScale", &scaleX, 0.05f, 0, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##yScale", &scaleY, 0.05f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+									// Scale x
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("X Scale");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##xScaleDrag", 0, scaleX, 0.5f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("xScale");
+									ImGui::PopID();
+									
+									// Scale y
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Y Scale");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##yScaleDrag", 0, scaleY, 0.5f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("yScale");
+									ImGui::PopID();
 
-								// Pop Width Setting
-								ImGui::PopItemWidth();
+									transform->SetScale(Vector2(scaleX, scaleY));
 
-								// Assign the new slider values to the sprites pivotPoint
-								transform->SetScale(Vector2(scaleX, scaleY));
+									ImGui::EndTable();
+								}
 							}
 							else if (componentType == "Sprite")
 							{
@@ -231,20 +251,18 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text(pathString.c_str());
 								ImGui::SameLine(0, 5);
 
-								if (ImGui::ImageButton(openFileID.c_str(), openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+								if (RenderImageButton(openFileID.c_str(), openFileTexture))
 								{
 									std::string assetPath = OpenLoadFileExplorer();
 									strcpy_s(newPath, assetPath.c_str());
 									sprite->SetTexture(newPath);
 								}
-
-								// Set Mouse Cursor
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
+								
 								ImGui::SameLine(0, 5);
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
 									sprite->SetTexture(newPath);
+								ImGui::PopStyleColor();
 								ImGui::Text(textureWidthString.c_str());
 								ImGui::Text(textureHeightString.c_str());
 
@@ -266,15 +284,9 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text("xOffset:");
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
 								ImGui::Text("yOffset:");
-								ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##xOffset", 0, xOffset, 0.5f, -FLT_MAX, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##yOffset", 0, yOffset, 0.5f, -FLT_MAX, -FLT_MAX);
 
 								// Pop Width Setting
 								ImGui::PopItemWidth();
@@ -299,15 +311,9 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text("Camera width:");
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
 								ImGui::Text("Camera height:");
-								ImGui::DragFloat("##CameraWidth", &width, 0.5f, 0, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##CameraWidth", 0, width, 0.5f, 0, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##CameraHeight", &height, 0.5f, 0, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##CameraHeight", 0, height, 0.5f, 0, -FLT_MAX);
 
 								// Pop Width Setting
 								ImGui::PopItemWidth();
@@ -334,6 +340,7 @@ namespace FlatEngine { namespace FlatGui {
 								// Before allowing this camera to be set as primary, we need to ensure it has a transform component
 								if (focusedObject->GetComponent(ComponentTypes::Transform) != nullptr)
 								{
+									ImGui::PushStyleColor(ImGuiCol_FrameBg, checkboxBg);
 									if (ImGui::Checkbox("Is Primary Camera", &_isPrimary))
 									{
 										if (_isPrimary)
@@ -341,6 +348,7 @@ namespace FlatEngine { namespace FlatGui {
 										else
 											FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
 									}
+									ImGui::PopStyleColor();
 								}
 								else
 								{
@@ -367,8 +375,11 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::SameLine(0, 5);
 								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 								std::string inputId = "##scriptName_" + std::to_string(script->GetID());
+
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
 									script->SetAttachedScript(newPath);
+								ImGui::PopStyleColor();
 
 								// _isActive checkbox
 								std::string checkboxId = "Active##" + std::to_string(script->GetID());
@@ -396,29 +407,17 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
 								ImGui::Text("Active height:");
 
-								ImGui::DragFloat("##activeWidth", &activeWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##activeWidth", 0, activeWidth, 0.5f, 0.1f, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##activeHeight", &activeHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##activeHeight", 0, activeHeight, 0.5f, 0.1f, -FLT_MAX);
 
 								ImGui::Text("Active offset x:");
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
 								ImGui::Text("Active offset y:");
 
-								ImGui::DragFloat("##activeoffsetx", &activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##activeoffsetx", 0, activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##activeoffsety", &activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##activeoffsety", 0, activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
 
 								// Assign the new slider values
 								button->SetActiveDimensions(activeWidth, activeHeight);
@@ -459,24 +458,12 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
 								ImGui::Text("Canvas height: ");
 
-								// Push Item Width Setting
-								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-								ImGui::DragFloat("##canvasWidth", &canvasWidth, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##canvasWidth", ImGui::GetContentRegionMax().x / 2 - 5, canvasWidth, 0.5f, 0.1f, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##canvasHeight", &canvasHeight, 0.5f, 0.1f, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##canvasHeight", ImGui::GetContentRegionMax().x / 2 - 5, canvasHeight, 0.5f, 0.1f, -FLT_MAX);
 
 								// Assign new values to Canvas
 								canvas->SetDimensions(canvasWidth, canvasHeight);
-
-
-								ImGui::PopItemWidth();
 							}
 							else if (componentType == "Animation")
 							{
@@ -493,19 +480,19 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text(pathString.c_str());
 								ImGui::SameLine(0, 5);
 
-								if (ImGui::ImageButton(buttonID.c_str(), openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+								if (RenderImageButton(buttonID.c_str(), openFileTexture))
 								{
 									std::string assetPath = OpenLoadFileExplorer();
 									strcpy_s(newPath, assetPath.c_str());
 									animation->SetAnimationPath(newPath);
 								}
-								// Set Mouse Cursor
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
 								ImGui::SameLine(0, 5);
+
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText("##animationPath", newPath, IM_ARRAYSIZE(newPath), flags))
 									animation->SetAnimationPath(newPath);
-
+								ImGui::PopStyleColor();
 
 								// Retrieve Animation values
 								float ticksPerFrame = animation->GetTicksPerFrame();
@@ -527,12 +514,12 @@ namespace FlatEngine { namespace FlatGui {
 								//ImGui::Text(totalFrames.c_str());
 
 								// Add Frame Button
-								if (ImGui::Button("Add Frame"))
+								if (RenderButton("Add Frame"))
 									animation->AddFrame();
 
 								//ImGui::SliderInt("Animation Time", &previewAnimationTime, 0, 12000);
 								// Play Animation Button
-								if (ImGui::Button("Play Animation"))
+								if (RenderButton("Play Animation"))
 									animation->Play(GetEllapsedGameTime());
 
 								// Set cursor type
@@ -557,6 +544,8 @@ namespace FlatEngine { namespace FlatGui {
 								// On Path editing, reload the effect
 								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 								std::string inputId = "##audioPath_" + std::to_string(audio->GetID());
+
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
 								{
 									if (_isMusic)
@@ -566,6 +555,7 @@ namespace FlatEngine { namespace FlatGui {
 
 									audio->SetPath(newPath);
 								}
+								ImGui::PopStyleColor();
 
 								// _isMusic checkbox, also reload the effect as music or chunk
 								std::string checkboxId = "Is Music##" + std::to_string(audio->GetID());
@@ -584,15 +574,15 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
 								// Play Audio
-								if (ImGui::Button("Play"))
+								if (RenderButton("Play"))
 									audio->Play();
 								ImGui::SameLine(0, 5);
 								// Pause Audio
-								if (ImGui::Button("Pause"))
+								if (RenderButton("Pause"))
 									audio->Pause();
 								ImGui::SameLine(0, 5);
 								// Stop Audio
-								if (ImGui::Button("Stop"))
+								if (RenderButton("Stop"))
 									audio->Stop();
 							}
 							else if (componentType == "Text")
@@ -610,11 +600,14 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Text String
 								ImGui::Text(textString.c_str());
 								ImGui::SameLine(0, 5);
+
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText("##textString", newTextString, IM_ARRAYSIZE(newTextString), flags))
 								{
 									text->SetText(newTextString);
 									text->LoadText();
 								}
+								ImGui::PopStyleColor();
 
 
 								// Other variables
@@ -633,8 +626,11 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Font Path
 								ImGui::Text(pathString.c_str());
 								ImGui::SameLine(0, 5);
+
+								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText("##fontPath", newPath, IM_ARRAYSIZE(newPath), flags))
 									text->SetFontPath(newPath);
+								ImGui::PopStyleColor();
 
 								// Text Width and Height
 								std::string textureWidthString = "Text width: " + std::to_string(textureWidth);
@@ -655,15 +651,9 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::Text("xOffset:");
 								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
 								ImGui::Text("yOffset:");
-								ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##xOffset", 0, xOffset, 0.5f, -FLT_MAX, -FLT_MAX);
 								ImGui::SameLine(0, 5);
-								ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+								RenderDragFloat("##yOffset", 0, yOffset, 0.5f, -FLT_MAX, -FLT_MAX);
 								// Set new offset values
 								text->SetOffset(Vector2(xOffset, yOffset));
 
@@ -691,7 +681,6 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isMoving = characterController->IsMoving();
 								float velocity = characterController->GetVelocity();
 
-								static ImGuiSliderFlags sliderFlags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 									ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable ;
 
@@ -700,10 +689,7 @@ namespace FlatEngine { namespace FlatGui {
 
 									ImGui::TableSetupColumn("##PROPERTY");
 									ImGui::TableSetupColumn("##DATA");
-									
 
-									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x / 2);
-									ImGui::TableHeadersRow();
 									ImGui::TableNextRow();
 
 									ImGui::TableSetColumnIndex(0);
@@ -711,13 +697,9 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::Text("Walk Speed");
 									ImGui::TableSetColumnIndex(1);
 									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
-									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-									if (ImGui::DragFloat("##walkSpeedSlider", &walkSpeed, 0.01f, 0.0f, 20, "%.3f", sliderFlags))
+									if (RenderDragFloat("##walkSpeedSlider", ImGui::GetContentRegionAvail().x, walkSpeed, 0.01f, 0.0f, 20))
 										characterController->SetWalkSpeed(walkSpeed);
 									ImGui::PopStyleColor();
-									// Set cursor type
-									if (ImGui::IsItemHovered())
-										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 									ImGui::PushID("WalkSpeed");
 									ImGui::PopID();
 
@@ -727,13 +709,9 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::Text("Run Speed");
 									ImGui::TableSetColumnIndex(1);									
 									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
-									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-									if (ImGui::DragFloat("##runSpeedSlider", &runSpeed, 0.01f, 0.0f, 20, "%.3f", sliderFlags))
+									if (RenderDragFloat("##runSpeedSlider", ImGui::GetContentRegionAvail().x, runSpeed, 0.01f, 0.0f, 20))
 										characterController->SetRunSpeed(runSpeed);
 									ImGui::PopStyleColor();
-									// Set cursor type
-									if (ImGui::IsItemHovered())
-										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 									ImGui::PushID("RunSpeed");
 									ImGui::PopID();
 
@@ -743,13 +721,9 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::Text("Gravity");
 									ImGui::TableSetColumnIndex(1);
 									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
-									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-									if (ImGui::DragFloat("##gravitySlider", &gravity, 0.05f, 0.0f, 100, "%.3f", sliderFlags))
+									if (RenderDragFloat("##gravitySlider", ImGui::GetContentRegionAvail().x, gravity, 0.05f, 0.0f, 100))
 										characterController->SetGravity(gravity);
 									ImGui::PopStyleColor();
-									// Set cursor type
-									if (ImGui::IsItemHovered())
-										ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 									ImGui::PushID("Gravity");
 									ImGui::PopID();
 
@@ -805,7 +779,7 @@ namespace FlatEngine { namespace FlatGui {
 			std::shared_ptr<Component> characterController = focusedObject->GetComponent(ComponentTypes::CharacterController);
 
 			// Render the Adding Components button
-			ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
+			RenderButton("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
@@ -818,66 +792,66 @@ namespace FlatEngine { namespace FlatGui {
 				// Add all the component types you can add to this GameObject
 				//
 				if (transformComponent == nullptr)
-					if (ImGui::Button("Transform", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Transform", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Transform);
 						ImGui::CloseCurrentPopup();
 					}
 
 				if (spriteComponent == nullptr)
-					if (ImGui::Button("Sprite", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Sprite", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Sprite);
 						ImGui::CloseCurrentPopup();
 					}
 
-				if (ImGui::Button("Button", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				if (RenderButton("Button", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Button);
 					ImGui::CloseCurrentPopup();
 				}
 
 				if (cameraComponent == nullptr)
-					if (ImGui::Button("Camera", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Camera", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Camera);
 						ImGui::CloseCurrentPopup();
 					}
 
 				if (canvasComponent == nullptr)
-					if (ImGui::Button("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Canvas);
 						ImGui::CloseCurrentPopup();
 					}
 
 				if (animationComponent == nullptr)
-					if (ImGui::Button("Animation", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Animation", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::Animation);
 						ImGui::CloseCurrentPopup();
 					}
 
-				if (ImGui::Button("Audio", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				if (RenderButton("Audio", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Audio);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (ImGui::Button("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				if (RenderButton("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Text);
 					ImGui::CloseCurrentPopup();
 				}
 
-				if (ImGui::Button("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+				if (RenderButton("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 				{
 					focusedObject->AddComponent(ComponentTypes::Script);
 					ImGui::CloseCurrentPopup();
 				}
 
 				if (characterController == nullptr)
-					if (ImGui::Button("Character Controller", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+					if (RenderButton("Character Controller", ImVec2(ImGui::GetContentRegionMax().x, 0)))
 					{
 						focusedObject->AddComponent(ComponentTypes::CharacterController);
 						ImGui::CloseCurrentPopup();
@@ -890,7 +864,7 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::EndPopup();
 			}
 
-			if (ImGui::Button("Delete GameObject"))
+			if (RenderButton("Delete GameObject"))
 			{
 				// Unfocus GameObject first
 				int tempID = focusedObjectID;

@@ -169,6 +169,7 @@
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Project.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="SceneView.cpp" />
     <ClCompile Include="scripts\QuitButton.cpp" />
     <ClCompile Include="scripts\RestartButton.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="MappingContext.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="Project.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="scripts\QuitButton.h" />
     <ClInclude Include="scripts\RestartButton.h" />
     <ClInclude Include="Animation.h" />

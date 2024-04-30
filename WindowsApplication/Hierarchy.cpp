@@ -7,7 +7,9 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeX;
 		ImGuiStyle& style = ImGui::GetStyle();
 
+		PushWindowStyles();
 		ImGui::Begin("Scene Hierarchy");
+		PopWindowStyles();
 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
 		float availableHorizontalSpace = ImGui::GetContentRegionAvail().x;
@@ -25,7 +27,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
-		if (ImGui::Button("Add New GameObject"))
+		if (RenderButton("Add New GameObject"))
 			CreateGameObject(-1);
 
 		// Scene Objects in Hierarchy
@@ -118,17 +120,17 @@ namespace FlatEngine { namespace FlatGui {
 
 		// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
 		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
-
+		
 		// Right click context menu for GameObject
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			if (ImGui::Button("Add child"))
+			if (RenderButton("Add child"))
 			{
 				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::Button("Delete GameObject"))
+			if (RenderButton("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
@@ -191,22 +193,25 @@ namespace FlatEngine { namespace FlatGui {
 			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
-
 		// TreeNode Opener - No TreePop because it's a leaf
 		ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+		ImGui::PopStyleVar();
+
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			if (ImGui::Button("Add child"))
+			if (ImGui::MenuItem("Add Child"))
 			{
 				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::Button("Delete GameObject"))
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
 			}
+			
 			ImGui::EndPopup();
 		}
 
@@ -223,8 +228,6 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Text("This is a drag and drop source");
 			ImGui::EndDragDropSource();
 		}
-
-		ImGui::PopStyleVar();
 	}
 }
 }

@@ -22,8 +22,10 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
+		PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
 		ImGui::Begin("Animator", 0, 16 | 8);
+		PopWindowStyles();
 
 		// Animated Properties BeginChild()
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
@@ -53,7 +55,7 @@ namespace FlatEngine { namespace FlatGui {
 		static std::string animationFilePath = "";
 
 		ImGui::SameLine(0, 15);
-		if (ImGui::ImageButton("##NewAnimationFile", newFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+		if (RenderImageButton("##NewAnimationFile", newFileTexture))
 		{
 			std::string animationFilePath = OpenSaveFileExplorer();
 			if (animationFilePath != "")
@@ -68,7 +70,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		ImGui::SameLine(0, 5);
 		
-		if (ImGui::ImageButton("#OpenAnim", openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+		if (RenderImageButton("#OpenAnim", openFileTexture))
 		{
 			animationFilePath = OpenLoadFileExplorer();
 			if (animationFilePath != "")
@@ -78,7 +80,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 		ImGui::SameLine(0, 5);
-		if (ImGui::ImageButton("#SaveAnimationFile", saveFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+		if (RenderImageButton("#SaveAnimationFile", saveFileTexture))
 		{
 			//std::string animationFilePath = OpenSaveFileExplorer();
 			//if (animationFilePath != "")
@@ -327,12 +329,12 @@ namespace FlatEngine { namespace FlatGui {
 			if (_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(14, 14), uv0, uv1, bg_col, tint_col);
+				RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14));
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (ImGui::ImageButton(playID.c_str(), playTexture, ImVec2(14, 14), uv0, uv1, bg_col, tint_col))
+				if (RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14)))
 				{
 					if (animation != nullptr)
 					{
@@ -342,8 +344,6 @@ namespace FlatEngine { namespace FlatGui {
 						_isPreviewing = true;
 					}
 				}
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 			}
 
 			ImGui::SameLine(0, 5);
@@ -352,19 +352,17 @@ namespace FlatEngine { namespace FlatGui {
 			if (!_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col);
+				RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16));
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (ImGui::ImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), uv0, uv1, bg_col, tint_col))
+				if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16)))
 				{
 					animation->Stop();
 					_isPreviewing = false;
 					previewAnimationTime = 0;
 				}
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 			}
 
 			ImGui::SameLine(0, 5);
@@ -1065,34 +1063,29 @@ namespace FlatEngine { namespace FlatGui {
 				std::string path = sprite->path;
 				char newPath[1024];
 				strcpy_s(newPath, path.c_str());
-				//float textureWidth = sprite->GetTextureWidth();
-				//float textureHeight = sprite->GetTextureHeight();
-				//int renderOrder = sprite->GetRenderOrder();
 
 				// Sprite Path Strings
 				std::string pathString = "Path: ";
-				//std::string textureWidthString = "Texture width: " + std::to_string(textureWidth);
-				//std::string textureHeightString = "Texture height: " + std::to_string(textureHeight);
 
 				// Render Sprite Path
 				ImGui::Text(pathString.c_str());
 				ImGui::SameLine(0, 5);
 
 				std::string openFileID = "##openFileIconForAnimatorSprite";
-				if (ImGui::ImageButton(openFileID.c_str(), openFileTexture, ImVec2(12, 12), uv0, uv1, bg_col, tint_col))
+				if (RenderImageButton(openFileID.c_str(), openFileTexture))
 				{
 					std::string assetPath = OpenLoadFileExplorer();
 					strcpy_s(newPath, assetPath.c_str());
 					sprite->path = newPath;
 				}
 
-				// Set Mouse Cursor
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
 				ImGui::SameLine(0, 5);
+				
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 				if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
 					sprite->path = newPath;
+				ImGui::PopStyleColor();
+
 				//ImGui::Text(textureWidthString.c_str());
 				//ImGui::Text(textureHeightString.c_str());
 

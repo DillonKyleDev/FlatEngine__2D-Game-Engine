@@ -36,6 +36,7 @@ namespace FlatEngine
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
+	std::vector<RigidBody> rigidBodies = std::vector<RigidBody>();
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
