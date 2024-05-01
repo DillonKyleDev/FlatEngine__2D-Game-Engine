@@ -78,7 +78,7 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "attachedScript": "StartButton",
                     "id": 6,
                     "type": "Script"
@@ -94,7 +94,7 @@
                     "yScale": 1.0
                 },
                 {
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 8,
                     "renderOrder": 0,
                     "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Pieces\\kingB.png",

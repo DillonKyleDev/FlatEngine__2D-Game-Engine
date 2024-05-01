@@ -36,7 +36,7 @@ bool init()
 		char* title = &(t[0]);
 
 		//Initialize Window::window
-		if (Window::Init(title, 1920, 1080))
+		if (Window::Init(title, 1600, 800))
 		{
 			FlatEngine::LogString("Window initialized...");
 

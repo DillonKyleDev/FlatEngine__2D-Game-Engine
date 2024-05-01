@@ -180,6 +180,8 @@ namespace FlatEngine
 		extern ImVec4 componentBorderColor;
 		// Input
 		extern ImVec4 inputColor;
+		// Tables
+		extern ImVec4 uneditableTableRowColor;
 		// Combos
 		extern ImVec4 comboBgColor;
 		extern ImVec4 comboHoveredColor;
@@ -321,7 +323,8 @@ namespace FlatEngine
 		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
 		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(12, 12), ImVec4 bgColor = imageButtonColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
-		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None);
+		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
+		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);
 		
 		
 		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));

@@ -244,55 +244,101 @@ namespace FlatEngine { namespace FlatGui {
 
 								// Sprite Path Strings
 								std::string pathString = "Path: ";
-								std::string textureWidthString = "Texture width: " + std::to_string(textureWidth);
-								std::string textureHeightString = "Texture height: " + std::to_string(textureHeight);
+								std::string textureWidthString = std::to_string(textureWidth);
+								std::string textureHeightString = std::to_string(textureHeight);
 
 								// Render Sprite Path
 								ImGui::Text(pathString.c_str());
 								ImGui::SameLine(0, 5);
 
+								// Load From File
 								if (RenderImageButton(openFileID.c_str(), openFileTexture))
 								{
 									std::string assetPath = OpenLoadFileExplorer();
 									strcpy_s(newPath, assetPath.c_str());
 									sprite->SetTexture(newPath);
 								}
-								
 								ImGui::SameLine(0, 5);
+
+								// Sprite Path Edit
 								ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 								if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
 									sprite->SetTexture(newPath);
 								ImGui::PopStyleColor();
-								ImGui::Text(textureWidthString.c_str());
-								ImGui::Text(textureHeightString.c_str());
-
-								// Render Order
-								ImGui::Text("Render order: ");
-								if (ImGui::SliderInt("Sprite Render Order", &renderOrder, 0, maxSpriteLayers, "%d"))
-									sprite->SetRenderOrder(renderOrder);
-
-								// Push Item Width Setting
-								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
 
 								// Sprite offset variables
 								Vector2 offset = sprite->GetOffset();
 								float xOffset = offset.x;
 								float yOffset = offset.y;
-								ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 
-								// Render Drags for offset of texture editing
-								ImGui::Text("xOffset:");
-								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-								ImGui::Text("yOffset:");
-								RenderDragFloat("##xOffset", 0, xOffset, 0.5f, -FLT_MAX, -FLT_MAX);
-								ImGui::SameLine(0, 5);
-								RenderDragFloat("##yOffset", 0, yOffset, 0.5f, -FLT_MAX, -FLT_MAX);
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable;
 
-								// Pop Width Setting
-								ImGui::PopItemWidth();
+								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
+								{
+									ImGui::TableSetupColumn("##PROPERTY");
+									ImGui::TableSetupColumn("##VALUE");
 
-								// Assign the new slider values to the sprites pivotPoint
-								sprite->SetOffset(Vector2(xOffset, yOffset));
+									// Texture Width
+									//ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, uneditableTableRowColor);
+									ImGui::PushStyleColor(ImGuiCol_TableRowBg, uneditableTableRowColor);
+									ImGui::TableNextRow();									
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Texture width");
+									ImGui::TableSetColumnIndex(1);									
+									ImGui::Text(textureWidthString.c_str());									
+									ImGui::PushID("textureWidth");
+									ImGui::PopID();
+									ImGui::PopStyleColor();
+
+									// Texture Height
+									ImGui::PushStyleColor(ImGuiCol_TableRowBg, uneditableTableRowColor);
+									ImGui::TableNextRow();								
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Texture height");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::Text(textureHeightString.c_str());									
+									ImGui::PushID("textureHeight");
+									ImGui::PopID();
+									ImGui::PopStyleColor();
+
+									// X Offset
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("X Offset");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##xOffsetDrag", 0, xOffset, 0.1f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("xOffset");
+									ImGui::PopID();
+
+									// Y Offset
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Y Offset");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##yOffsetDrag", 0, yOffset, 0.1f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("yOffset");
+									ImGui::PopID();
+
+									// Assign the new slider values to the sprites pivotPoint
+									sprite->SetOffset(Vector2(xOffset, yOffset));
+
+									// Render Order
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Render order");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragInt("##renderOrder", 0, renderOrder, 1, 0, maxSpriteLayers);
+									sprite->SetRenderOrder(renderOrder);
+									ImGui::PushID("renderOrder");
+									ImGui::PopID();
+
+									ImGui::EndTable();
+								}
 							}
 							else if (componentType == "Camera")
 							{

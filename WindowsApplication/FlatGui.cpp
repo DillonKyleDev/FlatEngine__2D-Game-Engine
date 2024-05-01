@@ -41,13 +41,16 @@ namespace FlatEngine { namespace FlatGui {
 	// Global Colors
 	ImVec4 transparentColor = ImVec4(float(0.0), float(0.0), float(0.0), float(0));
 
-	ImVec4 outerWindowColor = ImVec4(float(0.2), float(0.2), float(0.2), float(0));
+	ImVec4 outerWindowColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
 	ImVec4 innerWindowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 windowTitleBg = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 componentBorderColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	// Inputs
 	ImVec4 inputColor = ImVec4(float(0.2), float(0.2), float(0.20), float(1));
+	// Tables
+	ImVec4 uneditableTableRowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(0));
 	// Combos
 	ImVec4 comboBgColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 comboHoveredColor = ImVec4(float(0.25), float(0.25), float(0.25), float(1));
@@ -67,9 +70,9 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 sliderColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 sliderHoveredColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 sliderActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 dragColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 dragColor = ImVec4(float(0.2), float(0.2), float(0.2), float(0));
 	ImVec4 dragHoveredColor = ImVec4(float(0.45), float(0.45), float(0.45), float(1));
-	ImVec4 dragActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 dragActiveColor = ImVec4(float(0.10), float(0.10), float(0.10), float(1));
 	// Checkboxes
 	extern ImVec4 checkboxBg = ImVec4(float(0.09), float(0.09), float(0.9), float(1));
 
@@ -1123,6 +1126,10 @@ namespace FlatEngine { namespace FlatGui {
 			RenderProfiler();
 		if (_showMappingContextEditor)
 			RenderMappingContextEditor();
+
+		bool show_demo_window = true;
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
 	void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset)
@@ -1459,6 +1466,17 @@ namespace FlatEngine { namespace FlatGui {
 	
 	void PushWindowStyles()
 	{
+		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			const char* name = ImGui::GetStyleColorName(i);
+			if (name == "TitleBgActive")
+			{
+				ImGuiStyle *ref = &ImGui::GetStyle();
+				ref->Colors[i] = windowTitleBg;
+			}
+		}
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, windowTitleBg);
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, windowTitleBg);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, windowTitleBg);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, windowTitleBg);
@@ -1484,6 +1502,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void PopWindowStyles()
 	{
+		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -1624,10 +1643,9 @@ namespace FlatEngine { namespace FlatGui {
 
 	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
 	{
-		ImGui::PushStyleColor(ImGuiCol_SliderGrab, dragColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, dragColor);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, dragActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, dragActiveColor);
 
 		if (width != 0)
 			ImGui::SetNextItemWidth(width);
@@ -1639,6 +1657,27 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 
 		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		return _sliderChanged;
+	}
+
+	bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags)
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, dragColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, dragActiveColor);
+
+		if (width != 0)
+			ImGui::SetNextItemWidth(width);
+		else
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		bool _sliderChanged = ImGui::DragInt(text.c_str(), &value, increment, min, max, "%d", flags);
+		// Set cursor type
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
