@@ -6,54 +6,53 @@ namespace FlatEngine
 {
 	Button::Button(long myID, long parentID)
 	{
-		this->SetType(ComponentTypes::Button);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->_mouseIsOver = false;
-		this->_hasMouseOverFired = false;
-		this->_active = true;
-		this->activeWidth = 5;
-		this->activeHeight = 3;
-		this->activeOffset = Vector2(0, 0);
-		this->activeLayer = 0;
+		SetType(ComponentTypes::Button);
+		SetID(myID);
+		SetParentID(parentID);
+		_mouseIsOver = false;
+		_hasMouseOverFired = false;
+		activeWidth = 5;
+		activeHeight = 3;
+		activeOffset = Vector2(0, 0);
+		activeLayer = 0;
 
 		// Initialize callback functions to nullptr
-		this->OnMouseOverFunction = nullptr;
-		this->OnMouseLeaveFunction = nullptr;
-		this->OnLeftClickFunction = nullptr;
-		this->OnRightClickFunction = nullptr;
+		OnMouseOverFunction = nullptr;
+		OnMouseLeaveFunction = nullptr;
+		OnLeftClickFunction = nullptr;
+		OnRightClickFunction = nullptr;
 
-		this->_mouseOverSet = false;
-		this->_mouseEnterSet = false;
-		this->_mouseLeaveSet = false;
-		this->_leftClickSet = false;
-		this->_rightClickSet = false;
+		_mouseOverSet = false;
+		_mouseEnterSet = false;
+		_mouseLeaveSet = false;
+		_leftClickSet = false;
+		_rightClickSet = false;
 	}
 
 	Button::Button(std::shared_ptr<Button> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Button);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->_mouseIsOver = false;
-		this->_hasMouseOverFired = false;
-		this->_active = toCopy->IsActive();
-		this->activeWidth = toCopy->GetActiveWidth();
-		this->activeHeight = toCopy->GetActiveHeight();
-		this->activeOffset = toCopy->GetActiveOffset();
-		this->activeLayer = toCopy->GetActiveLayer();
+		SetType(ComponentTypes::Button);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		_mouseIsOver = false;
+		_hasMouseOverFired = false;
+		activeWidth = toCopy->GetActiveWidth();
+		activeHeight = toCopy->GetActiveHeight();
+		activeOffset = toCopy->GetActiveOffset();
+		activeLayer = toCopy->GetActiveLayer();
 
 		// Initialize callback functions to nullptr
-		this->OnMouseOverFunction = nullptr;
-		this->OnMouseLeaveFunction = nullptr;
-		this->OnLeftClickFunction = nullptr;
-		this->OnRightClickFunction = nullptr;
+		OnMouseOverFunction = nullptr;
+		OnMouseLeaveFunction = nullptr;
+		OnLeftClickFunction = nullptr;
+		OnRightClickFunction = nullptr;
 
-		this->_mouseOverSet = false;
-		this->_mouseEnterSet = false;
-		this->_mouseLeaveSet = false;
-		this->_leftClickSet = false;
-		this->_rightClickSet = false;
+		_mouseOverSet = false;
+		_mouseEnterSet = false;
+		_mouseLeaveSet = false;
+		_leftClickSet = false;
+		_rightClickSet = false;
 	}
 
 	Button::~Button()
@@ -62,45 +61,40 @@ namespace FlatEngine
 
 	void Button::SetOnMouseOver(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{	
-		this->OnMouseOverFunction = callback;
-		this->_mouseOverSet = true;
+		OnMouseOverFunction = callback;
+		_mouseOverSet = true;
 	}
 
 	void Button::SetOnMouseEnter(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnMouseEnterFunction = callback;
-		this->_mouseEnterSet = true;
+		OnMouseEnterFunction = callback;
+		_mouseEnterSet = true;
 	}
 
 	void Button::SetOnMouseLeave(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnMouseLeaveFunction = callback;
-		this->_mouseLeaveSet = true;
+		OnMouseLeaveFunction = callback;
+		_mouseLeaveSet = true;
 	}
 
 	void Button::SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnLeftClickFunction = callback;
-		this->_leftClickSet = true;
+		OnLeftClickFunction = callback;
+		_leftClickSet = true;
 	}
 
 	void Button::SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnRightClickFunction = callback;
-		this->_rightClickSet = true;
-	}
-
-	void Button::SetActive(bool _active)
-	{
-		this->_active = _active;
+		OnRightClickFunction = callback;
+		_rightClickSet = true;
 	}
 
 	void Button::SetActiveDimensions(float width, float height)
 	{
 		if (width >= 0 && height >= 0)
 		{
-			this->activeWidth = width;
-			this->activeHeight = height;
+			activeWidth = width;
+			activeHeight = height;
 		}
 		else
 			FlatEngine::LogString("The active width or height you tried to set to Button component was < 0. Try again.");
@@ -108,78 +102,73 @@ namespace FlatEngine
 
 	void Button::SetActiveOffset(Vector2 offset)
 	{
-		this->activeOffset = offset;
-	}
-
-	bool Button::IsActive()
-	{
-		return this->_active;
+		activeOffset = offset;
 	}
 
 	void Button::SetActiveLayer(int layer)
 	{
 		if (layer >= 0)
-			this->activeLayer = layer;
+			activeLayer = layer;
 		else
 			FlatEngine::LogString("Button active layer must be an integer greater than 0.");
 	}
 
 	int Button::GetActiveLayer()
 	{
-		return this->activeLayer;
+		return activeLayer;
 	}
 
 	float Button::GetActiveWidth()
 	{
-		return this->activeWidth;
+		return activeWidth;
 	}
 
 	float Button::GetActiveHeight()
 	{
-		return this->activeHeight;
+		return activeHeight;
 	}
 
 	Vector2 Button::GetActiveOffset()
 	{
-		return this->activeOffset;
+		return activeOffset;
 	}
 
 	void Button::SetMouseIsOver(bool _isOver)
 	{
-		this->_mouseIsOver = _isOver;
+		_mouseIsOver = _isOver;
 	}
 	void Button::SetIsOverFired(bool _fired)
 	{
-		this->_hasMouseOverFired = _fired;
+		_hasMouseOverFired = _fired;
 	}
 
 	bool Button::MouseIsOver()
 	{
-		return this->_mouseIsOver;
+		return _mouseIsOver;
 	}
 
 	void Button::SetActiveEdges(ImVec4 edges)
 	{
-		this->activeEdges = edges;
+		activeEdges = edges;
 	}
 
 	ImVec4 Button::GetActiveEdges()
 	{
-		return this->activeEdges;
+		return activeEdges;
 	}
 
 	std::string Button::GetData()
 	{
 		json jsonData = {
 			{ "type", "Button" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "_isActive", this->_active },
-			{ "activeWidth", this->activeWidth },
-			{ "activeHeight", this->activeHeight },
-			{ "activeOffsetX", this->activeOffset.x },
-			{ "activeOffsetY", this->activeOffset.y },
-			{ "activeLayer", this->activeLayer },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "activeWidth", activeWidth },
+			{ "activeHeight", activeHeight },
+			{ "activeOffsetX", activeOffset.x },
+			{ "activeOffsetY", activeOffset.y },
+			{ "activeLayer", activeLayer },
 		};
 
 		std::string data = jsonData.dump();
@@ -188,30 +177,30 @@ namespace FlatEngine
 	}
 	void Button::SetConnectedScript(std::string scriptName)
 	{
-		this->connectedScript = scriptName;
+		connectedScript = scriptName;
 	}
 	std::string Button::GetConnectedScript()
 	{
-		return this->connectedScript;
+		return connectedScript;
 	}
 	bool Button::MouseOverSet()
 	{
-		return this->_mouseOverSet;
+		return _mouseOverSet;
 	}
 	bool Button::MouseEnterSet()
 	{
-		return this->_mouseEnterSet;
+		return _mouseEnterSet;
 	}
 	bool Button::MouseLeaveSet()
 	{
-		return this->_mouseLeaveSet;
+		return _mouseLeaveSet;
 	}
 	bool Button::LeftClickSet()
 	{
-		return this->_leftClickSet;
+		return _leftClickSet;
 	}
 	bool Button::RightClickSet()
 	{
-		return this->_rightClickSet;
+		return _rightClickSet;
 	}
 }

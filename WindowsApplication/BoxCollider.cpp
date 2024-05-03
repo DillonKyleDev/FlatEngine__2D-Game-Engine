@@ -6,87 +6,96 @@ namespace FlatEngine
 {
 	BoxCollider::BoxCollider(long myID, long parentID)
 	{
-		this->SetType(ComponentTypes::BoxCollider);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->_mouseIsOver = false;
-		this->_hasMouseOverFired = false;
-		this->_active = true;
-		this->activeWidth = 5;
-		this->activeHeight = 3;
-		this->activeOffset = Vector2(0, 0);
-		this->activeLayer = 0;
+		SetType(ComponentTypes::BoxCollider);
+		SetID(myID);
+		SetParentID(parentID);
+		activeWidth = 5;
+		activeHeight = 3;
+		activeOffset = Vector2(0, 0);
+		activeLayer = 0;
 
 		// Initialize callback functions to nullptr
-		this->OnActiveCollisionFunction = nullptr;
-		this->OnCollisionEnterFunction = nullptr;
-		this->OnCollisionLeaveFunction = nullptr;
-
-		this->_mouseOverSet = false;
-		this->_mouseEnterSet = false;
-		this->_mouseLeaveSet = false;
-		this->_leftClickSet = false;
-		this->_rightClickSet = false;
+		OnActiveCollision = nullptr;
+		OnCollisionEnter = nullptr;
+		OnCollisionLeave = nullptr;
 	}
 
 	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::BoxCollider);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->_mouseIsOver = false;
-		this->_hasMouseOverFired = false;
-		this->_active = toCopy->IsActive();
-		this->activeWidth = toCopy->GetActiveWidth();
-		this->activeHeight = toCopy->GetActiveHeight();
-		this->activeOffset = toCopy->GetActiveOffset();
-		this->activeLayer = toCopy->GetActiveLayer();
+		SetType(ComponentTypes::BoxCollider);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		activeWidth = toCopy->GetActiveWidth();
+		activeHeight = toCopy->GetActiveHeight();
+		activeOffset = toCopy->GetActiveOffset();
+		activeLayer = toCopy->GetActiveLayer();
 
 		// Initialize callback functions to nullptr
-		this->OnActiveCollisionFunction = nullptr;
-		this->OnCollisionEnterFunction = nullptr;
-		this->OnCollisionLeaveFunction = nullptr;
-
-		this->_mouseOverSet = false;
-		this->_mouseEnterSet = false;
-		this->_mouseLeaveSet = false;
-		this->_leftClickSet = false;
-		this->_rightClickSet = false;
+		OnActiveCollision = toCopy->OnActiveCollision;
+		OnCollisionEnter = toCopy->OnCollisionEnter;
+		OnCollisionLeave = toCopy->OnCollisionLeave;
 	}
 
 	BoxCollider::~BoxCollider()
 	{
 	}
 
-	void BoxCollider::SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
+	void BoxCollider::SetOnColliding(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnActiveCollisionFunction = callback;
-		this->_mouseOverSet = true;
+		OnActiveCollision = callback;
+		_onActiveCollidingSet = true;
 	}
 
 	void BoxCollider::SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnCollisionEnterFunction = callback;
-		this->_mouseEnterSet = true;
+		OnCollisionEnter = callback;
+		_onCollisionEnterSet = true;
 	}
 
 	void BoxCollider::SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback)
 	{
-		this->OnCollisionLeaveFunction = callback;
-		this->_mouseLeaveSet = true;
+		OnCollisionLeave = callback;
+		_onCollisionLeaveSet = true;
 	}
 
-	void BoxCollider::SetActive(bool _active)
+	bool BoxCollider::IsColliding()
 	{
-		this->_active = _active;
+		return _isColliding;
+	}
+
+	void BoxCollider::SetColliding(bool _colliding)
+	{
+		_isColliding = _colliding;
+	}
+
+	void BoxCollider::RemoveCollidingObject(std::shared_ptr<GameObject> object)
+	{
+		for (std::vector<std::shared_ptr<GameObject>>::iterator iterator = collidingObjects.begin(); iterator != collidingObjects.end();)
+		{
+			if ((*iterator)->GetID() == object->GetID())
+				collidingObjects.erase(iterator);
+
+			iterator++;
+		}
+	}
+
+	void BoxCollider::AddCollidingObject(std::shared_ptr<GameObject> object)
+	{
+		collidingObjects.push_back(object);
+	}
+
+	std::vector<std::shared_ptr<GameObject>> BoxCollider::GetCollidingObjects()
+	{
+		return collidingObjects;
 	}
 
 	void BoxCollider::SetActiveDimensions(float width, float height)
 	{
 		if (width >= 0 && height >= 0)
 		{
-			this->activeWidth = width;
-			this->activeHeight = height;
+			activeWidth = width;
+			activeHeight = height;
 		}
 		else
 			FlatEngine::LogString("The active width or height you tried to set to BoxCollider component was < 0. Try again.");
@@ -94,110 +103,73 @@ namespace FlatEngine
 
 	void BoxCollider::SetActiveOffset(Vector2 offset)
 	{
-		this->activeOffset = offset;
-	}
-
-	bool BoxCollider::IsActive()
-	{
-		return this->_active;
+		activeOffset = offset;
 	}
 
 	void BoxCollider::SetActiveLayer(int layer)
 	{
 		if (layer >= 0)
-			this->activeLayer = layer;
+			activeLayer = layer;
 		else
 			FlatEngine::LogString("BoxCollider active layer must be an integer greater than 0.");
 	}
 
 	int BoxCollider::GetActiveLayer()
 	{
-		return this->activeLayer;
+		return activeLayer;
 	}
 
 	float BoxCollider::GetActiveWidth()
 	{
-		return this->activeWidth;
+		return activeWidth;
 	}
 
 	float BoxCollider::GetActiveHeight()
 	{
-		return this->activeHeight;
+		return activeHeight;
 	}
 
 	Vector2 BoxCollider::GetActiveOffset()
 	{
-		return this->activeOffset;
-	}
-
-	void BoxCollider::SetMouseIsOver(bool _isOver)
-	{
-		this->_mouseIsOver = _isOver;
-	}
-	void BoxCollider::SetIsOverFired(bool _fired)
-	{
-		this->_hasMouseOverFired = _fired;
-	}
-
-	bool BoxCollider::MouseIsOver()
-	{
-		return this->_mouseIsOver;
+		return activeOffset;
 	}
 
 	void BoxCollider::SetActiveEdges(ImVec4 edges)
 	{
-		this->activeEdges = edges;
+		activeEdges = edges;
 	}
 
 	ImVec4 BoxCollider::GetActiveEdges()
 	{
-		return this->activeEdges;
+		return activeEdges;
 	}
 
 	std::string BoxCollider::GetData()
 	{
 		json jsonData = {
 			{ "type", "BoxCollider" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "_isActive", this->_active },
-			{ "activeWidth", this->activeWidth },
-			{ "activeHeight", this->activeHeight },
-			{ "activeOffsetX", this->activeOffset.x },
-			{ "activeOffsetY", this->activeOffset.y },
-			{ "activeLayer", this->activeLayer },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "activeWidth", activeWidth },
+			{ "activeHeight", activeHeight },
+			{ "activeOffsetX", activeOffset.x },
+			{ "activeOffsetY", activeOffset.y },
+			{ "activeLayer", activeLayer },
 		};
 
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
 	}
+
 	void BoxCollider::SetConnectedScript(std::string scriptName)
 	{
-		this->connectedScript = scriptName;
+		connectedScript = scriptName;
 	}
+
 	std::string BoxCollider::GetConnectedScript()
 	{
-		return this->connectedScript;
-	}
-	bool BoxCollider::MouseOverSet()
-	{
-		return this->_mouseOverSet;
-	}
-	bool BoxCollider::MouseEnterSet()
-	{
-		return this->_mouseEnterSet;
-	}
-	bool BoxCollider::MouseLeaveSet()
-	{
-		return this->_mouseLeaveSet;
-	}
-	bool BoxCollider::LeftClickSet()
-	{
-		return this->_leftClickSet;
-	}
-	bool BoxCollider::RightClickSet()
-	{
-		return this->_rightClickSet;
+		return connectedScript;
 	}
 }

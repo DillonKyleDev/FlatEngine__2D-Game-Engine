@@ -5,26 +5,27 @@ namespace FlatEngine
 {
 	Transform::Transform(long myID, long parentID)
 	{
-		this->SetType(ComponentTypes::Transform);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->position.x = 0;
-		this->position.y = 0;
-		this->scale.x = 1;
-		this->scale.y = 1;
-		this->rotation = 0;
+		SetType(ComponentTypes::Transform);
+		SetID(myID);
+		SetParentID(parentID);
+		position.x = 0;
+		position.y = 0;
+		scale.x = 1;
+		scale.y = 1;
+		rotation = 0;
 	}
 
 	Transform::Transform(std::shared_ptr<Transform> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Transform);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->position.x = toCopy->GetPosition().x;
-		this->position.y = toCopy->GetPosition().y;
-		this->scale.x = toCopy->GetScale().x;
-		this->scale.y = toCopy->GetScale().y;
-		this->rotation = toCopy->GetRotation();
+		SetType(ComponentTypes::Transform);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		position.x = toCopy->GetPosition().x;
+		position.y = toCopy->GetPosition().y;
+		scale.x = toCopy->GetScale().x;
+		scale.y = toCopy->GetScale().y;
+		rotation = toCopy->GetRotation();
 	}
 
 	Transform::~Transform()
@@ -35,13 +36,14 @@ namespace FlatEngine
 	{
 		json jsonData = { 
 			{ "type", "Transform" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "xPos", this->position.x }, 
-			{ "yPos", this->position.y },
-			{ "rotation", this->rotation },
-			{ "xScale", this->scale.x },
-			{ "yScale", this->scale.y }
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "xPos", position.x }, 
+			{ "yPos", position.y },
+			{ "rotation", rotation },
+			{ "xScale", scale.x },
+			{ "yScale", scale.y }
 		};
 
 		std::string data = jsonData.dump();
@@ -50,34 +52,34 @@ namespace FlatEngine
 	}
 
 	// Setters
-	void Transform::SetPosition(Vector2 position)
+	void Transform::SetPosition(Vector2 newPosition)
 	{
-		this->position = position;
+		position = newPosition;
 	}
 
-	void Transform::SetScale(Vector2 scale)
+	void Transform::SetScale(Vector2 newScale)
 	{
-		this->scale = scale;
+		scale = newScale;
 	}
 
-	void Transform::SetRotation(float rotation)
+	void Transform::SetRotation(float newRotation)
 	{
-		this->rotation = rotation;
+		rotation = newRotation;
 	}
 
 	// Getters
 	Vector2 Transform::GetPosition()
 	{
-		return this->position;
+		return position;
 	}
 
 	Vector2 Transform::GetScale()
 	{
-		return this->scale;
+		return scale;
 	}
 
 	float Transform::GetRotation()
 	{
-		return this->rotation;
+		return rotation;
 	}
 }

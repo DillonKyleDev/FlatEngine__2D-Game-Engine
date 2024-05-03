@@ -5,6 +5,9 @@
 #include "Text.h"
 #include "Audio.h"
 #include "CharacterController.h"
+#include "BoxCollider.h"
+//#include "CircleCollider.h"
+#include "RigidBody.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -34,6 +37,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Text(nameLabel.c_str());
 			ImGui::SameLine(0, 5);
 
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), flags))
 				focusedObject->SetName(newName);
@@ -41,7 +45,7 @@ namespace FlatEngine { namespace FlatGui {
 
 			bool _isActive = focusedObject->IsActive();
 
-			if (ImGui::Checkbox("Active", &_isActive))
+			if (RenderCheckbox("Active", _isActive))
 				focusedObject->SetActive(_isActive);
 
 			// Components section
@@ -93,10 +97,9 @@ namespace FlatEngine { namespace FlatGui {
 						// Component Name
 						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
 						ImGui::Text(componentType.c_str());
-						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 5));
 
 						// Same Line
-						ImGui::SameLine(ImGui::GetContentRegionMax().x - (16 + childPadding + 20), 5); // Add the expander icon on the same line
+						ImGui::SameLine(ImGui::GetContentRegionAvail().x - (childPadding + 42), 5);
 
 						// Pushes	
 						ImGui::PushItemWidth(-1.0f);
@@ -109,13 +112,14 @@ namespace FlatEngine { namespace FlatGui {
 						std::string trashcanID = "##trashIcon-" + i;
 						std::string openFileID = "##openFileIcon-" + i;
 
-
+						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 						// Trash Can Icon for removing Component from Focused Object
 						if (RenderImageButton(trashcanID.c_str(), trashTexture))
 							queuedForDelete = components[i]->GetID();
 
 						ImGui::SameLine(0, 5);
 
+						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 						// Draw Expand Icon for expanding/collapsing current component information
 						if (_isCollapsed)
 						{
@@ -131,6 +135,10 @@ namespace FlatEngine { namespace FlatGui {
 						{
 							ImGui::Separator();
 							ImGui::Separator();
+						}
+						else {
+							ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 15));
+							ImGui::Text("");
 						}
 
 
@@ -165,13 +173,19 @@ namespace FlatEngine { namespace FlatGui {
 								float scaleX = scale.x;
 								float scaleY = scale.y;
 								float rotation = transform->GetRotation();
+								bool _isActive = transform->IsActive();
 
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable;
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								transform->SetActive(_isActive);
+
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
 								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
 								{					
-									ImGui::TableSetupColumn("##PROPERTY");
-									ImGui::TableSetupColumn("##VALUE");
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##VALUE", 0, columnWidth);
 									ImGui::TableNextRow();								
 
 									// Position X
@@ -241,6 +255,11 @@ namespace FlatEngine { namespace FlatGui {
 								float textureWidth = sprite->GetTextureWidth();
 								float textureHeight = sprite->GetTextureHeight();
 								int renderOrder = sprite->GetRenderOrder();
+								bool _isActive = sprite->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								sprite->SetActive(_isActive);
 
 								// Sprite Path Strings
 								std::string pathString = "Path: ";
@@ -271,38 +290,49 @@ namespace FlatEngine { namespace FlatGui {
 								float xOffset = offset.x;
 								float yOffset = offset.y;
 
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable;
+								//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersV | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
-								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
+								if (ImGui::BeginTable("##SpriteProperties", 2, tableFlags))
 								{
-									ImGui::TableSetupColumn("##PROPERTY");
-									ImGui::TableSetupColumn("##VALUE");
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##VALUE", 0, columnWidth);
 
-									// Texture Width
-									//ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, uneditableTableRowColor);
-									ImGui::PushStyleColor(ImGuiCol_TableRowBg, uneditableTableRowColor);
-									ImGui::TableNextRow();									
+									// Texture Width									
+									ImGui::TableNextRow();			
+									//ImU32 row_bg_color = ImGui::GetColorU32(uneditableTableRowDarkColor);
+									//ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0 + 1, row_bg_color);
 									ImGui::TableSetColumnIndex(0);
+									// Set table cell bg color
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));									
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Texture width");
-									ImGui::TableSetColumnIndex(1);									
-									ImGui::Text(textureWidthString.c_str());									
-									ImGui::PushID("textureWidth");
-									ImGui::PopID();
+									ImGui::TableSetColumnIndex(1);		
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));			
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
+									ImGui::Text(textureWidthString.c_str());	
 									ImGui::PopStyleColor();
-
+									ImGui::PushID("textureWidth");
+									ImGui::PopID();									
+			
 									// Texture Height
-									ImGui::PushStyleColor(ImGuiCol_TableRowBg, uneditableTableRowColor);
 									ImGui::TableNextRow();								
 									ImGui::TableSetColumnIndex(0);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));									
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Texture height");
 									ImGui::TableSetColumnIndex(1);
-									ImGui::Text(textureHeightString.c_str());									
+								
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));									
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
+									ImGui::Text(textureHeightString.c_str());	
+									ImGui::PopStyleColor();
 									ImGui::PushID("textureHeight");
 									ImGui::PopID();
-									ImGui::PopStyleColor();
-
+									
 									// X Offset
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
@@ -349,6 +379,11 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isPrimary = camera->IsPrimary();
 								float zoom = camera->GetZoom();
 								ImVec4 frustrumColor = camera->GetFrustrumColor();
+								bool _isActive = camera->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								camera->SetActive(_isActive);
 
 								// Push Item Width Setting
 								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
@@ -385,21 +420,19 @@ namespace FlatEngine { namespace FlatGui {
 								// _isPrimaryCamera checkbox
 								// Before allowing this camera to be set as primary, we need to ensure it has a transform component
 								if (focusedObject->GetComponent(ComponentTypes::Transform) != nullptr)
-								{
-									ImGui::PushStyleColor(ImGuiCol_FrameBg, checkboxBg);
-									if (ImGui::Checkbox("Is Primary Camera", &_isPrimary))
+								{									
+									if (RenderCheckbox("Is Primary Camera", _isPrimary))
 									{
 										if (_isPrimary)
 											FlatEngine::GetLoadedScene()->SetPrimaryCamera(camera);
 										else
 											FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
-									}
-									ImGui::PopStyleColor();
+									}									
 								}
 								else
 								{
 									bool temp = false;
-									if (ImGui::Checkbox("Is Primary Camera", &temp))
+									if (RenderCheckbox("Is Primary Camera", temp))
 										FlatEngine::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
 									temp = false;
 									ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
@@ -412,6 +445,10 @@ namespace FlatEngine { namespace FlatGui {
 								std::shared_ptr<FlatEngine::ScriptComponent> script = std::static_pointer_cast<FlatEngine::ScriptComponent>(components[i]);
 								std::string path = script->GetAttachedScript();
 								bool _isActive = script->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								script->SetActive(_isActive);
 
 								// For path editing
 								char newPath[1024];
@@ -426,11 +463,6 @@ namespace FlatEngine { namespace FlatGui {
 								if (ImGui::InputText(inputId.c_str(), newPath, IM_ARRAYSIZE(newPath), flags))
 									script->SetAttachedScript(newPath);
 								ImGui::PopStyleColor();
-
-								// _isActive checkbox
-								std::string checkboxId = "Active##" + std::to_string(script->GetID());
-								ImGui::Checkbox(checkboxId.c_str(), &_isActive);
-								script->SetActive(_isActive);
 							}
 							else if (componentType == "Button")
 							{
@@ -442,35 +474,64 @@ namespace FlatEngine { namespace FlatGui {
 								int activeLayer = button->GetActiveLayer();
 
 								// Active Checkbox
-								ImGui::Checkbox("Active:", &_isActive);
-								button->SetActive(_isActive);
+								RenderCheckbox("Active", _isActive);
+								button->SetActive(_isActive);								
 
-								// Push Item Width Setting
-								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
-								// Drags for active width, height and offsets
-								ImGui::Text("Active width:");
-								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
-								ImGui::Text("Active height:");
+								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
+								{
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##VALUE", 0, columnWidth);
 
-								RenderDragFloat("##activeWidth", 0, activeWidth, 0.5f, 0.1f, -FLT_MAX);
-								ImGui::SameLine(0, 5);
-								RenderDragFloat("##activeHeight", 0, activeHeight, 0.5f, 0.1f, -FLT_MAX);
+									// Active Width
+									
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Active width");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeWidth", 0, activeWidth, 0.5f, 0, 1000);
+									ImGui::PushID("activeWidth");
+									ImGui::PopID();
 
-								ImGui::Text("Active offset x:");
-								ImGui::SameLine(ImGui::GetContentRegionMax().x / 2, 5);
-								ImGui::Text("Active offset y:");
+									// Active Height
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Active height");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeHeight", 0, activeHeight, 0.5f, 0, 1000);
+									ImGui::PushID("activeHeight");
+									ImGui::PopID();
 
-								RenderDragFloat("##activeoffsetx", 0, activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
-								ImGui::SameLine(0, 5);
-								RenderDragFloat("##activeoffsety", 0, activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
+									button->SetActiveDimensions(activeWidth, activeHeight);
 
-								// Assign the new slider values
-								button->SetActiveDimensions(activeWidth, activeHeight);
-								button->SetActiveOffset(activeOffset);
+									// X Offset
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("X Offset");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeoffsetx", 0, activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("activeXOffset");
+									ImGui::PopID();
 
-								// Pop Width Setting
-								ImGui::PopItemWidth();
+									// Y Offset
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Y Offset");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeoffsety", 0, activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
+									ImGui::PushID("activeYOffset");
+									ImGui::PopID();
+
+									button->SetActiveOffset(activeOffset);
+
+									ImGui::EndTable();
+								}
 							}
 							else if (componentType == "Canvas")
 							{
@@ -482,9 +543,14 @@ namespace FlatEngine { namespace FlatGui {
 								int layerNumber = canvas->GetLayerNumber();
 								bool _blocksLayers = canvas->GetBlocksLayers();
 								std::vector<std::shared_ptr<Button>> canvasButtons = canvas->GetButtons();
+								bool _isActive = canvas->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								canvas->SetActive(_isActive);
 
 								// _BlocksLayers Checkbox
-								ImGui::Checkbox("Blocks Layers:", &_blocksLayers);
+								RenderCheckbox("Blocks Layers:", _blocksLayers);
 								canvas->SetBlocksLayers(_blocksLayers);
 
 								// Text
@@ -518,6 +584,11 @@ namespace FlatEngine { namespace FlatGui {
 								std::string path = animation->GetAnimationPath();
 								char newPath[1024];
 								strcpy_s(newPath, path.c_str());
+								bool _isActive = animation->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								animation->SetActive(_isActive);
 
 								// Sprite Animation Path String
 								std::string pathString = "Path: ";
@@ -540,37 +611,20 @@ namespace FlatEngine { namespace FlatGui {
 									animation->SetAnimationPath(newPath);
 								ImGui::PopStyleColor();
 
-								// Retrieve Animation values
-								float ticksPerFrame = animation->GetTicksPerFrame();
-								//std::vector<std::shared_ptr<GameObject>> frames = animation->GetFrames();
-
-								// Text
-								ImGui::Text("Ticks per frame: ");
-
-								// Set Ticks Per Frame
-								ImGui::SliderFloat("##ticksPerFrame", &ticksPerFrame, 0.5f, -FLT_MAX, "%.3f");
-								animation->SetTicksPerFrame(ticksPerFrame);
-
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
-								// Total Frames Text
-								//std::string totalFrames = "Total frames: " + std::to_string(frames.size());
-								//ImGui::Text(totalFrames.c_str());
-
-								// Add Frame Button
-								if (RenderButton("Add Frame"))
-									animation->AddFrame();
-
-								//ImGui::SliderInt("Animation Time", &previewAnimationTime, 0, 12000);
-								// Play Animation Button
 								if (RenderButton("Play Animation"))
 									animation->Play(GetEllapsedGameTime());
 
-								// Set cursor type
-								if (ImGui::IsItemHovered())
-									ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+								ImGui::SameLine(0, 5);
+
+								if (animation->GetAnimationPath() != "")
+									if (RenderButton("Edit Animation"))
+									{
+										_showAnimator = true;
+										_showAnimationPreview = true;
+
+										SetFocusedAnimation(LoadAnimationFile(animation->GetAnimationPath()));
+										loadedProject->SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
+									}
 							}
 							else if (componentType == "Audio")
 							{
@@ -579,6 +633,11 @@ namespace FlatEngine { namespace FlatGui {
 								// Retrieve Audio values
 								std::string path = audio->GetPath();
 								bool _isMusic = audio->IsMusic();
+								bool _isActive = audio->IsActive();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								audio->SetActive(_isActive);
 
 								// For path editing
 								char newPath[1024];
@@ -605,7 +664,7 @@ namespace FlatEngine { namespace FlatGui {
 
 								// _isMusic checkbox, also reload the effect as music or chunk
 								std::string checkboxId = "Is Music##" + std::to_string(audio->GetID());
-								if (ImGui::Checkbox(checkboxId.c_str(), &_isMusic))
+								if (RenderCheckbox(checkboxId, _isMusic))
 								{
 									if (_isMusic)
 										audio->LoadMusic(newPath);
@@ -635,7 +694,11 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								// Sprite path and texture dimension variables
 								std::shared_ptr<FlatEngine::Text> text = std::static_pointer_cast<FlatEngine::Text>(components[i]);
+								bool _isActive = text->IsActive();
 
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								text->SetActive(_isActive);
 
 								// Text String Variables
 								std::string textText = text->GetText();
@@ -726,15 +789,20 @@ namespace FlatEngine { namespace FlatGui {
 								float gravity = characterController->GetGravity();
 								bool _isMoving = characterController->IsMoving();
 								float velocity = characterController->GetVelocity();
+								bool _isActive = characterController->IsActive();
 
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
-									ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable ;
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								characterController->SetActive(_isActive);
+
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
 								if (ImGui::BeginTable("##CharacterControllerProps", 2, tableFlags, ImVec2(-1, 0)))
 								{
 
-									ImGui::TableSetupColumn("##PROPERTY");
-									ImGui::TableSetupColumn("##DATA");
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##DATA", 0, columnWidth);
 
 									ImGui::TableNextRow();
 
@@ -742,10 +810,8 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Walk Speed");
 									ImGui::TableSetColumnIndex(1);
-									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
 									if (RenderDragFloat("##walkSpeedSlider", ImGui::GetContentRegionAvail().x, walkSpeed, 0.01f, 0.0f, 20))
 										characterController->SetWalkSpeed(walkSpeed);
-									ImGui::PopStyleColor();
 									ImGui::PushID("WalkSpeed");
 									ImGui::PopID();
 
@@ -754,10 +820,8 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Run Speed");
 									ImGui::TableSetColumnIndex(1);									
-									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
 									if (RenderDragFloat("##runSpeedSlider", ImGui::GetContentRegionAvail().x, runSpeed, 0.01f, 0.0f, 20))
 										characterController->SetRunSpeed(runSpeed);
-									ImGui::PopStyleColor();
 									ImGui::PushID("RunSpeed");
 									ImGui::PopID();
 
@@ -766,27 +830,33 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Gravity");
 									ImGui::TableSetColumnIndex(1);
-									ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
 									if (RenderDragFloat("##gravitySlider", ImGui::GetContentRegionAvail().x, gravity, 0.05f, 0.0f, 100))
 										characterController->SetGravity(gravity);
-									ImGui::PopStyleColor();
 									ImGui::PushID("Gravity");
 									ImGui::PopID();
 
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Velocity");
 									ImGui::TableSetColumnIndex(1);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));									
 									ImGui::Text(std::to_string(velocity).c_str());
 									ImGui::PushID("Velocity");
 									ImGui::PopID();
 
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));									
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Is Moving");
 									ImGui::TableSetColumnIndex(1);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));									
 									std::string isMoving = "false";
 									if (characterController->IsMoving())
 										isMoving = "true";
@@ -797,7 +867,199 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::EndTable();
 								}
 							}
+							else if (componentType == "BoxCollider")
+							{
+								// Get Character Controller
+								std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(components[i]);
+								bool _isColliding = boxCollider->IsColliding();
+								float activeWidth = boxCollider->GetActiveWidth();
+								float activeHeight = boxCollider->GetActiveHeight();
+								ImVec4 activeEdges = boxCollider->GetActiveEdges();
+								Vector2 activeOffset = boxCollider->GetActiveOffset();
+								int activeLayer = boxCollider->GetActiveLayer();
+								bool _isActive = boxCollider->IsActive();
 
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								boxCollider->SetActive(_isActive);
+
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
+
+								if (ImGui::BeginTable("##BoxColliderProps", 2, tableFlags, ImVec2(-1, 0)))
+								{
+
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##DATA", 0, columnWidth);
+
+									ImGui::TableNextRow();
+
+									// Active Width
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Width");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeBoxColliderWidth", ImGui::GetContentRegionAvail().x, activeWidth, 0.01f, 0.0f, 20);
+									ImGui::PushID("activeWidth");
+									ImGui::PopID();
+
+									// Active Height
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Run Speed");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeHeight", ImGui::GetContentRegionAvail().x, activeHeight, 0.01f, 0.0f, 20);
+									ImGui::PushID("activeBoxColliderHeight");
+									ImGui::PopID();
+
+									boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+
+									// Active Offset X
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("X Offset");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragFloat("##activeOffsetBoxColliderX", ImGui::GetContentRegionAvail().x, activeOffset.x, 0.05f, 0.0f, 100);
+									ImGui::PushID("activeOffsetBoxColliderX");
+									ImGui::PopID();
+
+									// Active Offset Y
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::Text("Y Offset");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									RenderDragFloat("##activeOffsetBoxColliderY", ImGui::GetContentRegionAvail().x, activeOffset.x, 0.05f, 0.0f, 100);								
+									ImGui::PushID("activeOffsetBoxColliderY");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Is Colliding");
+									ImGui::TableSetColumnIndex(1);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									std::string isCollidingString = "false";
+									if (_isColliding)
+										isCollidingString = "true";
+									ImGui::Text(isCollidingString.c_str());
+									ImGui::PushID("BoxIsColliding");
+									ImGui::PopID();
+
+									// Active Layer
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Active Layer");
+									ImGui::TableSetColumnIndex(1);
+									RenderDragInt("##activeLayer", 0, activeLayer, 1, 0, 100);
+									boxCollider->SetActiveLayer(activeLayer);
+									ImGui::PushID("renderOrder");
+									ImGui::PopID();
+
+									ImGui::EndTable();
+								}
+							}
+							else if (componentType == "RigidBody")
+							{
+								// Get Character Controller
+								std::shared_ptr<RigidBody> rigidBody = std::static_pointer_cast<RigidBody>(components[i]);
+								float mass = rigidBody->GetMass();
+								float gravity = rigidBody->GetGravity();
+								float angularDrag = rigidBody->GetAngularDrag();
+								float velocity = rigidBody->GetVelocity();
+								bool _isContinious = rigidBody->IsContinuous();
+								bool _isKinematic = rigidBody->IsKinematic();
+								bool _isGrounded = rigidBody->IsGrounded();
+								bool _isMoving = rigidBody->IsMoving();
+
+								// Active Checkbox
+								RenderCheckbox("Active", _isActive);
+								rigidBody->SetActive(_isActive);
+
+								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
+
+								if (ImGui::BeginTable("##RigidBodyProps", 2, tableFlags, ImVec2(-1, 0)))
+								{
+
+									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
+									ImGui::TableSetupColumn("##DATA", 0, columnWidth);
+
+									ImGui::TableNextRow();
+
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Mass");
+									ImGui::TableSetColumnIndex(1);
+									if (RenderDragFloat("##massSlider", ImGui::GetContentRegionAvail().x, mass, 0.01f, 0.0f, 20))
+										rigidBody->SetMass(mass);
+									ImGui::PushID("Mass");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Gravity Scale");
+									ImGui::TableSetColumnIndex(1);
+									if (RenderDragFloat("##gravityScaleSlider", ImGui::GetContentRegionAvail().x, gravity, 0.01f, 0.0f, 20))
+										rigidBody->SetGravity(gravity);
+									ImGui::PushID("RunSpeed");
+									ImGui::PopID();
+
+									ImGui::TableSetColumnIndex(0);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Velocity");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									ImGui::Text(std::to_string(velocity).c_str());
+									ImGui::PushID("Velocity");
+									ImGui::PopID();
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Is Moving");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									std::string isMovingString = "false";
+									if (_isMoving)
+										isMovingString = "true";
+									ImGui::Text(isMovingString.c_str());
+									ImGui::PushID("RigidBodyMoving");
+									ImGui::PopID();
+
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Is Grounded");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									std::string isGroundedString = "false";
+									if (_isGrounded)
+										isGroundedString = "true";
+									ImGui::Text(isGroundedString.c_str());
+									ImGui::PushID("RigidBodyGrounded");
+									ImGui::PopID();
+
+									// Continuous Checkbox
+									RenderCheckbox("Continuous:", _isContinious);
+									rigidBody->SetIsContinuous(_isContinious);
+
+									// Kinematic Checkbox
+									RenderCheckbox("Kinematic:", _isKinematic);
+									rigidBody->SetIsKinematic(_isKinematic);
+
+									ImGui::EndTable();
+								}
+							}
+							
 							// Pops
 							ImGui::PopItemWidth();
 							ImGui::PopStyleColor();

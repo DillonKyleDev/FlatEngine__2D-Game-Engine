@@ -5,20 +5,21 @@ namespace FlatEngine
 {
 	Audio::Audio(long myID, long parentID)
 	{
-		this->SetType(ComponentTypes::Audio);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->sound = std::make_shared<Sound>();
-		this->_isMusic = false;
+		SetType(ComponentTypes::Audio);
+		SetID(myID);
+		SetParentID(parentID);
+		sound = std::make_shared<Sound>();
+		_isMusic = false;
 	}
 
 	Audio::Audio(std::shared_ptr<Audio> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Audio);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->_isMusic = toCopy->IsMusic();
-		this->sound = toCopy->sound;
+		SetType(ComponentTypes::Audio);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		_isMusic = toCopy->IsMusic();
+		sound = toCopy->sound;
 	}
 
 	Audio::~Audio()
@@ -27,71 +28,72 @@ namespace FlatEngine
 
 	void Audio::LoadMusic(std::string path)
 	{
-		this->sound->LoadMusic(path);
+		sound->LoadMusic(path);
 	}
 
 	void Audio::LoadEffect(std::string path)
 	{
-		this->sound->LoadEffect(path);
+		sound->LoadEffect(path);
 	}
 
-	void Audio::SetPath(std::string path)
+	void Audio::SetPath(std::string newPath)
 	{
-		this->path = path;
+		path = newPath;
 	}
 
 	std::string Audio::GetPath()
 	{
-		return this->path;
+		return path;
 	}
 
-	void Audio::SetIsMusic(bool _isMusic)
+	void Audio::SetIsMusic(bool _music)
 	{
-		this->_isMusic = _isMusic;
+		_isMusic = _music;
 	}
 
 	bool Audio::IsMusic()
 	{
-		return this->_isMusic;
+		return _isMusic;
 	}
 
 	void Audio::Play(int channel)
 	{
-		if (this->_isMusic)
-			this->sound->PlayMusic();
+		if (_isMusic)
+			sound->PlayMusic();
 		else
-			this->sound->PlayEffect(channel);
+			sound->PlayEffect(channel);
 	}
 
 	void Audio::Pause(int channel)
 	{
-		if (this->_isMusic)
-			this->sound->PauseMusic();
+		if (_isMusic)
+			sound->PauseMusic();
 		else
-			this->sound->HaultChannel(channel);
+			sound->HaultChannel(channel);
 	}
 
 	void Audio::Stop(int channel)
 	{
-		if (this->_isMusic)
-			this->sound->StopMusic();
+		if (_isMusic)
+			sound->StopMusic();
 		else
-			this->sound->HaultChannel(channel);
+			sound->HaultChannel(channel);
 	}
 
 	bool Audio::IsMusicPlaying()
 	{
-		return this->sound->IsMusicPlaying();
+		return sound->IsMusicPlaying();
 	}
 
 	std::string Audio::GetData()
 	{
 		json jsonData = {
 			{ "type", "Audio" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "path", this->path },
-			{ "_isMusic", this->_isMusic },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "path", path },
+			{ "_isMusic", _isMusic },
 		};
 
 		std::string data = jsonData.dump();

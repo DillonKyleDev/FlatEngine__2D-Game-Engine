@@ -91,6 +91,8 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				if (ImGui::BeginMenu("Windows"))
 				{
+					if (ImGui::MenuItem("ImGui Demo Window", NULL, _showDemoWindow))
+						_showDemoWindow = !_showDemoWindow;
 					if (ImGui::MenuItem("Scene View", NULL, _showSceneView))
 						_showSceneView = !_showSceneView;
 					if (ImGui::MenuItem("Game View", NULL, _showGameView))

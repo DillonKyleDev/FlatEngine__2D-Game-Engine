@@ -5,7 +5,7 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		bool _controlPanelWindow = false;
 		PushWindowStyles();
-		ImGui::Begin("Gameloop Control Panel", &_controlPanelWindow, ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None);
+		ImGui::Begin("Gameloop Control Panel", &_controlPanelWindow, ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoUndocking);
 		PopWindowStyles();
 
 		std::string playID = "##PlayGameloopIcon";
@@ -23,10 +23,10 @@ namespace FlatEngine { namespace FlatGui {
 		if (gameLoop->IsStarted() && !gameLoop->IsPaused())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16));
+			RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16), whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16)))
+		else if (RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16), whiteColor))
 			StartGameLoop();
 
 		ImGui::SameLine(0, 5);
@@ -34,10 +34,10 @@ namespace FlatEngine { namespace FlatGui {
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16));
+			RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16)))
+		else if (RenderImageButton(pauseID.c_str(), pauseTexture, ImVec2(16, 16), whiteColor))
 			PauseGameLoop();
 
 
@@ -46,10 +46,10 @@ namespace FlatEngine { namespace FlatGui {
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16));
+			RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16)))
+		else if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), whiteColor))
 			StopGameLoop();
 
 		ImGui::PopStyleVar();

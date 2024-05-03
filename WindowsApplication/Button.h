@@ -27,10 +27,8 @@ namespace FlatEngine
 		void SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 		void SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 
-		void SetActive(bool _active);
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
-		bool IsActive();
 		void SetActiveLayer(int layer);
 		int GetActiveLayer();
 		float GetActiveWidth();
@@ -67,7 +65,6 @@ namespace FlatEngine
 
 		bool _mouseIsOver;
 		bool _hasMouseOverFired;
-		bool _active;
 		float activeWidth;
 		float activeHeight;
 		ImVec4 activeEdges;

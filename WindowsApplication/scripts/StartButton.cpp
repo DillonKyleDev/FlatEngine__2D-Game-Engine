@@ -80,5 +80,5 @@ void StartButton::Update(float deltaTime)
 		yDir = moveY.jaxis.value;
 
 	if (characterController != nullptr)
-		characterController->MoveToward(Vector2(xDir, yDir));
+		characterController->MoveToward(Vector2((float)xDir, (float)yDir));
 }

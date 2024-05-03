@@ -40,17 +40,58 @@ namespace FlatEngine { namespace FlatGui {
 
 	// Global Colors
 	ImVec4 transparentColor = ImVec4(float(0.0), float(0.0), float(0.0), float(0));
-
-	ImVec4 outerWindowColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 whiteColor = ImVec4(float(1.0), float(1.0), float(1.0), float(1.0));
+	// Windows
+	ImVec4 windowBgColor = ImVec4(float(0.08), float(0.08), float(0.10), float(1));
+	ImVec4 outerWindowColor = ImVec4(float(0.13), float(0.13), float(0.15), float(1));
 	ImVec4 innerWindowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
 	ImVec4 singleItemColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 windowTitleBg = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
+	ImVec4 windowTitleBg = ImVec4(float(0.25), float(0.25), float(0.12), float(1));
 	ImVec4 componentBorderColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 dockingPreviewColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
+	ImVec4 dockingPreviewEmptyColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
+	// ImGui Key colors
+	ImVec4 frameBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 frameBgActiveColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 frameBgHoveredColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	// tabs
+	ImVec4 tabColor = ImVec4(float(0.15), float(0.15), float(0.2), float(1));
+	ImVec4 tabActiveColor = ImVec4(float(0.4), float(0.4), float(0.42), float(1));
+	ImVec4 tabHoveredColor = ImVec4(float(0.4), float(0.4), float(0.42), float(1));
+	ImVec4 tabUnfocusedColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
+	ImVec4 tabUnfocusedActiveColor = ImVec4(float(0.3), float(0.3), float(0.31), float(1));
+	// titles
+	ImVec4 titleBgColor = ImVec4(float(0.25), float(0.25), float(0.12), float(1));
+	ImVec4 titleBgActiveColor = ImVec4(float(0.2), float(0.2), float(0.25), float(1));
+	ImVec4 titleBgCollapsedColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	// Text
+	ImVec4 textSelectedBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	// Resizers
+	ImVec4 resizeGripColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
+	ImVec4 resizeGripHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
+	ImVec4 resizeGripActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
+	// Misc (not sure what they're for)
+	ImVec4 popupBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 navWindowHighlightColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 navHighlightColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 navWindowDimBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 modalWindowDimBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	// Custom Colors
+	// 
 	// Inputs
-	ImVec4 inputColor = ImVec4(float(0.2), float(0.2), float(0.20), float(1));
+	ImVec4 inputColor = ImVec4(float(0.2), float(0.2), float(0.21), float(1));
 	// Tables
-	ImVec4 uneditableTableRowColor = ImVec4(float(0.1), float(0.1), float(0.1), float(0));
+	ImVec4 uneditableTableTextColor = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
+	ImVec4 uneditableTableRowLightColor = ImVec4(float(0.3), float(0.35), float(0.55), float(1));
+	ImVec4 uneditableTableRowDarkColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
+	ImVec4 uneditableTableRowFieldColor = ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
+	// Trees
+	ImVec4 treeSelectableColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
+	ImVec4 treeSelectableHoveredColor = ImVec4(float(0.3), float(0.35), float(0.65), float(1));
+	ImVec4 treeSelectableActiveColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
+	ImVec4 treeSelectableSelectedColor = ImVec4(0.5f, 0.5f, 0.8f, 1.0f);
+	ImVec4 hierarchyChildObjectColor = ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
 	// Combos
 	ImVec4 comboBgColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
 	ImVec4 comboHoveredColor = ImVec4(float(0.25), float(0.25), float(0.25), float(1));
@@ -60,12 +101,13 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 comboArrowColor = ImVec4(float(0.11), float(0.11), float(0.13), float(1));
 	ImVec4 comboArrowHoveredColor = ImVec4(float(0.15), float(0.15), float(0.16), float(1));
 	// Buttons
-	ImVec4 buttonColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
-	ImVec4 buttonHoveredColor = ImVec4(float(0.3), float(0.35), float(0.55), float(1));
-	ImVec4 buttonActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 imageButtonColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 buttonColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
+	ImVec4 buttonHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
+	ImVec4 buttonActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
+	ImVec4 imageButtonColor = ImVec4(float(0.18), float(0.18), float(0.18), float(1));
 	ImVec4 imageButtonHoveredColor = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
 	ImVec4 imageButtonActiveColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
+	ImVec4 imageButtonTintColor = whiteColor;
 	// Sliders/Drags
 	ImVec4 sliderColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
 	ImVec4 sliderHoveredColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
@@ -74,7 +116,10 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 dragHoveredColor = ImVec4(float(0.45), float(0.45), float(0.45), float(1));
 	ImVec4 dragActiveColor = ImVec4(float(0.10), float(0.10), float(0.10), float(1));
 	// Checkboxes
-	extern ImVec4 checkboxBg = ImVec4(float(0.09), float(0.09), float(0.9), float(1));
+	ImVec4 checkboxBgColor = ImVec4(float(0.09), float(0.09), float(0.09), float(1));
+	ImVec4 checkboxCheckColor = ImVec4(0.3f, 0.3f, 0.7f, 1.0f);
+	ImVec4 checkboxHoveredColor = ImVec4(float(0.2), float(0.2), float(0.3), float(1));
+	ImVec4 checkboxActiveColor = ImVec4(float(0.15), float(0.15), float(0.23), float(1));
 
 
 	// For rendering sprites
@@ -88,6 +133,7 @@ namespace FlatEngine { namespace FlatGui {
 	int iconTransparency = 100;
 
 	// Window Visibility
+	bool _showDemoWindow = false;
 	bool _showSceneView = true;
 	bool _showGameView = true;
 	bool _showHierarchy = true;
@@ -113,7 +159,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls for imgui ui nav
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 
 		// Setup Dear ImGui style
@@ -148,6 +194,48 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		else
 			CreateNewScene();
+
+		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			const char* name = ImGui::GetStyleColorName(i);
+			LogString(name);
+			if (name == "TitleBgActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = titleBgActiveColor;
+			}
+			if (name == "TabUnfocusedActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = tabUnfocusedActiveColor;
+			}
+			if (name == "TabActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = tabActiveColor;
+			}
+			if (name == "ResizeGripHovered")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = resizeGripHoveredColor;
+			}
+			if (name == "ResizeGripActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = resizeGripActiveColor;
+			}
+			if (name == "DockingPreview")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = dockingPreviewColor;
+			}
+			if (name == "DockingEmptyBg")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = dockingPreviewEmptyColor;
+			}
+		}
 	}
 
 	void RunOnceAfterInitialization()
@@ -1104,6 +1192,10 @@ namespace FlatEngine { namespace FlatGui {
 
 	void AddViewports()
 	{
+		// ImGui Demo Window
+		if (_showDemoWindow)
+			ImGui::ShowDemoWindow(&_showDemoWindow);
+
 		MainMenuBar();
 		RenderToolbar();
 		if (_showHierarchy)
@@ -1126,10 +1218,6 @@ namespace FlatEngine { namespace FlatGui {
 			RenderProfiler();
 		if (_showMappingContextEditor)
 			RenderMappingContextEditor();
-
-		bool show_demo_window = true;
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
 	void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset)
@@ -1466,42 +1554,34 @@ namespace FlatEngine { namespace FlatGui {
 	
 	void PushWindowStyles()
 	{
-		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
-		for (int i = 0; i < ImGuiCol_COUNT; i++)
-		{
-			const char* name = ImGui::GetStyleColorName(i);
-			if (name == "TitleBgActive")
-			{
-				ImGuiStyle *ref = &ImGui::GetStyle();
-				ref->Colors[i] = windowTitleBg;
-			}
-		}
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_Tab, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TabActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TabHovered, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_NavHighlight, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, windowTitleBg);
-		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, windowTitleBg);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, windowBgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, frameBgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, frameBgActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, frameBgHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_Tab, tabColor);
+		ImGui::PushStyleColor(ImGuiCol_TabActive, tabActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_TabHovered, tabHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, tabUnfocusedColor);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, tabUnfocusedActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, titleBgColor);
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, titleBgActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, titleBgCollapsedColor);
+		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, textSelectedBgColor);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, resizeGripColor);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, resizeGripActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, resizeGripHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, popupBgColor);
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, navWindowHighlightColor);
+		ImGui::PushStyleColor(ImGuiCol_NavHighlight, navHighlightColor);
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, navWindowDimBgColor);
+		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, modalWindowDimBgColor);
+		ImGui::PushStyleColor(ImGuiCol_DockingPreview, dockingPreviewColor);
+		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, dockingPreviewEmptyColor);
 	}
 
 	void PopWindowStyles()
 	{
+		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -1599,6 +1679,7 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			_isClicked = ImGui::Button(text.c_str());
 
+		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
@@ -1609,18 +1690,20 @@ namespace FlatEngine { namespace FlatGui {
 		return _isClicked;
 	}
 
-	bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size, ImVec4 bgColor, ImVec4 hoverColor, ImVec4 activeColor)
+	bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size, ImVec4 tint, ImVec4 bgColor, ImVec4 hoverColor, ImVec4 activeColor)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uv0, uv1, bg_col, tint_col);
+		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uv0, uv1, transparentColor, tint);
 
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -1652,6 +1735,7 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 		bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
+
 		// Set cursor type
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
@@ -1661,6 +1745,35 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 
 		return _sliderChanged;
+	}
+
+	bool RenderCheckbox(std::string text, bool &_toCheck)
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, checkboxBgColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, checkboxHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, checkboxActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_CheckMark, checkboxCheckColor);
+
+		bool _checked = ImGui::Checkbox(text.c_str(), &_toCheck);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		return _checked;
+	}
+
+	ImU32 ImVec4ToImU32(ImVec4 color)
+	{
+		float redValue = color.x;
+		float greenValue = color.y;
+		float blueValue = color.z;
+		float alphaValue = color.w;
+		return (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
 	}
 
 	bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags)
@@ -2710,9 +2823,9 @@ namespace FlatEngine { namespace FlatGui {
 	//ImGui_ImplSDL2_NewFrame();
 	//ImGui::NewFrame();
 
-//bool show_demo_window = true;
-//	if (show_demo_window)
-//	ImGui::ShowDemoWindow(&show_demo_window);
+//bool _showDemoWindow = true;
+//	if (_showDemoWindow)
+//	ImGui::ShowDemoWindow(&_showDemoWindow);
 
 
 	//// Rendering

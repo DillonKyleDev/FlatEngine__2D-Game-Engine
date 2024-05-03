@@ -5,28 +5,29 @@
 namespace FlatEngine {
 	Canvas::Canvas(long myID, long parentID, long canvasID)
 	{
-		this->SetType(ComponentTypes::Canvas);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->canvasID = canvasID;
-		this->buttons = std::vector<std::shared_ptr<FlatEngine::Button>>();
-		this->layerNumber = canvasID;
-		this->_blocksLayers = true;
-		this->width = 50;
-		this->height = 30;
+		SetType(ComponentTypes::Canvas);
+		SetID(myID);
+		SetParentID(parentID);
+		canvasID = canvasID;
+		buttons = std::vector<std::shared_ptr<FlatEngine::Button>>();
+		layerNumber = canvasID;
+		_blocksLayers = true;
+		width = 50;
+		height = 30;
 	}
 
 	Canvas::Canvas(std::shared_ptr<Canvas> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Canvas);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->canvasID = toCopy->canvasID;
-		this->buttons = toCopy->GetButtons();
-		this->layerNumber = toCopy->GetLayerNumber();
-		this->_blocksLayers = toCopy->GetBlocksLayers();
-		this->width = toCopy->GetWidth();
-		this->height = toCopy->GetHeight();
+		SetType(ComponentTypes::Canvas);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		canvasID = toCopy->canvasID;
+		buttons = toCopy->GetButtons();
+		layerNumber = toCopy->GetLayerNumber();
+		_blocksLayers = toCopy->GetBlocksLayers();
+		width = toCopy->GetWidth();
+		height = toCopy->GetHeight();
 	}
 
 	Canvas::~Canvas()
@@ -35,57 +36,57 @@ namespace FlatEngine {
 
 	void Canvas::AddButton(std::shared_ptr<FlatEngine::Button> button)
 	{
-		this->buttons.push_back(button);
+		buttons.push_back(button);
 	}
 
 	void Canvas::RemoveButton(std::shared_ptr<FlatEngine::Button> button)
 	{
-		for (int i = 0; i < this->buttons.size(); i++)
+		for (int i = 0; i < buttons.size(); i++)
 		{
-			if (button->GetID() == this->buttons[i]->GetID())
-				this->buttons.erase(this->buttons.begin() + i);
+			if (button->GetID() == buttons[i]->GetID())
+				buttons.erase(buttons.begin() + i);
 		}
 	}
 
 	float Canvas::GetWidth()
 	{
-		return this->width;
+		return width;
 	}
 
 	float Canvas::GetHeight()
 	{
-		return this->height;
+		return height;
 	}
 
-	void Canvas::SetDimensions(float width, float height)
+	void Canvas::SetDimensions(float newWidth, float newHeight)
 	{
-		if (width >= 0 && height >= 0)
+		if (newWidth >= 0 && newHeight >= 0)
 		{
-			this->width = width;
-			this->height = height;
+			width = newWidth;
+			height = newHeight;
 		}
 		else
 			FlatEngine::LogString("Canvas::SetDimensions() - Canvas width and height must be positive values.");
 	}
 
-	void Canvas::SetLayerNumber(int layerNumber)
+	void Canvas::SetLayerNumber(int newLayerNumber)
 	{
-		this->layerNumber = layerNumber;
+		layerNumber = newLayerNumber;
 	}
 
 	int Canvas::GetLayerNumber()
 	{
-		return this->layerNumber;
+		return layerNumber;
 	}
 
-	void Canvas::SetBlocksLayers(bool _blocksLayers)
+	void Canvas::SetBlocksLayers(bool _doesBlock)
 	{
-		this->_blocksLayers = _blocksLayers;
+		_blocksLayers = _doesBlock;
 	}
 
 	bool Canvas::GetBlocksLayers()
 	{
-		return this->_blocksLayers;
+		return _blocksLayers;
 	}
 
 	std::vector<std::shared_ptr<FlatEngine::Button>> Canvas::GetButtons()
@@ -97,12 +98,13 @@ namespace FlatEngine {
 	{
 		json jsonData = {
 			{ "type", "Canvas" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "width", this->width },
-			{ "height", this->height },
-			{ "layerNumber", this->layerNumber },
-			{ "_blocksLayers", this->_blocksLayers },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "width", width },
+			{ "height", height },
+			{ "layerNumber", layerNumber },
+			{ "_blocksLayers", _blocksLayers },
 		};
 
 		std::string data = jsonData.dump();

@@ -10,28 +10,27 @@ namespace FlatEngine
 {
 	Animation::Animation(long myID, long parentID)
 	{
-		this->SetType(ComponentTypes::Animation);
-		this->SetID(myID);
-		this->SetParentID(parentID);
+		SetType(ComponentTypes::Animation);
+		SetID(myID);
+		SetParentID(parentID);
 		animationName = "";
 		animationProperties = {};
 		animationPath = "";
-		this->_playing = false;
-		this->ticksPerFrame = 10;
-		this->animationStartTime = -1;
+		_playing = false;
+		animationStartTime = -1;
 	}
 
 	Animation::Animation(std::shared_ptr<Animation> toCopy, long newParentID)
 	{
-		this->SetType(ComponentTypes::Animation);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
+		SetType(ComponentTypes::Animation);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
 		animationName = toCopy->GetAnimationName();
 		animationProperties = toCopy->animationProperties;
 		animationPath = toCopy->GetAnimationPath();
-		this->_playing = false;
-		this->ticksPerFrame = toCopy->GetTicksPerFrame();
-		this->animationStartTime = toCopy->animationStartTime;
+		_playing = false;
+		animationStartTime = toCopy->animationStartTime;
 	}
 
 	Animation::~Animation()
@@ -45,38 +44,29 @@ namespace FlatEngine
 	void Animation::Play(int startTime)
 	{
 		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(animationPath);
-		this->_playing = true;
+		_playing = true;
 		// Start animation timer
-		this->animationStartTime = startTime;
+		animationStartTime = startTime;
 	}
 
 	void Animation::Stop()
 	{
-		this->_playing = false;
+		_playing = false;
 	}
 
 	bool Animation::IsPlaying()
 	{
-		return this->_playing;
-	}
-
-	void Animation::SetTicksPerFrame(float ticksPerFrame)
-	{
-		this->ticksPerFrame = ticksPerFrame;
-	}
-
-	float Animation::GetTicksPerFrame()
-	{
-		return this->ticksPerFrame;
+		return _playing;
 	}
 
 	std::string Animation::GetData()
 	{
 		json jsonData = {
 			{ "type", "Animation" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "path", this->animationPath }
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "path", animationPath }
 		};
 
 		std::string data = jsonData.dump();
@@ -109,14 +99,14 @@ namespace FlatEngine
 	void Animation::LerpToCenter()
 	{
 		// Get variables
-		std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(this->GetParentID());
+		std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(GetParentID());
 		std::shared_ptr<FlatEngine::Transform> transform = std::static_pointer_cast<FlatEngine::Transform>(thisObject->GetComponent(ComponentTypes::Transform));
 
 		// Save original position
 		static Vector2 startingPoint = transform->GetPosition();
 
 		// If the animation should still be on the first frame
-		//if (animationStartTime + this->ticksPerFrame * 1 < FlatEngine::GetEllapsedGameTime())
+		//if (animationStartTime + ticksPerFrame * 1 < FlatEngine::GetEllapsedGameTime())
 		//{
 		//	// Do first frame things
 		//	transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(0, 0), .01f));
@@ -141,7 +131,7 @@ namespace FlatEngine
 			transform->SetScale(FlatEngine::Lerp(transform->GetScale(), Vector2(1, 1), 0.1f));
 		}
 		else
-			this->Stop();
+			Stop();
 	}
 
 	void Animation::PlayAnimation(int ellapsedTime)
@@ -151,15 +141,9 @@ namespace FlatEngine
 		if (!props->_isSorted)
 			props->SortKeyFrames();
 
-		LogFloat(props->animationLength, "Animation Length: ");
-		LogFloat(ellapsedTime, "Ellapsed Time: ");
-		LogFloat(animationStartTime, "Start Time: ");
-		if (props->_loop)
-			LogString("Looping on");
-
 		static float lastTransformAnimationFrameEnd = 0;
 		static float lastSpriteAnimationFrameEnd = 0;
-		static float currentKeyFrame = animationStartTime;
+		static float currentKeyFrame = (float)animationStartTime;
 		static Vector2 lastFrameTransform = Vector2(0, 0);
 
 		// While the animation is not over
@@ -174,7 +158,7 @@ namespace FlatEngine
 					if (transformFrame - 1 >= props->transformProperties.begin())
 						lastFrame = transformFrame - 1;
 
-					int timeLeft = (*transformFrame)->time - ellapsedTime - animationStartTime;
+					int timeLeft = (int)(*transformFrame)->time - ellapsedTime - animationStartTime;
 					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
 					lastFrameTransform = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
@@ -237,6 +221,6 @@ namespace FlatEngine
 			animationStartTime = ellapsedTime;
 		}
 		else
-			this->Stop();
+			Stop();
 	}
 }

@@ -99,7 +99,7 @@ namespace FlatEngine {
 		}
 
 
-		ImGui::Checkbox("Animate", &anim);
+		RenderCheckbox("Animate", anim);
 		if (anim)
 			offset = (offset + 1) % 100;
 

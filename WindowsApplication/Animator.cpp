@@ -176,13 +176,13 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		};
 
-		if (animProps->animationName != "")
+		if (animProps != nullptr && animProps->animationName != "")
 		{
 			std::shared_ptr<Animation> animation = nullptr;
 			if (objectForFocusedAnimation != nullptr)
 				animation = objectForFocusedAnimation->GetAnimationComponent();
 
-			if (ImGui::Checkbox("Loop Animation", &animProps->_loop) && animation != nullptr && animation->IsPlaying())
+			if (RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
 			{
 				animation->Stop();
 				animation->Play(GetEngineTime());
@@ -236,46 +236,47 @@ namespace FlatEngine { namespace FlatGui {
 			// List properties on this animation
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
-			ImGui::BeginListBox("##AnimationProperties", ImVec2(-FLT_MIN, -FLT_MIN));
+			if (ImGui::BeginListBox("##AnimationProperties", ImVec2(-FLT_MIN, -FLT_MIN)))
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+				auto RenderPropertyButton = [&](std::string property, int size, std::string& node_clicked)
+					{
+						ImGuiTreeNodeFlags node_flags;
+
+						std::string treeID = property + "_node";
+						if (node_clicked == property)
+							node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+						else
+							node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+						//// TreeNode Opener - No TreePop because it's a leaf
+						if (size > 0)
+						{
+							ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, property.c_str());
+							if (ImGui::IsItemClicked())
+								node_clicked = property;
+						}
+					};
+
+				RenderPropertyButton("Transform", (int)animProps->transformProperties.size(), node_clicked);
+				RenderPropertyButton("Sprite", (int)animProps->spriteProperties.size(), node_clicked);
+				RenderPropertyButton("Camera", (int)animProps->cameraProperties.size(), node_clicked);
+				RenderPropertyButton("Script", (int)animProps->scriptProperties.size(), node_clicked);
+				RenderPropertyButton("Button", (int)animProps->buttonProperties.size(), node_clicked);
+				RenderPropertyButton("Canvas", (int)animProps->canvasProperties.size(), node_clicked);
+				RenderPropertyButton("Audio", (int)animProps->audioProperties.size(), node_clicked);
+				RenderPropertyButton("Text", (int)animProps->textProperties.size(), node_clicked);
+				RenderPropertyButton("BoxCollider", (int)animProps->boxColliderProperties.size(), node_clicked);
+				RenderPropertyButton("CircleCollider", (int)animProps->circleColliderProperties.size(), node_clicked);
+				RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProperties.size(), node_clicked);
+				RenderPropertyButton("CharacterController", (int)animProps->characterControllerProperties.size(), node_clicked);
+
+				ImGui::PopStyleVar();
+				ImGui::EndListBox();
+			}
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
-
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
-
-			auto RenderPropertyButton = [&](std::string property, int size, std::string& node_clicked)
-			{
-				ImGuiTreeNodeFlags node_flags;
-
-				std::string treeID = property + "_node";
-				if (node_clicked == property)
-					node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-				else
-					node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-				//// TreeNode Opener - No TreePop because it's a leaf
-				if (size > 0)
-				{
-					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, property.c_str());
-					if (ImGui::IsItemClicked())
-						node_clicked = property;
-				}
-			};
-
-			RenderPropertyButton("Transform", animProps->transformProperties.size(), node_clicked);
-			RenderPropertyButton("Sprite", animProps->spriteProperties.size(), node_clicked);
-			RenderPropertyButton("Camera", animProps->cameraProperties.size(), node_clicked);
-			RenderPropertyButton("Script", animProps->scriptProperties.size(), node_clicked);
-			RenderPropertyButton("Button", animProps->buttonProperties.size(), node_clicked);
-			RenderPropertyButton("Canvas", animProps->canvasProperties.size(), node_clicked);
-			RenderPropertyButton("Audio", animProps->audioProperties.size(), node_clicked);
-			RenderPropertyButton("Text", animProps->textProperties.size(), node_clicked);
-			RenderPropertyButton("BoxCollider", animProps->boxColliderProperties.size(), node_clicked);
-			RenderPropertyButton("CircleCollider", animProps->circleColliderProperties.size(), node_clicked);
-			RenderPropertyButton("RigidBody", animProps->rigidBodyProperties.size(), node_clicked);
-			RenderPropertyButton("CharacterController", animProps->characterControllerProperties.size(), node_clicked);
-
-			ImGui::PopStyleVar();
-			ImGui::EndListBox();
 		}
 
 		ImGui::EndChild(); // Animator Properties EndChild()
@@ -384,8 +385,8 @@ namespace FlatEngine { namespace FlatGui {
 		
 
 		// Render animator scrubber
-		static float scrubberTime = previewAnimationTime / 1000;
-		static Vector2 keyFramePos = Vector2(scrubberTime, -.05);
+		static float scrubberTime = (float)previewAnimationTime / 1000;
+		static Vector2 keyFramePos = Vector2(scrubberTime, -0.05f);
 		static float animatorGridStep = 50;
 
 		// Lambda
@@ -425,7 +426,7 @@ namespace FlatEngine { namespace FlatGui {
 						if (pipPosition.x + inputOutput.MouseDelta.x / gridStep >= 0)
 						{
 							pipPosition.x += inputOutput.MouseDelta.x / gridStep;
-							previewAnimationTime = pipPosition.x * 1000;
+							previewAnimationTime = (int)(pipPosition.x * 1000);
 						}
 					}
 				}
@@ -829,7 +830,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild();
 		////////////////
 
-		ImGui::Checkbox("Preview Animation", &_playPreviewAnimation);
+		RenderCheckbox("Preview Animation", _playPreviewAnimation);
 
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
 		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();

@@ -163,8 +163,6 @@ namespace FlatEngine
 		void Stop();
 
 		bool IsPlaying();
-		void SetTicksPerFrame(float ticksPerFrame);
-		float GetTicksPerFrame();
 		std::string GetData();
 		void SetAnimationName(std::string animationName);
 		std::string GetAnimationName();
@@ -180,7 +178,6 @@ namespace FlatEngine
 		std::string animationName;
 		std::string animationPath;
 		bool _playing;
-		float ticksPerFrame;
 		int animationStartTime;
 	};
 }

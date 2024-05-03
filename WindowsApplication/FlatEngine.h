@@ -173,15 +173,54 @@ namespace FlatEngine
 
 		// Colors
 		extern ImVec4 transparentColor;
+		extern ImVec4 whiteColor;
 		extern ImVec4 outerWindowColor;
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
 		extern ImVec4 windowTitleBg;
 		extern ImVec4 componentBorderColor;
+		// Windows
+		extern ImVec4 windowBgColor;
+		extern ImVec4 frameBgColor;
+		extern ImVec4 frameBgActiveColor;
+		extern ImVec4 frameBgHoveredColor;
+		extern ImVec4 dockingPreviewColor;
+		extern ImVec4 dockingPreviewEmptyColor;
+		// tabs
+		extern ImVec4 tabColor;
+		extern ImVec4 tabHoveredColor;
+		extern ImVec4 tabUnfocusedColor;
+		extern ImVec4 tabUnfocusedActiveColor;
+		extern ImVec4 tabActiveColor;
+		// title
+		extern ImVec4 titleBgColor;
+		extern ImVec4 titleBgActiveColor;
+		extern ImVec4 titleBgCollapsedColor;
+		// Text
+		extern ImVec4 textSelectedBgColor;
+		// Resizers
+		extern ImVec4 resizeGripColor;
+		extern ImVec4 resizeGripActiveColor;
+		extern ImVec4 resizeGripHoveredColor;
+		// Misc (not sure what they're for)
+		extern ImVec4 popupBgColor;
+		extern ImVec4 navWindowHighlightColor;
+		extern ImVec4 navHighlightColor;
+		extern ImVec4 navWindowDimBgColor; 
+		extern ImVec4 modalWindowDimBgColor;
 		// Input
 		extern ImVec4 inputColor;
 		// Tables
-		extern ImVec4 uneditableTableRowColor;
+		extern ImVec4 uneditableTableTextColor;
+		extern ImVec4 uneditableTableRowLightColor;
+		extern ImVec4 uneditableTableRowDarkColor;
+		extern ImVec4 uneditableTableRowFieldColor;
+		// Trees
+		extern ImVec4 treeSelectableColor;
+		extern ImVec4 treeSelectableHoveredColor;
+		extern ImVec4 treeSelectableActiveColor;
+		extern ImVec4 treeSelectableSelectedColor;
+		extern ImVec4 hierarchyChildObjectColor;
 		// Combos
 		extern ImVec4 comboBgColor;
 		extern ImVec4 comboHoveredColor;
@@ -197,6 +236,7 @@ namespace FlatEngine
 		extern ImVec4 imageButtonColor;
 		extern ImVec4 imageButtonHoveredColor;
 		extern ImVec4 imageButtonActiveColor;
+		extern ImVec4 imageButtonTintColor;
 		// Sliders/Drags
 		extern ImVec4 sliderColor;
 		extern ImVec4 sliderHoveredColor;
@@ -205,7 +245,10 @@ namespace FlatEngine
 		extern ImVec4 dragHoveredColor;
 		extern ImVec4 dragActiveColor;
 		// Checkboxes
-		extern ImVec4 checkboxBg;
+		extern ImVec4 checkboxBgColor;
+		extern ImVec4 checkboxCheckColor;
+		extern ImVec4 checkboxHoveredColor;
+		extern ImVec4 checkboxActiveColor;
 
 		extern int maxSpriteLayers;
 		extern float spriteScaleMultiplier;
@@ -266,6 +309,7 @@ namespace FlatEngine
 		extern bool _clearBufferEveryFrame;
 
 		// Window Visibility
+		extern bool _showDemoWindow;
 		extern bool _showSceneView;
 		extern bool _showGameView;
 		extern bool _showHierarchy;
@@ -321,19 +365,21 @@ namespace FlatEngine
 		extern void PushComboStyles();
 		extern void PopComboStyles();
 		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
-		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(12, 12), ImVec4 bgColor = imageButtonColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
+		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(16, 16), ImVec4 tint = imageButtonTintColor, ImVec4 bgColor = imageButtonColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
 		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);
-		
+		extern bool RenderCheckbox(std::string text, bool &_toCheck);
+
+		extern ImU32 ImVec4ToImU32(ImVec4 color);
 		
 		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 		extern ImVec2 ViewportToWorld(ImVec2 viewportPosition);
 		// Recursive - For Rendering Hierarchy Objects and their children
-		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
-		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete);
+		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
+		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
 		// Recursive - For adding GameObjects and their children to the scene/game view
 		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
 		ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera);

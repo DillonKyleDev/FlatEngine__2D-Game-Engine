@@ -103,11 +103,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-			ImGui::GetFont()->Scale *= 1.3;
-			ImGui::PushFont(ImGui::GetFont());
 			ImGui::Text("Select mapping context to edit:");
-			ImGui::GetFont()->Scale /= 1.3;
-			ImGui::PopFont();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::Separator();
@@ -143,11 +139,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Separator();
 		
 			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 10, ImGui::GetCursorPosY() + 5));
-			ImGui::GetFont()->Scale *= 1.3;
-			ImGui::PushFont(ImGui::GetFont());
 			ImGui::Text("Create new Input Action:");
-			ImGui::GetFont()->Scale /= 1.3;
-			ImGui::PopFont();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::Separator();
@@ -215,11 +207,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-			ImGui::GetFont()->Scale *= 1.3;
-			ImGui::PushFont(ImGui::GetFont());
 			ImGui::Text("Existing Bindings");
-			ImGui::GetFont()->Scale /= 1.3;
-			ImGui::PopFont();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::Separator();

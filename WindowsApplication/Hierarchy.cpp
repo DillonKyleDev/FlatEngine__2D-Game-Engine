@@ -32,11 +32,19 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Scene Objects in Hierarchy
 		{
+			static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+			float objectColumnWidth = ImGui::GetContentRegionAvail().x - 10;
+			float visibleIconColumnWidth = 24;
+			static float currentIndent = 10;
+
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
-			ImGui::BeginListBox("##SceneObjects", ImVec2(-FLT_MIN, -FLT_MIN));
+			ImGui::BeginTable("##HierarchyTable", 2, tableFlags);
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
+
+			ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
+			ImGui::TableSetupColumn("##OBJECT", 0, objectColumnWidth);
 
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
@@ -52,20 +60,13 @@ namespace FlatEngine { namespace FlatGui {
 					std::shared_ptr<GameObject> currentObject = (*object);
 					std::string name = currentObject->GetName();
 					const char* charName = name.c_str();
+					float indent = 0;
 
 					// If the object has children call the recursive AddObjectWithChild();
 					if (currentObject->HasChildren())
-						AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete);
+						AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete, indent);
 					else
-						AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete);
-
-					// Push Item Spacing
-					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 1.0f });
-					ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(1, 1, 1, 0.2f));
-					ImGui::Separator();
-					ImGui::PopStyleColor();
-					// Pop Item Spacing
-					ImGui::PopStyleVar();
+						AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete, -15);
 				}
 			}
 			if (node_clicked != -1)
@@ -82,19 +83,34 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			ImGui::EndListBox();
+			// Add empty table rows so the table goes all the way to the bottom of the screen
+			float availableVerticalSpace = ImGui::GetContentRegionAvail().y;
+			if (availableVerticalSpace > 22)
+			{
+				for (int i = 0; i < availableVerticalSpace / 22 - 1; i++)
+				{
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(1);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					ImGui::Text("");
+				}
+			}
+
+			ImGui::EndTable();
 
 			// Delete queued GameObject
 			if (queuedForDelete != -1)
 			{
 				long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+				long saveFocusedObject = focusedObjectID;
 
-				// Unfocus GameObject first if it is focused
-				if (queuedForDelete == focusedObjectID)
-				{
-					FlatEngine::SetFocusedGameObjectID(-1);
-				}
-				FlatEngine::DeleteGameObject(queuedForDelete);
+				// Unfocus focused GameObject first
+				SetFocusedGameObjectID(-1);
+				DeleteGameObject(queuedForDelete);
+
+				// If previous focused object still exists, set it to focused object again
+				if (GetObjectById(saveFocusedObject) != nullptr)
+					SetFocusedGameObjectID(saveFocusedObject);
 			}
 		}
 
@@ -104,8 +120,9 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper function for Hierarchy child rendering (Recursive)
-	void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long& queuedForDelete)
+	void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
+		indent += 15;
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
@@ -115,26 +132,46 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		// Push item spacing
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+		// Go to next row and column
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(1);
+		if (currentObject->GetParentID() != -1)
+		{
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+			// Set table cell bg color for child object						
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
+		}
 
+
+		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
 		// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
 		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
 		
 		// Right click context menu for GameObject
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			if (RenderButton("Add child"))
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
+			if (ImGui::MenuItem("Create Child"))
 			{
 				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
-			if (RenderButton("Delete GameObject"))
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
 			ImGui::EndPopup();
 		}
 		// For whether the object is the currentlySelected GameObject
@@ -163,26 +200,20 @@ namespace FlatEngine { namespace FlatGui {
 				std::string name = child->GetName();
 				const char* childName = name.c_str();
 
-				ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(1, 1, 1, 0.05f));
-				ImGui::Separator();
-				ImGui::PopStyleColor();
-
 				if (child->HasChildren())
-					AddObjectWithChild(child, childName, node_clicked, queuedForDelete);
+					AddObjectWithChild(child, childName, node_clicked, queuedForDelete, indent);
 				else
-					AddObjectWithoutChild(child, childName, node_clicked, queuedForDelete);
+					AddObjectWithoutChild(child, childName, node_clicked, queuedForDelete, indent);
 			}
 
 			ImGui::TreePop(); // TreeNode Closer
 		}
-
-		// Pop Item Spacing
-		ImGui::PopStyleVar();
 	}
 
 	// Helper function for Hierarchy child rendering
-	void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long& queuedForDelete)
+	void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
+		indent += 15;
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 
@@ -192,14 +223,30 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+		// Go to next row and column
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(1);
+		if (currentObject->GetParentID() != -1)
+		{
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+			// Set table cell bg color for child object						
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
 		// TreeNode Opener - No TreePop because it's a leaf
 		ImGui::TreeNodeEx((void*)(intptr_t)currentObject->GetID(), node_flags, charName);
-		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
 
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			if (ImGui::MenuItem("Add Child"))
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
+			if (ImGui::MenuItem("Create Child"))
 			{
 				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
@@ -211,6 +258,8 @@ namespace FlatEngine { namespace FlatGui {
 				queuedForDelete = currentObject->GetID();
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
 			
 			ImGui::EndPopup();
 		}

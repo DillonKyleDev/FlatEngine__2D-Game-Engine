@@ -38,30 +38,25 @@ namespace FlatEngine { namespace FlatGui {
 
 	void CreateIcons()
 	{
-		uv0 = ImVec2(0.0f, 0.0f);
-		uv1 = ImVec2(1.0f, 1.0f);
-		tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
-		bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
-
 		playIcon->loadFromFile("assets/images/icons/PlayIcon.png");
 		playTexture = playIcon->getTexture();
 		pauseIcon->loadFromFile("assets/images/icons/PauseIcon.png");
 		pauseTexture = pauseIcon->getTexture();
 		stopIcon->loadFromFile("assets/images/icons/StopIcon.png");
 		stopTexture = stopIcon->getTexture();
-		expandIcon->loadFromFile("assets/images/icons/Expand.png");
+		expandIcon->loadFromFile("assets/images/icons/expand.png");
 		expandTexture = expandIcon->getTexture();
-		expandFlippedIcon->loadFromFile("assets/images/icons/ExpandFlipped.png");
+		expandFlippedIcon->loadFromFile("assets/images/icons/collapse.png");
 		expandFlippedTexture = expandFlippedIcon->getTexture();
 		float expandWidth = (float)expandIcon->getWidth();
 		float expandHeight = (float)expandIcon->getHeight();
-		trashIcon->loadFromFile("assets/images/icons/Trashcan.png");
+		trashIcon->loadFromFile("assets/images/icons/delete.png");
 		trashTexture = trashIcon->getTexture();
-		openFileIcon->loadFromFile("assets/images/icons/OpenFileIcon.png");
+		openFileIcon->loadFromFile("assets/images/icons/open.png");
 		openFileTexture = openFileIcon->getTexture();
-		newFileIcon->loadFromFile("assets/images/icons/NewFileIcon.png");
+		newFileIcon->loadFromFile("assets/images/icons/new.png");
 		newFileTexture = newFileIcon->getTexture();
-		saveFileIcon->loadFromFile("assets/images/icons/SaveIcon.png");
+		saveFileIcon->loadFromFile("assets/images/icons/save.png");
 		saveFileTexture = saveFileIcon->getTexture();
 		keyFrameIcon->loadFromFile("assets/images/icons/KeyFrameIcon.png");
 		keyFrameTexture = keyFrameIcon->getTexture();

@@ -5,123 +5,123 @@ namespace FlatEngine
 {
 	Sprite::Sprite(long myID, long parentID)
 	{
-		this->SetType(Component::ComponentTypes::Sprite);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->texture = nullptr;
-		this->textureWidth = 0;
-		this->textureHeight = 0;
-		this->offset = { 0,0 };
-		this->path = "";
-		this->renderOrder = 0;
+		SetType(Component::ComponentTypes::Sprite);
+		SetID(myID);
+		SetParentID(parentID);
+		texture = nullptr;
+		textureWidth = 0;
+		textureHeight = 0;
+		offset = { 0,0 };
+		path = "";
+		renderOrder = 0;
 	}
 
 	Sprite::Sprite(std::shared_ptr<Sprite> toCopy, long newParentID)
 	{
-		this->SetType(Component::ComponentTypes::Sprite);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->texture = toCopy->GetTexture();
-		this->textureWidth = toCopy->GetTextureWidth();
-		this->textureHeight = toCopy->GetTextureHeight();
-		this->offset = toCopy->GetOffset();
-		this->path = toCopy->GetPath();
-		this->renderOrder = toCopy->GetRenderOrder();
+		SetType(Component::ComponentTypes::Sprite);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		texture = toCopy->GetTexture();
+		textureWidth = toCopy->GetTextureWidth();
+		textureHeight = toCopy->GetTextureHeight();
+		offset = toCopy->GetOffset();
+		path = toCopy->GetPath();
+		renderOrder = toCopy->GetRenderOrder();
 	}
-
 
 	Sprite::~Sprite()
 	{
 	}
 
-
 	std::string Sprite::GetData()
 	{
 		json jsonData = { 
 			{ "type", "Sprite" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "texture", this->path },
-			{ "texture_width", this->textureWidth },
-			{ "texture_height", this->textureHeight },
-			{ "xOffset", this->offset.x },
-			{ "yOffset", this->offset.y },
-			{ "renderOrder", this->renderOrder }
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "texture", path },
+			{ "texture_width", textureWidth },
+			{ "texture_height", textureHeight },
+			{ "xOffset", offset.x },
+			{ "yOffset", offset.y },
+			{ "renderOrder", renderOrder }
 ,		};
 		std::string data = jsonData.dump();
 		return data;
 	}
 
 
-	void Sprite::SetTexture(std::string path)
+	void Sprite::SetTexture(std::string newPath)
 	{
-		if (path != "")
+		if (newPath != "")
 		{
 			// Save path for referencing later if needed
-			this->path = path;
-			Texture* texture = new Texture();
-			if (texture->loadFromFile(path))
+			path = newPath;
+			Texture* newTexture = new Texture();
+			if (newTexture->loadFromFile(newPath))
 			{
-				this->texture = texture->getTexture();
-				this->textureWidth = (float)texture->getWidth();
-				this->textureHeight = (float)texture->getHeight();
+				texture = newTexture->getTexture();
+				textureWidth = (float)newTexture->getWidth();
+				textureHeight = (float)newTexture->getHeight();
 
 				// Set pivot point to the center of the texture by default
-				this->offset = { this->textureWidth / 2, this->textureHeight / 2 };
+				offset = { textureWidth / 2, textureHeight / 2 };
 			}
 		}
 		else
-			this->texture = nullptr;
+			texture = nullptr;
 	}
 
 
-	void Sprite::SetOffset(Vector2 offset)
+	void Sprite::SetOffset(Vector2 newOffset)
 	{
-		this->offset = offset;
+		offset = newOffset;
 	}
 
 
 	Vector2 Sprite::GetOffset()
 	{
-		return this->offset;
+		return offset;
 	}
 
 
 	SDL_Texture* Sprite::GetTexture()
 	{
-		return this->texture;
+		return texture;
 	}
 
 
 	float Sprite::GetTextureWidth()
 	{
-		return (float)this->textureWidth;
+		return (float)textureWidth;
 	}
 
 
 	float Sprite::GetTextureHeight()
 	{
-		return (float)this->textureHeight;
+		return (float)textureHeight;
 	}
 
 	
 	std::string Sprite::GetPath()
 	{
-		return this->path;
+		return path;
 	}
 
 	void Sprite::SetRenderOrder(int order)
 	{
-		this->renderOrder = order;
+		renderOrder = order;
 	}
 
 	int Sprite::GetRenderOrder()
 	{
-		return this->renderOrder;
+		return renderOrder;
 	}
 
 	void Sprite::RemoveTexture()
 	{
-		this->texture = NULL;
+		texture = NULL;
 	}
 }

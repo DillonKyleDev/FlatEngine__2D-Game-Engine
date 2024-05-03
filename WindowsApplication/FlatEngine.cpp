@@ -165,24 +165,26 @@ namespace FlatEngine
 	void SetFocusedGameObjectID(long ID)
 	{
 		FocusedGameObjectID = ID;
-		std::shared_ptr<GameObject> focusedObject = GetObjectById(ID);
-		std::shared_ptr<Animation> animationComponent = focusedObject->GetAnimationComponent();
-		std::string animationPath = "";
-
-		if (animationComponent != nullptr)
-			animationPath = animationComponent->GetAnimationPath();
-	
-
-		// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
-		if (FlatGui::_showAnimator && ID != -1 && FocusedAnimation != nullptr &&
-			animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
+		if (ID != -1)
 		{
-			std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
-			objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, -1);
-			std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
-			transform->SetPosition(Vector2(0,0));
-			animatorObjects.push_back(objectForFocusedAnimation);
-			GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects);
+			std::shared_ptr<GameObject> focusedObject = GetObjectById(ID);
+			std::shared_ptr<Animation> animationComponent = focusedObject->GetAnimationComponent();
+			std::string animationPath = "";
+
+			if (animationComponent != nullptr)
+				animationPath = animationComponent->GetAnimationPath();
+	
+			// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
+			if (FlatGui::_showAnimator && FocusedAnimation != nullptr &&
+				animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
+			{
+				std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
+				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, -1);
+				std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
+				transform->SetPosition(Vector2(0,0));
+				animatorObjects.push_back(objectForFocusedAnimation);
+				GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects);
+			}
 		}
 	}
 

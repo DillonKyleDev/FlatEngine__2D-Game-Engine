@@ -10,22 +10,21 @@ namespace FlatEngine
 {
 	ScriptComponent::ScriptComponent(long myID, long parentID)
 	{
-		this->SetType(Component::ComponentTypes::Script);
-		this->SetID(myID);
-		this->SetParentID(parentID);
-		this->_isActive = true;
-		this->attachedScript = "";
-		this->scriptInstance = nullptr;
+		SetType(Component::ComponentTypes::Script);
+		SetID(myID);
+		SetParentID(parentID);
+		attachedScript = "";
+		scriptInstance = nullptr;
 	}
 
 	ScriptComponent::ScriptComponent(std::shared_ptr<ScriptComponent> toCopy, long newParentID)
 	{
-		this->SetType(Component::ComponentTypes::Script);
-		this->SetID(GetNextComponentID());
-		this->SetParentID(newParentID);
-		this->_isActive = toCopy->IsActive();
-		this->attachedScript = toCopy->GetAttachedScript();
-		this->scriptInstance = toCopy->GetScriptInstance();
+		SetType(Component::ComponentTypes::Script);
+		SetID(GetNextComponentID());
+		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
+		attachedScript = toCopy->GetAttachedScript();
+		scriptInstance = toCopy->GetScriptInstance();
 	}
 
 	ScriptComponent::~ScriptComponent()
@@ -34,43 +33,32 @@ namespace FlatEngine
 
 	void ScriptComponent::SetAttachedScript(std::string script)
 	{
-		this->attachedScript = script;
+		attachedScript = script;
 	}
 
 	std::string ScriptComponent::GetAttachedScript()
 	{
-		return this->attachedScript;
+		return attachedScript;
 	}
 
 	void ScriptComponent::SetScriptInstance(std::shared_ptr<GameScript> script)
 	{
-		this->scriptInstance = script;
+		scriptInstance = script;
 	}
 
 	std::shared_ptr<GameScript> ScriptComponent::GetScriptInstance()
 	{
-		return this->scriptInstance;
+		return scriptInstance;
 	}
-
-	bool ScriptComponent::IsActive()
-	{
-		return this->_isActive;
-	}
-
-	void ScriptComponent::SetActive(bool _isActive)
-	{
-		this->_isActive = _isActive;
-	}
-
 
 	std::string ScriptComponent::GetData()
 	{
 		json jsonData = {
 			{ "type", "Script" },
-			{ "id", this->GetID() },
-			{ "_isCollapsed", this->IsCollapsed() },
-			{ "attachedScript", this->attachedScript },
-			{ "_isActive", this->_isActive }
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "attachedScript", attachedScript },
 		};
 
 		std::string data = jsonData.dump();

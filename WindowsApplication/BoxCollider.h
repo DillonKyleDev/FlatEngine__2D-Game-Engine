@@ -21,24 +21,22 @@ namespace FlatEngine
 		BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID);
 		~BoxCollider();
 
-		void SetOnOverlapping(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
+		void SetOnColliding(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
 		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
 		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
-		//void SetOnMouseLeftClick(std::function<void(std::shared_ptr<GameObject>)> callback);
-		//void SetOnMouseRightClick(std::function<void(std::shared_ptr<GameObject>)> callback);
 
-		void SetActive(bool _active);
+		bool IsColliding();
+		void SetColliding(bool _isColliding);
+		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
+		void AddCollidingObject(std::shared_ptr<GameObject> object);
+		std::vector<std::shared_ptr<GameObject>> GetCollidingObjects();
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
-		bool IsActive();
 		void SetActiveLayer(int layer);
 		int GetActiveLayer();
 		float GetActiveWidth();
 		float GetActiveHeight();
 		Vector2 GetActiveOffset();
-		void SetMouseIsOver(bool _isOver);
-		void SetIsOverFired(bool _fired);
-		bool MouseIsOver();
 		//ImVec4(activeTop, activeRight, activeBottom, activeLeft)
 		void SetActiveEdges(ImVec4 edges);
 		ImVec4 GetActiveEdges();
@@ -46,26 +44,17 @@ namespace FlatEngine
 		void SetConnectedScript(std::string scriptName);
 		std::string GetConnectedScript();
 
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollisionFunction;
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnterFunction;
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionLeaveFunction;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollision;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnter;
+		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionLeave;
 
-		bool MouseOverSet();
-		bool MouseEnterSet();
-		bool MouseLeaveSet();
-		bool LeftClickSet();
-		bool RightClickSet();
+		bool _onActiveCollidingSet;
+		bool _onCollisionEnterSet;
+		bool _onCollisionLeaveSet;
 
 	private:
-		bool _mouseOverSet;
-		bool _mouseEnterSet;
-		bool _mouseLeaveSet;
-		bool _leftClickSet;
-		bool _rightClickSet;
-
-		bool _mouseIsOver;
-		bool _hasMouseOverFired;
-		bool _active;
+		bool _isColliding;
+		std::vector<std::shared_ptr<GameObject>> collidingObjects;
 		float activeWidth;
 		float activeHeight;
 		ImVec4 activeEdges;

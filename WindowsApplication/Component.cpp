@@ -5,10 +5,10 @@ namespace FlatEngine
 {
 	Component::Component()
 	{
-		this->type = Component::ComponentTypes::Null;
-		this->ID = -1;
-		this->parentID = -1;
-		this->_isCollapsed = false;
+		type = Component::ComponentTypes::Null;
+		ID = -1;
+		parentID = -1;
+		_isCollapsed = false;
 		_isActive = true;
 	}
 
@@ -18,12 +18,12 @@ namespace FlatEngine
 
 	void Component::SetParentID(long parentID)
 	{
-		this->parentID = parentID;
+		parentID = parentID;
 	}
 
 	long Component::GetParentID()
 	{
-		return this->parentID;
+		return parentID;
 	}
 
 	std::shared_ptr<GameObject> Component::GetParent()
@@ -31,35 +31,35 @@ namespace FlatEngine
 		return GetObjectById(parentID);
 	}
 
-	void Component::SetType(ComponentTypes type)
+	void Component::SetType(ComponentTypes componentType)
 	{
-		this->type = type;
+		type = componentType;
 	}
 
 	void Component::SetID(long ID)
 	{
-		this->ID = ID;
+		ID = ID;
 	}
 
 	long Component::GetID()
 	{
-		return this->ID;
+		return ID;
 	}
 
 	Component::ComponentTypes Component::GetType()
 	{
-		return this->type;
+		return type;
 	}
 
 	bool Component::IsCollapsed()
 	{
-		return this->_isCollapsed;
+		return _isCollapsed;
 	}
 
 	std::string Component::GetTypeString()
 	{
-		this->type = this->type;
-		switch (this->type)
+		type = type;
+		switch (type)
 		{
 		case ComponentTypes::Transform:
 			return "Transform";
@@ -120,7 +120,7 @@ namespace FlatEngine
 
 	void Component::SetCollapsed(bool collapsed)
 	{
-		this->_isCollapsed = collapsed;
+		_isCollapsed = collapsed;
 	}
 
 	void Component::SetActive(bool _active)

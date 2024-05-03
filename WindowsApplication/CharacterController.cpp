@@ -24,6 +24,7 @@ namespace FlatEngine {
 		SetType(ComponentTypes::CharacterController);
 		SetID(FlatEngine::GetNextComponentID());
 		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
 		walkSpeed = toCopy->GetWalkSpeed();
 		runSpeed = toCopy->GetWalkSpeed();
 		gravity = toCopy->GetGravity();
@@ -42,6 +43,7 @@ namespace FlatEngine {
 			{ "type", "CharacterController" },
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
 			{ "walkSpeed", walkSpeed },
 			{ "runSpeed", runSpeed },
 			{ "gravity", gravity },

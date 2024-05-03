@@ -23,8 +23,9 @@ namespace FlatEngine
 	Text::Text(std::shared_ptr<Text> toCopy, long newParentID)
 	{
 		SetType(Component::ComponentTypes::Text);
-		this->SetID(GetNextComponentID());
+		SetID(GetNextComponentID());
 		SetParentID(newParentID);
+		SetActive(toCopy->IsActive());
 		fontPath = toCopy->GetFontPath();
 		fontSize = toCopy->GetFontSize();
 		font = TTF_OpenFont(fontPath.c_str(), fontSize);
@@ -75,9 +76,9 @@ namespace FlatEngine
 		return fontPath;
 	}
 
-	void Text::SetFontSize(int fontSize)
+	void Text::SetFontSize(int newFontSize)
 	{
-		fontSize = fontSize;
+		fontSize = newFontSize;
 	}
 
 	int Text::GetFontSize()
@@ -85,9 +86,9 @@ namespace FlatEngine
 		return fontSize;
 	}
 
-	void Text::SetColor(SDL_Color color)
+	void Text::SetColor(SDL_Color newColor)
 	{
-		color = color;
+		color = newColor;
 	}
 
 	SDL_Color Text::GetColor()
@@ -95,9 +96,9 @@ namespace FlatEngine
 		return color;
 	}
 
-	void Text::SetText(std::string text)
+	void Text::SetText(std::string newText)
 	{
-		text = text;
+		text = newText;
 	}
 
 	std::string Text::GetText()
@@ -105,9 +106,9 @@ namespace FlatEngine
 		return text;
 	}
 
-	void Text::SetOffset(Vector2 offset)
+	void Text::SetOffset(Vector2 newOffset)
 	{
-		offset = offset;
+		offset = newOffset;
 	}
 
 	Vector2 Text::GetOffset()
@@ -121,6 +122,7 @@ namespace FlatEngine
 			{ "type", "Text" },
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
 			{ "fontPath", fontPath },
 			{ "text", text },
 			{ "fontSize", fontSize },

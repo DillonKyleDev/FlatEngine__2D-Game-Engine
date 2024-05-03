@@ -100,7 +100,7 @@ namespace FlatEngine
 			ImGui::Begin("Debug Log");
 			PopWindowStyles();
 
-			if (ImGui::Checkbox("Clear buffer after every frame", &_clearBufferEveryFrame))
+			if (RenderCheckbox("Clear buffer after every frame", _clearBufferEveryFrame))
 				FlatEngine::logger->ClearBuffer();
 
 			ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;

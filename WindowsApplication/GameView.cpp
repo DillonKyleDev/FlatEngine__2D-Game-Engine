@@ -24,7 +24,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
-
 		// If Release - Make GameView full screen and disable tab decoration and resizing
 		if (FlatEngine::_isDebugMode == false)
 		{
@@ -37,10 +36,8 @@ namespace FlatEngine { namespace FlatGui {
 			flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize;
 		}
 
-		bool _open = true;
-
 		PushWindowStyles();
-		ImGui::Begin("Game View", &_open, flags);
+		ImGui::Begin("Game View", 0, flags);
 		PopWindowStyles();
 
 		if (ImGui::IsWindowFocused())
