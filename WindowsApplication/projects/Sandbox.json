@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_showAnimationPreview": false,
-            "_showAnimator": true,
+            "_showAnimator": false,
             "_showGameView": true,
             "_showHierarchy": true,
             "_showInspector": true,
@@ -11,8 +11,8 @@
             "_showMappingContextEditor": true,
             "_showProfiler": true,
             "_showSceneView": true,
-            "loadedAnimationPath": "",
-            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\DancerScene.json",
+            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
+            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\MainMenu.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "sceneViewScrollingX": 0.0,
             "sceneViewScrollingY": 0.0

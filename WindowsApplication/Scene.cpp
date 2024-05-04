@@ -9,8 +9,8 @@ namespace FlatEngine
 	{
 		name = "New Scene";
 		path = "";
-		sceneObjects = std::vector< std::shared_ptr<GameObject>>();
-		animatorPreviewObjects = std::vector< std::shared_ptr<GameObject>>();
+		sceneObjects = std::vector<std::shared_ptr<GameObject>>();		
+		animatorPreviewObjects = std::vector<std::shared_ptr<GameObject>>();
 		primaryCamera = nullptr;
 		nextGameObjectID = 0;
 		nextComponentID = 0;
@@ -20,9 +20,9 @@ namespace FlatEngine
 	{
 	}
 
-    void Scene::SetName(std::string name)
+    void Scene::SetName(std::string newName)
     {
-        name = name;
+        name = newName;
     }
 
 	std::string Scene::GetName()
@@ -62,21 +62,25 @@ namespace FlatEngine
 
 	std::shared_ptr<GameObject> Scene::GetObjectById(long ID)
 	{
-		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
+		if (ID != -1)
 		{
-			if (ID == sceneObject->GetID())
+			for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
 			{
-				return sceneObject;
+				if (ID == sceneObject->GetID())
+				{
+					return sceneObject;
+				}
 			}
-		}
-		for (std::shared_ptr<GameObject> animPreviewObject : animatorPreviewObjects)
-		{
-			if (ID == animPreviewObject->GetID())
+			for (std::shared_ptr<GameObject> animPreviewObject : animatorPreviewObjects)
 			{
-				return animPreviewObject;
+				if (ID == animPreviewObject->GetID())
+				{
+					return animPreviewObject;
+				}
 			}
+			return nullptr;
 		}
-		return nullptr;
+		else return nullptr;
 	}
 
 	std::shared_ptr<GameObject> Scene::GetObjectByName(std::string name)
@@ -95,7 +99,7 @@ namespace FlatEngine
 				return animPreviewObject;
 			}
 		}
-		return nullptr;
+		return std::shared_ptr<GameObject>(nullptr);
 	}
 
 	std::shared_ptr<GameObject> Scene::CreateGameObject(long parentID)
@@ -168,6 +172,23 @@ namespace FlatEngine
 
 	long Scene::GetNextGameObjectID()
 	{
+		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
+		{
+			if (sceneObject->GetID() == nextGameObjectID)
+			{
+				IncrementGameObjectID();
+				GetNextGameObjectID();
+			}
+		}
+		for (std::shared_ptr<GameObject> animationObject : animatorPreviewObjects)
+		{
+			if (animationObject->GetID() == nextGameObjectID)
+			{
+				IncrementGameObjectID();
+				GetNextGameObjectID();
+			}
+		}
+
 		return nextGameObjectID;
 	}
 

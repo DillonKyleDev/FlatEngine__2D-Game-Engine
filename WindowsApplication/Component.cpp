@@ -16,9 +16,9 @@ namespace FlatEngine
 	{
 	}
 
-	void Component::SetParentID(long parentID)
+	void Component::SetParentID(long newParentID)
 	{
-		parentID = parentID;
+		parentID = newParentID;
 	}
 
 	long Component::GetParentID()
@@ -36,9 +36,9 @@ namespace FlatEngine
 		type = componentType;
 	}
 
-	void Component::SetID(long ID)
+	void Component::SetID(long newID)
 	{
-		ID = ID;
+		ID = newID;
 	}
 
 	long Component::GetID()

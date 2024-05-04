@@ -179,6 +179,10 @@ namespace FlatEngine
 		extern ImVec4 singleItemColor;
 		extern ImVec4 windowTitleBg;
 		extern ImVec4 componentBorderColor;
+		// Log
+		extern ImVec4 logTextColor;
+		extern ImVec4 logBgColor;
+		extern ImVec4 logOutlineColor;
 		// Windows
 		extern ImVec4 windowBgColor;
 		extern ImVec4 frameBgColor;
@@ -215,6 +219,8 @@ namespace FlatEngine
 		extern ImVec4 uneditableTableRowLightColor;
 		extern ImVec4 uneditableTableRowDarkColor;
 		extern ImVec4 uneditableTableRowFieldColor;
+		extern ImVec4 tableCellLightColor;
+		extern ImVec4 tableCellDarkColor;
 		// Trees
 		extern ImVec4 treeSelectableColor;
 		extern ImVec4 treeSelectableHoveredColor;
@@ -263,10 +269,14 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> openFileIcon;
 		extern std::shared_ptr<Texture> newFileIcon;
 		extern std::shared_ptr<Texture> saveFileIcon;
+		extern std::shared_ptr<Texture> saveAsFileIcon;
 		extern std::shared_ptr<Texture> transformArrow;
 		extern std::shared_ptr<Texture> cameraTexture;
 		extern std::shared_ptr<Texture> keyFrameIcon;
 		extern std::shared_ptr<Texture> timelineScrubberIcon;
+		extern std::shared_ptr<Texture> threeDotsIcon;
+		extern std::shared_ptr<Texture> showIcon;
+		extern std::shared_ptr<Texture> hideIcon;
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
 		extern SDL_Texture* stopTexture;		
@@ -276,8 +286,12 @@ namespace FlatEngine
 		extern SDL_Texture* openFileTexture;
 		extern SDL_Texture* newFileTexture;
 		extern SDL_Texture* saveFileTexture;
+		extern SDL_Texture* saveAsFileTexture;
 		extern SDL_Texture* keyFrameTexture;
 		extern SDL_Texture* timelineScrubberTexture;
+		extern SDL_Texture* threeDotsTexture;
+		extern SDL_Texture* showTexture;
+		extern SDL_Texture* hideTexture;
 
 		extern ImVec2 uv0;
 		extern ImVec2 uv1;
@@ -308,6 +322,9 @@ namespace FlatEngine
 		extern int iconTransparency;
 		extern bool _clearBufferEveryFrame;
 
+		// Hierarchy
+		extern std::map<long, bool> leafExpandedTracker;
+
 		// Window Visibility
 		extern bool _showDemoWindow;
 		extern bool _showSceneView;
@@ -336,6 +353,7 @@ namespace FlatEngine
 		extern void MainMenuBar();
 		extern std::string OpenSaveFileExplorer();
 		extern std::string OpenLoadFileExplorer();
+		extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
 		extern void AddViewports();
 		extern void RenderToolbar();
 		extern void RenderHierarchy();
@@ -364,8 +382,10 @@ namespace FlatEngine
 		extern void PopWindowStyles();
 		extern void PushComboStyles();
 		extern void PopComboStyles();
-		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
-		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(16, 16), ImVec4 tint = imageButtonTintColor, ImVec4 bgColor = imageButtonColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
+		extern void PushMenuStyles();
+		extern void PopMenuStyles();
+		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), float rounding = 1, ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
+		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(16, 16), float rounding = 1, ImVec4 bgColor = imageButtonColor, ImVec4 tint = imageButtonTintColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
 		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);

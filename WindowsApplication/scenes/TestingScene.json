@@ -5,6 +5,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 0,
                     "rotation": 0.0,
@@ -15,6 +16,7 @@
                     "yScale": 1.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 1,
                     "renderOrder": 0,
@@ -26,6 +28,7 @@
                     "yOffset": 11.5
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 2,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\SlerpTest.json",
@@ -41,16 +44,18 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 3,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0.0,
+                    "xPos": 5.0,
                     "xScale": 1.0,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 4,
                     "renderOrder": 0,
@@ -62,6 +67,7 @@
                     "yOffset": 5.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 5,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
@@ -84,16 +90,18 @@
                     "type": "Script"
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 7,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 0.0,
+                    "xPos": -5.0,
                     "xScale": 1.0,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": true,
                     "id": 8,
                     "renderOrder": 0,
@@ -105,9 +113,15 @@
                     "yOffset": 17.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
+                    "_isMoving": false,
+                    "gravity": 1.0,
                     "id": 9,
-                    "type": "CharacterController"
+                    "runSpeed": 2.0,
+                    "type": "CharacterController",
+                    "velocity": 0.0,
+                    "walkSpeed": 1.0
                 }
             ],
             "id": 2,

@@ -100,34 +100,47 @@ namespace FlatEngine
 			ImGui::Begin("Debug Log");
 			PopWindowStyles();
 
-			if (RenderCheckbox("Clear buffer after every frame", _clearBufferEveryFrame))
-				FlatEngine::logger->ClearBuffer();
-
 			ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
 			ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
 			ImGui::BeginChild("Log Container", ImVec2(0, 0), padding_child_flags);
 			ImGui::PopStyleColor();
 
+			if (RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
+				FlatEngine::logger->ClearBuffer();
+
 			static ImGuiTextBuffer* log = FlatEngine::logger->GetBuffer();
 			static int lines = 0;
 
+			ImGui::PushStyleColor(ImGuiCol_Text, logTextColor);
 			ImGui::Text("Log buffer contents : % d bytes", log->size());
 			ImGui::SameLine(0, 10);
-			if (RenderButton("Clear"))
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+			ImGui::PopStyleColor();
+			if (RenderButton("Clear Buffer"))
 				log->clear(); lines = 0;
 
 			ImGui::Separator();
 			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+			ImVec2 cursorPos = ImVec2(ImGui::GetCursorScreenPos().x - 1, ImGui::GetCursorScreenPos().y - 1);
+			ImVec2 availSpace = ImGui::GetContentRegionAvail();
+
+			// Draw Border around log
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, ImVec2(cursorPos.x + availSpace.x + 2, cursorPos.y + availSpace.y + 2), ImGui::GetColorU32(logOutlineColor));
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, logBgColor);
 			ImGui::BeginChild("Log", ImVec2(0, 0), padding_child_flags);
+			ImGui::PushStyleColor(ImGuiCol_Text, logTextColor);
 			ImGui::TextUnformatted(log->begin(), log->end());
+			ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
 
 			ImGui::EndChild(); // Log
 			ImGui::EndChild(); // Log Container
 			ImGui::End(); // Debug Log
+
 
 			// For keeping the log from filling up when logging repeating values
 			if (_clearBufferEveryFrame)

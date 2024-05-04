@@ -194,6 +194,101 @@
                 }
             ],
             "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "_isPrimaryCamera": false,
+                    "time": 0.0
+                }
+            ],
+            "Property": "Camera"
+        },
+        {
+            "Frames": [
+                {
+                    "path": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Script"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "Button"
+        },
+        {
+            "Frames": [
+                {
+                    "time": 0.0
+                }
+            ],
+            "Property": "Canvas"
+        },
+        {
+            "Frames": [
+                {
+                    "_isMusic": false,
+                    "path": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Audio"
+        },
+        {
+            "Frames": [
+                {
+                    "color": "",
+                    "path": "",
+                    "text": "",
+                    "time": 0.0
+                }
+            ],
+            "Property": "Text"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "BoxCollider"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "CircleCollider"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "gravityScale": 1.0,
+                    "interpType": 0,
+                    "speed": 0.10000000149011612,
+                    "time": 0.0
+                }
+            ],
+            "Property": "RigidBody"
+        },
+        {
+            "Frames": [
+                {
+                    "_isActive": true,
+                    "time": 0.0
+                }
+            ],
+            "Property": "CharacterController"
         }
     ]
 }

@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <list>
 
 namespace FlatEngine
 {
@@ -38,7 +39,7 @@ namespace FlatEngine
 	private:
 		std::string name;
 		std::string path;
-		std::vector<std::shared_ptr<GameObject>> sceneObjects;
+		std::vector<std::shared_ptr<GameObject>> sceneObjects;	
 		std::vector<std::shared_ptr<GameObject>> animatorPreviewObjects;
 		std::shared_ptr<Camera> primaryCamera;
 		long nextGameObjectID;

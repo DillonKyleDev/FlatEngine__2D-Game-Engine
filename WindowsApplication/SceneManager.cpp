@@ -14,6 +14,8 @@
 #include "Audio.h"
 #include "Text.h"
 #include "CharacterController.h"
+#include "BoxCollider.h"
+#include "RigidBody.h"
 #include "json.hpp"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -165,12 +167,13 @@ namespace FlatEngine
 		loadedScenePath = filename;
 
 		// Remove loaded scene from memory
-		this->loadedScene = nullptr;
+		loadedScene = nullptr;
 
 		// Start up a new scene
-		std::shared_ptr<Scene> freshScene(new Scene());
-		this->loadedScene = freshScene;
-		freshScene->SetName(filename);
+		std::shared_ptr<Scene> freshScene = std::make_shared<Scene>();
+		loadedScene = freshScene;
+		freshScene->SetName(FlatEngine::FlatGui::GetFilenameFromPath(filename, false));
+		freshScene->SetPath(filename);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -254,11 +257,9 @@ namespace FlatEngine
 
 
 					// Create new GameObject to load the data into
-					std::shared_ptr<GameObject> loadedObject(new GameObject());
+					std::shared_ptr<GameObject> loadedObject = std::make_shared<GameObject>(loadedParentID, loadedID);
 					loadedObject->SetName(loadedName);
-					loadedObject->SetID(loadedID);
 					loadedObject->SetActive(_isActive);
-					loadedObject->SetParentID(loadedParentID);
 
 					// Add children
 					for (int c = 0; c < currentObjectJson["children"].size(); c++)
@@ -283,6 +284,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							float xScale = 1;
 							float yScale = 1;
 							float xPos = 0;
@@ -301,6 +303,12 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
 
 							// position
 							if (currentObjectJson["components"][j].contains("xPos"))
@@ -313,6 +321,7 @@ namespace FlatEngine
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yPos' in object: ");
 
+
 							// scale
 							if (currentObjectJson["components"][j].contains("xScale"))
 								xScale = currentObjectJson["components"][j]["xScale"];
@@ -324,6 +333,7 @@ namespace FlatEngine
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yScale' in object: ");
 
+
 							// rotation
 							if (currentObjectJson["components"][j].contains("rotation"))
 								rotation = currentObjectJson["components"][j]["rotation"];
@@ -332,6 +342,7 @@ namespace FlatEngine
 
 							newTransform->SetID(id);
 							newTransform->SetCollapsed(_isCollapsed);
+							newTransform->SetActive(_isActive);
 							newTransform->SetPosition(Vector2(xPos, yPos));
 							newTransform->SetScale(Vector2(xScale, yScale));
 							newTransform->SetRotation(rotation);
@@ -343,6 +354,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							std::string path = "";
 							float xOffset = 0;
 							float yOffset = 0;
@@ -358,6 +370,12 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
 
 							if (currentObjectJson["components"][j].contains("texture"))
 								path = currentObjectJson["components"][j]["texture"];
@@ -379,6 +397,7 @@ namespace FlatEngine
 
 							newSprite->SetID(id);
 							newSprite->SetCollapsed(_isCollapsed);
+							newSprite->SetActive(_isActive);
 							newSprite->SetTexture(path);
 							newSprite->SetOffset(Vector2(xOffset, yOffset));
 							newSprite->SetRenderOrder(renderOrder);
@@ -390,6 +409,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							float width = 400;
 							float height = 300;
 							bool _isPrimaryCamera = false;
@@ -409,6 +429,11 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
 
 							// Width and height
 							if (currentObjectJson["components"][j].contains("width"))
@@ -451,6 +476,7 @@ namespace FlatEngine
 
 							newCamera->SetID(id);
 							newCamera->SetCollapsed(_isCollapsed);
+							newCamera->SetActive(_isActive);
 							newCamera->SetDimensions(width, height);
 							newCamera->SetPrimaryCamera(_isPrimaryCamera);
 							newCamera->SetZoom(zoom);
@@ -467,8 +493,8 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
-							std::string attachedScript = "";
 							bool _isActive = false;
+							std::string attachedScript = "";
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -480,6 +506,12 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
 
 							if (currentObjectJson["components"][j].contains("attachedScript"))
 								attachedScript = currentObjectJson["components"][j]["attachedScript"];
@@ -493,8 +525,8 @@ namespace FlatEngine
 
 							newScript->SetID(id);
 							newScript->SetCollapsed(_isCollapsed);
-							newScript->SetAttachedScript(attachedScript);
 							newScript->SetActive(_isActive);
+							newScript->SetAttachedScript(attachedScript);
 						}
 						else if (type == "Button")
 						{
@@ -520,7 +552,7 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
-
+							// Load _isActive
 							if (currentObjectJson["components"][j].contains("_isActive"))
 								_isActive = currentObjectJson["components"][j]["_isActive"];
 							else
@@ -565,6 +597,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							float canvasWidth = 5;
 							float canvasHeight = 3;
 							int layerNumber = -1;
@@ -581,6 +614,13 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+
 
 							if (currentObjectJson["components"][j].contains("width"))
 								canvasWidth = currentObjectJson["components"][j]["width"];
@@ -605,6 +645,7 @@ namespace FlatEngine
 							// Assign values to the new Canvas
 							newCanvas->SetID(id);
 							newCanvas->SetCollapsed(_isCollapsed);
+							newCanvas->SetActive(_isActive);
 							newCanvas->SetDimensions(canvasWidth, canvasHeight);
 							newCanvas->SetLayerNumber(layerNumber);
 							newCanvas->SetBlocksLayers(_blocksLayers);
@@ -616,6 +657,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = false;
+							bool _isActive = true;
 							std::string path = "";
 
 							// Load ID
@@ -628,7 +670,15 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
-							// Ticks Per Frame
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+
+
+							// Path
 							if (currentObjectJson["components"][j].contains("path"))
 								path = currentObjectJson["components"][j]["path"];
 							else
@@ -637,6 +687,7 @@ namespace FlatEngine
 							// Assign values to the new Canvas
 							newAnimation->SetID(id);
 							newAnimation->SetCollapsed(_isCollapsed);
+							newAnimation->SetActive(_isActive);
 							newAnimation->Stop();
 							newAnimation->SetAnimationPath(path);
 						}
@@ -647,6 +698,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = false;
+							bool _isActive = true;
 							bool _isMusic = false;
 							std::string path = "";
 
@@ -661,6 +713,13 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+
 
 							if (currentObjectJson["components"][j].contains("_isMusic"))
 								_isMusic = currentObjectJson["components"][j]["_isMusic"];
@@ -675,6 +734,7 @@ namespace FlatEngine
 							// Assign values to the new Canvas
 							newAudio->SetID(id);
 							newAudio->SetCollapsed(_isCollapsed);
+							newAudio->SetActive(_isActive);
 							newAudio->SetPath(path);
 							newAudio->SetIsMusic(_isMusic);
 							if (_isMusic)
@@ -689,6 +749,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							std::string fontPath = "";
 							int fontSize = 40;
 							std::string text = "Text Component";
@@ -709,6 +770,14 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+							
+							
 							// Text Properties
 							if (currentObjectJson["components"][j].contains("fontPath"))
 								fontPath = currentObjectJson["components"][j]["fontPath"];
@@ -756,6 +825,7 @@ namespace FlatEngine
 
 							newText->SetID(id);
 							newText->SetCollapsed(_isCollapsed);
+							newText->SetActive(_isActive);
 							newText->SetFontPath(fontPath);
 							newText->SetFontSize(fontSize);
 							newText->SetColor(fontColor);
@@ -771,6 +841,7 @@ namespace FlatEngine
 							// Default values
 							long id = -1;
 							bool _isCollapsed = true;
+							bool _isActive = true;
 							float walkSpeed = 1;
 							float runSpeed = 2;
 							float gravity = 1;
@@ -787,6 +858,15 @@ namespace FlatEngine
 								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+							
+							
+							
 							// CharacterController Properties
 							if (currentObjectJson["components"][j].contains("walkSpeed"))
 								walkSpeed = currentObjectJson["components"][j]["walkSpeed"];
@@ -812,11 +892,143 @@ namespace FlatEngine
 						
 							newCharacterController->SetID(id);
 							newCharacterController->SetCollapsed(_isCollapsed);
+							newCharacterController->SetActive(_isActive);
 							newCharacterController->SetWalkSpeed(walkSpeed);
 							newCharacterController->SetRunSpeed(runSpeed);
 							newCharacterController->SetGravity(gravity);
 							newCharacterController->SetMoving(_isMoving);
 							newCharacterController->SetVelocity(velocity);
+						}
+						else if (type == "BoxCollider")
+						{
+							std::shared_ptr<BoxCollider> newBoxCollider = std::static_pointer_cast<BoxCollider>(loadedObject->AddComponent(ComponentTypes::BoxCollider));
+
+							// Default values
+							long id = -1;
+							bool _isCollapsed = true;
+							bool _isActive = true;
+							float activeWidth = 10;
+							float activeHeight = 10;
+							Vector2 activeOffset = Vector2(0,0);
+							int activeLayer = 0;
+							std::string connectedScript = "";
+
+							// Load ID
+							if (currentObjectJson["components"][j].contains("id"))
+								id = currentObjectJson["components"][j]["id"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+							// Load _isCollapsed
+							if (currentObjectJson["components"][j].contains("_isCollapsed"))
+								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+							
+							
+							// BoxCollider Properties
+							if (currentObjectJson["components"][j].contains("activeWidth"))
+								activeWidth = currentObjectJson["components"][j]["activeWidth"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeWidth' in object: ");
+							if (currentObjectJson["components"][j].contains("activeHeight"))
+								activeHeight = currentObjectJson["components"][j]["activeHeight"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeHeight' in object: ");
+							if (currentObjectJson["components"][j].contains("activeOffsetX"))
+								activeOffset.x = currentObjectJson["components"][j]["activeOffsetX"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetX' in object: ");
+							if (currentObjectJson["components"][j].contains("activeOffsetY"))
+								activeOffset.y = currentObjectJson["components"][j]["activeOffsetY"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetY' in object: ");
+							if (currentObjectJson["components"][j].contains("activeLayer"))
+								activeLayer = currentObjectJson["components"][j]["activeLayer"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeLayer' in object: ");
+							if (currentObjectJson["components"][j].contains("connectedScript"))
+								connectedScript = currentObjectJson["components"][j]["connectedScript"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'connectedScript' in object: ");
+
+
+							newBoxCollider->SetID(id);
+							newBoxCollider->SetCollapsed(_isCollapsed);
+							newBoxCollider->SetActive(_isActive);
+							newBoxCollider->SetActiveDimensions(activeWidth, activeHeight);
+							newBoxCollider->SetActiveOffset(activeOffset);
+							newBoxCollider->SetActiveLayer(activeLayer);
+							newBoxCollider->SetConnectedScript(connectedScript);
+						}
+						else if (type == "RigidBody")
+						{
+							std::shared_ptr<RigidBody> newRigidBody = std::static_pointer_cast<RigidBody>(loadedObject->AddComponent(ComponentTypes::RigidBody));
+
+							// Default values
+							long id = -1;
+							bool _isCollapsed = true;
+							bool _isActive = true;
+							float mass = 1;
+							float angularDrag = 1;
+							float gravity = 1;							
+							bool _isContinious = false;
+							bool _isKinematic = false;
+
+							// Load ID
+							if (currentObjectJson["components"][j].contains("id"))
+								id = currentObjectJson["components"][j]["id"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+							// Load _isCollapsed
+							if (currentObjectJson["components"][j].contains("_isCollapsed"))
+								_isCollapsed = currentObjectJson["components"][j]["_isCollapsed"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isCollapsed' in object: ");
+							// Load _isActive
+							if (currentObjectJson["components"][j].contains("_isActive"))
+								_isActive = currentObjectJson["components"][j]["_isActive"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+							
+							
+							// CharacterController Properties
+							if (currentObjectJson["components"][j].contains("mass"))
+								mass = currentObjectJson["components"][j]["mass"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'mass' in object: ");
+							if (currentObjectJson["components"][j].contains("angularDrag"))
+								angularDrag = currentObjectJson["components"][j]["angularDrag"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'angularDrag' in object: ");
+							if (currentObjectJson["components"][j].contains("gravity"))
+								gravity = currentObjectJson["components"][j]["gravity"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'gravity' in object: ");
+							if (currentObjectJson["components"][j].contains("_isContinious"))
+								_isContinious = currentObjectJson["components"][j]["_isContinious"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isContinious' in object: ");
+							if (currentObjectJson["components"][j].contains("_isKinematic"))
+								_isKinematic = currentObjectJson["components"][j]["_isKinematic"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isKinematic' in object: ");
+
+
+							newRigidBody->SetID(id);
+							newRigidBody->SetCollapsed(_isCollapsed);
+							newRigidBody->SetActive(_isActive);
+							newRigidBody->SetMass(mass);
+							newRigidBody->SetAngularDrag(angularDrag);
+							newRigidBody->SetGravity(gravity);
+							newRigidBody->SetIsContinuous(_isContinious);
+							newRigidBody->SetIsKinematic(_isKinematic);
 						}
 					}
 

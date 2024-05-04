@@ -1,0 +1,179 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "children": [
+                0,
+                5
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 12,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 0.25,
+                    "yPos": 0.0,
+                    "yScale": 0.25
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 13,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\TitleImage.png",
+                    "texture_height": 197.0,
+                    "texture_width": 270.0,
+                    "type": "Sprite",
+                    "xOffset": 135.0,
+                    "yOffset": 98.5
+                }
+            ],
+            "id": 2,
+            "name": "Background",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [
+                8
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 14,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 15,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\rightidle.png",
+                    "texture_height": 23.0,
+                    "texture_width": 13.0,
+                    "type": "Sprite",
+                    "xOffset": 6.5,
+                    "yOffset": 11.5
+                }
+            ],
+            "id": 5,
+            "name": "Player",
+            "parent": 2
+        },
+        {
+            "_isActive": true,
+            "children": [
+                1
+            ],
+            "components": [],
+            "id": 0,
+            "name": "New GameObject (0)",
+            "parent": 2
+        },
+        {
+            "_isActive": true,
+            "children": [
+                3
+            ],
+            "components": [],
+            "id": 1,
+            "name": "New GameObject (1)",
+            "parent": 0
+        },
+        {
+            "_isActive": true,
+            "children": [
+                4
+            ],
+            "components": [],
+            "id": 3,
+            "name": "New GameObject (3)",
+            "parent": 1
+        },
+        {
+            "_isActive": true,
+            "children": [
+                6
+            ],
+            "components": [],
+            "id": 4,
+            "name": "New GameObject (4)",
+            "parent": 3
+        },
+        {
+            "_isActive": true,
+            "children": [
+                7
+            ],
+            "components": [],
+            "id": 6,
+            "name": "New GameObject (6)",
+            "parent": 4
+        },
+        {
+            "_isActive": true,
+            "children": [
+                12
+            ],
+            "components": [],
+            "id": 7,
+            "name": "New GameObject (7)",
+            "parent": 6
+        },
+        {
+            "_isActive": true,
+            "children": [
+                9
+            ],
+            "components": [],
+            "id": 8,
+            "name": "New GameObject (8)",
+            "parent": 5
+        },
+        {
+            "_isActive": true,
+            "children": [
+                10
+            ],
+            "components": [],
+            "id": 9,
+            "name": "New GameObject (9)",
+            "parent": 8
+        },
+        {
+            "_isActive": true,
+            "children": [
+                11
+            ],
+            "components": [],
+            "id": 10,
+            "name": "New GameObject (10)",
+            "parent": 9
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 11,
+            "name": "New GameObject (11)",
+            "parent": 10
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 12,
+            "name": "New GameObject (12)",
+            "parent": 7
+        }
+    ]
+}

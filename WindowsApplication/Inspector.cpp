@@ -27,6 +27,112 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			// Get focused GameObject
 			std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+
+			// For checking if SceneObject has these components yet
+			std::shared_ptr<Component> transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
+			std::shared_ptr<Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
+			std::shared_ptr<Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
+			std::shared_ptr<Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
+			std::shared_ptr<Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
+			std::shared_ptr<Component> characterController = focusedObject->GetComponent(ComponentTypes::CharacterController);
+
+			// Lambda
+			auto L_ShowAddComponentsWindow = [&]()
+			{
+				PushMenuStyles();
+
+				// Add all the component types you can add to this GameObject
+				//
+				if (transformComponent == nullptr)
+				{
+					if (ImGui::MenuItem("Transform"))
+					{
+						focusedObject->AddComponent(ComponentTypes::Transform);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (spriteComponent == nullptr)
+				{
+					if (ImGui::MenuItem("Sprite"))
+					{
+						focusedObject->AddComponent(ComponentTypes::Sprite);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (ImGui::MenuItem("Button"))
+				{
+					focusedObject->AddComponent(ComponentTypes::Button);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (cameraComponent == nullptr)
+				{
+					if (ImGui::MenuItem("Camera"))
+					{
+						focusedObject->AddComponent(ComponentTypes::Camera);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (canvasComponent == nullptr)
+				{
+					if (ImGui::MenuItem("Canvas"))
+					{
+						focusedObject->AddComponent(ComponentTypes::Canvas);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (animationComponent == nullptr)
+				{
+					if (ImGui::MenuItem("Animation"))
+					{
+						focusedObject->AddComponent(ComponentTypes::Animation);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (ImGui::MenuItem("Audio"))
+				{
+					focusedObject->AddComponent(ComponentTypes::Audio);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Text"))
+				{
+					focusedObject->AddComponent(ComponentTypes::Text);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Script"))
+				{
+					focusedObject->AddComponent(ComponentTypes::Script);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (characterController == nullptr)
+				{
+					if (ImGui::MenuItem("CharacterController"))
+					{
+						focusedObject->AddComponent(ComponentTypes::CharacterController);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (characterController == nullptr)
+				{
+					if (ImGui::MenuItem("RigidBody"))
+					{
+						focusedObject->AddComponent(ComponentTypes::RigidBody);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				PopMenuStyles();
+			};
+
 			// Name editing
 			std::string nameLabel = "Name: ";
 			char newName[1024];
@@ -48,6 +154,30 @@ namespace FlatEngine { namespace FlatGui {
 			if (RenderCheckbox("Active", _isActive))
 				focusedObject->SetActive(_isActive);
 
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 20, 5);
+
+			RenderImageButton("##InspectorMoreButton", threeDotsTexture, ImVec2(16, 16), 1, transparentColor);
+			PushMenuStyles();
+			if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			{
+				if (ImGui::BeginMenu("Add Component"))
+				{
+					L_ShowAddComponentsWindow();
+					ImGui::EndMenu();
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Delete GameObject"))
+				{
+					SetFocusedGameObjectID(-1);
+					DeleteGameObject(focusedObject->GetID());
+					ImGui::CloseCurrentPopup();
+				}
+	
+				ImGui::EndPopup();
+			}
+			PopMenuStyles();
+			
+
 			// Components section
 			ImGui::Text("Components:");
 			ImGui::Separator();
@@ -57,7 +187,7 @@ namespace FlatEngine { namespace FlatGui {
 
 			if (components.size() > 0)
 			{
-				// Get Expander, Trashcan, and open file icons for components
+				
 
 				long queuedForDelete = -1;
 				// Open File Icon
@@ -1078,107 +1208,15 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			// For checking if SceneObject has these components yet
-			std::shared_ptr<Component> transformComponent = focusedObject->GetComponent(ComponentTypes::Transform);
-			std::shared_ptr<Component> spriteComponent = focusedObject->GetComponent(ComponentTypes::Sprite);
-			std::shared_ptr<Component> cameraComponent = focusedObject->GetComponent(ComponentTypes::Camera);
-			std::shared_ptr<Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
-			std::shared_ptr<Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
-			std::shared_ptr<Component> characterController = focusedObject->GetComponent(ComponentTypes::CharacterController);
-
 			// Render the Adding Components button
-			RenderButton("Add Component", ImVec2(ImGui::GetContentRegionMax().x, 0));
+			RenderButton("Add Component", ImVec2(ImGui::GetContentRegionAvail().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, outerWindowColor);
-				ImGui::BeginListBox("##SceneObjects", ImVec2(220, 100));
-				ImGui::PopStyleColor();
-
-				// Push button bg color style
-				ImGui::PushStyleColor(ImGuiCol_Button, innerWindowColor);
-
-				// Add all the component types you can add to this GameObject
-				//
-				if (transformComponent == nullptr)
-					if (RenderButton("Transform", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::Transform);
-						ImGui::CloseCurrentPopup();
-					}
-
-				if (spriteComponent == nullptr)
-					if (RenderButton("Sprite", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::Sprite);
-						ImGui::CloseCurrentPopup();
-					}
-
-				if (RenderButton("Button", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Button);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (cameraComponent == nullptr)
-					if (RenderButton("Camera", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::Camera);
-						ImGui::CloseCurrentPopup();
-					}
-
-				if (canvasComponent == nullptr)
-					if (RenderButton("Canvas", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::Canvas);
-						ImGui::CloseCurrentPopup();
-					}
-
-				if (animationComponent == nullptr)
-					if (RenderButton("Animation", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::Animation);
-						ImGui::CloseCurrentPopup();
-					}
-
-				if (RenderButton("Audio", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Audio);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (RenderButton("Text", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Text);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (RenderButton("Script", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-				{
-					focusedObject->AddComponent(ComponentTypes::Script);
-					ImGui::CloseCurrentPopup();
-				}
-
-				if (characterController == nullptr)
-					if (RenderButton("Character Controller", ImVec2(ImGui::GetContentRegionMax().x, 0)))
-					{
-						focusedObject->AddComponent(ComponentTypes::CharacterController);
-						ImGui::CloseCurrentPopup();
-					}
-
-				ImGui::EndListBox();
-
-				// Pop button bg color styles
-				ImGui::PopStyleColor();
+				L_ShowAddComponentsWindow();
 				ImGui::EndPopup();
 			}
 
-			if (RenderButton("Delete GameObject"))
-			{
-				// Unfocus GameObject first
-				int tempID = focusedObjectID;
-				FlatEngine::SetFocusedGameObjectID(-1);
-				FlatEngine::DeleteGameObject(tempID);
-			}
+			ImGui::Text("");
 		}
 		ImGui::PopStyleColor();
 		ImGui::EndChild();

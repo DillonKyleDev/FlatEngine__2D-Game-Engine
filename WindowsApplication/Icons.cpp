@@ -14,10 +14,14 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> openFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> newFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> saveFileIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> saveAsFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
 	std::shared_ptr<Texture> cameraTexture = std::make_shared<Texture>();
 	std::shared_ptr<Texture> keyFrameIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> timelineScrubberIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> threeDotsIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> showIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> hideIcon = std::make_shared<Texture>();
 
 	ImVec2 uv0 = ImVec2(0.0f, 0.0f);
 	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
@@ -33,8 +37,12 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* openFileTexture = nullptr;
 	SDL_Texture* newFileTexture = nullptr;
 	SDL_Texture* saveFileTexture = nullptr;
+	SDL_Texture* saveAsFileTexture = nullptr;
 	SDL_Texture* keyFrameTexture = nullptr;
 	SDL_Texture* timelineScrubberTexture = nullptr;
+	SDL_Texture* threeDotsTexture = nullptr;
+	SDL_Texture* showTexture = nullptr;
+	SDL_Texture* hideTexture = nullptr;
 
 	void CreateIcons()
 	{
@@ -48,8 +56,6 @@ namespace FlatEngine { namespace FlatGui {
 		expandTexture = expandIcon->getTexture();
 		expandFlippedIcon->loadFromFile("assets/images/icons/collapse.png");
 		expandFlippedTexture = expandFlippedIcon->getTexture();
-		float expandWidth = (float)expandIcon->getWidth();
-		float expandHeight = (float)expandIcon->getHeight();
 		trashIcon->loadFromFile("assets/images/icons/delete.png");
 		trashTexture = trashIcon->getTexture();
 		openFileIcon->loadFromFile("assets/images/icons/open.png");
@@ -58,8 +64,16 @@ namespace FlatEngine { namespace FlatGui {
 		newFileTexture = newFileIcon->getTexture();
 		saveFileIcon->loadFromFile("assets/images/icons/save.png");
 		saveFileTexture = saveFileIcon->getTexture();
+		saveAsFileIcon->loadFromFile("assets/images/icons/saveAs.png");
+		saveAsFileTexture = saveAsFileIcon->getTexture();
 		keyFrameIcon->loadFromFile("assets/images/icons/KeyFrameIcon.png");
 		keyFrameTexture = keyFrameIcon->getTexture();
+		threeDotsIcon->loadFromFile("assets/images/icons/threeDots.png");
+		threeDotsTexture = threeDotsIcon->getTexture();
+		showIcon->loadFromFile("assets/images/icons/show.png");
+		showTexture = showIcon->getTexture();
+		hideIcon->loadFromFile("assets/images/icons/hide.png");
+		hideTexture = hideIcon->getTexture();
 
 		timelineScrubberIcon->loadFromFile("assets/images/icons/timelineScrubber.png");
 		timelineScrubberTexture = timelineScrubberIcon->getTexture();

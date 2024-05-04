@@ -47,10 +47,7 @@ namespace FlatEngine {
 			{ "mass", GetMass()},
 			{ "angularDrag", GetAngularDrag() },
 			{ "gravity", GetGravity() },
-			{ "velocity", GetVelocity() },
-			{ "_isMoving", IsMoving() },
 			{ "_isContinious", IsContinuous() },
-			{ "_isGrounded", IsGrounded() },
 			{ "_isKinematic", IsKinematic() }
 		};
 

@@ -11,7 +11,14 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::Begin("Mapping Context Editor");
 		PopWindowStyles();
 
-		ImGui::BeginChild("Mapping Context Editor");
+		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGuiChildFlags header_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+
+
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild("Mapping Context Editor", ImVec2(0, 0), padding_child_flags);
+		ImGui::PopStyleColor();
 		
 		const char* inputs[] = { 
 			// XInput
@@ -75,48 +82,26 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
 
 		// Select Mapping Context to edit //
-		
-		// Save and create new mapping contexts
-		if (mappingContexts.size() > 0)
-		{
-			if (RenderButton("Save"))
-			{
-				std::shared_ptr<MappingContext> currentContext = mappingContexts.at(current_context);
-				SaveMappingContext(currentContext->GetPath(), currentContext);
-			}
-		}
-		ImGui::SameLine(0, 5);
-		if (RenderButton("Create New Context"))
-		{
-			std::string path = OpenSaveFileExplorer();
-			std::string name = path.substr(path.find_last_of("/\\") + 1);
-			std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
-			newContext->SetPath(path);
-			newContext->SetName(name);
-			SaveMappingContext(path, newContext);
-			InitializeMappingContexts();
-		}
-		ImGui::Separator();
 
 		// Section Label
 		if (mappingContexts.size() > 0)
 		{
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+			ImGui::BeginChild("Animation Preview", ImVec2(0, 30), header_flags);
+			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 			ImGui::Text("Select mapping context to edit:");
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::Separator();
+			ImGui::EndChild();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		}
 
-		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 		if (mappingContexts.size() > 0)
 		{
 			std::shared_ptr<MappingContext> currentContext = mappingContexts.at(current_context);
 
-
 			PushComboStyles();
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 184);
 			if (ImGui::BeginCombo("##contexts", currentContext->GetName().c_str()))
 			{
 				for (int n = 0; n < mappingContexts.size(); n++)
@@ -133,29 +118,58 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			PopComboStyles();
 
-			// Create New Input Action //
+			ImGui::SameLine();
+			// Save and create new mapping contexts
+			if (mappingContexts.size() > 0)
+			{
+				if (RenderButton("Save"))
+				{
+					std::shared_ptr<MappingContext> currentContext = mappingContexts.at(current_context);
+					SaveMappingContext(currentContext->GetPath(), currentContext);
+				}
+			}
+			ImGui::SameLine(0, 5);
+			if (RenderButton("Create New Context"))
+			{
+				std::string path = OpenSaveFileExplorer();
+				std::string name = path.substr(path.find_last_of("/\\") + 1);
+				std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
+				newContext->SetPath(path);
+				newContext->SetName(name);
+				SaveMappingContext(path, newContext);
+				InitializeMappingContexts();
+			}
 
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+			// Create New Input Action //
+			//
 			// Section Label
 			ImGui::Separator();
-		
-			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 10, ImGui::GetCursorPosY() + 5));
-			ImGui::Text("Create new Input Action:");
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+			ImGui::BeginChild("Create New Input Action", ImVec2(0, 30), header_flags);
+			ImGui::PopStyleColor();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+			ImGui::Text("Create new Input Action:");
+			ImGui::EndChild();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
 			ImGui::Columns(2);
-			ImGui::SetColumnWidth(0, widthAvailable / 2);
 
 			// Column 1
 			static int current_input = 0;
 
 			// Label
+
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::Text("Input Source");
 
 			// Select New Input
 			PushComboStyles();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 			if (ImGui::BeginCombo("##inputs", inputs[current_input]))
 			{
@@ -172,7 +186,6 @@ namespace FlatEngine { namespace FlatGui {
 			PopComboStyles();
 
 			ImGui::NextColumn();
-			ImGui::SetColumnWidth(1, widthAvailable / 2);
 
 			// Column 2
 			// Name editing
@@ -185,7 +198,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Edit field
 			ImGui::Text(nameLabel.c_str());
 
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 35);
+			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 32);
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
 			if (ImGui::InputText("##InputActionName", inputActionName, IM_ARRAYSIZE(inputActionName), flags))
 			{
@@ -203,25 +216,23 @@ namespace FlatEngine { namespace FlatGui {
 			// Go back to one column for Label
 			ImGui::Columns(1);
 
-			// Currently created Input Actions on this context
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+			ImGui::BeginChild("Existing Bindings", ImVec2(0, 30), header_flags);
+			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-			ImGui::Text("Existing Bindings");
+			ImGui::Text("Existing Bindings:");
+			ImGui::EndChild();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::Separator();
 
 
 			// Go back to two columns
 			ImGui::Columns(2);
-			ImGui::SetColumnWidth(0, widthAvailable / 2);
 
-			// Column 1
-
-			// Label
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-
+			// First Column
 			int inputIDCounter = 0;
 
 			// Input Binding
@@ -237,6 +248,7 @@ namespace FlatEngine { namespace FlatGui {
 					std::string comboId = "##selectedInput" + currentContext->GetName() + std::to_string(inputIDCounter);
 
 					PushComboStyles();
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
 					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 					if (ImGui::BeginCombo(comboId.c_str(), inputs[selected_input]))
 					{
@@ -265,7 +277,6 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Column 2
 			ImGui::NextColumn();
-			ImGui::SetColumnWidth(0, widthAvailable / 2);
 
 			int inputActionIDCounter = 0;
 			// Input Action name
@@ -282,7 +293,7 @@ namespace FlatEngine { namespace FlatGui {
 					std::string textLabelID = "##InputActionName" + keyBinding.second + std::to_string(inputActionIDCounter);
 
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 40);
+					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 39);
 					if (ImGui::InputText(textLabelID.c_str(), inputActionName, IM_ARRAYSIZE(inputActionName), 0))
 					{
 						currentContext->SetKeyBinding(keyBinding.first, inputActionName);
@@ -305,9 +316,9 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			ImGui::Text("");
+			ImGui::Columns(1);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		}
-
 
 		ImGui::PopStyleVar();
 

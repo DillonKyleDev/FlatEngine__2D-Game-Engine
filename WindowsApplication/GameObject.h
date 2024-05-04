@@ -23,7 +23,7 @@ namespace FlatEngine
 	class GameObject
 	{
 	public:
-		GameObject(long parentID = -1);
+		GameObject(long parentID = -1, long myID = -1);
 		// Copy Constructor
 		GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>> &objectVector, long parentID = -1);
 		~GameObject();

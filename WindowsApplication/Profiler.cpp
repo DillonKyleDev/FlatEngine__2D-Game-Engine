@@ -137,7 +137,7 @@ namespace FlatEngine {
 						ImGui::Text("%.3f ms", rawDataVector.front());
 						ImGui::TableSetColumnIndex(2);
 						ImGui::PushID(processCounter);
-						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor(rawDataVector.front()), ImVec2(-1, 35));
+						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), ImVec2(-1, 35));
 						ImGui::PopID();
 					}
 

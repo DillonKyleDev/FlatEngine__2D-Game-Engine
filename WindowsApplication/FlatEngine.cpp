@@ -521,7 +521,6 @@ namespace FlatEngine
 		if (loadedScene != nullptr)
 		{
 			nextID = loadedScene->GetNextGameObjectID();
-			GetLoadedScene()->IncrementGameObjectID();
 		}
 
 		return nextID;

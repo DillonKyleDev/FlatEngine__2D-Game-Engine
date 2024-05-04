@@ -6,11 +6,13 @@ namespace FlatEngine { namespace FlatGui {
 
 	void MainMenuBar()
 	{
+		PushMenuStyles();
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New Project.."))
+				if (ImGui::MenuItem("New Project..."))
 				{
 					// First, save current project
 					SaveProject(loadedProject, loadedProject->GetPath());
@@ -33,9 +35,9 @@ namespace FlatEngine { namespace FlatGui {
 					std::string projectPath = loadedProject->GetPath();
 					SaveProject(loadedProject, projectPath);
 				}
-				if (ImGui::MenuItem("Save Project As.."))
+				if (ImGui::MenuItem("Save Project As..."))
 				{
-					// Save Project As...
+					// Save Project As....
 					std::string projectPath = OpenSaveFileExplorer();
 					SaveProject(loadedProject, projectPath);
 				}
@@ -51,7 +53,7 @@ namespace FlatEngine { namespace FlatGui {
 					loadedProject->SetLoadedScenePath(newScene->GetPath());
 				}
 
-				if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+				if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 				{
 					// Load the scene
 					std::string scenePath = OpenLoadFileExplorer();
@@ -63,7 +65,7 @@ namespace FlatEngine { namespace FlatGui {
 				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 					sceneManager->SaveCurrentScene();
 
-				if (ImGui::MenuItem("Save Scene As.."))
+				if (ImGui::MenuItem("Save Scene As..."))
 				{
 					// Save the scene
 					std::string scenePath = OpenSaveFileExplorer();
@@ -118,6 +120,31 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Assets"))
+			{
+				if (ImGui::BeginMenu("Create New..."))
+				{
+					if (ImGui::MenuItem("GameObject"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Mapping Context"))
+					{
+						std::string path = OpenSaveFileExplorer();
+						std::string name = path.substr(path.find_last_of("/\\") + 1);
+						std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
+						newContext->SetPath(path);
+						newContext->SetName(name);
+						SaveMappingContext(path, newContext);
+						InitializeMappingContexts();
+						_showMappingContextEditor = true;
+					}
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
 			if (ImGui::BeginMenu("Settings"))
 			{
 				if (ImGui::BeginMenu("Widgets"))
@@ -135,6 +162,8 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			ImGui::EndMainMenuBar();
 		}
+
+		PopMenuStyles();
 	}
 }
 }
