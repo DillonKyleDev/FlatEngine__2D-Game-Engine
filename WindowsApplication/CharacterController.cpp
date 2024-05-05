@@ -59,6 +59,7 @@ namespace FlatEngine {
 	void CharacterController::MoveToward(Vector2 direction)
 	{
 		std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetParent()->GetRigidBody();
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		float normalizedX = direction.x / 32760;
 		float normalizedY = direction.y / 32760;
 
@@ -71,7 +72,7 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		rigidBody->Move(Vector2(normalizedX, normalizedY));
+		rigidBody->Move(Lerp(transform->GetPosition(), Vector2(normalizedX, normalizedY), walkSpeed));
 	}
 
 	void CharacterController::MoveTo(Vector2 location)

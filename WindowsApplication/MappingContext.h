@@ -4,7 +4,7 @@
 
 namespace FlatEngine {
 
-	enum XboxButtons {
+	enum XInputButtons {
 		A,
 		B,
 		X,
@@ -18,14 +18,14 @@ namespace FlatEngine {
 		Home,
 		Tray,
 	};
-	enum XboxHats {
+	enum XInputHats {
 		Up = 1,
 		Down = 4,
 		Left = 8,
 		Right = 2,
 
 	};
-	enum XboxAxis {
+	enum XInputAxis {
 		LeftXAxis = 0,
 		LeftYAxis = 1,
 		RightXAxis = 2,

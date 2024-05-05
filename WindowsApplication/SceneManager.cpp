@@ -37,38 +37,15 @@ namespace FlatEngine
 	std::shared_ptr<Scene> SceneManager::CreateNewScene()
 	{
 		// Remove loaded scene from memory
-		this->loadedScene = nullptr;
+		loadedScene = nullptr;
 
 		// Start up a new scene
-		std::shared_ptr<Scene> freshScene(new Scene());
-		this->loadedScene = freshScene;
+		std::shared_ptr<Scene> freshScene = std::make_shared<Scene>();
+		loadedScene = freshScene;
 
-		// Declare file and input stream
-		std::ofstream file_obj;
+		FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 
-		// Delete old contents of the file
-		file_obj.open("NewScene.json", std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
-
-		// Opening file in append mode
-		file_obj.open("NewScene.json", std::ios::app);
-
-		// Array that will hold our gameObject json objects
-		json sceneObjectsJsonArray;
-		
-		// Set sceneObjectsJsonArray to empty
-		sceneObjectsJsonArray.push_back("NULL");
-
-		// Create the GameObjects json object and add the empty array as the content
-		json newFileObject = json::object({ {"Scene GameObjects", sceneObjectsJsonArray } });
-
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
-
-		return this->loadedScene;
+		return loadedScene;
 	}
 
 	void SceneManager::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
@@ -145,7 +122,6 @@ namespace FlatEngine
 		{
 			sceneObjectsJsonArray.push_back("NULL");
 		}
-
 
 		// Recreate the GameObjects json object and add the array as the content
 		json newFileObject = json::object({ {"Scene GameObjects", sceneObjectsJsonArray } });
@@ -910,8 +886,8 @@ namespace FlatEngine
 							float activeWidth = 10;
 							float activeHeight = 10;
 							Vector2 activeOffset = Vector2(0,0);
+							bool _isContinious = false;
 							int activeLayer = 0;
-							std::string connectedScript = "";
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -948,23 +924,22 @@ namespace FlatEngine
 								activeOffset.y = currentObjectJson["components"][j]["activeOffsetY"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetY' in object: ");
+							if (currentObjectJson["components"][j].contains("_isContinious"))
+								_isContinious = currentObjectJson["components"][j]["_isContinious"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isContinious' in object: ");
 							if (currentObjectJson["components"][j].contains("activeLayer"))
 								activeLayer = currentObjectJson["components"][j]["activeLayer"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeLayer' in object: ");
-							if (currentObjectJson["components"][j].contains("connectedScript"))
-								connectedScript = currentObjectJson["components"][j]["connectedScript"];
-							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'connectedScript' in object: ");
-
 
 							newBoxCollider->SetID(id);
 							newBoxCollider->SetCollapsed(_isCollapsed);
 							newBoxCollider->SetActive(_isActive);
 							newBoxCollider->SetActiveDimensions(activeWidth, activeHeight);
 							newBoxCollider->SetActiveOffset(activeOffset);
+							newBoxCollider->SetIsContinuous(_isContinious);
 							newBoxCollider->SetActiveLayer(activeLayer);
-							newBoxCollider->SetConnectedScript(connectedScript);
 						}
 						else if (type == "RigidBody")
 						{
@@ -979,6 +954,7 @@ namespace FlatEngine
 							float gravity = 1;							
 							bool _isContinious = false;
 							bool _isKinematic = false;
+							bool _isStatic = false;
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -1019,6 +995,10 @@ namespace FlatEngine
 								_isKinematic = currentObjectJson["components"][j]["_isKinematic"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isKinematic' in object: ");
+							if (currentObjectJson["components"][j].contains("_isStatic"))
+								_isStatic = currentObjectJson["components"][j]["_isStatic"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isStatic' in object: ");
 
 
 							newRigidBody->SetID(id);
@@ -1029,6 +1009,7 @@ namespace FlatEngine
 							newRigidBody->SetGravity(gravity);
 							newRigidBody->SetIsContinuous(_isContinious);
 							newRigidBody->SetIsKinematic(_isKinematic);
+							newRigidBody->SetIsStatic(_isStatic);
 						}
 					}
 
@@ -1040,6 +1021,8 @@ namespace FlatEngine
 
 		// Assign our freshScene to the SceneManagers currently loadedScene member variable
 		this->loadedScene = freshScene;
+
+		FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 	}
 
 	std::shared_ptr<Scene> SceneManager::GetLoadedScene()
@@ -1063,7 +1046,3 @@ namespace FlatEngine
 		loadedScene->SetAnimatorPreviewObjects(animatorPreviewObjects);
 	}
 }
-
-
-// Alternative file writing method
-//file_obj.write(fileContent.c_str(), fileContent.size());

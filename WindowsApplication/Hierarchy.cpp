@@ -53,10 +53,11 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::EndMenu();
 			}
 			ImGui::Separator();
-			if (ImGui::BeginMenu("..."))
+			if (ImGui::BeginMenu("Manage Scene"))
 			{
-				if (ImGui::MenuItem("Another Item"))
+				if (ImGui::MenuItem("Reload Scene"))
 				{
+					LoadScene(GetLoadedScenePath());
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndMenu();
@@ -164,11 +165,11 @@ namespace FlatEngine { namespace FlatGui {
 			float availableVerticalSpace = ImGui::GetContentRegionAvail().y;
 			if (availableVerticalSpace > 23)
 			{
-				for (int i = 0; i < availableVerticalSpace / 22 - 1; i++)
+				for (int i = 0; i < availableVerticalSpace / 20 - 1; i++)
 				{
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(1);
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 9);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
 					ImGui::Text("");
 				}
 			}

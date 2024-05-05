@@ -11,7 +11,7 @@ namespace FlatEngine {
 		mass = 1;
 		angularDrag = 1;
 		gravity = 1;
-		velocity = 0;
+		velocity = Vector2(0,0);
 		_isMoving = false;
 		_isContinious = false;
 		_isGrounded = false;
@@ -48,7 +48,8 @@ namespace FlatEngine {
 			{ "angularDrag", GetAngularDrag() },
 			{ "gravity", GetGravity() },
 			{ "_isContinious", IsContinuous() },
-			{ "_isKinematic", IsKinematic() }
+			{ "_isKinematic", IsKinematic() },
+			{ "_isStatic", IsStatic() },
 		};
 
 		std::string data = jsonData.dump();
@@ -58,7 +59,17 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyGravity()
 	{
+		if (!_isGrounded && velocity.y <= .2)
+			velocity.y -= gravity;
+		else if (_isGrounded)
+			velocity.y = 0;
+	}
 
+	void RigidBody::ApplyVelocity()
+	{
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 position = transform->GetPosition();
+		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
 	}
 
 	void RigidBody::AddForce(Vector2 direction, float power)
@@ -104,12 +115,12 @@ namespace FlatEngine {
 		return gravity;
 	}
 
-	void RigidBody::SetVelocity(float newVelocity)
+	void RigidBody::SetVelocity(Vector2 newVelocity)
 	{
 		velocity = newVelocity;
 	}
 
-	float RigidBody::GetVelocity()
+	Vector2 RigidBody::GetVelocity()
 	{
 		return velocity;
 	}
@@ -132,6 +143,16 @@ namespace FlatEngine {
 	bool RigidBody::IsContinuous()
 	{
 		return _isContinious;
+	}
+
+	void RigidBody::SetIsStatic(bool _static)
+	{
+		_isStatic = _static;
+	}
+
+	bool RigidBody::IsStatic()
+	{
+		return _isStatic;
 	}
 
 	void RigidBody::SetIsGrounded(bool _grounded)

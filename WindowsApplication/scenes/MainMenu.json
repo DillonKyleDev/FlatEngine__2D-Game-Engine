@@ -5,6 +5,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 0,
                     "rotation": 0.0,
@@ -15,6 +16,7 @@
                     "yScale": 2.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 1,
                     "renderOrder": 0,
@@ -35,6 +37,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 2,
                     "rotation": 0.0,
@@ -45,6 +48,7 @@
                     "yScale": 1.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "_isPrimaryCamera": true,
                     "frustrumAlpha": 255.0,
@@ -70,6 +74,7 @@
             ],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 11,
                     "rotation": 0.0,
@@ -89,6 +94,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 13,
                     "rotation": 0.0,
@@ -99,6 +105,7 @@
                     "yScale": 0.5
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "f_alpha": 204,
                     "f_blue": 1,
@@ -123,6 +130,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 16,
                     "rotation": 0.0,
@@ -133,6 +141,7 @@
                     "yScale": 0.30000001192092896
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "f_alpha": 204,
                     "f_blue": 1,
@@ -160,6 +169,7 @@
             ],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 16,
                     "rotation": 0.0,
@@ -170,6 +180,7 @@
                     "yScale": 2.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 17,
                     "renderOrder": 0,
@@ -208,6 +219,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 19,
                     "rotation": 0.0,
@@ -218,6 +230,7 @@
                     "yScale": 0.30000001192092896
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "f_alpha": 204,
                     "f_blue": 1,
@@ -242,6 +255,7 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 15,
                     "rotation": 0.0,
@@ -252,6 +266,7 @@
                     "yScale": 1.0
                 },
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 16,
                     "renderOrder": 0,

@@ -17,6 +17,8 @@ namespace FlatEngine
 	class GameScript;
 	class CharacterController;
 	class RigidBody;
+	class BoxCollider;
+	//class CircleCollider;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -37,6 +39,8 @@ namespace FlatEngine
 		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
 		std::shared_ptr<Component> GetComponent(ComponentTypes type);
+		bool HasComponent(ComponentTypes type);
+		bool HasComponent(std::string type);
 		std::shared_ptr<Transform> GetTransformComponent();
 		std::shared_ptr<Sprite> GetSpriteComponent();
 		std::shared_ptr<Camera> GetCameraComponent();
@@ -48,6 +52,8 @@ namespace FlatEngine
 		std::shared_ptr<Text> GetTextComponent();
 		std::shared_ptr<CharacterController> GetCharacterController();
 		std::shared_ptr<RigidBody> GetRigidBody();
+		std::shared_ptr<BoxCollider> GetBoxCollider();
+		//std::shared_ptr<GetCircleCollider> GetCircleCollider();
 		std::shared_ptr<GameScript> GetGameScriptByName(std::string scriptName);
 		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();

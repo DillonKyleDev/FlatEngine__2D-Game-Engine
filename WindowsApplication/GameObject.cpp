@@ -16,6 +16,8 @@
 #include "Button.h"
 #include "Canvas.h"
 #include "CharacterController.h"
+#include "BoxCollider.h"
+//#include "CircleCollider.h"
 
 
 namespace FlatEngine
@@ -122,6 +124,16 @@ namespace FlatEngine
 				std::shared_ptr<RigidBody> newComponent = std::make_shared<RigidBody>(std::static_pointer_cast<RigidBody>(component), GetID());
 				components.push_back(newComponent);
 			}
+			if (component->GetTypeString() == "BoxCollider")
+			{
+				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
+				components.push_back(newComponent);
+			}
+			//if (component->GetTypeString() == "CircleCollider")
+			//{
+			//	std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
+			//	components.push_back(newComponent);
+			//}
 		}
 	}
 
@@ -201,6 +213,16 @@ namespace FlatEngine
 				std::shared_ptr<RigidBody> newComponent = std::make_shared<RigidBody>(std::static_pointer_cast<RigidBody>(component), GetID());
 				components.push_back(newComponent);
 			}
+			if (component->GetTypeString() == "BoxCollider")
+			{
+				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
+				components.push_back(newComponent);
+			}
+			//if (component->GetTypeString() == "CircleCollider")
+			//{
+			//	std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
+			//	components.push_back(newComponent);
+			//}
 		}
 	}
 
@@ -249,6 +271,9 @@ namespace FlatEngine
 		std::shared_ptr<Audio> audioComponent;
 		std::shared_ptr<Text> textComponent;
 		std::shared_ptr<CharacterController> characterControllerComponent;
+		std::shared_ptr<RigidBody> rigidBodyComponent;
+		std::shared_ptr<BoxCollider> boxColliderComponent;
+		//std::shared_ptr<CircleCollider> circleColliderComponent;
 
 		// Get next Component ID from the scene
 		std::shared_ptr<Scene> scene = GetLoadedScene();
@@ -326,6 +351,29 @@ namespace FlatEngine
 			return characterControllerComponent;
 			break;
 
+		case ComponentTypes::RigidBody:
+			rigidBodyComponent = std::make_shared<RigidBody>(nextID, ID);
+			components.push_back(rigidBodyComponent);
+			scene->IncrementComponentID();
+			return rigidBodyComponent;
+			break;
+
+
+		case ComponentTypes::BoxCollider:
+			boxColliderComponent = std::make_shared<BoxCollider>(nextID, ID);
+			components.push_back(boxColliderComponent);
+			scene->IncrementComponentID();
+			return boxColliderComponent;
+			break;
+
+
+		//case ComponentTypes::CircleCollider:
+		//	circleColliderComponent = std::make_shared<CircleCollider>(nextID, ID);
+		//	components.push_back(circleColliderComponent);
+		//	scene->IncrementComponentID();
+		//	return circleColliderComponent;
+		//	break;
+
 		default:
 			return nullptr;
 			break;
@@ -369,6 +417,21 @@ namespace FlatEngine
 		}
 
 		return nullptr;
+	}
+
+	bool GameObject::HasComponent(ComponentTypes type)
+	{
+		return GetComponent(type) != nullptr;
+	}
+
+	bool GameObject::HasComponent(std::string type)
+	{
+		for (std::shared_ptr<Component> component : components)
+		{
+			if (component->GetTypeString() == type)
+				return true;
+		}
+		return false;
 	}
 
 	std::shared_ptr<Transform> GameObject::GetTransformComponent()
@@ -436,6 +499,18 @@ namespace FlatEngine
 		std::shared_ptr<RigidBody> rigidBody = std::static_pointer_cast<RigidBody>(GetComponent(ComponentTypes::RigidBody));
 		return rigidBody;
 	}
+
+	std::shared_ptr<BoxCollider> GameObject::GetBoxCollider()
+	{
+		std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(GetComponent(ComponentTypes::BoxCollider));
+		return boxCollider;
+	}
+
+	//std::shared_ptr<CircleCollider> GameObject::GetCircleCollider()
+	//{
+	//	std::shared_ptr<CircleCollider> circleCollider = std::static_pointer_cast<CircleCollider>(GetComponent(ComponentTypes::CircleCollider));
+	//	return circleCollider;
+	//}
 
 	std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)
 	{

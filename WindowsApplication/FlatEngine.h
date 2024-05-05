@@ -47,8 +47,6 @@ namespace FlatEngine
 	extern std::vector<SDL_Joystick*> gamepads;
 	extern int JOYSTICK_DEAD_ZONE;
 
-	extern std::shared_ptr<GameManager> gameManager;
-
 	// #### FLAGENGINE #### //
 	// 
 	// Variables
@@ -69,12 +67,15 @@ namespace FlatEngine
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
 
 	// Managers
+	extern std::shared_ptr<GameManager> gameManager;
 	extern FlatEngine::SceneManager *sceneManager;
 	extern FlatEngine::Logger *logger;
 	extern FlatEngine::GameLoop *gameLoop;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;
-	extern std::vector<RigidBody> rigidBodies;
+	extern std::shared_ptr<Sound> soundController;
+	extern std::vector<std::shared_ptr<RigidBody>> rigidBodies;
+	extern std::vector<std::shared_ptr<BoxCollider>> boxColliders;
 
 	// ImU32 colors
 	extern ImU32 White;
@@ -89,11 +90,7 @@ namespace FlatEngine
 	extern void Run(bool &_hasQuit);
 	extern void CloseProgram();
 	extern int GetEngineTime();
-
 	extern json LoadFileData(std::string filepath);
-
-	// Audio Managing
-	extern std::shared_ptr<Sound> soundController;
 
 	// Project Management
 	extern std::shared_ptr<Project> loadedProject;
@@ -104,7 +101,6 @@ namespace FlatEngine
 	extern std::vector<std::shared_ptr<MappingContext>> mappingContexts;
 	extern void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context);
 	extern void InitializeMappingContexts();
-	extern void ClearIAContextBindings();
 	extern std::shared_ptr<MappingContext> GetMappingContext(std::string contextName);
 
 	// Scene Manager Prettification
@@ -178,7 +174,18 @@ namespace FlatEngine
 		extern ImVec4 innerWindowColor;
 		extern ImVec4 singleItemColor;
 		extern ImVec4 windowTitleBg;
-		extern ImVec4 componentBorderColor;
+		// Components
+		//
+ 		extern ImVec4 componentBorderColor;
+		// Collider borders
+		extern ImVec4 boxColliderActiveColor;
+		extern ImVec4 boxColliderInactiveColor;
+		extern ImVec4 boxColliderCollidingColor;
+		extern ImVec4 circleColliderActiveColor;
+		extern ImVec4 circleColliderInactiveColor;
+		// Button Components
+		extern ImVec4 buttonComponentActiveColor;
+		extern ImVec4 buttonComponentInctiveColor;
 		// Log
 		extern ImVec4 logTextColor;
 		extern ImVec4 logBgColor;
@@ -256,10 +263,14 @@ namespace FlatEngine
 		extern ImVec4 checkboxHoveredColor;
 		extern ImVec4 checkboxActiveColor;
 
+
 		extern int maxSpriteLayers;
 		extern float spriteScaleMultiplier;
 
 		// Icons
+		extern std::shared_ptr<Texture> transformArrow;
+		extern std::shared_ptr<Texture> cameraIcon;
+
 		extern std::shared_ptr<Texture> playIcon;
 		extern std::shared_ptr<Texture> pauseIcon;
 		extern std::shared_ptr<Texture> stopIcon;
@@ -270,13 +281,15 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> newFileIcon;
 		extern std::shared_ptr<Texture> saveFileIcon;
 		extern std::shared_ptr<Texture> saveAsFileIcon;
-		extern std::shared_ptr<Texture> transformArrow;
-		extern std::shared_ptr<Texture> cameraTexture;
 		extern std::shared_ptr<Texture> keyFrameIcon;
 		extern std::shared_ptr<Texture> timelineScrubberIcon;
 		extern std::shared_ptr<Texture> threeDotsIcon;
 		extern std::shared_ptr<Texture> showIcon;
 		extern std::shared_ptr<Texture> hideIcon;
+
+		extern SDL_Texture* transformArrowTexture;
+		extern SDL_Texture* cameraTexture;
+
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
 		extern SDL_Texture* stopTexture;		
@@ -292,7 +305,7 @@ namespace FlatEngine
 		extern SDL_Texture* threeDotsTexture;
 		extern SDL_Texture* showTexture;
 		extern SDL_Texture* hideTexture;
-
+		// Texture Colors
 		extern ImVec2 uv0;
 		extern ImVec2 uv1;
 		extern ImVec4 tint_col;
@@ -384,6 +397,9 @@ namespace FlatEngine
 		extern void PopComboStyles();
 		extern void PushMenuStyles();
 		extern void PopMenuStyles();
+		extern void PushTableStyles();
+		extern void PopTableStyles();
+		extern ImGuiTableFlags tableFlags;
 		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), float rounding = 1, ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
 		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(16, 16), float rounding = 1, ImVec4 bgColor = imageButtonColor, ImVec4 tint = imageButtonTintColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
@@ -393,6 +409,9 @@ namespace FlatEngine
 
 		extern ImU32 ImVec4ToImU32(ImVec4 color);
 		
+		// Hierarchy
+		extern void ResetHierarchyExpanderTracker();
+
 		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);

@@ -30,13 +30,13 @@ namespace FlatEngine
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 	long FlatEngine::FocusedGameObjectID = -1;
-
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
 	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
-	std::vector<RigidBody> rigidBodies = std::vector<RigidBody>();
+	std::vector<std::shared_ptr<RigidBody>> rigidBodies = std::vector<std::shared_ptr<RigidBody>>();
+	std::vector<std::shared_ptr<BoxCollider>> boxColliders = std::vector<std::shared_ptr<BoxCollider>>();
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
@@ -67,9 +67,6 @@ namespace FlatEngine
 	// FlatEngine
 	void Run(bool& _hasQuit)
 	{
-		// Save a copy of the old process map values
-		//AddProfilerProcess("Run Start", 0);
-
 		// Manage Controllers
 		static int controllersConnected = 0;
 		if (SDL_NumJoysticks() != controllersConnected)
@@ -293,8 +290,12 @@ namespace FlatEngine
 
 		loadedProject = newProject;
 		
-		LoadScene(loadedProject->GetLoadedScenePath());
-		SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
+		if (loadedProject->GetLoadedScenePath() != "")
+			LoadScene(loadedProject->GetLoadedScenePath());
+		else
+			CreateNewScene();
+		if (loadedProject->GetLoadedPreviewAnimationPath() != "")
+			SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
 		//FlatGui::sceneViewScrolling = ImVec2(scrolling.x, scrolling.y);
 	}
@@ -348,7 +349,6 @@ namespace FlatEngine
 
 
 	// Mapping Context Management
-
 	void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context)
 	{
 
@@ -471,11 +471,6 @@ namespace FlatEngine
 		}
 	}
 
-	void ClearIAContextBindings()
-	{
-
-	}
-
 	std::shared_ptr<MappingContext> GetMappingContext(std::string contextName)
 	{
 		for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
@@ -484,6 +479,7 @@ namespace FlatEngine
 
 		return nullptr;
 	}
+	
 
 	// Scene Manager Prettification
 	std::shared_ptr<Scene> GetLoadedScene()

@@ -20,6 +20,8 @@
 #include "Text.h"
 #include "Scene.h"
 #include "Camera.h"
+#include "BoxCollider.h"
+//#include "CircleCollider.h"
 
 #include "MappingContext.h"
 
@@ -38,96 +40,121 @@ namespace FlatEngine { namespace FlatGui {
 	// For window styles
 	float childPadding = 8;
 
-	// Global Colors
-	ImVec4 transparentColor = ImVec4(float(0.0), float(0.0), float(0.0), float(0));
-	ImVec4 whiteColor = ImVec4(float(1.0), float(1.0), float(1.0), float(1.0));
-	// Windows
-	ImVec4 windowBgColor = ImVec4(float(0.08), float(0.08), float(0.10), float(1));
-	ImVec4 outerWindowColor = ImVec4(float(0.13), float(0.13), float(0.15), float(1));
-	ImVec4 innerWindowColor = ImVec4(float(0.1), float(0.1), float(0.12), float(1));
-	ImVec4 singleItemColor = ImVec4(float(0.19), float(0.19), float(0.21), float(1));
-	ImVec4 singleItemDark = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 windowTitleBg = ImVec4(float(0.25), float(0.25), float(0.25), float(1));
-	ImVec4 componentBorderColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	//////////////////////
+	//Global      Colors//
+	//  //////VV///////  /
+	//     UUUUUUUU     //
+	///\-------------/////
+	//////////////////////
+
+	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ImVec4 whiteColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	//////////////////////
+	// Components ////////
+	//////////////////////
+	ImVec4 componentBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	// Colliders
+	ImVec4 boxColliderActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
+	ImVec4 boxColliderInactiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
+	ImVec4 boxColliderCollidingColor = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
+	ImVec4 circleColliderActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
+	ImVec4 circleColliderInactiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
+	// Button Components
+	ImVec4 buttonComponentActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
+	ImVec4 buttonComponentInctiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
+	// Canvas Orange = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
+	
+	//////////////////////
+	// Windows ///////////
+	//////////////////////
+	ImVec4 windowBgColor = ImVec4(0.08f, 0.08f, 0.10f, 1.0f);
+	ImVec4 outerWindowColor = ImVec4(0.13f, 0.13f, 0.15f, 1.0f);
+	ImVec4 innerWindowColor = ImVec4(0.1f, 0.1f, 0.12f, 1.0f);
+	ImVec4 singleItemColor = ImVec4(0.16f, 0.16f, 0.17f, 1.0f);
+	ImVec4 singleItemDark = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
+	ImVec4 windowTitleBg = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
 	// Log
-	ImVec4 logTextColor = ImVec4(float(0.75), float(0.75), float(0.75), float(1.0));;
-	ImVec4 logBgColor = ImVec4(float(0.2), float(0.2), float(0.22), float(1));
-	ImVec4 logOutlineColor = ImVec4(float(0.25), float(0.25), float(0.27), float(1));
+	ImVec4 logTextColor = ImVec4(0.75f, 0.75f, 0.75f, 1.0f);;
+	ImVec4 logBgColor = ImVec4(0.2f, 0.2f, 0.22f, 1.0f);
+	ImVec4 logOutlineColor = ImVec4(0.25f, 0.25f, 0.27f, 1.0f);
 	// Docking
 	ImVec4 dockingPreviewColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
 	ImVec4 dockingPreviewEmptyColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
 	// ImGui Key colors
-	ImVec4 frameBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 frameBgActiveColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 frameBgHoveredColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 frameBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 frameBgActiveColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 frameBgHoveredColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	// tabs
-	ImVec4 tabColor = ImVec4(float(0.15), float(0.15), float(0.2), float(1));
-	ImVec4 tabActiveColor = ImVec4(float(0.4), float(0.4), float(0.42), float(1));
-	ImVec4 tabHoveredColor = ImVec4(float(0.4), float(0.4), float(0.42), float(1));
-	ImVec4 tabUnfocusedColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
-	ImVec4 tabUnfocusedActiveColor = ImVec4(float(0.3), float(0.3), float(0.31), float(1));
+	ImVec4 tabColor = ImVec4(0.15f, 0.15f, 0.2f, 1.0f);
+	ImVec4 tabActiveColor = ImVec4(0.4f, 0.4f, 0.42f, 1.0f);
+	ImVec4 tabHoveredColor = ImVec4(0.4f, 0.4f, 0.42f, 1.0f);
+	ImVec4 tabUnfocusedColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+	ImVec4 tabUnfocusedActiveColor = ImVec4(0.3f, 0.3f, 0.31f, 1.0f);
 	// titles
-	ImVec4 titleBgColor = ImVec4(float(0.0), float(0.0), float(0.0), float(1));
-	ImVec4 titleBgActiveColor = ImVec4(float(0.2), float(0.2), float(0.25), float(1));
-	ImVec4 titleBgCollapsedColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 titleBgColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+	ImVec4 titleBgActiveColor = ImVec4(0.2f, 0.2f, 0.25f, 1.0f);
+	ImVec4 titleBgCollapsedColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Text
-	ImVec4 textSelectedBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
+	ImVec4 textSelectedBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Resizers
 	ImVec4 resizeGripColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
 	ImVec4 resizeGripHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
 	ImVec4 resizeGripActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
 	// Misc (not sure what they're for)
-	ImVec4 popupBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 navWindowHighlightColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 navHighlightColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 navWindowDimBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 modalWindowDimBgColor = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	// Custom Colors
-	// 
+	ImVec4 popupBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 navWindowHighlightColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 navHighlightColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 navWindowDimBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	ImVec4 modalWindowDimBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	////////////////////
+	// Custom Colors ///
+	//////////////////// 
 	// Inputs
-	ImVec4 inputColor = ImVec4(float(0.2), float(0.2), float(0.22), float(1));
+	ImVec4 inputColor = ImVec4(0.3f, 0.3f, 0.32f, 1.0f);
 	// Tables
-	ImVec4 uneditableTableTextColor = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
-	ImVec4 uneditableTableRowLightColor = ImVec4(float(0.3), float(0.35), float(0.55), float(1));
-	ImVec4 uneditableTableRowDarkColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
-	ImVec4 uneditableTableRowFieldColor = ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
-	ImVec4 tableCellLightColor = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
-	ImVec4 tableCellDarkColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+	ImVec4 uneditableTableTextColor = ImVec4(0.75f, 0.75f, 0.81f, 1.0f);
+	ImVec4 uneditableTableRowLightColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.35f, 0.55f, 1.0f);
+	ImVec4 uneditableTableRowDarkColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
+	ImVec4 uneditableTableRowFieldColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
+	ImVec4 tableCellLightColor = ImVec4(0.19f, 0.19f, 0.21f, 1.0f);
+	ImVec4 tableCellDarkColor = ImVec4(0.24f, 0.24f, 0.27f, 1.0f);
+	//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
+	ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 	// Trees
-	ImVec4 treeSelectableColor = ImVec4(float(0.15), float(0.15), float(0.15), float(1));
-	ImVec4 treeSelectableHoveredColor = ImVec4(float(0.3), float(0.35), float(0.65), float(1));
-	ImVec4 treeSelectableActiveColor = ImVec4(float(0.2), float(0.25), float(0.45), float(1));
+	ImVec4 treeSelectableColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+	ImVec4 treeSelectableHoveredColor = ImVec4(0.3f, 0.35f, 0.65f, 1.0f);
+	ImVec4 treeSelectableActiveColor = ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
 	ImVec4 treeSelectableSelectedColor = ImVec4(0.5f, 0.5f, 0.8f, 1.0f);
 	ImVec4 hierarchyChildObjectColor = ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
 	// Combos
-	ImVec4 comboBgColor = ImVec4(float(0.19), float(0.19), float(0.21), float(1));
-	ImVec4 comboHoveredColor = ImVec4(float(0.25), float(0.25), float(0.26), float(1));
-	ImVec4 comboSelectableColor = ImVec4(float(0.34), float(.34), float(.4), float(1));
-	ImVec4 comboSelectedColor = ImVec4(float(0.45), float(0.45), float(0.50), float(1));
-	ImVec4 comboHighlightedColor = ImVec4(float(0.25), float(0.25), float(0.28), float(1));
-	ImVec4 comboArrowColor = ImVec4(float(0.11), float(0.11), float(0.13), float(1));
-	ImVec4 comboArrowHoveredColor = ImVec4(float(0.15), float(0.15), float(0.16), float(1));
+	ImVec4 comboBgColor = ImVec4(0.19f, 0.19f, 0.21f, 1.0f);
+	ImVec4 comboHoveredColor = ImVec4(0.25f, 0.25f, 0.26f, 1.0f);
+	ImVec4 comboSelectableColor = ImVec4(0.34f, .34f, .4f, 1.0f);
+	ImVec4 comboSelectedColor = ImVec4(0.45f, 0.45f, 0.50f, 1.0f);
+	ImVec4 comboHighlightedColor = ImVec4(0.25f, 0.25f, 0.28f, 1.0f);
+	ImVec4 comboArrowColor = ImVec4(0.11f, 0.11f, 0.13f, 1.0f);
+	ImVec4 comboArrowHoveredColor = ImVec4(0.15f, 0.15f, 0.16f, 1.0f);
 	// Buttons
 	ImVec4 buttonColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
 	ImVec4 buttonHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
 	ImVec4 buttonActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
-	ImVec4 imageButtonColor = ImVec4(float(0.18), float(0.18), float(0.18), float(1));
-	ImVec4 imageButtonHoveredColor = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
-	ImVec4 imageButtonActiveColor = ImVec4(float(0.1), float(0.1), float(0.1), float(1));
+	ImVec4 imageButtonColor = ImVec4(0.18f, 0.18f, 0.18f, 1.0f);
+	ImVec4 imageButtonHoveredColor = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+	ImVec4 imageButtonActiveColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	ImVec4 imageButtonTintColor = whiteColor;
 	// Sliders/Drags
-	ImVec4 sliderColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 sliderHoveredColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 sliderActiveColor = ImVec4(float(0.09), float(0.09), float(0.13), float(1));
-	ImVec4 dragColor = ImVec4(float(0.2), float(0.2), float(0.2), float(0));
-	ImVec4 dragHoveredColor = ImVec4(float(0.45), float(0.45), float(0.45), float(1));
-	ImVec4 dragActiveColor = ImVec4(float(0.10), float(0.10), float(0.10), float(1));
+	ImVec4 sliderColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
+	ImVec4 sliderHoveredColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
+	ImVec4 sliderActiveColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
+	ImVec4 dragColor = ImVec4(0.2f, 0.2f, 0.2f, 0.0f);
+	ImVec4 dragHoveredColor = ImVec4(0.45f, 0.45f, 0.45f, 1.0f);
+	ImVec4 dragActiveColor = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
 	// Checkboxes
-	ImVec4 checkboxBgColor = ImVec4(float(0.23), float(0.23), float(0.23), float(1));
-	ImVec4 checkboxCheckColor = ImVec4(0.35f, 0.35f, 0.85f, 1.0f);
-	ImVec4 checkboxHoveredColor = ImVec4(float(0.2), float(0.2), float(0.3), float(1));
-	ImVec4 checkboxActiveColor = ImVec4(float(0.15), float(0.15), float(0.23), float(1));
-
+	ImVec4 checkboxBgColor = ImVec4(0.28f, 0.28f, 0.29f, 1.0f);
+	ImVec4 checkboxCheckColor = ImVec4(0.45f, 0.45f, 0.9f, 1.0f);
+	ImVec4 checkboxHoveredColor = ImVec4(0.31f, 0.31f, 0.32f, 1.0f);
+	ImVec4 checkboxActiveColor = ImVec4(0.15f, 0.15f, 0.23f, 1.0f);
+	////////////////////////
 
 	// For rendering sprites
 	int maxSpriteLayers = 55;
@@ -261,15 +288,8 @@ namespace FlatEngine { namespace FlatGui {
 			// Open Project by default
 			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
 			
-			// Initialize Hierarchy scene object expanded tracker
-			std::vector<std::shared_ptr<GameObject>> sceneObjects = GetSceneObjects();
-			for (std::vector<std::shared_ptr<GameObject>>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
-			{
-				if (leafExpandedTracker.count((*object)->GetID()) == 0)
-				{
-					leafExpandedTracker.emplace((*object)->GetID(), true);
-				}
-			}
+			// Hierarchy management
+			FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 
 			_hasRunOnce = true;
 		}
@@ -833,7 +853,7 @@ namespace FlatEngine { namespace FlatGui {
 				//{
 				switch (event.jaxis.axis)
 				{
-				case XboxAxis::LeftXAxis:
+				case XInputAxis::LeftXAxis:
 					// Left of dead zone or right of dead zone
 					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
 						event.jaxis.value = 0;
@@ -841,7 +861,7 @@ namespace FlatEngine { namespace FlatGui {
 						if (mappingContext->GetKeyBinding("XInput_LeftJoystickX") != "")
 							mappingContext->OnInputEvent("XInput_LeftJoystickX", event);
 					break;
-				case XboxAxis::LeftYAxis:
+				case XInputAxis::LeftYAxis:
 					// Below dead zone or Above dead zone
 					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
 						event.jaxis.value = 0;
@@ -849,7 +869,7 @@ namespace FlatEngine { namespace FlatGui {
 						if (mappingContext->GetKeyBinding("XInput_LeftJoystickY") != "")
 							mappingContext->OnInputEvent("XInput_LeftJoystickY", event);
 					break;
-				case XboxAxis::RightXAxis:
+				case XInputAxis::RightXAxis:
 					// Left of dead zone or Right of dead zone
 					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
 						event.jaxis.value = 0;
@@ -857,7 +877,7 @@ namespace FlatEngine { namespace FlatGui {
 						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
 							mappingContext->OnInputEvent("XInput_RightJoystick", event);
 					break;
-				case XboxAxis::RightYAxis:
+				case XInputAxis::RightYAxis:
 					// Below dead zone or Above dead zone
 					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
 						event.jaxis.value = 0;
@@ -865,12 +885,12 @@ namespace FlatEngine { namespace FlatGui {
 						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
 							mappingContext->OnInputEvent("XInput_RightJoystick", event);
 					break;
-				case XboxAxis::LT:
+				case XInputAxis::LT:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_LT") != "")
 							mappingContext->OnInputEvent("XInput_LT", event);
 					break;
-				case XboxAxis::RT:
+				case XInputAxis::RT:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_RT") != "")
 							mappingContext->OnInputEvent("XInput_RT", event);
@@ -882,7 +902,7 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				switch (event.jbutton.button)
 				{
-				case XboxButtons::A:
+				case XInputButtons::A:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_A") != "")
 						{
@@ -891,7 +911,7 @@ namespace FlatEngine { namespace FlatGui {
 						}
 							
 					break;
-				case XboxButtons::B:
+				case XInputButtons::B:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_B") != "")
 						{
@@ -899,7 +919,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_B");
 						}
 					break;
-				case XboxButtons::X:
+				case XInputButtons::X:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_X") != "")
 						{
@@ -907,7 +927,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_X");
 						}
 					break;
-				case XboxButtons::Y:
+				case XInputButtons::Y:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Y") != "")
 						{
@@ -915,7 +935,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_Y");
 						}
 					break;
-				case XboxButtons::LB:
+				case XInputButtons::LB:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_LB") != "")
 						{
@@ -923,7 +943,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_LB");
 						}
 					break;
-				case XboxButtons::RB:
+				case XInputButtons::RB:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_RB") != "")
 						{
@@ -931,7 +951,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_RB");
 						}
 					break;
-				case XboxButtons::ScreenShot:
+				case XInputButtons::ScreenShot:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
 						{
@@ -939,7 +959,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_ScreenShot");
 						}
 					break;
-				case XboxButtons::Start:
+				case XInputButtons::Start:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Start") != "")
 						{
@@ -947,7 +967,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_Start");
 						}
 					break;
-				case XboxButtons::LS:
+				case XInputButtons::LS:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_LS") != "")
 						{
@@ -955,7 +975,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_LS");
 						}
 					break;
-				case XboxButtons::RS:
+				case XInputButtons::RS:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_RS") != "")
 						{
@@ -963,7 +983,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_RS");
 						}
 					break;
-				case XboxButtons::Home:
+				case XInputButtons::Home:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Home") != "")
 						{
@@ -971,7 +991,7 @@ namespace FlatEngine { namespace FlatGui {
 							firedKeys.push_back("XInput_Home");
 						}
 					break;
-				case XboxButtons::Tray:
+				case XInputButtons::Tray:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
 						{
@@ -988,62 +1008,62 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				switch (event.jbutton.button)
 				{
-				case XboxButtons::A:
+				case XInputButtons::A:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_A") != "")
 							mappingContext->ClearInputActionEvent("XInput_A");
 					break;
-				case XboxButtons::B:
+				case XInputButtons::B:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_B") != "")
 							mappingContext->ClearInputActionEvent("XInput_B");
 					break;
-				case XboxButtons::X:
+				case XInputButtons::X:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_X") != "")
 							mappingContext->ClearInputActionEvent("XInput_X");
 					break;
-				case XboxButtons::Y:
+				case XInputButtons::Y:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Y") != "")
 							mappingContext->ClearInputActionEvent("XInput_Y");
 					break;
-				case XboxButtons::LB:
+				case XInputButtons::LB:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_LB") != "")
 							mappingContext->ClearInputActionEvent("XInput_LB");
 					break;
-				case XboxButtons::RB:
+				case XInputButtons::RB:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_RB") != "")
 							mappingContext->ClearInputActionEvent("XInput_RB");
 					break;
-				case XboxButtons::ScreenShot:
+				case XInputButtons::ScreenShot:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
 							mappingContext->ClearInputActionEvent("XInput_ScreenShot");
 					break;
-				case XboxButtons::Start:
+				case XInputButtons::Start:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)						
 						if (mappingContext->GetKeyBinding("XInput_Start") != "")
 							mappingContext->ClearInputActionEvent("XInput_Start");
 					break;
-				case XboxButtons::LS:
+				case XInputButtons::LS:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_LS") != "")
 							mappingContext->ClearInputActionEvent("XInput_LS");
 					break;
-				case XboxButtons::RS:
+				case XInputButtons::RS:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_RS") != "")
 							mappingContext->ClearInputActionEvent("XInput_RS");
 					break;
-				case XboxButtons::Home:
+				case XInputButtons::Home:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Home") != "")
 							mappingContext->ClearInputActionEvent("XInput_Home");
 					break;
-				case XboxButtons::Tray:
+				case XInputButtons::Tray:
 					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
 						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
 							mappingContext->ClearInputActionEvent("XInput_Tray");
@@ -1057,18 +1077,18 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				switch (event.jhat.value)
 				{
-				case XboxHats::Up:
+				case XInputHats::Up:
 					//LogFloat(event.jhat.type, "Hat Type: ");
 					//LogFloat(event.jhat.value, "Hat Value: ");
 					//LogFloat(event.jhat.hat, "Hat hat: ");
 					break;
-				case XboxHats::Down:
+				case XInputHats::Down:
 					LogString("Down");
 					break;
-				case XboxHats::Left:
+				case XInputHats::Left:
 					LogString("Left");
 					break;
-				case XboxHats::Right:
+				case XInputHats::Right:
 					LogString("Right");
 					break;
 				default:
@@ -1142,7 +1162,6 @@ namespace FlatEngine { namespace FlatGui {
 		f_FileSystem->Release();
 		CoUninitialize();
 
-		LogString(sSelectedFile);
 		return sFilePath;
 	}
 
@@ -1375,6 +1394,7 @@ namespace FlatEngine { namespace FlatGui {
 		std::shared_ptr<Button> button = self->GetButtonComponent();
 		std::shared_ptr<Canvas> canvas = self->GetCanvasComponent();
 		std::shared_ptr<Text> text = self->GetTextComponent();
+		std::shared_ptr<BoxCollider> boxCollider = self->GetBoxCollider();
 
 		// Check if each object has a Transform component
 		if (transform != nullptr)
@@ -1450,10 +1470,8 @@ namespace FlatEngine { namespace FlatGui {
 				ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
 				ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
 
-				cameraTexture->loadFromFile("assets/images/camera.png");
-				SDL_Texture* texture = cameraTexture->getTexture();
-				float cameraTextureWidth = (float)cameraTexture->getWidth() * 3;
-				float cameraTextureHeight = (float)cameraTexture->getHeight() * 3;
+				float cameraTextureWidth = (float)cameraIcon->getWidth() / 4;
+				float cameraTextureHeight = (float)cameraIcon->getHeight() / 4;
 				bool _scalesWithZoom = false;
 				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
 				Vector2 cameraTextureScale = { 1, 1 };
@@ -1468,7 +1486,7 @@ namespace FlatEngine { namespace FlatGui {
 				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
 
 				// Draw actual camera icon
-				AddImageToDrawList(texture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -1517,6 +1535,34 @@ namespace FlatEngine { namespace FlatGui {
 					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
 			}
 
+			// Renders Button Component
+			if (boxCollider != nullptr)
+			{
+				float activeWidth = boxCollider->GetActiveWidth();
+				float activeHeight = boxCollider->GetActiveHeight();
+				Vector2 activeOffset = boxCollider->GetActiveOffset();
+				int activeLayer = boxCollider->GetActiveLayer();
+				bool _isActive = boxCollider->IsActive();
+				bool _isColliding = boxCollider->IsColliding();
+
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), gridStep, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), gridStep, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), gridStep, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), gridStep, true);
+
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
+
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				if (_isActive && !_isColliding)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderActiveColor), 1.0f, draw_list);
+				else if (!_isActive)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderInactiveColor), 1.0f, draw_list);
+				else if (_isColliding)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderCollidingColor), 1.0f, draw_list);
+			}
+
 
 			// Renders Transform Arrow // 
 			//
@@ -1524,9 +1570,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
 			{
 				// Get focused GameObject and transformArrow png
-				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
-				transformArrow->loadFromFile("assets/images/transformArrow.png");
-				SDL_Texture* texture = transformArrow->getTexture();
+				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);								
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting
 				// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
 				float arrowWidth = (float)transformArrow->getWidth() * 3;
@@ -1537,7 +1581,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				AddImageToDrawList(texture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
+				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
 			}
 		}
 
@@ -1688,6 +1732,18 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleVar();
 	}
 
+	void PushTableStyles()
+	{
+		ImGui::PushStyleColor(ImGuiCol_TableRowBg, tableCellDarkColor);
+		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, tableCellLightColor);
+	}
+
+	void PopTableStyles()
+	{
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
 	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
@@ -1698,9 +1754,9 @@ namespace FlatEngine { namespace FlatGui {
 		float scalingXEnd = WorldToViewport(scalingXStart, textureWidthPx * newScale.x, zoomMultiplier);
 		float scalingYEnd = WorldToViewport(scalingYStart, textureHeightPx * newScale.y, zoomMultiplier);
 
-		float unscaledXStart = WorldToViewport(relativeCenterPoint.x, positionInGrid.x, zoomMultiplier) - offsetPx.x * scale.x;
-		float unscaledYStart = WorldToViewport(relativeCenterPoint.y, -positionInGrid.y, zoomMultiplier) - offsetPx.y * scale.y;
-
+		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
+		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
+	
 		ImVec2 renderStart;
 		ImVec2 renderEnd;
 		ImVec2 UvStart = { 0, 0 };
@@ -1826,6 +1882,21 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 
 		return _checked;
+	}
+
+	// Hierarchy
+	void ResetHierarchyExpanderTracker()
+	{
+		// Initialize Hierarchy scene object expanded tracker
+		FlatEngine::FlatGui::leafExpandedTracker.clear();
+		std::vector<std::shared_ptr<GameObject>> sceneObjects = GetSceneObjects();
+		for (std::vector<std::shared_ptr<GameObject>>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+		{
+			if (FlatEngine::FlatGui::leafExpandedTracker.count((*object)->GetID()) == 0)
+			{
+				FlatEngine::FlatGui::leafExpandedTracker.emplace((*object)->GetID(), true);
+			}
+		}
 	}
 
 	ImU32 ImVec4ToImU32(ImVec4 color)

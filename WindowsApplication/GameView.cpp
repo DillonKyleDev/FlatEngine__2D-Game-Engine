@@ -124,7 +124,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
 		worldCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * cameraZoom) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * cameraZoom) + canvas_p0.y);
-		// Get the "center point of the viewport
+		// Get the center point of the viewport
 		ImVec2 viewportCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
 		// Start off with a 0,0 parentOffset because this is the top level object to be rendered.

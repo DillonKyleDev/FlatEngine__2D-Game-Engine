@@ -4,7 +4,10 @@
 
 namespace FlatEngine { namespace FlatGui {
 
-	// Icons
+	// Icons / Images
+	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
+	std::shared_ptr<Texture> cameraIcon = std::make_shared<Texture>();
+
 	std::shared_ptr<Texture> playIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> pauseIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> stopIcon = std::make_shared<Texture>();
@@ -15,8 +18,6 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> newFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> saveFileIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> saveAsFileIcon = std::make_shared<Texture>();
-	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
-	std::shared_ptr<Texture> cameraTexture = std::make_shared<Texture>();
 	std::shared_ptr<Texture> keyFrameIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> timelineScrubberIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> threeDotsIcon = std::make_shared<Texture>();
@@ -27,6 +28,9 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
 	ImVec4 tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 	ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+
+	SDL_Texture* transformArrowTexture = nullptr;
+	SDL_Texture* cameraTexture = nullptr;
 
 	SDL_Texture* playTexture = nullptr;
 	SDL_Texture* pauseTexture = nullptr;
@@ -46,11 +50,18 @@ namespace FlatEngine { namespace FlatGui {
 
 	void CreateIcons()
 	{
-		playIcon->loadFromFile("assets/images/icons/PlayIcon.png");
+		transformArrow->loadFromFile("assets/images/icons/transformArrow.png");
+		transformArrowTexture = transformArrow->getTexture();
+		cameraIcon->loadFromFile("assets/images/icons/camera.png");
+		cameraTexture = cameraIcon->getTexture();
+		// Attribution for Camera icon
+		/*<a href = "https://www.flaticon.com/free-icons/movie-camera" title = "movie camera icons">Movie camera icons created by Freepik - Flaticon< / a>*/
+
+		playIcon->loadFromFile("assets/images/icons/play.png");
 		playTexture = playIcon->getTexture();
-		pauseIcon->loadFromFile("assets/images/icons/PauseIcon.png");
+		pauseIcon->loadFromFile("assets/images/icons/pause.png");
 		pauseTexture = pauseIcon->getTexture();
-		stopIcon->loadFromFile("assets/images/icons/StopIcon.png");
+		stopIcon->loadFromFile("assets/images/icons/stop.png");
 		stopTexture = stopIcon->getTexture();
 		expandIcon->loadFromFile("assets/images/icons/expand.png");
 		expandTexture = expandIcon->getTexture();
@@ -66,7 +77,7 @@ namespace FlatEngine { namespace FlatGui {
 		saveFileTexture = saveFileIcon->getTexture();
 		saveAsFileIcon->loadFromFile("assets/images/icons/saveAs.png");
 		saveAsFileTexture = saveAsFileIcon->getTexture();
-		keyFrameIcon->loadFromFile("assets/images/icons/KeyFrameIcon.png");
+		keyFrameIcon->loadFromFile("assets/images/icons/keyFrame.png");
 		keyFrameTexture = keyFrameIcon->getTexture();
 		threeDotsIcon->loadFromFile("assets/images/icons/threeDots.png");
 		threeDotsTexture = threeDotsIcon->getTexture();

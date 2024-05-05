@@ -35,6 +35,9 @@ namespace FlatEngine { namespace FlatGui {
 			std::shared_ptr<Component> canvasComponent = focusedObject->GetComponent(ComponentTypes::Canvas);
 			std::shared_ptr<Component> animationComponent = focusedObject->GetComponent(ComponentTypes::Animation);
 			std::shared_ptr<Component> characterController = focusedObject->GetComponent(ComponentTypes::CharacterController);
+			std::shared_ptr<Component> rigidBody = focusedObject->GetComponent(ComponentTypes::RigidBody);
+			std::shared_ptr<Component> boxCollider = focusedObject->GetComponent(ComponentTypes::BoxCollider);
+			std::shared_ptr<Component> circleCollider = focusedObject->GetComponent(ComponentTypes::CircleCollider);
 
 			// Lambda
 			auto L_ShowAddComponentsWindow = [&]()
@@ -121,13 +124,25 @@ namespace FlatEngine { namespace FlatGui {
 					}
 				}
 
-				if (characterController == nullptr)
+				if (rigidBody == nullptr)
 				{
 					if (ImGui::MenuItem("RigidBody"))
 					{
 						focusedObject->AddComponent(ComponentTypes::RigidBody);
 						ImGui::CloseCurrentPopup();
 					}
+				}
+
+				if (ImGui::MenuItem("BoxCollider"))
+				{
+					focusedObject->AddComponent(ComponentTypes::BoxCollider);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("CircleCollider"))
+				{
+					focusedObject->AddComponent(ComponentTypes::CircleCollider);
+					ImGui::CloseCurrentPopup();
 				}
 
 				PopMenuStyles();
@@ -149,14 +164,14 @@ namespace FlatEngine { namespace FlatGui {
 				focusedObject->SetName(newName);
 			ImGui::PopStyleColor();
 
-			bool _isActive = focusedObject->IsActive();
+			bool _objectActive = focusedObject->IsActive();
 
-			if (RenderCheckbox("Active", _isActive))
-				focusedObject->SetActive(_isActive);
-
+			if (RenderCheckbox("Active", _objectActive))
+				focusedObject->SetActive(_objectActive);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 20, 5);
-
 			RenderImageButton("##InspectorMoreButton", threeDotsTexture, ImVec2(16, 16), 1, transparentColor);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
 			PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
@@ -177,11 +192,34 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			PopMenuStyles();
 			
+			ImGui::Separator();
+			ImGui::Separator();
 
 			// Components section
-			ImGui::Text("Components:");
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+			ImVec2 screenCursor = ImGui::GetCursorScreenPos();
+			ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, ImVec2(screenCursor.x + ImGui::GetContentRegionAvail().x, screenCursor.y + 30), ImGui::GetColorU32(innerWindowColor));
+			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
+			ImGui::Text("Components");
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 			ImGui::Separator();
-			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+
+
+			// Lambda
+			auto L_IsActiveCheckbox = [](bool& _isActive)
+			{
+				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 1));
+				bool _checked = RenderCheckbox("Active", _isActive);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+				ImGui::Separator();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+				return _checked;
+			};
+
+
 
 			std::vector<std::shared_ptr<Component>> components = focusedObject->GetComponents();
 
@@ -304,14 +342,13 @@ namespace FlatEngine { namespace FlatGui {
 								float scaleY = scale.y;
 								float rotation = transform->GetRotation();
 								bool _isActive = transform->IsActive();
-
-								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								transform->SetActive(_isActive);
-
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									transform->SetActive(_isActive);
+
+								PushTableStyles();
 								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
 								{					
 									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
@@ -373,6 +410,7 @@ namespace FlatEngine { namespace FlatGui {
 									transform->SetScale(Vector2(scaleX, scaleY));
 
 									ImGui::EndTable();
+									PopTableStyles();
 								}
 							}
 							else if (componentType == "Sprite")
@@ -388,8 +426,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = sprite->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								sprite->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									sprite->SetActive(_isActive);
 
 								// Sprite Path Strings
 								std::string pathString = "Path: ";
@@ -419,49 +457,13 @@ namespace FlatEngine { namespace FlatGui {
 								Vector2 offset = sprite->GetOffset();
 								float xOffset = offset.x;
 								float yOffset = offset.y;
-
-								//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersV | ImGuiTableFlags_SizingStretchSame;
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								PushTableStyles();
 								if (ImGui::BeginTable("##SpriteProperties", 2, tableFlags))
 								{
 									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
 									ImGui::TableSetupColumn("##VALUE", 0, columnWidth);
-
-									// Texture Width									
-									ImGui::TableNextRow();			
-									//ImU32 row_bg_color = ImGui::GetColorU32(uneditableTableRowDarkColor);
-									//ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0 + 1, row_bg_color);
-									ImGui::TableSetColumnIndex(0);
-									// Set table cell bg color
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));									
-									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-									ImGui::Text("Texture width");
-									ImGui::TableSetColumnIndex(1);		
-						
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));			
-									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
-									ImGui::Text(textureWidthString.c_str());	
-									ImGui::PopStyleColor();
-									ImGui::PushID("textureWidth");
-									ImGui::PopID();									
-			
-									// Texture Height
-									ImGui::TableNextRow();								
-									ImGui::TableSetColumnIndex(0);
-						
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));									
-									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-									ImGui::Text("Texture height");
-									ImGui::TableSetColumnIndex(1);
-								
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));									
-									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
-									ImGui::Text(textureHeightString.c_str());	
-									ImGui::PopStyleColor();
-									ImGui::PushID("textureHeight");
-									ImGui::PopID();
 									
 									// X Offset
 									ImGui::TableNextRow();
@@ -497,8 +499,40 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::PushID("renderOrder");
 									ImGui::PopID();
 
+									// Texture Width									
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									// Set table cell bg color
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									// Push uneditableTableTextColor text color
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
+									ImGui::Text("Texture width");
+									ImGui::TableSetColumnIndex(1);
+
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									ImGui::Text(textureWidthString.c_str());
+									ImGui::PushID("textureWidth");
+									ImGui::PopID();
+
+									// Texture Height
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Texture height");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									// Pop uneditableTableTextColor text color
+									ImGui::Text(textureHeightString.c_str());
+									ImGui::PopStyleColor();
+									ImGui::PushID("textureHeight");
+									ImGui::PopID();
+
 									ImGui::EndTable();
 								}
+								PopTableStyles();
 							}
 							else if (componentType == "Camera")
 							{
@@ -512,8 +546,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = camera->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								camera->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									camera->SetActive(_isActive);
 
 								// Push Item Width Setting
 								ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
@@ -577,8 +611,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = script->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								script->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									script->SetActive(_isActive);
 
 								// For path editing
 								char newPath[1024];
@@ -602,14 +636,13 @@ namespace FlatEngine { namespace FlatGui {
 								float activeHeight = button->GetActiveHeight();
 								Vector2 activeOffset = button->GetActiveOffset();
 								int activeLayer = button->GetActiveLayer();
-
-								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								button->SetActive(_isActive);								
-
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									button->SetActive(_isActive);
+
+								PushTableStyles();
 								if (ImGui::BeginTable("##TransformProperties", 2, tableFlags))
 								{
 									ImGui::TableSetupColumn("##PROPERTY", 0, columnWidth);
@@ -662,6 +695,7 @@ namespace FlatEngine { namespace FlatGui {
 
 									ImGui::EndTable();
 								}
+								PopTableStyles();
 							}
 							else if (componentType == "Canvas")
 							{
@@ -676,8 +710,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = canvas->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								canvas->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									canvas->SetActive(_isActive);
 
 								// _BlocksLayers Checkbox
 								RenderCheckbox("Blocks Layers:", _blocksLayers);
@@ -717,8 +751,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = animation->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								animation->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									animation->SetActive(_isActive);
 
 								// Sprite Animation Path String
 								std::string pathString = "Path: ";
@@ -744,9 +778,9 @@ namespace FlatEngine { namespace FlatGui {
 								if (RenderButton("Play Animation"))
 									animation->Play(GetEllapsedGameTime());
 
-								ImGui::SameLine(0, 5);
-
 								if (animation->GetAnimationPath() != "")
+								{
+									ImGui::SameLine(0, 5);
 									if (RenderButton("Edit Animation"))
 									{
 										_showAnimator = true;
@@ -755,6 +789,7 @@ namespace FlatEngine { namespace FlatGui {
 										SetFocusedAnimation(LoadAnimationFile(animation->GetAnimationPath()));
 										loadedProject->SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
 									}
+								}
 							}
 							else if (componentType == "Audio")
 							{
@@ -766,8 +801,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = audio->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								audio->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									audio->SetActive(_isActive);
 
 								// For path editing
 								char newPath[1024];
@@ -827,8 +862,8 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isActive = text->IsActive();
 
 								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								text->SetActive(_isActive);
+								if (L_IsActiveCheckbox(_isActive))
+									text->SetActive(_isActive);
 
 								// Text String Variables
 								std::string textText = text->GetText();
@@ -914,20 +949,19 @@ namespace FlatEngine { namespace FlatGui {
 							{
 								// Get Character Controller
 								std::shared_ptr<CharacterController> characterController = std::static_pointer_cast<CharacterController>(components[i]);
+								bool _isActive = characterController->IsActive();
 								float walkSpeed = characterController->GetWalkSpeed();
 								float runSpeed = characterController->GetRunSpeed();
 								float gravity = characterController->GetGravity();
 								bool _isMoving = characterController->IsMoving();
-								float velocity = characterController->GetVelocity();
-								bool _isActive = characterController->IsActive();
-
-								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								characterController->SetActive(_isActive);
-
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								float velocity = characterController->GetVelocity();								
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									characterController->SetActive(_isActive);
+
+								PushTableStyles();
 								if (ImGui::BeginTable("##CharacterControllerProps", 2, tableFlags, ImVec2(-1, 0)))
 								{
 
@@ -970,9 +1004,10 @@ namespace FlatEngine { namespace FlatGui {
 						
 									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									// Push uneditableTableTextColor text color
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
 									ImGui::Text("Velocity");
 									ImGui::TableSetColumnIndex(1);
-						
 									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));									
 									ImGui::Text(std::to_string(velocity).c_str());
 									ImGui::PushID("Velocity");
@@ -992,30 +1027,33 @@ namespace FlatEngine { namespace FlatGui {
 										isMoving = "true";
 									ImGui::Text(isMoving.c_str());
 									ImGui::PushID("IsMoving");
+									// Pop uneditableTableTextColor text color
+									ImGui::PopStyleColor();
 									ImGui::PopID();
 
 									ImGui::EndTable();
 								}
+								PopTableStyles();
 							}
 							else if (componentType == "BoxCollider")
 							{
 								// Get Character Controller
 								std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(components[i]);
+								bool _isActive = boxCollider->IsActive();
 								bool _isColliding = boxCollider->IsColliding();
 								float activeWidth = boxCollider->GetActiveWidth();
 								float activeHeight = boxCollider->GetActiveHeight();
 								ImVec4 activeEdges = boxCollider->GetActiveEdges();
 								Vector2 activeOffset = boxCollider->GetActiveOffset();
-								int activeLayer = boxCollider->GetActiveLayer();
-								bool _isActive = boxCollider->IsActive();
-
-								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								boxCollider->SetActive(_isActive);
-
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+								bool _isContinious = boxCollider->IsContinuous();
+								int activeLayer = boxCollider->GetActiveLayer();														
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									boxCollider->SetActive(_isActive);
+
+								PushTableStyles();
 								if (ImGui::BeginTable("##BoxColliderProps", 2, tableFlags, ImVec2(-1, 0)))
 								{
 
@@ -1037,7 +1075,7 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-									ImGui::Text("Run Speed");
+									ImGui::Text("Height");
 									ImGui::TableSetColumnIndex(1);
 									RenderDragFloat("##activeHeight", ImGui::GetContentRegionAvail().x, activeHeight, 0.01f, 0.0f, 20);
 									ImGui::PushID("activeBoxColliderHeight");
@@ -1065,22 +1103,6 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::PushID("activeOffsetBoxColliderY");
 									ImGui::PopID();
 
-									ImGui::TableNextRow();
-									ImGui::TableSetColumnIndex(0);
-						
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
-									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-									ImGui::Text("Is Colliding");
-									ImGui::TableSetColumnIndex(1);
-						
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
-									std::string isCollidingString = "false";
-									if (_isColliding)
-										isCollidingString = "true";
-									ImGui::Text(isCollidingString.c_str());
-									ImGui::PushID("BoxIsColliding");
-									ImGui::PopID();
-
 									// Active Layer
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
@@ -1092,29 +1114,57 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::PushID("renderOrder");
 									ImGui::PopID();
 
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									// Push uneditableTableTextColor text color
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Is Colliding");
+									ImGui::TableSetColumnIndex(1);
+
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									std::string isCollidingString = "false";
+									if (_isColliding)
+										isCollidingString = "true";
+									ImGui::Text(isCollidingString.c_str());
+									// Pop uneditableTableTextColor text color
+									ImGui::PopStyleColor();
+									ImGui::PushID("BoxIsColliding");
+									ImGui::PopID();
+
 									ImGui::EndTable();
 								}
+								PopTableStyles();
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+								// Continuous Checkbox
+								RenderCheckbox(" Is Continuous", _isContinious);
+								boxCollider->SetIsContinuous(_isContinious);
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 							}
 							else if (componentType == "RigidBody")
 							{
 								// Get Character Controller
 								std::shared_ptr<RigidBody> rigidBody = std::static_pointer_cast<RigidBody>(components[i]);
+								bool _isActive = rigidBody->IsActive();
 								float mass = rigidBody->GetMass();
 								float gravity = rigidBody->GetGravity();
 								float angularDrag = rigidBody->GetAngularDrag();
-								float velocity = rigidBody->GetVelocity();
+								Vector2 velocity = rigidBody->GetVelocity();
 								bool _isContinious = rigidBody->IsContinuous();
 								bool _isKinematic = rigidBody->IsKinematic();
+								bool _isStatic = rigidBody->IsStatic();
 								bool _isGrounded = rigidBody->IsGrounded();
 								bool _isMoving = rigidBody->IsMoving();
-
-								// Active Checkbox
-								RenderCheckbox("Active", _isActive);
-								rigidBody->SetActive(_isActive);
-
-								static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 								float columnWidth = ImGui::GetContentRegionAvail().x / 2 - 10;
 
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									rigidBody->SetActive(_isActive);
+
+								PushTableStyles();
 								if (ImGui::BeginTable("##RigidBodyProps", 2, tableFlags, ImVec2(-1, 0)))
 								{
 
@@ -1122,7 +1172,6 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::TableSetupColumn("##DATA", 0, columnWidth);
 
 									ImGui::TableNextRow();
-
 									ImGui::TableSetColumnIndex(0);
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Mass");
@@ -1142,18 +1191,32 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::PushID("RunSpeed");
 									ImGui::PopID();
 
+									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
 									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-									ImGui::Text("Velocity");
+									// Push uneditableTableTextColor text color
+									ImGui::PushStyleColor(ImGuiCol_Text, uneditableTableTextColor);
+									ImGui::Text("Velocity X");
 									ImGui::TableSetColumnIndex(1);
 									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
-									ImGui::Text(std::to_string(velocity).c_str());
-									ImGui::PushID("Velocity");
+									ImGui::Text(std::to_string(velocity.x).c_str());
+									ImGui::PushID("VelocityX");
 									ImGui::PopID();
+
 									ImGui::TableNextRow();
 									ImGui::TableSetColumnIndex(0);
-						
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
+									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+									ImGui::Text("Velocity Y");
+									ImGui::TableSetColumnIndex(1);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowFieldColor));
+									ImGui::Text(std::to_string(velocity.y).c_str());
+									ImGui::PushID("VelocityY");
+									ImGui::PopID();
+
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
 									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Is Moving");
@@ -1166,7 +1229,9 @@ namespace FlatEngine { namespace FlatGui {
 									ImGui::PushID("RigidBodyMoving");
 									ImGui::PopID();
 
-									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowDarkColor));
+									ImGui::TableNextRow();
+									ImGui::TableSetColumnIndex(0);
+									ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(uneditableTableRowLightColor));
 									ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 									ImGui::Text("Is Grounded");
 									ImGui::TableSetColumnIndex(1);
@@ -1175,24 +1240,38 @@ namespace FlatEngine { namespace FlatGui {
 									if (_isGrounded)
 										isGroundedString = "true";
 									ImGui::Text(isGroundedString.c_str());
+									// Pop uneditableTableTextColor text color
+									ImGui::PopStyleColor();
 									ImGui::PushID("RigidBodyGrounded");
 									ImGui::PopID();
 
-									// Continuous Checkbox
-									RenderCheckbox("Continuous:", _isContinious);
-									rigidBody->SetIsContinuous(_isContinious);
-
-									// Kinematic Checkbox
-									RenderCheckbox("Kinematic:", _isKinematic);
-									rigidBody->SetIsKinematic(_isKinematic);
-
-									ImGui::EndTable();
+									ImGui::EndTable();								
 								}
+								ImGui::PopStyleColor();
+								ImGui::PopStyleColor();
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+								// Continuous Checkbox
+								RenderCheckbox(" Is Continuous", _isContinious);
+								rigidBody->SetIsContinuous(_isContinious);
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+								// Kinematic Checkbox
+								RenderCheckbox(" Is Kinematic", _isKinematic);
+								rigidBody->SetIsKinematic(_isKinematic);
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+								// Static Checkbox
+								RenderCheckbox(" Is Static", _isStatic);
+								rigidBody->SetIsKinematic(_isKinematic);
 							}
 							
 							// Pops
 							ImGui::PopItemWidth();
 							ImGui::PopStyleColor();
+							
+							// Add some space to the bottom of each component
+							ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 
 							ImGui::EndChild();
 						}

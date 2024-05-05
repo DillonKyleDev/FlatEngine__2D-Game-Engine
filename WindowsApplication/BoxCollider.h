@@ -40,9 +40,10 @@ namespace FlatEngine
 		//ImVec4(activeTop, activeRight, activeBottom, activeLeft)
 		void SetActiveEdges(ImVec4 edges);
 		ImVec4 GetActiveEdges();
+		ImVec4 UpdateActiveEdges(ImVec2 centerPoint, float gridStep);
+		void SetIsContinuous(bool _continuous);
+		bool IsContinuous();
 		std::string GetData();
-		void SetConnectedScript(std::string scriptName);
-		std::string GetConnectedScript();
 
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollision;
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnter;
@@ -53,13 +54,13 @@ namespace FlatEngine
 		bool _onCollisionLeaveSet;
 
 	private:
-		bool _isColliding;
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;
+		bool _isColliding;
 		float activeWidth;
 		float activeHeight;
 		ImVec4 activeEdges;
 		Vector2 activeOffset;
+		bool _isContinious;
 		int activeLayer;
-		std::string connectedScript;
 	};
 }

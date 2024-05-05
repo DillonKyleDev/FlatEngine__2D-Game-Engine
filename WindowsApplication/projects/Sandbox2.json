@@ -1,6 +1,16 @@
 {
     "Project Properties": [
         {
+            "_showAnimationPreview": false,
+            "_showAnimator": false,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": true,
+            "_showProfiler": true,
+            "_showSceneView": true,
             "loadedAnimationPath": "",
             "loadedScenePath": "",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox2.json",

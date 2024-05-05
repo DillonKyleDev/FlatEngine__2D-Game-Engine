@@ -1,6 +1,8 @@
 #include "BoxCollider.h"
 #include "FlatEngine.h"
 #include "GameObject.h"
+#include "Transform.h"
+
 
 namespace FlatEngine
 {
@@ -13,11 +15,17 @@ namespace FlatEngine
 		activeHeight = 3;
 		activeOffset = Vector2(0, 0);
 		activeLayer = 0;
+		_isContinious = false;
+		_isColliding = false;
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = nullptr;
 		OnCollisionEnter = nullptr;
 		OnCollisionLeave = nullptr;
+
+		_onActiveCollidingSet = false;
+		_onCollisionEnterSet = false;
+		_onCollisionLeaveSet = false;
 	}
 
 	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
@@ -30,11 +38,17 @@ namespace FlatEngine
 		activeHeight = toCopy->GetActiveHeight();
 		activeOffset = toCopy->GetActiveOffset();
 		activeLayer = toCopy->GetActiveLayer();
+		_isContinious = toCopy->IsContinuous();
+		_isColliding = false;
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = toCopy->OnActiveCollision;
 		OnCollisionEnter = toCopy->OnCollisionEnter;
 		OnCollisionLeave = toCopy->OnCollisionLeave;
+
+		_onActiveCollidingSet = false;
+		_onCollisionEnterSet = false;
+		_onCollisionLeaveSet = false;
 	}
 
 	BoxCollider::~BoxCollider()
@@ -144,6 +158,32 @@ namespace FlatEngine
 		return activeEdges;
 	}
 
+	ImVec4 BoxCollider::UpdateActiveEdges(ImVec2 centerPoint, float gridStep)
+	{
+		std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
+		Vector2 position = transform->GetPosition();
+		Vector2 scale = transform->GetScale();
+
+		float activeLeft = FlatGui::WorldToViewport(centerPoint.x, position.x + activeOffset.x - (activeWidth / 2 * scale.x), gridStep, false);
+		float activeRight = FlatGui::WorldToViewport(centerPoint.x, position.x + activeOffset.x + (activeWidth / 2 * scale.x), gridStep, false);
+		float activeTop = FlatGui::WorldToViewport(centerPoint.y, position.y + activeOffset.y + (activeHeight / 2 * scale.y), gridStep, true);
+		float activeBottom = FlatGui::WorldToViewport(centerPoint.y, position.y + activeOffset.y - (activeHeight / 2 * scale.y), gridStep, true);
+
+		SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+
+		return activeEdges;
+	}
+
+	void BoxCollider::SetIsContinuous(bool _continuous)
+	{
+		_isContinious = _continuous;
+	}
+
+	bool BoxCollider::IsContinuous()
+	{
+		return _isContinious;
+	}
+
 	std::string BoxCollider::GetData()
 	{
 		json jsonData = {
@@ -155,21 +195,12 @@ namespace FlatEngine
 			{ "activeHeight", activeHeight },
 			{ "activeOffsetX", activeOffset.x },
 			{ "activeOffsetY", activeOffset.y },
+			{ "_isContinious", IsContinuous() },
 			{ "activeLayer", activeLayer },
 		};
 
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
-	}
-
-	void BoxCollider::SetConnectedScript(std::string scriptName)
-	{
-		connectedScript = scriptName;
-	}
-
-	std::string BoxCollider::GetConnectedScript()
-	{
-		return connectedScript;
 	}
 }

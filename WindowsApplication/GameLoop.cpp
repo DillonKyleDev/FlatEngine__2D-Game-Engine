@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "Process.h"
 #include "Scene.h"
+#include "BoxCollider.h"
 #include "./scripts/GameManager.h"
 
 
@@ -9,19 +10,19 @@ namespace FlatEngine
 {
 	GameLoop::GameLoop()
 	{
-		this->startTime = 0;
-		this->countedTicks = 0;
-		this->pausedTicks = 0;
-		this->_started = false;
-		this->_paused = false;
-		this->framesCounted = 0;
-		this->lastFrameTime = 0;
-		this->deltaTime = 0;
-		this->startedScene = "";
-		this->gameManager = nullptr;
+		startTime = 0;
+		countedTicks = 0;
+		pausedTicks = 0;
+		_started = false;
+		_paused = false;
+		framesCounted = 0;
+		lastFrameTime = 0;
+		deltaTime = 0;
+		startedScene = "";
+		gameManager = nullptr;
 
-		this->gameObjects = std::vector<std::shared_ptr<GameObject>>();
-		this->scripts = std::vector<std::shared_ptr<GameScript>>();
+		gameObjects = std::vector<std::shared_ptr<GameObject>>();
+		scripts = std::vector<std::shared_ptr<GameScript>>();
 	}
 
 	GameLoop::~GameLoop()
@@ -31,29 +32,31 @@ namespace FlatEngine
 	void GameLoop::Start()
 	{
 		// Handle Game Time
-		this->_paused = false;
-		this->lastFrameTime = (float)SDL_GetTicks();
-		this->startTime = SDL_GetTicks();
-		this->pausedTicks = 0;
+		_paused = false;
+		lastFrameTime = (float)SDL_GetTicks();
+		startTime = SDL_GetTicks();
+		pausedTicks = 0;
 
 		// Initialize our scripts with the currently loaded scene
-		this->InitializeScriptObjects();
+		InitializeScriptObjects();
 		// Save the name of the scene we started with so we can load it back up when we stop
-		this->startedScene = FlatEngine::GetLoadedScenePath();
+		startedScene = FlatEngine::GetLoadedScenePath();
 
-		this->_started = true;
+		_started = true;
 	}
 
 	void GameLoop::InitializeScriptObjects()
 	{
 		// Get currently loaded scenes GameObjects
-		this->gameObjects = FlatEngine::GetSceneObjects();
+		gameObjects = FlatEngine::GetSceneObjects();
+		rigidBodies.clear();
+		boxColliders.clear();
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
-		for (int i = 0; i < this->gameObjects.size(); i++)
+		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			std::vector<std::shared_ptr<Component>> components = this->gameObjects[i]->GetComponents();
+			std::vector<std::shared_ptr<Component>> components = gameObjects[i]->GetComponents();
 
 			for (int j = 0; j < components.size(); j++)
 			{
@@ -66,33 +69,43 @@ namespace FlatEngine
 					if (attachedScript == "GameManager")
 					{
 						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
-						gameManagerScript->SetOwner(this->gameObjects[i]);
+						gameManagerScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(gameManagerScript);
-						this->activeScripts.push_back(gameManagerScript);
-						this->gameManager = gameManagerScript;
+						activeScripts.push_back(gameManagerScript);
+						gameManager = gameManagerScript;
 						FlatEngine::gameManager = gameManagerScript;
 					}
 					else if (attachedScript == "StartButton")
 					{
 						std::shared_ptr<StartButton> startButtonScript = std::make_shared<StartButton>();
-						startButtonScript->SetOwner(this->gameObjects[i]);
+						startButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(startButtonScript);
-						this->activeScripts.push_back(startButtonScript);
+						activeScripts.push_back(startButtonScript);
 					}
 					else if (attachedScript == "RestartButton")
 					{
 						std::shared_ptr<RestartButton> restartButtonScript = std::make_shared<RestartButton>();
-						restartButtonScript->SetOwner(this->gameObjects[i]);
+						restartButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(restartButtonScript);
-						this->activeScripts.push_back(restartButtonScript);
+						activeScripts.push_back(restartButtonScript);
 					}
 					else if (attachedScript == "QuitButton")
 					{
 						std::shared_ptr<QuitButton> quitButtonScript = std::make_shared<QuitButton>();
-						quitButtonScript->SetOwner(this->gameObjects[i]);
+						quitButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(quitButtonScript);
-						this->activeScripts.push_back(quitButtonScript);
+						activeScripts.push_back(quitButtonScript);
 					}
+				}
+				if (components[j]->GetTypeString() == "RigidBody")
+				{
+					// Collect all BoxCollider components for collision detection in Update()
+					rigidBodies.push_back(std::static_pointer_cast<RigidBody>(components[j]));
+				}
+				if (components[j]->GetTypeString() == "BoxCollider")
+				{
+					// Collect all BoxCollider components for collision detection in Update()
+					boxColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
 				}
 			}
 		}
@@ -112,19 +125,19 @@ namespace FlatEngine
 
 	void GameLoop::Update()
 	{
-		this->AddFrame();
+		AddFrame();
 
-		// The time that this function was called last (the last frame), this->lastFrameTime, is the marker for how long it has been 
+		// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
 		// (in milliseconds) from that frame to this current one. That is deltaTime.
-		this->deltaTime = (float)SDL_GetTicks() - this->lastFrameTime;
-		// Update this->lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
-		this->lastFrameTime = (float)SDL_GetTicks();
+		deltaTime = (float)SDL_GetTicks() - lastFrameTime;
+		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
+		lastFrameTime = (float)SDL_GetTicks();
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			// Save time before script update
 			float timeStart = (float)SDL_GetTicks();
-			activeScripts[i]->Update(this->deltaTime);
+			activeScripts[i]->Update(deltaTime);
 
 			// Get hang time of each script update function for profiler
 			float hangTime = (float)SDL_GetTicks() - timeStart;
@@ -167,17 +180,55 @@ namespace FlatEngine
 			if (!inputOutput.MouseDown[1])
 				_hasRightClicked = false;
 		}
+
+		// Handle RigidBody physics updates here
+		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
+		{
+			rigidBody->ApplyGravity();
+			rigidBody->ApplyVelocity();
+		}
+
+		static int continuousCounter = 0;
+
+		// Handle BoxCollision updates here
+		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
+		{
+			if (boxCollider != nullptr && boxCollider->IsActive() && (boxCollider->IsContinuous() || (!boxCollider->IsContinuous() && continuousCounter == 10)))
+			{
+				// Update Active Collider bounds
+				ImVec4 activeEdges = boxCollider->UpdateActiveEdges(FlatGui::worldCenterPoint, FlatGui::gridStep);
+				//ImVec2 screenPos = ImGui::GetCursorScreenPos();
+				//ImGui::SetCursorPos(FlatGui::worldCenterPoint);
+				//ImGui::GetWindowDrawList()->AddRectFilled(FlatGui::worldCenterPoint, ImVec2(FlatGui::worldCenterPoint.x + 20, FlatGui::worldCenterPoint.y + 20), ImGui::GetColorU32(FlatGui::whiteColor));
+				// Get Mouse Position in the viewport space
+				ImVec2 mousePos = ImGui::GetIO().MousePos;
+
+				// If Mouse and Button are colliding, add the hovered button
+				if (FlatEngine::AreCollidingViewport(activeEdges, ImVec4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+				{
+					LogString("Colliding with: " + boxCollider->GetParent()->GetName());
+					if (boxCollider->GetParent()->HasComponent("RigidBody"))
+						boxCollider->GetParent()->GetRigidBody();
+				}
+				else if (boxCollider->GetParent()->HasComponent("RigidBody"))
+					boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(false);
+
+				// Reset continuous counter
+				continuousCounter = 0;
+			}
+			continuousCounter++;
+		}
 	}
 
 	void GameLoop::Stop()
 	{
-		this->_started = false;
-		this->_paused = false;
+		_started = false;
+		_paused = false;
 
 		// Reset Ticks and frames counted
-		this->countedTicks = SDL_GetTicks();
-		this->pausedTicks = 0;
-		this->framesCounted = 0;
+		countedTicks = SDL_GetTicks();
+		pausedTicks = 0;
+		framesCounted = 0;
 
 		// Delete script processes
 		for (int i = 0; i < activeScripts.size(); i++)
@@ -187,77 +238,77 @@ namespace FlatEngine
 		activeScripts.clear();
 
 		// Load back up the saved version of the scene
-		FlatEngine::LoadScene(this->startedScene);
+		FlatEngine::LoadScene(startedScene);
 	}
 
 	void GameLoop::Pause()
 	{
 		// If the timer is running and isn't already paused
-		if (this->_started && !this->_paused)
+		if (_started && !_paused)
 		{
-			this->_paused = true;
+			_paused = true;
 
 			// Store the time that the timer was paused and reset the counted frames
-			this->pausedTicks = SDL_GetTicks() - this->countedTicks;
-			this->countedTicks = 0;
+			pausedTicks = SDL_GetTicks() - countedTicks;
+			countedTicks = 0;
 		}
 	}
 
 	void GameLoop::Unpause()
 	{
 		// If the timer is running and paused
-		if (this->_started && this->_paused)
+		if (_started && _paused)
 		{
-			this->_paused = false;
+			_paused = false;
 			// Get the ellapsed time since the pause and remove it from total ticks to get current time
-			this->countedTicks = SDL_GetTicks() - this->pausedTicks;
-			this->pausedTicks = 0;
+			countedTicks = SDL_GetTicks() - pausedTicks;
+			pausedTicks = 0;
 		}
 	}
 
 	int GameLoop::TimeEllapsed()
 	{
-		if (this->_started)
+		if (_started)
 		{
-			if (this->_paused)
+			if (_paused)
 			{
-				return this->pausedTicks;
+				return pausedTicks;
 			}
 			else
 			{
-				return SDL_GetTicks() - this->startTime;
+				return SDL_GetTicks() - startTime;
 			}
 		}
-		return this->countedTicks;
+		return countedTicks;
 	}
 
 	bool GameLoop::IsStarted()
 	{
-		return this->_started;
+		return _started;
 	}
 
 	bool GameLoop::IsPaused()
 	{
-		return this->_paused && this->_started;
+		return _paused && _started;
 	}
 
 	float GameLoop::GetAverageFps()
 	{
-		return this->framesCounted / this->TimeEllapsed() * 1000;
+		return framesCounted / TimeEllapsed() * 1000;
 	}
 
 	float GameLoop::GetFramesCounted()
 	{
-		return this->framesCounted;
+		return framesCounted;
 	}
 
 	void GameLoop::AddFrame()
 	{
-		this->framesCounted++;
+		framesCounted++;
 	}
 
 	float GameLoop::GetDeltaTime()
 	{
-		return this->deltaTime;
+		return deltaTime;
 	}
 }

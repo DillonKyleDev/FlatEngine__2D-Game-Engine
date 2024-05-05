@@ -38,8 +38,10 @@ namespace FlatEngine { namespace FlatGui {
 			"XInput_DPadDown",
 			"XInput_DPadLeft",
 			"XInput_DPadRight",
-			"XInput_LeftJoystick",
-			"XInput_RightJoystick",
+			"XInput_LeftJoystickX",
+			"XInput_LeftJoystickY",
+			"XInput_RightJoystickX",
+			"XInput_RightJoystickY",
 			"XInput_LT",
 			"XInput_RT",
 			// Keyboard + Mouse
@@ -262,6 +264,7 @@ namespace FlatEngine { namespace FlatGui {
 								selected_input = n;
 								currentContext->RemoveKeyBinding(keyBinding.first);
 								currentContext->AddKeyBinding(inputs[selected_input], tempInputAction);
+								currentContext->AddInputAction(inputs[selected_input], tempInputAction);
 							}
 							if (is_selected)					
 								ImGui::SetItemDefaultFocus();

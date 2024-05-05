@@ -16,18 +16,22 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					// First, save current project
 					SaveProject(loadedProject, loadedProject->GetPath());
-					// Then Create New Project and open it
-					std::shared_ptr<Project> newProject = std::make_shared<Project>();
 					std::string projectPath = OpenSaveFileExplorer();
-					SaveProject(newProject, projectPath);
-					OpenProject(projectPath);
+					if (projectPath != "")
+					{
+						// Then Create New Project and open it
+						std::shared_ptr<Project> newProject = std::make_shared<Project>();
+						SaveProject(newProject, projectPath);
+						OpenProject(projectPath);
+					}
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Open Project"))
+				if (ImGui::MenuItem("Open Project..."))
 				{
 					// Open Project
 					std::string projectPath = OpenLoadFileExplorer();
-					OpenProject(projectPath);
+					if (projectPath != "")
+						OpenProject(projectPath);
 				}
 				if (ImGui::MenuItem("Save Project"))
 				{
@@ -39,26 +43,36 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					// Save Project As....
 					std::string projectPath = OpenSaveFileExplorer();
-					SaveProject(loadedProject, projectPath);
+					if (projectPath != "")
+					{
+						SaveProject(loadedProject, projectPath);
+					}
 				}
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("New Scene"))
+				if (ImGui::MenuItem("New Scene..."))
 				{
 					// First Save Loaded scene
 					sceneManager->SaveCurrentScene();
-					std::shared_ptr<Scene> newScene = sceneManager->CreateNewScene();
-					sceneManager->LoadScene(newScene->GetPath());
-					loadedProject->SetLoadedScenePath(newScene->GetPath());
+
+					std::string scenePath = OpenSaveFileExplorer();
+					if (scenePath != "")
+					{
+						sceneManager->SaveScene(sceneManager->CreateNewScene(), scenePath);
+						loadedProject->SetLoadedScenePath(scenePath);
+					}
 				}
 
-				if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
+				if (ImGui::MenuItem("Load Scene...", "Ctrl+L"))
 				{
 					// Load the scene
 					std::string scenePath = OpenLoadFileExplorer();
-					sceneManager->LoadScene(scenePath);
-					loadedProject->SetLoadedScenePath(scenePath);
+					if (scenePath != "")
+					{
+						sceneManager->LoadScene(scenePath);
+						loadedProject->SetLoadedScenePath(scenePath);
+					}
 				}
 
 				// Save the scene
@@ -69,8 +83,11 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					// Save the scene
 					std::string scenePath = OpenSaveFileExplorer();
-					std::shared_ptr<Scene> currentScene = sceneManager->GetLoadedScene();
-					sceneManager->SaveScene(currentScene, scenePath);
+					if (scenePath != "")
+					{
+						std::shared_ptr<Scene> currentScene = sceneManager->GetLoadedScene();
+						sceneManager->SaveScene(currentScene, scenePath);
+					}
 				}
 
 				ImGui::Separator();

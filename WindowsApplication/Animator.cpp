@@ -274,6 +274,20 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
 			PushMenuStyles();
+
+			// Conditionally begin the table
+			if (animProps->transformProperties.size() > 0 ||
+				animProps->spriteProperties.size() > 0 ||
+				animProps->cameraProperties.size() > 0 ||
+				animProps->scriptProperties.size() > 0 ||
+				animProps->buttonProperties.size() > 0 ||
+				animProps->canvasProperties.size() > 0 ||
+				animProps->audioProperties.size() > 0 ||
+				animProps->textProperties.size() > 0 ||
+				animProps->boxColliderProperties.size() > 0 ||
+				animProps->circleColliderProperties.size() > 0 ||
+				animProps->rigidBodyProperties.size() > 0 || 
+				animProps->characterControllerProperties.size() > 0)
 			if (ImGui::BeginTable("##AnimationProperties", 1, tableFlags))
 			{
 				ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
@@ -384,12 +398,12 @@ namespace FlatEngine { namespace FlatGui {
 			if (_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14));
+				RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14)))
+				if (RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					if (animation != nullptr)
 					{
@@ -407,12 +421,12 @@ namespace FlatEngine { namespace FlatGui {
 			if (!_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16));
+				RenderImageButton(stopID.c_str(), stopTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16)))
+				if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					animation->Stop();
 					_isPreviewing = false;
@@ -434,7 +448,7 @@ namespace FlatEngine { namespace FlatGui {
 		//ImVec2 scrubberZeroPoint = ImGui::GetCursorScreenPos();
 
 		//ImGui::PushStyleColor(ImGuiCol_ChildBg, scrubberBackground);
-		//ImGui::BeginChild("Timeline Scrubber", ImVec2(0,33), child_flags);
+		//ImGui::BeginChild("Timeline Scrubber", ImVec2(0,50), child_flags);
 		//ImGui::PopStyleColor();
 		
 
@@ -585,7 +599,7 @@ namespace FlatEngine { namespace FlatGui {
 			// If there is a valid Texture loaded into the Sprite Component
 			if (keyFrameTexture != nullptr)
 			{
-				ImVec2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), false, gridStep, draw_list);
+				ImVec2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
 
 				ImGui::SetCursorScreenPos(pipStartingPoint);
 				std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
@@ -639,7 +653,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Get keyFrame time and convert to seconds
 				float keyFrameX = keyFrame->time / 1000;
 				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-				if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
+				//if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
 					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 				IDCounter++;
 			}
