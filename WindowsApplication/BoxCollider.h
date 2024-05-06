@@ -27,6 +27,8 @@ namespace FlatEngine
 
 		bool IsColliding();
 		void SetColliding(bool _isColliding);
+		void UpdatePreviousPosition();
+		bool HasMoved();
 		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
 		void AddCollidingObject(std::shared_ptr<GameObject> object);
 		std::vector<std::shared_ptr<GameObject>> GetCollidingObjects();
@@ -53,6 +55,7 @@ namespace FlatEngine
 		bool _onCollisionEnterSet;
 		bool _onCollisionLeaveSet;
 
+		Vector2 previousPosition;
 	private:
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;
 		bool _isColliding;
@@ -62,5 +65,7 @@ namespace FlatEngine
 		Vector2 activeOffset;
 		bool _isContinious;
 		int activeLayer;
+		bool _activeEdgesSet;
+
 	};
 }

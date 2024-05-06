@@ -30,10 +30,13 @@ namespace FlatEngine {
 	private:
 		float walkSpeed;
 		float runSpeed;
+		float maxSpeed;
+		float speedCorrection;
 		float gravity;
 		bool _isMoving;
 		float velocity;
 		bool _isGrounded;
+
 	};
 }
 

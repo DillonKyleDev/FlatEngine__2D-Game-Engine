@@ -3,6 +3,7 @@
 #include "Process.h"
 #include "Scene.h"
 #include "BoxCollider.h"
+#include "Transform.h"
 #include "./scripts/GameManager.h"
 
 
@@ -181,11 +182,10 @@ namespace FlatEngine
 				_hasRightClicked = false;
 		}
 
-		// Handle RigidBody physics updates here
+		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 		{
-			rigidBody->ApplyGravity();
-			rigidBody->ApplyVelocity();
+			rigidBody->CalculatePhysics(deltaTime);
 		}
 
 		static int continuousCounter = 0;
@@ -193,30 +193,67 @@ namespace FlatEngine
 		// Handle BoxCollision updates here
 		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
 		{
+			//LogFloat(boxCollider->previousPosition.y, " " + boxCollider->GetParent()->GetName() + "Outer Previous Pos: ");
+
 			if (boxCollider != nullptr && boxCollider->IsActive() && (boxCollider->IsContinuous() || (!boxCollider->IsContinuous() && continuousCounter == 10)))
 			{
-				// Update Active Collider bounds
-				ImVec4 activeEdges = boxCollider->UpdateActiveEdges(FlatGui::worldCenterPoint, FlatGui::gridStep);
-				//ImVec2 screenPos = ImGui::GetCursorScreenPos();
-				//ImGui::SetCursorPos(FlatGui::worldCenterPoint);
-				//ImGui::GetWindowDrawList()->AddRectFilled(FlatGui::worldCenterPoint, ImVec2(FlatGui::worldCenterPoint.x + 20, FlatGui::worldCenterPoint.y + 20), ImGui::GetColorU32(FlatGui::whiteColor));
-				// Get Mouse Position in the viewport space
-				ImVec2 mousePos = ImGui::GetIO().MousePos;
+				bool _isColliding = false;
 
-				// If Mouse and Button are colliding, add the hovered button
-				if (FlatEngine::AreCollidingViewport(activeEdges, ImVec4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+				// Update Primary BoxCollider Active Edges
+				ImVec4 primaryActiveEdges = boxCollider->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::gridStep);
+
+				for (std::shared_ptr<BoxCollider> checkAgainst : boxColliders)
 				{
-					LogString("Colliding with: " + boxCollider->GetParent()->GetName());
-					if (boxCollider->GetParent()->HasComponent("RigidBody"))
-						boxCollider->GetParent()->GetRigidBody();
+					if (checkAgainst != nullptr && (checkAgainst->GetID() != boxCollider->GetID()) && checkAgainst->IsActive())
+					{
+						// Update Secondary BoxCollider Active Edges
+						ImVec4 secondaryActiveEdges = checkAgainst->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::gridStep);
+
+						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && FlatEngine::AreColliding(primaryActiveEdges, secondaryActiveEdges))
+						{
+							_isColliding = true;
+
+							// Now get transforms and get the collision side
+							std::shared_ptr<Transform> primaryTransform = boxCollider->GetParent()->GetTransformComponent();
+							std::shared_ptr<Transform> secondaryTransform = checkAgainst->GetParent()->GetTransformComponent();
+							std::shared_ptr<RigidBody> primaryRigidBody = boxCollider->GetParent()->GetRigidBody();
+							std::shared_ptr<RigidBody> secondaryRigidBody = checkAgainst->GetParent()->GetRigidBody();
+							Vector2 primaryPos = primaryTransform->GetPosition();
+							Vector2 secondaryPos = secondaryTransform->GetPosition();
+
+							if ((primaryPos.x - secondaryPos.x) < 0) {
+								//LogString("hit left");
+							}
+							else if ((primaryPos.x - secondaryPos.x) > 0) {
+								//LogString("hit right");
+							}
+							if ((primaryPos.y - secondaryPos.y) < 0) {
+
+								//LogString("hit top");
+							}
+							else if ((primaryPos.y - secondaryPos.y) > 0) {
+								/*if (primaryActiveEdges.z - secondaryActiveEdges.x > 0.5f)
+									primaryRigidBody->AddForce(Vector2(0, 1), .1f, deltaTime);*/
+								//LogString("hit bottom");
+							}
+						}
+					}
 				}
-				else if (boxCollider->GetParent()->HasComponent("RigidBody"))
-					boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(false);
+
+				if (boxCollider->GetParent()->HasComponent("RigidBody"))
+						boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(_isColliding);
+				boxCollider->SetColliding(_isColliding);
 
 				// Reset continuous counter
 				continuousCounter = 0;
 			}
 			continuousCounter++;
+		}
+
+		// Apply RigidBody physics calculations
+		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
+		{
+			rigidBody->ApplyPhysics();
 		}
 	}
 

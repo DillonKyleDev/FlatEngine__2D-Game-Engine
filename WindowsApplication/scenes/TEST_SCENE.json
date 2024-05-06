@@ -2,28 +2,22 @@
     "Scene GameObjects": [
         {
             "_isActive": true,
-            "children": [
-                1
-            ],
+            "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
                     "id": 2,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": 0.0,
+                    "yPos": -2.0,
                     "yScale": 1.0
                 },
                 {
-                    "_isCollapsed": false,
-                    "id": 3,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\Test.json",
-                    "type": "Animation"
-                },
-                {
-                    "_isCollapsed": false,
+                    "_isActive": true,
+                    "_isCollapsed": true,
                     "id": 4,
                     "renderOrder": 0,
                     "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\frustrumVisible.png",
@@ -32,10 +26,54 @@
                     "type": "Sprite",
                     "xOffset": 5.0,
                     "yOffset": 5.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": false,
+                    "_isKinematic": false,
+                    "_isStatic": true,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 4,
+                    "mass": 1.0,
+                    "terminalVelocity": -1.0,
+                    "type": "RigidBody",
+                    "windResistance": 0.08500000089406967
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": true,
+                    "activeHeight": 2.130000114440918,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.119999885559082,
+                    "id": 5,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "StartButton",
+                    "id": 8,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMoving": false,
+                    "gravity": 1.0,
+                    "id": 8,
+                    "runSpeed": 2.0,
+                    "type": "CharacterController",
+                    "velocity": 0.0,
+                    "walkSpeed": 1.0
                 }
             ],
             "id": 0,
-            "name": "New GameObject (0)",
+            "name": "TestCube",
             "parent": -1
         },
         {
@@ -43,19 +81,44 @@
             "children": [],
             "components": [
                 {
+                    "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 0,
+                    "id": 4,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": 0.0,
+                    "yPos": -6.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": true,
+                    "id": 5,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\frustrum.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": true,
+                    "activeHeight": 2.0799999237060547,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 20.0,
+                    "id": 7,
+                    "type": "BoxCollider"
                 }
             ],
             "id": 1,
-            "name": "New GameObject (1)",
-            "parent": 0
+            "name": "Platform",
+            "parent": -1
         }
     ]
 }

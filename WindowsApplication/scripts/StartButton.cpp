@@ -4,6 +4,7 @@
 #include "../Sprite.h"
 #include "../Audio.h"
 #include "../CharacterController.h"
+#include "../RigidBody.h"
 
 #include "../MappingContext.h"
 #include "../Transform.h"
@@ -65,9 +66,14 @@ void StartButton::Update(float deltaTime)
 	// Get Mapping Context
 	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
 	std::shared_ptr<FlatEngine::CharacterController> characterController = GetOwner()->GetCharacterController();
+	std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetOwner()->GetRigidBody();
 
 	if (mappingContext->Fired("IA_Jump"))
+	{
 		FlatEngine::LogString("Jumped!");
+		if (rigidBody->IsGrounded())
+			rigidBody->AddForce(Vector2(0, 1), 1, deltaTime);
+	}
 
 	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
 	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");

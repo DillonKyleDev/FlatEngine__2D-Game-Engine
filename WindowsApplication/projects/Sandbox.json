@@ -1,8 +1,8 @@
 {
     "Project Properties": [
         {
-            "_showAnimationPreview": true,
-            "_showAnimator": true,
+            "_showAnimationPreview": false,
+            "_showAnimator": false,
             "_showGameView": true,
             "_showHierarchy": true,
             "_showInspector": true,
@@ -12,7 +12,7 @@
             "_showProfiler": true,
             "_showSceneView": true,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\SlerpTest.json",
-            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\TestingScene.json",
+            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\TEST_SCENE.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "sceneViewScrollingX": 0.0,
             "sceneViewScrollingY": 0.0

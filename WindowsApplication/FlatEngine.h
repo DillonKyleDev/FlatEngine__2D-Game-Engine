@@ -154,6 +154,7 @@ namespace FlatEngine
 	// Helper Functions
 	extern bool AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern bool AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB);
+	extern 	bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
 
 
@@ -320,6 +321,7 @@ namespace FlatEngine
 		extern bool _sceneHasBeenSet;
 		extern float gridStep;
 		extern ImVec2 sceneViewScrolling;
+		extern ImVec2 sceneViewCenter;
 
 		extern void RunOnceAfterInitialization();
 
@@ -357,6 +359,7 @@ namespace FlatEngine
 		extern float xGameCenter;
 		extern float yGameCenter;
 		extern ImVec2 worldCenterPoint;
+		extern ImVec2 gameViewCenter;
 
 		// Gui Rendering
 		extern void SetupImGui();

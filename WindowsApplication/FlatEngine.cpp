@@ -736,6 +736,21 @@ namespace FlatEngine
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 
+	bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB)
+	{
+		float A_TopEdge = ObjectA.x;
+		float A_RightEdge = ObjectA.y;
+		float A_BottomEdge = ObjectA.z;
+		float A_LeftEdge = ObjectA.w;
+
+		float B_TopEdge = ObjectB.x;
+		float B_RightEdge = ObjectB.y;
+		float B_BottomEdge = ObjectB.z;
+		float B_LeftEdge = ObjectB.w;
+
+		return ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
+	}
+
 	Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease)
 	{
 		Vector2 difference = Vector2(endPos.x - startPos.x, endPos.y - startPos.y);

@@ -12,6 +12,8 @@ namespace FlatEngine {
 		SetParentID(parentID);
 		walkSpeed = 1;
 		runSpeed = 2;
+		maxSpeed = 0.2f;
+		speedCorrection = 0.001f;
 		gravity = 1;
 		velocity = 0;
 		_isMoving = false;
@@ -27,6 +29,7 @@ namespace FlatEngine {
 		SetActive(toCopy->IsActive());
 		walkSpeed = toCopy->GetWalkSpeed();
 		runSpeed = toCopy->GetWalkSpeed();
+		speedCorrection = 0.001f;
 		gravity = toCopy->GetGravity();
 		velocity = toCopy->GetVelocity();
 		_isMoving = toCopy->IsMoving();
@@ -72,7 +75,20 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		rigidBody->Move(Lerp(transform->GetPosition(), Vector2(normalizedX, normalizedY), walkSpeed));
+		Vector2 velocity = rigidBody->GetPendingVelocity();
+		// If the object has not hit max speed in negative or positive direction
+		if (velocity.x >= 0 && velocity.x < maxSpeed || velocity.x <= 0 && velocity.x >(maxSpeed * -1) ||
+			// If velocity exceeds positive max speed but x direction is negative
+			(velocity.x >= maxSpeed && normalizedX * walkSpeed * speedCorrection < 0) ||
+			// If velocity exceeds negative max speed but x direction is positive
+			(velocity.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0))
+		{
+			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, normalizedY * walkSpeed * speedCorrection), GetDeltaTime());
+			_isMoving = true;
+		}
+		
+		if (normalizedX == 0)
+			_isMoving = false;
 	}
 
 	void CharacterController::MoveTo(Vector2 location)

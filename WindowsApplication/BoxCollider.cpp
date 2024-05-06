@@ -1,4 +1,5 @@
 #include "BoxCollider.h"
+#include "RigidBody.h"
 #include "FlatEngine.h"
 #include "GameObject.h"
 #include "Transform.h"
@@ -14,9 +15,12 @@ namespace FlatEngine
 		activeWidth = 5;
 		activeHeight = 3;
 		activeOffset = Vector2(0, 0);
+		activeEdges = ImVec4(0, 0, 0, 0);
 		activeLayer = 0;
 		_isContinious = false;
 		_isColliding = false;
+		_activeEdgesSet = false;
+		previousPosition = Vector2(0, 0);
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = nullptr;
@@ -40,6 +44,8 @@ namespace FlatEngine
 		activeLayer = toCopy->GetActiveLayer();
 		_isContinious = toCopy->IsContinuous();
 		_isColliding = false;
+		_activeEdgesSet = false;
+		previousPosition = Vector2(0, 0);
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = toCopy->OnActiveCollision;
@@ -81,6 +87,21 @@ namespace FlatEngine
 	void BoxCollider::SetColliding(bool _colliding)
 	{
 		_isColliding = _colliding;
+	}
+
+	void BoxCollider::UpdatePreviousPosition()
+	{
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		previousPosition = transform->GetPosition();
+	}
+
+	bool BoxCollider::HasMoved()
+	{
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 position = transform->GetPosition();
+		//LogFloat(previousPosition.y, " " + GetParent()->GetName() + " Inner Previous Pos: ");
+
+		return (previousPosition.x != position.x || previousPosition.y != position.y);
 	}
 
 	void BoxCollider::RemoveCollidingObject(std::shared_ptr<GameObject> object)
@@ -151,6 +172,7 @@ namespace FlatEngine
 	void BoxCollider::SetActiveEdges(ImVec4 edges)
 	{
 		activeEdges = edges;
+		_activeEdgesSet = true;
 	}
 
 	ImVec4 BoxCollider::GetActiveEdges()
@@ -158,18 +180,50 @@ namespace FlatEngine
 		return activeEdges;
 	}
 
+	// Just based on actual pixel locations (0,0) being the top left of the window
+	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	ImVec4 BoxCollider::UpdateActiveEdges(ImVec2 centerPoint, float gridStep)
 	{
-		std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
-		Vector2 position = transform->GetPosition();
-		Vector2 scale = transform->GetScale();
+		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
+		bool _shouldUpdate = false;
 
-		float activeLeft = FlatGui::WorldToViewport(centerPoint.x, position.x + activeOffset.x - (activeWidth / 2 * scale.x), gridStep, false);
-		float activeRight = FlatGui::WorldToViewport(centerPoint.x, position.x + activeOffset.x + (activeWidth / 2 * scale.x), gridStep, false);
-		float activeTop = FlatGui::WorldToViewport(centerPoint.y, position.y + activeOffset.y + (activeHeight / 2 * scale.y), gridStep, true);
-		float activeBottom = FlatGui::WorldToViewport(centerPoint.y, position.y + activeOffset.y - (activeHeight / 2 * scale.y), gridStep, true);
+		std::shared_ptr<FlatEngine::RigidBody> rigidBody;
+		if (GetParent()->HasComponent("RigidBody"))
+		{
+			rigidBody = GetParent()->GetRigidBody();
+			Vector2 velocity = rigidBody->GetVelocity();
 
-		SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+			if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
+				_shouldUpdate = true;
+		}
+		else
+		{
+			if (!_activeEdgesSet || HasMoved())
+				_shouldUpdate = true;
+		}
+
+		if (_shouldUpdate)
+		{
+			Vector2 position;
+
+
+			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
+			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
+			if (rigidBody != nullptr)
+				position = rigidBody->GetNextPosition();
+			else
+			{
+				std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
+				position = transform->GetPosition();
+			}			
+
+			float activeLeft = centerPoint.x + (position.x - (activeWidth / 2) + activeOffset.x) * gridStep;
+			float activeTop = centerPoint.y + (-position.y - (activeHeight / 2) + activeOffset.y) * gridStep;
+			float activeRight = centerPoint.x + (position.x + (activeWidth / 2) + activeOffset.x) * gridStep;
+			float activeBottom = centerPoint.y + (-position.y + (activeHeight / 2) + activeOffset.y) * gridStep;
+
+			SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+		}
 
 		return activeEdges;
 	}

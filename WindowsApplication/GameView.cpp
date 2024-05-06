@@ -14,6 +14,7 @@ namespace FlatEngine { namespace FlatGui {
 	float GAME_VIEWPORT_HEIGHT = 400;
 	float xGameCenter = 600 / 2;
 	float yGameCenter = 400 / 2;
+	ImVec2 gameViewCenter = ImVec2(0, 0);
 
 
 	void Game_RenderView()

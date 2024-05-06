@@ -91,7 +91,7 @@ namespace FlatEngine
 
 	namespace FlatGui {
 
-		bool _clearBufferEveryFrame = false;
+		bool _clearBufferEveryFrame = true;
 		bool _logProfilerOutput = false;
 
 		void RenderLog()

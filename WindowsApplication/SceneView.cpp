@@ -17,6 +17,7 @@ namespace FlatEngine { namespace FlatGui {
 	bool _firstSceneRenderPass = true;
 	bool _sceneHasBeenSet = false;
 	ImVec2 sceneViewScrolling = ImVec2(0,0);
+	ImVec2 sceneViewCenter = ImVec2(0, 0);
 
 	void Scene_RenderView()
 	{
@@ -89,9 +90,9 @@ namespace FlatEngine { namespace FlatGui {
 			sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		static ImVec2 centerPoint = ImVec2(0, 0);
+		//static ImVec2 centerPoint = ImVec2(0, 0);
 
-		RenderGridView(centerPoint, sceneViewScrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
+		RenderGridView(sceneViewCenter, sceneViewScrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
 
 		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
@@ -102,7 +103,7 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			sceneObjects = std::vector<std::shared_ptr<GameObject>>();
 
-		RenderViewObjects(sceneObjects, centerPoint, canvas_p0, canvas_sz);
+		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz);
 
 		// Reset WindowPadding
 		ImGui::PopStyleVar();
