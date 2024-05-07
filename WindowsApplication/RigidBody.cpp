@@ -131,18 +131,20 @@ namespace FlatEngine {
 		}
 	}
 
-	void RigidBody::AddForce(Vector2 direction, float power, float deltaTime)
+	void RigidBody::AddForce(Vector2 direction, float power)
 	{
 		// Normalize the force first, then apply the power factor to the force
 		Vector2 addedForce = Vector2(direction.x * power * forceCorrection, direction.y * power * forceCorrection);
-		AddVelocity(addedForce, deltaTime);
+		pendingVelocity.x += addedForce.x;
+		pendingVelocity.y += addedForce.y;
+		LogFloat(pendingVelocity.y, "Vel y: ");
 	}
 
 	Vector2 RigidBody::GetNextPosition()
 	{
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
-		return Vector2(position.x + velocity.x, position.y + velocity.y);
+		return Vector2(position.x + pendingVelocity.x * 1.9, position.y + pendingVelocity.y * 1.9);
 	}
 
 	void RigidBody::Move(Vector2 position)

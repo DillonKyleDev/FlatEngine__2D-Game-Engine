@@ -45,11 +45,11 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_isContinious": true,
-                    "activeHeight": 1.9800000190734863,
+                    "activeHeight": 2.130000114440918,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 2.009999990463257,
+                    "activeWidth": 2.119999885559082,
                     "id": 5,
                     "type": "BoxCollider"
                 },
@@ -137,8 +137,70 @@
                 }
             ],
             "id": 2,
-            "name": "Sprite",
+            "name": "New GameObject (2)",
             "parent": 1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": false,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 10,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 10.0
+                }
+            ],
+            "id": 3,
+            "name": "New GameObject (3)",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 13,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\MoveAround.json",
+                    "type": "Animation"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 16,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 17,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\frustrum.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 6,
+            "name": "Animation(6)",
+            "parent": -1
         }
     ]
 }

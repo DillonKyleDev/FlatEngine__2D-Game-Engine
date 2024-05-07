@@ -20,7 +20,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimator()
 	{
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
 
 		PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
@@ -29,36 +29,23 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Animated Properties BeginChild()
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Animated Properties", ImVec2(ImGui::GetContentRegionMax().x / 3, 0), padding_child_flags | ImGuiChildFlags_ResizeX);
+		ImGui::BeginChild("Animated Properties", ImVec2(ImGui::GetContentRegionMax().x / 3, 0), padding_childFlags | ImGuiChildFlags_ResizeX);
 		ImGui::PopStyleColor();
 
 		std::string animationName = "-No Animation Selected-";
 		if (GetFocusedAnimation()->animationName != "")
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGuiChildFlags header_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-		ImGuiChildFlags child_flags = ImGuiChildFlags_:: ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-		ImGui::BeginChild(animationName.c_str(), ImVec2(0, 0), header_flags);
-		ImGui::PopStyleColor();
-		ImGui::Text(animationName.c_str());
-		ImGui::EndChild();
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		ImGui::BeginChild("Manage Animation", ImVec2(0, 0), child_flags);
-
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x - 270, ImGui::GetCursorPos().y + 3));
-		ImGui::Text("Manage Loaded Animation -");
+		ImGui::BeginChild("Manage Animation", ImVec2(0, 0), childFlags);
+	
+		RenderSectionHeader(animationName, 18);
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));
 
 		static std::string animationFilePath;
 		if (GetFocusedAnimation() != nullptr)
 			animationFilePath = GetFocusedAnimation()->animationPath;
 
 		// Loading, saving and opening animation json files
-		ImGui::SameLine(0, 15);
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() - 8, ImGui::GetCursorPosY() - 3));
 		if (RenderImageButton("##NewAnimationFile", newFileTexture, ImVec2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenSaveFileExplorer();
@@ -80,8 +67,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndTooltip();
 		}
 
-		ImGui::SameLine(0, 2);
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+		ImGui::SameLine(0, 2);			
 		if (RenderImageButton("#OpenAnim", openFileTexture, ImVec2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenLoadFileExplorer();
@@ -98,8 +84,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndTooltip();
 		}
 
-		ImGui::SameLine(0, 2);
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+		ImGui::SameLine(0, 2);		
 		if (RenderImageButton("#SaveAnimationFile", saveFileTexture, ImVec2(16, 16), 1, transparentColor))
 		{
 			if (animationFilePath != "")
@@ -113,7 +98,6 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 		if (RenderImageButton("#SaveAsAnimationFile", saveAsFileTexture, ImVec2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenSaveFileExplorer();
@@ -213,13 +197,12 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (animProps != nullptr && animProps->animationName != "")
 		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 12);
 			std::shared_ptr<Animation> animation = nullptr;
 			if (objectForFocusedAnimation != nullptr)
 				animation = objectForFocusedAnimation->GetAnimationComponent();
-			
-			ImGui::Separator();
 
-			if (RenderCheckbox("Loop Animation?", animProps->_loop) && animation != nullptr && animation->IsPlaying())
+			if (RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
 			{
 				animation->Stop();
 				animation->Play(GetEngineTime());
@@ -347,18 +330,13 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Timeline Events
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Timeline Events", ImVec2(0, 0), padding_child_flags);
+		ImGui::BeginChild("##AnimationTimeline", ImVec2(0, 0), padding_childFlags);
 		ImGui::PopStyleColor();
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild("Animation Timeline", ImVec2(0, 0), header_flags);
-		ImGui::PopStyleColor();
-		ImGui::Text("Animation Timeline");
-		ImGui::EndChild();
+		RenderSectionHeader("Animation Timeline");
 
-		ImGui::BeginChild("Property Header", ImVec2(0,0), header_flags);
+		ImGui::BeginChild("Property Header", ImVec2(0,0), headerFlags);
 		float availableSpace = ImGui::GetContentRegionAvail().x / 2;
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 		ImGui::SetNextItemWidth(availableSpace);
 		ImGui::Text("Property Selected: ");
 
@@ -372,16 +350,15 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, ImVec2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(tableCellLightColor), 2);
 			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
 			ImGui::Text(node_clicked.c_str());
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 205, 0);
 		}
 		
 		if (node_clicked != "")
 		{
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 			if (RenderButton("Add Keyframe"))
 				L_PushBackKeyFrame(node_clicked);
 			ImGui::SameLine(0, 5);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+			//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 			if (RenderButton("Remove Property"))
 				L_PushBackKeyFrame(node_clicked);
 		}
@@ -448,7 +425,7 @@ namespace FlatEngine { namespace FlatGui {
 		//ImVec2 scrubberZeroPoint = ImGui::GetCursorScreenPos();
 
 		//ImGui::PushStyleColor(ImGuiCol_ChildBg, scrubberBackground);
-		//ImGui::BeginChild("Timeline Scrubber", ImVec2(0,50), child_flags);
+		//ImGui::BeginChild("Timeline Scrubber", ImVec2(0,50), childFlags);
 		//ImGui::PopStyleColor();
 		
 
@@ -878,27 +855,17 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimationPreview()
 	{
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+		static ImVec2 step = ImVec2(50, 50);
 
 		ImGui::Begin("Animation Preview");
+
 		// Animation Preview BeginChild()
 		// 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), padding_child_flags);
+		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), padding_childFlags);
 		ImGui::PopStyleColor();
-
-		////////////////
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, white);
-		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), child_flags);
-		ImGui::PopStyleColor();
-		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(1, 9, 0, 255));
-		ImGui::Text("Animation Preview");
-		ImGui::PopStyleColor();
-		ImGui::EndChild();
-		////////////////
-
-		RenderCheckbox("Preview Animation", _playPreviewAnimation);
 
 		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
 		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -939,7 +906,8 @@ namespace FlatEngine { namespace FlatGui {
 		
 		ImVec2 centerPoint = ImVec2(0, 0);
 
-		RenderGridView(centerPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(50,50), ImVec2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
+		bool _weightedScroll = false;
+		RenderGridView(centerPoint, scrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, ImVec2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
 		if (objectForFocusedAnimation != nullptr)
 		{
@@ -959,7 +927,7 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz);
+			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
 		}
 
 		// Animation Preview EndChild()
@@ -992,33 +960,27 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderKeyFrameEditor()
 	{
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
+		ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
 
 		ImGui::Begin("KeyFrame Editor");
 		// Animation Preview BeginChild()
 		// 
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("KeyFrame Editor", ImVec2(0, 0), padding_child_flags);
+		ImGui::BeginChild("KeyFrame Editor", ImVec2(0, 0), padding_childFlags);
 		ImGui::PopStyleColor();
 
-		std::string keyFrameProperty = "-No KeyFrame Selected-";
+		std::string keyFrameProperty = "No KeyFrame Selected";
 		if (selectedKeyFrameToEdit != nullptr)
 			keyFrameProperty = selectedKeyFrameToEdit->name;
 
-		////////////////
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild("KeyFrame Editor", ImVec2(0, 0), child_flags);
-		ImGui::PopStyleColor();
-		ImGui::Text(keyFrameProperty.c_str());
-		ImGui::EndChild();
-		////////////////
+		RenderSectionHeader(keyFrameProperty);
 
 		if (selectedKeyFrameToEdit != nullptr)
 		{
 			static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 			// Flags for child padding and dimensions
-			ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+			ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
 
 			// Here we should steal code from the components rendering in Inpsector window.
 			if (selectedKeyFrameToEdit->name == "Transform")
@@ -1090,7 +1052,7 @@ namespace FlatEngine { namespace FlatGui {
 				transform->yScale = yScale;
 
 				// Interpolation type
-				const char* interpType[] = { "-Select-", "Lerp", "Slerp" };
+				const char* interpType[] = { "- Select -", "Lerp", "Slerp" };
 				static int current_type = 0;
 				static std::string node_clicked = "";
 				static std::string selected_property = "";
@@ -1192,8 +1154,8 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 		else
-		{
-			ImGui::Text("-Select a keyframe to edit-");
+		{	
+			ImGui::TextWrapped("Select a keyframe to edit from the Animation Timeline...");
 		}
 
 		ImGui::EndChild();

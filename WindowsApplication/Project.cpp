@@ -11,6 +11,7 @@ Project::Project()
 	loadedScenePath = "";
 	loadedAnimationPath = "";
 	sceneViewScrolling = Vector2(0,0);
+	focusedGameObjectID = -1;
 }
 
 Project::~Project()
@@ -35,6 +36,16 @@ void Project::SetLoadedScenePath(std::string path)
 std::string Project::GetLoadedScenePath()
 {
 	return loadedScenePath;
+}
+
+void Project::SetFocusedGameObjectID(long ID)
+{
+	focusedGameObjectID = ID;
+}
+
+long Project::GetFocusedGameObjectID()
+{
+	return focusedGameObjectID;
 }
 
 void Project::SetLoadedPreviewAnimationPath(std::string path)

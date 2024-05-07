@@ -34,7 +34,7 @@ namespace FlatEngine
 		}
 	
 		parentID = newParentID;
-		name = "New GameObject (" + std::to_string(ID) + ")";
+		name = "GameObject(" + std::to_string(ID) + ")";
 		components = {};
 		_isActive = true;
 		childrenIDs = std::vector<long>();
@@ -260,7 +260,6 @@ namespace FlatEngine
 
 	std::shared_ptr<Component> GameObject::AddComponent(Component::ComponentTypes type)
 	{
-		// Look into making these smart pointers so they delete automatically
 		std::shared_ptr <Transform> transformComponent;
 		std::shared_ptr <Sprite> spriteComponent;
 		std::shared_ptr <Camera> cameraComponent;

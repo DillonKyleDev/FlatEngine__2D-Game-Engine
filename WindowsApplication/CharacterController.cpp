@@ -14,8 +14,6 @@ namespace FlatEngine {
 		runSpeed = 2;
 		maxSpeed = 0.2f;
 		speedCorrection = 0.001f;
-		gravity = 1;
-		velocity = 0;
 		_isMoving = false;
 		_isGrounded = false;
 	}
@@ -30,8 +28,6 @@ namespace FlatEngine {
 		walkSpeed = toCopy->GetWalkSpeed();
 		runSpeed = toCopy->GetWalkSpeed();
 		speedCorrection = 0.001f;
-		gravity = toCopy->GetGravity();
-		velocity = toCopy->GetVelocity();
 		_isMoving = toCopy->IsMoving();
 		_isGrounded = toCopy->IsGrounded();
 	}
@@ -49,9 +45,7 @@ namespace FlatEngine {
 			{ "_isActive", IsActive() },
 			{ "walkSpeed", walkSpeed },
 			{ "runSpeed", runSpeed },
-			{ "gravity", gravity },
 			{ "_isMoving", _isMoving },
-			{ "velocity", velocity }
 		};
 
 		std::string data = jsonData.dump();
@@ -75,7 +69,7 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		Vector2 velocity = rigidBody->GetPendingVelocity();
+		Vector2 velocity = rigidBody->GetVelocity();
 		// If the object has not hit max speed in negative or positive direction
 		if (velocity.x >= 0 && velocity.x < maxSpeed || velocity.x <= 0 && velocity.x >(maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
@@ -83,7 +77,7 @@ namespace FlatEngine {
 			// If velocity exceeds negative max speed but x direction is positive
 			(velocity.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0))
 		{
-			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, normalizedY * walkSpeed * speedCorrection), GetDeltaTime());
+			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0), GetDeltaTime());
 			_isMoving = true;
 		}
 		
@@ -115,16 +109,6 @@ namespace FlatEngine {
 		return runSpeed;
 	}
 
-	void CharacterController::SetGravity(float newGravity)
-	{
-		gravity = newGravity;
-	}
-
-	float CharacterController::GetGravity()
-	{
-		return gravity;
-	}
-
 	void CharacterController::SetMoving(bool _newIsMoving)
 	{
 		_isMoving = _newIsMoving;
@@ -135,19 +119,11 @@ namespace FlatEngine {
 		return _isMoving;
 	}
 
-	void CharacterController::SetVelocity(float vel)
-	{
-		velocity = vel;
-	}
-
-	float CharacterController::GetVelocity()
-	{
-		return velocity;
-	}
 	void CharacterController::SetIsGrounded(bool _grounded)
 	{
 		_isGrounded = _grounded;
 	}
+
 	bool CharacterController::IsGrounded()
 	{
 		return _isGrounded;

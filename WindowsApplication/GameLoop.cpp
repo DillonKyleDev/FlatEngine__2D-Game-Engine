@@ -200,14 +200,14 @@ namespace FlatEngine
 				bool _isColliding = false;
 
 				// Update Primary BoxCollider Active Edges
-				ImVec4 primaryActiveEdges = boxCollider->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::gridStep);
+				ImVec4 primaryActiveEdges = boxCollider->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::sceneViewGridStep.x);
 
 				for (std::shared_ptr<BoxCollider> checkAgainst : boxColliders)
 				{
 					if (checkAgainst != nullptr && (checkAgainst->GetID() != boxCollider->GetID()) && checkAgainst->IsActive())
 					{
 						// Update Secondary BoxCollider Active Edges
-						ImVec4 secondaryActiveEdges = checkAgainst->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::gridStep);
+						ImVec4 secondaryActiveEdges = checkAgainst->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::sceneViewGridStep.x);
 
 						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && FlatEngine::AreColliding(primaryActiveEdges, secondaryActiveEdges))
 						{

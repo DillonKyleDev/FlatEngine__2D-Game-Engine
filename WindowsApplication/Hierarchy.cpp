@@ -43,24 +43,16 @@ namespace FlatEngine { namespace FlatGui {
 		PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 		{
-			if (ImGui::BeginMenu("Add New"))
+			if (ImGui::MenuItem("Quick save"))
 			{
-				if (ImGui::MenuItem("GameObject"))
-				{
-					CreateGameObject(-1);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndMenu();
+				std::shared_ptr<Scene> loadedScene = GetLoadedScene();
+				SaveScene(loadedScene, loadedScene->GetPath());
+				ImGui::CloseCurrentPopup();
 			}
-			ImGui::Separator();
-			if (ImGui::BeginMenu("Manage Scene"))
+			if (ImGui::MenuItem("Reload scene"))
 			{
-				if (ImGui::MenuItem("Reload Scene"))
-				{
-					LoadScene(GetLoadedScenePath());
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndMenu();
+				LoadScene(GetLoadedScenePath());
+				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}

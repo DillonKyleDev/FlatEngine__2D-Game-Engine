@@ -109,7 +109,7 @@ namespace FlatEngine
 	std::string GetLoadedScenePath();
 	extern long GetNextComponentID();
 	extern long GetNextGameObjectID();
-	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filename);
+	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filePath);
 	extern void LoadScene(std::string name);
 
 	// Scene Prettification
@@ -223,10 +223,9 @@ namespace FlatEngine
 		// Input
 		extern ImVec4 inputColor;
 		// Tables
-		extern ImVec4 uneditableTableTextColor;
-		extern ImVec4 uneditableTableRowLightColor;
-		extern ImVec4 uneditableTableRowDarkColor;
-		extern ImVec4 uneditableTableRowFieldColor;
+		extern ImVec4 noEditTableTextColor;
+		extern ImVec4 noEditTableRowFieldBgColor;
+		extern ImVec4 noEditTableRowValueBgColor;
 		extern ImVec4 tableCellLightColor;
 		extern ImVec4 tableCellDarkColor;
 		// Trees
@@ -312,6 +311,11 @@ namespace FlatEngine
 		extern ImVec4 tint_col;
 		extern ImVec4 bg_col;
 
+		// Flags
+		extern ImGuiChildFlags childFlags;
+		extern ImGuiChildFlags headerFlags;
+		extern ImGuiTableFlags tableFlags;
+
 		// Scene view
 		extern float SCENE_VIEWPORT_WIDTH;
 		extern float SCENE_VIEWPORT_HEIGHT;
@@ -319,7 +323,7 @@ namespace FlatEngine
 		extern float DYNAMIC_VIEWPORT_HEIGHT;
 		extern bool _firstSceneRenderPass;
 		extern bool _sceneHasBeenSet;
-		extern float gridStep;
+		extern ImVec2 sceneViewGridStep;
 		extern ImVec2 sceneViewScrolling;
 		extern ImVec2 sceneViewCenter;
 
@@ -360,6 +364,7 @@ namespace FlatEngine
 		extern float yGameCenter;
 		extern ImVec2 worldCenterPoint;
 		extern ImVec2 gameViewCenter;
+		extern ImVec2 gameViewGridStep;
 
 		// Gui Rendering
 		extern void SetupImGui();
@@ -386,9 +391,9 @@ namespace FlatEngine
 		extern void RenderMappingContextEditor();
 		extern void Cleanup();
 
-		extern void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset);
-		extern void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz);
-		extern void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		extern void RenderGridView(ImVec2& centerPoint, ImVec2 &scrolling, bool _weightedScroll, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 &step, ImVec2 centerOffset);
+		extern void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, float step);
+		extern void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Helper Functions
 		//
@@ -402,13 +407,19 @@ namespace FlatEngine
 		extern void PopMenuStyles();
 		extern void PushTableStyles();
 		extern void PopTableStyles();
-		extern ImGuiTableFlags tableFlags;
+		extern void PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
+		extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max);
+		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float increment, float min, float max);
+		extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value);
+		extern void PopTable();
+		extern bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles = false, ImGuiInputTextFlags flags = 0);
 		extern bool RenderButton(std::string text, ImVec2 size = ImVec2(0,0), float rounding = 1, ImVec4 color = buttonColor, ImVec4 hoverColor = buttonHoveredColor, ImVec4 activeColor = buttonActiveColor);
 		extern bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size = ImVec2(16, 16), float rounding = 1, ImVec4 bgColor = imageButtonColor, ImVec4 tint = imageButtonTintColor, ImVec4 hoverColor = imageButtonHoveredColor, ImVec4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
 		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);
 		extern bool RenderCheckbox(std::string text, bool &_toCheck);
+		extern void RenderSectionHeader(std::string headerText, float height = 0);
 
 		extern ImU32 ImVec4ToImU32(ImVec4 color);
 		

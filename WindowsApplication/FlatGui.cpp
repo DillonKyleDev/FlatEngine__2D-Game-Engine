@@ -112,14 +112,11 @@ namespace FlatEngine { namespace FlatGui {
 	// Inputs
 	ImVec4 inputColor = ImVec4(0.3f, 0.3f, 0.32f, 1.0f);
 	// Tables
-	ImVec4 uneditableTableTextColor = ImVec4(0.75f, 0.75f, 0.81f, 1.0f);
-	ImVec4 uneditableTableRowLightColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.35f, 0.55f, 1.0f);
-	ImVec4 uneditableTableRowDarkColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
-	ImVec4 uneditableTableRowFieldColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
+	ImVec4 noEditTableTextColor = ImVec4(0.75f, 0.75f, 0.81f, 1.0f);
+	ImVec4 noEditTableRowFieldBgColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.35f, 0.55f, 1.0f);// ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
+	ImVec4 noEditTableRowValueBgColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
 	ImVec4 tableCellLightColor = ImVec4(0.19f, 0.19f, 0.21f, 1.0f);
 	ImVec4 tableCellDarkColor = ImVec4(0.24f, 0.24f, 0.27f, 1.0f);
-	//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
-	ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 	// Trees
 	ImVec4 treeSelectableColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
 	ImVec4 treeSelectableHoveredColor = ImVec4(0.3f, 0.35f, 0.65f, 1.0f);
@@ -155,6 +152,12 @@ namespace FlatEngine { namespace FlatGui {
 	ImVec4 checkboxHoveredColor = ImVec4(0.31f, 0.31f, 0.32f, 1.0f);
 	ImVec4 checkboxActiveColor = ImVec4(0.15f, 0.15f, 0.23f, 1.0f);
 	////////////////////////
+
+	// Flags
+	ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+	ImGuiChildFlags headerFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+	//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
+	ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 
 	// For rendering sprites
 	int maxSpriteLayers = 55;
@@ -1279,18 +1282,51 @@ namespace FlatEngine { namespace FlatGui {
 			RenderMappingContextEditor();
 	}
 
-	void RenderGridView(ImVec2& centerPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 step, ImVec2 centerOffset)
+	void RenderGridView(ImVec2& centerPoint, ImVec2 &scrolling, bool _weightedScroll, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 &step, ImVec2 centerOffset)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
 		ImVec2 adjustedScrolling = ImVec2(scrolling.x + centerOffset.x, scrolling.y + centerOffset.y);
 		
+		// Get scroll amount for changing zoom level of scene view
+		ImGuiIO inputOutput = ImGui::GetIO();
+		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+		float scrollInput = inputOutput.MouseWheel;
+		float weight = 0.08f;
+		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+
+		const bool is_hovered = ImGui::IsItemHovered();
+		// Change scrolling offset based on mouse position and weight
+		if (is_hovered)
+		{
+			if (scrollInput > 0)
+			{
+				if (_weightedScroll)
+				{
+					scrolling.x -= trunc(signedMousePosX * weight);
+					scrolling.y -= trunc(signedMousePosY * weight);
+				}
+				step.x += 1;
+				step.y += 1;
+			}
+			else if (scrollInput < 0 && step.x > 2 && step.y > 2)
+			{
+				if (_weightedScroll)
+				{
+					scrolling.x += trunc(signedMousePosX * weight);
+					scrolling.y += trunc(signedMousePosY * weight);
+				}
+				step.x -= 1;
+				step.y -= 1;
+			}
+		}
 
 		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
-		// one of those gridstep locations. We get the total grid steps that will render given the current viewport
+		// one of those step locations. We get the total grid steps that will render given the current viewport
 		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
 		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
-		// point and for that point. We need to update this value every pass of the scene view because the gridStep
+		// point and for that point. We need to update this value every pass of the scene view because the step
 		// value will change over time and we need to keep these in sync.          
 		// 
 		//                   V
@@ -1357,7 +1393,7 @@ namespace FlatEngine { namespace FlatGui {
 		FlatEngine::DrawPoint(ImVec2(centerPoint.x, centerPoint.y), centerColor, draw_list);
 	}
 
-	void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, float step)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -1377,7 +1413,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 parentScale(1, 1);
 
 				// Render self and children recursively
-				RenderSelfThenChildren(object, parentOffset, parentScale, centerPoint, canvas_p0, canvas_sz, draw_list, drawSplitter);
+				RenderSelfThenChildren(object, parentOffset, parentScale, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 			}
 		}
 
@@ -1386,7 +1422,7 @@ namespace FlatEngine { namespace FlatGui {
 		drawSplitter = nullptr;
 	}
 
-	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Transform> transform = self->GetTransformComponent();
 		std::shared_ptr<Sprite> sprite = self->GetSpriteComponent();
@@ -1423,7 +1459,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, step, draw_list);
 				}
 			}
 
@@ -1450,7 +1486,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, gridStep, draw_list);
+					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, step, draw_list);
 				}
 			}
 
@@ -1460,10 +1496,10 @@ namespace FlatEngine { namespace FlatGui {
 				float cameraWidth = camera->GetWidth();
 				float cameraHeight = camera->GetHeight();
 
-				float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, gridStep);
-				float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, gridStep);
-				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), gridStep);
-				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), gridStep);
+				float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, step);
+				float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, step);
+				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), step);
+				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), step);
 
 				ImVec2 topLeftCorner = ImVec2(cameraLeftEdge, cameraTopEdge);
 				ImVec2 bottomRightCorner = ImVec2(cameraRightEdge, cameraBottomEdge);
@@ -1486,7 +1522,7 @@ namespace FlatEngine { namespace FlatGui {
 				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
 
 				// Draw actual camera icon
-				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -1497,10 +1533,10 @@ namespace FlatEngine { namespace FlatGui {
 				int layerNumber = canvas->GetLayerNumber();
 				bool _blocksLayers = canvas->GetBlocksLayers();
 
-				float canvasLeft = WorldToViewport(scrolling.x, position.x - activeWidth / 2, gridStep, false);
-				float canvasRight = WorldToViewport(scrolling.x, position.x + activeWidth / 2, gridStep, false);
-				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, gridStep, true);
-				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, gridStep, true);
+				float canvasLeft = WorldToViewport(scrolling.x, position.x - activeWidth / 2, step, false);
+				float canvasRight = WorldToViewport(scrolling.x, position.x + activeWidth / 2, step, false);
+				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, step, true);
+				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, step, true);
 
 				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
 				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
@@ -1519,10 +1555,10 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
 
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), gridStep, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), gridStep, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), gridStep, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), gridStep, true);
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
@@ -1545,10 +1581,10 @@ namespace FlatEngine { namespace FlatGui {
 				bool _isActive = boxCollider->IsActive();
 				bool _isColliding = boxCollider->IsColliding();
 
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), gridStep, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), gridStep, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), gridStep, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), gridStep, true);
+				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
+				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
+				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
+				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
@@ -1581,7 +1617,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, gridStep, draw_list, IM_COL32(255, 255, 255, 255));
+				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, 255));
 			}
 		}
 
@@ -1600,7 +1636,7 @@ namespace FlatEngine { namespace FlatGui {
 				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
 
 				if (child->IsActive())
-					RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, draw_list, drawSplitter);
+					RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 			}
 		}
 	}
@@ -1744,6 +1780,110 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 	}
 
+	void PushTable(std::string id, int columns, ImGuiTableFlags flags)
+	{
+		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
+		PushTableStyles();
+		ImGui::BeginTable(id.c_str(), columns, tableFlags);
+		for (int i = 0; i < columns; i++)
+		{
+			std::string columnLabel = id + std::to_string(i);
+			ImGui::TableSetupColumn(columnLabel.c_str(), flags, columnWidth);
+		}
+	}
+
+	bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max)
+	{
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		bool _isChanged = RenderDragFloat(id.c_str(), 0, value, increment, min, max);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return _isChanged;
+	}
+
+	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float increment, float min, float max)
+	{
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		bool _isChanged = RenderDragInt(id.c_str(), 0, value, increment, min, max);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return _isChanged;
+	}
+
+	void RenderTextTableRow(std::string id, std::string fieldName, std::string value)
+	{
+		// Push uneditableTableTextColor text color
+		ImGui::PushStyleColor(ImGuiCol_Text, noEditTableTextColor);
+
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		// Set table cell bg color
+		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowFieldBgColor));
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		// Set table cell bg color
+		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowValueBgColor));
+		ImGui::Text(value.c_str());
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		// Pop text color
+		ImGui::PopStyleColor();
+	}
+
+	void PopTable()
+	{
+		ImGui::EndTable();
+		PopTableStyles();
+	}
+
+	bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles, ImGuiInputTextFlags flags)
+	{
+		bool _editedButton = false;
+		bool _editedInput = false;
+		char newPath[1024];
+		strcpy_s(newPath, value.c_str());
+		std::string pathString = label;
+
+		if (pathString != "")
+		{
+			ImGui::Text(pathString.c_str());
+			ImGui::SameLine(0, 5);
+		}
+		
+		if (_canOpenFiles)
+		{
+			std::string buttonId = id + "openFileButton";
+			if (RenderImageButton(buttonId.c_str(), openFileTexture))
+			{
+				std::string assetPath = OpenLoadFileExplorer();
+				strcpy_s(newPath, assetPath.c_str());				
+				_editedButton = true;
+			}
+			ImGui::SameLine();
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
+		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
+		ImGui::PopStyleColor();
+
+		if (newPath != " ")
+			value = newPath;
+		return _editedButton || _editedInput;
+	}
+
+
 	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
@@ -1882,6 +2022,25 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 
 		return _checked;
+	}
+
+	void RenderSectionHeader(std::string headerText, float height)
+	{
+		auto cursorPos = ImGui::GetCursorScreenPos();
+		auto regionAvailable = ImGui::GetContentRegionAvail();
+
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+		ImVec2 screenCursor = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, ImVec2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(innerWindowColor));
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
+		ImGui::Text(headerText.c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		ImGui::GetWindowDrawList()->AddRect(ImVec2(cursorPos.x, cursorPos.y + 4), ImVec2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(componentBorderColor));
 	}
 
 	// Hierarchy

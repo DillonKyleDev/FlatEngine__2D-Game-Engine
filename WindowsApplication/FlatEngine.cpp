@@ -176,6 +176,7 @@ namespace FlatEngine
 				animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
 			{
 				std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
+				animatorObjects.clear();
 				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, -1);
 				std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
 				transform->SetPosition(Vector2(0,0));
@@ -254,6 +255,8 @@ namespace FlatEngine
 						newProject->SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
 					if (currentObjectJson.contains("loadedAnimationPath"))
 						newProject->SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
+					if (currentObjectJson.contains("focusedGameObjectID"))
+						newProject->SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
 
 					// Scene Scrolling
 					Vector2 sceneViewScroll = Vector2(0, 0);
@@ -284,6 +287,10 @@ namespace FlatEngine
 						FlatGui::_showProfiler = currentObjectJson["_showProfiler"];
 					if (currentObjectJson.contains("_showMappingContextEditor"))
 						FlatGui::_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
+
+					// Settings
+					if (currentObjectJson.contains("_clearLogBuffer"))
+						FlatGui::_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
 				}
 			}
 		}
@@ -298,6 +305,9 @@ namespace FlatEngine
 			SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
 		//FlatGui::sceneViewScrolling = ImVec2(scrolling.x, scrolling.y);
+
+		if (loadedProject->GetFocusedGameObjectID() != -1)
+			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
 	}
 
 	void SaveProject(std::shared_ptr<Project> project, std::string path)
@@ -322,6 +332,7 @@ namespace FlatEngine
 			{ "path", path },
 			{ "loadedScenePath", project->GetLoadedScenePath()},
 			{ "loadedAnimationPath", project->GetLoadedPreviewAnimationPath()},
+			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", sceneViewScrolling.x },
 			{ "sceneViewScrollingY", sceneViewScrolling.y },
 			{ "_showSceneView", FlatGui::_showSceneView },
@@ -333,7 +344,8 @@ namespace FlatEngine
 			{ "_showKeyFrameEditor", FlatGui::_showKeyFrameEditor },
 			{ "_showLogger", FlatGui::_showLogger },
 			{ "_showProfiler", FlatGui::_showProfiler },
-			{ "_showMappingContextEditor", FlatGui::_showMappingContextEditor }
+			{ "_showMappingContextEditor", FlatGui::_showMappingContextEditor },
+			{ "_clearLogBuffer", FlatGui::_clearBufferEveryFrame },
 		});
 		projectProperties.push_back(animationName);
 

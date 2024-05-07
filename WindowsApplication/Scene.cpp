@@ -104,7 +104,7 @@ namespace FlatEngine
 
 	std::shared_ptr<GameObject> Scene::CreateGameObject(long parentID)
 	{
-		std::shared_ptr<GameObject> newObject(new GameObject(parentID));
+		std::shared_ptr<GameObject> newObject = std::make_shared<GameObject>();
 		AddSceneObject(newObject);
 		return newObject;
 	}

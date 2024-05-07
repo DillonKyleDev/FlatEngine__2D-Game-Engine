@@ -206,7 +206,6 @@ namespace FlatEngine
 		{
 			Vector2 position;
 
-
 			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
 			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
 			if (rigidBody != nullptr)

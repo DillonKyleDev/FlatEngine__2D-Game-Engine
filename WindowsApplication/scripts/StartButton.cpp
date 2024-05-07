@@ -72,7 +72,7 @@ void StartButton::Update(float deltaTime)
 	{
 		FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded())
-			rigidBody->AddForce(Vector2(0, 1), 1, deltaTime);
+			rigidBody->AddForce(Vector2(0, 1), 20);
 	}
 
 	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");

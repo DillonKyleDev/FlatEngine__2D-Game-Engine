@@ -8,8 +8,8 @@
 namespace FlatEngine { namespace FlatGui {
 
 	// Scene view
-	// The multiplier for gridstep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
-	float gridStep = 50;
+	// The multiplier for sceneViewGridStep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
+	ImVec2 sceneViewGridStep = ImVec2(50,50);
 	float SCENE_VIEWPORT_WIDTH = 600;
 	float SCENE_VIEWPORT_HEIGHT = 400;
 	float DYNAMIC_VIEWPORT_WIDTH = 600;
@@ -58,30 +58,6 @@ namespace FlatEngine { namespace FlatGui {
 		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 
-		// Get scroll amount for changing zoom level of scene view
-		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-		float scrollInput = inputOutput.MouseWheel;
-		float weight = 0.08f;
-		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-
-		// Change scrolling offset based on mouse position and weight
-		if (is_hovered)
-		{
-			if (scrollInput > 0)
-			{
-				sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-				sceneViewScrolling.y -= trunc(signedMousePosY * weight);
-				gridStep += 1;
-			}
-			else if (scrollInput < 0 && gridStep > 2)
-			{
-				sceneViewScrolling.x += trunc(signedMousePosX * weight);
-				sceneViewScrolling.y += trunc(signedMousePosY * weight);
-				gridStep -= 1;
-			}
-		}
-
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
@@ -90,9 +66,8 @@ namespace FlatEngine { namespace FlatGui {
 			sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
-		//static ImVec2 centerPoint = ImVec2(0, 0);
-
-		RenderGridView(sceneViewCenter, sceneViewScrolling, canvas_p0, canvas_p1, canvas_sz, ImVec2(gridStep, gridStep), ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
+		bool _weightedScroll = true;
+		RenderGridView(sceneViewCenter, sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, sceneViewGridStep, ImVec2(SCENE_VIEWPORT_WIDTH/2, SCENE_VIEWPORT_HEIGHT/2));
 
 		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::sceneManager->GetLoadedScene();
@@ -103,7 +78,7 @@ namespace FlatEngine { namespace FlatGui {
 		else
 			sceneObjects = std::vector<std::shared_ptr<GameObject>>();
 
-		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz);
+		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
 
 		// Reset WindowPadding
 		ImGui::PopStyleVar();

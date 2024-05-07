@@ -18,12 +18,8 @@ namespace FlatEngine {
 		float GetWalkSpeed();
 		void SetRunSpeed(float speed);
 		float GetRunSpeed();
-		void SetGravity(float gravity);
-		float GetGravity();
 		void SetMoving(bool _isMoving);
 		bool IsMoving();
-		void SetVelocity(float velocity);
-		float GetVelocity();
 		void SetIsGrounded(bool _grounded);
 		bool IsGrounded();
 
@@ -32,9 +28,7 @@ namespace FlatEngine {
 		float runSpeed;
 		float maxSpeed;
 		float speedCorrection;
-		float gravity;
 		bool _isMoving;
-		float velocity;
 		bool _isGrounded;
 
 	};

@@ -48,20 +48,20 @@ namespace FlatEngine
 		return loadedScene;
 	}
 
-	void SceneManager::SaveScene(std::shared_ptr<Scene> scene, std::string filename)
+	void SceneManager::SaveScene(std::shared_ptr<Scene> scene, std::string filePath)
 	{
-		loadedScenePath = filename;
+		loadedScenePath = filePath;
 
 		// Declare file and input stream
 		std::ofstream file_obj;
-		std::ifstream ifstream(filename);
+		std::ifstream ifstream(filePath);
 
 		// Delete old contents of the file
-		file_obj.open(filename, std::ofstream::out | std::ofstream::trunc);
+		file_obj.open(filePath, std::ofstream::out | std::ofstream::trunc);
 		file_obj.close();
 
 		// Opening file in append mode
-		file_obj.open(filename, std::ios::app);
+		file_obj.open(filePath, std::ios::app);
  
 		// Array that will hold our gameObject json objects
 		json sceneObjectsJsonArray;
@@ -138,9 +138,9 @@ namespace FlatEngine
 		SaveScene(loadedScene, loadedScenePath);
 	}
 
-	void SceneManager::LoadScene(std::string filename)
+	void SceneManager::LoadScene(std::string filePath)
 	{
-		loadedScenePath = filename;
+		loadedScenePath = filePath;
 
 		// Remove loaded scene from memory
 		loadedScene = nullptr;
@@ -148,15 +148,15 @@ namespace FlatEngine
 		// Start up a new scene
 		std::shared_ptr<Scene> freshScene = std::make_shared<Scene>();
 		loadedScene = freshScene;
-		freshScene->SetName(FlatEngine::FlatGui::GetFilenameFromPath(filename, false));
-		freshScene->SetPath(filename);
+		freshScene->SetName(FlatEngine::FlatGui::GetFilenameFromPath(filePath, false));
+		freshScene->SetPath(filePath);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
-		std::ifstream ifstream(filename);
+		std::ifstream ifstream(filePath);
 
 		// Open file in in mode
-		file_obj.open(filename, std::ios::in);
+		file_obj.open(filePath, std::ios::in);
 
 		// Variable to save the current file data into
 		std::string fileContent = "";
@@ -842,7 +842,6 @@ namespace FlatEngine
 
 							
 							
-							
 							// CharacterController Properties
 							if (currentObjectJson["components"][j].contains("walkSpeed"))
 								walkSpeed = currentObjectJson["components"][j]["walkSpeed"];
@@ -852,28 +851,12 @@ namespace FlatEngine
 								runSpeed = currentObjectJson["components"][j]["runSpeed"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'runSpeed' in object: ");
-							if (currentObjectJson["components"][j].contains("gravity"))
-								gravity = currentObjectJson["components"][j]["gravity"];
-							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'gravity' in object: ");
-							if (currentObjectJson["components"][j].contains("_isMoving"))
-								_isMoving = currentObjectJson["components"][j]["_isMoving"];
-							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isMoving' in object: ");
-							// Font RGBA values
-							if (currentObjectJson["components"][j].contains("velocity"))
-								velocity = currentObjectJson["components"][j]["velocity"];
-							else
-								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'velocity' in object: ");
 						
 							newCharacterController->SetID(id);
 							newCharacterController->SetCollapsed(_isCollapsed);
 							newCharacterController->SetActive(_isActive);
 							newCharacterController->SetWalkSpeed(walkSpeed);
 							newCharacterController->SetRunSpeed(runSpeed);
-							newCharacterController->SetGravity(gravity);
-							newCharacterController->SetMoving(_isMoving);
-							newCharacterController->SetVelocity(velocity);
 						}
 						else if (type == "BoxCollider")
 						{
@@ -1021,7 +1004,7 @@ namespace FlatEngine
 
 		// Assign our freshScene to the SceneManagers currently loadedScene member variable
 		this->loadedScene = freshScene;
-
+		SetFocusedGameObjectID(-1);
 		FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 	}
 

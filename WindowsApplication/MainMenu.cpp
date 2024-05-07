@@ -1,6 +1,9 @@
 #include "FlatEngine.h"
 #include "imgui.h"
 #include "Scene.h"
+#include "Sprite.h"
+#include "Transform.h"
+#include "Vector2.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -139,25 +142,170 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			if (ImGui::BeginMenu("Assets"))
 			{
-				if (ImGui::BeginMenu("Create New..."))
+				if (ImGui::BeginMenu("GameObjects"))
 				{
-					if (ImGui::MenuItem("GameObject"))
+					if (ImGui::MenuItem("New GameObject"))
 					{
 						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
 						SetFocusedGameObjectID(newObject->GetID());
 					}
+					if (ImGui::MenuItem("Ball"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(newObject->AddComponent(ComponentTypes::Transform));
+						newObject->AddComponent(ComponentTypes::RigidBody);
+						newObject->AddComponent(ComponentTypes::CircleCollider);
+						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
+						sprite->SetTexture("assets/images/resources/ball.png");
+						transform->SetScale(Vector2(0.02f, 0.02f));
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Block"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(newObject->AddComponent(ComponentTypes::Transform));
+						newObject->AddComponent(ComponentTypes::RigidBody);
+						newObject->AddComponent(ComponentTypes::CircleCollider);
+						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
+						sprite->SetTexture("assets/images/resources/block.png");
+						
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Components"))
+				{
+					if (ImGui::MenuItem("Sprite"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Sprite);
+						newObject->SetName("Sprite(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Button"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Button);
+						newObject->SetName("Button(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Camera"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Camera);
+						newObject->SetName("Camera(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Canvas"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Canvas);
+						newObject->SetName("Canvas(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Animation"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Animation);											
+						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
+						sprite->SetTexture("assets/images/resources/block.png");
+						newObject->SetName("Animation(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Audio"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Audio);
+						newObject->SetName("Audio(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Text"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::Text);
+						newObject->SetName("Text(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("Script"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Script);
+						newObject->SetName("Script(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("CharacterController"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::CharacterController);
+						newObject->SetName("CharacterController(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("RigidBody"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::RigidBody);
+						newObject->SetName("RigidBody(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("BoxCollider"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::BoxCollider);
+						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					if (ImGui::MenuItem("CircleCollider"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->AddComponent(ComponentTypes::CircleCollider);
+						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Asset files"))
+				{
 					if (ImGui::MenuItem("Mapping Context"))
 					{
 						std::string path = OpenSaveFileExplorer();
-						std::string name = path.substr(path.find_last_of("/\\") + 1);
-						std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
-						newContext->SetPath(path);
-						newContext->SetName(name);
-						SaveMappingContext(path, newContext);
-						InitializeMappingContexts();
-						_showMappingContextEditor = true;
+						if (path != "")
+						{
+							std::string name = path.substr(path.find_last_of("/\\") + 1);
+							std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
+							newContext->SetPath(path);
+							newContext->SetName(name);
+							SaveMappingContext(path, newContext);
+							InitializeMappingContexts();
+							_showMappingContextEditor = true;
+						}
 					}
-
+					if (ImGui::MenuItem("Animation"))
+					{
+						std::string path = OpenSaveFileExplorer();
+						if (path != "")
+						{
+							std::string name = path.substr(path.find_last_of("/\\") + 1);
+							std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+							animationProperties->animationName = name;
+							CreateNewAnimationFile(path);
+							SaveAnimationFile(animationProperties, path);
+							//LoadAnimationFile(path);
+							SetFocusedAnimation(animationProperties);
+							
+							_showAnimator = true;
+							_showAnimationPreview = true;
+						}
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

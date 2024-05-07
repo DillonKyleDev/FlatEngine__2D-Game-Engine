@@ -21,7 +21,7 @@ namespace FlatEngine
 		Vector2 AddVelocity(Vector2 vel, float deltaTime);
 		void ApplyGravity(float deltaTime);
 		void ApplyVelocity();
-		void AddForce(Vector2 direction, float power, float deltaTime);
+		void AddForce(Vector2 direction, float power);
 		void Move(Vector2 position);
 		void SetMass(float newMass);
 		float GetMass();
