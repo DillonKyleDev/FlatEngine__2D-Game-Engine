@@ -30,9 +30,9 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": false,
+                    "_isContinious": true,
                     "_isKinematic": false,
-                    "_isStatic": true,
+                    "_isStatic": false,
                     "angularDrag": 1.0,
                     "gravity": 1.0,
                     "id": 4,
@@ -94,7 +94,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": true,
+                    "_isContinious": false,
                     "activeHeight": 3.809999942779541,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,

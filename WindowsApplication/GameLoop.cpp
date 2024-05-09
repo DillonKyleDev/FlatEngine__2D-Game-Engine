@@ -243,12 +243,14 @@ namespace FlatEngine
 				if (boxCollider->GetParent()->HasComponent("RigidBody"))
 						boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(_isColliding);
 				boxCollider->SetColliding(_isColliding);
-
-				// Reset continuous counter
-				continuousCounter = 0;
 			}
-			continuousCounter++;
 		}
+
+		// Reset continuous counter
+		if (continuousCounter >= 10)
+			continuousCounter = 0;
+
+		continuousCounter++;
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)

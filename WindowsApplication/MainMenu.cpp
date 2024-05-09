@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Sprite.h"
 #include "Transform.h"
+#include "BoxCollider.h"
 #include "Vector2.h"
 
 namespace FlatEngine { namespace FlatGui {
@@ -152,12 +153,22 @@ namespace FlatEngine { namespace FlatGui {
 					if (ImGui::MenuItem("Ball"))
 					{
 						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
-						std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(newObject->AddComponent(ComponentTypes::Transform));
+						newObject->SetName("Ball(" + std::to_string(newObject->GetID()) + ")");
+						newObject->AddComponent(ComponentTypes::Transform);
 						newObject->AddComponent(ComponentTypes::RigidBody);
-						newObject->AddComponent(ComponentTypes::CircleCollider);
-						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
+						std::shared_ptr<BoxCollider> collider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
+						collider->SetActiveDimensions(2.0f, 2.0f);	
+						collider->SetIsContinuous(true);
+
+						std::shared_ptr<GameObject> spriteObject = CreateGameObject(-1);
+						newObject->SetName("BallSprite(" + std::to_string(spriteObject->GetID()) + ")");
+						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(spriteObject->AddComponent(ComponentTypes::Sprite));
+						std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(spriteObject->AddComponent(ComponentTypes::Transform));
 						sprite->SetTexture("assets/images/resources/ball.png");
-						transform->SetScale(Vector2(0.02f, 0.02f));
+						transform->SetScale(Vector2(0.0175f, 0.0175f));
+
+						newObject->AddChild(spriteObject->GetID());
+						spriteObject->SetParentID(newObject->GetID());
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Block"))
@@ -165,10 +176,13 @@ namespace FlatEngine { namespace FlatGui {
 						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
 						std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(newObject->AddComponent(ComponentTypes::Transform));
 						newObject->AddComponent(ComponentTypes::RigidBody);
-						newObject->AddComponent(ComponentTypes::CircleCollider);
+						std::shared_ptr<BoxCollider> collider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
+						collider->SetActiveDimensions(2.0f, 2.0f);
+						collider->SetIsContinuous(true);
+
 						std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
 						sprite->SetTexture("assets/images/resources/block.png");
-						
+						newObject->SetName("Block(" + std::to_string(newObject->GetID()) + ")");						
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					ImGui::EndMenu();

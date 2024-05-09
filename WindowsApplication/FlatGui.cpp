@@ -1,3 +1,5 @@
+#include "imgui_internal.h"
+#include <math.h>
 #include "FlatEngine.h"
 #include "TextureManager.h"
 #include "SceneManager.h"
@@ -1438,6 +1440,7 @@ namespace FlatEngine { namespace FlatGui {
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 			Vector2 position = Vector2(transform->GetPosition().x + parentOffset.x, transform->GetPosition().y + parentOffset.y);
 			Vector2 transformScale = Vector2(transform->GetScale().x * parentScale.x, transform->GetScale().y * parentScale.y);
+			float rotation = transform->GetRotation();
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
 			if (sprite != nullptr)
@@ -1459,7 +1462,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, step, draw_list);
+					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, step, draw_list, rotation);
 				}
 			}
 
@@ -1486,7 +1489,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, step, draw_list);
+					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, step, draw_list, rotation);
 				}
 			}
 
@@ -1617,7 +1620,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, 255));
+				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
 			}
 		}
 
@@ -1884,7 +1887,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor)
+	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, float rotation, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
 		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
@@ -1912,10 +1915,42 @@ namespace FlatEngine { namespace FlatGui {
 			renderStart = ImVec2(unscaledXStart, unscaledYStart);
 			renderEnd = ImVec2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
 		}
+		
+		if (rotation != 0)
+		{
+			float cos_a = cosf(rotation);
+			float sin_a = sinf(rotation);
 
-		// Render sprite to viewport
-		draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
+			ImVec2 topLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			ImVec2 topRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			ImVec2 bottomRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			ImVec2 bottomLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 
+			ImVec2 center = ImVec2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
+			ImVec2 pos[4] =
+			{
+				ImVec2(center.x + topLeft.x, center.y + topLeft.y),
+				ImVec2(center.x + topRight.x, center.y + topRight.y),
+				ImVec2(center.x + bottomRight.x, center.y + bottomRight.y),
+				ImVec2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+			};
+			ImVec2 uvs[4] =
+			{
+				ImVec2(0.0f, 0.0f),
+				ImVec2(1.0f, 0.0f),
+				ImVec2(1.0f, 1.0f),
+				ImVec2(0.0f, 1.0f)
+			};
+
+			// Render sprite to viewport
+			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+		}
+		else
+		{
+			// Render sprite to viewport
+			draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
+		}
+	
 		return renderStart;
 	}
 

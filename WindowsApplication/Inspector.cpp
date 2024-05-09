@@ -760,7 +760,7 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 								// Static Checkbox
 								RenderCheckbox(" Is Static", _isStatic);
-								rigidBody->SetIsKinematic(_isKinematic);
+								rigidBody->SetIsStatic(_isStatic);
 							}
 							
 							// Pops

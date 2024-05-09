@@ -119,6 +119,9 @@ namespace FlatEngine
 	extern std::shared_ptr<Component> GetObjectComponent(long objectID, ComponentTypes type);
 	extern std::shared_ptr<GameObject> GetObjectById(long objectID);
 	extern std::shared_ptr<GameObject> GetObjectByName(std::string name);
+	extern std::shared_ptr<GameObject> CreateTransformPrefab();
+	extern std::shared_ptr<GameObject> CreateSpritePrefab();
+	extern std::shared_ptr<GameObject> CreateButtonPrefab();
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");
@@ -270,7 +273,6 @@ namespace FlatEngine
 		// Icons
 		extern std::shared_ptr<Texture> transformArrow;
 		extern std::shared_ptr<Texture> cameraIcon;
-
 		extern std::shared_ptr<Texture> playIcon;
 		extern std::shared_ptr<Texture> pauseIcon;
 		extern std::shared_ptr<Texture> stopIcon;
@@ -289,7 +291,6 @@ namespace FlatEngine
 
 		extern SDL_Texture* transformArrowTexture;
 		extern SDL_Texture* cameraTexture;
-
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
 		extern SDL_Texture* stopTexture;		
@@ -426,7 +427,7 @@ namespace FlatEngine
 		// Hierarchy
 		extern void ResetHierarchyExpanderTracker();
 
-		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
+		extern ImVec2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, ImVec2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 		// Just add - canvas_p0 to get Window coordinates
 		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
 		extern ImVec2 ViewportToWorld(ImVec2 viewportPosition);

@@ -1,7 +1,7 @@
 {
     "Project Properties": [
         {
-            "_clearLogBuffer": true,
+            "_clearLogBuffer": false,
             "_showAnimationPreview": true,
             "_showAnimator": true,
             "_showGameView": true,
