@@ -64,7 +64,8 @@ namespace FlatEngine { namespace FlatGui {
 	// Button Components
 	ImVec4 buttonComponentActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
 	ImVec4 buttonComponentInctiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
-	// Canvas Orange = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
+	// Canvas Orange
+	ImVec4 canvasBorderColor = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
 	
 	//////////////////////
 	// Windows ///////////
@@ -1339,12 +1340,12 @@ namespace FlatEngine { namespace FlatGui {
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(adjustedScrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
 		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), IM_COL32(200, 200, 200, 40), 1.0f, draw_list);
+			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, draw_list);
 		}
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(adjustedScrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
 		{
-			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), IM_COL32(200, 200, 200, 40), 1.0f, draw_list);
+			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, draw_list);
 		}
 
 		// Draw our x and y axis blue and green lines
@@ -1357,9 +1358,9 @@ namespace FlatEngine { namespace FlatGui {
 		float offsetY = (step.y * divY) + modY;
 
 		// Blue, green and pink colors for axis and center
-		ImU32 xColor = IM_COL32(1, 210, 35, 255);
-		ImU32 yColor = IM_COL32(50, 50, 255, 255);
-		ImU32 centerColor = IM_COL32(255, 1, 247, 255);
+		ImVec4 xColor = ImVec4(0.2f, 0.2f, 0.9f, 1.0f);
+		ImVec4 yColor = ImVec4(0, 0.82f, 0.14f, 1.0f);
+		ImVec4 centerColor = ImVec4(1.0f, 0, 0.96f, 1.0f);
 
 		centerPoint = ImVec2(offsetX + canvas_p0.x, offsetY + canvas_p0.y);
 		float drawYAxisAt = centerPoint.x;
@@ -1369,29 +1370,29 @@ namespace FlatEngine { namespace FlatGui {
 		if (centerPoint.x > canvas_p1.x - 1)
 		{
 			drawYAxisAt = canvas_p1.x - 1;
-			xColor = IM_COL32(1, 210, 35, 100);
+			xColor = ImVec4(0, 0.82f, 0.14f, 0.4f);
 		}
 		else if (centerPoint.x < canvas_p0.x)
 		{
 			drawYAxisAt = canvas_p0.x;
-			xColor = IM_COL32(1, 210, 35, 100);
+			xColor = ImVec4(0, 0.82f, 0.14f, 0.4f);
 		}
 		// y axis bounds check + color change (lighten) if out of bounds
 		if (centerPoint.y > canvas_p1.y - 1)
 		{
 			drawXAxisAt = canvas_p1.y - 1;
-			yColor = IM_COL32(20, 20, 200, 150);
+			yColor = ImVec4(0.07f, 0.07f, 0.8f, 0.58f);
 		}
 		else if (centerPoint.y < canvas_p0.y)
 		{
 			drawXAxisAt = canvas_p0.y;
-			yColor = IM_COL32(20, 20, 200, 150);
+			yColor = ImVec4(0.07f, 0.07f, 0.8f, 0.58f);
 		}
 
 
 		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(drawYAxisAt, canvas_p0.y), ImVec2(drawYAxisAt, canvas_p1.y), xColor, 1.0f, draw_list);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x, drawXAxisAt), ImVec2(canvas_p1.x, drawXAxisAt), yColor, 1.0f, draw_list);
+		FlatEngine::DrawLine(ImVec2(drawYAxisAt, canvas_p0.y), ImVec2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, draw_list);
+		FlatEngine::DrawLine(ImVec2(canvas_p0.x, drawXAxisAt), ImVec2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, draw_list);
 		FlatEngine::DrawPoint(ImVec2(centerPoint.x, centerPoint.y), centerColor, draw_list);
 	}
 
@@ -1520,9 +1521,9 @@ namespace FlatEngine { namespace FlatGui {
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, IM_COL32(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
 
 				// Draw actual camera icon
 				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, iconTransparency));
@@ -1541,12 +1542,12 @@ namespace FlatEngine { namespace FlatGui {
 				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, step, true);
 				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, step, true);
 
-				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
-				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
+				ImVec2 canvasTopLeft = { canvasLeft, canvasTop };
+				ImVec2 canvasBottomRight = { canvasRight, canvasBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, FlatEngine::CanvasBorder, 3.0f, draw_list);
+				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, canvasBorderColor, 3.0f, draw_list);
 			}
 
 
@@ -1563,15 +1564,58 @@ namespace FlatEngine { namespace FlatGui {
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
 				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
-				Vector2 topLeft = { activeLeft, activeTop };
-				Vector2 bottomRight = { activeRight, activeBottom };
+				ImVec2 center = ImVec2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
+
+				ImVec2 topLeft = { activeLeft, activeTop };
+				ImVec2 bottomRight = { activeRight, activeBottom };
+				ImVec2 topRight = { activeRight, activeTop };
+				ImVec2 bottomLeft = { activeLeft, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				if (_isActive)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
+				if (rotation != 0)
+				{
+					float cos_a = cosf(rotation * 2 * M_PI / 360); // Convert degrees into radians
+					float sin_a = sinf(rotation * 2 * M_PI / 360);
+
+					LogFloat(activeWidth, "Active WIDTH: ");
+
+					topLeft = ImRotate(ImVec2(-activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
+					topRight = ImRotate(ImVec2(+activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
+					bottomRight = ImRotate(ImVec2(+activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
+					bottomLeft = ImRotate(ImVec2(-activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
+
+					LogVector2(topLeft, "topLeft: ");
+					/*LogVector2(topRight, "topRight: ");
+					LogVector2(bottomRight, "bottomRight: ");
+					LogVector2(bottomLeft, "bottomLeft: ");*/
+
+					ImVec2 pos[4] =
+					{
+						ImVec2(center.x + topLeft.x, center.y + topLeft.y),
+						ImVec2(center.x + topRight.x, center.y + topRight.y),
+						ImVec2(center.x + bottomRight.x, center.y + bottomRight.y),
+						ImVec2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+					};
+
+					if (_isActive)
+					{
+						FlatEngine::DrawLine(pos[0], pos[1], buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[1], pos[2], buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[2], pos[3], buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[3], pos[0], buttonComponentActiveColor, 2.0f, draw_list);
+					}
+					else
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+				}
 				else
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+				{
+					LogVector2(topLeft, "TOPLEFT: ");
+					if (_isActive)
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentActiveColor, 1.0f, draw_list);
+					else
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+				}
 			}
 
 			// Renders Button Component
@@ -1589,17 +1633,17 @@ namespace FlatEngine { namespace FlatGui {
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
 				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
-				Vector2 topLeft = { activeLeft, activeTop };
-				Vector2 bottomRight = { activeRight, activeBottom };
+				ImVec2 topLeft = { activeLeft, activeTop };
+				ImVec2 bottomRight = { activeRight, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (_isActive && !_isColliding)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderActiveColor), 1.0f, draw_list);
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
 				else if (!_isActive)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderInactiveColor), 1.0f, draw_list);
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
 				else if (_isColliding)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, ImGui::GetColorU32(boxColliderCollidingColor), 1.0f, draw_list);
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
 			}
 
 
@@ -1918,13 +1962,18 @@ namespace FlatEngine { namespace FlatGui {
 		
 		if (rotation != 0)
 		{
-			float cos_a = cosf(rotation);
-			float sin_a = sinf(rotation);
+			float cos_a = cosf(rotation * 2 * M_PI / 360); // Convert degrees into radians
+			float sin_a = sinf(rotation * 2 * M_PI / 360);
 
 			ImVec2 topLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			ImVec2 topRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			ImVec2 bottomRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			ImVec2 bottomLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+
+			LogVector2(topLeft, "topLeft Sprite: ");
+			LogVector2(topRight, "topRight Sprite: ");
+			LogVector2(bottomRight, "bottomRight Sprite: ");
+			LogVector2(bottomLeft, "bottomLeft Sprite: ");
 
 			ImVec2 center = ImVec2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
 			ImVec2 pos[4] =

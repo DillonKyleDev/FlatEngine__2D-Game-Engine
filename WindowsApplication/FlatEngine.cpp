@@ -612,12 +612,12 @@ namespace FlatEngine
 		logger->LogInt(var, line);
 	}
 
-	void LogVector2(Vector2 vector, std::string line)
+	void LogVector2(ImVec2 vector, std::string line)
 	{
 		logger->LogVector2(vector, line);
 	}
 
-	void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImVec4 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
 			startingPoint.x = canvas_p0.x;
@@ -631,36 +631,12 @@ namespace FlatEngine
 		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList)
-	{
-		if (startingPoint.x < canvas_p0.x)
-			startingPoint.x = canvas_p0.x;
-		if (endingPoint.x > canvas_p0.x + canvas_sz.x)
-			endingPoint.x = canvas_p0.x + canvas_sz.x;
-		if (startingPoint.y < canvas_p0.y)
-			startingPoint.y = canvas_p0.y;
-		if (endingPoint.y > canvas_p0.y + canvas_sz.y)
-			endingPoint.y = canvas_p0.y + canvas_sz.y;
-
-		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
-	}
-
-	void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
+	void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImVec4 color, float thickness, ImDrawList* drawList)
 	{
 		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList)
-	{
-		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
-	}
-
-	void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList)
-	{
-		logger->DrawPoint(point, color, drawList);
-	}
-
-	void DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList)
+	void DrawPoint(ImVec2 point, ImVec4 color, ImDrawList* drawList)
 	{
 		logger->DrawPoint(point, color, drawList);
 	}

@@ -84,7 +84,6 @@ namespace FlatEngine
 	extern ImU32 Red;
 	extern ImU32 ActiveButtonColor;
 	extern ImU32 InactiveButtonColor;
-	extern ImU32 CanvasBorder;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -128,13 +127,10 @@ namespace FlatEngine
 	extern void LogSeparator();
 	extern void LogFloat(float var, std::string line = "");
 	extern void LogInt(int var, std::string line = "");
-	extern void LogVector2(Vector2 vector, std::string line = "");
-	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList);
-	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImU32 color, float thickness, ImDrawList* drawList);
-	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList);
-	extern void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImU32 color, float thickness, ImDrawList* drawList);
-	extern void DrawPoint(Vector2 point, ImU32 color, ImDrawList* drawList);
-	extern void DrawPoint(ImVec2 point, ImU32 color, ImDrawList* drawList);
+	extern void LogVector2(ImVec2 vector, std::string line = "");
+	extern void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImVec4 color, float thickness, ImDrawList* drawList);
+	extern void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImVec4 color, float thickness, ImDrawList* drawList);
+	extern void DrawPoint(ImVec2 point, ImVec4 color, ImDrawList* drawList);
 
 	// Profiler
 	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
@@ -190,6 +186,8 @@ namespace FlatEngine
 		// Button Components
 		extern ImVec4 buttonComponentActiveColor;
 		extern ImVec4 buttonComponentInctiveColor;
+		// Canvas
+		extern ImVec4 canvasBorderColor;
 		// Log
 		extern ImVec4 logTextColor;
 		extern ImVec4 logBgColor;
