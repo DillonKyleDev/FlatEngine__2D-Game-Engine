@@ -16,8 +16,8 @@ namespace FlatEngine {
 		velocity = Vector2(0, 0);
 		pendingVelocity = Vector2(0, 0);
 		terminalVelocity = -1.0f;
-		windResistance = 0.085f;
-		friction = 0.05f;
+		windResistance = 0.5f;  // Lower value = more resistance
+		friction = 0.83f;  // 1 = no friction. 0 = velocity = 0
 		forceCorrection = 0.01f;
 		_isMoving = false;
 		_isContinious = false;
@@ -102,6 +102,7 @@ namespace FlatEngine {
 	// Apply the accumulated velocity to the actual transform
 	void RigidBody::ApplyVelocity()
 	{
+		LogVector2(pendingVelocity, "Pending Velocity: ");
 		velocity = pendingVelocity;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
@@ -124,9 +125,12 @@ namespace FlatEngine {
 			_isMoving = characterController->IsMoving();
 
 		// Ground Friction
-		if (!_isMoving && _isGrounded && (friction * deltaTime < 1))
+		if (!_isMoving && _isGrounded)
 		{
-			Vector2 dampenedVelocity = Vector2(pendingVelocity.x * (friction * deltaTime), pendingVelocity.y * (friction * deltaTime));
+			float frictionFactor = friction * deltaTime;
+			if (frictionFactor > 1)
+				frictionFactor = friction;
+			Vector2 dampenedVelocity = Vector2(pendingVelocity.x * frictionFactor, pendingVelocity.y);
 			pendingVelocity = dampenedVelocity;
 		}
 	}

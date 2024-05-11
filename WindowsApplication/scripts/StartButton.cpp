@@ -70,17 +70,36 @@ void StartButton::Update(float deltaTime)
 	std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetOwner()->GetRigidBody();
 	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
 
+	bool _moving = false;
+	static int xDir = 0;
+	static int yDir = 0;
+
 	if (mappingContext->Fired("IA_Jump"))
 	{
 		FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded())
 			rigidBody->AddForce(Vector2(0, 1), 20);
 	}
+	if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
+	{
+		xDir = -30000;
+		characterController->MoveToward(Vector2(-36000, 0));
+		_moving = true;
+	}	
+	if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
+	{
+		xDir = 30000;
+		characterController->MoveToward(Vector2(36000, 0));
+		_moving = true;
+	}
+	//if (mappingContext->GetInputAction("IA_MoveUp").type != 0)
+	//	characterController->MoveToward(Vector2(0, 1));
+	//if (mappingContext->GetInputAction("IA_MoveDown").type != 0)
+	//	characterController->MoveToward(Vector2(0, -1));
 
 	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
 	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
-	static int xDir = 0;
-	static int yDir = 0;
+
 
 	if (moveX.type != 0)
 		xDir = moveX.jaxis.value;
@@ -89,7 +108,9 @@ void StartButton::Update(float deltaTime)
 
 	if (characterController != nullptr)
 	{
-		characterController->MoveToward(Vector2((float)xDir, (float)yDir));
+		//characterController->MoveToward(Vector2((float)xDir, (float)yDir));
 	}
 	FlatEngine::RayCast(transform->GetPosition(), Vector2(xDir, -yDir), 2);
+
+	characterController->SetMoving(_moving);
 }

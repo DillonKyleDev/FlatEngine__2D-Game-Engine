@@ -69,13 +69,14 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
+		LogFloat(normalizedX, "norm x: ");
 		Vector2 velocity = rigidBody->GetVelocity();
 		// If the object has not hit max speed in negative or positive direction
 		if (velocity.x >= 0 && velocity.x < maxSpeed || velocity.x <= 0 && velocity.x >(maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
 			(velocity.x >= maxSpeed && normalizedX * walkSpeed * speedCorrection < 0) ||
 			// If velocity exceeds negative max speed but x direction is positive
-			(velocity.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0))
+			(velocity.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0) && normalizedX != 0)
 		{
 			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0), GetDeltaTime());
 			_isMoving = true;

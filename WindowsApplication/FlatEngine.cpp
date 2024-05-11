@@ -309,7 +309,7 @@ namespace FlatEngine
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
 		//FlatGui::sceneViewScrolling = ImVec2(scrolling.x, scrolling.y);
 
-		if (loadedProject->GetFocusedGameObjectID() != -1)
+		if (loadedProject->GetFocusedGameObjectID() != -1 && GetObjectById(loadedProject->GetFocusedGameObjectID()) != nullptr)
 			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
 	}
 
