@@ -293,7 +293,11 @@ namespace FlatEngine
 
 					// Settings
 					if (currentObjectJson.contains("_clearLogBuffer"))
+					{
 						FlatGui::_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
+						FlatEngine::logger->ClearBuffer();
+					}
+						
 				}
 			}
 		}
@@ -307,7 +311,7 @@ namespace FlatEngine
 		if (loadedProject->GetLoadedPreviewAnimationPath() != "")
 			SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
-		//FlatGui::sceneViewScrolling = ImVec2(scrolling.x, scrolling.y);
+		//FlatGui::sceneViewScrolling = Vector2(scrolling.x, scrolling.y);
 
 		if (loadedProject->GetFocusedGameObjectID() != -1 && GetObjectById(loadedProject->GetFocusedGameObjectID()) != nullptr)
 			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
@@ -615,12 +619,12 @@ namespace FlatEngine
 		logger->LogInt(var, line);
 	}
 
-	void LogVector2(ImVec2 vector, std::string line)
+	void LogVector2(Vector2 vector, std::string line)
 	{
 		logger->LogVector2(vector, line);
 	}
 
-	void DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, ImVec4 color, float thickness, ImDrawList* drawList)
+	void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
 			startingPoint.x = canvas_p0.x;
@@ -634,12 +638,12 @@ namespace FlatEngine
 		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImVec4 color, float thickness, ImDrawList* drawList)
+	void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList)
 	{
 		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
-	void DrawPoint(ImVec2 point, ImVec4 color, ImDrawList* drawList)
+	void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList)
 	{
 		logger->DrawPoint(point, color, drawList);
 	}
@@ -696,8 +700,8 @@ namespace FlatEngine
 
 
 	// Helper
-	//ImVec4 objectA(top, right, bottom, left), ImVec4 objectB(top, right, bottom, left)
-	bool AreCollidingWorld(ImVec4 ObjectA, ImVec4 ObjectB)
+	//Vector4 objectA(top, right, bottom, left), Vector4 objectB(top, right, bottom, left)
+	bool AreCollidingWorld(Vector4 ObjectA, Vector4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.x;
 		float A_RightEdge = ObjectA.y;
@@ -712,7 +716,7 @@ namespace FlatEngine
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 
-	bool AreCollidingViewport(ImVec4 ObjectA, ImVec4 ObjectB)
+	bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.z;
 		float A_RightEdge = ObjectA.y;
@@ -727,7 +731,7 @@ namespace FlatEngine
 		return (A_LeftEdge < B_RightEdge && A_RightEdge > B_LeftEdge && A_TopEdge > B_BottomEdge && A_BottomEdge < B_TopEdge);
 	}
 
-	bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB)
+	bool AreColliding(Vector4 ObjectA, Vector4 ObjectB)
 	{
 		float A_TopEdge = ObjectA.x;
 		float A_RightEdge = ObjectA.y;

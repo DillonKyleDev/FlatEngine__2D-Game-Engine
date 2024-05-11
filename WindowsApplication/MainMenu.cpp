@@ -337,6 +337,8 @@ namespace FlatEngine { namespace FlatGui {
 					}
 					ImGui::EndMenu();
 				}
+				if (ImGui::MenuItem("Project Settings", NULL, _showSettings))
+					_showSettings = !_showSettings;
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();

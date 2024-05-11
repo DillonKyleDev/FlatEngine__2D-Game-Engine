@@ -201,6 +201,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="WidgetsManager.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -240,7 +241,6 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScriptComponent.h" />
-    <ClInclude Include="Settings.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="scripts\StartButton.h" />
@@ -250,6 +250,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector4.h" />
     <ClInclude Include="WidgetsManager.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

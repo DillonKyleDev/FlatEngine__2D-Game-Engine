@@ -101,8 +101,7 @@ namespace FlatEngine {
 
 	// Apply the accumulated velocity to the actual transform
 	void RigidBody::ApplyVelocity()
-	{
-		LogVector2(pendingVelocity, "Pending Velocity: ");
+	{		
 		velocity = pendingVelocity;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
@@ -140,8 +139,7 @@ namespace FlatEngine {
 		// Normalize the force first, then apply the power factor to the force
 		Vector2 addedForce = Vector2(direction.x * power * forceCorrection, direction.y * power * forceCorrection);
 		pendingVelocity.x += addedForce.x;
-		pendingVelocity.y += addedForce.y;
-		LogFloat(pendingVelocity.y, "Vel y: ");
+		pendingVelocity.y += addedForce.y;		
 	}
 
 	Vector2 RigidBody::GetNextPosition()

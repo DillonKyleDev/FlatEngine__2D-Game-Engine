@@ -7,6 +7,7 @@
 #include "Vector2.h"
 #include <functional>
 #include "GameObject.h"
+#include "Vector4.h"
 #include <imgui.h>
 
 
@@ -39,10 +40,10 @@ namespace FlatEngine
 		float GetActiveWidth();
 		float GetActiveHeight();
 		Vector2 GetActiveOffset();
-		//ImVec4(activeTop, activeRight, activeBottom, activeLeft)
-		void SetActiveEdges(ImVec4 edges);
-		ImVec4 GetActiveEdges();
-		ImVec4 UpdateActiveEdges(ImVec2 centerPoint, float gridStep);
+		//Vector4(activeTop, activeRight, activeBottom, activeLeft)
+		void SetActiveEdges(Vector4 edges);
+		Vector4 GetActiveEdges();
+		Vector4 UpdateActiveEdges(Vector2 centerPoint, float gridStep);
 		void SetIsContinuous(bool _continuous);
 		bool IsContinuous();
 		std::string GetData();
@@ -61,11 +62,11 @@ namespace FlatEngine
 		bool _isColliding;
 		float activeWidth;
 		float activeHeight;
-		ImVec4 activeEdges;
+		Vector4 activeEdges;
 		Vector2 activeOffset;
 		bool _isContinious;
 		int activeLayer;
 		bool _activeEdgesSet;
-		std::vector<ImVec2> normals;
+		std::vector<Vector2> normals;
 	};
 }

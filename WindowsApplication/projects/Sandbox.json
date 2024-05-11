@@ -2,12 +2,12 @@
     "Project Properties": [
         {
             "_clearLogBuffer": true,
-            "_showAnimationPreview": true,
+            "_showAnimationPreview": false,
             "_showAnimator": true,
             "_showGameView": true,
             "_showHierarchy": true,
             "_showInspector": true,
-            "_showKeyFrameEditor": true,
+            "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": false,
             "_showProfiler": true,

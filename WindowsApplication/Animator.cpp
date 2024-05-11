@@ -8,45 +8,41 @@
 
 namespace FlatEngine { namespace FlatGui {
 
-	ImVec4 darker = ImVec4(float(0.2), float(0.2), float(0.2), float(1));
-	ImVec4 lighter = ImVec4(float(0.8), float(0.8), float(0.8), float(1));
-	ImVec4 light = ImVec4(float(0.7), float(0.7), float(0.7), float(1));
-	ImVec4 dark = ImVec4(float(0.3), float(0.3), float(0.3), float(1));
-	ImVec4 white = ImVec4(float(0.9), float(0.9), float(0.9), float(1));
-	ImVec4 transformAnimationNode = ImVec4(float(0.1), float(0.76), float(0.08), float(.8));
-	ImVec4 scrubberBackground = ImVec4(float(0.22), float(0.22), float(0.25), float(1));
-	ImVec4 scrubberBackgroundDark = ImVec4(float(0.12), float(0.02), float(0.0), float(1));
+	Vector4 darker = Vector4(float(0.2), float(0.2), float(0.2), float(1));
+	Vector4 lighter = Vector4(float(0.8), float(0.8), float(0.8), float(1));
+	Vector4 light = Vector4(float(0.7), float(0.7), float(0.7), float(1));
+	Vector4 dark = Vector4(float(0.3), float(0.3), float(0.3), float(1));
+	Vector4 white = Vector4(float(0.9), float(0.9), float(0.9), float(1));
+	Vector4 transformAnimationNode = Vector4(float(0.1), float(0.76), float(0.08), float(.8));
+	Vector4 scrubberBackground = Vector4(float(0.22), float(0.22), float(0.25), float(1));
+	Vector4 scrubberBackgroundDark = Vector4(float(0.12), float(0.02), float(0.0), float(1));
 
 
 	void RenderAnimator()
 	{
-		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-
 		PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
-		ImGui::Begin("Animator", 0, 16 | 8);
+		ImGui::Begin("Animator", &_showAnimator, 16 | 8);
 		PopWindowStyles();
 
 		// Animated Properties BeginChild()
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Animated Properties", ImVec2(ImGui::GetContentRegionMax().x / 3, 0), padding_childFlags | ImGuiChildFlags_ResizeX);
-		ImGui::PopStyleColor();
+		BeginResizeWindowChild("Animated Properties");
 
 		std::string animationName = "-No Animation Selected-";
 		if (GetFocusedAnimation()->animationName != "")
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
 
-		ImGui::BeginChild("Manage Animation", ImVec2(0, 0), childFlags);
+		ImGui::BeginChild("Manage Animation", Vector2(0, 0), childFlags);
 	
 		RenderSectionHeader(animationName, 18);
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));
 
 		static std::string animationFilePath;
 		if (GetFocusedAnimation() != nullptr)
 			animationFilePath = GetFocusedAnimation()->animationPath;
 
 		// Loading, saving and opening animation json files
-		if (RenderImageButton("##NewAnimationFile", newFileTexture, ImVec2(16, 16), 1, transparentColor))
+		if (RenderImageButton("##NewAnimationFile", newFileTexture, Vector2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenSaveFileExplorer();
 
@@ -68,7 +64,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);			
-		if (RenderImageButton("#OpenAnim", openFileTexture, ImVec2(16, 16), 1, transparentColor))
+		if (RenderImageButton("#OpenAnim", openFileTexture, Vector2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenLoadFileExplorer();
 			if (animationFilePath != "")
@@ -85,7 +81,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);		
-		if (RenderImageButton("#SaveAnimationFile", saveFileTexture, ImVec2(16, 16), 1, transparentColor))
+		if (RenderImageButton("#SaveAnimationFile", saveFileTexture, Vector2(16, 16), 1, transparentColor))
 		{
 			if (animationFilePath != "")
 				SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
@@ -98,7 +94,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);
-		if (RenderImageButton("#SaveAsAnimationFile", saveAsFileTexture, ImVec2(16, 16), 1, transparentColor))
+		if (RenderImageButton("#SaveAsAnimationFile", saveAsFileTexture, Vector2(16, 16), 1, transparentColor))
 		{
 			animationFilePath = OpenSaveFileExplorer();
 			if (animationFilePath != "")
@@ -252,10 +248,10 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndChild();
 
 			// List properties on this animation
-			static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
+
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
-			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 			PushMenuStyles();
 
 			// Conditionally begin the table
@@ -274,7 +270,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::BeginTable("##AnimationProperties", 1, tableFlags))
 			{
 				ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
-				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 10.0f });
+		
 
 				auto RenderPropertyButton = [&](std::string property, int size, std::string& node_clicked)
 				{
@@ -316,7 +312,7 @@ namespace FlatEngine { namespace FlatGui {
 				RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProperties.size(), node_clicked);
 				RenderPropertyButton("CharacterController", (int)animProps->characterControllerProperties.size(), node_clicked);
 
-				ImGui::PopStyleVar();
+			
 				ImGui::EndTable();
 			}
 			PopMenuStyles();
@@ -330,12 +326,12 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Timeline Events
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("##AnimationTimeline", ImVec2(0, 0), padding_childFlags);
+		ImGui::BeginChild("##AnimationTimeline", Vector2(0, 0), childFlags);
 		ImGui::PopStyleColor();
 
 		RenderSectionHeader("Animation Timeline");
 
-		ImGui::BeginChild("Property Header", ImVec2(0,0), headerFlags);
+		ImGui::BeginChild("Property Header", Vector2(0,0), headerFlags);
 		float availableSpace = ImGui::GetContentRegionAvail().x / 2;
 		ImGui::SetNextItemWidth(availableSpace);
 		ImGui::Text("Property Selected: ");
@@ -345,10 +341,10 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			ImGui::SameLine(0, 5);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
-			ImVec2 textSize = ImGui::CalcTextSize(node_clicked.c_str());
-			ImVec2 cursorScreen = ImGui::GetCursorScreenPos();
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, ImVec2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(tableCellLightColor), 2);
-			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
+			Vector2 textSize = ImGui::CalcTextSize(node_clicked.c_str());
+			Vector2 cursorScreen = ImGui::GetCursorScreenPos();
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(tableCellLightColor), 2);
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
 			ImGui::Text(node_clicked.c_str());
 		}
 		
@@ -375,12 +371,12 @@ namespace FlatEngine { namespace FlatGui {
 			if (_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
+				RenderImageButton(playID.c_str(), playTexture, Vector2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (RenderImageButton(playID.c_str(), playTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+				if (RenderImageButton(playID.c_str(), playTexture, Vector2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					if (animation != nullptr)
 					{
@@ -398,12 +394,12 @@ namespace FlatEngine { namespace FlatGui {
 			if (!_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				RenderImageButton(stopID.c_str(), stopTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
+				RenderImageButton(stopID.c_str(), stopTexture, Vector2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor);
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+				if (RenderImageButton(stopID.c_str(), stopTexture, Vector2(14, 14), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					animation->Stop();
 					_isPreviewing = false;
@@ -422,10 +418,10 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::EndChild();
 
 		//// Save zero point for rendering the scrubber slider
-		//ImVec2 scrubberZeroPoint = ImGui::GetCursorScreenPos();
+		//Vector2 scrubberZeroPoint = ImGui::GetCursorScreenPos();
 
 		//ImGui::PushStyleColor(ImGuiCol_ChildBg, scrubberBackground);
-		//ImGui::BeginChild("Timeline Scrubber", ImVec2(0,50), childFlags);
+		//ImGui::BeginChild("Timeline Scrubber", Vector2(0,50), childFlags);
 		//ImGui::PopStyleColor();
 		
 
@@ -435,7 +431,7 @@ namespace FlatEngine { namespace FlatGui {
 		static float animatorGridStep = 50;
 
 		// Lambda
-		//auto L_RenderAnimationScrubber = [](Vector2& pipPosition, ImVec2 zeroPoint, float gridStep)
+		//auto L_RenderAnimationScrubber = [](Vector2& pipPosition, Vector2 zeroPoint, float gridStep)
 		//	{
 		//		std::string ID = "TimelineScrubber";
 		//		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -446,9 +442,9 @@ namespace FlatEngine { namespace FlatGui {
 		//		// If there is a valid Texture loaded into the Sprite Component
 		//		if (keyFrameTexture != nullptr)
 		//		{
-		//			ImVec2 pipStartingPoint = AddImageToDrawList(timelineScrubberTexture, pipPosition, zeroPoint, spriteTextureWidth, spriteTextureHeight, spriteOffset, Vector2(1, 1), false, gridStep, draw_list);					
+		//			Vector2 pipStartingPoint = AddImageToDrawList(timelineScrubberTexture, pipPosition, zeroPoint, spriteTextureWidth, spriteTextureHeight, spriteOffset, Vector2(1, 1), false, gridStep, draw_list);					
 		//			ImGui::SetCursorScreenPos(pipStartingPoint);
-		//			ImGui::InvisibleButton(ID.c_str(), ImVec2(spriteTextureWidth, spriteTextureHeight), ImGuiButtonFlags_MouseButtonLeft | 4096);
+		//			ImGui::InvisibleButton(ID.c_str(), Vector2(spriteTextureWidth, spriteTextureHeight), ImGuiButtonFlags_MouseButtonLeft | 4096);
 		//			const bool _isClicked = ImGui::IsItemClicked();
 		//			const bool _isHovered = ImGui::IsItemHovered();
 		//			const bool _isActive = ImGui::IsItemActive();   // Held
@@ -457,8 +453,8 @@ namespace FlatEngine { namespace FlatGui {
 		//			{
 		//				// Mouse Hover Tooltip - Mouse Over Tooltip
 		//				std::string keyTimeText = "Time: " + std::to_string(pipPosition.x) + " sec";
-		//				ImVec2 m = ImGui::GetIO().MousePos;
-		//				ImGui::SetNextWindowPos(ImVec2(m.x + 15, m.y + 5));
+		//				Vector2 m = ImGui::GetIO().MousePos;
+		//				ImGui::SetNextWindowPos(Vector2(m.x + 15, m.y + 5));
 		//				ImGui::Begin("ScrubberTooltip", NULL, ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
 		//				ImGui::Text(keyTimeText.c_str());
 		//				ImGui::End();
@@ -483,12 +479,12 @@ namespace FlatEngine { namespace FlatGui {
 		// Get Back to here
 
 		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
+		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-		static ImVec2 scrolling = ImVec2(0, 0);
+		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		static Vector2 scrolling = Vector2(0, 0);
 
 		// Get Input and Output
 		ImGuiIO& inputOutput = ImGui::GetIO();
@@ -524,7 +520,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (scrolling.y < -1500)
 			scrolling.y = -1500;
 
-		ImVec2 zeroPoint = ImVec2(0, 0);
+		Vector2 zeroPoint = Vector2(0, 0);
 
 		// Render the Timeline Grid
 		RenderAnimationTimelineGrid(zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
@@ -536,7 +532,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
 		// Lambda
-		auto L_RenderPropertyInTimeline = [&](std::string property, std::vector<float> keyFrameTimes, ImVec4 rectColor)
+		auto L_RenderPropertyInTimeline = [&](std::string property, std::vector<float> keyFrameTimes, Vector4 rectColor)
 		{
 			float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
 			float bottomYPos = topYPos + animatorGridStep;
@@ -557,13 +553,13 @@ namespace FlatEngine { namespace FlatGui {
 			if (bottomYPos > canvas_p1.y)
 				bottomYPos = canvas_p1.y;
 
-			ImVec2 topLeftCorner = ImVec2(canvas_p0.x, topYPos);
-			ImVec2 bottomRightCorner = ImVec2(canvas_p1.x, bottomYPos);
+			Vector2 topLeftCorner = Vector2(canvas_p0.x, topYPos);
+			Vector2 bottomRightCorner = Vector2(canvas_p1.x, bottomYPos);
 			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, color);
 		};
 
 		// Lambda
-		auto L_RenderAnimationTimelineKeyFrames = [](std::shared_ptr<Animation::S_Property> keyFrame, int counter, Vector2& pipPosition, ImVec2 zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+		auto L_RenderAnimationTimelineKeyFrames = [](std::shared_ptr<Animation::S_Property> keyFrame, int counter, Vector2& pipPosition, Vector2 zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
 		{
 			std::string ID = keyFrame->name;
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -576,11 +572,11 @@ namespace FlatEngine { namespace FlatGui {
 			// If there is a valid Texture loaded into the Sprite Component
 			if (keyFrameTexture != nullptr)
 			{
-				ImVec2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
+				Vector2 pipStartingPoint = AddImageToDrawList(keyFrameTexture, pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
 
 				ImGui::SetCursorScreenPos(pipStartingPoint);
 				std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
-				ImGui::InvisibleButton(pipID.c_str(), ImVec2(12, 12), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+				ImGui::InvisibleButton(pipID.c_str(), Vector2(12, 12), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
 				const bool _isClicked = ImGui::IsItemClicked();
 				const bool _isHovered = ImGui::IsItemHovered();
 				const bool _isActive = ImGui::IsItemActive();   // Held
@@ -592,8 +588,8 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					// Mouse Hover Tooltip - Mouse Over Tooltip
 					std::string keyTimeText = "Time: " + std::to_string(keyFrame->time / 1000) + " sec";
-					ImVec2 m = ImGui::GetIO().MousePos;
-					ImGui::SetNextWindowPos(ImVec2(m.x + 15, m.y + 5));
+					Vector2 m = ImGui::GetIO().MousePos;
+					ImGui::SetNextWindowPos(Vector2(m.x + 15, m.y + 5));
 					ImGui::Begin("1", NULL, ImGuiWindowFlags_Tooltip | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
 					ImGui::Text(keyTimeText.c_str());
 					ImGui::End();
@@ -614,13 +610,13 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		};
 
-		ImVec4 rectColor;
+		Vector4 rectColor;
 		int IDCounter = 0;
 
 		// Draw colored box for transform keyframes
 		if (animProps->transformProperties.size() > 0)
 		{
-			rectColor = ImVec4(214, 8, 118, 100);
+			rectColor = Vector4(214, 8, 118, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Transform", keyFrameTimes, rectColor);
 
@@ -639,7 +635,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->spriteProperties.size() > 0)
 		{
-			rectColor = ImVec4(83, 214, 8, 100);
+			rectColor = Vector4(83, 214, 8, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Sprite", keyFrameTimes, rectColor);
 
@@ -658,7 +654,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->cameraProperties.size() > 0)
 		{
-			rectColor = ImVec4(206, 108, 4, 100);
+			rectColor = Vector4(206, 108, 4, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Camera", keyFrameTimes, rectColor);
 
@@ -677,7 +673,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->scriptProperties.size() > 0)
 		{
-			rectColor = ImVec4(4, 159, 206, 100);
+			rectColor = Vector4(4, 159, 206, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Script", keyFrameTimes, rectColor);
 
@@ -696,7 +692,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->buttonProperties.size() > 0)
 		{
-			rectColor = ImVec4(152, 16, 198, 100);
+			rectColor = Vector4(152, 16, 198, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Button", keyFrameTimes, rectColor);
 
@@ -715,7 +711,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->canvasProperties.size() > 0)
 		{
-			rectColor = ImVec4(224, 81, 15, 100);
+			rectColor = Vector4(224, 81, 15, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Canvas", keyFrameTimes, rectColor);
 
@@ -734,7 +730,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->audioProperties.size() > 0)
 		{
-			rectColor = ImVec4(237, 244, 14, 100);
+			rectColor = Vector4(237, 244, 14, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Audio", keyFrameTimes, rectColor);
 
@@ -753,7 +749,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->textProperties.size() > 0)
 		{
-			rectColor = ImVec4(15, 224, 200, 100);
+			rectColor = Vector4(15, 224, 200, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("Text", keyFrameTimes, rectColor);
 
@@ -772,7 +768,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->boxColliderProperties.size() > 0)
 		{
-			rectColor = ImVec4(224, 158, 15, 100);
+			rectColor = Vector4(224, 158, 15, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("BoxCollider", keyFrameTimes, rectColor);
 
@@ -791,7 +787,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->circleColliderProperties.size() > 0)
 		{
-			rectColor = ImVec4(11, 42, 183, 100);
+			rectColor = Vector4(11, 42, 183, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("CircleCollider", keyFrameTimes, rectColor);
 
@@ -810,7 +806,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->rigidBodyProperties.size() > 0)
 		{
-			rectColor = ImVec4(166, 11, 183, 100);
+			rectColor = Vector4(166, 11, 183, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("RigidBody", keyFrameTimes, rectColor);
 
@@ -829,7 +825,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		if (animProps->characterControllerProperties.size() > 0)
 		{
-			rectColor = ImVec4(85, 183, 11, 100);
+			rectColor = Vector4(85, 183, 11, 100);
 			std::vector<float> keyFrameTimes = std::vector<float>();
 			L_RenderPropertyInTimeline("CharacterController", keyFrameTimes, rectColor);
 
@@ -855,25 +851,17 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderAnimationPreview()
 	{
-		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-		static ImVec2 step = ImVec2(50, 50);
+		static Vector2 step = Vector2(50, 50);
 
-		ImGui::Begin("Animation Preview");
+		BeginWindow("Animator Preview", _showAnimationPreview);
 
-		// Animation Preview BeginChild()
-		// 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild("Animation Preview", ImVec2(0, 0), padding_childFlags);
-		ImGui::PopStyleColor();
-
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
+		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-		static ImVec2 scrolling = ImVec2(0, 0);
-		static ImVec2 viewPortDimensions = ImVec2(0, 0);
+		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		static Vector2 scrolling = Vector2(0, 0);
+		static Vector2 viewPortDimensions = Vector2(0, 0);
 		static bool _firstRenderPassDone = false;
 		static bool _viewportSizeTaken = false;
 
@@ -882,7 +870,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			if (!_viewportSizeTaken)
 			{
-				viewPortDimensions = ImVec2(canvas_sz.x, canvas_sz.y);
+				viewPortDimensions = Vector2(canvas_sz.x, canvas_sz.y);
 			}
 			_viewportSizeTaken = true;
 		}
@@ -904,10 +892,10 @@ namespace FlatEngine { namespace FlatGui {
 			scrolling.y += inputOutput.MouseDelta.y;
 		}
 		
-		ImVec2 centerPoint = ImVec2(0, 0);
+		Vector2 centerPoint = Vector2(0, 0);
 
 		bool _weightedScroll = false;
-		RenderGridView(centerPoint, scrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, ImVec2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
+		RenderGridView(centerPoint, scrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
 		if (objectForFocusedAnimation != nullptr)
 		{
@@ -930,45 +918,35 @@ namespace FlatEngine { namespace FlatGui {
 			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
 		}
 
-		// Animation Preview EndChild()
-		ImGui::EndChild();
-		ImGui::End();
+		EndWindow();
 	}
 
-	void RenderAnimationTimelineGrid(ImVec2& zeroPoint, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, float gridStep)
+	void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x * 255, darker.y * 255, darker.z * 255, 255));
-		zeroPoint = ImVec2(scrolling.x + canvas_p0.x, canvas_p0.y + scrolling.y);
+		zeroPoint = Vector2(scrolling.x + canvas_p0.x, canvas_p0.y + scrolling.y);
 
 		// Draw vertical grid lines
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
 		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), dark, 1.0f, draw_list);
+			FlatEngine::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), dark, 1.0f, draw_list);
 		}
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
 		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), light, 1.0f, draw_list);
+			FlatEngine::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), light, 1.0f, draw_list);
 		}
 		// Draw horizontal grid lines
 		for (float y = trunc(fmodf(zeroPoint.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
 		{
 			if (y > canvas_p0.y)
-				FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), dark, 1.0f, draw_list);
+				FlatEngine::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), dark, 1.0f, draw_list);
 		}
 	}
 
 	void RenderKeyFrameEditor()
 	{
-		ImGuiChildFlags padding_childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-
-		ImGui::Begin("KeyFrame Editor");
-		// Animation Preview BeginChild()
-		// 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("KeyFrame Editor", ImVec2(0, 0), padding_childFlags);
-		ImGui::PopStyleColor();
+		BeginWindow("Keyframe Editor", _showKeyFrameEditor);
 
 		std::string keyFrameProperty = "No KeyFrame Selected";
 		if (selectedKeyFrameToEdit != nullptr)
@@ -978,10 +956,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (selectedKeyFrameToEdit != nullptr)
 		{
-			static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-			// Flags for child padding and dimensions
-			ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-
 			// Here we should steal code from the components rendering in Inpsector window.
 			if (selectedKeyFrameToEdit->name == "Transform")
 			{
@@ -1111,7 +1085,7 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::SameLine(0, 5);
 				
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
-				if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath), flags))
+				if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath)))
 					sprite->path = newPath;
 				ImGui::PopStyleColor();
 
@@ -1158,8 +1132,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::TextWrapped("Select a keyframe to edit from the Animation Timeline...");
 		}
 
-		ImGui::EndChild();
-		ImGui::End();
+		EndWindow();
 	}
 }	
 }

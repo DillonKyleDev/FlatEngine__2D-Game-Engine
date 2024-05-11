@@ -13,15 +13,9 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderInspector()
 	{
-		PushWindowStyles();
-		ImGui::Begin("Inspector");
-		PopWindowStyles();
+		BeginWindow("Inspector");
 
 		long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGui::BeginChild("Inspector Background", ImVec2(0, 0), padding_child_flags);
 
 		if (focusedObjectID != -1)
 		{
@@ -169,7 +163,7 @@ namespace FlatEngine { namespace FlatGui {
 			if (RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 20, 5);
-			RenderImageButton("##InspectorMoreButton", threeDotsTexture, ImVec2(16, 16), 1, transparentColor);
+			RenderImageButton("##InspectorMoreButton", threeDotsTexture, Vector2(16, 16), 1, transparentColor);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
 			PushMenuStyles();
@@ -197,7 +191,7 @@ namespace FlatEngine { namespace FlatGui {
 			// Lambda
 			auto L_IsActiveCheckbox = [](bool& _isActive)
 			{
-				ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 1));
+				ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 1));
 				bool _checked = RenderCheckbox("Active", _isActive);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 				ImGui::Separator();
@@ -240,7 +234,7 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
 						ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
 						
-						ImGui::BeginChild(componentID.c_str(), ImVec2(0, 0), child_flags);
+						ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), child_flags);
 
 						ImGui::PopStyleColor();
 						ImGui::PopStyleColor();
@@ -252,7 +246,7 @@ namespace FlatEngine { namespace FlatGui {
 						ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, {wPos.x + wSize.x - 2, wPos.y + wSize.y - 2}, ImColor(componentBorderColor.x, componentBorderColor.y, componentBorderColor.z, componentBorderColor.w));
 
 						// Component Name
-						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+						ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
 						ImGui::Text(componentType.c_str());
 
 						ImGui::SameLine(ImGui::GetContentRegionAvail().x - (childPadding + 42), 5);
@@ -260,21 +254,21 @@ namespace FlatEngine { namespace FlatGui {
 						// Pushes	
 						ImGui::PushItemWidth(-1.0f);						
 						ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(1.0f, 1.0f));
 						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
 
 						std::string expandID = "##expandIcon-" + i;
 						std::string trashcanID = "##trashIcon-" + i;
 						std::string openFileID = "##openFileIcon-" + i;
 
-						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+						ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 						// Trash Can Icon for removing Component from Focused Object
 						if (RenderImageButton(trashcanID.c_str(), trashTexture))
 							queuedForDelete = components[i]->GetID();
 
 						ImGui::SameLine(0, 5);
 
-						ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+						ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 						// Draw Expand Icon for expanding/collapsing current component information
 						if (_isCollapsed)
 						{
@@ -292,7 +286,7 @@ namespace FlatEngine { namespace FlatGui {
 							ImGui::Separator();
 						}
 						else {
-							ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 15));
+							ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 15));
 							ImGui::Text("");
 						}
 
@@ -310,7 +304,7 @@ namespace FlatEngine { namespace FlatGui {
 							// Push
 							std::string componentItemID = "##ComponentItem-" + componentType;
 							ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
-							ImGui::BeginChild(componentItemID.c_str(), ImVec2(0, 0), child_flags);
+							ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), child_flags);
 
 							// Make full width Push
 							ImGui::PushItemWidth(-1.0f);
@@ -785,7 +779,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			// Render the Adding Components button
-			RenderButton("Add Component", ImVec2(ImGui::GetContentRegionAvail().x, 0));
+			RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				L_ShowAddComponentsWindow();
@@ -794,10 +788,8 @@ namespace FlatEngine { namespace FlatGui {
 
 			ImGui::Text("");
 		}
-		ImGui::PopStyleColor();
-		ImGui::EndChild();
 
-		ImGui::End();
+		EndWindow();
 	}
 }
 }

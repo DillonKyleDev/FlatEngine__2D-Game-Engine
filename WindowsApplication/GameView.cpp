@@ -14,14 +14,14 @@ namespace FlatEngine { namespace FlatGui {
 	float GAME_VIEWPORT_HEIGHT = 400;
 	float xGameCenter = 600 / 2;
 	float yGameCenter = 400 / 2;
-	ImVec2 gameViewCenter = ImVec2(0, 0);
-	ImVec2 gameViewGridStep = ImVec2(50, 50);
+	Vector2 gameViewCenter = Vector2(0, 0);
+	Vector2 gameViewGridStep = Vector2(50, 50);
 
 
 	void Game_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
@@ -33,8 +33,8 @@ namespace FlatEngine { namespace FlatGui {
 			ImGuiIO& inputOutput = ImGui::GetIO();
 			float xSize = inputOutput.DisplaySize.x;
 			float ySize = inputOutput.DisplaySize.y;
-			ImGui::SetNextWindowSize(ImVec2(xSize, ySize));
-			ImGui::SetNextWindowPos(ImVec2(0, 0));
+			ImGui::SetNextWindowSize(Vector2(xSize, ySize));
+			ImGui::SetNextWindowPos(Vector2(0, 0));
 			flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize;
 		}
 
@@ -48,11 +48,11 @@ namespace FlatEngine { namespace FlatGui {
 
 		static bool opt_enable_context_menu = true;
 
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();
+		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		// Set viewport dimensions for rendering objects in game view. We want this to always be centered in game view so we can get it every frame.
 		GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
@@ -76,7 +76,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleVar();
 	}
 
-	void Game_RenderObjects(ImVec2 canvas_p0, ImVec2 canvas_sz)
+	void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz)
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
@@ -103,7 +103,7 @@ namespace FlatEngine { namespace FlatGui {
 		// 3 channels for now in this scene view. 0 = scene objects, 1 = other UI (camera icon, etc), 2 = transform arrow
 		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
 
-		ImVec2 cameraPosition(0, 0);
+		Vector2 cameraPosition(0, 0);
 		float cameraWidth = 50;
 		float cameraHeight = 30;
 		// Used to convert grid space values to pixel values.ie. 2 grid squares = 2 * 10 = 20px.
@@ -125,9 +125,9 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
-		worldCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
+		worldCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
 		// Get the center point of the viewport
-		ImVec2 viewportCenterPoint = ImVec2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
+		Vector2 viewportCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
 		// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
 		Vector2 parentOffset(0, 0);
@@ -181,7 +181,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 	}
 
-	ImVec2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
+	Vector2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
 	{
 		std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(primaryCamera->GetParentID());
 		std::shared_ptr<Transform> transform = std::static_pointer_cast<Transform>(parent->GetComponent(ComponentTypes::Transform));
@@ -192,7 +192,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (parent->GetParentID() != -1)
 			Game_GetTotalOffsetAndScale(parent, offset, scale);
 
-		return ImVec2(offset.x, offset.y);
+		return Vector2(offset.x, offset.y);
 	}
 
 	void Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2& offset, Vector2& scale)
@@ -223,8 +223,8 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper - Recursively draws scene objects and their children to the game view
-	void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 worldCenterPoint, ImVec2 canvas_p0,
-		ImVec2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, ImVec2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
+	void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, Vector2 worldCenterPoint, Vector2 canvas_p0,
+		Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
 	{
 		// Get Components
 		std::shared_ptr<Component> transformComponent = self->GetComponent(Component::ComponentTypes::Transform);

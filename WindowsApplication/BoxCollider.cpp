@@ -15,7 +15,7 @@ namespace FlatEngine
 		activeWidth = 5;
 		activeHeight = 3;
 		activeOffset = Vector2(0, 0);
-		activeEdges = ImVec4(0, 0, 0, 0);
+		activeEdges = Vector4(0, 0, 0, 0);
 		activeLayer = 0;
 		_isContinious = false;
 		_isColliding = false;
@@ -169,20 +169,20 @@ namespace FlatEngine
 		return activeOffset;
 	}
 
-	void BoxCollider::SetActiveEdges(ImVec4 edges)
+	void BoxCollider::SetActiveEdges(Vector4 edges)
 	{
 		activeEdges = edges;
 		_activeEdgesSet = true;
 	}
 
-	ImVec4 BoxCollider::GetActiveEdges()
+	Vector4 BoxCollider::GetActiveEdges()
 	{
 		return activeEdges;
 	}
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
-	ImVec4 BoxCollider::UpdateActiveEdges(ImVec2 centerPoint, float gridStep)
+	Vector4 BoxCollider::UpdateActiveEdges(Vector2 centerPoint, float gridStep)
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
@@ -221,7 +221,7 @@ namespace FlatEngine
 			float activeRight = centerPoint.x + (position.x + (activeWidth / 2) + activeOffset.x) * gridStep;
 			float activeBottom = centerPoint.y + (-position.y + (activeHeight / 2) + activeOffset.y) * gridStep;
 
-			SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+			SetActiveEdges(Vector4(activeTop, activeRight, activeBottom, activeLeft));
 		}
 
 		return activeEdges;

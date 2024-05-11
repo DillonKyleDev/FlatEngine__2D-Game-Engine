@@ -38,15 +38,7 @@ namespace FlatEngine {
 
 	void RenderProfiler()
 	{
-		PushWindowStyles();
-		ImGui::Begin("Profiler");
-		PopWindowStyles();
-
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Profiler Container", ImVec2(0, 0), padding_child_flags);
-		ImGui::PopStyleColor();
+		BeginWindow("Profiler", _showProfiler);
 
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
@@ -64,7 +56,7 @@ namespace FlatEngine {
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 		}
 
-		if (ImGui::BeginTable("##RuntimeData", 2, flags, ImVec2(-1, 0))) 
+		if (ImGui::BeginTable("##RuntimeData", 2, flags, Vector2(-1, 0))) 
 		{
 
 			ImGui::TableSetupColumn("RUNTIME PROCESS");
@@ -107,7 +99,7 @@ namespace FlatEngine {
 		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
 		int processCounter = 1;
 
-		if (ImGui::BeginTable("##table", 3, flags, ImVec2(-1, 0))) 
+		if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
 		{
 			ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
@@ -137,7 +129,7 @@ namespace FlatEngine {
 						ImGui::Text("%.3f ms", rawDataVector.front());
 						ImGui::TableSetColumnIndex(2);
 						ImGui::PushID(processCounter);
-						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), ImVec2(-1, 35));
+						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), Vector2(-1, 35));
 						ImGui::PopID();
 					}
 
@@ -148,12 +140,11 @@ namespace FlatEngine {
 			ImGui::EndTable();
 		}
 
-		ImGui::EndChild(); // Profiler Container
-		ImGui::End(); // Profiler
+		EndWindow();
 	}
 
-	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const ImVec4& col, const ImVec2& size) {
-		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0, 0));
+	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) {
+		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, Vector2(0, 0));
 		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) {
 			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
 			ImPlot::SetupAxesLimits(0, count - 1, min_v, max_v, ImGuiCond_Always);

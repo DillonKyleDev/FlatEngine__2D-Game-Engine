@@ -37,27 +37,27 @@ namespace FlatEngine
 		this->log->appendf(line.c_str());
 	}
 
-	void Logger::LogVector2(ImVec2 vector, std::string line)
+	void Logger::LogVector2(Vector2 vector, std::string line)
 	{
 		line = line + " Vector.x: " + std::to_string(vector.x) + " Vector.y: " + std::to_string(vector.y) + "\n";
 		this->log->appendf(line.c_str());
 	}
 
-	void Logger::DrawRectangle(ImVec2 startingPoint, ImVec2 endingPoint, ImVec4 color, float thickness, ImDrawList* drawList)
+	void Logger::DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList)
 	{
-		drawList->AddRect(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), ImGui::GetColorU32(color), 0.0f, 0, thickness);
+		drawList->AddRect(Vector2(startingPoint.x, startingPoint.y), Vector2(endingPoint.x, endingPoint.y), ImGui::GetColorU32(color), 0.0f, 0, thickness);
 	}
 
-	void Logger::DrawLine(ImVec2 startingPoint, ImVec2 endingPoint, ImVec4 color, float thickness, ImDrawList* drawList)
+	void Logger::DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList)
 	{
-		drawList->AddLine(ImVec2(startingPoint.x, startingPoint.y), ImVec2(endingPoint.x, endingPoint.y), ImGui::GetColorU32(color), thickness);
+		drawList->AddLine(Vector2(startingPoint.x, startingPoint.y), Vector2(endingPoint.x, endingPoint.y), ImGui::GetColorU32(color), thickness);
 	}
 
-	void Logger::DrawPoint(ImVec2 point, ImVec4 color, ImDrawList* drawList)
+	void Logger::DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList)
 	{
-		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x + 1, point.y), ImGui::GetColorU32(color));
-		drawList->AddLine(ImVec2(point.x, point.y), ImVec2(point.x, point.y - 1), ImGui::GetColorU32(color));
-		drawList->AddLine(ImVec2(point.x + 1, point.y + 1), ImVec2(point.x + 1, point.y + 1), ImGui::GetColorU32(color));
+		drawList->AddLine(Vector2(point.x, point.y), Vector2(point.x + 1, point.y), ImGui::GetColorU32(color));
+		drawList->AddLine(Vector2(point.x, point.y), Vector2(point.x, point.y - 1), ImGui::GetColorU32(color));
+		drawList->AddLine(Vector2(point.x + 1, point.y + 1), Vector2(point.x + 1, point.y + 1), ImGui::GetColorU32(color));
 	}
 
 
@@ -79,15 +79,7 @@ namespace FlatEngine
 
 		void RenderLog()
 		{
-			PushWindowStyles();
-			ImGui::Begin("Debug Log");
-			PopWindowStyles();
-
-			ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-
-			ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-			ImGui::BeginChild("Log Container", ImVec2(0, 0), padding_child_flags);
-			ImGui::PopStyleColor();
+			BeginWindow("Logger", _showLogger);
 
 			if (RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
 				FlatEngine::logger->ClearBuffer();
@@ -107,25 +99,24 @@ namespace FlatEngine
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-			ImVec2 cursorPos = ImVec2(ImGui::GetCursorScreenPos().x - 1, ImGui::GetCursorScreenPos().y - 1);
-			ImVec2 availSpace = ImGui::GetContentRegionAvail();
+			Vector2 cursorPos = Vector2(ImGui::GetCursorScreenPos().x - 1, ImGui::GetCursorScreenPos().y - 1);
+			Vector2 availSpace = ImGui::GetContentRegionAvail();
 
 			// Draw Border around log
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, ImVec2(cursorPos.x + availSpace.x + 2, cursorPos.y + availSpace.y + 2), ImGui::GetColorU32(logOutlineColor));
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, Vector2(cursorPos.x + availSpace.x + 2, cursorPos.y + availSpace.y + 2), ImGui::GetColorU32(logOutlineColor));
 
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, logBgColor);
-			ImGui::BeginChild("Log", ImVec2(0, 0), padding_child_flags);
+			ImGui::BeginChild("Log", Vector2(0, 0), childFlags);
 			ImGui::PushStyleColor(ImGuiCol_Text, logTextColor);
 			ImGui::TextUnformatted(log->begin(), log->end());
 			ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
-
 			ImGui::EndChild(); // Log
-			ImGui::EndChild(); // Log Container
-			ImGui::End(); // Debug Log
+			
+			EndWindow();
 
 
-			// For keeping the log from filling up when logging repeating values
+			// For keeping the log from filling up when logging continuous values
 			if (_clearBufferEveryFrame)
 			{
 				FlatEngine::logger->ClearBuffer();

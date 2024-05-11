@@ -24,10 +24,10 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> showIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> hideIcon = std::make_shared<Texture>();
 
-	ImVec2 uv0 = ImVec2(0.0f, 0.0f);
-	ImVec2 uv1 = ImVec2(1.0f, 1.0f);
-	ImVec4 tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
-	ImVec4 bg_col = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
+	Vector2 uv0 = Vector2(0.0f, 0.0f);
+	Vector2 uv1 = Vector2(1.0f, 1.0f);
+	Vector4 tint_col = Vector4(1.0, 1.0, 1.0, 1.0f);
+	Vector4 bg_col = Vector4(1.0f, 1.0f, 1.0f, 0.0f);
 
 	SDL_Texture* transformArrowTexture = nullptr;
 	SDL_Texture* cameraTexture = nullptr;

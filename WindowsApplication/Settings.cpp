@@ -1,36 +1,16 @@
-#include "Settings.h"
+#include "FlatEngine.h"
+#include "imgui.h"
 
 
-namespace FlatEngine
-{
-	Settings::Settings()
+namespace FlatEngine { namespace FlatGui {
+
+	void RenderSettings()
 	{
-		this->iconAlpha = 100;
+		BeginWindow("Settings", _showSettings);
+
+
+
+		EndWindow();
 	}
 
-	Settings::~Settings()
-	{
-
-	}
-
-	void Settings::SaveSettings()
-	{
-
-	}
-
-	void Settings::LoadSettings()
-	{
-
-	}
-
-	void Settings::SetIconAlpha(float alpha)
-	{
-		if (alpha >= 0 && alpha <= 255)
-			this->iconAlpha = alpha;
-	}
-
-	float Settings::GetIconAlpha()
-	{
-		return this->iconAlpha;
-	}
-}
+} }

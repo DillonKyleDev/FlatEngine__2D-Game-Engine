@@ -77,8 +77,11 @@ void StartButton::Update(float deltaTime)
 	if (mappingContext->Fired("IA_Jump"))
 	{
 		FlatEngine::LogString("Jumped!");
-		if (rigidBody->IsGrounded())
+		if (rigidBody->IsGrounded() && rigidBody->GetVelocity().y == 0)
+		{
 			rigidBody->AddForce(Vector2(0, 1), 20);
+		}
+
 	}
 	if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
 	{

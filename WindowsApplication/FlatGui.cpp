@@ -1,4 +1,5 @@
 #include "imgui_internal.h"
+#include "Vector4.h"
 #include <math.h>
 #include "FlatEngine.h"
 #include "TextureManager.h"
@@ -50,116 +51,118 @@ namespace FlatEngine { namespace FlatGui {
 	///\-------------/////
 	//////////////////////
 
-	ImVec4 transparentColor = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-	ImVec4 whiteColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	Vector4 transparentColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4 whiteColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	//////////////////////
 	// Components ////////
 	//////////////////////
-	ImVec4 componentBorderColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 componentBorderColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Colliders
-	ImVec4 boxColliderActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
-	ImVec4 boxColliderInactiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
-	ImVec4 boxColliderCollidingColor = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
-	ImVec4 circleColliderActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
-	ImVec4 circleColliderInactiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
+	Vector4 boxColliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
+	Vector4 boxColliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
+	Vector4 boxColliderCollidingColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
+	Vector4 circleColliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
+	Vector4 circleColliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
 	// Button Components
-	ImVec4 buttonComponentActiveColor = ImVec4(0.19, 0.9f, 0.2f, 0.5f);
-	ImVec4 buttonComponentInctiveColor = ImVec4(0.9f, 0.2f, 0.2f, 0.5f);
+	Vector4 buttonComponentActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
+	Vector4 buttonComponentInctiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
 	// Canvas Orange
-	ImVec4 canvasBorderColor = ImVec4(0.76f, 0.42f, 0.0f, 0.5f);
+	Vector4 canvasBorderColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
 	
 	//////////////////////
 	// Windows ///////////
 	//////////////////////
-	ImVec4 windowBgColor = ImVec4(0.08f, 0.08f, 0.10f, 1.0f);
-	ImVec4 outerWindowColor = ImVec4(0.13f, 0.13f, 0.15f, 1.0f);
-	ImVec4 innerWindowColor = ImVec4(0.1f, 0.1f, 0.12f, 1.0f);
-	ImVec4 singleItemColor = ImVec4(0.16f, 0.16f, 0.17f, 1.0f);
-	ImVec4 singleItemDark = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
-	ImVec4 windowTitleBg = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
+	Vector4 windowBgColor = Vector4(0.08f, 0.08f, 0.10f, 1.0f);
+	Vector4 outerWindowColor = Vector4(0.13f, 0.13f, 0.15f, 1.0f);
+	Vector4 innerWindowColor = Vector4(0.1f, 0.1f, 0.12f, 1.0f);
+	Vector4 singleItemColor = Vector4(0.16f, 0.16f, 0.17f, 1.0f);
+	Vector4 singleItemDark = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
+	Vector4 windowTitleBg = Vector4(0.25f, 0.25f, 0.25f, 1.0f);
 	// Log
-	ImVec4 logTextColor = ImVec4(0.75f, 0.75f, 0.75f, 1.0f);;
-	ImVec4 logBgColor = ImVec4(0.2f, 0.2f, 0.22f, 1.0f);
-	ImVec4 logOutlineColor = ImVec4(0.25f, 0.25f, 0.27f, 1.0f);
+	Vector4 logTextColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);;
+	Vector4 logBgColor = Vector4(0.2f, 0.2f, 0.22f, 1.0f);
+	Vector4 logOutlineColor = Vector4(0.25f, 0.25f, 0.27f, 1.0f);
 	// Docking
-	ImVec4 dockingPreviewColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
-	ImVec4 dockingPreviewEmptyColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
+	Vector4 dockingPreviewColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
+	Vector4 dockingPreviewEmptyColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
 	// ImGui Key colors
-	ImVec4 frameBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 frameBgActiveColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 frameBgHoveredColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 frameBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 frameBgActiveColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 frameBgHoveredColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	// tabs
-	ImVec4 tabColor = ImVec4(0.15f, 0.15f, 0.2f, 1.0f);
-	ImVec4 tabActiveColor = ImVec4(0.4f, 0.4f, 0.42f, 1.0f);
-	ImVec4 tabHoveredColor = ImVec4(0.4f, 0.4f, 0.42f, 1.0f);
-	ImVec4 tabUnfocusedColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
-	ImVec4 tabUnfocusedActiveColor = ImVec4(0.3f, 0.3f, 0.31f, 1.0f);
+	Vector4 tabColor = Vector4(0.15f, 0.15f, 0.2f, 1.0f);
+	Vector4 tabActiveColor = Vector4(0.4f, 0.4f, 0.42f, 1.0f);
+	Vector4 tabHoveredColor = Vector4(0.4f, 0.4f, 0.42f, 1.0f);
+	Vector4 tabUnfocusedColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	Vector4 tabUnfocusedActiveColor = Vector4(0.3f, 0.3f, 0.31f, 1.0f);
 	// titles
-	ImVec4 titleBgColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	ImVec4 titleBgActiveColor = ImVec4(0.2f, 0.2f, 0.25f, 1.0f);
-	ImVec4 titleBgCollapsedColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 titleBgColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4 titleBgActiveColor = Vector4(0.2f, 0.2f, 0.25f, 1.0f);
+	Vector4 titleBgCollapsedColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Text
-	ImVec4 textSelectedBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 textSelectedBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Resizers
-	ImVec4 resizeGripColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
-	ImVec4 resizeGripHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
-	ImVec4 resizeGripActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
+	Vector4 resizeGripColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
+	Vector4 resizeGripHoveredColor = Vector4(0.35f, 0.35f, 0.75f, 1.0f);
+	Vector4 resizeGripActiveColor = Vector4(0.2f, 0.2f, 0.5f, 0.8f);
 	// Misc (not sure what they're for)
-	ImVec4 popupBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 navWindowHighlightColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 navHighlightColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 navWindowDimBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	ImVec4 modalWindowDimBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 popupBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 navWindowHighlightColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 navHighlightColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 navWindowDimBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 modalWindowDimBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	////////////////////
 	// Custom Colors ///
 	//////////////////// 
 	// Inputs
-	ImVec4 inputColor = ImVec4(0.3f, 0.3f, 0.32f, 1.0f);
+	Vector4 inputColor = Vector4(0.3f, 0.3f, 0.32f, 1.0f);
 	// Tables
-	ImVec4 noEditTableTextColor = ImVec4(0.75f, 0.75f, 0.81f, 1.0f);
-	ImVec4 noEditTableRowFieldBgColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.35f, 0.55f, 1.0f);// ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
-	ImVec4 noEditTableRowValueBgColor = ImVec4(0.1f, 0.1f, 0.5f, 0.2f);// ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
-	ImVec4 tableCellLightColor = ImVec4(0.19f, 0.19f, 0.21f, 1.0f);
-	ImVec4 tableCellDarkColor = ImVec4(0.24f, 0.24f, 0.27f, 1.0f);
+	Vector4 noEditTableTextColor = Vector4(0.75f, 0.75f, 0.81f, 1.0f);
+	Vector4 noEditTableRowFieldBgColor = Vector4(0.1f, 0.1f, 0.5f, 0.2f);// Vector4(0.3f, 0.35f, 0.55f, 1.0f);// Vector4(0.2f, 0.25f, 0.45f, 1.0f);
+	Vector4 noEditTableRowValueBgColor = Vector4(0.1f, 0.1f, 0.5f, 0.2f);// Vector4(0.3f, 0.3f, 0.7f, 0.2f);
+	Vector4 tableCellLightColor = Vector4(0.19f, 0.19f, 0.21f, 1.0f);
+	Vector4 tableCellDarkColor = Vector4(0.24f, 0.24f, 0.27f, 1.0f);
 	// Trees
-	ImVec4 treeSelectableColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
-	ImVec4 treeSelectableHoveredColor = ImVec4(0.3f, 0.35f, 0.65f, 1.0f);
-	ImVec4 treeSelectableActiveColor = ImVec4(0.2f, 0.25f, 0.45f, 1.0f);
-	ImVec4 treeSelectableSelectedColor = ImVec4(0.5f, 0.5f, 0.8f, 1.0f);
-	ImVec4 hierarchyChildObjectColor = ImVec4(0.3f, 0.3f, 0.7f, 0.2f);
+	Vector4 treeSelectableColor = Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+	Vector4 treeSelectableHoveredColor = Vector4(0.3f, 0.35f, 0.65f, 1.0f);
+	Vector4 treeSelectableActiveColor = Vector4(0.2f, 0.25f, 0.45f, 1.0f);
+	Vector4 treeSelectableSelectedColor = Vector4(0.5f, 0.5f, 0.8f, 1.0f);
+	Vector4 hierarchyChildObjectColor = Vector4(0.3f, 0.3f, 0.7f, 0.2f);
 	// Combos
-	ImVec4 comboBgColor = ImVec4(0.19f, 0.19f, 0.21f, 1.0f);
-	ImVec4 comboHoveredColor = ImVec4(0.25f, 0.25f, 0.26f, 1.0f);
-	ImVec4 comboSelectableColor = ImVec4(0.34f, .34f, .4f, 1.0f);
-	ImVec4 comboSelectedColor = ImVec4(0.45f, 0.45f, 0.50f, 1.0f);
-	ImVec4 comboHighlightedColor = ImVec4(0.25f, 0.25f, 0.28f, 1.0f);
-	ImVec4 comboArrowColor = ImVec4(0.11f, 0.11f, 0.13f, 1.0f);
-	ImVec4 comboArrowHoveredColor = ImVec4(0.15f, 0.15f, 0.16f, 1.0f);
+	Vector4 comboBgColor = Vector4(0.19f, 0.19f, 0.21f, 1.0f);
+	Vector4 comboHoveredColor = Vector4(0.25f, 0.25f, 0.26f, 1.0f);
+	Vector4 comboSelectableColor = Vector4(0.34f, .34f, .4f, 1.0f);
+	Vector4 comboSelectedColor = Vector4(0.45f, 0.45f, 0.50f, 1.0f);
+	Vector4 comboHighlightedColor = Vector4(0.25f, 0.25f, 0.28f, 1.0f);
+	Vector4 comboArrowColor = Vector4(0.11f, 0.11f, 0.13f, 1.0f);
+	Vector4 comboArrowHoveredColor = Vector4(0.15f, 0.15f, 0.16f, 1.0f);
 	// Buttons
-	ImVec4 buttonColor = ImVec4(0.3f, 0.3f, 0.65f, 1.0f);
-	ImVec4 buttonHoveredColor = ImVec4(0.35f, 0.35f, 0.75f, 1.0f);
-	ImVec4 buttonActiveColor = ImVec4(0.2f, 0.2f, 0.5f, 0.8f);
-	ImVec4 imageButtonColor = ImVec4(0.18f, 0.18f, 0.18f, 1.0f);
-	ImVec4 imageButtonHoveredColor = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
-	ImVec4 imageButtonActiveColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
-	ImVec4 imageButtonTintColor = whiteColor;
+	Vector4 buttonColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
+	Vector4 buttonHoveredColor = Vector4(0.35f, 0.35f, 0.75f, 1.0f);
+	Vector4 buttonActiveColor = Vector4(0.2f, 0.2f, 0.5f, 0.8f);
+	Vector4 imageButtonColor = Vector4(0.18f, 0.18f, 0.18f, 1.0f);
+	Vector4 imageButtonHoveredColor = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
+	Vector4 imageButtonActiveColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	Vector4 imageButtonTintColor = whiteColor;
 	// Sliders/Drags
-	ImVec4 sliderColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
-	ImVec4 sliderHoveredColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
-	ImVec4 sliderActiveColor = ImVec4(0.09f, 0.09f, 0.13f, 1.0f);
-	ImVec4 dragColor = ImVec4(0.2f, 0.2f, 0.2f, 0.0f);
-	ImVec4 dragHoveredColor = ImVec4(0.45f, 0.45f, 0.45f, 1.0f);
-	ImVec4 dragActiveColor = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
+	Vector4 sliderColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
+	Vector4 sliderHoveredColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
+	Vector4 sliderActiveColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
+	Vector4 dragColor = Vector4(0.2f, 0.2f, 0.2f, 0.0f);
+	Vector4 dragHoveredColor = Vector4(0.45f, 0.45f, 0.45f, 1.0f);
+	Vector4 dragActiveColor = Vector4(0.10f, 0.10f, 0.10f, 1.0f);
 	// Checkboxes
-	ImVec4 checkboxBgColor = ImVec4(0.28f, 0.28f, 0.29f, 1.0f);
-	ImVec4 checkboxCheckColor = ImVec4(0.45f, 0.45f, 0.9f, 1.0f);
-	ImVec4 checkboxHoveredColor = ImVec4(0.31f, 0.31f, 0.32f, 1.0f);
-	ImVec4 checkboxActiveColor = ImVec4(0.15f, 0.15f, 0.23f, 1.0f);
+	Vector4 checkboxBgColor = Vector4(0.28f, 0.28f, 0.29f, 1.0f);
+	Vector4 checkboxCheckColor = Vector4(0.45f, 0.45f, 0.9f, 1.0f);
+	Vector4 checkboxHoveredColor = Vector4(0.31f, 0.31f, 0.32f, 1.0f);
+	Vector4 checkboxActiveColor = Vector4(0.15f, 0.15f, 0.23f, 1.0f);
 	////////////////////////
 
 	// Flags
-	ImGuiChildFlags childFlags = ImGuiChildFlags_::ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-	ImGuiChildFlags headerFlags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
+	ImGuiChildFlags autoResizeChildFlags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AlwaysUseWindowPadding;
+	ImGuiChildFlags resizeChildFlags = ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding;
+	ImGuiChildFlags childFlags = ImGuiChildFlags_AlwaysUseWindowPadding;
+	ImGuiChildFlags headerFlags = ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize;
 	//ImGuiTableFlags_Resizable ImGuiTableFlags_RowBg
 	ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 
@@ -188,8 +191,9 @@ namespace FlatEngine { namespace FlatGui {
 	bool _showLogger = true;
 	bool _showProfiler = true;
 	bool _showMappingContextEditor = false;
+	bool _showSettings = false;
 
-	ImVec2 worldCenterPoint = ImVec2(0, 0);
+	Vector2 worldCenterPoint = Vector2(0, 0);
 
 
 	using ComponentTypes = Component::ComponentTypes;
@@ -216,7 +220,7 @@ namespace FlatEngine { namespace FlatGui {
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		style.WindowPadding = { 5.0f, 5.0f };
 		style.DockingSeparatorSize = 1;
-		style.SeparatorTextAlign = ImVec2(0.5f, 0.0f);
+		style.SeparatorTextAlign = Vector2(0.5f, 0.0f);
 		style.SeparatorTextBorderSize = 1;
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::window, Window::renderer);
@@ -332,7 +336,7 @@ namespace FlatEngine { namespace FlatGui {
 	void RenderClear()
 	{
 		// Rendering
-		ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+		Vector4 clear_color = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
 		ImGui::Render();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		SDL_RenderSetScale(Window::renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
@@ -1287,13 +1291,15 @@ namespace FlatEngine { namespace FlatGui {
 			RenderProfiler();
 		if (_showMappingContextEditor)
 			RenderMappingContextEditor();
+		if (_showSettings)
+			RenderSettings();
 	}
 
-	void RenderGridView(ImVec2& centerPoint, ImVec2 &scrolling, bool _weightedScroll, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 &step, ImVec2 centerOffset)
+	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset)
 	{
 		drawList = ImGui::GetWindowDrawList();
 		drawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-		ImVec2 adjustedScrolling = ImVec2(scrolling.x + centerOffset.x, scrolling.y + centerOffset.y);
+		Vector2 adjustedScrolling = Vector2(scrolling.x + centerOffset.x, scrolling.y + centerOffset.y);
 		
 		// Get scroll amount for changing zoom level of scene view
 		ImGuiIO inputOutput = ImGui::GetIO();
@@ -1343,14 +1349,10 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(adjustedScrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
-		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
-		}
+			DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(adjustedScrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
-		{
-			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
-		}
+			DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 
 		// Draw our x and y axis blue and green lines
 		//
@@ -1362,11 +1364,11 @@ namespace FlatEngine { namespace FlatGui {
 		float offsetY = (step.y * divY) + modY;
 
 		// Blue, green and pink colors for axis and center
-		ImVec4 xColor = ImVec4(0.2f, 0.2f, 0.9f, 1.0f);
-		ImVec4 yColor = ImVec4(0, 0.82f, 0.14f, 1.0f);
-		ImVec4 centerColor = ImVec4(1.0f, 0, 0.96f, 1.0f);
+		Vector4 xColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
+		Vector4 yColor = Vector4(0, 0.82f, 0.14f, 1.0f);
+		Vector4 centerColor = Vector4(1.0f, 0, 0.96f, 1.0f);
 
-		centerPoint = ImVec2(offsetX + canvas_p0.x, offsetY + canvas_p0.y);
+		centerPoint = Vector2(offsetX + canvas_p0.x, offsetY + canvas_p0.y);
 		float drawYAxisAt = centerPoint.x;
 		float drawXAxisAt = centerPoint.y;
 
@@ -1374,34 +1376,34 @@ namespace FlatEngine { namespace FlatGui {
 		if (centerPoint.x > canvas_p1.x - 1)
 		{
 			drawYAxisAt = canvas_p1.x - 1;
-			xColor = ImVec4(0, 0.82f, 0.14f, 0.4f);
+			yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 		}
 		else if (centerPoint.x < canvas_p0.x)
 		{
 			drawYAxisAt = canvas_p0.x;
-			xColor = ImVec4(0, 0.82f, 0.14f, 0.4f);
+			yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 		}
 		// y axis bounds check + color change (lighten) if out of bounds
 		if (centerPoint.y > canvas_p1.y - 1)
 		{
 			drawXAxisAt = canvas_p1.y - 1;
-			yColor = ImVec4(0.07f, 0.07f, 0.8f, 0.58f);
+			xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
 		}
 		else if (centerPoint.y < canvas_p0.y)
 		{
 			drawXAxisAt = canvas_p0.y;
-			yColor = ImVec4(0.07f, 0.07f, 0.8f, 0.58f);
+			xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
 		}
 
 
 		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(drawYAxisAt, canvas_p0.y), ImVec2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x, drawXAxisAt), ImVec2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
-		FlatEngine::DrawPoint(ImVec2(centerPoint.x, centerPoint.y), centerColor, drawList);
+		FlatEngine::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
+		FlatEngine::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
+		FlatEngine::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
 		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
-	void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, float step)
+	void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -1430,7 +1432,7 @@ namespace FlatEngine { namespace FlatGui {
 		drawSplitter = nullptr;
 	}
 
-	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, ImVec2 scrolling, ImVec2 canvas_p0, ImVec2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Transform> transform = self->GetTransformComponent();
 		std::shared_ptr<Sprite> sprite = self->GetSpriteComponent();
@@ -1510,10 +1512,10 @@ namespace FlatEngine { namespace FlatGui {
 				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), step);
 				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), step);
 
-				ImVec2 topLeftCorner = ImVec2(cameraLeftEdge, cameraTopEdge);
-				ImVec2 bottomRightCorner = ImVec2(cameraRightEdge, cameraBottomEdge);
-				ImVec2 topRightCorner = ImVec2(cameraRightEdge, cameraTopEdge);
-				ImVec2 bottomLeftCorner = ImVec2(cameraLeftEdge, cameraBottomEdge);
+				Vector2 topLeftCorner = Vector2(cameraLeftEdge, cameraTopEdge);
+				Vector2 bottomRightCorner = Vector2(cameraRightEdge, cameraBottomEdge);
+				Vector2 topRightCorner = Vector2(cameraRightEdge, cameraTopEdge);
+				Vector2 bottomLeftCorner = Vector2(cameraLeftEdge, cameraBottomEdge);
 
 				float cameraTextureWidth = (float)cameraIcon->getWidth() / 4;
 				float cameraTextureHeight = (float)cameraIcon->getHeight() / 4;
@@ -1526,9 +1528,9 @@ namespace FlatEngine { namespace FlatGui {
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, ImVec4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, Vector4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, Vector4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, Vector4(255, 30, 30, 70), 2.0f, draw_list);
 
 				// Draw actual camera icon
 				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, iconTransparency));
@@ -1547,8 +1549,8 @@ namespace FlatEngine { namespace FlatGui {
 				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, step, true);
 				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, step, true);
 
-				ImVec2 canvasTopLeft = { canvasLeft, canvasTop };
-				ImVec2 canvasBottomRight = { canvasRight, canvasBottom };
+				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
+				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
@@ -1569,49 +1571,49 @@ namespace FlatEngine { namespace FlatGui {
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
 				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
-				ImVec2 center = ImVec2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
+				Vector2 center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
 
-				ImVec2 topLeft = { activeLeft, activeTop };
-				ImVec2 bottomRight = { activeRight, activeBottom };
-				ImVec2 topRight = { activeRight, activeTop };
-				ImVec2 bottomLeft = { activeLeft, activeBottom };
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
+				Vector2 topRight = { activeRight, activeTop };
+				Vector2 bottomLeft = { activeLeft, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (rotation != 0)
 				{
-					float cos_a = cosf(rotation * 2 * M_PI / 360); // Convert degrees into radians
-					float sin_a = sinf(rotation * 2 * M_PI / 360);
+					float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
+					float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
 
-					topLeft = ImRotate(ImVec2(-activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
-					topRight = ImRotate(ImVec2(+activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
-					bottomRight = ImRotate(ImVec2(+activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
-					bottomLeft = ImRotate(ImVec2(-activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
+					topLeft = ImRotate(Vector2(-activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
+					topRight = ImRotate(Vector2(+activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
+					bottomRight = ImRotate(Vector2(+activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
+					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
 
-					ImVec2 pos[4] =
+					Vector2 pos[4] =
 					{
-						ImVec2(center.x + topLeft.x, center.y + topLeft.y),
-						ImVec2(center.x + topRight.x, center.y + topRight.y),
-						ImVec2(center.x + bottomRight.x, center.y + bottomRight.y),
-						ImVec2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+						Vector2(center.x + topLeft.x, center.y + topLeft.y),
+						Vector2(center.x + topRight.x, center.y + topRight.y),
+						Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+						Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
 					};
 
 					if (_isActive)
 					{
-						FlatEngine::DrawLine(pos[0], pos[1], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[1], pos[2], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[2], pos[3], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[3], pos[0], buttonComponentActiveColor, 2.0f, draw_list);
+						DrawLine(pos[0], pos[1], buttonComponentActiveColor, 2.0f, draw_list);
+						DrawLine(pos[1], pos[2], buttonComponentActiveColor, 2.0f, draw_list);
+						DrawLine(pos[2], pos[3], buttonComponentActiveColor, 2.0f, draw_list);
+						DrawLine(pos[3], pos[0], buttonComponentActiveColor, 2.0f, draw_list);
 					}
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
 				}
 				else
 				{
 					if (_isActive)
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentActiveColor, 1.0f, draw_list);
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentActiveColor, 1.0f, draw_list);
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
 				}
 			}
 
@@ -1630,17 +1632,17 @@ namespace FlatEngine { namespace FlatGui {
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
 				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
-				ImVec2 topLeft = { activeLeft, activeTop };
-				ImVec2 bottomRight = { activeRight, activeBottom };
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (_isActive && !_isColliding)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
+					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
 				else if (!_isActive)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
+					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
 				else if (_isColliding)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
+					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
 			}
 
 
@@ -1702,7 +1704,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 	// Helper - Get a value from viewport position converted into world/grid position.
-	ImVec2 ViewportToWorld(ImVec2 viewportPosition)
+	Vector2 ViewportToWorld(Vector2 viewportPosition)
 	{
 		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
 		float zoom = 10;
@@ -1713,9 +1715,53 @@ namespace FlatEngine { namespace FlatGui {
 		float xPos = (viewportPosition.x - worldCenterPoint.x) / zoom;
 		float yPos = -(viewportPosition.y - worldCenterPoint.y) / zoom;
 
-		return ImVec2(xPos, yPos);
+		return Vector2(xPos, yPos);
 	}
 	
+	// ImGui Wrappers
+	void BeginWindow(std::string name)
+	{
+		PushWindowStyles();
+		ImGui::Begin(name.c_str());
+		PopWindowStyles();
+
+		BeginWindowChild(name);
+	}
+
+	void BeginWindow(std::string name, bool& _isOpen)
+	{
+		PushWindowStyles();
+		ImGui::Begin(name.c_str(), &_isOpen);
+		PopWindowStyles();
+
+		BeginWindowChild(name);
+	}
+
+	void EndWindow()
+	{
+		EndWindowChild();
+		ImGui::End();
+	}
+
+	void BeginWindowChild(std::string title)
+	{
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild(title.c_str(), Vector2(0, 0), childFlags);
+		ImGui::PopStyleColor();
+	}
+
+	void BeginResizeWindowChild(std::string title)
+	{
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
+		ImGui::BeginChild(title.c_str(), Vector2(0, 0), resizeChildFlags);
+		ImGui::PopStyleColor();
+	}
+
+	void EndWindowChild()
+	{
+		ImGui::EndChild();
+	}
+
 	void PushWindowStyles()
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, windowBgColor);
@@ -1797,7 +1843,7 @@ namespace FlatEngine { namespace FlatGui {
 	void PushMenuStyles()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10, 5 });
-		//ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+		//ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
@@ -1928,7 +1974,7 @@ namespace FlatEngine { namespace FlatGui {
 	}
 
 
-	ImVec2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, ImVec2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, float rotation, ImU32 addColor)
+	Vector2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, float rotation, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
 		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
@@ -1941,51 +1987,51 @@ namespace FlatEngine { namespace FlatGui {
 		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
 		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
 	
-		ImVec2 renderStart;
-		ImVec2 renderEnd;
-		ImVec2 UvStart = { 0, 0 };
-		ImVec2 UvEnd = { 1, 1 };
+		Vector2 renderStart;
+		Vector2 renderEnd;
+		Vector2 UvStart = { 0, 0 };
+		Vector2 UvEnd = { 1, 1 };
 
 		if (_scalesWithZoom)
 		{
-			renderStart = ImVec2(scalingXStart, scalingYStart);
-			renderEnd = ImVec2(scalingXEnd, scalingYEnd);
+			renderStart = Vector2(scalingXStart, scalingYStart);
+			renderEnd = Vector2(scalingXEnd, scalingYEnd);
 		}
 		else
 		{
-			renderStart = ImVec2(unscaledXStart, unscaledYStart);
-			renderEnd = ImVec2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
+			renderStart = Vector2(unscaledXStart, unscaledYStart);
+			renderEnd = Vector2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
 		}
 		
 		if (rotation != 0)
 		{
-			float cos_a = cosf(rotation * 2 * M_PI / 360); // Convert degrees into radians
-			float sin_a = sinf(rotation * 2 * M_PI / 360);
+			float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
+			float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
 
-			ImVec2 topLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			ImVec2 topRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			ImVec2 bottomRight = ImRotate(ImVec2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			ImVec2 bottomLeft = ImRotate(ImVec2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 
 			LogVector2(topLeft, "topLeft Sprite: ");
 			LogVector2(topRight, "topRight Sprite: ");
 			LogVector2(bottomRight, "bottomRight Sprite: ");
 			LogVector2(bottomLeft, "bottomLeft Sprite: ");
 
-			ImVec2 center = ImVec2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
-			ImVec2 pos[4] =
+			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
+			Vector2 pos[4] =
 			{
-				ImVec2(center.x + topLeft.x, center.y + topLeft.y),
-				ImVec2(center.x + topRight.x, center.y + topRight.y),
-				ImVec2(center.x + bottomRight.x, center.y + bottomRight.y),
-				ImVec2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+				Vector2(center.x + topLeft.x, center.y + topLeft.y),
+				Vector2(center.x + topRight.x, center.y + topRight.y),
+				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
 			};
-			ImVec2 uvs[4] =
+			Vector2 uvs[4] =
 			{
-				ImVec2(0.0f, 0.0f),
-				ImVec2(1.0f, 0.0f),
-				ImVec2(1.0f, 1.0f),
-				ImVec2(0.0f, 1.0f)
+				Vector2(0.0f, 0.0f),
+				Vector2(1.0f, 0.0f),
+				Vector2(1.0f, 1.0f),
+				Vector2(0.0f, 1.0f)
 			};
 
 			// Render sprite to viewport
@@ -2000,7 +2046,7 @@ namespace FlatEngine { namespace FlatGui {
 		return renderStart;
 	}
 
-	bool RenderButton(std::string text, ImVec2 size, float rounding, ImVec4 color, ImVec4 hoverColor, ImVec4 activeColor)
+	bool RenderButton(std::string text, Vector2 size, float rounding, Vector4 color, Vector4 hoverColor, Vector4 activeColor)
 	{
 		bool _isClicked;
 
@@ -2026,12 +2072,12 @@ namespace FlatEngine { namespace FlatGui {
 		return _isClicked;
 	}
 
-	bool RenderImageButton(std::string id, SDL_Texture *texture, ImVec2 size, float rounding, ImVec4 bgColor, ImVec4 tint, ImVec4 hoverColor, ImVec4 activeColor)
+	bool RenderImageButton(std::string id, SDL_Texture *texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(2, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
 
 		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uv0, uv1, transparentColor, tint);
@@ -2113,15 +2159,15 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
-		ImVec2 screenCursor = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, ImVec2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(innerWindowColor));
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
+		Vector2 screenCursor = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(innerWindowColor));
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
 		ImGui::Text(headerText.c_str());
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
-		ImGui::GetWindowDrawList()->AddRect(ImVec2(cursorPos.x, cursorPos.y + 4), ImVec2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(componentBorderColor));
+		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(componentBorderColor));
 	}
 
 	// Hierarchy
@@ -2139,7 +2185,7 @@ namespace FlatEngine { namespace FlatGui {
 		}
 	}
 
-	ImU32 ImVec4ToImU32(ImVec4 color)
+	ImU32 Vector4ToImU32(Vector4 color)
 	{
 		float redValue = color.x;
 		float greenValue = color.y;

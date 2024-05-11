@@ -448,7 +448,7 @@ namespace FlatEngine
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumAlpha' in object: ");
 
-							ImVec4 frustrumColor = ImVec4(f_red, f_green, f_blue, f_alpha);
+							Vector4 frustrumColor = Vector4(f_red, f_green, f_blue, f_alpha);
 
 							newCamera->SetID(id);
 							newCamera->SetCollapsed(_isCollapsed);

@@ -8,38 +8,26 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeX;
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		PushWindowStyles();
-		ImGui::Begin("Scene Hierarchy");
-		PopWindowStyles();
-
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, outerWindowColor);
-		float availableHorizontalSpace = ImGui::GetContentRegionAvail().x;
-		float availableVerticalSpace = ImGui::GetContentRegionAvail().y;
-
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGui::BeginChild("Hierarchy Background", ImVec2(0, 0), padding_child_flags);
+		BeginWindow("Hierarchy");
 
 		// Variables for viewport dimensions
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
+		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
 		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 		// Render Loaded Scene text and threeDots more menu button
 		std::string sceneName = GetLoadedScene()->GetName();
 		std::string loadedSceneString = "Loaded Scene: " + sceneName;
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-		ImGui::BeginChild(loadedSceneString.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 30));
-		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 6, ImGui::GetCursorPosY() + 8));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(1,1,1,.8)));
-		ImGui::Text(loadedSceneString.c_str());
-		ImGui::PopStyleColor();
+
+		RenderSectionHeader(loadedSceneString);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 26, 0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2);
-		RenderImageButton("##AddGameObjectHierarchy", threeDotsTexture, ImVec2(16, 16), 1, transparentColor);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 29);
+
+		RenderImageButton("##AddGameObjectHierarchy", threeDotsTexture, Vector2(16, 16), 1, transparentColor);
 		PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 		{
@@ -57,15 +45,12 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndPopup();
 		}
 		PopMenuStyles();
-		ImGui::EndChild();
-		ImGui::PopStyleColor();
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
-
+		// Hides bottom separator in the RenderSectionHeader under hierarchy
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 
 		// Scene Objects in Hierarchy
 		{
-			static ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
 			float objectColumnWidth = ImGui::GetContentRegionAvail().x;
 			float visibleIconColumnWidth = 20;
 			static float currentIndent = 10;
@@ -74,7 +59,7 @@ namespace FlatEngine { namespace FlatGui {
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
-			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 			ImGui::BeginTable("##HierarchyTable", 2, tableFlags);		
 
 			ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
@@ -83,10 +68,10 @@ namespace FlatEngine { namespace FlatGui {
 
 			// Visible/Invisible all gameObjects at once
 			ImGui::TableSetColumnIndex(0);
-			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
 			if (_allAreVisible)
 			{
-				if (RenderImageButton("##SetAllInVisible", showTexture, ImVec2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+				if (RenderImageButton("##SetAllInVisible", showTexture, Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					for (std::shared_ptr<GameObject> currentObject : sceneObjects)
 						currentObject->SetActive(false);
@@ -95,7 +80,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 			else
 			{
-				if (RenderImageButton("##SetAllVisible", hideTexture, ImVec2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+				if (RenderImageButton("##SetAllVisible", hideTexture, Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					for (std::shared_ptr<GameObject> currentObject : sceneObjects)
 						currentObject->SetActive(true);
@@ -104,15 +89,15 @@ namespace FlatEngine { namespace FlatGui {
 			}
 
 			ImGui::TableSetColumnIndex(1);
-			ImVec2 cellSize = ImVec2(ImGui::GetContentRegionAvail().x + 1, 20);
-			ImVec2 cursorScreen = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 1);
+			Vector2 cellSize = Vector2(ImGui::GetContentRegionAvail().x + 1, 20);
+			Vector2 cursorScreen = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 1);
 			ImGui::PushStyleColor(ImGuiCol_Text, logTextColor);
-			ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 7, ImGui::GetCursorPosY() + 4));
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 7, ImGui::GetCursorPosY() + 4));
 			ImGui::Text("ALL SCENE OBJECTS");
 			ImGui::PopStyleColor();
 			ImGui::TableNextRow();
 			ImGui::TableNextRow();
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, ImVec2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(buttonActiveColor));
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(buttonActiveColor));
 
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
@@ -188,9 +173,7 @@ namespace FlatEngine { namespace FlatGui {
 			}
 		}
 
-		ImGui::EndChild();
-		ImGui::PopStyleColor();
-		ImGui::End();
+		EndWindow();
 	}
 
 	// Helper function for Hierarchy child rendering (Recursive)
@@ -221,12 +204,12 @@ namespace FlatEngine { namespace FlatGui {
 		// Show Visible/Invisible Icons
 		if (currentObject->IsActive())
 		{
-			if (RenderImageButton(visibleID.c_str(), showTexture, ImVec2(16, 16), 0, transparentColor))
+			if (RenderImageButton(visibleID.c_str(), showTexture, Vector2(16, 16), 0, transparentColor))
 				currentObject->SetActive(false);
 		}
 		else
 		{
-			if (RenderImageButton(visibleID.c_str(), hideTexture, ImVec2(16, 16), 0, transparentColor))
+			if (RenderImageButton(visibleID.c_str(), hideTexture, Vector2(16, 16), 0, transparentColor))
 				currentObject->SetActive(true);
 		}
 
@@ -247,9 +230,9 @@ namespace FlatEngine { namespace FlatGui {
 		if (it != sceneObjects.end())
 			index = (int)(it - sceneObjects.begin());
 
-		ImVec2 cursorPos = ImGui::GetCursorPos();
-		ImVec2 availSpace = ImGui::GetContentRegionAvail();
-		ImVec2 size = ImVec2(availSpace.x + 30 - cursorPos.x, 2);
+		Vector2 cursorPos = ImGui::GetCursorPos();
+		Vector2 availSpace = ImGui::GetContentRegionAvail();
+		Vector2 size = Vector2(availSpace.x + 30 - cursorPos.x, 2);
 		if (size.x < 30)
 			size.x = 30;
 		std::string id = "##SwapDropSource" + index;
@@ -278,9 +261,9 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		if (it == sceneObjects.begin())
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 1));
+			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
 		else
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y));
+			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
 
 		ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject->GetID()));
 
@@ -451,12 +434,12 @@ namespace FlatEngine { namespace FlatGui {
 		// Show Visible/Invisible Icons
 		if (currentObject->IsActive())
 		{
-			if (RenderImageButton(visibleID.c_str(), showTexture, ImVec2(16, 16), 0, transparentColor))
+			if (RenderImageButton(visibleID.c_str(), showTexture, Vector2(16, 16), 0, transparentColor))
 				currentObject->SetActive(false);
 		}
 		else
 		{
-			if (RenderImageButton(visibleID.c_str(), hideTexture, ImVec2(16, 16), 0, transparentColor))
+			if (RenderImageButton(visibleID.c_str(), hideTexture, Vector2(16, 16), 0, transparentColor))
 				currentObject->SetActive(true);
 		}
 
@@ -477,9 +460,9 @@ namespace FlatEngine { namespace FlatGui {
 		if (it != sceneObjects.end())
 			index = (int)(it - sceneObjects.begin());
 
-		ImVec2 cursorPos = ImGui::GetCursorPos();
-		ImVec2 availSpace = ImGui::GetContentRegionAvail();
-		ImVec2 size = ImVec2(availSpace.x + 30 - cursorPos.x, 2);
+		Vector2 cursorPos = ImGui::GetCursorPos();
+		Vector2 availSpace = ImGui::GetContentRegionAvail();
+		Vector2 size = Vector2(availSpace.x + 30 - cursorPos.x, 2);
 		if (size.x < 30)
 			size.x = 30;
 		std::string id = "##SwapDropSource" + index;
@@ -507,9 +490,9 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndDragDropTarget();
 		}
 		if (it == sceneObjects.begin())
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 1));
+			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
 		else
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y));
+			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
 
 		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
@@ -562,7 +545,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndTooltip();
 		}
 
-		ImVec2 savedCursorPos = ImGui::GetCursorPos();
+		Vector2 savedCursorPos = ImGui::GetCursorPos();
 
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{

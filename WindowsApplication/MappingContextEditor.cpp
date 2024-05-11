@@ -7,18 +7,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderMappingContextEditor()
 	{
-		PushWindowStyles();
-		ImGui::Begin("Mapping Context Editor");
-		PopWindowStyles();
-
-		ImGuiChildFlags padding_child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding;
-		ImGuiChildFlags header_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-		ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-
-
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild("Mapping Context Editor", ImVec2(0, 0), padding_child_flags);
-		ImGui::PopStyleColor();
+		BeginWindow("Mapping Context Editor", _showMappingContextEditor);
 		
 		const char* inputs[] = { 
 			// XInput
@@ -81,7 +70,7 @@ namespace FlatEngine { namespace FlatGui {
 		float widthAvailable = ImGui::GetContentRegionAvail().x;
 		static int current_context = 0;
 		
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, -5));
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, -5));
 
 		// Select Mapping Context to edit //
 
@@ -89,7 +78,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (mappingContexts.size() > 0)
 		{
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-			ImGui::BeginChild("Animation Preview", ImVec2(0, 30), header_flags);
+			ImGui::BeginChild("Animation Preview", Vector2(0, 30), headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -150,7 +139,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-			ImGui::BeginChild("Create New Input Action", ImVec2(0, 30), header_flags);
+			ImGui::BeginChild("Create New Input Action", Vector2(0, 30), headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -222,7 +211,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
-			ImGui::BeginChild("Existing Bindings", ImVec2(0, 30), header_flags);
+			ImGui::BeginChild("Existing Bindings", Vector2(0, 30), headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -325,8 +314,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::PopStyleVar();
 
-		ImGui::EndChild();
-		ImGui::End();
+		EndWindow();
 	}
 
 } 
