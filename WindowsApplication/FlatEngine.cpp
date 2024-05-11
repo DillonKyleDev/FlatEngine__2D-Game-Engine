@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
+#include <cmath>
 #include "MappingContext.h"
 
 /*
@@ -106,6 +107,8 @@ namespace FlatEngine
 		{
 			FlatEngine::GameLoopUpdate();
 		}
+
+		FlatEngine::FlatGui::RenderClear();
 	}
 
 	void CloseProgram()
@@ -744,5 +747,24 @@ namespace FlatEngine
 		Vector2 difference = Vector2(endPos.x - startPos.x, endPos.y - startPos.y);
 		Vector2 easedDiff = Vector2(difference.x * ease, difference.y * ease);
 		return Vector2(startPos.x + easedDiff.x, startPos.y + easedDiff.y);
+	}
+
+	std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance)
+	{
+		Vector2 correctedOrigin = Vector2(FlatGui::sceneViewCenter.x + origin.x * FlatGui::sceneViewGridStep.x, FlatGui::sceneViewCenter.y - origin.y * FlatGui::sceneViewGridStep.y);
+		float hypotenuse = sqrt(direction.x * direction.x + direction.y * direction.y);
+		float divisor = hypotenuse / distance;
+		Vector2 endPoint = Vector2(correctedOrigin.x + direction.x / divisor * FlatGui::sceneViewGridStep.x, correctedOrigin.y - direction.y / divisor * FlatGui::sceneViewGridStep.y);
+
+		ImGui::Begin("Scene View");
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		DrawLine(correctedOrigin, endPoint, FlatGui::whiteColor, 3, drawList);
+		ImGui::End();
+		return std::vector<std::shared_ptr<GameObject>>();
+	}
+
+	std::vector<std::shared_ptr<GameObject>> SphereCast(Vector2 origin, Vector2 direction, float distance)
+	{
+		return std::vector<std::shared_ptr<GameObject>>();
 	}
 }

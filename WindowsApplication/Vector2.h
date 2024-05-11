@@ -1,5 +1,7 @@
 #pragma once
-class Vector2
+#include <imgui.h>
+
+class Vector2 : public ImVec2
 {
 public:
 	Vector2(float x=0, float y=0);
@@ -7,9 +9,6 @@ public:
 
 	bool operator==(const Vector2 &right);
 	bool operator!=(const Vector2& right);
-
-	float x;
-	float y;
 
 private:
 

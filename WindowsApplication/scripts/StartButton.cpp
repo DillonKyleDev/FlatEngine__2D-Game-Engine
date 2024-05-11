@@ -5,6 +5,7 @@
 #include "../Audio.h"
 #include "../CharacterController.h"
 #include "../RigidBody.h"
+#include "imgui.h"
 
 #include "../MappingContext.h"
 #include "../Transform.h"
@@ -67,6 +68,7 @@ void StartButton::Update(float deltaTime)
 	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
 	std::shared_ptr<FlatEngine::CharacterController> characterController = GetOwner()->GetCharacterController();
 	std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetOwner()->GetRigidBody();
+	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
 
 	if (mappingContext->Fired("IA_Jump"))
 	{
@@ -86,5 +88,8 @@ void StartButton::Update(float deltaTime)
 		yDir = moveY.jaxis.value;
 
 	if (characterController != nullptr)
+	{
 		characterController->MoveToward(Vector2((float)xDir, (float)yDir));
+	}
+	FlatEngine::RayCast(transform->GetPosition(), Vector2(xDir, -yDir), 2);
 }

@@ -66,6 +66,6 @@ namespace FlatEngine
 		bool _isContinious;
 		int activeLayer;
 		bool _activeEdgesSet;
-
+		std::vector<ImVec2> normals;
 	};
 }

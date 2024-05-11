@@ -156,8 +156,8 @@ namespace FlatEngine
 	extern 	bool AreColliding(ImVec4 ObjectA, ImVec4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
 
-
-
+	extern std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance);
+	extern std::vector<std::shared_ptr<GameObject>> SphereCast(Vector2 origin, Vector2 direction, float distance);
 
 	// #### FLATGUI #### //
 	//
@@ -166,6 +166,7 @@ namespace FlatEngine
 		// Global variables
 		extern bool _editingValue;
 		extern float childPadding;
+		extern ImDrawList* drawList;
 
 		// Colors
 		extern ImVec4 transparentColor;
@@ -369,6 +370,7 @@ namespace FlatEngine
 		extern void SetupImGui();
 		extern void CreateIcons();
 		extern void Render(bool& quit);
+		extern void RenderClear();
 		extern void HandleEvents(bool& quit);
 		extern void MainMenuBar();
 		extern std::string OpenSaveFileExplorer();

@@ -1,9 +1,9 @@
 #include "Vector2.h"
 
-Vector2::Vector2(float x, float y)
+Vector2::Vector2(float xValue, float yValue)
 {
-	this->x = x;
-	this->y = y;
+	x = xValue;
+	y = yValue;
 }
 
 

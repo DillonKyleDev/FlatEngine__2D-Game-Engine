@@ -41,6 +41,7 @@ namespace FlatEngine { namespace FlatGui {
 
 	// For window styles
 	float childPadding = 8;
+	ImDrawList* drawList = nullptr;
 
 	//////////////////////
 	//Global      Colors//
@@ -326,7 +327,10 @@ namespace FlatEngine { namespace FlatGui {
 		// Else add FlatEngine viewports
 		else
 			AddViewports();
+	}
 
+	void RenderClear()
+	{
 		// Rendering
 		ImVec4 clear_color = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		ImGui::Render();
@@ -1287,8 +1291,8 @@ namespace FlatEngine { namespace FlatGui {
 
 	void RenderGridView(ImVec2& centerPoint, ImVec2 &scrolling, bool _weightedScroll, ImVec2 canvas_p0, ImVec2 canvas_p1, ImVec2 canvas_sz, ImVec2 &step, ImVec2 centerOffset)
 	{
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+		drawList = ImGui::GetWindowDrawList();
+		drawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
 		ImVec2 adjustedScrolling = ImVec2(scrolling.x + centerOffset.x, scrolling.y + centerOffset.y);
 		
 		// Get scroll amount for changing zoom level of scene view
@@ -1340,12 +1344,12 @@ namespace FlatEngine { namespace FlatGui {
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(adjustedScrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
 		{
-			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, draw_list);
+			FlatEngine::DrawLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 		}
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(adjustedScrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
 		{
-			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, draw_list);
+			FlatEngine::DrawLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), ImVec4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 		}
 
 		// Draw our x and y axis blue and green lines
@@ -1391,9 +1395,10 @@ namespace FlatEngine { namespace FlatGui {
 
 
 		// Draw the axis and center point
-		FlatEngine::DrawLine(ImVec2(drawYAxisAt, canvas_p0.y), ImVec2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, draw_list);
-		FlatEngine::DrawLine(ImVec2(canvas_p0.x, drawXAxisAt), ImVec2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, draw_list);
-		FlatEngine::DrawPoint(ImVec2(centerPoint.x, centerPoint.y), centerColor, draw_list);
+		FlatEngine::DrawLine(ImVec2(drawYAxisAt, canvas_p0.y), ImVec2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
+		FlatEngine::DrawLine(ImVec2(canvas_p0.x, drawXAxisAt), ImVec2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
+		FlatEngine::DrawPoint(ImVec2(centerPoint.x, centerPoint.y), centerColor, drawList);
+		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
 	void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, ImVec2 centerPoint, ImVec2 canvas_p0, ImVec2 canvas_sz, float step)
@@ -1578,17 +1583,10 @@ namespace FlatEngine { namespace FlatGui {
 					float cos_a = cosf(rotation * 2 * M_PI / 360); // Convert degrees into radians
 					float sin_a = sinf(rotation * 2 * M_PI / 360);
 
-					LogFloat(activeWidth, "Active WIDTH: ");
-
 					topLeft = ImRotate(ImVec2(-activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
 					topRight = ImRotate(ImVec2(+activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
 					bottomRight = ImRotate(ImVec2(+activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
 					bottomLeft = ImRotate(ImVec2(-activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
-
-					LogVector2(topLeft, "topLeft: ");
-					/*LogVector2(topRight, "topRight: ");
-					LogVector2(bottomRight, "bottomRight: ");
-					LogVector2(bottomLeft, "bottomLeft: ");*/
 
 					ImVec2 pos[4] =
 					{
@@ -1610,7 +1608,6 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				else
 				{
-					LogVector2(topLeft, "TOPLEFT: ");
 					if (_isActive)
 						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentActiveColor, 1.0f, draw_list);
 					else
