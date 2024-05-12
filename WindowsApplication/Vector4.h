@@ -8,6 +8,9 @@ public:
 	Vector4(const ImVec4& toCopy);
 	~Vector4();
 
+	Vector4 operator=(ImVec4& toCopy);
+	Vector4 operator*(ImVec4& right);
+	Vector4 operator*(Vector4& right);
 	bool operator==(const Vector4& right);
 	bool operator!=(const Vector4& right);
 

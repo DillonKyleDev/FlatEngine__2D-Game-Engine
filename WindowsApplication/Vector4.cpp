@@ -20,6 +20,36 @@ Vector4::~Vector4()
 {
 }
 
+Vector4 Vector4::operator=(ImVec4& toCopy)
+{
+	x *= toCopy.x;
+	y *= toCopy.y;
+	z *= toCopy.z;
+	w *= toCopy.w;
+
+	return *this;
+}
+
+Vector4 Vector4::operator*(ImVec4& right)
+{
+	x *= right.x;
+	y *= right.y;
+	z *= right.z;
+	w *= right.w;
+
+	return *this;
+}
+
+Vector4 Vector4::operator*(Vector4& right)
+{
+	x *= right.x;
+	y *= right.y;
+	z *= right.z;
+	w *= right.w;
+
+	return *this;
+}
+
 bool Vector4::operator==(const Vector4& right)
 {
 	return (x == right.x && y == right.y && z == right.z && w == right.w);

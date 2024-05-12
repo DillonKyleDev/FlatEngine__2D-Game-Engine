@@ -12,7 +12,7 @@
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": -2.0,
+                    "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
@@ -39,7 +39,7 @@
                     "mass": 1.0,
                     "terminalVelocity": -1.0,
                     "type": "RigidBody",
-                    "windResistance": 0.08500000089406967
+                    "windResistance": 0.5
                 },
                 {
                     "_isActive": true,

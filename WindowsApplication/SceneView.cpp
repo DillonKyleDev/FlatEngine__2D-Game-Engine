@@ -25,7 +25,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 
 		PushWindowStyles();
-		ImGui::Begin("Scene View");
+		ImGui::Begin("Scene View", 0, 16 | 8);
 		PopWindowStyles();
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
@@ -54,7 +54,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiIO& inputOutput = ImGui::GetIO();
 
 		// This will catch our interactions
-		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
 		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 

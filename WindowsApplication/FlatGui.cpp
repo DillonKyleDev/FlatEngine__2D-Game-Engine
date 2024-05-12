@@ -1449,6 +1449,7 @@ namespace FlatEngine { namespace FlatGui {
 			Vector2 position = Vector2(transform->GetPosition().x + parentOffset.x, transform->GetPosition().y + parentOffset.y);
 			Vector2 transformScale = Vector2(transform->GetScale().x * parentScale.x, transform->GetScale().y * parentScale.y);
 			float rotation = transform->GetRotation();
+			Vector2 scale = transform->GetScale();
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
 			if (sprite != nullptr)
@@ -1459,6 +1460,23 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 spriteOffset = sprite->GetOffset();
 				bool _spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
+				std::string invisibleButtonID = "GameObjectSelectorButton_" + sprite->GetID();
+				// Get Input and Output
+				ImGuiIO& inputOutput = ImGui::GetIO();
+
+				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y));
+				ImGui::SetCursorPos(positionOnScreen);
+				//// This will catch our interactions  - 4096 for overlap or keyword if it works
+				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
+				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+				const bool is_active = ImGui::IsItemActive();   // Held
+				const bool is_clicked = ImGui::IsItemClicked();
+				LogFloat(spriteTextureWidth * spriteScaleMultiplier * step, "Texture width: ");
+				if (is_hovered || is_active)
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+				if (is_clicked)
+					SetFocusedGameObjectID(sprite->GetParentID());
 
 				// If there is a valid Texture loaded into the Sprite Component
 				if (spriteTexture != nullptr)
@@ -1585,10 +1603,10 @@ namespace FlatEngine { namespace FlatGui {
 					float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
 					float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
 
-					topLeft = ImRotate(Vector2(-activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
-					topRight = ImRotate(Vector2(+activeWidth * step / 2, -activeHeight * step / 2), cos_a, sin_a);
-					bottomRight = ImRotate(Vector2(+activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
-					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2, +activeHeight * step / 2), cos_a, sin_a);
+					topLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					topRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
 
 					Vector2 pos[4] =
 					{
@@ -1632,17 +1650,85 @@ namespace FlatEngine { namespace FlatGui {
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
 				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
 
+				float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
+				float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+
+				Vector2 center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
+
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
+				Vector2 topRight = { activeRight, activeTop };
+				Vector2 bottomLeft = { activeLeft, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				if (_isActive && !_isColliding)
-					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
-				else if (!_isActive)
-					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
-				else if (_isColliding)
-					DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
+				// Normal vectors
+				Vector2 topNormal = ImRotate(Vector2(0, -activeHeight * step * transformScale.y), cos_a, sin_a);
+				Vector2 rightNormal = ImRotate(Vector2(+activeWidth * step * transformScale.x, 0), cos_a, sin_a);
+				Vector2 bottomNormal = ImRotate(Vector2(0, +activeHeight * step * transformScale.y), cos_a, sin_a);
+				Vector2 leftNormal = ImRotate(Vector2(-activeWidth * step * transformScale.x, 0), cos_a, sin_a);
+
+				Vector2 normals[4] =
+				{
+					Vector2(center.x + topNormal.x, center.y + topNormal.y),
+					Vector2(center.x + rightNormal.x, center.y + rightNormal.y),
+					Vector2(center.x + bottomNormal.x, center.y + bottomNormal.y),
+					Vector2(center.x + leftNormal.x, center.y + leftNormal.y),
+				};
+
+				// Get dot product of
+				// Get normal of a vertex
+				DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
+				DrawLine(center, normals[1], boxColliderInactiveColor, 2.0f, draw_list);
+				DrawLine(center, normals[2], boxColliderInactiveColor, 2.0f, draw_list);
+				DrawLine(center, normals[3], boxColliderInactiveColor, 2.0f, draw_list);
+
+				if (rotation != 0)
+				{
+					topLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					topRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+
+					Vector2 pos[4] =
+					{
+						Vector2(center.x + topLeft.x, center.y + topLeft.y),
+						Vector2(center.x + topRight.x, center.y + topRight.y),
+						Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+						Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+					};					
+
+					if (_isActive && !_isColliding)
+					{
+						DrawLine(pos[0], pos[1], boxColliderActiveColor, 1.0f, draw_list);
+						DrawLine(pos[1], pos[2], boxColliderActiveColor, 1.0f, draw_list);
+						DrawLine(pos[2], pos[3], boxColliderActiveColor, 1.0f, draw_list);
+						DrawLine(pos[3], pos[0], boxColliderActiveColor, 1.0f, draw_list);
+					}
+					else if (!_isActive)
+					{
+						DrawLine(pos[0], pos[1], boxColliderInactiveColor, 1.0f, draw_list);
+						DrawLine(pos[1], pos[2], boxColliderInactiveColor, 1.0f, draw_list);
+						DrawLine(pos[2], pos[3], boxColliderInactiveColor, 1.0f, draw_list);
+						DrawLine(pos[3], pos[0], boxColliderInactiveColor, 1.0f, draw_list);
+					}
+					else if (_isColliding)
+					{
+						DrawLine(pos[0], pos[1], boxColliderCollidingColor, 1.0f, draw_list);
+						DrawLine(pos[1], pos[2], boxColliderCollidingColor, 1.0f, draw_list);
+						DrawLine(pos[2], pos[3], boxColliderCollidingColor, 1.0f, draw_list);
+						DrawLine(pos[3], pos[0], boxColliderCollidingColor, 1.0f, draw_list);
+					}
+				}
+				else
+				{
+					if (_isActive && !_isColliding)
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
+					else if (!_isActive)
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
+					else if (_isColliding)
+						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
+				}
 			}
 
 
@@ -1660,6 +1746,26 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 arrowScale = { 1, 1 };
 				Vector2 arrowOffset = { 0, arrowHeight };
 				bool _scalesWithZoom = false;
+
+				// Get Input and Output
+				ImGuiIO& inputOutput = ImGui::GetIO();
+
+				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step), sceneViewCenter.y - canvas_p0.y - ((position.y) * step + arrowOffset.y - 20));
+				ImGui::SetCursorPos(positionOnScreen);
+				// This will catch our interactions  - 4096 for overlap or keyword if it works
+				ImGui::InvisibleButton("TransformArrowButton", Vector2(arrowWidth, arrowHeight), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
+				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+				const bool is_active = ImGui::IsItemActive();   // Held
+
+				if (is_hovered || is_active)
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+				float transformMoveModifier = 0.02f;
+				// For panning the scene view
+				const float mouse_threshold_for_pan = 0.0f;
+				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Left, mouse_threshold_for_pan))
+					transform->SetPosition(Vector2(position.x + inputOutput.MouseDelta.x * transformMoveModifier, position.y - inputOutput.MouseDelta.y * transformMoveModifier));
+
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);

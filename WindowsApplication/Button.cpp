@@ -1,6 +1,7 @@
 #include "Button.h"
 #include "FlatEngine.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 namespace FlatEngine
 {
@@ -102,6 +103,18 @@ namespace FlatEngine
 
 	void Button::SetActiveOffset(Vector2 offset)
 	{
+		// Might need this later VVV
+		//std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
+		//std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+		//Vector2 scale = Vector2(1, 1);
+
+		//if (parent != nullptr)
+		//	transform = parent->GetTransformComponent();
+		//if (transform != nullptr)
+		//	scale = transform->GetScale();
+
+		//activeOffset = offset * scale;
+
 		activeOffset = offset;
 	}
 

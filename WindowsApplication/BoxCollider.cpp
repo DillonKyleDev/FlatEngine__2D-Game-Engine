@@ -138,6 +138,17 @@ namespace FlatEngine
 
 	void BoxCollider::SetActiveOffset(Vector2 offset)
 	{
+		// Might need this later VVV
+		//std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
+		//std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+		//Vector2 scale = Vector2(1, 1);
+
+		//if (parent != nullptr)
+		//	transform = parent->GetTransformComponent();
+		//if (transform != nullptr)
+		//	scale = transform->GetScale();
+
+		//activeOffset = offset * scale;
 		activeOffset = offset;
 	}
 
@@ -187,6 +198,15 @@ namespace FlatEngine
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
 
+		std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
+		std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+		Vector2 scale = Vector2(1, 1);
+
+		if (parent != nullptr)
+			transform = parent->GetTransformComponent();
+		if (transform != nullptr)
+			scale = transform->GetScale();
+
 		std::shared_ptr<FlatEngine::RigidBody> rigidBody;
 		if (GetParent()->HasComponent("RigidBody"))
 		{
@@ -216,10 +236,10 @@ namespace FlatEngine
 				position = transform->GetPosition();
 			}			
 
-			float activeLeft = centerPoint.x + (position.x - (activeWidth / 2) + activeOffset.x) * gridStep;
-			float activeTop = centerPoint.y + (-position.y - (activeHeight / 2) + activeOffset.y) * gridStep;
-			float activeRight = centerPoint.x + (position.x + (activeWidth / 2) + activeOffset.x) * gridStep;
-			float activeBottom = centerPoint.y + (-position.y + (activeHeight / 2) + activeOffset.y) * gridStep;
+			float activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * gridStep;
+			float activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * gridStep;
+			float activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * gridStep;
+			float activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * gridStep;
 
 			SetActiveEdges(Vector4(activeTop, activeRight, activeBottom, activeLeft));
 		}

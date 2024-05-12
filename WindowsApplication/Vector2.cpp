@@ -24,6 +24,22 @@ Vector2 Vector2::operator=(ImVec2& right)
 	return *this;
 }
 
+Vector2 Vector2::operator*(ImVec2& right)
+{
+	x *= right.x;
+	y *= right.y;
+
+	return *this;
+}
+
+Vector2 Vector2::operator*(Vector2& right)
+{
+	x *= right.x;
+	y *= right.y;
+
+	return *this;
+}
+
 bool Vector2::operator==(const Vector2 &right)
 {
 	return (x == right.x && y == right.y);
