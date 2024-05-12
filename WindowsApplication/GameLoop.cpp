@@ -207,6 +207,8 @@ namespace FlatEngine
 					if (checkAgainst != nullptr && (checkAgainst->GetID() != boxCollider->GetID()) && checkAgainst->IsActive())
 					{
 						// Update Secondary BoxCollider Active Edges
+						//LogVector2(FlatGui::sceneViewCenter, "Scene View Center: ");
+						//LogVector2(FlatGui::sceneViewGridStep, "Scene View GridStep: ");
 						ImVec4 secondaryActiveEdges = checkAgainst->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::sceneViewGridStep.x);
 
 						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && FlatEngine::AreColliding(primaryActiveEdges, secondaryActiveEdges))

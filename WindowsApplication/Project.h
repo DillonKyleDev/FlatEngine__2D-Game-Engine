@@ -19,6 +19,8 @@ public:
 	std::string GetLoadedPreviewAnimationPath();
 	void SetSceneViewScrolling(Vector2 scrolling);
 	Vector2 GetSceneViewScrolling();
+	void SetSceneViewGridStep(Vector2 gridStep);
+	Vector2 GetSceneViewGridStep();
 	std::string GetData();
 
 private:
@@ -26,6 +28,7 @@ private:
 	std::string loadedScenePath;
 	std::string loadedAnimationPath;
 	Vector2 sceneViewScrolling;
+	Vector2 sceneViewGridStep;
 	long focusedGameObjectID;
 	// Add more project properties here
 };

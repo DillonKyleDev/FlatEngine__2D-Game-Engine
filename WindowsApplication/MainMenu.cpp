@@ -189,6 +189,13 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				if (ImGui::BeginMenu("Components"))
 				{
+					if (ImGui::MenuItem("Transform"))
+					{
+						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
+						newObject->AddComponent(ComponentTypes::Transform);
+						newObject->SetName("Transform(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
 					if (ImGui::MenuItem("Sprite"))
 					{
 						std::shared_ptr<GameObject> newObject = CreateGameObject(-1);

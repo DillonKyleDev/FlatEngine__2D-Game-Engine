@@ -294,6 +294,13 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			// Parent ID
+			ImGui::Text("Parent ID    | ");
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(currentObject->GetParentID()).c_str());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			// Children
 			ImGui::Text("Children IDs | ");
 			for (long child : currentObject->GetChildren())
@@ -305,19 +312,6 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Indent
-			ImGui::Text("Indent       | ");
-			std::string indentString = std::to_string(indent);
-			ImGui::SameLine();
-			ImGui::Text(indentString.c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Extra Indent
-			ImGui::Text("Extra indent | ");
-			std::string extraIndentString = std::to_string(extraIndent);
-			ImGui::SameLine();
-			ImGui::Text(extraIndentString.c_str());
 			ImGui::EndTooltip();
 		}
 
@@ -332,7 +326,7 @@ namespace FlatEngine { namespace FlatGui {
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
-			
+			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
@@ -518,6 +512,13 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			// Parent ID
+			ImGui::Text("Parent ID    | ");
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(currentObject->GetParentID()).c_str());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			// Children
 			ImGui::Text("Children IDs | ");
 			for (long child : currentObject->GetChildren())
@@ -527,21 +528,6 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::Text(idString.c_str());
 			}
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Indent
-			ImGui::Text("Indent       | ");
-			std::string indentString = std::to_string(indent);
-			ImGui::SameLine();
-			ImGui::Text(indentString.c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Extra Indent
-			ImGui::Text("Extra indent | ");
-			std::string extraIndentString = std::to_string(extraIndent);
-			ImGui::SameLine();
-			ImGui::Text(extraIndentString.c_str());
 			ImGui::EndTooltip();
 		}
 
@@ -552,7 +538,7 @@ namespace FlatEngine { namespace FlatGui {
 			PushMenuStyles();
 			if (ImGui::MenuItem("Create Child"))
 			{
-				std::shared_ptr<GameObject> childObject = FlatEngine::CreateGameObject(currentObject->GetID());
+				std::shared_ptr<GameObject> childObject = CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}

@@ -132,6 +132,7 @@ namespace FlatEngine
 	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList);
+	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
 
 	// Profiler
 	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
@@ -272,6 +273,9 @@ namespace FlatEngine
 
 		// Icons
 		extern std::shared_ptr<Texture> transformArrow;
+		extern std::shared_ptr<Texture> transformArrowAllWhite;
+		extern std::shared_ptr<Texture> transformArrowXWhite;
+		extern std::shared_ptr<Texture> transformArrowYWhite;
 		extern std::shared_ptr<Texture> cameraIcon;
 		extern std::shared_ptr<Texture> playIcon;
 		extern std::shared_ptr<Texture> pauseIcon;
@@ -290,6 +294,9 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> hideIcon;
 
 		extern SDL_Texture* transformArrowTexture;
+		extern SDL_Texture* transformArrowAllWhiteTexture;
+		extern SDL_Texture* transformArrowXWhiteTexture;
+		extern SDL_Texture* transformArrowYWhiteTexture;
 		extern SDL_Texture* cameraTexture;
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
@@ -314,6 +321,8 @@ namespace FlatEngine
 
 		// Flags
 		extern ImGuiChildFlags childFlags;
+		extern ImGuiChildFlags autoResizeChildFlags;
+		extern ImGuiChildFlags resizeChildFlags;
 		extern ImGuiChildFlags headerFlags;
 		extern ImGuiTableFlags tableFlags;
 
@@ -430,6 +439,7 @@ namespace FlatEngine
 		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);
 		extern bool RenderCheckbox(std::string text, bool &_toCheck);
 		extern void RenderSectionHeader(std::string headerText, float height = 0);
+		extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false);
 
 		extern ImU32 Vector4ToImU32(Vector4 color);
 		

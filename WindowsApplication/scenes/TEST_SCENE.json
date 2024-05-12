@@ -12,7 +12,7 @@
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": 0.0,
+                    "yPos": 8.470588684082031,
                     "yScale": 1.0
                 },
                 {
@@ -76,9 +76,7 @@
         },
         {
             "_isActive": true,
-            "children": [
-                2
-            ],
+            "children": [],
             "components": [
                 {
                     "_isActive": true,
@@ -88,7 +86,7 @@
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": -6.0,
+                    "yPos": -2.9200000762939453,
                     "yScale": 1.0
                 },
                 {
@@ -102,31 +100,11 @@
                     "activeWidth": 17.84000015258789,
                     "id": 7,
                     "type": "BoxCollider"
-                }
-            ],
-            "id": 1,
-            "name": "Platform",
-            "parent": -1
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 10,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 11,
+                    "id": 10,
                     "renderOrder": 0,
                     "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\SingleButton.png",
                     "texture_height": 19.0,
@@ -136,9 +114,9 @@
                     "yOffset": 9.5
                 }
             ],
-            "id": 2,
-            "name": "Sprite",
-            "parent": 1
+            "id": 1,
+            "name": "Platform",
+            "parent": -1
         }
     ]
 }

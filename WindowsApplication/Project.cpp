@@ -68,6 +68,16 @@ Vector2 Project::GetSceneViewScrolling()
 	return sceneViewScrolling;
 }
 
+void Project::SetSceneViewGridStep(Vector2 gridStep)
+{
+	sceneViewGridStep = gridStep;
+}
+
+Vector2 Project::GetSceneViewGridStep()
+{
+	return sceneViewGridStep;
+}
+
 std::string Project::GetData()
 {
 	json jsonData = {

@@ -32,7 +32,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (GetFocusedAnimation()->animationName != "")
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
 
-		ImGui::BeginChild("Manage Animation", Vector2(0, 0), childFlags);
+		ImGui::BeginChild("Manage Animation", Vector2(0, 0), autoResizeChildFlags);
 	
 		RenderSectionHeader(animationName, 18);
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));

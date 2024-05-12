@@ -1299,41 +1299,6 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		drawList = ImGui::GetWindowDrawList();
 		drawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-		Vector2 adjustedScrolling = Vector2(scrolling.x + centerOffset.x, scrolling.y + centerOffset.y);
-		
-		// Get scroll amount for changing zoom level of scene view
-		ImGuiIO inputOutput = ImGui::GetIO();
-		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-		float scrollInput = inputOutput.MouseWheel;
-		float weight = 0.08f;
-		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-
-		const bool is_hovered = ImGui::IsItemHovered();
-		// Change scrolling offset based on mouse position and weight
-		if (is_hovered)
-		{
-			if (scrollInput > 0)
-			{
-				if (_weightedScroll)
-				{
-					scrolling.x -= trunc(signedMousePosX * weight);
-					scrolling.y -= trunc(signedMousePosY * weight);
-				}
-				step.x += 1;
-				step.y += 1;
-			}
-			else if (scrollInput < 0 && step.x > 2 && step.y > 2)
-			{
-				if (_weightedScroll)
-				{
-					scrolling.x += trunc(signedMousePosX * weight);
-					scrolling.y += trunc(signedMousePosY * weight);
-				}
-				step.x -= 1;
-				step.y -= 1;
-			}
-		}
 
 		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
 		// one of those step locations. We get the total grid steps that will render given the current viewport
@@ -1348,19 +1313,19 @@ namespace FlatEngine { namespace FlatGui {
 		// X = 0 starts the drawing at the left most edge of the entire app window.
 
 		// Draw horizontal grid lines
-		for (float x = trunc(fmodf(adjustedScrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
+		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
 			DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 		// Draw vertical grid lines
-		for (float y = trunc(fmodf(adjustedScrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
+		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
 			DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 
 		// Draw our x and y axis blue and green lines
 		//
-		float divX = trunc(adjustedScrolling.x / step.x);
-		float modX = fmodf(adjustedScrolling.x, step.x);
+		float divX = trunc(scrolling.x / step.x);
+		float modX = fmodf(scrolling.x, step.x);
 		float offsetX = (step.x * divX) + modX;
-		float divY = trunc(adjustedScrolling.y / step.y);
-		float modY = fmodf(adjustedScrolling.y, step.y);
+		float divY = trunc(scrolling.y / step.y);
+		float modY = fmodf(scrolling.y, step.y);
 		float offsetY = (step.y * divY) + modY;
 
 		// Blue, green and pink colors for axis and center
@@ -1461,26 +1426,26 @@ namespace FlatEngine { namespace FlatGui {
 				bool _spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 				std::string invisibleButtonID = "GameObjectSelectorButton_" + sprite->GetID();
-				// Get Input and Output
-				ImGuiIO& inputOutput = ImGui::GetIO();
 
-				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y));
-				ImGui::SetCursorPos(positionOnScreen);
-				//// This will catch our interactions  - 4096 for overlap or keyword if it works
-				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
-				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-				const bool is_active = ImGui::IsItemActive();   // Held
-				const bool is_clicked = ImGui::IsItemClicked();
-				LogFloat(spriteTextureWidth * spriteScaleMultiplier * step, "Texture width: ");
-				if (is_hovered || is_active)
-					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-
-				if (is_clicked)
-					SetFocusedGameObjectID(sprite->GetParentID());
-
-				// If there is a valid Texture loaded into the Sprite Component
 				if (spriteTexture != nullptr)
 				{
+					// Get Input and Output
+					ImGuiIO& inputOutput = ImGui::GetIO();
+
+					Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y));
+					ImGui::SetCursorPos(positionOnScreen);
+					//// This will catch our interactions  - 4096 for overlap or keyword if it works
+					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
+					const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+					const bool is_active = ImGui::IsItemActive();   // Held
+					const bool is_clicked = ImGui::IsItemClicked();
+
+					if (is_hovered || is_active)
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+					if (is_clicked)
+						SetFocusedGameObjectID(sprite->GetParentID());
+				
 					// Change the draw channel for the scene object
 					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
@@ -1737,39 +1702,78 @@ namespace FlatEngine { namespace FlatGui {
 			// Should be last in line here to be rendered top-most -- If this obect is focused
 			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
 			{
-				// Get focused GameObject and transformArrow png
-				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);								
-				// * 3 because the texture is so small. If we change the scale, it will change the render starting
-				// position, which we don't want. We only want to change the render ending position so we adjust dimensions only
+				std::shared_ptr<GameObject> focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+				SDL_Texture* arrowToRender = transformArrowTexture;
+				// * 3 because the texture is so small. If we change the scale, it will change the render starting position. We only want to change the render ending position so we adjust dimensions only
 				float arrowWidth = (float)transformArrow->getWidth() * 3;
 				float arrowHeight = (float)transformArrow->getHeight() * 3;
 				Vector2 arrowScale = { 1, 1 };
-				Vector2 arrowOffset = { 0, arrowHeight };
+				Vector2 arrowOffset = { 3, arrowHeight - 3 };
 				bool _scalesWithZoom = false;
-
-				// Get Input and Output
-				ImGuiIO& inputOutput = ImGui::GetIO();
-
-				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step), sceneViewCenter.y - canvas_p0.y - ((position.y) * step + arrowOffset.y - 20));
-				ImGui::SetCursorPos(positionOnScreen);
-				// This will catch our interactions  - 4096 for overlap or keyword if it works
-				ImGui::InvisibleButton("TransformArrowButton", Vector2(arrowWidth, arrowHeight), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
-				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-				const bool is_active = ImGui::IsItemActive();   // Held
-
-				if (is_hovered || is_active)
-					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-
 				float transformMoveModifier = 0.02f;
-				// For panning the scene view
-				const float mouse_threshold_for_pan = 0.0f;
-				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Left, mouse_threshold_for_pan))
-					transform->SetPosition(Vector2(position.x + inputOutput.MouseDelta.x * transformMoveModifier, position.y - inputOutput.MouseDelta.y * transformMoveModifier));
+				ImGuiIO& inputOutput = ImGui::GetIO();
+				Vector2 positionOnScreen = Vector2(sceneViewCenter.x + (position.x * step), sceneViewCenter.y - (position.y * step));
+
+				// Invisible button for Transform Arrow Move X and Y
+				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
+				RenderInvisibleButton("TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
+				const bool _baseHovered = ImGui::IsItemHovered();
+				const bool _baseActive = ImGui::IsItemActive();
+				const bool _baseClicked = ImGui::IsItemClicked();
+				if (_baseHovered || _baseActive)
+				{
+					arrowToRender = transformArrowAllWhiteTexture;
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				}
+
+				// Invisible button for X arrow
+				Vector2 moveXStartPos = Vector2(positionOnScreen.x + 24, positionOnScreen.y - 30);
+				RenderInvisibleButton("TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
+				const bool _xHovered = ImGui::IsItemHovered();
+				const bool _xActive = ImGui::IsItemActive();
+				const bool _xClicked = ImGui::IsItemClicked();
+				if (_xHovered || _xActive)
+				{
+					arrowToRender = transformArrowXWhiteTexture;
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				}
+
+				// Invisible button for Y arrow
+				Vector2 moveYStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 86);
+				RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
+				const bool _yHovered = ImGui::IsItemHovered();
+				const bool _yActive = ImGui::IsItemActive();
+				const bool _yClicked = ImGui::IsItemClicked();
+				if (_yHovered || _yActive)
+				{
+					arrowToRender = transformArrowYWhiteTexture;
+					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				}
+
+				static Vector2 transformScreenPos = Vector2(0, 0);
+				static Vector2 cursorPosAtClick = inputOutput.MousePos;
+
+				if (_baseClicked || _xClicked || _yClicked)
+				{
+					cursorPosAtClick = inputOutput.MousePos;
+					transformScreenPos = Vector2(sceneViewCenter.x + (position.x * step), sceneViewCenter.y - (position.y * step));
+				}
+
+				Vector2 transformPosOffsetFromMouse = Vector2((cursorPosAtClick.x - transformScreenPos.x) / step, (cursorPosAtClick.y - transformScreenPos.y) / step);
+				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / step, (sceneViewCenter.y - inputOutput.MousePos.y) / step);
+				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);
+				
+				if (_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					transform->SetPosition(newTransformPos);
+				else if (_xActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					transform->SetPosition(Vector2(newTransformPos.x, position.y));
+				else if (_yActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					transform->SetPosition(Vector2(position.x, newTransformPos.y));
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				AddImageToDrawList(transformArrowTexture, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
+				AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
 			}
 		}
 
@@ -2119,10 +2123,10 @@ namespace FlatEngine { namespace FlatGui {
 			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 
-			LogVector2(topLeft, "topLeft Sprite: ");
-			LogVector2(topRight, "topRight Sprite: ");
-			LogVector2(bottomRight, "bottomRight Sprite: ");
-			LogVector2(bottomLeft, "bottomLeft Sprite: ");
+			//LogVector2(topLeft, "topLeft Sprite: ");
+			//LogVector2(topRight, "topRight Sprite: ");
+			//LogVector2(bottomRight, "bottomRight Sprite: ");
+			//LogVector2(bottomLeft, "bottomLeft Sprite: ");
 
 			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
 			Vector2 pos[4] =
@@ -2274,6 +2278,20 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
 		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(componentBorderColor));
+	}
+
+	// *** Sets CursorScreenPos to the starting point! ***
+	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect)
+	{
+		if (_showRect)
+			DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), FlatGui::whiteColor, 1.0f, ImGui::GetWindowDrawList());
+
+		ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight;
+		if (_allowOverlap)
+			flags += ImGuiButtonFlags_AllowOverlap;
+
+		ImGui::SetCursorScreenPos(startingPoint);
+		return ImGui::InvisibleButton(id.c_str(), size, flags);
 	}
 
 	// Hierarchy

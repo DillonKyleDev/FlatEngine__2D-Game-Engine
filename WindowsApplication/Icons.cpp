@@ -6,6 +6,9 @@ namespace FlatEngine { namespace FlatGui {
 
 	// Icons / Images
 	std::shared_ptr<Texture> transformArrow = std::make_shared<Texture>();
+	std::shared_ptr<Texture> transformArrowAllWhite = std::make_shared<Texture>();
+	std::shared_ptr<Texture> transformArrowXWhite = std::make_shared<Texture>();
+	std::shared_ptr<Texture> transformArrowYWhite = std::make_shared<Texture>();
 	std::shared_ptr<Texture> cameraIcon = std::make_shared<Texture>();
 
 	std::shared_ptr<Texture> playIcon = std::make_shared<Texture>();
@@ -30,6 +33,9 @@ namespace FlatEngine { namespace FlatGui {
 	Vector4 bg_col = Vector4(1.0f, 1.0f, 1.0f, 0.0f);
 
 	SDL_Texture* transformArrowTexture = nullptr;
+	SDL_Texture* transformArrowAllWhiteTexture = nullptr;
+	SDL_Texture* transformArrowXWhiteTexture = nullptr;
+	SDL_Texture* transformArrowYWhiteTexture = nullptr;
 	SDL_Texture* cameraTexture = nullptr;
 
 	SDL_Texture* playTexture = nullptr;
@@ -52,6 +58,13 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		transformArrow->loadFromFile("assets/images/icons/transformArrow.png");
 		transformArrowTexture = transformArrow->getTexture();
+		transformArrowAllWhite->loadFromFile("assets/images/icons/transformArrowAllWhite.png");
+		transformArrowAllWhiteTexture = transformArrowAllWhite->getTexture();
+		transformArrowXWhite->loadFromFile("assets/images/icons/transformArrowXWhite.png");
+		transformArrowXWhiteTexture = transformArrowXWhite->getTexture();
+		transformArrowYWhite->loadFromFile("assets/images/icons/transformArrowYWhite.png");
+		transformArrowYWhiteTexture = transformArrowYWhite->getTexture();
+
 		cameraIcon->loadFromFile("assets/images/icons/camera.png");
 		cameraTexture = cameraIcon->getTexture();
 		// Attribution for Camera icon

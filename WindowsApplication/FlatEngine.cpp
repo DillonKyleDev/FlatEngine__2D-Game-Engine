@@ -261,13 +261,19 @@ namespace FlatEngine
 					if (currentObjectJson.contains("focusedGameObjectID"))
 						newProject->SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
 
-					// Scene Scrolling
+					// Scene Scrolling + Grid Step
 					Vector2 sceneViewScroll = Vector2(0, 0);
 					if (currentObjectJson.contains("sceneViewScrollingX"))				
 						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
 					if (currentObjectJson.contains("sceneViewScrollingY"))
 						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
 					newProject->SetSceneViewScrolling(sceneViewScroll);
+					Vector2 sceneViewGridStep = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewGridStepX"))
+						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
+					if (currentObjectJson.contains("sceneViewGridStepY"))
+						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
+					newProject->SetSceneViewGridStep(sceneViewGridStep);
 
 					// Show/hide windows
 					if (currentObjectJson.contains("_showSceneView"))
@@ -311,7 +317,9 @@ namespace FlatEngine
 		if (loadedProject->GetLoadedPreviewAnimationPath() != "")
 			SetFocusedAnimation(FlatGui::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
-		//FlatGui::sceneViewScrolling = Vector2(scrolling.x, scrolling.y);
+		FlatGui::sceneViewScrolling = scrolling;
+		Vector2 gridStep = loadedProject->GetSceneViewGridStep();
+		FlatGui::sceneViewGridStep = gridStep;
 
 		if (loadedProject->GetFocusedGameObjectID() != -1 && GetObjectById(loadedProject->GetFocusedGameObjectID()) != nullptr)
 			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
@@ -332,7 +340,6 @@ namespace FlatEngine
 
 		// Array that will hold our gameObject json objects
 		json projectProperties;
-		Vector2 sceneViewScrolling = project->GetSceneViewScrolling();
 
 		// Create Animation Property Json data object
 		json animationName = json::object({
@@ -340,8 +347,10 @@ namespace FlatEngine
 			{ "loadedScenePath", project->GetLoadedScenePath()},
 			{ "loadedAnimationPath", project->GetLoadedPreviewAnimationPath()},
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
-			{ "sceneViewScrollingX", sceneViewScrolling.x },
-			{ "sceneViewScrollingY", sceneViewScrolling.y },
+			{ "sceneViewScrollingX", FlatGui::sceneViewScrolling.x },
+			{ "sceneViewScrollingY", FlatGui::sceneViewScrolling.y },
+			{ "sceneViewGridStepX", FlatGui::sceneViewGridStep.x },
+			{ "sceneViewGridStepY", FlatGui::sceneViewGridStep.y },
 			{ "_showSceneView", FlatGui::_showSceneView },
 			{ "_showGameView", FlatGui::_showGameView },
 			{ "_showHierarchy", FlatGui::_showHierarchy },
@@ -624,18 +633,23 @@ namespace FlatEngine
 		logger->LogVector2(vector, line);
 	}
 
-	void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)
+	void DrawRectangle(Vector2 startingPoint, Vector2 endPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
 			startingPoint.x = canvas_p0.x;
-		if (endingPoint.x > canvas_p0.x + canvas_sz.x)
-			endingPoint.x = canvas_p0.x + canvas_sz.x;
+		if (endPoint.x > canvas_p0.x + canvas_sz.x)
+			endPoint.x = canvas_p0.x + canvas_sz.x;
 		if (startingPoint.y < canvas_p0.y)
 			startingPoint.y = canvas_p0.y;
-		if (endingPoint.y > canvas_p0.y + canvas_sz.y)
-			endingPoint.y = canvas_p0.y + canvas_sz.y;
+		if (endPoint.y > canvas_p0.y + canvas_sz.y)
+			endPoint.y = canvas_p0.y + canvas_sz.y;
 
-		logger->DrawRectangle(startingPoint, endingPoint, color, thickness, drawList);
+		logger->DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
+	}
+
+	void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList)
+	{
+		logger->DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
 	}
 
 	void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList)
