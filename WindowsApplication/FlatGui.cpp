@@ -1609,91 +1609,25 @@ namespace FlatEngine { namespace FlatGui {
 				int activeLayer = boxCollider->GetActiveLayer();
 				bool _isActive = boxCollider->IsActive();
 				bool _isColliding = boxCollider->IsColliding();
-
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
-
-				float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
-				float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
-
-				Vector2 center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
-
-				Vector2 topLeft = { activeLeft, activeTop };
-				Vector2 bottomRight = { activeRight, activeBottom };
-				Vector2 topRight = { activeRight, activeTop };
-				Vector2 bottomLeft = { activeLeft, activeBottom };
+				Vector2* corners = boxCollider->GetCorners();
+				Vector2* normals = boxCollider->GetNormals();
+				Vector2 center = boxCollider->GetCenter();
+				boxCollider->RecalculateBounds();
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				// Normal vectors
-				Vector2 topNormal = ImRotate(Vector2(0, -activeHeight * step * transformScale.y), cos_a, sin_a);
-				Vector2 rightNormal = ImRotate(Vector2(+activeWidth * step * transformScale.x, 0), cos_a, sin_a);
-				Vector2 bottomNormal = ImRotate(Vector2(0, +activeHeight * step * transformScale.y), cos_a, sin_a);
-				Vector2 leftNormal = ImRotate(Vector2(-activeWidth * step * transformScale.x, 0), cos_a, sin_a);
-
-				Vector2 normals[4] =
-				{
-					Vector2(center.x + topNormal.x, center.y + topNormal.y),
-					Vector2(center.x + rightNormal.x, center.y + rightNormal.y),
-					Vector2(center.x + bottomNormal.x, center.y + bottomNormal.y),
-					Vector2(center.x + leftNormal.x, center.y + leftNormal.y),
-				};
-
-				// Get dot product of
-				// Get normal of a vertex
+				// Draw Normals
 				DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
 				DrawLine(center, normals[1], boxColliderInactiveColor, 2.0f, draw_list);
 				DrawLine(center, normals[2], boxColliderInactiveColor, 2.0f, draw_list);
 				DrawLine(center, normals[3], boxColliderInactiveColor, 2.0f, draw_list);
 
-				if (rotation != 0)
-				{
-					topLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					topRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-
-					Vector2 pos[4] =
-					{
-						Vector2(center.x + topLeft.x, center.y + topLeft.y),
-						Vector2(center.x + topRight.x, center.y + topRight.y),
-						Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
-						Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
-					};					
-
-					if (_isActive && !_isColliding)
-					{
-						DrawLine(pos[0], pos[1], boxColliderActiveColor, 1.0f, draw_list);
-						DrawLine(pos[1], pos[2], boxColliderActiveColor, 1.0f, draw_list);
-						DrawLine(pos[2], pos[3], boxColliderActiveColor, 1.0f, draw_list);
-						DrawLine(pos[3], pos[0], boxColliderActiveColor, 1.0f, draw_list);
-					}
-					else if (!_isActive)
-					{
-						DrawLine(pos[0], pos[1], boxColliderInactiveColor, 1.0f, draw_list);
-						DrawLine(pos[1], pos[2], boxColliderInactiveColor, 1.0f, draw_list);
-						DrawLine(pos[2], pos[3], boxColliderInactiveColor, 1.0f, draw_list);
-						DrawLine(pos[3], pos[0], boxColliderInactiveColor, 1.0f, draw_list);
-					}
-					else if (_isColliding)
-					{
-						DrawLine(pos[0], pos[1], boxColliderCollidingColor, 1.0f, draw_list);
-						DrawLine(pos[1], pos[2], boxColliderCollidingColor, 1.0f, draw_list);
-						DrawLine(pos[2], pos[3], boxColliderCollidingColor, 1.0f, draw_list);
-						DrawLine(pos[3], pos[0], boxColliderCollidingColor, 1.0f, draw_list);
-					}
-				}
-				else
-				{
-					if (_isActive && !_isColliding)
-						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderActiveColor, 1.0f, draw_list);
-					else if (!_isActive)
-						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderInactiveColor, 1.0f, draw_list);
-					else if (_isColliding)
-						DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, boxColliderCollidingColor, 1.0f, draw_list);
-				}
+				if (_isActive && !_isColliding)
+					DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
+				else if (!_isActive)
+					DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
+				else if (_isColliding)
+					DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
 			}
 
 

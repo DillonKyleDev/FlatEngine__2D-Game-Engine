@@ -200,44 +200,18 @@ namespace FlatEngine
 				bool _isColliding = false;
 
 				// Update Primary BoxCollider Active Edges
-				ImVec4 primaryActiveEdges = boxCollider->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::sceneViewGridStep.x);
+				boxCollider->UpdateActiveEdges();
 
 				for (std::shared_ptr<BoxCollider> checkAgainst : boxColliders)
 				{
 					if (checkAgainst != nullptr && (checkAgainst->GetID() != boxCollider->GetID()) && checkAgainst->IsActive())
 					{
 						// Update Secondary BoxCollider Active Edges
-						//LogVector2(FlatGui::sceneViewCenter, "Scene View Center: ");
-						//LogVector2(FlatGui::sceneViewGridStep, "Scene View GridStep: ");
-						ImVec4 secondaryActiveEdges = checkAgainst->UpdateActiveEdges(FlatGui::sceneViewCenter, FlatGui::sceneViewGridStep.x);
+						checkAgainst->UpdateActiveEdges();
 
-						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && FlatEngine::AreColliding(primaryActiveEdges, secondaryActiveEdges))
+						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->CheckForCollision(checkAgainst))
 						{
-							_isColliding = true;
-
-							// Now get transforms and get the collision side
-							std::shared_ptr<Transform> primaryTransform = boxCollider->GetParent()->GetTransformComponent();
-							std::shared_ptr<Transform> secondaryTransform = checkAgainst->GetParent()->GetTransformComponent();
-							std::shared_ptr<RigidBody> primaryRigidBody = boxCollider->GetParent()->GetRigidBody();
-							std::shared_ptr<RigidBody> secondaryRigidBody = checkAgainst->GetParent()->GetRigidBody();
-							Vector2 primaryPos = primaryTransform->GetPosition();
-							Vector2 secondaryPos = secondaryTransform->GetPosition();
-
-							if ((primaryPos.x - secondaryPos.x) < 0) {
-								//LogString("hit left");
-							}
-							else if ((primaryPos.x - secondaryPos.x) > 0) {
-								//LogString("hit right");
-							}
-							if ((primaryPos.y - secondaryPos.y) < 0) {
-
-								//LogString("hit top");
-							}
-							else if ((primaryPos.y - secondaryPos.y) > 0) {
-								/*if (primaryActiveEdges.z - secondaryActiveEdges.x > 0.5f)
-									primaryRigidBody->AddForce(Vector2(0, 1), .1f, deltaTime);*/
-								//LogString("hit bottom");
-							}
+							LogString("Colliding");
 						}
 					}
 				}

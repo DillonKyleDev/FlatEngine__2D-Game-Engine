@@ -236,6 +236,8 @@ namespace FlatEngine
 					std::shared_ptr<GameObject> loadedObject = std::make_shared<GameObject>(loadedParentID, loadedID);
 					loadedObject->SetName(loadedName);
 					loadedObject->SetActive(_isActive);
+					// Add created GameObject to our freshScene
+					freshScene->AddSceneObject(loadedObject);
 
 					// Add children
 					for (int c = 0; c < currentObjectJson["children"].size(); c++)
@@ -995,9 +997,6 @@ namespace FlatEngine
 							newRigidBody->SetIsStatic(_isStatic);
 						}
 					}
-
-					// Add created GameObject to our freshScene
-					freshScene->AddSceneObject(loadedObject);
 				}
 			}
 		}

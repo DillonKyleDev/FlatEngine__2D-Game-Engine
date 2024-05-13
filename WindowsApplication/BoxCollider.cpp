@@ -3,6 +3,7 @@
 #include "FlatEngine.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "imgui_internal.h"
 
 
 namespace FlatEngine
@@ -21,6 +22,13 @@ namespace FlatEngine
 		_isColliding = false;
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
+
+		activeLeft = 0;
+		activeRight = 0;
+		activeBottom = 0;
+		activeTop = 0;
+		// CREATE A SAVED JSON FIELD THAT WILL LOAD ROTATION EVERY RELOAD
+		rotation = 0;
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = nullptr;
@@ -77,6 +85,11 @@ namespace FlatEngine
 	{
 		OnCollisionLeave = callback;
 		_onCollisionLeaveSet = true;
+	}
+
+	bool BoxCollider::CheckForCollision(std::shared_ptr<BoxCollider> other)
+	{
+		return false;
 	}
 
 	bool BoxCollider::IsColliding()
@@ -193,38 +206,41 @@ namespace FlatEngine
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
-	Vector4 BoxCollider::UpdateActiveEdges(Vector2 centerPoint, float gridStep)
+	Vector4 BoxCollider::UpdateActiveEdges()
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
-		bool _shouldUpdate = false;
+		//bool _shouldUpdate = false;
 
 		std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
 		std::shared_ptr<FlatEngine::Transform> transform = nullptr;
-		Vector2 scale = Vector2(1, 1);
+		//Vector2 scale = Vector2(1, 1);
 
-		if (parent != nullptr)
-			transform = parent->GetTransformComponent();
-		if (transform != nullptr)
-			scale = transform->GetScale();
+		//if (parent != nullptr)
+		//	transform = parent->GetTransformComponent();
+		//if (transform != nullptr)
+		//	scale = transform->GetScale();
 
-		std::shared_ptr<FlatEngine::RigidBody> rigidBody;
-		if (GetParent()->HasComponent("RigidBody"))
-		{
-			rigidBody = GetParent()->GetRigidBody();
-			Vector2 velocity = rigidBody->GetVelocity();
+		//std::shared_ptr<FlatEngine::RigidBody> rigidBody;
+		//if (GetParent()->HasComponent("RigidBody"))
+		//{
+			//rigidBody = GetParent()->GetRigidBody();
+		//	Vector2 velocity = rigidBody->GetVelocity();
 
-			if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
-				_shouldUpdate = true;
-		}
-		else
-		{
-			if (!_activeEdgesSet || HasMoved())
-				_shouldUpdate = true;
-		}
+		//	if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
+		//		_shouldUpdate = true;
+		//}
+		//else
+		//{
+		//	if (!_activeEdgesSet || HasMoved())
+		//		_shouldUpdate = true;
+		//}
 
-		if (_shouldUpdate)
-		{
+		//if (_shouldUpdate)
+		//{
+			std::shared_ptr<FlatEngine::RigidBody> rigidBody = parent->GetRigidBody();
 			Vector2 position;
+			float step = FlatGui::sceneViewGridStep.x;
+			Vector2 centerPoint = FlatGui::sceneViewCenter;
 
 			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
 			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
@@ -236,15 +252,127 @@ namespace FlatEngine
 				position = transform->GetPosition();
 			}			
 
-			float activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * gridStep;
-			float activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * gridStep;
-			float activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * gridStep;
-			float activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * gridStep;
-
 			SetActiveEdges(Vector4(activeTop, activeRight, activeBottom, activeLeft));
-		}
+		//}
 
 		return activeEdges;
+	}
+
+	void BoxCollider::UpdateNormals()
+	{
+		float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
+		float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+		float step = FlatGui::sceneViewGridStep.x;
+		Vector2 centerPoint = FlatGui::sceneViewCenter;
+		Vector2 scale = GetParent()->GetTransformComponent()->GetScale();
+
+		// Normal vectors without rotation
+		Vector2 topNormal = Vector2(0, -activeHeight * step * scale.y);
+		Vector2 rightNormal = Vector2(+activeWidth * step * scale.x, 0);
+		Vector2 bottomNormal = Vector2(0, +activeHeight * step * scale.y);
+		Vector2 leftNormal = Vector2(-activeWidth * step * scale.x, 0);
+
+		if (rotation != 0)
+		{
+			// Normal vectors with rotation
+			topNormal = ImRotate(Vector2(0, -activeHeight * step * scale.y), cos_a, sin_a);
+			rightNormal = ImRotate(Vector2(+activeWidth * step * scale.x, 0), cos_a, sin_a);
+			bottomNormal = ImRotate(Vector2(0, +activeHeight * step * scale.y), cos_a, sin_a);
+			leftNormal = ImRotate(Vector2(-activeWidth * step * scale.x, 0), cos_a, sin_a);
+		}
+
+		Vector2 newNormals[4] =
+		{
+			Vector2(center.x + topNormal.x, center.y + topNormal.y),
+			Vector2(center.x + rightNormal.x, center.y + rightNormal.y),
+			Vector2(center.x + bottomNormal.x, center.y + bottomNormal.y),
+			Vector2(center.x + leftNormal.x, center.y + leftNormal.y),
+		};
+		
+		SetNormals(newNormals);
+	}
+
+	void BoxCollider::UpdateCorners()
+	{
+		float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
+		float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+		float step = FlatGui::sceneViewGridStep.x;
+		Vector2 centerPoint = FlatGui::sceneViewCenter;
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 position = transform->GetPosition();
+		Vector2 scale = transform->GetScale();
+
+		// Corners without rotation
+		Vector2 topLeft = { activeLeft, activeTop };
+		Vector2 bottomRight = { activeRight, activeBottom };
+		Vector2 topRight = { activeRight, activeTop };
+		Vector2 bottomLeft = { activeLeft, activeBottom };		
+
+		if (rotation != 0)
+		{
+			// Corners with rotation
+			topLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);			
+			topRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);
+			bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
+			bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
+		}
+
+		Vector2 newCorners[4] =
+		{
+			Vector2(center.x + topLeft.x, center.y + topLeft.y),
+			Vector2(center.x + topRight.x, center.y + topRight.y),
+			Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+			Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+		};
+
+		SetCorners(newCorners);
+	}
+
+	void BoxCollider::UpdateCenter()
+	{
+		float step = FlatGui::sceneViewGridStep.x;
+		Vector2 centerPoint = FlatGui::sceneViewCenter;
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 position = transform->GetPosition();
+		Vector2 scale = transform->GetScale();
+
+		activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
+		activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
+		activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
+		activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+
+		center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
+	}
+
+	void BoxCollider::SetCorners(Vector2 newCorners[4])
+	{
+		corners[0] = newCorners[0];
+		corners[1] = newCorners[1];
+		corners[2] = newCorners[2];
+		corners[3] = newCorners[3];
+	}
+
+	Vector2* BoxCollider::GetCorners()
+	{
+		return corners;
+	}
+
+	void BoxCollider::SetNormals(Vector2 newNormals[4])
+	{
+		normals[0] = newNormals[0];
+		normals[1] = newNormals[1];
+		normals[2] = newNormals[2];
+		normals[3] = newNormals[3];
+	}
+
+	Vector2 BoxCollider::GetCenter()
+	{
+		return center;
+	}
+
+	Vector2* BoxCollider::GetNormals()
+	{
+		return normals;
 	}
 
 	void BoxCollider::SetIsContinuous(bool _continuous)
@@ -275,5 +403,17 @@ namespace FlatEngine
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
+	}
+
+	void BoxCollider::SetRotation(float newRotation)
+	{
+		rotation = newRotation;
+	}
+	void BoxCollider::RecalculateBounds()
+	{
+		UpdateActiveEdges();
+		UpdateCenter();
+		UpdateCorners();
+		UpdateNormals();
 	}
 }

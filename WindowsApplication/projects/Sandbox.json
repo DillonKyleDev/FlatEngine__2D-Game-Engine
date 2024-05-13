@@ -12,14 +12,14 @@
             "_showMappingContextEditor": false,
             "_showProfiler": false,
             "_showSceneView": true,
-            "focusedGameObjectID": 0,
+            "focusedGameObjectID": 2,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\MoveAround.json",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\TEST_SCENE.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
-            "sceneViewGridStepX": 20.0,
-            "sceneViewGridStepY": 20.0,
-            "sceneViewScrollingX": 517.0,
-            "sceneViewScrollingY": 236.0
+            "sceneViewGridStepX": 53.0,
+            "sceneViewGridStepY": 53.0,
+            "sceneViewScrollingX": 494.0,
+            "sceneViewScrollingY": 814.0
         }
     ]
 }

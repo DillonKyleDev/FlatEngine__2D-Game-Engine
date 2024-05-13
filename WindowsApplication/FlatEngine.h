@@ -131,6 +131,7 @@ namespace FlatEngine
 	extern void LogVector2(Vector2 vector, std::string line = "");
 	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
+	extern void DrawRectangleFromLines(Vector2* corners, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList);
 	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
 
@@ -155,7 +156,8 @@ namespace FlatEngine
 	// Helper Functions
 	extern bool AreCollidingWorld(Vector4 ObjectA, Vector4 ObjectB);
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
-	extern 	bool AreColliding(Vector4 ObjectA, Vector4 ObjectB);
+	extern bool AreCollidingNoRotation(Vector4 ObjectA, Vector4 ObjectB);
+	extern bool AreCollidingWithRotation(Vector4 ObjectA, Vector4 ObjectB, Vector2 projectionVector);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
 
 	extern std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance);

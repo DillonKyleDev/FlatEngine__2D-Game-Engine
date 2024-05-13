@@ -26,6 +26,7 @@ namespace FlatEngine
 		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
 		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
 
+		bool CheckForCollision(std::shared_ptr<BoxCollider> other);
 		bool IsColliding();
 		void SetColliding(bool _isColliding);
 		void UpdatePreviousPosition();
@@ -43,10 +44,20 @@ namespace FlatEngine
 		//Vector4(activeTop, activeRight, activeBottom, activeLeft)
 		void SetActiveEdges(Vector4 edges);
 		Vector4 GetActiveEdges();
-		Vector4 UpdateActiveEdges(Vector2 centerPoint, float gridStep);
+		Vector4 UpdateActiveEdges();
+		void UpdateNormals();
+		void UpdateCorners();
+		void UpdateCenter();
+		void SetCorners(Vector2 corners[4]);
+		Vector2* GetCorners();
+		void SetNormals(Vector2 normals[4]);
+		Vector2 GetCenter();
+		Vector2* GetNormals();
 		void SetIsContinuous(bool _continuous);
 		bool IsContinuous();
 		std::string GetData();
+		void SetRotation(float rotation);
+		void RecalculateBounds();
 
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollision;
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnter;
@@ -62,11 +73,18 @@ namespace FlatEngine
 		bool _isColliding;
 		float activeWidth;
 		float activeHeight;
+		float activeLeft;
+		float activeRight;
+		float activeBottom;
+		float activeTop;
 		Vector4 activeEdges;
 		Vector2 activeOffset;
 		bool _isContinious;
 		int activeLayer;
 		bool _activeEdgesSet;
-		std::vector<Vector2> normals;
+		Vector2 corners[4];
+		Vector2 normals[4];
+		Vector2 center;
+		float rotation;
 	};
 }

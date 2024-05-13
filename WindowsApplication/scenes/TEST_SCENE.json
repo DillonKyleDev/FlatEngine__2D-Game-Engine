@@ -8,11 +8,11 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 2,
-                    "rotation": 0.0,
+                    "rotation": 45.0,
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": 8.470588684082031,
+                    "yPos": 10.0,
                     "yScale": 1.0
                 },
                 {
@@ -81,41 +81,29 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 4,
-                    "rotation": 0.0,
+                    "id": 9,
+                    "rotation": -30.799999237060547,
                     "type": "Transform",
-                    "xPos": 0.0,
+                    "xPos": 4.264150619506836,
                     "xScale": 1.0,
-                    "yPos": -2.9200000762939453,
+                    "yPos": 9.899999618530273,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": false,
-                    "activeHeight": 3.809999942779541,
+                    "_isContinious": true,
+                    "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 17.84000015258789,
-                    "id": 7,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
+                    "activeWidth": 2.0,
                     "id": 10,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\SingleButton.png",
-                    "texture_height": 19.0,
-                    "texture_width": 89.0,
-                    "type": "Sprite",
-                    "xOffset": 44.5,
-                    "yOffset": 9.5
+                    "type": "BoxCollider"
                 }
             ],
-            "id": 1,
-            "name": "Platform",
+            "id": 2,
+            "name": "BoxCollider(2)",
             "parent": -1
         }
     ]

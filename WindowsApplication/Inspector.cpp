@@ -337,7 +337,16 @@ namespace FlatEngine { namespace FlatGui {
 								RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, -FLT_MAX, -FLT_MAX);
 								RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, -FLT_MAX, -FLT_MAX);
 								transform->SetScale(Vector2(scaleX, scaleY));								
-								PopTable();							
+								PopTable();			
+
+								if (focusedObject->HasComponent("BoxCollider"))
+								{
+									std::shared_ptr<BoxCollider> boxCollider = focusedObject->GetBoxCollider();									
+									boxCollider->SetRotation(rotation);
+									boxCollider->RecalculateBounds();
+								}
+
+								// Might want to do the same thing here for sprites as above
 							}
 							else if (componentType == "Sprite")
 							{

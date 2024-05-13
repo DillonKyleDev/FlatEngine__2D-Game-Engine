@@ -1,5 +1,6 @@
 #include "Transform.h"
 #include "FlatEngine.h"
+#include "BoxCollider.h"
 
 namespace FlatEngine
 {
@@ -54,6 +55,8 @@ namespace FlatEngine
 	// Setters
 	void Transform::SetPosition(Vector2 newPosition)
 	{
+		if (GetParent()->HasComponent("BoxCollider"))
+			GetParent()->GetBoxCollider()->RecalculateBounds();
 		position = newPosition;
 	}
 
@@ -64,6 +67,8 @@ namespace FlatEngine
 
 	void Transform::SetRotation(float newRotation)
 	{
+		if (GetParent()->HasComponent("BoxCollider"))
+			GetParent()->GetBoxCollider()->SetRotation(newRotation);
 		rotation = newRotation;
 	}
 
