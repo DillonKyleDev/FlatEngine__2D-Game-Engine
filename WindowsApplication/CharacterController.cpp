@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "Transform.h"
 #include "RigidBody.h"
+#include "BoxCollider.h"
 
 
 namespace FlatEngine {
@@ -12,7 +13,7 @@ namespace FlatEngine {
 		SetParentID(parentID);
 		walkSpeed = 1;
 		runSpeed = 2;
-		maxSpeed = 0.2f;
+		maxSpeed = 0.09f;
 		speedCorrection = 0.001f;
 		_isMoving = false;
 		_isGrounded = false;
@@ -69,7 +70,6 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		LogFloat(normalizedX, "norm x: ");
 		Vector2 velocity = rigidBody->GetVelocity();
 		// If the object has not hit max speed in negative or positive direction
 		if (velocity.x >= 0 && velocity.x < maxSpeed || velocity.x <= 0 && velocity.x >(maxSpeed * -1) ||
@@ -81,6 +81,11 @@ namespace FlatEngine {
 			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0), GetDeltaTime());
 			_isMoving = true;
 		}
+
+		if (velocity.x > maxSpeed && _isMoving)
+			velocity.x = maxSpeed;
+		if (velocity.y < -maxSpeed && _isMoving)
+			velocity.y = -maxSpeed;
 		
 		if (normalizedX == 0)
 			_isMoving = false;

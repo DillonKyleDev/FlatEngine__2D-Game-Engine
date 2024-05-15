@@ -89,7 +89,17 @@ namespace FlatEngine
 
 	bool BoxCollider::CheckForCollision(std::shared_ptr<BoxCollider> other)
 	{
-		return false;
+		float A_TopEdge = activeTop;
+		float A_RightEdge = activeRight;
+		float A_BottomEdge = activeBottom;
+		float A_LeftEdge = activeLeft;
+
+		float B_TopEdge = other->activeTop;
+		float B_RightEdge = other->activeRight;
+		float B_BottomEdge = other->activeBottom;
+		float B_LeftEdge = other->activeLeft;
+
+		return ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
 	}
 
 	bool BoxCollider::IsColliding()
@@ -208,35 +218,42 @@ namespace FlatEngine
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	Vector4 BoxCollider::UpdateActiveEdges()
 	{
-		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
-		//bool _shouldUpdate = false;
+		if (loadedProject->GetCollisionDetection() == "Simple Box")
+		{
+			SimpleBoxUpdateEdges();
+		}
+		else
+		{
 
-		std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
-		std::shared_ptr<FlatEngine::Transform> transform = nullptr;
-		//Vector2 scale = Vector2(1, 1);
+			// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
+			bool _shouldUpdate = false;
 
-		//if (parent != nullptr)
-		//	transform = parent->GetTransformComponent();
-		//if (transform != nullptr)
-		//	scale = transform->GetScale();
+			std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
+			std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+			//Vector2 scale = Vector2(1, 1);
 
-		//std::shared_ptr<FlatEngine::RigidBody> rigidBody;
-		//if (GetParent()->HasComponent("RigidBody"))
-		//{
-			//rigidBody = GetParent()->GetRigidBody();
-		//	Vector2 velocity = rigidBody->GetVelocity();
+			//if (parent != nullptr)
+			//	transform = parent->GetTransformComponent();
+			//if (transform != nullptr)
+			//	scale = transform->GetScale();
 
-		//	if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
-		//		_shouldUpdate = true;
-		//}
-		//else
-		//{
-		//	if (!_activeEdgesSet || HasMoved())
-		//		_shouldUpdate = true;
-		//}
+			//std::shared_ptr<FlatEngine::RigidBody> rigidBody;
+			//if (GetParent()->HasComponent("RigidBody"))
+			//{
+				//rigidBody = GetParent()->GetRigidBody();
+			//	Vector2 velocity = rigidBody->GetVelocity();
 
-		//if (_shouldUpdate)
-		//{
+			//	if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
+			//		_shouldUpdate = true;
+			//}
+			//else
+			//{
+			//	if (!_activeEdgesSet || HasMoved())
+			//		_shouldUpdate = true;
+			//}
+
+			//if (_shouldUpdate)
+			//{
 			std::shared_ptr<FlatEngine::RigidBody> rigidBody = parent->GetRigidBody();
 			Vector2 position;
 			float step = FlatGui::sceneViewGridStep.x;
@@ -250,12 +267,60 @@ namespace FlatEngine
 			{
 				std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
 				position = transform->GetPosition();
-			}			
+			}
 
 			SetActiveEdges(Vector4(activeTop, activeRight, activeBottom, activeLeft));
-		//}
-
+			//}
+		}
 		return activeEdges;
+	}
+
+	void BoxCollider::SimpleBoxUpdateEdges()
+	{
+		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
+		bool _shouldUpdate = false;
+
+		std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
+		std::shared_ptr<FlatEngine::Transform> transform = nullptr;
+		Vector2 scale = Vector2(1, 1);
+
+		if (parent != nullptr)
+			transform = parent->GetTransformComponent();
+		if (transform != nullptr)
+			scale = transform->GetScale();
+
+		std::shared_ptr<FlatEngine::RigidBody> rigidBody;
+		if (GetParent()->HasComponent("RigidBody"))
+		{
+			rigidBody = GetParent()->GetRigidBody();
+			Vector2 velocity = rigidBody->GetVelocity();
+
+			if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
+				_shouldUpdate = true;
+		}
+		else
+		{
+			if (!_activeEdgesSet || HasMoved())
+				_shouldUpdate = true;
+		}
+
+		if (_shouldUpdate)
+		{
+			std::shared_ptr<FlatEngine::RigidBody> rigidBody = parent->GetRigidBody();
+
+			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
+			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
+			if (rigidBody != nullptr)
+				center = rigidBody->GetNextPosition();
+			else
+			{
+				std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
+				center = transform->GetTruePosition();
+			}
+
+			UpdateCenter();
+			UpdateCorners();
+		}
 	}
 
 	void BoxCollider::UpdateNormals()
@@ -263,7 +328,7 @@ namespace FlatEngine
 		float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
 		float step = FlatGui::sceneViewGridStep.x;
-		Vector2 centerPoint = FlatGui::sceneViewCenter;
+		Vector2 centerPoint = FlatGui::sceneViewCenter;	
 		Vector2 scale = GetParent()->GetTransformComponent()->GetScale();
 
 		// Normal vectors without rotation
@@ -299,7 +364,6 @@ namespace FlatEngine
 		float step = FlatGui::sceneViewGridStep.x;
 		Vector2 centerPoint = FlatGui::sceneViewCenter;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		Vector2 position = transform->GetPosition();
 		Vector2 scale = transform->GetScale();
 
 		// Corners without rotation
@@ -308,14 +372,14 @@ namespace FlatEngine
 		Vector2 topRight = { activeRight, activeTop };
 		Vector2 bottomLeft = { activeLeft, activeBottom };		
 
-		if (rotation != 0)
-		{
+		//if (rotation != 0)
+		//{
 			// Corners with rotation
 			topLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);			
 			topRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);
 			bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
 			bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
-		}
+		//}
 
 		Vector2 newCorners[4] =
 		{
@@ -333,13 +397,12 @@ namespace FlatEngine
 		float step = FlatGui::sceneViewGridStep.x;
 		Vector2 centerPoint = FlatGui::sceneViewCenter;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		Vector2 position = transform->GetPosition();
 		Vector2 scale = transform->GetScale();
 
-		activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
-		activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
-		activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
-		activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+		activeLeft = centerPoint.x + (center.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
+		activeTop = centerPoint.y + (-center.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
+		activeRight = centerPoint.x + (center.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
+		activeBottom = centerPoint.y + (-center.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
 
 		center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
 	}
@@ -409,8 +472,15 @@ namespace FlatEngine
 	{
 		rotation = newRotation;
 	}
+
+	void BoxCollider::UpdateRotation()
+	{
+		rotation = GetParent()->GetTransformComponent()->GetRotation();
+	}
+
 	void BoxCollider::RecalculateBounds()
 	{
+		UpdateRotation();
 		UpdateActiveEdges();
 		UpdateCenter();
 		UpdateCorners();

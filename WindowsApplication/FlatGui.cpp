@@ -320,6 +320,12 @@ namespace FlatEngine { namespace FlatGui {
 		//Create dockable background space for all viewports
 		ImGui::DockSpaceOverViewport();
 
+
+		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
+		{
+			boxCollider->RecalculateBounds();
+		}
+
 		//Add viewport(s)
 		// 
 		// If Release
@@ -1609,25 +1615,58 @@ namespace FlatEngine { namespace FlatGui {
 				int activeLayer = boxCollider->GetActiveLayer();
 				bool _isActive = boxCollider->IsActive();
 				bool _isColliding = boxCollider->IsColliding();
-				Vector2* corners = boxCollider->GetCorners();
-				Vector2* normals = boxCollider->GetNormals();
-				Vector2 center = boxCollider->GetCenter();
-				boxCollider->RecalculateBounds();
+
+				boxCollider->UpdateActiveEdges();
+
+				Vector2 corners[4] = {
+					boxCollider->GetCorners()[0],
+					boxCollider->GetCorners()[1],
+					boxCollider->GetCorners()[2],
+					boxCollider->GetCorners()[3],
+				};
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				// Draw Normals
-				DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
-				DrawLine(center, normals[1], boxColliderInactiveColor, 2.0f, draw_list);
-				DrawLine(center, normals[2], boxColliderInactiveColor, 2.0f, draw_list);
-				DrawLine(center, normals[3], boxColliderInactiveColor, 2.0f, draw_list);
+				if (loadedProject->GetCollisionDetection() == "Simple Box")
+				{
+					if (_isActive && !_isColliding)
+						DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
+					else if (!_isActive)
+						DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
+					else if (_isColliding)
+						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
+				}
+				else
+				{
+					Vector2 corners[4] = {
+						boxCollider->GetCorners()[0],
+						boxCollider->GetCorners()[1],
+						boxCollider->GetCorners()[2],
+						boxCollider->GetCorners()[3],
+					};
+					Vector2 normals[4] =
+					{
+						boxCollider->GetNormals()[0],
+						boxCollider->GetNormals()[1],
+						boxCollider->GetNormals()[2],
+						boxCollider->GetNormals()[3],
+					};
+					Vector2 center = boxCollider->GetCenter();
+					//boxCollider->RecalculateBounds();
 
-				if (_isActive && !_isColliding)
-					DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
-				else if (!_isActive)
-					DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
-				else if (_isColliding)
-					DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
+					// Draw Normals
+					DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[1], boxColliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[2], boxColliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[3], boxColliderInactiveColor, 2.0f, draw_list);
+
+					if (_isActive && !_isColliding)
+						DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
+					else if (!_isActive)
+						DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
+					else if (_isColliding)
+						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
+				}
 			}
 
 
@@ -1954,6 +1993,32 @@ namespace FlatEngine { namespace FlatGui {
 		return _isChanged;
 	}
 
+	bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value)
+	{
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		bool _checked = RenderCheckbox(fieldName, _value);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return _checked;
+	}
+
+	void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option)
+	{
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		RenderSelectable(id, options, current_option);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+	}
+
 	void RenderTextTableRow(std::string id, std::string fieldName, std::string value)
 	{
 		// Push uneditableTableTextColor text color
@@ -2015,6 +2080,66 @@ namespace FlatEngine { namespace FlatGui {
 		if (newPath != " ")
 			value = newPath;
 		return _editedButton || _editedInput;
+	}
+
+	void RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
+	{
+		PushComboStyles();
+		PushMenuStyles();
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		if (ImGui::BeginCombo(id.c_str(), options[current_option].c_str()))
+		{
+			for (int n = 0; n < options.size(); n++)
+			{
+				bool is_selected = (options[current_option] == options[n]); // You can store your selection however you want, outside or inside your objects
+				if (ImGui::Selectable(options[n].c_str(), is_selected))
+					current_option = n;
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		PopMenuStyles();
+		PopComboStyles();
+	}
+
+	void PushTreeList(std::string id)
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		PushMenuStyles();
+		ImGui::BeginTable(id.c_str(), 1, tableFlags);
+		ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
+	}
+
+	void PopTreeList()
+	{
+		ImGui::EndTable();
+		PopMenuStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+	}
+
+	void RenderTreeLeaf(std::string name, std::string& node_clicked)
+	{
+		ImGuiTreeNodeFlags node_flags;
+
+		std::string treeID = name + "_node";
+		if (node_clicked == name)
+			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+		else
+			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+		//// TreeNode Opener - No TreePop because it's a leaf
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+
+		ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, name.c_str());
+		if (ImGui::IsItemClicked())
+			node_clicked = name;
+
+		ImGui::PushID(treeID.c_str());
+		ImGui::PopID();
 	}
 
 

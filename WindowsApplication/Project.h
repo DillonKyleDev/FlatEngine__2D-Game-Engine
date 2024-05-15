@@ -21,6 +21,12 @@ public:
 	Vector2 GetSceneViewScrolling();
 	void SetSceneViewGridStep(Vector2 gridStep);
 	Vector2 GetSceneViewGridStep();
+	bool AutoSaveOn();
+	void SetAutoSave(bool _newAutoSave);
+	void SetPhysicsSystem(std::string system);
+	std::string GetPhysicsSystem();
+	void SetCollisionDetection(std::string system);
+	std::string GetCollisionDetection();
 	std::string GetData();
 
 private:
@@ -30,6 +36,9 @@ private:
 	Vector2 sceneViewScrolling;
 	Vector2 sceneViewGridStep;
 	long focusedGameObjectID;
+	bool _autoSave;
+	std::string physicsSystem;
+	std::string collisionDetection;
 	// Add more project properties here
 };
 

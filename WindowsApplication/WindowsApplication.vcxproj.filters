@@ -114,9 +114,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Settings.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="GameLoop.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
@@ -230,6 +227,12 @@
     </ClCompile>
     <ClCompile Include="Vector4.cpp">
       <Filter>Source Files\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files\FlatEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\GroundedCheck.cpp">
+      <Filter>Source Files\scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="Vector4.h">
       <Filter>Header Files\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\GroundedCheck.h">
+      <Filter>Header Files\scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

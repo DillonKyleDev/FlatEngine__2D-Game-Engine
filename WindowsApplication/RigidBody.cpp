@@ -17,7 +17,7 @@ namespace FlatEngine {
 		pendingVelocity = Vector2(0, 0);
 		terminalVelocity = -1.0f;
 		windResistance = 0.5f;  // Lower value = more resistance
-		friction = 0.83f;  // 1 = no friction. 0 = velocity = 0
+		friction = 0.93f;  // 1 = no friction. 0 = velocity = 0
 		forceCorrection = 0.01f;
 		_isMoving = false;
 		_isContinious = false;

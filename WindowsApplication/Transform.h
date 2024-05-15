@@ -15,6 +15,12 @@ namespace FlatEngine
 		Transform(long myID = -1, long parentID = -1);
 		Transform(std::shared_ptr<Transform> toCopy, long newParentID);
 		~Transform();
+		void SetInitialPosition(Vector2 initialPos);
+		void SetOrigin(Vector2 newOrigin);
+		Vector2 GetOrigin();
+		void UpdateOrigin(Vector2 newOrigin);
+		void UpdateChildOrigins(Vector2 newOrigin);
+		Vector2 GetTruePosition();
 		void SetPosition(Vector2 position);
 		void SetScale(Vector2 scale);
 		void SetRotation(float rotation);
@@ -24,6 +30,7 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
+		Vector2 origin;
 		Vector2 position;
 		Vector2 scale;
 		float rotation;

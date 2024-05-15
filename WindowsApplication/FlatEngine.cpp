@@ -303,7 +303,12 @@ namespace FlatEngine
 						FlatGui::_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
 						FlatEngine::logger->ClearBuffer();
 					}
-						
+					if (currentObjectJson.contains("_autoSave"))
+						newProject->SetAutoSave(currentObjectJson["_autoSave"]);
+					if (currentObjectJson.contains("physicsSystem"))
+						newProject->SetPhysicsSystem(currentObjectJson["physicsSystem"]);
+					if (currentObjectJson.contains("collisionDetection"))
+						newProject->SetCollisionDetection(currentObjectJson["collisionDetection"]);
 				}
 			}
 		}
@@ -362,6 +367,9 @@ namespace FlatEngine
 			{ "_showProfiler", FlatGui::_showProfiler },
 			{ "_showMappingContextEditor", FlatGui::_showMappingContextEditor },
 			{ "_clearLogBuffer", FlatGui::_clearBufferEveryFrame },
+			{ "_autoSave", loadedProject->AutoSaveOn() },
+			{ "physicsSystem", loadedProject->GetPhysicsSystem() },
+			{ "collisionDetection", loadedProject->GetCollisionDetection() },
 		});
 		projectProperties.push_back(animationName);
 

@@ -60,6 +60,7 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<Component>> GetScriptInstances();
 		void SetParentID(long parentID);
 		long GetParentID();
+		std::shared_ptr<GameObject> GetParent();
 		void AddChild(long childID);
 		void RemoveChild(long childID);
 		std::shared_ptr<GameObject> GetFirstChild();

@@ -431,6 +431,8 @@ namespace FlatEngine
 		extern void PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
 		extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max);
 		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float increment, float min, float max);
+		extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value);
+		extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
 		extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value);
 		extern void PopTable();
 		extern bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles = false, ImGuiInputTextFlags flags = 0);
@@ -442,6 +444,10 @@ namespace FlatEngine
 		extern bool RenderCheckbox(std::string text, bool &_toCheck);
 		extern void RenderSectionHeader(std::string headerText, float height = 0);
 		extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false);
+		extern void RenderSelectable(std::string id, std::vector<std::string> options, int& current_option);
+		extern void PushTreeList(std::string id);
+		extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
+		extern void PopTreeList();
 
 		extern ImU32 Vector4ToImU32(Vector4 color);
 		

@@ -8,7 +8,7 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 2,
-                    "rotation": 45.0,
+                    "rotation": 0.0,
                     "type": "Transform",
                     "xPos": 0.0,
                     "xScale": 1.0,
@@ -29,7 +29,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isContinious": true,
                     "_isKinematic": false,
                     "_isStatic": false,
@@ -43,7 +43,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isContinious": true,
                     "activeHeight": 1.9800000190734863,
                     "activeLayer": 0,
@@ -55,7 +55,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "attachedScript": "StartButton",
                     "id": 8,
                     "type": "Script"
@@ -67,7 +67,7 @@
                     "id": 8,
                     "runSpeed": 2.0,
                     "type": "CharacterController",
-                    "walkSpeed": 1.0
+                    "walkSpeed": 0.5
                 }
             ],
             "id": 0,
@@ -81,30 +81,150 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 9,
-                    "rotation": -30.799999237060547,
+                    "id": 8,
+                    "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": 4.264150619506836,
+                    "xPos": 1.4634146690368652,
                     "xScale": 1.0,
-                    "yPos": 9.899999618530273,
+                    "yPos": -5.317073345184326,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": false,
+                    "activeHeight": 4.179999828338623,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 18.229999542236328,
+                    "id": 9,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 10,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\ButtonOutline.png",
+                    "texture_height": 21.0,
+                    "texture_width": 91.0,
+                    "type": "Sprite",
+                    "xOffset": 45.29999923706055,
+                    "yOffset": 10.5
+                }
+            ],
+            "id": 1,
+            "name": "BoxCollider(1)",
+            "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [
+                4
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 11,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": -0.031637754291296005,
+                    "xScale": 1.0,
+                    "yPos": 1.076371192932129,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_isContinious": true,
-                    "activeHeight": 2.0,
+                    "activeHeight": 6.690000057220459,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 10,
+                    "activeWidth": 3.25,
+                    "id": 12,
                     "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMoving": false,
+                    "id": 13,
+                    "runSpeed": 2.0,
+                    "type": "CharacterController",
+                    "walkSpeed": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 14,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Pieces\\kingB.png",
+                    "texture_height": 34.0,
+                    "texture_width": 16.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "yOffset": 17.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 18,
+                    "mass": 1.0,
+                    "terminalVelocity": -1.0,
+                    "type": "RigidBody",
+                    "windResistance": 0.5
                 }
             ],
-            "id": 2,
-            "name": "BoxCollider(2)",
+            "id": 3,
+            "name": "CharacterController",
             "parent": -1
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 15,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yPos": -2.299999952316284,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": true,
+                    "activeHeight": 0.20999999344348907,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.9000000953674316,
+                    "id": 16,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "GroundedCheck",
+                    "id": 17,
+                    "type": "Script"
+                }
+            ],
+            "id": 4,
+            "name": "GroundedCheck",
+            "parent": 3
         }
     ]
 }

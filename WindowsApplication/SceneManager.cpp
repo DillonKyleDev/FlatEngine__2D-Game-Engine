@@ -247,6 +247,8 @@ namespace FlatEngine
 						freshScene->IncrementGameObjectID();
 					}
 
+					float objectRotation = 0;
+
 					// Loop through the components in this GameObjects json
 					for (int j = 0; j < currentObjectJson["components"].size(); j++)
 					{
@@ -263,6 +265,8 @@ namespace FlatEngine
 							long id = -1;
 							bool _isCollapsed = true;
 							bool _isActive = true;
+							float xOrigin = 0;
+							float yOrigin = 0;
 							float xScale = 1;
 							float yScale = 1;
 							float xPos = 0;
@@ -286,6 +290,18 @@ namespace FlatEngine
 								_isActive = currentObjectJson["components"][j]["_isActive"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: ");
+
+
+							// Origin
+							if (currentObjectJson["components"][j].contains("xOrigin"))
+								xOrigin = currentObjectJson["components"][j]["xOrigin"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'xOrigin' in object: ");
+
+							if (currentObjectJson["components"][j].contains("yOrigin"))
+								yOrigin = currentObjectJson["components"][j]["yOrigin"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yOrigin' in object: ");
 
 
 							// position
@@ -318,12 +334,15 @@ namespace FlatEngine
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'rotation' in object: ");
 
+
 							newTransform->SetID(id);
 							newTransform->SetCollapsed(_isCollapsed);
 							newTransform->SetActive(_isActive);
-							newTransform->SetPosition(Vector2(xPos, yPos));
+							newTransform->SetOrigin(Vector2(xOrigin, yOrigin));
+							newTransform->SetInitialPosition(Vector2(xPos, yPos));
 							newTransform->SetScale(Vector2(xScale, yScale));
 							newTransform->SetRotation(rotation);
+							objectRotation = rotation;
 						}
 						else if (type == "Sprite")
 						{
@@ -925,6 +944,8 @@ namespace FlatEngine
 							newBoxCollider->SetActiveOffset(activeOffset);
 							newBoxCollider->SetIsContinuous(_isContinious);
 							newBoxCollider->SetActiveLayer(activeLayer);
+							newBoxCollider->SetRotation(objectRotation);
+							//newBoxCollider->RecalculateBounds();
 						}
 						else if (type == "RigidBody")
 						{

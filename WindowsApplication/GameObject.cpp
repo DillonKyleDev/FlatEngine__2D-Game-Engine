@@ -35,7 +35,7 @@ namespace FlatEngine
 	
 		parentID = newParentID;
 		name = "GameObject(" + std::to_string(ID) + ")";
-		components = {};
+		components = std::vector<std::shared_ptr<Component>>();
 		_isActive = true;
 		childrenIDs = std::vector<long>();
 	}
@@ -274,6 +274,8 @@ namespace FlatEngine
 		std::shared_ptr<BoxCollider> boxColliderComponent;
 		//std::shared_ptr<CircleCollider> circleColliderComponent;
 
+		std::shared_ptr<GameObject> parent;
+
 		// Get next Component ID from the scene
 		std::shared_ptr<Scene> scene = GetLoadedScene();
 		long nextID = scene->GetNextComponentID();
@@ -284,6 +286,19 @@ namespace FlatEngine
 			transformComponent = std::make_shared<Transform>(nextID, ID);
 			scene->IncrementComponentID();
 			components.push_back(transformComponent);
+
+			// Set transforms origin to parents true position
+			if (parentID != -1)
+			{
+				parent = GetObjectById(parentID);
+				if (parent->HasComponent("Transform"))
+				{
+					std::shared_ptr <Transform> parentTransform = parent->GetTransformComponent();
+					Vector2 parentTruePosition = parentTransform->GetTruePosition();
+					transformComponent->SetOrigin(parentTruePosition);
+				}
+			}
+
 			return transformComponent;
 			break;
 
@@ -615,5 +630,9 @@ namespace FlatEngine
 	bool GameObject::IsActive()
 	{
 		return _isActive;
+	}
+	std::shared_ptr<GameObject> GameObject::GetParent()
+	{
+		return GetObjectById(parentID);
 	}
 }

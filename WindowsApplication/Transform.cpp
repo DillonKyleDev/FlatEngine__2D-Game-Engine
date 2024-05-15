@@ -9,6 +9,8 @@ namespace FlatEngine
 		SetType(ComponentTypes::Transform);
 		SetID(myID);
 		SetParentID(parentID);
+		origin.x = 0;
+		origin.y = 0;
 		position.x = 0;
 		position.y = 0;
 		scale.x = 1;
@@ -22,6 +24,8 @@ namespace FlatEngine
 		SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
+		origin.x = toCopy->GetOrigin().x;
+		origin.y = toCopy->GetOrigin().y;
 		position.x = toCopy->GetPosition().x;
 		position.y = toCopy->GetPosition().y;
 		scale.x = toCopy->GetScale().x;
@@ -33,6 +37,26 @@ namespace FlatEngine
 	{
 	}
 
+	void Transform::SetInitialPosition(Vector2 initialPos)
+	{
+		position = initialPos;
+	}
+
+	void Transform::SetOrigin(Vector2 newOrigin)
+	{
+		origin = newOrigin;
+	}
+
+	Vector2 Transform::GetOrigin()
+	{
+		return origin;
+	}
+
+	Vector2 Transform::GetTruePosition()
+	{
+		return Vector2(origin.x + position.x, origin.y + position.y);
+	}
+
 	std::string Transform::GetData()
 	{
 		json jsonData = { 
@@ -40,6 +64,8 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
+			{ "xOrigin", origin.x },
+			{ "yOrigin", origin.y },
 			{ "xPos", position.x }, 
 			{ "yPos", position.y },
 			{ "rotation", rotation },
@@ -55,9 +81,42 @@ namespace FlatEngine
 	// Setters
 	void Transform::SetPosition(Vector2 newPosition)
 	{
-		if (GetParent()->HasComponent("BoxCollider"))
-			GetParent()->GetBoxCollider()->RecalculateBounds();
+		//if (GetParent()->HasComponent("BoxCollider"))
+		//	GetParent()->GetBoxCollider()->RecalculateBounds();
 		position = newPosition;
+
+		if (GetParent()->HasChildren())
+		{
+			for (long id : GetParent()->GetChildren())
+			{
+				std::shared_ptr<GameObject> child = GetObjectById(id);
+				if (child->HasComponent("Transform"))
+					child->GetTransformComponent()->UpdateOrigin(GetTruePosition());
+			}
+		}
+	}
+
+	void Transform::UpdateOrigin(Vector2 newOrigin)
+	{
+		origin = newOrigin;
+		UpdateChildOrigins(GetTruePosition());
+	}
+
+	void Transform::UpdateChildOrigins(Vector2 newOrigin)
+	{
+		if (GetParent()->HasChildren())
+		{
+			for (long id : GetParent()->GetChildren())
+			{
+				std::shared_ptr<GameObject> child = GetObjectById(id);
+				if (child->HasComponent("Transform"))
+				{
+					std::shared_ptr<Transform> childTransform = child->GetTransformComponent();
+					childTransform->SetOrigin(newOrigin);
+					childTransform->UpdateChildOrigins(GetTruePosition());
+				}
+			}
+		}
 	}
 
 	void Transform::SetScale(Vector2 newScale)

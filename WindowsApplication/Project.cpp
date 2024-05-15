@@ -12,6 +12,9 @@ Project::Project()
 	loadedAnimationPath = "";
 	sceneViewScrolling = Vector2(0,0);
 	focusedGameObjectID = -1;
+	_autoSave = true;
+	physicsSystem = "Euler";
+	collisionDetection = "Simple Box";
 }
 
 Project::~Project()
@@ -78,6 +81,37 @@ Vector2 Project::GetSceneViewGridStep()
 	return sceneViewGridStep;
 }
 
+bool Project::AutoSaveOn()
+{
+	return _autoSave;
+}
+
+void Project::SetAutoSave(bool _newAutoSave)
+{
+	_autoSave = _newAutoSave;
+}
+
+void Project::SetPhysicsSystem(std::string system)
+{
+	physicsSystem = system;
+}
+
+std::string Project::GetPhysicsSystem()
+{
+	return physicsSystem;
+}
+
+void Project::SetCollisionDetection(std::string system)
+{
+	collisionDetection = system;
+}
+
+std::string Project::GetCollisionDetection()
+{
+	return collisionDetection;
+}
+
+
 std::string Project::GetData()
 {
 	json jsonData = {
@@ -86,6 +120,9 @@ std::string Project::GetData()
 		{ "loadedAnimationPath", loadedAnimationPath },
 		{ "sceneViewScrollingX", sceneViewScrolling.x },
 		{ "sceneViewScrollingY", sceneViewScrolling.y },
+		{ "_autoSave", _autoSave },
+		{ "physicsSystem", physicsSystem },
+		{ "collisionDetection", collisionDetection },
 	};
 
 	std::string data = jsonData.dump();

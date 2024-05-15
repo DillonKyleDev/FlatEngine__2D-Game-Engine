@@ -57,7 +57,11 @@ namespace FlatEngine
 		bool IsContinuous();
 		std::string GetData();
 		void SetRotation(float rotation);
+		void UpdateRotation();
 		void RecalculateBounds();
+
+		// Simple Box
+		void SimpleBoxUpdateEdges();
 
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollision;
 		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnter;

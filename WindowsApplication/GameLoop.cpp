@@ -5,6 +5,7 @@
 #include "BoxCollider.h"
 #include "Transform.h"
 #include "./scripts/GameManager.h"
+#include "./scripts/GroundedCheck.h"
 
 
 namespace FlatEngine
@@ -96,6 +97,13 @@ namespace FlatEngine
 						quitButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(quitButtonScript);
 						activeScripts.push_back(quitButtonScript);
+					}
+					else if (attachedScript == "GroundedCheck")
+					{
+						std::shared_ptr<GroundedCheck> groundCheckScript = std::make_shared<GroundedCheck>();
+						groundCheckScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(groundCheckScript);
+						activeScripts.push_back(groundCheckScript);
 					}
 				}
 				if (components[j]->GetTypeString() == "RigidBody")
@@ -193,8 +201,6 @@ namespace FlatEngine
 		// Handle BoxCollision updates here
 		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
 		{
-			//LogFloat(boxCollider->previousPosition.y, " " + boxCollider->GetParent()->GetName() + "Outer Previous Pos: ");
-
 			if (boxCollider != nullptr && boxCollider->IsActive() && (boxCollider->IsContinuous() || (!boxCollider->IsContinuous() && continuousCounter == 10)))
 			{
 				bool _isColliding = false;
@@ -210,8 +216,8 @@ namespace FlatEngine
 						checkAgainst->UpdateActiveEdges();
 
 						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->CheckForCollision(checkAgainst))
-						{
-							LogString("Colliding");
+						{							
+							_isColliding = true;
 						}
 					}
 				}
