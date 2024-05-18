@@ -2,58 +2,9 @@
     "Scene GameObjects": [
         {
             "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 0,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 1,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\idle.png",
-                    "texture_height": 23.0,
-                    "texture_width": 13.0,
-                    "type": "Sprite",
-                    "xOffset": 6.5,
-                    "yOffset": 11.5
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 2,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\SlerpTest.json",
-                    "type": "Animation"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinious": true,
-                    "activeHeight": 4.690000057220459,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 1.4299999475479126,
-                    "id": 21,
-                    "type": "BoxCollider"
-                }
+            "children": [
+                0
             ],
-            "id": 0,
-            "name": "Dancer",
-            "parent": -1
-        },
-        {
-            "_isActive": true,
-            "children": [],
             "components": [
                 {
                     "_isActive": true,
@@ -64,13 +15,15 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 7,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xPos": -5.0,
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": 3.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
@@ -89,11 +42,9 @@
                     "_isActive": true,
                     "_isCollapsed": true,
                     "_isMoving": false,
-                    "gravity": 1.0,
                     "id": 9,
                     "runSpeed": 2.0,
                     "type": "CharacterController",
-                    "velocity": 0.0,
                     "walkSpeed": 0.20000000298023224
                 },
                 {
@@ -103,10 +54,12 @@
                     "_isKinematic": false,
                     "_isStatic": false,
                     "angularDrag": 1.0,
-                    "gravity": 0.009999999776482582,
+                    "gravity": 1.0,
                     "id": 10,
                     "mass": 1.0,
-                    "type": "RigidBody"
+                    "terminalVelocity": 0.699999988079071,
+                    "type": "RigidBody",
+                    "windResistance": 0.5
                 },
                 {
                     "_isActive": true,
@@ -131,43 +84,33 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 11,
+                    "_isCollapsed": false,
+                    "id": 13,
                     "rotation": 0.0,
                     "type": "Transform",
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yPos": -4.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 12,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\SingleButton.png",
-                    "texture_height": 19.0,
-                    "texture_width": 89.0,
-                    "type": "Sprite",
-                    "xOffset": 44.5,
-                    "yOffset": 9.5
-                },
-                {
-                    "_isActive": true,
+                    "_isActive": false,
                     "_isCollapsed": false,
-                    "_isContinious": true,
-                    "activeHeight": 3.8399999141693115,
+                    "_isContinious": false,
+                    "activeHeight": 0.14000000059604645,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 17.850000381469727,
-                    "id": 13,
+                    "activeWidth": 3.4200000762939453,
+                    "id": 14,
                     "type": "BoxCollider"
                 }
             ],
-            "id": 3,
-            "name": "Platform",
-            "parent": -1
+            "id": 0,
+            "name": "GameObject(0)",
+            "parent": 2
         }
     ]
 }

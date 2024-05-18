@@ -1554,7 +1554,7 @@ namespace FlatEngine { namespace FlatGui {
 				float activeHeight = button->GetActiveHeight();
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
-
+				
 				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
 				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
@@ -1617,6 +1617,8 @@ namespace FlatEngine { namespace FlatGui {
 				bool _isColliding = boxCollider->IsColliding();
 
 				boxCollider->UpdateActiveEdges();
+
+				LogVector2(transform->GetTruePosition(), "True position of " + self->GetName());
 
 				Vector2 corners[4] = {
 					boxCollider->GetCorners()[0],

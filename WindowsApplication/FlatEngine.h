@@ -338,6 +338,8 @@ namespace FlatEngine
 		extern Vector2 sceneViewGridStep;
 		extern Vector2 sceneViewScrolling;
 		extern Vector2 sceneViewCenter;
+		extern bool _sceneViewLockedOnObject;
+		extern std::shared_ptr<GameObject> sceneViewLockedObject;
 
 		extern void RunOnceAfterInitialization();
 

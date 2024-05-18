@@ -15,7 +15,7 @@ namespace FlatEngine {
 		gravityCorrection = 0.001f;
 		velocity = Vector2(0, 0);
 		pendingVelocity = Vector2(0, 0);
-		terminalVelocity = -1.0f;
+		terminalVelocity = 0.7f;
 		windResistance = 0.5f;  // Lower value = more resistance
 		friction = 0.93f;  // 1 = no friction. 0 = velocity = 0
 		forceCorrection = 0.01f;
@@ -93,10 +93,20 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyGravity(float deltaTime)
 	{
-		if (!_isGrounded && velocity.y > terminalVelocity)
-			pendingVelocity.y -= gravity * gravityCorrection * deltaTime;
-		else if (_isGrounded && pendingVelocity.y < 0)
-			pendingVelocity.y = 0;
+		if (gravity > 0)
+		{
+			if (!_isGrounded && velocity.y > -terminalVelocity)
+				pendingVelocity.y -= gravity * gravityCorrection * deltaTime;
+			else if (_isGrounded && pendingVelocity.y < 0)
+				pendingVelocity.y = 0;
+		}
+		else if (gravity < 0)
+		{
+			if (!_isGrounded && velocity.y < terminalVelocity)
+				pendingVelocity.y -= gravity * gravityCorrection * deltaTime;
+			else if (_isGrounded && pendingVelocity.y > 0)
+				pendingVelocity.y = 0;
+		}
 	}
 
 	// Apply the accumulated velocity to the actual transform

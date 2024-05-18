@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "Scene.h"
+#include "Transform.h"
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -275,9 +276,23 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		//if (ImGui::IsItemClicked())
-		//	LogString("Clicked");
+
 		leafExpandedTracker.at(currentObject->GetID()) = node_open;
+			
+		// Get Scene View Dimensions from its window
+		Vector2 sceneViewDimensions;
+		ImGui::Begin("Scene View", 0, 16 | 8);
+		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+		ImGui::End();
+
+		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
+		{
+			sceneViewLockedObject = nullptr;
+			_sceneViewLockedOnObject = false;
+			std::shared_ptr<Transform> transform = currentObject->GetTransformComponent();
+			Vector2 position = transform->GetPosition();
+			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * sceneViewGridStep.y + (sceneViewDimensions.y / 2));
+		}
 
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{
@@ -330,6 +345,22 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Lock in view"))
+			{
+				if (_sceneViewLockedOnObject && sceneViewLockedObject->GetID() == currentObject->GetID())
+				{
+					_sceneViewLockedOnObject = false;
+					sceneViewLockedObject = currentObject;
+				}
+				else if (!_sceneViewLockedOnObject)
+				{
+					sceneViewLockedObject = currentObject;
+					_sceneViewLockedOnObject = true;
+				}
+
 				ImGui::CloseCurrentPopup();
 			}
 			PopMenuStyles();
@@ -496,10 +527,23 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
+		
+		// Get Scene View Dimensions from its window
+		Vector2 sceneViewDimensions;
+		ImGui::Begin("Scene View", 0, 16 | 8);
+		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+		ImGui::End();
+
+		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
+		{
+			std::shared_ptr<Transform> transform = currentObject->GetTransformComponent();
+			Vector2 position = transform->GetTruePosition();
+			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * sceneViewGridStep.y + (sceneViewDimensions.y / 2));
+		}
 
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{
-			// Mouse Hover Tooltip - Mouse Over Tooltip			
+			// Mouse Hover Tooltip - GameObject Data Tooltip		
 			ImGui::BeginTooltip();
 			ImGui::Text("GameObject Data");
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -546,6 +590,22 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Lock in view"))
+			{
+				if (_sceneViewLockedOnObject && sceneViewLockedObject->GetID() == currentObject->GetID())
+				{
+					_sceneViewLockedOnObject = false;
+					sceneViewLockedObject = currentObject;
+				}
+				else if (!_sceneViewLockedOnObject)
+				{
+					sceneViewLockedObject = currentObject;
+					_sceneViewLockedOnObject = true;
+				}
+
 				ImGui::CloseCurrentPopup();
 			}
 			PopMenuStyles();

@@ -18,6 +18,8 @@ namespace FlatEngine { namespace FlatGui {
 	bool _sceneHasBeenSet = false;
 	Vector2 sceneViewScrolling = Vector2(0,0);
 	Vector2 sceneViewCenter = Vector2(0, 0);
+	bool _sceneViewLockedOnObject = false;
+	std::shared_ptr<GameObject> sceneViewLockedObject = nullptr;
 
 	void Scene_RenderView()
 	{
@@ -83,12 +85,44 @@ namespace FlatEngine { namespace FlatGui {
 			sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
+		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
+		{
+			Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / sceneViewGridStep.x, -(inputOutput.MousePos.y - sceneViewCenter.y) / sceneViewGridStep.y);
+			std::string cursorXPos = "x: " + std::to_string(positionInGrid.x);
+			std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);
+			// Mouse Hover Tooltip - Scene View Tooltip			
+			ImGui::BeginTooltip();
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+			ImGui::Text("Scene View Data ");
+			ImGui::Separator();
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+			// Cursor Position
+			ImGui::Text("Cursor Position: ");
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+			ImGui::Text(cursorXPos.c_str());
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+			ImGui::Text(cursorYPos.c_str());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::EndTooltip();
+		}
+
+		if (_sceneViewLockedOnObject && sceneViewLockedObject != nullptr)
+		{
+			std::shared_ptr<Transform> transform = sceneViewLockedObject->GetTransformComponent();
+			Vector2 position = transform->GetTruePosition();
+			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
+		}
+
+		LogVector2(sceneViewScrolling, "Scene View Scroll: ");
+		LogFloat(ImGui::GetWindowWidth() / 2, "Window width: ");
 		Vector2 adjustedScrolling = Vector2(sceneViewScrolling.x + centerOffset.x, sceneViewScrolling.y + centerOffset.y);
 
 		// Get scroll amount for changing zoom level of scene view
 		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
 		float scrollInput = inputOutput.MouseWheel;
-		float weight = 0.08f;
+		float weight = 0.01f;
 		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
 		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
 
@@ -102,8 +136,8 @@ namespace FlatEngine { namespace FlatGui {
 					sceneViewScrolling.x -= trunc(signedMousePosX * weight);
 					sceneViewScrolling.y -= trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x += 1;
-				sceneViewGridStep.y += 1;
+				sceneViewGridStep.x += .1;
+				sceneViewGridStep.y += .1;
 			}
 			else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
 			{
@@ -112,8 +146,8 @@ namespace FlatEngine { namespace FlatGui {
 					sceneViewScrolling.x += trunc(signedMousePosX * weight);
 					sceneViewScrolling.y += trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x -= 1;
-				sceneViewGridStep.y -= 1;
+				sceneViewGridStep.x -= .1;
+				sceneViewGridStep.y -= .1;
 			}
 		}
 

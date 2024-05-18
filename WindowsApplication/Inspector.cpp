@@ -700,8 +700,8 @@ namespace FlatEngine { namespace FlatGui {
 								RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f);
 								RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f);
 								boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-								RenderFloatDragTableRow("##activeOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, 0.0f, 20.0f);
-								RenderFloatDragTableRow("##activeOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, 0.0f, 20.0f);
+								RenderFloatDragTableRow("##activeOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
+								RenderFloatDragTableRow("##activeOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
 								boxCollider->SetActiveOffset(activeOffset);
 								RenderIntDragTableRow("##boxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
 								boxCollider->SetActiveLayer(activeLayer);								
