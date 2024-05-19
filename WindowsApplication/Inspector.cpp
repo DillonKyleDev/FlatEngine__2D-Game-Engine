@@ -334,8 +334,8 @@ namespace FlatEngine { namespace FlatGui {
 								transform->SetPosition(Vector2(xPos, yPos));
 								RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360);
 								transform->SetRotation(rotation);
-								RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, -FLT_MAX, -FLT_MAX);
-								RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, -FLT_MAX, -FLT_MAX);
+								RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000);
+								RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
 								transform->SetScale(Vector2(scaleX, scaleY));								
 								PopTable();			
 								
@@ -421,8 +421,8 @@ namespace FlatEngine { namespace FlatGui {
 
 								// Render Table
 								PushTable("##CameraProperties" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, -FLT_MAX);
-								RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, -FLT_MAX);
+								RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000);
+								RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000);
 								camera->SetDimensions(width, height);
 								RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100);
 								camera->SetZoom(zoom);

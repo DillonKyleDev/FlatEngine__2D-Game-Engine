@@ -14,15 +14,15 @@
             "_showProfiler": false,
             "_showSceneView": true,
             "collisionDetection": "Simple Box",
-            "focusedGameObjectID": -1,
-            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\MoveAround.json",
+            "focusedGameObjectID": 3,
+            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\dance.json",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\TEST_SCENE.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Verlet",
-            "sceneViewGridStepX": 31.0,
-            "sceneViewGridStepY": 31.0,
-            "sceneViewScrollingX": 455.0,
-            "sceneViewScrollingY": 274.0
+            "sceneViewGridStepX": 30.499998092651367,
+            "sceneViewGridStepY": 30.499998092651367,
+            "sceneViewScrollingX": 397.0,
+            "sceneViewScrollingY": 237.0
         }
     ]
 }

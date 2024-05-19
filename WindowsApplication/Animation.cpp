@@ -187,8 +187,6 @@ namespace FlatEngine
 								slerpedPercentDone = 1 - (sqrt(1 - slerpYValue * slerpYValue) / 2);
 							}
 
-							LogFloat(slerpYValue, "Slerped Y Value: ");
-							LogFloat(slerpedPercentDone, "Slerped %: ");
 							float correctedX = (lastFrameTransform.x + ((*transformFrame)->xMove - lastFrameTransform.x) * slerpedPercentDone);
 							float correctedY = (lastFrameTransform.y + ((*transformFrame)->yMove - lastFrameTransform.y) * slerpedPercentDone);
 

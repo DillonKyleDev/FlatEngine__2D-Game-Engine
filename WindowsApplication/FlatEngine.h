@@ -172,15 +172,21 @@ namespace FlatEngine
 		extern float childPadding;
 		extern ImDrawList* drawList;
 
-		// Colors
+		//////////////////////
+		//Global      Colors//
+		//  //////VV///////  /
+		//     UUUUUUUU     //
+		///\-------------/////
+		//////////////////////
 		extern Vector4 transparentColor;
 		extern Vector4 whiteColor;
 		extern Vector4 outerWindowColor;
 		extern Vector4 innerWindowColor;
 		extern Vector4 singleItemColor;
 		extern Vector4 windowTitleBg;
-		// Components
-		//
+		//////////////////////
+		// Components ////////
+		//////////////////////
  		extern Vector4 componentBorderColor;
 		// Collider borders
 		extern Vector4 boxColliderActiveColor;
@@ -193,11 +199,15 @@ namespace FlatEngine
 		extern Vector4 buttonComponentInctiveColor;
 		// Canvas
 		extern Vector4 canvasBorderColor;
+		// Camera
+		extern Vector4 cameraBoxColor;
 		// Log
 		extern Vector4 logTextColor;
 		extern Vector4 logBgColor;
 		extern Vector4 logOutlineColor;
-		// Windows
+		//////////////////////
+		// Windows ///////////
+		//////////////////////
 		extern Vector4 windowBgColor;
 		extern Vector4 frameBgColor;
 		extern Vector4 frameBgActiveColor;
@@ -226,6 +236,9 @@ namespace FlatEngine
 		extern Vector4 navHighlightColor;
 		extern Vector4 navWindowDimBgColor; 
 		extern Vector4 modalWindowDimBgColor;
+		////////////////////
+		// Custom Colors ///
+		//////////////////// 
 		// Input
 		extern Vector4 inputColor;
 		// Tables
@@ -268,7 +281,9 @@ namespace FlatEngine
 		extern Vector4 checkboxCheckColor;
 		extern Vector4 checkboxHoveredColor;
 		extern Vector4 checkboxActiveColor;
-
+		////////////////////
+		//// End Colors ////
+		////////////////////
 
 		extern int maxSpriteLayers;
 		extern float spriteScaleMultiplier;

@@ -50,7 +50,6 @@ namespace FlatEngine { namespace FlatGui {
 	//     UUUUUUUU     //
 	///\-------------/////
 	//////////////////////
-
 	Vector4 transparentColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 	Vector4 whiteColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	//////////////////////
@@ -68,7 +67,8 @@ namespace FlatEngine { namespace FlatGui {
 	Vector4 buttonComponentInctiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
 	// Canvas Orange
 	Vector4 canvasBorderColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
-	
+	// Camera
+	Vector4 cameraBoxColor = Vector4(1.0f, 0.11f, 0.11f, 0.27);
 	//////////////////////
 	// Windows ///////////
 	//////////////////////
@@ -156,7 +156,9 @@ namespace FlatEngine { namespace FlatGui {
 	Vector4 checkboxCheckColor = Vector4(0.45f, 0.45f, 0.9f, 1.0f);
 	Vector4 checkboxHoveredColor = Vector4(0.31f, 0.31f, 0.32f, 1.0f);
 	Vector4 checkboxActiveColor = Vector4(0.15f, 0.15f, 0.23f, 1.0f);
-	////////////////////////
+	////////////////////
+	//// End Colors ////
+	////////////////////
 
 	// Flags
 	ImGuiChildFlags autoResizeChildFlags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AlwaysUseWindowPadding;
@@ -1496,10 +1498,10 @@ namespace FlatEngine { namespace FlatGui {
 				float cameraWidth = camera->GetWidth();
 				float cameraHeight = camera->GetHeight();
 
-				float cameraLeftEdge = WorldToViewport(scrolling.x, position.x - cameraWidth / 2 * transformScale.x, step);
-				float cameraRightEdge = WorldToViewport(scrolling.x, position.x + cameraWidth / 2 * transformScale.x, step);
-				float cameraTopEdge = WorldToViewport(scrolling.y, -(position.y + cameraHeight / 2 * transformScale.y), step);
-				float cameraBottomEdge = WorldToViewport(scrolling.y, -(position.y - cameraHeight / 2 * transformScale.y), step);
+				float cameraLeftEdge = scrolling.x + (position.x * sceneViewGridStep.x) - (cameraWidth * sceneViewGridStep.x / 2 * scale.x);
+				float cameraTopEdge = scrolling.y + (-position.y * sceneViewGridStep.y) - (cameraHeight * sceneViewGridStep.y / 2 * scale.y);
+				float cameraRightEdge = scrolling.x + (position.x * sceneViewGridStep.x) + (cameraWidth * sceneViewGridStep.x / 2 * scale.x);
+				float cameraBottomEdge = scrolling.y + (-position.y * sceneViewGridStep.y) + (cameraHeight * sceneViewGridStep.y / 2 * scale.y);
 
 				Vector2 topLeftCorner = Vector2(cameraLeftEdge, cameraTopEdge);
 				Vector2 bottomRightCorner = Vector2(cameraRightEdge, cameraBottomEdge);
@@ -1517,12 +1519,12 @@ namespace FlatEngine { namespace FlatGui {
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, Vector4(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, Vector4(255, 30, 30, 70), 2.0f, draw_list);
-				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, Vector4(255, 30, 30, 70), 2.0f, draw_list);
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, cameraBoxColor, 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, cameraBoxColor, 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, cameraBoxColor, 2.0f, draw_list);
 
 				// Draw actual camera icon
-				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, IM_COL32(255, 255, 255, iconTransparency));
+				AddImageToDrawList(cameraTexture, position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -1533,17 +1535,14 @@ namespace FlatEngine { namespace FlatGui {
 				int layerNumber = canvas->GetLayerNumber();
 				bool _blocksLayers = canvas->GetBlocksLayers();
 
-				float canvasLeft = WorldToViewport(scrolling.x, position.x - activeWidth / 2, step, false);
-				float canvasRight = WorldToViewport(scrolling.x, position.x + activeWidth / 2, step, false);
-				float canvasTop = WorldToViewport(scrolling.y, position.y + activeHeight / 2, step, true);
-				float canvasBottom = WorldToViewport(scrolling.y, position.y - activeHeight / 2, step, true);
-
-				Vector2 canvasTopLeft = { canvasLeft, canvasTop };
-				Vector2 canvasBottomRight = { canvasRight, canvasBottom };
+				float unscaledXStart = scrolling.x + (position.x * sceneViewGridStep.x) - (activeWidth / 2 * scale.x);
+				float unscaledYStart = scrolling.y + (-position.y * sceneViewGridStep.y) - (activeHeight / 2 * scale.y);
+				Vector2 renderStart = Vector2(unscaledXStart, unscaledYStart);
+				Vector2 renderEnd = Vector2(unscaledXStart + (activeWidth * scale.x), unscaledYStart + (activeHeight * scale.y));
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				FlatEngine::DrawRectangle(canvasTopLeft, canvasBottomRight, canvas_p0, canvas_sz, canvasBorderColor, 3.0f, draw_list);
+				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, canvasBorderColor, 3.0f, draw_list);
 			}
 
 
@@ -1618,7 +1617,7 @@ namespace FlatEngine { namespace FlatGui {
 
 				boxCollider->UpdateActiveEdges();
 
-				LogVector2(transform->GetTruePosition(), "True position of " + self->GetName());
+				/*LogVector2(transform->GetTruePosition(), "True position of " + self->GetName());*/
 
 				Vector2 corners[4] = {
 					boxCollider->GetCorners()[0],
@@ -2150,10 +2149,10 @@ namespace FlatEngine { namespace FlatGui {
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
 		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
 
-		float scalingXStart = WorldToViewport(relativeCenterPoint.x, positionInGrid.x - (offsetPx.x * newScale.x), zoomMultiplier);
-		float scalingYStart = WorldToViewport(relativeCenterPoint.y, -positionInGrid.y - (offsetPx.y * newScale.y), zoomMultiplier);
-		float scalingXEnd = WorldToViewport(scalingXStart, textureWidthPx * newScale.x, zoomMultiplier);
-		float scalingYEnd = WorldToViewport(scalingYStart, textureHeightPx * newScale.y, zoomMultiplier);
+		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
+		float scalingYStart = relativeCenterPoint.y - (positionInGrid.y * zoomMultiplier) - (offsetPx.y * newScale.y * zoomMultiplier);
+		float scalingXEnd = scalingXStart + (textureWidthPx * newScale.x * zoomMultiplier);
+		float scalingYEnd = scalingYStart + (textureHeightPx * newScale.y * zoomMultiplier);
 
 		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
 		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
@@ -2183,11 +2182,6 @@ namespace FlatEngine { namespace FlatGui {
 			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-
-			//LogVector2(topLeft, "topLeft Sprite: ");
-			//LogVector2(topRight, "topRight Sprite: ");
-			//LogVector2(bottomRight, "bottomRight Sprite: ");
-			//LogVector2(bottomLeft, "bottomLeft Sprite: ");
 
 			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
 			Vector2 pos[4] =

@@ -47,6 +47,7 @@ namespace FlatEngine
 		Vector4 UpdateActiveEdges();
 		void UpdateNormals();
 		void UpdateCorners();
+		void SimpleBoxUpdateCorners();
 		void UpdateCenter();
 		void SetCorners(Vector2 corners[4]);
 		Vector2* GetCorners();

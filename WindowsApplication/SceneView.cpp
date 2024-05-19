@@ -115,8 +115,6 @@ namespace FlatEngine { namespace FlatGui {
 			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 		}
 
-		LogVector2(sceneViewScrolling, "Scene View Scroll: ");
-		LogFloat(ImGui::GetWindowWidth() / 2, "Window width: ");
 		Vector2 adjustedScrolling = Vector2(sceneViewScrolling.x + centerOffset.x, sceneViewScrolling.y + centerOffset.y);
 
 		// Get scroll amount for changing zoom level of scene view

@@ -392,6 +392,30 @@ namespace FlatEngine
 		SetCorners(newCorners);
 	}
 
+	// Corners without rotation
+	void BoxCollider::SimpleBoxUpdateCorners()
+	{
+		float step = FlatGui::sceneViewGridStep.x;
+		Vector2 centerPoint = FlatGui::sceneViewCenter;
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 scale = transform->GetScale();
+
+		Vector2 topLeft = { activeLeft, activeTop };
+		Vector2 bottomRight = { activeRight, activeBottom };
+		Vector2 topRight = { activeRight, activeTop };
+		Vector2 bottomLeft = { activeLeft, activeBottom };
+
+		Vector2 newCorners[4] =
+		{
+			Vector2(center.x + topLeft.x, center.y + topLeft.y),
+			Vector2(center.x + topRight.x, center.y + topRight.y),
+			Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+			Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+		};
+
+		SetCorners(newCorners);
+	}
+
 	void BoxCollider::UpdateCenter()
 	{
 		float step = FlatGui::sceneViewGridStep.x;

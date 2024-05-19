@@ -64,6 +64,7 @@ namespace FlatEngine { namespace FlatGui {
 					if (scenePath != "")
 					{
 						sceneManager->SaveScene(sceneManager->CreateNewScene(), scenePath);
+						sceneManager->LoadScene(scenePath);
 						loadedProject->SetLoadedScenePath(scenePath);
 					}
 				}

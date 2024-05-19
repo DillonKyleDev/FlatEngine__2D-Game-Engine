@@ -85,7 +85,7 @@ namespace FlatEngine
 		//	GetParent()->GetBoxCollider()->RecalculateBounds();
 		position = newPosition;
 
-		if (GetParent()->HasChildren())
+		if (GetParent() != nullptr && GetParent()->HasChildren())
 		{
 			for (long id : GetParent()->GetChildren())
 			{
@@ -126,7 +126,7 @@ namespace FlatEngine
 
 	void Transform::SetRotation(float newRotation)
 	{
-		if (GetParent()->HasComponent("BoxCollider"))
+		if (loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)" && GetParent()->HasComponent("BoxCollider"))
 			GetParent()->GetBoxCollider()->SetRotation(newRotation);
 		rotation = newRotation;
 	}

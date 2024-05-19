@@ -281,9 +281,15 @@ namespace FlatEngine { namespace FlatGui {
 			
 		// Get Scene View Dimensions from its window
 		Vector2 sceneViewDimensions;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+		PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8);
 		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGui::End();
+		PopWindowStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 
 		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
 		{
@@ -530,9 +536,15 @@ namespace FlatEngine { namespace FlatGui {
 		
 		// Get Scene View Dimensions from its window
 		Vector2 sceneViewDimensions;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+		PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8);
 		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGui::End();
+		PopWindowStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 
 		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
 		{
