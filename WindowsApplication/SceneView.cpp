@@ -58,6 +58,13 @@ namespace FlatEngine { namespace FlatGui {
 		Vector2 centerOffset = Vector2(SCENE_VIEWPORT_WIDTH / 2, SCENE_VIEWPORT_HEIGHT / 2);
 		bool _weightedScroll = true;
 
+		// This will catch our interactions
+		ImGui::SetCursorScreenPos(currentPos);
+		ImGui::SetNextItemAllowOverlap();
+		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		const bool is_active = ImGui::IsItemActive();   // Held
+
 		RenderGridView(sceneViewCenter, sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, sceneViewGridStep, centerOffset);
 
 		// Get currently loaded scene objects
@@ -70,12 +77,6 @@ namespace FlatEngine { namespace FlatGui {
 			sceneObjects = std::vector<std::shared_ptr<GameObject>>();
 
 		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
-
-		// This will catch our interactions
-		ImGui::SetCursorScreenPos(currentPos);
-		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
 
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;

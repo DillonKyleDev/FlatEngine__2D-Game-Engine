@@ -1443,7 +1443,8 @@ namespace FlatEngine { namespace FlatGui {
 					Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y));
 					ImGui::SetCursorPos(positionOnScreen);
 					//// This will catch our interactions  - 4096 for overlap or keyword if it works
-					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap);
+					ImGui::SetNextItemAllowOverlap();
+					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 					const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 					const bool is_active = ImGui::IsItemActive();   // Held
 					const bool is_clicked = ImGui::IsItemClicked();
@@ -2343,8 +2344,11 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight;
 		if (_allowOverlap)
+		{
+			ImGui::SetNextItemAllowOverlap();
 			flags += ImGuiButtonFlags_AllowOverlap;
-
+		}
+			
 		ImGui::SetCursorScreenPos(startingPoint);
 		return ImGui::InvisibleButton(id.c_str(), size, flags);
 	}
