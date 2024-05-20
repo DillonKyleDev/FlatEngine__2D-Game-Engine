@@ -1626,7 +1626,7 @@ namespace FlatEngine { namespace FlatGui {
 					boxCollider->GetCorners()[2],
 					boxCollider->GetCorners()[3],
 				};
-
+				LogVector2(corners[0], "FlatGui: ");
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (loadedProject->GetCollisionDetection() == "Simple Box")

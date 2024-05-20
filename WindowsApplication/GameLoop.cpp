@@ -215,7 +215,7 @@ namespace FlatEngine
 						// Update Secondary BoxCollider Active Edges
 						checkAgainst->UpdateActiveEdges();
 
-						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->CheckForCollision(checkAgainst))
+						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->SimpleBoxCheckForCollision(checkAgainst))
 						{							
 							_isColliding = true;
 						}

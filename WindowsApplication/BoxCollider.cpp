@@ -23,6 +23,16 @@ namespace FlatEngine
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
 
+		float nextActiveLeft = 0;
+		float nextActiveRight = 0;
+		float nextActiveBottom = 0;
+		float nextActiveTop = 0;
+		Vector2 nextCorners[4] = { 0,0,0,0 };
+		Vector2 centerGrid = Vector2(0, 0);
+		Vector2 nextCenterGrid = Vector2(0, 0);
+		Vector2 centerCoord = Vector2(0, 0);
+		Vector2 nextCenterCoord = Vector2(0, 0);
+
 		activeLeft = 0;
 		activeRight = 0;
 		activeBottom = 0;
@@ -87,17 +97,17 @@ namespace FlatEngine
 		_onCollisionLeaveSet = true;
 	}
 
-	bool BoxCollider::CheckForCollision(std::shared_ptr<BoxCollider> other)
+	bool BoxCollider::SimpleBoxCheckForCollision(std::shared_ptr<BoxCollider> other)
 	{
-		float A_TopEdge = activeTop;
-		float A_RightEdge = activeRight;
-		float A_BottomEdge = activeBottom;
-		float A_LeftEdge = activeLeft;
+		float A_TopEdge = nextActiveTop;
+		float A_RightEdge = nextActiveRight;
+		float A_BottomEdge = nextActiveBottom;
+		float A_LeftEdge = nextActiveLeft;
 
-		float B_TopEdge = other->activeTop;
-		float B_RightEdge = other->activeRight;
-		float B_BottomEdge = other->activeBottom;
-		float B_LeftEdge = other->activeLeft;
+		float B_TopEdge = other->nextActiveTop;
+		float B_RightEdge = other->nextActiveRight;
+		float B_BottomEdge = other->nextActiveBottom;
+		float B_LeftEdge = other->nextActiveLeft;
 
 		return ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
 	}
@@ -224,7 +234,6 @@ namespace FlatEngine
 		}
 		else
 		{
-
 			// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 			bool _shouldUpdate = false;
 
@@ -290,7 +299,7 @@ namespace FlatEngine
 			scale = transform->GetScale();
 
 		std::shared_ptr<FlatEngine::RigidBody> rigidBody;
-		if (GetParent()->HasComponent("RigidBody"))
+		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 		{
 			rigidBody = GetParent()->GetRigidBody();
 			Vector2 velocity = rigidBody->GetVelocity();
@@ -308,18 +317,36 @@ namespace FlatEngine
 		{
 			std::shared_ptr<FlatEngine::RigidBody> rigidBody = parent->GetRigidBody();
 
-			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
-			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
-			if (rigidBody != nullptr)
-				center = rigidBody->GetNextPosition();
-			else
-			{
-				std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
-				center = transform->GetTruePosition();
-			}
+			float step = FlatGui::sceneViewGridStep.x;
+			Vector2 centerPoint = FlatGui::sceneViewCenter;
+			std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+			Vector2 scale = transform->GetScale();
 
-			UpdateCenter();
-			UpdateCorners();
+			// For visual representation
+			centerGrid = transform->GetTruePosition();
+
+			activeLeft = centerPoint.x + (centerGrid.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
+			activeTop = centerPoint.y + (-centerGrid.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
+			activeRight = centerPoint.x + (centerGrid.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
+			activeBottom = centerPoint.y + (-centerGrid.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+
+			centerCoord = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
+			LogFloat(centerCoord.x, "Center Point: ");
+
+			// For collision detection
+			if (rigidBody != nullptr)
+				nextCenterGrid = rigidBody->GetNextPosition();
+			else
+				nextCenterGrid = transform->GetTruePosition();
+
+			nextActiveLeft = centerPoint.x + (nextCenterGrid.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
+			nextActiveTop = centerPoint.y + (-nextCenterGrid.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
+			nextActiveRight = centerPoint.x + (nextCenterGrid.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
+			nextActiveBottom = centerPoint.y + (-nextCenterGrid.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+
+			nextCenterCoord = Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2);
+
+			SimpleBoxUpdateCorners();
 		}
 	}
 
@@ -372,14 +399,14 @@ namespace FlatEngine
 		Vector2 topRight = { activeRight, activeTop };
 		Vector2 bottomLeft = { activeLeft, activeBottom };		
 
-		//if (rotation != 0)
-		//{
+		if (rotation != 0)
+		{
 			// Corners with rotation
 			topLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);			
 			topRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);
 			bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
 			bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
-		//}
+		}
 
 		Vector2 newCorners[4] =
 		{
@@ -399,21 +426,37 @@ namespace FlatEngine
 		Vector2 centerPoint = FlatGui::sceneViewCenter;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 scale = transform->GetScale();
-
+		LogFloat(activeLeft, "Active Left: ");
+		LogFloat(activeTop, "Active Top: ");
+		// For visual representation
 		Vector2 topLeft = { activeLeft, activeTop };
-		Vector2 bottomRight = { activeRight, activeBottom };
 		Vector2 topRight = { activeRight, activeTop };
+		Vector2 bottomRight = { activeRight, activeBottom };
 		Vector2 bottomLeft = { activeLeft, activeBottom };
 
 		Vector2 newCorners[4] =
 		{
-			Vector2(center.x + topLeft.x, center.y + topLeft.y),
-			Vector2(center.x + topRight.x, center.y + topRight.y),
-			Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
-			Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+			topLeft,
+			topRight,
+			bottomRight,
+			bottomLeft
 		};
-
 		SetCorners(newCorners);
+
+		// For collision detection
+		Vector2 nextTopLeft = { nextActiveLeft, nextActiveTop };
+		Vector2 nextTopRight = { nextActiveRight, nextActiveTop };
+		Vector2 nextBottomRight = { nextActiveRight, nextActiveBottom };
+		Vector2 nextBottomLeft = { nextActiveLeft, nextActiveBottom };
+
+		Vector2 newNextCorners[4] =
+		{
+			nextTopLeft,
+			nextTopRight,
+			nextBottomRight,
+			nextBottomLeft
+		};
+		SetNextCorners(newNextCorners);
 	}
 
 	void BoxCollider::UpdateCenter()
@@ -439,6 +482,14 @@ namespace FlatEngine
 		corners[3] = newCorners[3];
 	}
 
+	void BoxCollider::SetNextCorners(Vector2 newCorners[4])
+	{
+		nextCorners[0] = newCorners[0];
+		nextCorners[1] = newCorners[1];
+		nextCorners[2] = newCorners[2];
+		nextCorners[3] = newCorners[3];
+	}
+
 	Vector2* BoxCollider::GetCorners()
 	{
 		return corners;
@@ -454,7 +505,7 @@ namespace FlatEngine
 
 	Vector2 BoxCollider::GetCenter()
 	{
-		return center;
+		return centerCoord;
 	}
 
 	Vector2* BoxCollider::GetNormals()
