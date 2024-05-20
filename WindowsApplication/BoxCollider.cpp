@@ -331,7 +331,6 @@ namespace FlatEngine
 			activeBottom = centerPoint.y + (-centerGrid.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
 
 			centerCoord = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
-			LogFloat(centerCoord.x, "Center Point: ");
 
 			// For collision detection
 			if (rigidBody != nullptr)
@@ -426,8 +425,7 @@ namespace FlatEngine
 		Vector2 centerPoint = FlatGui::sceneViewCenter;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 scale = transform->GetScale();
-		LogFloat(activeLeft, "Active Left: ");
-		LogFloat(activeTop, "Active Top: ");
+
 		// For visual representation
 		Vector2 topLeft = { activeLeft, activeTop };
 		Vector2 topRight = { activeRight, activeTop };

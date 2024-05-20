@@ -16,11 +16,17 @@ namespace FlatEngine
 		~RigidBody();
 
 		std::string GetData();
+
 		void CalculatePhysics(float deltaTime);
-		void ApplyPhysics();
+		void CalculateEulerPhysics(float deltaTime);
+		void CalculateVerletPhysics(float deltaTime);
+
+		void ApplyPhysics(float deltaTime);
+		void ApplyEulerPhysics(float deltaTime);
+		void ApplyVerletPhysics(float deltaTime);
+
 		Vector2 AddVelocity(Vector2 vel, float deltaTime);
 		void ApplyGravity(float deltaTime);
-		void ApplyVelocity();
 		void AddForce(Vector2 direction, float power);
 		void Move(Vector2 position);
 		void SetMass(float newMass);
@@ -53,7 +59,8 @@ namespace FlatEngine
 		float gravity;
 		float gravityCorrection;
 		Vector2 velocity;
-		Vector2 pendingVelocity;
+		Vector2 pendingForces;
+		Vector2 acceleration;
 		bool _isMoving;
 		bool _isContinious;
 		bool _isGrounded;

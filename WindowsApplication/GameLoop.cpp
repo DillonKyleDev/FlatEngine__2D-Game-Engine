@@ -237,7 +237,7 @@ namespace FlatEngine
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 		{
-			rigidBody->ApplyPhysics();
+			rigidBody->ApplyPhysics(deltaTime);
 		}
 	}
 
