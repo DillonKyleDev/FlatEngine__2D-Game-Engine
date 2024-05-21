@@ -148,7 +148,7 @@ namespace FlatEngine {
 			if (!_isGrounded && velocity.y < terminalVelocity)
 				pendingForces.y -= gravity * gravityCorrection * deltaTime;
 			else if (_isGrounded && pendingForces.y > 0)
-				pendingForces.y = 0;
+				pendingForces.y /= 100;
 		}
 	}
 

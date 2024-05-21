@@ -125,7 +125,7 @@ namespace FlatEngine
 	void BoxCollider::UpdatePreviousPosition()
 	{
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		previousPosition = transform->GetPosition();
+		previousPosition = transform->GetTruePosition();
 	}
 
 	bool BoxCollider::HasMoved()
@@ -232,54 +232,9 @@ namespace FlatEngine
 		{
 			SimpleBoxUpdateEdges();
 		}
-		else
+		else if(loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
 		{
-			// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
-			bool _shouldUpdate = false;
 
-			std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
-			std::shared_ptr<FlatEngine::Transform> transform = nullptr;
-			//Vector2 scale = Vector2(1, 1);
-
-			//if (parent != nullptr)
-			//	transform = parent->GetTransformComponent();
-			//if (transform != nullptr)
-			//	scale = transform->GetScale();
-
-			//std::shared_ptr<FlatEngine::RigidBody> rigidBody;
-			//if (GetParent()->HasComponent("RigidBody"))
-			//{
-				//rigidBody = GetParent()->GetRigidBody();
-			//	Vector2 velocity = rigidBody->GetVelocity();
-
-			//	if (velocity.x != 0 || velocity.y != 0 || !_activeEdgesSet || HasMoved())
-			//		_shouldUpdate = true;
-			//}
-			//else
-			//{
-			//	if (!_activeEdgesSet || HasMoved())
-			//		_shouldUpdate = true;
-			//}
-
-			//if (_shouldUpdate)
-			//{
-			std::shared_ptr<FlatEngine::RigidBody> rigidBody = parent->GetRigidBody();
-			Vector2 position;
-			float step = FlatGui::sceneViewGridStep.x;
-			Vector2 centerPoint = FlatGui::sceneViewCenter;
-
-			// If there is a RigidBody attached, take the next position it will be in as a reference for collision,
-			// Else just take the Transforms position because it will be stationary and we don't need precise position checking
-			if (rigidBody != nullptr)
-				position = rigidBody->GetNextPosition();
-			else
-			{
-				std::shared_ptr<FlatEngine::Transform> transform = this->GetParent()->GetTransformComponent();
-				position = transform->GetPosition();
-			}
-
-			SetActiveEdges(Vector4(activeTop, activeRight, activeBottom, activeLeft));
-			//}
 		}
 		return activeEdges;
 	}

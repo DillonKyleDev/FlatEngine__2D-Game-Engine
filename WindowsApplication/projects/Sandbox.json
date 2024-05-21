@@ -19,10 +19,10 @@
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\TEST_SCENE.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
-            "sceneViewGridStepX": 66.69947814941406,
-            "sceneViewGridStepY": 66.69947814941406,
-            "sceneViewScrollingX": 291.403076171875,
-            "sceneViewScrollingY": 249.73045349121094
+            "sceneViewGridStepX": 27.69999122619629,
+            "sceneViewGridStepY": 27.69999122619629,
+            "sceneViewScrollingX": 317.403076171875,
+            "sceneViewScrollingY": 361.73046875
         }
     ]
 }

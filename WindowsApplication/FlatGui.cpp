@@ -1606,7 +1606,7 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
-			// Renders Button Component
+			// Renders BoxCollider Component
 			if (boxCollider != nullptr)
 			{
 				float activeWidth = boxCollider->GetActiveWidth();
@@ -1618,15 +1618,13 @@ namespace FlatEngine { namespace FlatGui {
 
 				boxCollider->UpdateActiveEdges();
 
-				/*LogVector2(transform->GetTruePosition(), "True position of " + self->GetName());*/
-
 				Vector2 corners[4] = {
 					boxCollider->GetCorners()[0],
 					boxCollider->GetCorners()[1],
 					boxCollider->GetCorners()[2],
 					boxCollider->GetCorners()[3],
 				};
-				LogVector2(corners[0], "FlatGui: ");
+
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (loadedProject->GetCollisionDetection() == "Simple Box")
@@ -1638,7 +1636,7 @@ namespace FlatEngine { namespace FlatGui {
 					else if (_isColliding)
 						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
 				}
-				else
+				else if(loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
