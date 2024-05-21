@@ -148,7 +148,7 @@ namespace FlatEngine {
 			if (!_isGrounded && velocity.y < terminalVelocity)
 				pendingForces.y -= gravity * gravityCorrection * deltaTime;
 			else if (_isGrounded && pendingForces.y > 0)
-				pendingForces.y /= 100;
+				pendingForces.y = 0;
 		}
 	}
 
@@ -188,9 +188,10 @@ namespace FlatEngine {
 
 	Vector2 RigidBody::GetNextPosition()
 	{
+		Vector2 nextVelocity = Vector2(acceleration.x + (pendingForces.x), acceleration.y + (pendingForces.y));
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
-		return Vector2(position.x + velocity.x * gravity * 3, position.y + velocity.y * gravity * 3);
+		return Vector2(position.x + nextVelocity.x * 2, position.y + nextVelocity.y * 2);
 	}
 
 	void RigidBody::Move(Vector2 position)

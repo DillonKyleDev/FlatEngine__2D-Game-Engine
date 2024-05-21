@@ -31,7 +31,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "_isContinious": true,
                     "_isKinematic": false,
                     "_isStatic": false,
