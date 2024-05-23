@@ -34,7 +34,7 @@ namespace FlatEngine
 			GetLoadedScene()->IncrementGameObjectID();
 		}
 	
-		tagList = std::shared_ptr<TagList>();
+		tagList = std::make_shared<TagList>();
 		parentID = newParentID;
 		name = "GameObject(" + std::to_string(ID) + ")";
 		components = std::vector<std::shared_ptr<Component>>();

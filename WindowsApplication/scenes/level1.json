@@ -19,7 +19,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isMoving": false,
                     "id": 1,
                     "runSpeed": 2.0,
@@ -54,7 +54,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isContinious": true,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
@@ -66,7 +66,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "attachedScript": "PlayerController",
                     "id": 6,
                     "type": "Script"
@@ -74,7 +74,23 @@
             ],
             "id": 0,
             "name": "Hopper",
-            "parent": -1
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": true,
+                "Projectile": false,
+                "Terrain": false
+            }
         },
         {
             "_isActive": true,
@@ -122,7 +138,23 @@
             ],
             "id": 1,
             "name": "Level1",
-            "parent": -1
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
         },
         {
             "_isActive": true,
@@ -168,7 +200,23 @@
             ],
             "id": 2,
             "name": "Floor1",
-            "parent": -1
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": true
+            }
         },
         {
             "_isActive": true,
@@ -190,7 +238,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": false,
+                    "_isContinious": true,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
@@ -221,7 +269,85 @@
             ],
             "id": 3,
             "name": "JumpPad",
-            "parent": -1
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": true,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 16,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 18.20848846435547,
+                    "xScale": 4.400000095367432,
+                    "yOrigin": 0.0,
+                    "yPos": -0.16286659240722656,
+                    "yScale": 5.300000190734863
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 17,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": true,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 18,
+                    "type": "BoxCollider"
+                }
+            ],
+            "id": 4,
+            "name": "Sprite(4)",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": true
+            }
         }
     ]
 }

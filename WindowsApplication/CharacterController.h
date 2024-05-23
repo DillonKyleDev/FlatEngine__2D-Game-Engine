@@ -28,6 +28,7 @@ namespace FlatEngine {
 		float walkSpeed;
 		float runSpeed;
 		float maxSpeed;
+		float airControl;
 		float speedCorrection;
 		bool _isMoving;
 		bool _isGrounded;

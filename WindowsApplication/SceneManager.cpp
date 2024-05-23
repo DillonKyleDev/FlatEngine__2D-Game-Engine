@@ -98,32 +98,39 @@ namespace FlatEngine
 					childrenArray.push_back(currentObject->GetChildren()[c]);
 				}
 
-				// Declare tags array json object for GameObject Tags
-				json tagsArray = json::array();				
+				// Declare tags object for GameObject Tags	
 				std::map <std::string, bool> tagList = currentObject->GetTagList()->GetTagsMap();
-				std::map<std::string, bool>::iterator iterator;
-				for (iterator = tagList.begin(); iterator != tagList.end(); iterator++)
-				{
-					// PUT TAGS INTO THE JSON OBJECT TO BE SAVED
-				}
+
+				json tagsObjectJson = json::object({
+					{ "Player", tagList.at("Player") },
+					{ "Enemy", tagList.at("Enemy") },
+					{ "Npc", tagList.at("Npc") },
+					{ "OnlyForPlayer", tagList.at("OnlyForPlayer") },
+					{ "OnlyForEnemy", tagList.at("OnlyForEnemy") },
+					{ "OnlyForNpc", tagList.at("OnlyForNpc") },
+					{ "IgnorePlayer", tagList.at("IgnorePlayer") },
+					{ "IgnoreEnemy", tagList.at("IgnoreEnemy") },
+					{ "IgnoreNpc", tagList.at("IgnoreNpc") },
+					{ "Projectile", tagList.at("Projectile") },
+					{ "Terrain", tagList.at("Terrain") },
+					{ "InteractableItem", tagList.at("InteractableItem") },
+					{ "InteractableObject", tagList.at("InteractableObject") },
+					{ "Item", tagList.at("Item") },
+				});
 
 				// Get object name
 				std::string objectName = currentObject->GetName();
 
 				// Create Game Object Json data object
 				json gameObjectJson = json::object({ 
-					{"name", objectName}, 
-					{"id", currentObject->GetID()},
-					{"_isActive", currentObject->IsActive()},
-					{"parent", currentObject->GetParentID()},
-					{"children", childrenArray}, 
-					{"components", componentsArray},
-					{"tags", }
+					{ "name", objectName }, 
+					{ "id", currentObject->GetID() },
+					{ "_isActive", currentObject->IsActive() },
+					{ "parent", currentObject->GetParentID() },
+					{ "children", childrenArray }, 
+					{ "components", componentsArray },
+					{ "tags", tagsObjectJson },
 				});
-
-				// Adding elements to objects in this way doesn't seem to save correctly. ^ Use the way above ^
-				//gameObjectJson += json::object_t::value_type("name", objectName);
-				//gameObjectJson += json::object_t::value_type("components", componentsArray);
 
 				// Finally, add the gameObject json to the sceneObjectsJsonArray
 				sceneObjectsJsonArray.push_back(gameObjectJson);
@@ -204,6 +211,7 @@ namespace FlatEngine
 					// Default values
 					std::string loadedName = "Name";
 					long loadedID = -1;
+					std::shared_ptr<TagList> tags = std::make_shared<TagList>();
 					bool _isActive = true;
 					long loadedParentID = -1;
 					std::vector<long> loadedChildrenIDs = std::vector<long>();
@@ -220,6 +228,26 @@ namespace FlatEngine
 						loadedID = currentObjectJson["id"];
 					else
 						FlatEngine::LogInt(i, "SceneManager::Load() - Saved scene json does not contain a value for 'id' in object: ");
+					// Check tags key exists
+					if (currentObjectJson.contains("tags"))
+					{		
+						tags->SetTag("Player", currentObjectJson["tags"]["Player"]);
+						tags->SetTag("Enemy", currentObjectJson["tags"]["Enemy"]);
+						tags->SetTag("Npc", currentObjectJson["tags"]["Npc"]);
+						tags->SetTag("OnlyForPlayer", currentObjectJson["tags"]["OnlyForPlayer"]);
+						tags->SetTag("OnlyForEnemy", currentObjectJson["tags"]["OnlyForEnemy"]);
+						tags->SetTag("OnlyForNpc", currentObjectJson["tags"]["OnlyForNpc"]);
+						tags->SetTag("IgnorePlayer", currentObjectJson["tags"]["IgnorePlayer"]);
+						tags->SetTag("IgnoreEnemy", currentObjectJson["tags"]["IgnoreEnemy"]);
+						tags->SetTag("IgnoreNpc", currentObjectJson["tags"]["IgnoreNpc"]);
+						tags->SetTag("Projectile", currentObjectJson["tags"]["Projectile"]);
+						tags->SetTag("Terrain", currentObjectJson["tags"]["Terrain"]);
+						tags->SetTag("InteractableItem", currentObjectJson["tags"]["InteractableItem"]);
+						tags->SetTag("InteractableObject", currentObjectJson["tags"]["InteractableObject"]);
+						tags->SetTag("Item", currentObjectJson["tags"]["Item"]);
+					}
+					else
+						FlatEngine::LogInt(i, "SceneManager::Load() - Saved scene json does not contain a value for 'tags' in object: ");
 					// Check _isActive key exists
 					if (currentObjectJson.contains("_isActive"))
 						_isActive = currentObjectJson["_isActive"];
@@ -245,6 +273,7 @@ namespace FlatEngine
 
 					// Create new GameObject to load the data into
 					std::shared_ptr<GameObject> loadedObject = std::make_shared<GameObject>(loadedParentID, loadedID);
+					loadedObject->SetTagList(tags);
 					loadedObject->SetName(loadedName);
 					loadedObject->SetActive(_isActive);
 					// Add created GameObject to our freshScene

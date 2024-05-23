@@ -10,6 +10,10 @@ namespace FlatEngine {
 		tags.emplace("Npc", false);
 		tags.emplace("OnlyForPlayer", false);
 		tags.emplace("OnlyForEnemy", false);
+		tags.emplace("OnlyForNpc", false);
+		tags.emplace("IgnorePlayer", false);
+		tags.emplace("IgnoreEnemy", false);
+		tags.emplace("IgnoreNpc", false);
 		tags.emplace("Projectile", false);
 		tags.emplace("Terrain", false);
 		tags.emplace("InteractableItem", false);
@@ -17,8 +21,16 @@ namespace FlatEngine {
 		tags.emplace("Item", false);
 	}
 
-	TagList::TagList(const TagList* toCopy)
+	TagList::TagList(const std::shared_ptr<TagList> toCopy)
 	{
+		std::map<std::string, bool>::iterator iterator;
+		for (iterator = toCopy->tags.begin(); iterator != toCopy->tags.end(); iterator++)
+		{
+			if (tags.count(iterator->first) > 0)
+				tags.at(iterator->first) = iterator->second;
+			else
+				tags.emplace(iterator->first, iterator->second);
+		}
 	}
 
 	TagList::~TagList()
@@ -29,6 +41,12 @@ namespace FlatEngine {
 	{
 		if (tags.count(tag) > 0)
 			tags.at(tag) = _value;
+	}
+
+	void TagList::ToggleTag(std::string tag)
+	{
+		if (tags.count(tag) > 0)
+			tags.at(tag) = !tags.at(tag);
 	}
 
 	bool TagList::HasTag(std::string tag)

@@ -7,10 +7,11 @@ namespace FlatEngine {
 	{
 	public:
 		TagList();
-		TagList(const TagList* toCopy);
+		TagList(const std::shared_ptr<TagList> toCopy);
 		~TagList();
 
 		void SetTag(std::string tag, bool _value);
+		void ToggleTag(std::string tag);
 		bool HasTag(std::string);
 		void CreateNewTag(std::string tagName, bool _value = false);
 		void RemoveTag(std::string tagName);
@@ -18,16 +19,6 @@ namespace FlatEngine {
 		
 	private:
 		std::map<std::string, bool> tags;
-		bool _player;
-		bool _enemy;
-		bool _npc;
-		bool _onlyForPlayer;
-		bool _onlyForEnemy;
-		bool _projectile;
-		bool _terrain;
-		bool _interactableItem;
-		bool _interactableObject;
-		bool _item;
 	};
 
 }

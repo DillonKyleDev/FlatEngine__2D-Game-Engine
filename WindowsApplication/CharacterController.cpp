@@ -14,6 +14,7 @@ namespace FlatEngine {
 		walkSpeed = 1;
 		runSpeed = 2;
 		maxSpeed = 0.01f;
+		airControl = 0.5f;
 		speedCorrection = 0.001f;
 		_isMoving = false;
 		_isGrounded = false;
@@ -78,7 +79,10 @@ namespace FlatEngine {
 			// If velocity exceeds negative max speed but x direction is positive
 			(pendingForces.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0) && normalizedX != 0)
 		{
-			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0));
+			if (!rigidBody->IsGrounded())
+				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * airControl * speedCorrection, 0));
+			else
+				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0));
 			_isMoving = true;
 		}		
 		

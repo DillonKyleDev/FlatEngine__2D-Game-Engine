@@ -40,6 +40,7 @@ namespace FlatEngine
 		void SetVelocity(Vector2 newVelocity);
 		Vector2 GetVelocity();
 		Vector2 GetPendingForces();
+		void SetPendingForces(Vector2 newPendingForces);
 		Vector2 GetNextPosition();
 		void SetTerminalVelocity(float newTerminalVelocity);
 		float GetTerminalVelocity();
@@ -60,6 +61,7 @@ namespace FlatEngine
 		float mass;
 		float angularDrag;
 		float gravity;
+		float fallingGravity;
 		float gravityCorrection;
 		Vector2 velocity;
 		Vector2 pendingForces;

@@ -1,4 +1,5 @@
 #include "FlatEngine.h"
+#include "TagList.h"
 #include "Scene.h"
 #include "Sprite.h"
 #include "Camera.h"
@@ -160,12 +161,57 @@ namespace FlatEngine { namespace FlatGui {
 
 			bool _objectActive = focusedObject->IsActive();
 
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 2));
+
+			// GameObject Active Checkbox
 			if (RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 20, 5);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 62, 5);
+
+			// GameObject TagList Dropdown
+			std::shared_ptr<TagList> tagList = focusedObject->GetTagList();			
+			RenderButton("Tags");
+			PushMenuStyles();
+			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			{
+				if (ImGui::MenuItem("Player", NULL, tagList->HasTag("Player")))
+					tagList->ToggleTag("Player");
+				if (ImGui::MenuItem("Enemy", NULL,  tagList->HasTag("Enemy")))
+					tagList->ToggleTag("Enemy");
+				if (ImGui::MenuItem("Npc", NULL,  tagList->HasTag("Npc")))
+					tagList->ToggleTag("Npc");
+				if (ImGui::MenuItem("OnlyForPlayer", NULL,  tagList->HasTag("OnlyForPlayer")))
+					tagList->ToggleTag("OnlyForPlayer");
+				if (ImGui::MenuItem("OnlyForEnemy", NULL,  tagList->HasTag("OnlyForEnemy")))
+					tagList->ToggleTag("OnlyForEnemy");
+				if (ImGui::MenuItem("OnlyForNpc", NULL,  tagList->HasTag("OnlyForNpc")))
+					tagList->ToggleTag("OnlyForNpc");
+				if (ImGui::MenuItem("IgnorePlayer", NULL,  tagList->HasTag("IgnorePlayer")))
+					tagList->ToggleTag("IgnorePlayer");
+				if (ImGui::MenuItem("IgnoreEnemy", NULL,  tagList->HasTag("IgnoreEnemy")))
+					tagList->ToggleTag("IgnoreEnemy");
+				if (ImGui::MenuItem("IgnoreNpc", NULL,  tagList->HasTag("IgnoreNpc")))
+					tagList->ToggleTag("IgnoreNpc");
+				if (ImGui::MenuItem("Projectile", NULL,  tagList->HasTag("Projectile")))
+					tagList->ToggleTag("Projectile");
+				if (ImGui::MenuItem("Terrain", NULL,  tagList->HasTag("Terrain")))
+					tagList->ToggleTag("Terrain");
+				if (ImGui::MenuItem("InteractableItem", NULL,  tagList->HasTag("InteractableItem")))
+					tagList->ToggleTag("InteractableItem");
+				if (ImGui::MenuItem("InteractableObject", NULL,  tagList->HasTag("InteractableObject")))
+					tagList->ToggleTag("InteractableObject");
+				if (ImGui::MenuItem("Item", NULL,  tagList->HasTag("Item")))
+					tagList->ToggleTag("Item");
+				ImGui::EndPopup();
+			}
+			PopMenuStyles();
+
+
+			// Three Dots More Options Button
+			ImGui::SameLine(0, 5);
 			RenderImageButton("##InspectorMoreButton", threeDotsTexture, Vector2(16, 16), 1, transparentColor);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-
+			// Render the actual menu on click
 			PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
@@ -207,12 +253,14 @@ namespace FlatEngine { namespace FlatGui {
 
 			std::vector<std::shared_ptr<Component>> components = focusedObject->GetComponents();
 
+			// For scrolling components section with background
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, logBgColor);
+			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), childFlags);
+			ImGui::PopStyleColor();
+
 			if (components.size() > 0)
 			{
 				long queuedForDelete = -1;
-				// Open File Icon
-				float openFileWidth = (float)openFileIcon->getWidth();
-				float openFileHeight = (float)openFileIcon->getHeight();
 
 				for (int i = 0; i < components.size(); i++)
 				{
@@ -784,6 +832,8 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 
+			ImGui::EndChild(); // ComponentsSectionBg
+
 			// Render the Adding Components button
 			RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
@@ -791,8 +841,6 @@ namespace FlatEngine { namespace FlatGui {
 				L_ShowAddComponentsWindow();
 				ImGui::EndPopup();
 			}
-
-			ImGui::Text("");
 		}
 
 		EndWindow();

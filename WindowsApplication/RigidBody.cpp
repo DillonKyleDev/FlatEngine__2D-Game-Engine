@@ -12,6 +12,7 @@ namespace FlatEngine {
 		mass = 1;
 		angularDrag = 1;
 		gravity = 1;
+		fallingGravity = gravity * 1.5f;
 		gravityCorrection = 0.001f;
 		velocity = Vector2(0, 0);
 		pendingForces = Vector2(0, 0);
@@ -142,7 +143,12 @@ namespace FlatEngine {
 		if (gravity > 0)
 		{
 			if (!_isGrounded && velocity.y > -terminalVelocity)
-				pendingForces.y -= gravity * gravityCorrection;
+			{
+				if (velocity.y < 0)
+					pendingForces.y -= fallingGravity * gravityCorrection;
+				else
+					pendingForces.y -= gravity * gravityCorrection;
+			}
 			else if (_isGrounded && pendingForces.y < 0) 
 			{
 				pendingForces.y -= 8 * pendingForces.y / 10;
@@ -151,7 +157,10 @@ namespace FlatEngine {
 		else if (gravity < 0)
 		{
 			if (!_isGrounded && velocity.y < terminalVelocity)
-				pendingForces.y -= gravity * gravityCorrection;
+				if (velocity.y > 0)
+					pendingForces.y -= fallingGravity * gravityCorrection;
+				else
+					pendingForces.y -= gravity * gravityCorrection;				
 			else if (_isGrounded && pendingForces.y > 0)
 				pendingForces.y = 0;
 		}
@@ -326,6 +335,11 @@ namespace FlatEngine {
 		return _isKinematic;
 	}
 	
+	void RigidBody::SetPendingForces(Vector2 newPendingForces)
+	{
+		pendingForces = newPendingForces;
+	}
+
 	float RigidBody::GetEquilibriumForce()
 	{
 		return equilibriumForce;

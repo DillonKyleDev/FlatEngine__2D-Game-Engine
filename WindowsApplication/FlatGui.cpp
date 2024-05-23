@@ -79,7 +79,7 @@ namespace FlatEngine { namespace FlatGui {
 	Vector4 singleItemDark = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
 	Vector4 windowTitleBg = Vector4(0.25f, 0.25f, 0.25f, 1.0f);
 	// Log
-	Vector4 logTextColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);;
+	Vector4 logTextColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);
 	Vector4 logBgColor = Vector4(0.2f, 0.2f, 0.22f, 1.0f);
 	Vector4 logOutlineColor = Vector4(0.25f, 0.25f, 0.27f, 1.0f);
 	// Docking
