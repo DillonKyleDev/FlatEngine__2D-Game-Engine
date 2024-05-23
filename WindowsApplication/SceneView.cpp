@@ -86,6 +86,7 @@ namespace FlatEngine { namespace FlatGui {
 			sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
+		// Show cursor position in scene view when pressing Alt
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{
 			Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / sceneViewGridStep.x, -(inputOutput.MousePos.y - sceneViewCenter.y) / sceneViewGridStep.y);
@@ -124,6 +125,12 @@ namespace FlatEngine { namespace FlatGui {
 		float weight = 0.01f;
 		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
 		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+		float zoomSpeed = 0.1f;
+		float zoomMultiplier = 10;
+		float finalZoomSpeed = zoomSpeed;
+		
+		if (ImGui::GetIO().KeyCtrl)
+			finalZoomSpeed *= zoomMultiplier;
 
 		// Change scrolling offset based on mouse position and weight
 		if (is_hovered)
@@ -135,8 +142,8 @@ namespace FlatEngine { namespace FlatGui {
 					sceneViewScrolling.x -= trunc(signedMousePosX * weight);
 					sceneViewScrolling.y -= trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x += .1;
-				sceneViewGridStep.y += .1;
+				sceneViewGridStep.x += finalZoomSpeed;
+				sceneViewGridStep.y += finalZoomSpeed;
 			}
 			else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
 			{
@@ -145,8 +152,8 @@ namespace FlatEngine { namespace FlatGui {
 					sceneViewScrolling.x += trunc(signedMousePosX * weight);
 					sceneViewScrolling.y += trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x -= .1;
-				sceneViewGridStep.y -= .1;
+				sceneViewGridStep.x -= finalZoomSpeed;
+				sceneViewGridStep.y -= finalZoomSpeed;
 			}
 		}
 

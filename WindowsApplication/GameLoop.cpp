@@ -5,7 +5,13 @@
 #include "BoxCollider.h"
 #include "Transform.h"
 #include "./scripts/GameManager.h"
+#include "./scripts/StartButton.h"
+#include "./scripts/RestartButton.h"
+#include "./scripts/QuitButton.h"
+#include "./scripts/PlayerController.h"
 #include "./scripts/GroundedCheck.h"
+#include "./scripts/JumpPad.h"
+
 
 
 namespace FlatEngine
@@ -98,12 +104,26 @@ namespace FlatEngine
 						script->SetScriptInstance(quitButtonScript);
 						activeScripts.push_back(quitButtonScript);
 					}
+					else if (attachedScript == "PlayerController")
+					{
+						std::shared_ptr<PlayerController> playerControllerScript = std::make_shared<PlayerController>();
+						playerControllerScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(playerControllerScript);
+						activeScripts.push_back(playerControllerScript);
+					}
 					else if (attachedScript == "GroundedCheck")
 					{
 						std::shared_ptr<GroundedCheck> groundCheckScript = std::make_shared<GroundedCheck>();
 						groundCheckScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(groundCheckScript);
 						activeScripts.push_back(groundCheckScript);
+					}
+					else if (attachedScript == "JumpPad")
+					{
+						std::shared_ptr<JumpPad> jumpPadScript = std::make_shared<JumpPad>();
+						jumpPadScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(jumpPadScript);
+						activeScripts.push_back(jumpPadScript);
 					}
 				}
 				if (components[j]->GetTypeString() == "RigidBody")
@@ -193,7 +213,7 @@ namespace FlatEngine
 		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 		{
-			rigidBody->CalculatePhysics(deltaTime);
+			rigidBody->CalculatePhysics();
 		}
 
 		static int continuousCounter = 0;
@@ -216,7 +236,8 @@ namespace FlatEngine
 						checkAgainst->UpdateActiveEdges();
 
 						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->SimpleBoxCheckForCollision(checkAgainst))
-						{							
+						{				
+							//boxCollider->SetColliding(true);
 							_isColliding = true;
 						}
 					}
@@ -224,7 +245,7 @@ namespace FlatEngine
 
 				if (boxCollider->GetParent()->HasComponent("RigidBody"))
 					boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(_isColliding);
-				boxCollider->SetColliding(_isColliding);
+				//boxCollider->SetColliding(_isColliding);
 			}
 		}
 

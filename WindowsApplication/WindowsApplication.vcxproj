@@ -156,6 +156,8 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="GameView.cpp" />
+    <ClCompile Include="scripts\JumpPad.cpp" />
+    <ClCompile Include="scripts\PlayerController.cpp" />
     <ClCompile Include="scripts\GroundedCheck.cpp" />
     <ClCompile Include="Hierarchy.cpp" />
     <ClCompile Include="Icons.cpp" />
@@ -195,6 +197,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="scripts\StartButton.cpp" />
+    <ClCompile Include="TagList.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -218,6 +221,8 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="scripts\JumpPad.h" />
+    <ClInclude Include="scripts\PlayerController.h" />
     <ClInclude Include="scripts\GroundedCheck.h" />
     <ClInclude Include="implot.h" />
     <ClInclude Include="implot_internal.h" />
@@ -246,6 +251,7 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="scripts\StartButton.h" />
+    <ClInclude Include="TagList.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />

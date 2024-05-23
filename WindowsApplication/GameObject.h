@@ -5,6 +5,7 @@
 
 namespace FlatEngine
 {
+	class TagList;
 	class Button;
 	class Canvas;
 	class ScriptComponent;
@@ -36,6 +37,10 @@ namespace FlatEngine
 		long GetID();
 		void SetName(std::string name);
 		std::string GetName();
+		std::shared_ptr<TagList> GetTagList();
+		void SetTagList(std::shared_ptr<TagList> tagList);
+		bool HasTag(std::string tagName);
+		void SetTag(std::string tagName, bool _value);
 		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
 		std::shared_ptr<Component> GetComponent(ComponentTypes type);
@@ -70,6 +75,7 @@ namespace FlatEngine
 		bool IsActive();
 
 	private:
+		std::shared_ptr<TagList> tagList;
 		long ID;
 		long parentID;
 		bool _isActive;

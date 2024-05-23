@@ -17,17 +17,19 @@ namespace FlatEngine
 
 		std::string GetData();
 
-		void CalculatePhysics(float deltaTime);
-		void CalculateEulerPhysics(float deltaTime);
-		void CalculateVerletPhysics(float deltaTime);
+		void CalculatePhysics();
+		void CalculateEulerPhysics();
+		void CalculateVerletPhysics();
 
 		void ApplyPhysics(float deltaTime);
 		void ApplyEulerPhysics(float deltaTime);
 		void ApplyVerletPhysics(float deltaTime);
 
-		Vector2 AddVelocity(Vector2 vel, float deltaTime);
-		void ApplyGravity(float deltaTime);
+		Vector2 AddVelocity(Vector2 vel);
+		void ApplyGravity();
 		void AddForce(Vector2 direction, float power);
+		void ApplyEquilibriumForce();
+
 		void Move(Vector2 position);
 		void SetMass(float newMass);
 		float GetMass();
@@ -37,11 +39,12 @@ namespace FlatEngine
 		float GetGravity();
 		void SetVelocity(Vector2 newVelocity);
 		Vector2 GetVelocity();
-		Vector2 GetPendingVelocity();
+		Vector2 GetPendingForces();
 		Vector2 GetNextPosition();
 		void SetTerminalVelocity(float newTerminalVelocity);
 		float GetTerminalVelocity();
-		void ApplyFriction(float deltaTime);
+		float GetEquilibriumForce();
+		void ApplyFriction();
 		void SetIsMoving(bool _moving);
 		bool IsMoving();
 		void SetIsContinuous(bool _continuous);
@@ -69,6 +72,7 @@ namespace FlatEngine
 		float terminalVelocity;
 		float windResistance;
 		float friction;
+		float equilibriumForce;
 		float forceCorrection;
 	};
 }

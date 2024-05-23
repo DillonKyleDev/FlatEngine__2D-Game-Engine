@@ -447,7 +447,7 @@ namespace FlatEngine
 		extern void PopTableStyles();
 		extern void PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
 		extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max);
-		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float increment, float min, float max);
+		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
 		extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value);
 		extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
 		extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value);
@@ -457,7 +457,7 @@ namespace FlatEngine
 		extern bool RenderImageButton(std::string id, SDL_Texture *texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = imageButtonColor, Vector4 tint = imageButtonTintColor, Vector4 hoverColor = imageButtonHoveredColor, Vector4 activeColor = imageButtonActiveColor);
 		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
 		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
-		extern bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags = 0);
+		extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 		extern bool RenderCheckbox(std::string text, bool &_toCheck);
 		extern void RenderSectionHeader(std::string headerText, float height = 0);
 		extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false);

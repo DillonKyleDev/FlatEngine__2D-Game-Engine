@@ -109,7 +109,20 @@ namespace FlatEngine
 		float B_BottomEdge = other->nextActiveBottom;
 		float B_LeftEdge = other->nextActiveLeft;
 
-		return ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
+		bool _colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
+
+		if (_colliding)
+		{
+			AddCollidingObject(other->GetParent());
+
+			// Fire OnActiveCollision while there is a collision happening
+			if (OnActiveCollisionSet())
+				OnActiveCollision(GetParent(), other->GetParent());
+		}
+
+		_isColliding = _colliding;
+
+		return _colliding;
 	}
 
 	bool BoxCollider::IsColliding()
@@ -148,9 +161,19 @@ namespace FlatEngine
 		}
 	}
 
-	void BoxCollider::AddCollidingObject(std::shared_ptr<GameObject> object)
+	void BoxCollider::AddCollidingObject(std::shared_ptr<GameObject> collidedWith)
 	{
-		collidingObjects.push_back(object);
+		for (std::shared_ptr<GameObject> object : collidingObjects)
+		{
+			// Leave function if the object is already known to be in active collision
+			if (object->GetID() == collidedWith->GetID())
+				return;
+		}
+		collidingObjects.push_back(collidedWith);
+
+		// If OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
+		if (OnCollisionEnterSet())
+			OnCollisionEnter(GetParent(), collidedWith);
 	}
 
 	std::vector<std::shared_ptr<GameObject>> BoxCollider::GetCollidingObjects()
@@ -306,8 +329,8 @@ namespace FlatEngine
 
 	void BoxCollider::UpdateNormals()
 	{
-		float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
-		float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+		float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+		float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 		float step = FlatGui::sceneViewGridStep.x;
 		Vector2 centerPoint = FlatGui::sceneViewCenter;	
 		Vector2 scale = GetParent()->GetTransformComponent()->GetScale();
@@ -340,8 +363,8 @@ namespace FlatEngine
 
 	void BoxCollider::UpdateCorners()
 	{
-		float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
-		float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+		float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+		float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 		float step = FlatGui::sceneViewGridStep.x;
 		Vector2 centerPoint = FlatGui::sceneViewCenter;
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
@@ -410,6 +433,21 @@ namespace FlatEngine
 			nextBottomLeft
 		};
 		SetNextCorners(newNextCorners);
+	}
+
+	bool BoxCollider::OnActiveCollisionSet()
+	{
+		return _onActiveCollidingSet;
+	}
+
+	bool BoxCollider::OnCollisionEnterSet()
+	{
+		return _onCollisionEnterSet;
+	}
+
+	bool BoxCollider::OnCollisionLeaveSet()
+	{
+		return _onCollisionLeaveSet;
 	}
 
 	void BoxCollider::UpdateCenter()

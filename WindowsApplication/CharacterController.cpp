@@ -13,7 +13,7 @@ namespace FlatEngine {
 		SetParentID(parentID);
 		walkSpeed = 1;
 		runSpeed = 2;
-		maxSpeed = 0.09f;
+		maxSpeed = 0.01f;
 		speedCorrection = 0.001f;
 		_isMoving = false;
 		_isGrounded = false;
@@ -70,22 +70,17 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		Vector2 velocity = rigidBody->GetVelocity();
+		Vector2 pendingForces = rigidBody->GetPendingForces();
 		// If the object has not hit max speed in negative or positive direction
-		if (velocity.x >= 0 && velocity.x < maxSpeed || velocity.x <= 0 && velocity.x >(maxSpeed * -1) ||
+		if (pendingForces.x >= 0 && pendingForces.x < maxSpeed || pendingForces.x <= 0 && pendingForces.x > (maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
-			(velocity.x >= maxSpeed && normalizedX * walkSpeed * speedCorrection < 0) ||
+			(pendingForces.x >= maxSpeed && normalizedX * walkSpeed * speedCorrection < 0) ||
 			// If velocity exceeds negative max speed but x direction is positive
-			(velocity.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0) && normalizedX != 0)
+			(pendingForces.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0) && normalizedX != 0)
 		{
-			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0), GetDeltaTime());
+			rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0));
 			_isMoving = true;
-		}
-
-		if (velocity.x > maxSpeed && _isMoving)
-			velocity.x = maxSpeed;
-		if (velocity.y < -maxSpeed && _isMoving)
-			velocity.y = -maxSpeed;
+		}		
 		
 		if (normalizedX == 0)
 			_isMoving = false;
@@ -103,6 +98,11 @@ namespace FlatEngine {
 	float CharacterController::GetWalkSpeed()
 	{
 		return walkSpeed;
+	}
+
+	float CharacterController::GetMaxSpeed()
+	{
+		return maxSpeed;
 	}
 
 	void CharacterController::SetRunSpeed(float speed)

@@ -16,6 +16,7 @@ namespace FlatEngine {
 		void MoveTo(Vector2 location);
 		void SetWalkSpeed(float speed);
 		float GetWalkSpeed();
+		float GetMaxSpeed();
 		void SetRunSpeed(float speed);
 		float GetRunSpeed();
 		void SetMoving(bool _isMoving);

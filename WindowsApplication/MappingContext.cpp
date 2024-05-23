@@ -128,7 +128,10 @@ namespace FlatEngine {
 
 	std::string MappingContext::GetKeyBinding(std::string keyBinding)
 	{
-		return keyBindings.at(keyBinding);
+		if (keyBindings.count(keyBinding) > 0)
+			return keyBindings.at(keyBinding);
+		else
+			return "null";
 	}
 
 	void MappingContext::CreateInputActionBindings()
@@ -163,10 +166,13 @@ namespace FlatEngine {
 
 	void MappingContext::OnInputEvent(std::string keyBinding, SDL_Event event)
 	{
-		std::string actionName = keyBindings.at(keyBinding);
-		inputActionBindings.at(actionName) = event;
-		FireEvent(keyBinding);
-		//LogString("Firing event");
+		std::string actionName = "null";
+		if (keyBindings.count(keyBinding) > 0)
+			actionName = keyBindings.at(keyBinding);
+		if (inputActionBindings.count(actionName) > 0)
+			inputActionBindings.at(actionName) = event;
+		if (actionName != "null")
+			FireEvent(keyBinding);
 	}
 
 	void MappingContext::FireEvent(std::string keyBinding)
@@ -174,13 +180,17 @@ namespace FlatEngine {
 		std::string actionName = "";
 		if (keyBindings.count(keyBinding) > 0)
 			actionName = keyBindings.at(keyBinding);
-		actionFiredBool.at(actionName) = true;
+		if (actionFiredBool.count(actionName) > 0)
+			actionFiredBool.at(actionName) = true;
 	}
 
 	void MappingContext::UnFireEvent(std::string keyBinding)
 	{
-		std::string actionName = keyBindings.at(keyBinding);
-		actionFiredBool.at(actionName) = false;
+		std::string actionName = "null";
+		if (keyBindings.count(keyBinding) > 0)
+			actionName = keyBindings.at(keyBinding);
+		if (actionName != "null")
+			actionFiredBool.at(actionName) = false;
 	}
 
 	bool MappingContext::Fired(std::string actionName)
@@ -212,8 +222,8 @@ namespace FlatEngine {
 		//// If it's not empty, set the keyBinding InputAction value to an inputActionBindings key to be looked up later
 		while (iterator != keyBindings.end())
 		{
-			if (iterator->first == keyBinding)
-			{
+			if (iterator->first == keyBinding && inputActionBindings.count(iterator->second) > 0)
+			{		
 				inputActionBindings.at(iterator->second) = emptyEvent;
 				return;
 			}

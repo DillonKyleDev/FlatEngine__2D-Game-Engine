@@ -1,13 +1,8 @@
 #pragma once
 #include "SDL.h"
-#include "Button.h"
 #include "GameScript.h"
 #include "./scripts/GameManager.h"
-#include "./scripts/GameManager.h"
-#include "./scripts/StartButton.h"
-#include "./scripts/RestartButton.h"
-#include "./scripts/QuitButton.h"
-
+#include "GameObject.h"
 
 
 namespace FlatEngine
@@ -45,9 +40,9 @@ namespace FlatEngine
 		std::shared_ptr<GameManager> gameManager;
 
 		std::string startedScene;
-		std::vector<std::shared_ptr<GameObject>> gameObjects;
-		std::vector<std::shared_ptr<GameScript>> scripts;
-		std::vector<std::shared_ptr<GameScript>> activeScripts;
+		std::vector<std::shared_ptr<FlatEngine::GameObject>> gameObjects;
+		std::vector<std::shared_ptr<FlatEngine::GameScript>> scripts;
+		std::vector<std::shared_ptr<FlatEngine::GameScript>> activeScripts;
 	};
 }
 

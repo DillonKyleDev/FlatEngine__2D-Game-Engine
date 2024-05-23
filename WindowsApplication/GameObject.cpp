@@ -3,6 +3,7 @@
 #include "GameScript.h"
 #include "WidgetsManager.h"
 
+#include "TagList.h"
 #include "Transform.h"
 #include "Scene.h"
 #include "Sprite.h"
@@ -33,16 +34,17 @@ namespace FlatEngine
 			GetLoadedScene()->IncrementGameObjectID();
 		}
 	
+		tagList = std::shared_ptr<TagList>();
 		parentID = newParentID;
 		name = "GameObject(" + std::to_string(ID) + ")";
 		components = std::vector<std::shared_ptr<Component>>();
 		_isActive = true;
 		childrenIDs = std::vector<long>();
 	}
-
 	// Copy Constructor
 	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& objectVector, long parentID)
 	{
+		tagList = toCopy->GetTagList();
 		SetParentID(parentID);
 		SetID(GetNextGameObjectID());
 		SetName(toCopy->GetName());
@@ -256,6 +258,26 @@ namespace FlatEngine
 	std::string GameObject::GetName()
 	{
 		return name;
+	}
+
+	std::shared_ptr<TagList> GameObject::GetTagList()
+	{
+		return tagList;
+	}
+
+	void GameObject::SetTagList(std::shared_ptr<TagList> newTagList)
+	{
+		tagList = newTagList;
+	}
+
+	bool GameObject::HasTag(std::string tagName)
+	{
+		return tagList->HasTag(tagName);
+	}
+
+	void GameObject::SetTag(std::string tagName, bool _value)
+	{
+		tagList->SetTag(tagName, _value);
 	}
 
 	std::shared_ptr<Component> GameObject::AddComponent(Component::ComponentTypes type)

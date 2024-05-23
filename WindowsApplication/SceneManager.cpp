@@ -17,6 +17,7 @@
 #include "BoxCollider.h"
 #include "RigidBody.h"
 #include "json.hpp"
+#include "TagList.h"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
 
@@ -97,6 +98,15 @@ namespace FlatEngine
 					childrenArray.push_back(currentObject->GetChildren()[c]);
 				}
 
+				// Declare tags array json object for GameObject Tags
+				json tagsArray = json::array();				
+				std::map <std::string, bool> tagList = currentObject->GetTagList()->GetTagsMap();
+				std::map<std::string, bool>::iterator iterator;
+				for (iterator = tagList.begin(); iterator != tagList.end(); iterator++)
+				{
+					// PUT TAGS INTO THE JSON OBJECT TO BE SAVED
+				}
+
 				// Get object name
 				std::string objectName = currentObject->GetName();
 
@@ -107,7 +117,8 @@ namespace FlatEngine
 					{"_isActive", currentObject->IsActive()},
 					{"parent", currentObject->GetParentID()},
 					{"children", childrenArray}, 
-					{"components", componentsArray} 
+					{"components", componentsArray},
+					{"tags", }
 				});
 
 				// Adding elements to objects in this way doesn't seem to save correctly. ^ Use the way above ^

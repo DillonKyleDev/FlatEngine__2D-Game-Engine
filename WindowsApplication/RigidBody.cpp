@@ -17,9 +17,10 @@ namespace FlatEngine {
 		pendingForces = Vector2(0, 0);
 		acceleration = Vector2(0, 0);
 		terminalVelocity = 0.7f;
-		windResistance = 0.5f;  // Lower value = more resistance
-		friction = 0.93f;  // 1 = no friction. 0 = velocity = 0
-		forceCorrection = 0.01f;
+		windResistance = 1.0f;  // Lower value = more resistance
+		friction = 0.86f;  // 1 = no friction. 0 = velocity = 0
+		equilibriumForce = 0.0001f;
+		forceCorrection = 0.03f;
 		_isMoving = false;
 		_isContinious = false;
 		_isGrounded = false;
@@ -40,6 +41,7 @@ namespace FlatEngine {
 		terminalVelocity = toCopy->GetTerminalVelocity();
 		windResistance = toCopy->windResistance;
 		friction = toCopy->friction;
+		equilibriumForce = toCopy->GetEquilibriumForce();
 		forceCorrection = forceCorrection;
 		_isMoving = toCopy->IsMoving();
 		_isContinious = toCopy->IsContinuous();
@@ -74,29 +76,30 @@ namespace FlatEngine {
 		return data;
 	}
 
-	void RigidBody::CalculatePhysics(float deltaTime)
+	void RigidBody::CalculatePhysics()
 	{
 		// Add up forces
-		ApplyGravity(deltaTime);
-		ApplyFriction(deltaTime);
+		ApplyGravity();
+		ApplyFriction();
+		ApplyEquilibriumForce();
 
 		// Apply them to RigidBody
 		if (loadedProject->GetPhysicsSystem() == "Euler")
 		{
-			CalculateEulerPhysics(deltaTime);
+			CalculateEulerPhysics();
 		}
 		else if (loadedProject->GetPhysicsSystem() == "Verlet")
 		{
-			// CalculateVerletPhysics(deltaTime);
+			// CalculateVerletPhysics();
 		}
 	}
 
-	void RigidBody::CalculateEulerPhysics(float deltaTime)
+	void RigidBody::CalculateEulerPhysics()
 	{
 		acceleration = Vector2(pendingForces.x / mass, pendingForces.y / mass);
 	}
 
-	void RigidBody::CalculateVerletPhysics(float deltaTime)
+	void RigidBody::CalculateVerletPhysics()
 	{
 		// TODO
 	}
@@ -105,7 +108,7 @@ namespace FlatEngine {
 	{
 		if (loadedProject->GetPhysicsSystem() == "Euler")
 		{
-			ApplyEulerPhysics(deltaTime);
+			ApplyEulerPhysics(deltaTime);			
 		}
 		else if (loadedProject->GetPhysicsSystem() == "Verlet")
 		{
@@ -116,7 +119,7 @@ namespace FlatEngine {
 	void RigidBody::ApplyEulerPhysics(float deltaTime)
 	{
 		// Then apply to transform
-		velocity = Vector2(acceleration.x + (pendingForces.x), acceleration.y + (pendingForces.y));
+		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
@@ -127,37 +130,39 @@ namespace FlatEngine {
 		// TODO
 	}
 
-	Vector2 RigidBody::AddVelocity(Vector2 vel, float deltaTime)
+	Vector2 RigidBody::AddVelocity(Vector2 vel)
 	{
-		pendingForces.x += vel.x * deltaTime;
-		pendingForces.y += vel.y * deltaTime;
+		pendingForces.x += vel.x;
+		pendingForces.y += vel.y;
 		return pendingForces;
 	}
 
-	void RigidBody::ApplyGravity(float deltaTime)
+	void RigidBody::ApplyGravity()
 	{
 		if (gravity > 0)
 		{
 			if (!_isGrounded && velocity.y > -terminalVelocity)
-				pendingForces.y -= gravity * gravityCorrection * deltaTime;
-			else if (_isGrounded && pendingForces.y < 0)
-				pendingForces.y = 0;
+				pendingForces.y -= gravity * gravityCorrection;
+			else if (_isGrounded && pendingForces.y < 0) 
+			{
+				pendingForces.y -= 8 * pendingForces.y / 10;
+			}
 		}
 		else if (gravity < 0)
 		{
 			if (!_isGrounded && velocity.y < terminalVelocity)
-				pendingForces.y -= gravity * gravityCorrection * deltaTime;
+				pendingForces.y -= gravity * gravityCorrection;
 			else if (_isGrounded && pendingForces.y > 0)
 				pendingForces.y = 0;
 		}
 	}
 
-	void RigidBody::ApplyFriction(float deltaTime)
+	void RigidBody::ApplyFriction()
 	{
 		// Wind Friction
-		if (windResistance * deltaTime < 1)
+		if (!_isGrounded)
 		{
-			Vector2 dampenedVelocity = Vector2(pendingForces.x * (windResistance * deltaTime), pendingForces.y * (windResistance * deltaTime));
+			Vector2 dampenedVelocity = Vector2(pendingForces.x * windResistance, pendingForces.y * windResistance);
 			pendingForces = dampenedVelocity;
 		}
 
@@ -170,12 +175,26 @@ namespace FlatEngine {
 		// Ground Friction
 		if (!_isMoving && _isGrounded)
 		{
-			float frictionFactor = friction * deltaTime;
-			if (frictionFactor > 1)
-				frictionFactor = friction;
-			Vector2 dampenedVelocity = Vector2(pendingForces.x * frictionFactor, pendingForces.y);
+			Vector2 dampenedVelocity = Vector2(pendingForces.x * friction, pendingForces.y);
 			pendingForces = dampenedVelocity;
 		}
+	}
+
+	void RigidBody::ApplyEquilibriumForce()
+	{
+		std::shared_ptr<FlatEngine::CharacterController> characterController = GetParent()->GetCharacterController();
+		float maxSpeed = characterController->GetMaxSpeed();
+
+		// Horizontal speed control
+		if (pendingForces.x > maxSpeed)
+			pendingForces.x -= equilibriumForce;
+		else if (pendingForces.x < -maxSpeed)
+			pendingForces.x += equilibriumForce;
+		// Vertical speed control
+		if (pendingForces.y > maxSpeed)
+			pendingForces.y -= equilibriumForce;
+		else if (pendingForces.y < -maxSpeed)
+			pendingForces.y += equilibriumForce;
 	}
 
 	void RigidBody::AddForce(Vector2 direction, float power)
@@ -188,7 +207,7 @@ namespace FlatEngine {
 
 	Vector2 RigidBody::GetNextPosition()
 	{
-		Vector2 nextVelocity = Vector2(acceleration.x + (pendingForces.x), acceleration.y + (pendingForces.y));
+		Vector2 nextVelocity = Vector2(acceleration.x * GetDeltaTime(), acceleration.y * GetDeltaTime());
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
 		return Vector2(position.x + nextVelocity.x * 2, position.y + nextVelocity.y * 2);
@@ -252,7 +271,7 @@ namespace FlatEngine {
 		return velocity;
 	}
 
-	Vector2 RigidBody::GetPendingVelocity()
+	Vector2 RigidBody::GetPendingForces()
 	{
 		return pendingForces;
 	}
@@ -305,5 +324,10 @@ namespace FlatEngine {
 	bool RigidBody::IsKinematic()
 	{
 		return _isKinematic;
+	}
+	
+	float RigidBody::GetEquilibriumForce()
+	{
+		return equilibriumForce;
 	}
 }

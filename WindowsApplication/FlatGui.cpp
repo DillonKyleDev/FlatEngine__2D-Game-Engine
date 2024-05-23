@@ -68,7 +68,7 @@ namespace FlatEngine { namespace FlatGui {
 	// Canvas Orange
 	Vector4 canvasBorderColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
 	// Camera
-	Vector4 cameraBoxColor = Vector4(1.0f, 0.11f, 0.11f, 0.27);
+	Vector4 cameraBoxColor = Vector4(1.0f, 0.11f, 0.11f, 0.27f);
 	//////////////////////
 	// Windows ///////////
 	//////////////////////
@@ -1455,6 +1455,53 @@ namespace FlatEngine { namespace FlatGui {
 					if (is_clicked)
 						SetFocusedGameObjectID(sprite->GetParentID());
 				
+					// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
+					////////////////////////
+					if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+					{
+						sceneViewScrolling.x += inputOutput.MouseDelta.x;
+						sceneViewScrolling.y += inputOutput.MouseDelta.y;
+					}
+					// Get scroll amount for changing zoom level of scene view
+					Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+					float scrollInput = inputOutput.MouseWheel;
+					float weight = 0.01f;
+					float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+					float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+					bool _weightedScroll = true;
+					float zoomSpeed = 0.1f;
+					float zoomMultiplier = 10;
+					float finalZoomSpeed = zoomSpeed;
+
+					if (ImGui::GetIO().KeyCtrl)
+						finalZoomSpeed *= zoomMultiplier;
+
+					// Change scrolling offset based on mouse position and weight
+					if (is_hovered)
+					{
+						if (scrollInput > 0)
+						{
+							if (_weightedScroll)
+							{
+								sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+								sceneViewScrolling.y -= trunc(signedMousePosY * weight);
+							}
+							sceneViewGridStep.x += finalZoomSpeed;
+							sceneViewGridStep.y += finalZoomSpeed;
+						}
+						else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
+						{
+							if (_weightedScroll)
+							{
+								sceneViewScrolling.x += trunc(signedMousePosX * weight);
+								sceneViewScrolling.y += trunc(signedMousePosY * weight);
+							}
+							sceneViewGridStep.x -= finalZoomSpeed;
+							sceneViewGridStep.y -= finalZoomSpeed;
+						}
+					}
+					//////////////////
+					
 					// Change the draw channel for the scene object
 					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
@@ -1571,8 +1618,8 @@ namespace FlatEngine { namespace FlatGui {
 
 				if (rotation != 0)
 				{
-					float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
-					float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+					float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+					float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
 					topLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
 					topRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
@@ -1979,14 +2026,14 @@ namespace FlatEngine { namespace FlatGui {
 		return _isChanged;
 	}
 
-	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float increment, float min, float max)
+	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max)
 	{
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		bool _isChanged = RenderDragInt(id.c_str(), 0, value, increment, min, max);
+		bool _isChanged = RenderDragInt(id.c_str(), 0, value, speed, min, max);
 		ImGui::PushID(id.c_str());
 		ImGui::PopID();
 
@@ -2174,8 +2221,8 @@ namespace FlatEngine { namespace FlatGui {
 		
 		if (rotation != 0)
 		{
-			float cos_a = cosf(rotation * 2.0f * M_PI / 360.0f); // Convert degrees into radians
-			float sin_a = sinf(rotation * 2.0f * M_PI / 360.0f);
+			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
 			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
 			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
@@ -2375,7 +2422,7 @@ namespace FlatEngine { namespace FlatGui {
 		return (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
 	}
 
-	bool RenderDragInt(std::string text, float width, int& value, float increment, int min, int max, ImGuiSliderFlags flags)
+	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags)
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, dragColor);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
@@ -2385,7 +2432,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetNextItemWidth(width);
 		else
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		bool _sliderChanged = ImGui::DragInt(text.c_str(), &value, increment, min, max, "%d", flags);
+		bool _sliderChanged = ImGui::DragInt(text.c_str(), &value, speed, min, max, "%d", flags);
 		// Set cursor type
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);

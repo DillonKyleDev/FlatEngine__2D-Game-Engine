@@ -214,9 +214,6 @@ namespace FlatEngine { namespace FlatGui {
 				float openFileWidth = (float)openFileIcon->getWidth();
 				float openFileHeight = (float)openFileIcon->getHeight();
 
-				// Flags for child padding and dimensions
-				ImGuiChildFlags child_flags = ImGuiChildFlags_::ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize;
-
 				for (int i = 0; i < components.size(); i++)
 				{
 					if (components[i] != nullptr)
@@ -232,13 +229,13 @@ namespace FlatEngine { namespace FlatGui {
 						// Begin Component Child
 						ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 						ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
-						ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+						//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
 						
-						ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), child_flags);
+						ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), autoResizeChildFlags);
 
 						ImGui::PopStyleColor();
 						ImGui::PopStyleColor();
-						ImGui::PopStyleVar();
+						//ImGui::PopStyleVar();
 
 						// Border around each component
 						auto wPos = ImGui::GetWindowPos();
@@ -304,7 +301,7 @@ namespace FlatEngine { namespace FlatGui {
 							// Push
 							std::string componentItemID = "##ComponentItem-" + componentType;
 							ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
-							ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), child_flags);
+							ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), autoResizeChildFlags);
 
 							// Make full width Push
 							ImGui::PushItemWidth(-1.0f);
@@ -397,7 +394,7 @@ namespace FlatEngine { namespace FlatGui {
 								RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX);
 								if (path != "")
 									sprite->SetOffset(Vector2(xOffset, yOffset));
-								RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, maxSpriteLayers);
+								RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
 								sprite->SetRenderOrder(renderOrder);
 								RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
 								RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
@@ -644,7 +641,7 @@ namespace FlatEngine { namespace FlatGui {
 								RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
 								RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
 								RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));								
-								RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, maxSpriteLayers);
+								RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
 								text->SetRenderOrder(renderOrder);
 								PopTable();
 							}

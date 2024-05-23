@@ -64,56 +64,5 @@ void StartButton::Start()
 
 void StartButton::Update(float deltaTime)
 {
-	// Get Mapping Context
-	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
-	std::shared_ptr<FlatEngine::CharacterController> characterController = GetOwner()->GetCharacterController();
-	std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetOwner()->GetRigidBody();
-	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
 
-	bool _moving = false;
-	static int xDir = 0;
-	static int yDir = 0;
-
-	if (mappingContext->Fired("IA_Jump"))
-	{
-		//FlatEngine::LogString("Jumped!");
-		if (rigidBody->IsGrounded() && rigidBody->GetVelocity().y == 0)
-		{
-			rigidBody->AddForce(Vector2(0, 1), 20);
-		}
-
-	}
-	if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
-	{
-		xDir = -30000;
-		characterController->MoveToward(Vector2(-36000, 0));
-		_moving = true;
-	}	
-	if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
-	{
-		xDir = 30000;
-		characterController->MoveToward(Vector2(36000, 0));
-		_moving = true;
-	}
-	//if (mappingContext->GetInputAction("IA_MoveUp").type != 0)
-	//	characterController->MoveToward(Vector2(0, 1));
-	//if (mappingContext->GetInputAction("IA_MoveDown").type != 0)
-	//	characterController->MoveToward(Vector2(0, -1));
-
-	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
-	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
-
-
-	if (moveX.type != 0)
-		xDir = moveX.jaxis.value;
-	if (moveY.type != 0)
-		yDir = moveY.jaxis.value;
-
-	if (characterController != nullptr)
-	{
-		//characterController->MoveToward(Vector2((float)xDir, (float)yDir));
-	}
-	FlatEngine::RayCast(transform->GetPosition(), Vector2(xDir, -yDir), 2);
-
-	characterController->SetMoving(_moving);
 }

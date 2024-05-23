@@ -22,9 +22,9 @@ namespace FlatEngine
 		BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID);
 		~BoxCollider();
 
-		void SetOnColliding(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
-		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
-		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> callback);
+		void SetOnColliding(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
+		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
+		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
 
 		//bool CheckForCollision(std::shared_ptr<BoxCollider> other);
 		bool IsColliding();
@@ -32,7 +32,7 @@ namespace FlatEngine
 		void UpdatePreviousPosition();
 		bool HasMoved();
 		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
-		void AddCollidingObject(std::shared_ptr<GameObject> object);
+		void AddCollidingObject(std::shared_ptr<GameObject> collidedWith);
 		std::vector<std::shared_ptr<GameObject>> GetCollidingObjects();
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
@@ -68,16 +68,20 @@ namespace FlatEngine
 		void SimpleBoxUpdateEdges();
 		void SimpleBoxUpdateCorners();
 
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnActiveCollision;
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionEnter;
-		std::function<void(std::shared_ptr<GameObject>, std::shared_ptr<GameObject>)> OnCollisionLeave;
+		std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> OnActiveCollision;
+		std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> OnCollisionEnter;
+		std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> OnCollisionLeave;
 
+		bool OnActiveCollisionSet();
+		bool OnCollisionEnterSet();
+		bool OnCollisionLeaveSet();
+
+		Vector2 previousPosition;
+	private:
 		bool _onActiveCollidingSet;
 		bool _onCollisionEnterSet;
 		bool _onCollisionLeaveSet;
 
-		Vector2 previousPosition;
-	private:
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;
 		bool _isColliding;
 		float activeWidth;

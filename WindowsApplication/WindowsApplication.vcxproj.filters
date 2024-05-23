@@ -234,6 +234,15 @@
     <ClCompile Include="scripts\GroundedCheck.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\PlayerController.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\JumpPad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TagList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -379,6 +388,15 @@
     </ClInclude>
     <ClInclude Include="scripts\GroundedCheck.h">
       <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\PlayerController.h">
+      <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\JumpPad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TagList.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
