@@ -1455,6 +1455,10 @@ namespace FlatEngine { namespace FlatGui {
 					if (is_clicked)
 						SetFocusedGameObjectID(sprite->GetParentID());
 				
+					// Show cursor position in scene view when pressing Alt
+					if (is_hovered && inputOutput.KeyAlt)
+						RenderSceneViewTooltip();
+
 					// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
 					////////////////////////
 					if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
@@ -1740,6 +1744,7 @@ namespace FlatEngine { namespace FlatGui {
 				const bool _baseHovered = ImGui::IsItemHovered();
 				const bool _baseActive = ImGui::IsItemActive();
 				const bool _baseClicked = ImGui::IsItemClicked();
+
 				if (_baseHovered || _baseActive)
 				{
 					arrowToRender = transformArrowAllWhiteTexture;

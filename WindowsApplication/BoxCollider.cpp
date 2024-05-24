@@ -109,7 +109,17 @@ namespace FlatEngine
 		float B_BottomEdge = other->nextActiveBottom;
 		float B_LeftEdge = other->nextActiveLeft;
 
-		bool _colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge > B_TopEdge) && (A_TopEdge < B_BottomEdge));
+		LogFloat(A_TopEdge, "A Top Edge: ");
+		LogFloat(A_RightEdge, "A Right Edge: ");
+		LogFloat(A_BottomEdge, "A Bottom Edge: ");
+		LogFloat(A_LeftEdge, "A Left Edge: ");
+
+		LogFloat(B_TopEdge, "B Top Edge: ");
+		LogFloat(B_RightEdge, "B Right Edge: ");
+		LogFloat(B_BottomEdge, "B Bottom Edge: ");
+		LogFloat(B_LeftEdge, "B Left Edge: ");
+
+		bool _colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));
 
 		if (_colliding)
 		{
@@ -118,7 +128,13 @@ namespace FlatEngine
 			// Fire OnActiveCollision while there is a collision happening
 			if (OnActiveCollisionSet())
 				OnActiveCollision(GetParent(), other->GetParent());
+
+			// Check which direction the collision is happening from
+			Vector2 collisionDirection = Vector2(other->centerGrid.x - centerGrid.x, other->centerGrid.y - centerGrid.y);
+			LogVector2(collisionDirection, "Collision Direction: ");
 		}
+
+		
 
 		_isColliding = _colliding;
 
@@ -194,17 +210,6 @@ namespace FlatEngine
 
 	void BoxCollider::SetActiveOffset(Vector2 offset)
 	{
-		// Might need this later VVV
-		//std::shared_ptr<FlatEngine::GameObject> parent = GetParent();
-		//std::shared_ptr<FlatEngine::Transform> transform = nullptr;
-		//Vector2 scale = Vector2(1, 1);
-
-		//if (parent != nullptr)
-		//	transform = parent->GetTransformComponent();
-		//if (transform != nullptr)
-		//	scale = transform->GetScale();
-
-		//activeOffset = offset * scale;
 		activeOffset = offset;
 	}
 
@@ -316,11 +321,11 @@ namespace FlatEngine
 			else
 				nextCenterGrid = transform->GetTruePosition();
 
-			nextActiveLeft = centerPoint.x + (nextCenterGrid.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
-			nextActiveTop = centerPoint.y + (-nextCenterGrid.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
-			nextActiveRight = centerPoint.x + (nextCenterGrid.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
-			nextActiveBottom = centerPoint.y + (-nextCenterGrid.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
-
+			nextActiveLeft = nextCenterGrid.x - (activeWidth * scale.x / 2) + activeOffset.x;
+			nextActiveTop = nextCenterGrid.y + (activeHeight * scale.y / 2) + activeOffset.y;
+			nextActiveRight = nextCenterGrid.x + (activeWidth * scale.x / 2) + activeOffset.x;
+			nextActiveBottom = nextCenterGrid.y - (activeHeight * scale.y / 2) + activeOffset.y;
+		
 			nextCenterCoord = Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2);
 
 			SimpleBoxUpdateCorners();

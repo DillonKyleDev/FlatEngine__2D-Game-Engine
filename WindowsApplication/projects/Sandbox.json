@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": false,
+            "_clearLogBuffer": true,
             "_showAnimationPreview": false,
             "_showAnimator": true,
             "_showGameView": true,

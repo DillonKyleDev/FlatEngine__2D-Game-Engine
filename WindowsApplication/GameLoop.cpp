@@ -245,7 +245,6 @@ namespace FlatEngine
 
 				if (boxCollider->GetParent()->HasComponent("RigidBody"))
 					boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(_isColliding);
-				//boxCollider->SetColliding(_isColliding);
 			}
 		}
 

@@ -87,28 +87,8 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// Show cursor position in scene view when pressing Alt
-		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
-		{
-			Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / sceneViewGridStep.x, -(inputOutput.MousePos.y - sceneViewCenter.y) / sceneViewGridStep.y);
-			std::string cursorXPos = "x: " + std::to_string(positionInGrid.x);
-			std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);
-			// Mouse Hover Tooltip - Scene View Tooltip			
-			ImGui::BeginTooltip();
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
-			ImGui::Text("Scene View Data ");
-			ImGui::Separator();
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
-			// Cursor Position
-			ImGui::Text("Cursor Position: ");
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
-			ImGui::Text(cursorXPos.c_str());
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
-			ImGui::Text(cursorYPos.c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::EndTooltip();
-		}
+		if (is_hovered && inputOutput.KeyAlt)
+			RenderSceneViewTooltip();
 
 		if (_sceneViewLockedOnObject && sceneViewLockedObject != nullptr)
 		{
@@ -129,7 +109,7 @@ namespace FlatEngine { namespace FlatGui {
 		float zoomMultiplier = 10;
 		float finalZoomSpeed = zoomSpeed;
 		
-		if (ImGui::GetIO().KeyCtrl)
+		if (inputOutput.KeyCtrl)
 			finalZoomSpeed *= zoomMultiplier;
 
 		// Change scrolling offset based on mouse position and weight
@@ -163,6 +143,31 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleVar();
 
 		ImGui::End();
+	}
+
+	// Show cursor position in scene view when pressing Alt
+	void RenderSceneViewTooltip()
+	{
+		ImGuiIO& inputOutput = ImGui::GetIO();
+		Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / sceneViewGridStep.x, -(inputOutput.MousePos.y - sceneViewCenter.y) / sceneViewGridStep.y);
+		std::string cursorXPos = "x: " + std::to_string(positionInGrid.x);
+		std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);
+		// Mouse Hover Tooltip - Scene View Tooltip			
+		ImGui::BeginTooltip();
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+		ImGui::Text("Scene View Data ");
+		ImGui::Separator();
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+		// Cursor Position
+		ImGui::Text("Cursor Position: ");
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+		ImGui::Text(cursorXPos.c_str());
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+		ImGui::Text(cursorYPos.c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::EndTooltip();
 	}
 }
 }
