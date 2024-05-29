@@ -9,6 +9,6 @@ public:
 	~ButtonScriptTemplate();
 
 	void Start();
-	void Update(float deltaTime);
+	void Update(int deltaTime);
 };
 

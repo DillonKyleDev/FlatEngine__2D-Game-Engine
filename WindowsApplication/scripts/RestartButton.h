@@ -8,7 +8,7 @@ public:
 	~RestartButton();
 
 	void Start();
-	void Update(float deltaTime);
+	void Update(int deltaTime);
 
 private:
 

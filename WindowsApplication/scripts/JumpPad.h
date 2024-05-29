@@ -11,7 +11,7 @@ public:
 	~JumpPad();
 
 	void Start();
-	void Update(float deltaTime);
+	void Update(int deltaTime);
 	std::shared_ptr<FlatEngine::BoxCollider> boxCollider;
 };
 

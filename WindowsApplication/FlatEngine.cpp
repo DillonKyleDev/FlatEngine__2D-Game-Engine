@@ -38,6 +38,8 @@ namespace FlatEngine
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
 	std::vector<std::shared_ptr<RigidBody>> rigidBodies = std::vector<std::shared_ptr<RigidBody>>();
 	std::vector<std::shared_ptr<BoxCollider>> boxColliders = std::vector<std::shared_ptr<BoxCollider>>();
+	//std::vector<std::shared_ptr<CircleCollider>> circleColliders = std::vector<std::shared_ptr<CircleCollider>>();
+	std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>> boxColliderPairs = std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>>();
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
@@ -55,15 +57,6 @@ namespace FlatEngine
 
 	// Profiler
 	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
-
-	// Colors
-	ImU32 White = IM_COL32(255, 255, 255, 255);
-	ImU32 Green = IM_COL32(0, 255, 0, 255);
-	ImU32 Blue = IM_COL32(0, 0, 255, 255);
-	ImU32 Red = IM_COL32(255, 0, 0, 255);
-	ImU32 ActiveButtonColor = IM_COL32(50, 230, 50, 130);
-	ImU32 InactiveButtonColor = IM_COL32(230, 50, 50, 130);
-	ImU32 CanvasBorder = IM_COL32(195, 107, 1, 130);
 
 	// FlatEngine
 	void Run(bool& _hasQuit)
@@ -93,22 +86,23 @@ namespace FlatEngine
 			}
 		}
 
-		_hasQuit = FlatEngine::_closeProgram;
-		FlatEngine::FlatGui::Render(_hasQuit);
+		_hasQuit = _closeProgram;
+		FlatGui::Render(_hasQuit);
 
 		// If Release - Start the Game Loop
-		if (FlatEngine::_isDebugMode == false && FlatEngine::GameLoopStarted() == false)
+		if (_isDebugMode == false && GameLoopStarted() == false)
 		{
-			FlatEngine::StartGameLoop();
+			StartGameLoop();
 		}
 
 		// Keeping track of the frames passed since we started the GameLoop
-		if (FlatEngine::GameLoopStarted() && FlatEngine::GameLoopPaused() == false)
+		if (GameLoopStarted() && GameLoopPaused() == false || GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{
-			FlatEngine::GameLoopUpdate();
+			GameLoopUpdate();
+			gameLoop->SetFrameSkipped(false);
 		}
 
-		FlatEngine::FlatGui::RenderClear();
+		FlatGui::RenderClear();
 	}
 
 	void CloseProgram()
@@ -723,7 +717,7 @@ namespace FlatEngine
 		return gameLoop->GetAverageFps();
 	}
 
-	float GetDeltaTime()
+	int GetDeltaTime()
 	{
 		return gameLoop->GetDeltaTime();
 	}

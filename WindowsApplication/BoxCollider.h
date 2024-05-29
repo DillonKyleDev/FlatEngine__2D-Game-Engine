@@ -45,6 +45,10 @@ namespace FlatEngine
 		void SetActiveEdges(Vector4 edges);
 		Vector4 GetActiveEdges();
 		Vector4 UpdateActiveEdges();
+		float GetActiveRadiusScreen();
+		float GetActiveRadiusGrid();
+		void SetShowActiveRadius(bool _show);
+		bool GetShowActiveRadius();
 		void UpdateNormals();
 		void UpdateCorners();
 		void UpdateCenter();
@@ -58,11 +62,15 @@ namespace FlatEngine
 		Vector2* GetNormals();
 		void SetIsContinuous(bool _continuous);
 		bool IsContinuous();
+		void SetIsStatic(bool _newStatic);
+		bool IsStatic();
 		std::string GetData();
 		void SetRotation(float rotation);
 		void UpdateRotation();
 		void RecalculateBounds();
 
+		bool CheckForCollision(std::shared_ptr<BoxCollider> other);
+		
 		// Simple Box
 		bool SimpleBoxCheckForCollision(std::shared_ptr<BoxCollider> other);
 		void SimpleBoxUpdateEdges();
@@ -76,7 +84,25 @@ namespace FlatEngine
 		bool OnCollisionEnterSet();
 		bool OnCollisionLeaveSet();
 
+		void ResetCollisions();
+
 		Vector2 previousPosition;
+
+		float rightCollision;
+		float leftCollision;
+		float bottomCollision;
+		float topCollision;
+
+		bool _isCollidingRight;
+		bool _isCollidingLeft;
+		bool _isCollidingBottom;
+		bool _isCollidingTop;
+
+		bool _rightCollisionStatic;
+		bool _leftCollisionStatic;
+		bool _bottomCollisionStatic;
+		bool _topCollisionStatic;
+
 	private:
 		bool _onActiveCollidingSet;
 		bool _onCollisionEnterSet;
@@ -101,7 +127,8 @@ namespace FlatEngine
 
 		Vector4 activeEdges;
 		Vector2 activeOffset;
-		bool _isContinious;
+		bool _isContinuous;
+		bool _isStatic;
 		int activeLayer;
 		bool _activeEdgesSet;
 		Vector2 corners[4];
@@ -113,5 +140,8 @@ namespace FlatEngine
 		Vector2 centerCoord;
 		Vector2 nextCenterCoord;
 		float rotation;
+		float activeRadiusScreen;
+		float activeRadiusGrid;
+		bool _showActiveRadius;
 	};
 }

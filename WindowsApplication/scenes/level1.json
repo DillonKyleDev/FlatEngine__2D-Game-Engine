@@ -11,10 +11,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0.0,
+                    "xPos": 4.46228551864624,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 1.3355062007904053,
+                    "yPos": -3.760781764984131,
                     "yScale": 1.0
                 },
                 {
@@ -55,7 +55,9 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": true,
-                    "_isContinious": true,
+                    "_isContinuous": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
@@ -66,7 +68,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "attachedScript": "PlayerController",
                     "id": 6,
                     "type": "Script"
@@ -106,7 +108,7 @@
                     "xPos": 5.000007629394531,
                     "xScale": 40.0,
                     "yOrigin": 0.0,
-                    "yPos": 2.166165828704834,
+                    "yPos": -1.8339999914169312,
                     "yScale": 30.0
                 },
                 {
@@ -133,7 +135,7 @@
                     "id": 12,
                     "type": "Camera",
                     "width": 51.900001525878906,
-                    "zoom": 16.700000762939453
+                    "zoom": 44.29999923706055
                 }
             ],
             "id": 1,
@@ -163,68 +165,6 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 11,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 4.952389240264893,
-                    "xScale": 35.0,
-                    "yOrigin": 0.0,
-                    "yPos": -7.877370834350586,
-                    "yScale": 5.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinious": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 12,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 13,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 2,
-            "name": "Floor1",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": true
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
                     "id": 12,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -232,13 +172,15 @@
                     "xPos": 10.660394668579102,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -2.639620780944824,
+                    "yPos": -5.484365463256836,
                     "yScale": 0.20100000500679016
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": true,
+                    "_isContinuous": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
@@ -301,7 +243,7 @@
                     "xPos": 18.20848846435547,
                     "xScale": 4.400000095367432,
                     "yOrigin": 0.0,
-                    "yPos": -0.16286659240722656,
+                    "yPos": 0.027257800102233887,
                     "yScale": 5.300000190734863
                 },
                 {
@@ -319,7 +261,9 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": true,
+                    "_isContinuous": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
@@ -347,6 +291,157 @@
                 "Player": false,
                 "Projectile": false,
                 "Terrain": true
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 19,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 781.2799682617188,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": -12366.34765625,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 20,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 21,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.699999988079071,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 25,
+                    "renderOrder": 0,
+                    "texture": "",
+                    "texture_height": 0.0,
+                    "texture_width": 0.0,
+                    "type": "Sprite",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMoving": false,
+                    "id": 26,
+                    "runSpeed": 2.0,
+                    "type": "CharacterController",
+                    "walkSpeed": 1.0
+                }
+            ],
+            "id": 5,
+            "name": "Floor",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 22,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 2.857825756072998,
+                    "xScale": 31.399999618530273,
+                    "yOrigin": 0.0,
+                    "yPos": -9.60564136505127,
+                    "yScale": 3.799999952316284
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 23,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 24,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 6,
+            "name": "BoxCollider(6)",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
             }
         }
     ]

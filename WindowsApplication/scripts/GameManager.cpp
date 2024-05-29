@@ -21,7 +21,7 @@ void GameManager::Start()
 	//pauseScreen = FlatEngine::GetObjectByName("PauseScreen");
 }
 
-void GameManager::Update(float deltaTime)
+void GameManager::Update(int deltaTime)
 {
 }
 

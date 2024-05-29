@@ -11,6 +11,7 @@ namespace FlatEngine { namespace FlatGui {
 		std::string playID = "##PlayGameloopIcon";
 		std::string pauseID = "##PauseGameloopIcon";
 		std::string stopID = "##StopGameloopIcon";
+		std::string nextFrameID = "##AdvanceGameloopIcon";
 		ImVec4 gameloopControl_tint_col = ImVec4(1.0, 1.0, 1.0, 1.0f);
 		ImVec4 gameloopControl_bg_col = ImVec4(.50f, .50f, .5f, 1.0f);
 
@@ -20,7 +21,8 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::SetCursorPosX((windowWidth - 100) * 0.5f);
 
-		if (gameLoop->IsStarted() && !gameLoop->IsPaused())
+		// Play Icon
+		if (gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
 			RenderImageButton(playID.c_str(), playTexture, ImVec2(16, 16), 0, imageButtonColor, whiteColor);
@@ -31,6 +33,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::SameLine(0, 5);
 
+		// Pause Icon
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
@@ -43,6 +46,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		ImGui::SameLine(0, 5);
 
+		// Stop Icon
 		if (!gameLoop->IsStarted())
 		{
 			ImGui::BeginDisabled();
@@ -51,6 +55,18 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		else if (RenderImageButton(stopID.c_str(), stopTexture, ImVec2(16, 16), 0, imageButtonColor, whiteColor))
 			StopGameLoop();
+
+		ImGui::SameLine(0, 5);
+
+		// Next Frame Icon
+		if (!gameLoop->IsPaused())
+		{
+			ImGui::BeginDisabled();
+			RenderImageButton(nextFrameID.c_str(), nextFrameTexture, ImVec2(16, 16), 0, imageButtonColor, whiteColor);
+			ImGui::EndDisabled();
+		}
+		else if (RenderImageButton(nextFrameID.c_str(), nextFrameTexture, ImVec2(16, 16), 0, imageButtonColor, whiteColor))
+			FlatEngine::gameLoop->SetFrameSkipped(true);
 
 		ImGui::PopStyleVar();
 

@@ -25,7 +25,7 @@ void PlayerController::Start()
 	std::shared_ptr<FlatEngine::Audio> clickedAudio = GetOwner()->GetAudioComponent();
 }
 
-void PlayerController::Update(float deltaTime)
+void PlayerController::Update(int deltaTime)
 {
 	// Get Mapping Context
 	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");

@@ -77,14 +77,7 @@ namespace FlatEngine
 	extern std::shared_ptr<Sound> soundController;
 	extern std::vector<std::shared_ptr<RigidBody>> rigidBodies;
 	extern std::vector<std::shared_ptr<BoxCollider>> boxColliders;
-
-	// ImU32 colors
-	extern ImU32 White;
-	extern ImU32 Green;
-	extern ImU32 Blue;
-	extern ImU32 Red;
-	extern ImU32 ActiveButtonColor;
-	extern ImU32 InactiveButtonColor;
+	extern std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>> boxColliderPairs;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -151,7 +144,7 @@ namespace FlatEngine
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
-	extern float GetDeltaTime();
+	extern int GetDeltaTime();
 
 	// Helper Functions
 	extern bool AreCollidingWorld(Vector4 ObjectA, Vector4 ObjectB);
@@ -297,6 +290,7 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> playIcon;
 		extern std::shared_ptr<Texture> pauseIcon;
 		extern std::shared_ptr<Texture> stopIcon;
+		extern std::shared_ptr<Texture> nextFrameIcon;
 		extern std::shared_ptr<Texture> expandIcon;
 		extern std::shared_ptr<Texture> expandFlippedIcon;
 		extern std::shared_ptr<Texture> trashIcon;
@@ -317,7 +311,8 @@ namespace FlatEngine
 		extern SDL_Texture* cameraTexture;
 		extern SDL_Texture* playTexture;
 		extern SDL_Texture* pauseTexture;
-		extern SDL_Texture* stopTexture;		
+		extern SDL_Texture* stopTexture;	
+		extern SDL_Texture* nextFrameTexture;
 		extern SDL_Texture* expandTexture;
 		extern SDL_Texture* expandFlippedTexture;
 		extern SDL_Texture* trashTexture;

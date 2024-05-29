@@ -573,8 +573,8 @@ namespace FlatEngine
 							long id = -1;
 							bool _isCollapsed = true;
 							bool _isActive = true;
-							float activeWidth = 5;
-							float activeHeight = 3;
+							float activeWidth = 2;
+							float activeHeight = 2;
 							Vector2 activeOffset = { 0, 0 };
 							int activeLayer = 0;
 							std::string attachedScript = "";
@@ -927,11 +927,13 @@ namespace FlatEngine
 							long id = -1;
 							bool _isCollapsed = true;
 							bool _isActive = true;
-							float activeWidth = 10;
-							float activeHeight = 10;
+							float activeWidth = 2;
+							float activeHeight = 2;
 							Vector2 activeOffset = Vector2(0,0);
-							bool _isContinious = false;
+							bool _isContinuous = true;
+							bool _isStatic = false;
 							int activeLayer = 0;
+							bool _showActiveRadius = false;
 
 							// Load ID
 							if (currentObjectJson["components"][j].contains("id"))
@@ -968,24 +970,33 @@ namespace FlatEngine
 								activeOffset.y = currentObjectJson["components"][j]["activeOffsetY"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeOffsetY' in object: ");
-							if (currentObjectJson["components"][j].contains("_isContinious"))
-								_isContinious = currentObjectJson["components"][j]["_isContinious"];
+							if (currentObjectJson["components"][j].contains("_isContinuous"))
+								_isContinuous = currentObjectJson["components"][j]["_isContinuous"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isContinious' in object: ");
+							if (currentObjectJson["components"][j].contains("_isStatic"))
+								_isStatic = currentObjectJson["components"][j]["_isStatic"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isStatic' in object: ");
 							if (currentObjectJson["components"][j].contains("activeLayer"))
 								activeLayer = currentObjectJson["components"][j]["activeLayer"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeLayer' in object: ");
+							if (currentObjectJson["components"][j].contains("_showActiveRadius"))
+								_showActiveRadius = currentObjectJson["components"][j]["_showActiveRadius"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_showActiveRadius' in object: ");
 
 							newBoxCollider->SetID(id);
 							newBoxCollider->SetCollapsed(_isCollapsed);
 							newBoxCollider->SetActive(_isActive);
 							newBoxCollider->SetActiveDimensions(activeWidth, activeHeight);
 							newBoxCollider->SetActiveOffset(activeOffset);
-							newBoxCollider->SetIsContinuous(_isContinious);
+							newBoxCollider->SetIsContinuous(_isContinuous);
+							newBoxCollider->SetIsStatic(_isStatic);
 							newBoxCollider->SetActiveLayer(activeLayer);
 							newBoxCollider->SetRotation(objectRotation);
-							//newBoxCollider->RecalculateBounds();
+							newBoxCollider->SetShowActiveRadius(_showActiveRadius);
 						}
 						else if (type == "RigidBody")
 						{

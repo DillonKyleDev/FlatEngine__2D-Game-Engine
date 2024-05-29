@@ -65,6 +65,7 @@ namespace FlatEngine
 		float gravityCorrection;
 		Vector2 velocity;
 		Vector2 pendingForces;
+		Vector2 instantForces;
 		Vector2 acceleration;
 		bool _isMoving;
 		bool _isContinious;

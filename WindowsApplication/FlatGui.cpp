@@ -1666,6 +1666,9 @@ namespace FlatEngine { namespace FlatGui {
 				int activeLayer = boxCollider->GetActiveLayer();
 				bool _isActive = boxCollider->IsActive();
 				bool _isColliding = boxCollider->IsColliding();
+				float activeRadius = boxCollider->GetActiveRadiusScreen();
+				bool _showActiveRadius = boxCollider->GetShowActiveRadius();
+				Vector2 center = boxCollider->GetCenter();
 
 				boxCollider->UpdateActiveEdges();
 
@@ -1702,8 +1705,6 @@ namespace FlatEngine { namespace FlatGui {
 						boxCollider->GetNormals()[2],
 						boxCollider->GetNormals()[3],
 					};
-					Vector2 center = boxCollider->GetCenter();
-					//boxCollider->RecalculateBounds();
 
 					// Draw Normals
 					DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
@@ -1718,6 +1719,10 @@ namespace FlatEngine { namespace FlatGui {
 					else if (_isColliding)
 						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
 				}
+
+				// Draw activeRadius circle
+				if (_showActiveRadius)
+					draw_list->AddCircle(center, activeRadius, ImGui::GetColorU32(boxColliderActiveColor));
 			}
 
 

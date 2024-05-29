@@ -1,6 +1,7 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "CharacterController.h"
+#include "BoxCollider.h"
 
 
 namespace FlatEngine {
@@ -16,6 +17,7 @@ namespace FlatEngine {
 		gravityCorrection = 0.001f;
 		velocity = Vector2(0, 0);
 		pendingForces = Vector2(0, 0);
+		instantForces = Vector2(0, 0);
 		acceleration = Vector2(0, 0);
 		terminalVelocity = 0.7f;
 		windResistance = 1.0f;  // Lower value = more resistance
@@ -38,6 +40,8 @@ namespace FlatEngine {
 		angularDrag = toCopy->GetAngularDrag();
 		gravity = toCopy->GetGravity();
 		velocity = toCopy->GetVelocity();
+		pendingForces = Vector2(0, 0);
+		instantForces = Vector2(0, 0);
 		acceleration = Vector2(0, 0);
 		terminalVelocity = toCopy->GetTerminalVelocity();
 		windResistance = toCopy->windResistance;
@@ -122,8 +126,18 @@ namespace FlatEngine {
 		// Then apply to transform
 		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		Vector2 position = transform->GetPosition();
+		Vector2 position = transform->GetTruePosition();
+
+		std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
+
+		//if ((boxCollider->_isCollidingRight && boxCollider->_rightCollisionStatic && velocity.x > 0) || (boxCollider->_isCollidingLeft && boxCollider->_leftCollisionStatic && velocity.x < 0))
+		//	velocity.x = 0;
+		//if ((boxCollider->_isCollidingTop && boxCollider->_topCollisionStatic && velocity.y > 0) || (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && velocity.y < 0))
+		//	velocity.y = 0;
+
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
+
+		// Apply jump force after delta time multiplication!!!
 	}
 
 	void RigidBody::ApplyVerletPhysics(float deltaTime)
@@ -151,7 +165,19 @@ namespace FlatEngine {
 			}
 			else if (_isGrounded && pendingForces.y < 0) 
 			{
-				pendingForces.y -= 8 * pendingForces.y / 10;
+				LogFloat(pendingForces.y, "PendingY: ");
+				pendingForces.y = 0;
+				Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
+				std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
+				float activeHeight = boxCollider->GetActiveHeight();
+				float yPos = boxCollider->bottomCollision + (activeHeight / 2) - 0.01f;
+				float newYPos;
+				//if (position.y - yPos < 1)
+					newYPos = yPos;
+				//else
+				//	newYPos = position.y + (position.y - yPos) * 0.5f;
+				Vector2 lerpedPosition = Vector2(position.x, newYPos);
+				GetParent()->GetTransformComponent()->SetPosition(lerpedPosition);
 			}
 		}
 		else if (gravity < 0)
@@ -162,7 +188,14 @@ namespace FlatEngine {
 				else
 					pendingForces.y -= gravity * gravityCorrection;				
 			else if (_isGrounded && pendingForces.y > 0)
+			{
 				pendingForces.y = 0;
+				Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
+				std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
+				float activeHeight = boxCollider->GetActiveHeight();
+				float yPos = boxCollider->topCollision + activeHeight / 2 - 0.01f;
+				GetParent()->GetTransformComponent()->SetPosition(Vector2(position.x, yPos));
+			}
 		}
 	}
 
@@ -176,7 +209,11 @@ namespace FlatEngine {
 		}
 
 		// Get Character Controller for _isMoving
-		std::shared_ptr<FlatEngine::CharacterController> characterController = GetParent()->GetCharacterController();
+		std::shared_ptr<FlatEngine::CharacterController> characterController = nullptr;
+
+		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
+			characterController = GetParent()->GetCharacterController();
+
 		bool _isMoving = false;
 		if (characterController != nullptr)
 			_isMoving = characterController->IsMoving();
@@ -191,8 +228,14 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyEquilibriumForce()
 	{
-		std::shared_ptr<FlatEngine::CharacterController> characterController = GetParent()->GetCharacterController();
-		float maxSpeed = characterController->GetMaxSpeed();
+		float maxSpeed = 1;
+		std::shared_ptr<FlatEngine::CharacterController> characterController = nullptr;
+
+		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
+			characterController = GetParent()->GetCharacterController();
+
+		if (characterController != nullptr)
+			maxSpeed = characterController->GetMaxSpeed();
 
 		// Horizontal speed control
 		if (pendingForces.x > maxSpeed)

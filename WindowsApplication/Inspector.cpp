@@ -383,15 +383,6 @@ namespace FlatEngine { namespace FlatGui {
 								RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
 								transform->SetScale(Vector2(scaleX, scaleY));								
 								PopTable();			
-								
-								//if (focusedObject->HasComponent("BoxCollider"))
-								//{
-								//	std::shared_ptr<BoxCollider> boxCollider = focusedObject->GetBoxCollider();									
-								//	boxCollider->SetRotation(rotation);
-								//	boxCollider->RecalculateBounds();
-								//}
-
-								// Might want to do the same thing here for sprites as above
 							}
 							else if (componentType == "Sprite")
 							{
@@ -729,7 +720,9 @@ namespace FlatEngine { namespace FlatGui {
 								float activeHeight = boxCollider->GetActiveHeight();
 								ImVec4 activeEdges = boxCollider->GetActiveEdges();
 								Vector2 activeOffset = boxCollider->GetActiveOffset();
-								bool _isContinious = boxCollider->IsContinuous();
+								bool _isContinuous = boxCollider->IsContinuous();
+								bool _isStatic = boxCollider->IsStatic();
+								bool _showActiveRadius = boxCollider->GetShowActiveRadius();
 								int activeLayer = boxCollider->GetActiveLayer();	
 								long id = boxCollider->GetID();
 								std::string isCollidingString = "false";
@@ -754,8 +747,12 @@ namespace FlatEngine { namespace FlatGui {
 								PopTable();
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);							
-								RenderCheckbox(" Is Continuous", _isContinious);
-								boxCollider->SetIsContinuous(_isContinious);
+								RenderCheckbox(" Is Continuous", _isContinuous);
+								boxCollider->SetIsContinuous(_isContinuous);
+								RenderCheckbox(" Is Static", _isStatic);
+								boxCollider->SetIsStatic(_isStatic);
+								RenderCheckbox(" Show Active Radius", _showActiveRadius);
+								boxCollider->SetShowActiveRadius(_showActiveRadius);
 							}
 							else if (componentType == "RigidBody")
 							{

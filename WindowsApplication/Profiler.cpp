@@ -48,47 +48,36 @@ namespace FlatEngine {
 		std::string ellapsedTime = "---";
 		std::string averageFPS = "---";
 		std::string deltaTime = "---";
+		std::string framesCounted = "---";
+		std::string lastFrameTime = "---";
+		std::string countedTicks = "---";
+		std::string pausedTicks = "---";
+		std::string sdlTicks = "---";
 
 		if (FlatEngine::GameLoopStarted())
 		{
 			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTime() / 1000);
 			averageFPS = std::to_string(FlatEngine::GetAverageFps());
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
+			framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());
+			lastFrameTime = std::to_string(FlatEngine::gameLoop->GetLastFrameTime());
+			countedTicks = std::to_string(FlatEngine::gameLoop->GetCountedTicks());
+			pausedTicks = std::to_string(FlatEngine::gameLoop->GetPausedTicks());
+			sdlTicks = std::to_string(SDL_GetTicks());
 		}
 
-		if (ImGui::BeginTable("##RuntimeData", 2, flags, Vector2(-1, 0))) 
-		{
-
-			ImGui::TableSetupColumn("RUNTIME PROCESS");
-			ImGui::TableSetupColumn("DATA");
-			ImGui::TableHeadersRow();
-
-			ImGui::TableNextRow();
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("Ellapsed Game Time (sec)");
-			ImGui::TableSetColumnIndex(1);
-			ImGui::Text(ellapsedTime.c_str());
-			ImGui::PushID("EllapsedTime");
-			ImGui::PopID();
-
-			ImGui::TableNextRow();
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("Average FPS");
-			ImGui::TableSetColumnIndex(1);
-			ImGui::Text(averageFPS.c_str());
-			ImGui::PushID("AverageFPS");
-			ImGui::PopID();
-
-			ImGui::TableNextRow();
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("deltaTime (ms)");
-			ImGui::TableSetColumnIndex(1);
-			ImGui::Text(deltaTime.c_str());
-			ImGui::PushID("deltaTime");
-			ImGui::PopID();
-
-			ImGui::EndTable();
-		}
+		// Render runtime data
+		PushTable("##RunTimeData", 2);
+		RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
+		RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
+		RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
+		RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
+		RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
+		RenderTextTableRow("##lastFrameTime", "Last Frame Time", lastFrameTime.c_str());
+		RenderTextTableRow("##countedTicks", "Ticks Counted", countedTicks.c_str());
+		RenderTextTableRow("##pausedTicks", "Paused Ticks", pausedTicks.c_str());
+		RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+		PopTable();
 
 
 		RenderCheckbox("Animate", anim);

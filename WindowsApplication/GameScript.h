@@ -15,7 +15,7 @@ namespace FlatEngine
 
 		virtual void Awake() {}
 		virtual void Start() {}
-		virtual void Update(float deltaTime) {}
+		virtual void Update(int deltaTime) {}
 		void SetName(std::string name);
 		std::string GetName();
 		// Entities will be added at game run time for now. Could move this to 

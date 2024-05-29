@@ -1,0 +1,146 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 0,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 1.8883309364318848,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": -1.4666870832443237,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 3.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 5.0,
+                    "id": 1,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 2,
+                    "renderOrder": 0,
+                    "texture": "",
+                    "texture_height": 0.0,
+                    "texture_width": 0.0,
+                    "type": "Sprite",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinious": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 6,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.699999988079071,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                }
+            ],
+            "id": 0,
+            "name": "BoxCollider(0)",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 3,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.10419893264770508,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": -4.899932384490967,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 3.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 5.0,
+                    "id": 4,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 5,
+                    "renderOrder": 0,
+                    "texture": "",
+                    "texture_height": 0.0,
+                    "texture_width": 0.0,
+                    "type": "Sprite",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "id": 1,
+            "name": "Floor",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

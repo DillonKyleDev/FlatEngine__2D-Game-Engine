@@ -8,7 +8,7 @@ public:
 	~StartButton();
 
 	void Start();
-	void Update(float deltaTime);
+	void Update(int deltaTime);
 
 private:
 };

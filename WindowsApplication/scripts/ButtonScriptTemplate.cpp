@@ -60,7 +60,7 @@ void ButtonScriptTemplate::Start()
 }
 
 
-void ButtonScriptTemplate::Update(float deltaTime)
+void ButtonScriptTemplate::Update(int deltaTime)
 {
 	// For all entities attatched to this script:
 	for (int i = 0; i < this->GetEntities().size(); i++)

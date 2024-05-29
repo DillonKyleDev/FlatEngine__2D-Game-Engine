@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "imgui_internal.h"
+#include <cmath>
 
 
 namespace FlatEngine
@@ -18,25 +19,29 @@ namespace FlatEngine
 		activeOffset = Vector2(0, 0);
 		activeEdges = Vector4(0, 0, 0, 0);
 		activeLayer = 0;
-		_isContinious = false;
+		_isContinuous = true;
+		_isStatic = false;
 		_isColliding = false;
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
-
-		float nextActiveLeft = 0;
-		float nextActiveRight = 0;
-		float nextActiveBottom = 0;
-		float nextActiveTop = 0;
-		Vector2 nextCorners[4] = { 0,0,0,0 };
-		Vector2 centerGrid = Vector2(0, 0);
-		Vector2 nextCenterGrid = Vector2(0, 0);
-		Vector2 centerCoord = Vector2(0, 0);
-		Vector2 nextCenterCoord = Vector2(0, 0);
 
 		activeLeft = 0;
 		activeRight = 0;
 		activeBottom = 0;
 		activeTop = 0;
+		nextActiveLeft = 0;
+		nextActiveRight = 0;
+		nextActiveBottom = 0;
+		nextActiveTop = 0;
+		nextCorners;
+		centerGrid = Vector2(0, 0);
+		nextCenterGrid = Vector2(0, 0);
+		centerCoord = Vector2(0, 0);
+		nextCenterCoord = Vector2(0, 0);
+		activeRadiusScreen = 0;
+		activeRadiusGrid = 0;
+		_showActiveRadius = false;
+
 		// CREATE A SAVED JSON FIELD THAT WILL LOAD ROTATION EVERY RELOAD
 		rotation = 0;
 
@@ -48,6 +53,21 @@ namespace FlatEngine
 		_onActiveCollidingSet = false;
 		_onCollisionEnterSet = false;
 		_onCollisionLeaveSet = false;
+
+		_isCollidingRight = false;
+		_isCollidingLeft = false;
+		_isCollidingBottom = false;
+		_isCollidingTop = false;
+
+		_rightCollisionStatic = false;
+		_leftCollisionStatic = false;
+		_bottomCollisionStatic = false;
+		_topCollisionStatic = false;
+
+		rightCollision = 0;
+		leftCollision = 0;
+		bottomCollision = 0;
+		topCollision = 0;
 	}
 
 	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
@@ -60,10 +80,23 @@ namespace FlatEngine
 		activeHeight = toCopy->GetActiveHeight();
 		activeOffset = toCopy->GetActiveOffset();
 		activeLayer = toCopy->GetActiveLayer();
-		_isContinious = toCopy->IsContinuous();
+		_isContinuous = toCopy->IsContinuous();
+		_isStatic = toCopy->IsStatic();
 		_isColliding = false;
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
+		activeRadiusScreen = 0;
+		activeRadiusGrid = 0;
+		_showActiveRadius = toCopy->_showActiveRadius;
+
+		activeLeft = 0;
+		activeRight = 0;
+		activeBottom = 0;
+		activeTop = 0;
+		nextActiveLeft = 0;
+		nextActiveRight = 0;
+		nextActiveBottom = 0;
+		nextActiveTop = 0;
 
 		// Initialize callback functions to nullptr
 		OnActiveCollision = toCopy->OnActiveCollision;
@@ -73,6 +106,21 @@ namespace FlatEngine
 		_onActiveCollidingSet = false;
 		_onCollisionEnterSet = false;
 		_onCollisionLeaveSet = false;
+
+		_isCollidingRight = false;
+		_isCollidingLeft = false;
+		_isCollidingBottom = false;
+		_isCollidingTop = false;
+
+		_rightCollisionStatic = false;
+		_leftCollisionStatic = false;
+		_bottomCollisionStatic = false;
+		_topCollisionStatic = false;
+
+		rightCollision = 0;
+		leftCollision = 0;
+		bottomCollision = 0;
+		topCollision = 0;
 	}
 
 	BoxCollider::~BoxCollider()
@@ -97,46 +145,181 @@ namespace FlatEngine
 		_onCollisionLeaveSet = true;
 	}
 
+	bool BoxCollider::CheckForCollision(std::shared_ptr<BoxCollider> other)
+	{
+		if (loadedProject->GetCollisionDetection() == "Simple Box")
+		{
+			return SimpleBoxCheckForCollision(other);
+		}
+		else if (loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
+		{
+			// TODO
+			return false;
+		}
+		return false;
+	}
+
 	bool BoxCollider::SimpleBoxCheckForCollision(std::shared_ptr<BoxCollider> other)
 	{
-		float A_TopEdge = nextActiveTop;
-		float A_RightEdge = nextActiveRight;
-		float A_BottomEdge = nextActiveBottom;
-		float A_LeftEdge = nextActiveLeft;
+		bool _colliding = false;
 
-		float B_TopEdge = other->nextActiveTop;
-		float B_RightEdge = other->nextActiveRight;
-		float B_BottomEdge = other->nextActiveBottom;
-		float B_LeftEdge = other->nextActiveLeft;
+		// Calculate activeRadius with pythag
+		float rise = std::abs(other->centerGrid.y - centerGrid.y);
+		float run = std::abs(other->centerGrid.x - centerGrid.x);
+		float centerDistance = std::sqrt((rise * rise) + (run * run));
 
-		LogFloat(A_TopEdge, "A Top Edge: ");
-		LogFloat(A_RightEdge, "A Right Edge: ");
-		LogFloat(A_BottomEdge, "A Bottom Edge: ");
-		LogFloat(A_LeftEdge, "A Left Edge: ");
-
-		LogFloat(B_TopEdge, "B Top Edge: ");
-		LogFloat(B_RightEdge, "B Right Edge: ");
-		LogFloat(B_BottomEdge, "B Bottom Edge: ");
-		LogFloat(B_LeftEdge, "B Left Edge: ");
-
-		bool _colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));
-
-		if (_colliding)
+		if (centerDistance < other->activeRadiusGrid + activeRadiusGrid)
 		{
-			AddCollidingObject(other->GetParent());
+			float A_TopEdge = nextActiveTop;
+			float A_RightEdge = nextActiveRight;
+			float A_BottomEdge = nextActiveBottom;
+			float A_LeftEdge = nextActiveLeft;
 
-			// Fire OnActiveCollision while there is a collision happening
-			if (OnActiveCollisionSet())
-				OnActiveCollision(GetParent(), other->GetParent());
+			float B_TopEdge = other->nextActiveTop;
+			float B_RightEdge = other->nextActiveRight;
+			float B_BottomEdge = other->nextActiveBottom;
+			float B_LeftEdge = other->nextActiveLeft;
 
-			// Check which direction the collision is happening from
-			Vector2 collisionDirection = Vector2(other->centerGrid.x - centerGrid.x, other->centerGrid.y - centerGrid.y);
-			LogVector2(collisionDirection, "Collision Direction: ");
+			_colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));
+
+			if (_colliding)
+			{
+				AddCollidingObject(other->GetParent());
+
+				// Fire OnActiveCollision while there is a collision happening
+				if (OnActiveCollisionSet())
+					OnActiveCollision(GetParent(), other->GetParent());
+
+				// Check which direction the collision is happening from //
+				// if self is to the right
+				if (centerGrid.x > other->centerGrid.x)
+				{
+					// if self is below other
+					if (centerGrid.y < other->centerGrid.y)
+					{
+						float leftRightOverlap = B_RightEdge - A_LeftEdge;
+						float topBottomOverlap = A_TopEdge - B_BottomEdge;
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							_isCollidingLeft = true;
+							_leftCollisionStatic = other->_isStatic;
+							other->_isCollidingRight = true;
+							other->_rightCollisionStatic = _isStatic;
+						}
+						else {
+							_isCollidingTop = true;
+							_topCollisionStatic = other->_isStatic;
+							other->_isCollidingBottom = true;
+							other->_bottomCollisionStatic = _isStatic;
+						}
+					}
+					// if self is above other
+					else if (centerGrid.y > other->centerGrid.y)
+					{
+						float leftRightOverlap = B_RightEdge - A_LeftEdge;
+						float topBottomOverlap = B_TopEdge - A_BottomEdge;
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							_isCollidingLeft = true;
+							_leftCollisionStatic = other->_isStatic;
+							other->_isCollidingRight = true;
+							other->_rightCollisionStatic = _isStatic;
+						}
+						else {
+							_isCollidingBottom = true;
+							_bottomCollisionStatic = other->_isStatic;
+							other->_isCollidingTop = true;
+							other->_topCollisionStatic = _isStatic;
+						}
+					}
+				}
+				// if self is to the left
+				else if (centerGrid.x < other->centerGrid.x)
+				{
+					// if self is below other
+					if (centerGrid.y < other->centerGrid.y)
+					{
+						float leftRightOverlap = A_RightEdge - B_LeftEdge;
+						float topBottomOverlap = A_TopEdge - B_BottomEdge;
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							_isCollidingRight = true;
+							_rightCollisionStatic = other->_isStatic;
+							other->_isCollidingLeft = true;
+							other->_leftCollisionStatic = _isStatic;
+						}
+						else {
+							_isCollidingTop = true;
+							_topCollisionStatic = other->_isStatic;
+							other->_isCollidingBottom = true;
+							other->_bottomCollisionStatic = _isStatic;
+						}
+					}
+					else if (centerGrid.y > other->centerGrid.y)
+					{
+						float leftRightOverlap = A_RightEdge - B_LeftEdge;
+						float topBottomOverlap = B_TopEdge - A_BottomEdge;
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							_isCollidingRight = true;
+							_rightCollisionStatic = other->_isStatic;
+							other->_isCollidingLeft = true;
+							other->_leftCollisionStatic = _isStatic;
+						}
+						else {
+							_isCollidingBottom = true;
+							_bottomCollisionStatic = other->_isStatic;
+							other->_isCollidingTop = true;
+							other->_topCollisionStatic = _isStatic;
+						}
+					}
+				}
+			}
+
+			if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
+			{
+				if (_isCollidingBottom && other->_isStatic)
+				{
+					GetParent()->GetRigidBody()->SetIsGrounded(true);
+					bottomCollision = B_TopEdge;
+				}
+				if (_isCollidingTop && other->_isStatic)
+				{
+					topCollision = B_BottomEdge;
+				}
+				if (_isCollidingRight && other->_isStatic)
+				{
+					rightCollision = B_LeftEdge;
+				}
+				if (_isCollidingLeft && other->_isStatic)
+				{
+					leftCollision = B_RightEdge;
+				}
+			}
+			if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+			{
+				if (other->_isCollidingBottom && _isStatic)
+				{
+					other->GetParent()->GetRigidBody()->SetIsGrounded(true);
+					other->bottomCollision = A_TopEdge;
+				}
+				if (other->_isCollidingTop && _isStatic)
+				{
+					other->topCollision = A_BottomEdge;
+				}
+				if (other->_isCollidingRight && _isStatic)
+				{
+					other->rightCollision = A_LeftEdge;
+				}
+				if (other->_isCollidingLeft && _isStatic)
+				{
+					other->leftCollision = A_RightEdge;
+				}
+			}
+
+			_isColliding = _colliding;
+			other->SetColliding(_colliding);
 		}
-
-		
-
-		_isColliding = _colliding;
 
 		return _colliding;
 	}
@@ -161,7 +344,6 @@ namespace FlatEngine
 	{
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetPosition();
-		//LogFloat(previousPosition.y, " " + GetParent()->GetName() + " Inner Previous Pos: ");
 
 		return (previousPosition.x != position.x || previousPosition.y != position.y);
 	}
@@ -305,7 +487,7 @@ namespace FlatEngine
 			std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 			Vector2 scale = transform->GetScale();
 
-			// For visual representation
+			// For visual representation ( screen space values )
 			centerGrid = transform->GetTruePosition();
 
 			activeLeft = centerPoint.x + (centerGrid.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
@@ -315,7 +497,7 @@ namespace FlatEngine
 
 			centerCoord = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
 
-			// For collision detection
+			// For collision detection ( grid space values )
 			if (rigidBody != nullptr)
 				nextCenterGrid = rigidBody->GetNextPosition();
 			else
@@ -330,6 +512,26 @@ namespace FlatEngine
 
 			SimpleBoxUpdateCorners();
 		}
+	}
+
+	float BoxCollider::GetActiveRadiusScreen()
+	{
+		return activeRadiusScreen;
+	}
+
+	float BoxCollider::GetActiveRadiusGrid()
+	{
+		return activeRadiusGrid;
+	}
+
+	void  BoxCollider::SetShowActiveRadius(bool _show)
+	{
+		_showActiveRadius = _show;
+	}
+
+	bool  BoxCollider::GetShowActiveRadius()
+	{
+		return _showActiveRadius;
 	}
 
 	void BoxCollider::UpdateNormals()
@@ -424,6 +626,12 @@ namespace FlatEngine
 		};
 		SetCorners(newCorners);
 
+		// Calculate activeRadius with pythag
+		float rise = std::abs(topLeft.y - centerCoord.y);
+		float run = std::abs(topLeft.x - centerCoord.x);
+		activeRadiusScreen = std::sqrt((rise * rise) + (run * run));
+		activeRadiusGrid = activeRadiusScreen / step;
+
 		// For collision detection
 		Vector2 nextTopLeft = { nextActiveLeft, nextActiveTop };
 		Vector2 nextTopRight = { nextActiveRight, nextActiveTop };
@@ -453,6 +661,22 @@ namespace FlatEngine
 	bool BoxCollider::OnCollisionLeaveSet()
 	{
 		return _onCollisionLeaveSet;
+	}
+
+	void BoxCollider::ResetCollisions()
+	{
+		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
+			GetParent()->GetRigidBody()->SetIsGrounded(false);
+
+		_isCollidingRight = false;
+		_isCollidingLeft = false;
+		_isCollidingBottom = false;
+		_isCollidingTop = false;
+
+		rightCollision = 0;
+		leftCollision = 0;
+		bottomCollision = 0;
+		topCollision = 0;
 	}
 
 	void BoxCollider::UpdateCenter()
@@ -511,12 +735,22 @@ namespace FlatEngine
 
 	void BoxCollider::SetIsContinuous(bool _continuous)
 	{
-		_isContinious = _continuous;
+		_isContinuous = _continuous;
 	}
 
 	bool BoxCollider::IsContinuous()
 	{
-		return _isContinious;
+		return _isContinuous;
+	}
+
+	void BoxCollider::SetIsStatic(bool _newStatic)
+	{
+		_isStatic = _newStatic;
+	}
+
+	bool BoxCollider::IsStatic()
+	{
+		return _isStatic;
 	}
 
 	std::string BoxCollider::GetData()
@@ -530,8 +764,10 @@ namespace FlatEngine
 			{ "activeHeight", activeHeight },
 			{ "activeOffsetX", activeOffset.x },
 			{ "activeOffsetY", activeOffset.y },
-			{ "_isContinious", IsContinuous() },
+			{ "_isContinuous", _isContinuous },
+			{ "_isStatic", _isStatic },
 			{ "activeLayer", activeLayer },
+			{ "_showActiveRadius", _showActiveRadius },
 		};
 
 		std::string data = jsonData.dump();

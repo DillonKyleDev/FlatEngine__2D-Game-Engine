@@ -14,6 +14,7 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> playIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> pauseIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> stopIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> nextFrameIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> expandIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> expandFlippedIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> trashIcon = std::make_shared<Texture>();
@@ -41,6 +42,7 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* playTexture = nullptr;
 	SDL_Texture* pauseTexture = nullptr;
 	SDL_Texture* stopTexture = nullptr;
+	SDL_Texture* nextFrameTexture = nullptr;
 	SDL_Texture* expandTexture = nullptr;
 	SDL_Texture* expandFlippedTexture = nullptr;
 	SDL_Texture* trashTexture = nullptr;
@@ -76,6 +78,8 @@ namespace FlatEngine { namespace FlatGui {
 		pauseTexture = pauseIcon->getTexture();
 		stopIcon->loadFromFile("assets/images/icons/stop.png");
 		stopTexture = stopIcon->getTexture();
+		nextFrameIcon->loadFromFile("assets/images/icons/next.png");
+		nextFrameTexture = nextFrameIcon->getTexture();
 		expandIcon->loadFromFile("assets/images/icons/expand.png");
 		expandTexture = expandIcon->getTexture();
 		expandFlippedIcon->loadFromFile("assets/images/icons/collapse.png");

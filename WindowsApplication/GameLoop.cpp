@@ -23,6 +23,7 @@ namespace FlatEngine
 		pausedTicks = 0;
 		_started = false;
 		_paused = false;
+		_frameSkipped = false;
 		framesCounted = 0;
 		lastFrameTime = 0;
 		deltaTime = 0;
@@ -41,12 +42,15 @@ namespace FlatEngine
 	{
 		// Handle Game Time
 		_paused = false;
-		lastFrameTime = (float)SDL_GetTicks();
+		lastFrameTime = SDL_GetTicks();
 		startTime = SDL_GetTicks();
+		countedTicks = 0;
 		pausedTicks = 0;
 
 		// Initialize our scripts with the currently loaded scene
 		InitializeScriptObjects();
+		UpdateActiveColliders();
+		UpdateActiveRigidBodies();
 		// Save the name of the scene we started with so we can load it back up when we stop
 		startedScene = FlatEngine::GetLoadedScenePath();
 
@@ -57,8 +61,6 @@ namespace FlatEngine
 	{
 		// Get currently loaded scenes GameObjects
 		gameObjects = FlatEngine::GetSceneObjects();
-		rigidBodies.clear();
-		boxColliders.clear();
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
@@ -126,16 +128,6 @@ namespace FlatEngine
 						activeScripts.push_back(jumpPadScript);
 					}
 				}
-				if (components[j]->GetTypeString() == "RigidBody")
-				{
-					// Collect all BoxCollider components for collision detection in Update()
-					rigidBodies.push_back(std::static_pointer_cast<RigidBody>(components[j]));
-				}
-				if (components[j]->GetTypeString() == "BoxCollider")
-				{
-					// Collect all BoxCollider components for collision detection in Update()
-					boxColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
-				}
 			}
 		}
 
@@ -152,15 +144,89 @@ namespace FlatEngine
 		}
 	}
 
+	void GameLoop::UpdateActiveColliders()
+	{
+		// Get currently loaded scenes GameObjects
+		gameObjects = FlatEngine::GetSceneObjects();
+		boxColliders.clear();
+		//circleColliders.clear();
+
+		// Find all script components on Scene GameObjects and add those GameObjects
+		// to their corresponding script class entity vector members
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			std::vector<std::shared_ptr<Component>> components = gameObjects[i]->GetComponents();
+
+			for (int j = 0; j < components.size(); j++)
+			{
+				if (components[j]->GetTypeString() == "BoxCollider")
+				{
+					// Collect all BoxCollider components for collision detection in Update()
+					boxColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
+				}
+				if (components[j]->GetTypeString() == "CircleCollider")
+				{
+					// Collect all BoxCollider components for collision detection in Update()
+					//circleColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
+				}
+			}
+		}
+
+		// Remake boxColliderPairs
+		boxColliderPairs.clear();
+		for (int i = 0; i < boxColliders.size(); i++)
+		{
+			for (int j = i + 1; j < boxColliders.size(); j++)
+			{
+				std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>> newPair = { boxColliders.at(i), boxColliders.at(j) };
+				boxColliderPairs.push_back(newPair);
+			}
+		}
+	}
+
+	void GameLoop::UpdateActiveRigidBodies()
+	{
+		// Get currently loaded scenes GameObjects
+		gameObjects = FlatEngine::GetSceneObjects();
+		rigidBodies.clear();
+
+		// Find all script components on Scene GameObjects and add those GameObjects
+		// to their corresponding script class entity vector members
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			std::vector<std::shared_ptr<Component>> components = gameObjects[i]->GetComponents();
+
+			for (int j = 0; j < components.size(); j++)
+			{
+				if (components[j]->GetTypeString() == "RigidBody")
+				{
+					// Collect all BoxCollider components for collision detection in Update()
+					rigidBodies.push_back(std::static_pointer_cast<RigidBody>(components[j]));
+				}
+			}
+		}
+	}
+
 	void GameLoop::Update()
 	{
 		AddFrame();
 
+		// Update counted ticks;
+		if (_paused)
+		{
+			countedTicks += 16;
+			pausedTicks += 16;
+		}
+		else
+			countedTicks = SDL_GetTicks() - pausedTicks;
 		// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
 		// (in milliseconds) from that frame to this current one. That is deltaTime.
-		deltaTime = (float)SDL_GetTicks() - lastFrameTime;
+		if (_paused)
+			deltaTime = 16;
+		else
+			deltaTime = countedTicks - lastFrameTime;
 		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
-		lastFrameTime = (float)SDL_GetTicks();
+		lastFrameTime = countedTicks;
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
@@ -219,36 +285,32 @@ namespace FlatEngine
 		static int continuousCounter = 0;
 
 		// Handle BoxCollision updates here
-		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
+		for (std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>> boxColliderPair : boxColliderPairs)
 		{
-			if (boxCollider != nullptr && boxCollider->IsActive() && (boxCollider->IsContinuous() || (!boxCollider->IsContinuous() && continuousCounter == 10)))
+			std::shared_ptr<BoxCollider> collider1 = boxColliderPair.first;
+			std::shared_ptr<BoxCollider> collider2 = boxColliderPair.second;
+
+			collider1->ResetCollisions();
+			collider2->ResetCollisions();
+
+			if (collider1 != nullptr && collider1->IsActive() && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
 			{
 				bool _isColliding = false;
 
-				// Update Primary BoxCollider Active Edges
-				boxCollider->UpdateActiveEdges();
-
-				for (std::shared_ptr<BoxCollider> checkAgainst : boxColliders)
+				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
-					if (checkAgainst != nullptr && (checkAgainst->GetID() != boxCollider->GetID()) && checkAgainst->IsActive())
-					{
-						// Update Secondary BoxCollider Active Edges
-						checkAgainst->UpdateActiveEdges();
+					collider1->UpdateActiveEdges();
+					collider2->UpdateActiveEdges();
 
-						if (boxCollider->GetActiveLayer() == checkAgainst->GetActiveLayer() && boxCollider->SimpleBoxCheckForCollision(checkAgainst))
-						{				
-							//boxCollider->SetColliding(true);
-							_isColliding = true;
-						}
+					if (collider1->GetActiveLayer() == collider2->GetActiveLayer() && collider1->CheckForCollision(collider2))
+					{				
+						_isColliding = true;
 					}
 				}
-
-				if (boxCollider->GetParent()->HasComponent("RigidBody"))
-					boxCollider->GetParent()->GetRigidBody()->SetIsGrounded(_isColliding);
 			}
 		}
 
-		// Reset continuous counter
+		// Reset continuous counter if appropriate
 		if (continuousCounter >= 10)
 			continuousCounter = 0;
 
@@ -267,8 +329,8 @@ namespace FlatEngine
 		_paused = false;
 
 		// Reset Ticks and frames counted
-		countedTicks = SDL_GetTicks();
-		pausedTicks = 0;
+		pausedTicks = SDL_GetTicks();
+		countedTicks = 0;
 		framesCounted = 0;
 
 		// Delete script processes
@@ -290,8 +352,7 @@ namespace FlatEngine
 			_paused = true;
 
 			// Store the time that the timer was paused and reset the counted frames
-			pausedTicks = SDL_GetTicks() - countedTicks;
-			countedTicks = 0;
+			countedTicks = SDL_GetTicks() - pausedTicks;
 		}
 	}
 
@@ -302,8 +363,7 @@ namespace FlatEngine
 		{
 			_paused = false;
 			// Get the ellapsed time since the pause and remove it from total ticks to get current time
-			countedTicks = SDL_GetTicks() - pausedTicks;
-			pausedTicks = 0;
+			pausedTicks = SDL_GetTicks() - countedTicks;
 		}
 	}
 
@@ -311,16 +371,9 @@ namespace FlatEngine
 	{
 		if (_started)
 		{
-			if (_paused)
-			{
-				return pausedTicks;
-			}
-			else
-			{
-				return SDL_GetTicks() - startTime;
-			}
+			return countedTicks;
 		}
-		return countedTicks;
+		return pausedTicks;
 	}
 
 	bool GameLoop::IsStarted()
@@ -335,12 +388,30 @@ namespace FlatEngine
 
 	float GameLoop::GetAverageFps()
 	{
-		return framesCounted / TimeEllapsed() * 1000;
+		if (TimeEllapsed() != 0)
+			return (float)framesCounted / (float)TimeEllapsed() * 1000;
+		else
+			return 60;
 	}
 
-	float GameLoop::GetFramesCounted()
+	int GameLoop::GetFramesCounted()
 	{
 		return framesCounted;
+	}
+
+	int GameLoop::GetCountedTicks()
+	{
+		return countedTicks;
+	}
+
+	int GameLoop::GetPausedTicks()
+	{
+		return pausedTicks;
+	}
+
+	int GameLoop::GetLastFrameTime()
+	{
+		return lastFrameTime;
 	}
 
 	void GameLoop::AddFrame()
@@ -348,8 +419,18 @@ namespace FlatEngine
 		framesCounted++;
 	}
 
-	float GameLoop::GetDeltaTime()
+	int GameLoop::GetDeltaTime()
 	{
 		return deltaTime;
+	}
+
+	void GameLoop::SetFrameSkipped(bool _skipped)
+	{
+		_frameSkipped = _skipped;
+	}
+
+	bool GameLoop::IsFrameSkipped()
+	{
+		return _frameSkipped;
 	}
 }
