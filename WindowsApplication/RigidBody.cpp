@@ -19,7 +19,7 @@ namespace FlatEngine {
 		pendingForces = Vector2(0, 0);
 		instantForces = Vector2(0, 0);
 		acceleration = Vector2(0, 0);
-		terminalVelocity = gravity * 0.2f;
+		terminalVelocity = gravity * 0.4f;
 		windResistance = 1.0f;  // Lower value = more resistance
 		friction = 0.86f;  // 1 = no friction. 0 = velocity = 0
 		equilibriumForce = 2;

@@ -11,7 +11,7 @@ namespace FlatEngine {
 		SetType(ComponentTypes::CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
-		walkSpeed = 0.01f;
+		walkSpeed = 1;
 		runSpeed = 2;
 		maxSpeed = 0.1f;
 		airControl = 0.2f;
