@@ -13,16 +13,16 @@ namespace FlatEngine {
 		mass = 1;
 		angularDrag = 1;
 		gravity = 1;
-		fallingGravity = gravity * 1.5f;
-		gravityCorrection = 0.001f;
+		fallingGravity = gravity * 1.2f;
+		gravityCorrection = 1;
 		velocity = Vector2(0, 0);
 		pendingForces = Vector2(0, 0);
 		instantForces = Vector2(0, 0);
 		acceleration = Vector2(0, 0);
-		terminalVelocity = 0.7f;
+		terminalVelocity = gravity * 0.2f;
 		windResistance = 1.0f;  // Lower value = more resistance
 		friction = 0.86f;  // 1 = no friction. 0 = velocity = 0
-		equilibriumForce = 0.0001f;
+		equilibriumForce = 2;
 		forceCorrection = 0.03f;
 		_isMoving = false;
 		_isContinious = false;
@@ -155,9 +155,9 @@ namespace FlatEngine {
 			if (!_isGrounded && velocity.y > -terminalVelocity)
 			{
 				if (velocity.y < 0)
-					pendingForces.y -= fallingGravity * gravityCorrection;
+					pendingForces.y -= fallingGravity;
 				else
-					pendingForces.y -= gravity * gravityCorrection;
+					pendingForces.y -= gravity;
 			}
 		}
 		else if (gravity < 0)
@@ -165,9 +165,9 @@ namespace FlatEngine {
 			if (!_isGrounded && velocity.y < terminalVelocity)
 			{
 				if (velocity.y > 0)
-					pendingForces.y -= fallingGravity * gravityCorrection;
+					pendingForces.y -= fallingGravity;
 				else
-					pendingForces.y -= gravity * gravityCorrection;
+					pendingForces.y -= gravity;
 			}
 		}
 	}
@@ -211,15 +211,15 @@ namespace FlatEngine {
 			maxSpeed = characterController->GetMaxSpeed();
 
 		// Horizontal speed control
-		if (pendingForces.x > maxSpeed)
+		if (velocity.x > maxSpeed)
 			pendingForces.x -= equilibriumForce;
-		else if (pendingForces.x < -maxSpeed)
+		else if (velocity.x < -maxSpeed)
 			pendingForces.x += equilibriumForce;
 		// Vertical speed control
-		if (pendingForces.y > maxSpeed)
-			pendingForces.y -= equilibriumForce;
-		else if (pendingForces.y < -maxSpeed)
-			pendingForces.y += equilibriumForce;
+		//if (velocity.y > maxSpeed)
+		//	pendingForces.y -= equilibriumForce;
+		//else if (velocity.y < -maxSpeed)
+		//	pendingForces.y += equilibriumForce;
 	}
 
 	void RigidBody::ApplyCollisionForces()
@@ -231,6 +231,7 @@ namespace FlatEngine {
 		float activeWidth = boxCollider->GetActiveWidth();
 
 		// Vertical Collision Forces
+// 
 		// Normal Gravity
 		if (gravity > 0 && _isGrounded && pendingForces.y < 0)
 		{
@@ -243,6 +244,14 @@ namespace FlatEngine {
 		{
 			pendingForces.y = 0;
 			float yPos = boxCollider->topCollision + activeHeight / 2 - 0.001f;
+			transform->SetPosition(Vector2(position.x, yPos));
+		}
+
+		// Ceilings
+		if (gravity < 0 && pendingForces.y > 0 && boxCollider->_isCollidingTop)
+		{
+			pendingForces.y = 0;
+			float yPos = boxCollider->topCollision + activeHeight / 2 + 0.001f;
 			transform->SetPosition(Vector2(position.x, yPos));
 		}
 

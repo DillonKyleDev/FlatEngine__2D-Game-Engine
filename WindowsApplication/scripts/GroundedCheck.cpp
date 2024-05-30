@@ -24,7 +24,7 @@ void GroundedCheck::Start()
 		controller = parent->GetCharacterController();
 }
 
-void GroundedCheck::Update(int deltaTime)
+void GroundedCheck::Update(float deltaTime)
 {
 	if (collider != nullptr && collider->IsColliding() && controller != nullptr)
 		controller->SetIsGrounded(true);

@@ -717,7 +717,7 @@ namespace FlatEngine
 		return gameLoop->GetAverageFps();
 	}
 
-	int GetDeltaTime()
+	float GetDeltaTime()
 	{
 		return gameLoop->GetDeltaTime();
 	}

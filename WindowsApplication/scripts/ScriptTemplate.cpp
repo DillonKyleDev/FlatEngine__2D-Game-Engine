@@ -22,7 +22,7 @@ void ScriptTemplate::Start()
 	FlatEngine::LogString("ScriptTemplate instantiated on: " + this->GetOwner()->GetName());
 }
 
-void ScriptTemplate::Update(int deltaTime)
+void ScriptTemplate::Update(float deltaTime)
 {
 
 }

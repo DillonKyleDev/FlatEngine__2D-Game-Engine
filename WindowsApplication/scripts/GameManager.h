@@ -8,7 +8,7 @@ public:
 	~GameManager();
 
 	void Start();
-	void Update(int deltaTime);
+	void Update(float deltaTime);
 	void PauseGame();
 
 private:

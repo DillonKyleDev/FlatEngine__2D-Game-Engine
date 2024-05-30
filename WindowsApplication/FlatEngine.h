@@ -144,7 +144,7 @@ namespace FlatEngine
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
-	extern int GetDeltaTime();
+	extern float GetDeltaTime();
 
 	// Helper Functions
 	extern bool AreCollidingWorld(Vector4 ObjectA, Vector4 ObjectB);

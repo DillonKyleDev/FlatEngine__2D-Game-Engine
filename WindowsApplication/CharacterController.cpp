@@ -11,11 +11,11 @@ namespace FlatEngine {
 		SetType(ComponentTypes::CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
-		walkSpeed = 1;
+		walkSpeed = 0.01f;
 		runSpeed = 2;
-		maxSpeed = 0.01f;
-		airControl = 0.5f;
-		speedCorrection = 0.001f;
+		maxSpeed = 0.1f;
+		airControl = 0.2f;
+		speedCorrection = 1;
 		_isMoving = false;
 		_isGrounded = false;
 	}
@@ -73,16 +73,16 @@ namespace FlatEngine {
 
 		Vector2 pendingForces = rigidBody->GetPendingForces();
 		// If the object has not hit max speed in negative or positive direction
-		if (pendingForces.x >= 0 && pendingForces.x < maxSpeed || pendingForces.x <= 0 && pendingForces.x > (maxSpeed * -1) ||
+		if (pendingForces.x >= 0 || pendingForces.x <= 0 && pendingForces.x > (maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
-			(pendingForces.x >= maxSpeed && normalizedX * walkSpeed * speedCorrection < 0) ||
+			(normalizedX * walkSpeed < 0) ||
 			// If velocity exceeds negative max speed but x direction is positive
-			(pendingForces.x <= (maxSpeed * -1) && normalizedX * walkSpeed * speedCorrection > 0) && normalizedX != 0)
+			(normalizedX * walkSpeed > 0) && normalizedX != 0)
 		{
 			if (!rigidBody->IsGrounded())
-				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * airControl * speedCorrection, 0));
+				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * airControl, 0));
 			else
-				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * speedCorrection, 0));
+				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed, 0));
 			_isMoving = true;
 		}		
 		

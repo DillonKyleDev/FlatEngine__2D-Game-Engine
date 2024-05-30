@@ -62,7 +62,7 @@ void StartButton::Start()
 	//button->SetOnMouseRightClick(StartButtonOnRightClick);
 }
 
-void StartButton::Update(int deltaTime)
+void StartButton::Update(float deltaTime)
 {
 
 }

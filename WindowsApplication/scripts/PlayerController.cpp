@@ -25,7 +25,7 @@ void PlayerController::Start()
 	std::shared_ptr<FlatEngine::Audio> clickedAudio = GetOwner()->GetAudioComponent();
 }
 
-void PlayerController::Update(int deltaTime)
+void PlayerController::Update(float deltaTime)
 {
 	// Get Mapping Context
 	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
@@ -43,7 +43,7 @@ void PlayerController::Update(int deltaTime)
 		//FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
 		{
-			rigidBody->AddForce(Vector2(0, 1), 0.8f);
+			rigidBody->AddForce(Vector2(0, 1), 1200);
 		}
 
 	}

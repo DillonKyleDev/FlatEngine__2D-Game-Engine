@@ -220,7 +220,7 @@ namespace FlatEngine
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
 
-							// Self
+							// Self (ceiling)
 							//if (other->_isStatic)
 								topCollision = B_BottomEdge;
 
@@ -265,7 +265,7 @@ namespace FlatEngine
 								bottomCollision = B_TopEdge;
 							}
 
-							// Other
+							// Other (ceiling)
 							//if (_isStatic)
 								other->topCollision = A_BottomEdge;
 						}
@@ -301,7 +301,7 @@ namespace FlatEngine
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
 							
-							// Self
+							// Self (ceiling)
 							//if (other->_isStatic)
 								topCollision = B_BottomEdge;
 
@@ -345,53 +345,12 @@ namespace FlatEngine
 								bottomCollision = B_TopEdge;
 							}
 
-							// Other
+							// Other (ceiling)
 							//if (_isStatic)
 								other->topCollision = A_BottomEdge;
 						}
 					}
 				}
-			}
-
-			if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
-			{
-				//if (_isCollidingBottom && other->_isStatic)
-				//{
-				//	GetParent()->GetRigidBody()->SetIsGrounded(true);
-				//	bottomCollision = B_TopEdge;
-				//}
-				//if (_isCollidingTop && other->_isStatic)
-				//{
-				//	topCollision = B_BottomEdge;
-				//}
-				//if (_isCollidingRight && other->_isStatic)
-				//{
-				//	rightCollision = B_LeftEdge;
-				//}
-				//if (_isCollidingLeft && other->_isStatic)
-				//{
-				//	leftCollision = B_RightEdge;
-				//}
-			}
-			if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
-			{
-				//if (other->_isCollidingBottom && _isStatic)
-				//{
-				//	other->GetParent()->GetRigidBody()->SetIsGrounded(true);
-				//	other->bottomCollision = A_TopEdge;
-				//}
-				//if (other->_isCollidingTop && _isStatic)
-				//{
-				//	other->topCollision = A_BottomEdge;
-				//}
-				//if (other->_isCollidingRight && _isStatic)
-				//{
-				//	other->rightCollision = A_LeftEdge;
-				//}
-				//if (other->_isCollidingLeft && _isStatic)
-				//{
-				//	other->leftCollision = A_RightEdge;
-				//}
 			}
 
 			_isColliding = _colliding;

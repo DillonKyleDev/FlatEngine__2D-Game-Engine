@@ -216,18 +216,13 @@ namespace FlatEngine
 			// If paused and advancing a frame through time, artificially add 16 ticks to simulate advancing approx 1 frame through time.
 			countedTicks += 16;
 			pausedTicks += 16;
-			deltaTime = 16;
 		}
 		else
 		{
 			countedTicks = SDL_GetTicks() - pausedTicks;
 			// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
 			// (in milliseconds) from that frame to this current one. That is deltaTime.
-			deltaTime = countedTicks - lastFrameTime;
-			
-			// Capping framerate temporary fix
-			if (deltaTime > 18)
-				deltaTime = 16;
+			deltaTime = 1 / GetAverageFps();
 		}
 
 		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
@@ -309,7 +304,7 @@ namespace FlatEngine
 					collider2->UpdateActiveEdges();
 
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer() && collider1->CheckForCollision(collider2))
-					{				
+					{
 						_isColliding = true;
 					}
 				}
@@ -425,7 +420,7 @@ namespace FlatEngine
 		framesCounted++;
 	}
 
-	int GameLoop::GetDeltaTime()
+	float GameLoop::GetDeltaTime()
 	{
 		return deltaTime;
 	}

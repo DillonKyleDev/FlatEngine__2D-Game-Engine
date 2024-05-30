@@ -8,7 +8,7 @@ public:
 	~PlayerController();
 
 	void Start();
-	void Update(int deltaTime);
+	void Update(float deltaTime);
 
 private:
 };

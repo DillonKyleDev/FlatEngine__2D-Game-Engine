@@ -56,6 +56,6 @@ void RestartButton::Start()
 	button->SetOnMouseRightClick(RestartButtonOnRightClick);
 }
 
-void RestartButton::Update(int deltaTime)
+void RestartButton::Update(float deltaTime)
 {
 }

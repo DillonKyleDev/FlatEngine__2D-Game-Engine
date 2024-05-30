@@ -26,7 +26,7 @@ namespace FlatEngine
 		bool IsPaused();
 		float GetAverageFps();
 		void AddFrame();
-		int GetDeltaTime();
+		float GetDeltaTime();
 		void SetFrameSkipped(bool _skipped);
 		bool IsFrameSkipped();
 		int GetFramesCounted();
@@ -45,7 +45,7 @@ namespace FlatEngine
 		// For deltaTime
 		int lastFrameTime;
 
-		int deltaTime;
+		float deltaTime;
 		std::shared_ptr<GameManager> gameManager;
 
 		std::string startedScene;

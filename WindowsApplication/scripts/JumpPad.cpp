@@ -35,6 +35,6 @@ void JumpPad::Start()
 	boxCollider->SetOnColliding(JumpPadOnCollisionEnter);
 }
 
-void JumpPad::Update(int deltaTime)
+void JumpPad::Update(float deltaTime)
 {
 }

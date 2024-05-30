@@ -11,7 +11,7 @@ public:
 	~GroundedCheck();
 
 	void Start();
-	void Update(int deltaTime);
+	void Update(float deltaTime);
 
 private:
 	std::shared_ptr<FlatEngine::BoxCollider> collider;

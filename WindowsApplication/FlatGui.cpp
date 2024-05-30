@@ -1433,7 +1433,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 spriteOffset = sprite->GetOffset();
 				bool _spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
-				std::string invisibleButtonID = "GameObjectSelectorButton_" + sprite->GetID();
+				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());
 
 				if (spriteTexture != nullptr)
 				{

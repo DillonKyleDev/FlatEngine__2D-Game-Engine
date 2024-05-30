@@ -54,6 +54,6 @@ void QuitButton::Start()
 	button->SetOnMouseRightClick(QuitButtonOnRightClick);
 }
 
-void QuitButton::Update(int deltaTime)
+void QuitButton::Update(float deltaTime)
 {
 }
