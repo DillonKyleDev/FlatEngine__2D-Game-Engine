@@ -14,15 +14,15 @@
             "_showProfiler": true,
             "_showSceneView": true,
             "collisionDetection": "Simple Box",
-            "focusedGameObjectID": 0,
+            "focusedGameObjectID": -1,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\dance.json",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\level1.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
-            "sceneViewGridStepX": 47.399688720703125,
-            "sceneViewGridStepY": 47.399688720703125,
-            "sceneViewScrollingX": 297.403076171875,
-            "sceneViewScrollingY": 66.73046875
+            "sceneViewGridStepX": 25.699684143066406,
+            "sceneViewGridStepY": 25.699684143066406,
+            "sceneViewScrollingX": 479.403076171875,
+            "sceneViewScrollingY": 114.73046875
         }
     ]
 }

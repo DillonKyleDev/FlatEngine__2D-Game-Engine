@@ -87,6 +87,7 @@ namespace FlatEngine {
 		ApplyGravity();
 		ApplyFriction();
 		ApplyEquilibriumForce();
+		ApplyCollisionForces();
 
 		// Apply them to RigidBody
 		if (loadedProject->GetPhysicsSystem() == "Euler")
@@ -128,16 +129,7 @@ namespace FlatEngine {
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetTruePosition();
 
-		std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
-
-		//if ((boxCollider->_isCollidingRight && boxCollider->_rightCollisionStatic && velocity.x > 0) || (boxCollider->_isCollidingLeft && boxCollider->_leftCollisionStatic && velocity.x < 0))
-		//	velocity.x = 0;
-		//if ((boxCollider->_isCollidingTop && boxCollider->_topCollisionStatic && velocity.y > 0) || (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && velocity.y < 0))
-		//	velocity.y = 0;
-
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
-
-		// Apply jump force after delta time multiplication!!!
 	}
 
 	void RigidBody::ApplyVerletPhysics(float deltaTime)
@@ -147,7 +139,11 @@ namespace FlatEngine {
 
 	Vector2 RigidBody::AddVelocity(Vector2 vel)
 	{
-		pendingForces.x += vel.x;
+		// Make sure not colliding in that direction before adding the velocity
+		std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
+		if (vel.x > 0 && (!boxCollider->_isCollidingRight || !boxCollider->_rightCollisionStatic) || vel.x < 0 && (!boxCollider->_isCollidingLeft || !boxCollider->_leftCollisionStatic))
+			pendingForces.x += vel.x;
+
 		pendingForces.y += vel.y;
 		return pendingForces;
 	}
@@ -163,38 +159,15 @@ namespace FlatEngine {
 				else
 					pendingForces.y -= gravity * gravityCorrection;
 			}
-			else if (_isGrounded && pendingForces.y < 0) 
-			{
-				LogFloat(pendingForces.y, "PendingY: ");
-				pendingForces.y = 0;
-				Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
-				std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
-				float activeHeight = boxCollider->GetActiveHeight();
-				float yPos = boxCollider->bottomCollision + (activeHeight / 2) - 0.01f;
-				float newYPos;
-				//if (position.y - yPos < 1)
-					newYPos = yPos;
-				//else
-				//	newYPos = position.y + (position.y - yPos) * 0.5f;
-				Vector2 lerpedPosition = Vector2(position.x, newYPos);
-				GetParent()->GetTransformComponent()->SetPosition(lerpedPosition);
-			}
 		}
 		else if (gravity < 0)
 		{
 			if (!_isGrounded && velocity.y < terminalVelocity)
+			{
 				if (velocity.y > 0)
 					pendingForces.y -= fallingGravity * gravityCorrection;
 				else
-					pendingForces.y -= gravity * gravityCorrection;				
-			else if (_isGrounded && pendingForces.y > 0)
-			{
-				pendingForces.y = 0;
-				Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
-				std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
-				float activeHeight = boxCollider->GetActiveHeight();
-				float yPos = boxCollider->topCollision + activeHeight / 2 - 0.01f;
-				GetParent()->GetTransformComponent()->SetPosition(Vector2(position.x, yPos));
+					pendingForces.y -= gravity * gravityCorrection;
 			}
 		}
 	}
@@ -247,6 +220,47 @@ namespace FlatEngine {
 			pendingForces.y -= equilibriumForce;
 		else if (pendingForces.y < -maxSpeed)
 			pendingForces.y += equilibriumForce;
+	}
+
+	void RigidBody::ApplyCollisionForces()
+	{
+		std::shared_ptr<FlatEngine::BoxCollider> boxCollider = GetParent()->GetBoxCollider();
+		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
+		float activeHeight = boxCollider->GetActiveHeight();
+		float activeWidth = boxCollider->GetActiveWidth();
+
+		// Vertical Collision Forces
+		// Normal Gravity
+		if (gravity > 0 && _isGrounded && pendingForces.y < 0)
+		{
+			pendingForces.y = 0;
+			float yPos = boxCollider->bottomCollision + (activeHeight / 2) - 0.001f;
+			transform->SetPosition(Vector2(position.x, yPos));
+		}
+		// Inverted Gravity
+		if (gravity < 0 && _isGrounded && pendingForces.y > 0)
+		{
+			pendingForces.y = 0;
+			float yPos = boxCollider->topCollision + activeHeight / 2 - 0.001f;
+			transform->SetPosition(Vector2(position.x, yPos));
+		}
+
+		// Horizontal Collision Forces
+		// Collision on right side when moving to the right
+		if (boxCollider->_isCollidingRight && boxCollider->_rightCollisionStatic && velocity.x > 0)
+		{
+		    pendingForces.x = 0;
+			float xPos = boxCollider->rightCollision - activeWidth / 2 + 0.001f;
+			transform->SetPosition(Vector2(xPos, position.y));
+		}
+		// Collision on left side when moving to the left
+		if (boxCollider->_isCollidingLeft && boxCollider->_leftCollisionStatic && velocity.x < 0)
+		{
+			pendingForces.x = 0;
+			float xPos = boxCollider->leftCollision + activeWidth / 2 - 0.001f;
+			transform->SetPosition(Vector2(xPos, position.y));
+		}
 	}
 
 	void RigidBody::AddForce(Vector2 direction, float power)

@@ -2010,16 +2010,23 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopStyleColor();
 	}
 
-	void PushTable(std::string id, int columns, ImGuiTableFlags flags)
+	bool PushTable(std::string id, int columns, ImGuiTableFlags flags)
 	{
 		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
 		PushTableStyles();
-		ImGui::BeginTable(id.c_str(), columns, tableFlags);
-		for (int i = 0; i < columns; i++)
+		bool _beginTable = ImGui::BeginTable(id.c_str(), columns, tableFlags);
+		if (_beginTable)
 		{
-			std::string columnLabel = id + std::to_string(i);
-			ImGui::TableSetupColumn(columnLabel.c_str(), flags, columnWidth);
+			for (int i = 0; i < columns; i++)
+			{
+				std::string columnLabel = id + std::to_string(i);
+				ImGui::TableSetupColumn(columnLabel.c_str(), flags, columnWidth);
+			}
 		}
+		else
+			PopTableStyles();
+
+		return _beginTable;
 	}
 
 	bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max)

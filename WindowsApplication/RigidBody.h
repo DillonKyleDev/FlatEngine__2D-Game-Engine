@@ -29,6 +29,7 @@ namespace FlatEngine
 		void ApplyGravity();
 		void AddForce(Vector2 direction, float power);
 		void ApplyEquilibriumForce();
+		void ApplyCollisionForces();
 
 		void Move(Vector2 position);
 		void SetMass(float newMass);

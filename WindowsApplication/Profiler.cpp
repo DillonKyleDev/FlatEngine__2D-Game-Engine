@@ -67,17 +67,19 @@ namespace FlatEngine {
 		}
 
 		// Render runtime data
-		PushTable("##RunTimeData", 2);
-		RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
-		RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
-		RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
-		RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
-		RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-		RenderTextTableRow("##lastFrameTime", "Last Frame Time", lastFrameTime.c_str());
-		RenderTextTableRow("##countedTicks", "Ticks Counted", countedTicks.c_str());
-		RenderTextTableRow("##pausedTicks", "Paused Ticks", pausedTicks.c_str());
-		RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
-		PopTable();
+		if (PushTable("##RunTimeData", 2))
+		{
+			RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
+			RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
+			RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
+			RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
+			RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
+			RenderTextTableRow("##lastFrameTime", "Last Frame Time", lastFrameTime.c_str());
+			RenderTextTableRow("##countedTicks", "Ticks Counted", countedTicks.c_str());
+			RenderTextTableRow("##pausedTicks", "Paused Ticks", pausedTicks.c_str());
+			RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+			PopTable();
+		}
 
 
 		RenderCheckbox("Animate", anim);

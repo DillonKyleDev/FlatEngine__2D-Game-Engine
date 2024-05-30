@@ -440,7 +440,7 @@ namespace FlatEngine
 		extern void PopMenuStyles();
 		extern void PushTableStyles();
 		extern void PopTableStyles();
-		extern void PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
+		extern bool PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
 		extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max);
 		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
 		extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value);

@@ -42,10 +42,10 @@ namespace FlatEngine
 	{
 		// Handle Game Time
 		_paused = false;
-		lastFrameTime = SDL_GetTicks();
+		lastFrameTime = 0;
 		startTime = SDL_GetTicks();
 		countedTicks = 0;
-		pausedTicks = 0;
+		pausedTicks = startTime;
 
 		// Initialize our scripts with the currently loaded scene
 		InitializeScriptObjects();
@@ -211,20 +211,25 @@ namespace FlatEngine
 	{
 		AddFrame();
 
-		// Update counted ticks;
 		if (_paused)
 		{
+			// If paused and advancing a frame through time, artificially add 16 ticks to simulate advancing approx 1 frame through time.
 			countedTicks += 16;
 			pausedTicks += 16;
+			deltaTime = 16;
 		}
 		else
+		{
 			countedTicks = SDL_GetTicks() - pausedTicks;
-		// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
-		// (in milliseconds) from that frame to this current one. That is deltaTime.
-		if (_paused)
-			deltaTime = 16;
-		else
+			// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
+			// (in milliseconds) from that frame to this current one. That is deltaTime.
 			deltaTime = countedTicks - lastFrameTime;
+			
+			// Capping framerate temporary fix
+			if (deltaTime > 18)
+				deltaTime = 16;
+		}
+
 		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
 		lastFrameTime = countedTicks;
 
@@ -282,6 +287,10 @@ namespace FlatEngine
 			rigidBody->CalculatePhysics();
 		}
 
+		// Reset BoxCollider collisions before going through all of them again
+		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
+			boxCollider->ResetCollisions();
+
 		static int continuousCounter = 0;
 
 		// Handle BoxCollision updates here
@@ -289,9 +298,6 @@ namespace FlatEngine
 		{
 			std::shared_ptr<BoxCollider> collider1 = boxColliderPair.first;
 			std::shared_ptr<BoxCollider> collider2 = boxColliderPair.second;
-
-			collider1->ResetCollisions();
-			collider2->ResetCollisions();
 
 			if (collider1 != nullptr && collider1->IsActive() && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
 			{
@@ -319,7 +325,7 @@ namespace FlatEngine
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 		{
-			rigidBody->ApplyPhysics(deltaTime);
+			rigidBody->ApplyPhysics((float)deltaTime);
 		}
 	}
 
@@ -329,7 +335,7 @@ namespace FlatEngine
 		_paused = false;
 
 		// Reset Ticks and frames counted
-		pausedTicks = SDL_GetTicks();
+		pausedTicks = 0;
 		countedTicks = 0;
 		framesCounted = 0;
 
@@ -373,7 +379,7 @@ namespace FlatEngine
 		{
 			return countedTicks;
 		}
-		return pausedTicks;
+		return 0;
 	}
 
 	bool GameLoop::IsStarted()
@@ -389,7 +395,7 @@ namespace FlatEngine
 	float GameLoop::GetAverageFps()
 	{
 		if (TimeEllapsed() != 0)
-			return (float)framesCounted / (float)TimeEllapsed() * 1000;
+			return (float)framesCounted / (float)countedTicks * 1000;
 		else
 			return 60;
 	}

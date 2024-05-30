@@ -205,12 +205,31 @@ namespace FlatEngine
 							_leftCollisionStatic = other->_isStatic;
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
+
+							// Self
+							/*if (other->_isStatic)*/
+								leftCollision = B_RightEdge;
+
+							// Other
+							//if (_isStatic)							
+								other->rightCollision = A_LeftEdge;							
 						}
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
+
+							// Self
+							//if (other->_isStatic)
+								topCollision = B_BottomEdge;
+
+							// Other
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody")/* && _isStatic*/)
+							{
+								other->GetParent()->GetRigidBody()->SetIsGrounded(true);
+								other->bottomCollision = A_TopEdge;
+							}
 						}
 					}
 					// if self is above other
@@ -224,12 +243,31 @@ namespace FlatEngine
 							_leftCollisionStatic = other->_isStatic;
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
+
+							// Self
+							//if (other->_isStatic)
+								leftCollision = B_RightEdge;
+
+							// Other
+							//if (_isStatic)
+								other->rightCollision = A_LeftEdge;
 						}
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
+
+							// Self
+							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody")/* && other->_isStatic*/)
+							{
+								GetParent()->GetRigidBody()->SetIsGrounded(true);
+								bottomCollision = B_TopEdge;
+							}
+
+							// Other
+							//if (_isStatic)
+								other->topCollision = A_BottomEdge;
 						}
 					}
 				}
@@ -243,16 +281,36 @@ namespace FlatEngine
 						float topBottomOverlap = A_TopEdge - B_BottomEdge;
 						if (leftRightOverlap < topBottomOverlap)
 						{
+							std::string name = GetParent()->GetName();
 							_isCollidingRight = true;
 							_rightCollisionStatic = other->_isStatic;
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
+
+							// Self
+							//if (other->_isStatic)
+								rightCollision = B_LeftEdge;
+
+							// Other
+							//if (_isStatic)
+								other->leftCollision = A_RightEdge;
 						}
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
+							
+							// Self
+							//if (other->_isStatic)
+								topCollision = B_BottomEdge;
+
+							// Other (floor)
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody")/* && _isStatic*/)
+							{
+								other->GetParent()->GetRigidBody()->SetIsGrounded(true);
+								other->bottomCollision = A_TopEdge;
+							}
 						}
 					}
 					else if (centerGrid.y > other->centerGrid.y)
@@ -265,12 +323,31 @@ namespace FlatEngine
 							_rightCollisionStatic = other->_isStatic;
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
+
+							// Self
+							//if (other->_isStatic)
+								rightCollision = B_LeftEdge;
+
+							// Other
+							//if (_isStatic)
+								other->leftCollision = A_RightEdge;
 						}
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
+
+							// Self (floor)
+							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody")/* && other->_isStatic*/)
+							{
+								GetParent()->GetRigidBody()->SetIsGrounded(true);
+								bottomCollision = B_TopEdge;
+							}
+
+							// Other
+							//if (_isStatic)
+								other->topCollision = A_BottomEdge;
 						}
 					}
 				}
@@ -278,43 +355,43 @@ namespace FlatEngine
 
 			if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 			{
-				if (_isCollidingBottom && other->_isStatic)
-				{
-					GetParent()->GetRigidBody()->SetIsGrounded(true);
-					bottomCollision = B_TopEdge;
-				}
-				if (_isCollidingTop && other->_isStatic)
-				{
-					topCollision = B_BottomEdge;
-				}
-				if (_isCollidingRight && other->_isStatic)
-				{
-					rightCollision = B_LeftEdge;
-				}
-				if (_isCollidingLeft && other->_isStatic)
-				{
-					leftCollision = B_RightEdge;
-				}
+				//if (_isCollidingBottom && other->_isStatic)
+				//{
+				//	GetParent()->GetRigidBody()->SetIsGrounded(true);
+				//	bottomCollision = B_TopEdge;
+				//}
+				//if (_isCollidingTop && other->_isStatic)
+				//{
+				//	topCollision = B_BottomEdge;
+				//}
+				//if (_isCollidingRight && other->_isStatic)
+				//{
+				//	rightCollision = B_LeftEdge;
+				//}
+				//if (_isCollidingLeft && other->_isStatic)
+				//{
+				//	leftCollision = B_RightEdge;
+				//}
 			}
 			if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 			{
-				if (other->_isCollidingBottom && _isStatic)
-				{
-					other->GetParent()->GetRigidBody()->SetIsGrounded(true);
-					other->bottomCollision = A_TopEdge;
-				}
-				if (other->_isCollidingTop && _isStatic)
-				{
-					other->topCollision = A_BottomEdge;
-				}
-				if (other->_isCollidingRight && _isStatic)
-				{
-					other->rightCollision = A_LeftEdge;
-				}
-				if (other->_isCollidingLeft && _isStatic)
-				{
-					other->leftCollision = A_RightEdge;
-				}
+				//if (other->_isCollidingBottom && _isStatic)
+				//{
+				//	other->GetParent()->GetRigidBody()->SetIsGrounded(true);
+				//	other->bottomCollision = A_TopEdge;
+				//}
+				//if (other->_isCollidingTop && _isStatic)
+				//{
+				//	other->topCollision = A_BottomEdge;
+				//}
+				//if (other->_isCollidingRight && _isStatic)
+				//{
+				//	other->rightCollision = A_LeftEdge;
+				//}
+				//if (other->_isCollidingLeft && _isStatic)
+				//{
+				//	other->leftCollision = A_RightEdge;
+				//}
 			}
 
 			_isColliding = _colliding;
@@ -667,6 +744,7 @@ namespace FlatEngine
 	{
 		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 			GetParent()->GetRigidBody()->SetIsGrounded(false);
+		std::string name = GetParent()->GetName();
 
 		_isCollidingRight = false;
 		_isCollidingLeft = false;
