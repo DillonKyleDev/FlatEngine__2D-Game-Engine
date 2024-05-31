@@ -128,6 +128,7 @@ namespace FlatEngine {
 		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetTruePosition();
+		LogFloat(velocity.y, "Velocity.y: ");
 
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
 	}
@@ -231,7 +232,7 @@ namespace FlatEngine {
 		float activeWidth = boxCollider->GetActiveWidth();
 
 		// Vertical Collision Forces
-// 
+		// 
 		// Normal Gravity
 		if (gravity > 0 && _isGrounded && pendingForces.y < 0)
 		{

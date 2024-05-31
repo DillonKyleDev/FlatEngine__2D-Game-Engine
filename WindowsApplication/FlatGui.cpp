@@ -322,11 +322,11 @@ namespace FlatEngine { namespace FlatGui {
 		//Create dockable background space for all viewports
 		ImGui::DockSpaceOverViewport();
 
-
-		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
-		{
-			boxCollider->RecalculateBounds();
-		}
+		// Probably don't actually need this here
+		//for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
+		//{
+		//	boxCollider->RecalculateBounds();
+		//}
 
 		//Add viewport(s)
 		// 
@@ -1277,30 +1277,70 @@ namespace FlatEngine { namespace FlatGui {
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
 
+		//// For Profiler
+		float startTime = SDL_GetTicks();
 		MainMenuBar();
+		AddProcessData("MainMenuBar", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		RenderToolbar();
+		AddProcessData("RenderToolbar", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showHierarchy)
 			RenderHierarchy();
+		AddProcessData("RenderHierarchy", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showInspector)
 			RenderInspector();
+		AddProcessData("RenderInspector", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showGameView)
 			Game_RenderView();
+		AddProcessData("Game_RenderView", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showSceneView)
 			Scene_RenderView();
+		AddProcessData("Scene_RenderView", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showAnimator)
 			RenderAnimator();
+		AddProcessData("RenderAnimator", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showAnimationPreview)
 			RenderAnimationPreview();
+		AddProcessData("RenderAnimationPreview", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showKeyFrameEditor)
 			RenderKeyFrameEditor();
+		AddProcessData("RenderKeyFrameEditor", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showLogger)
 			RenderLog();
+		AddProcessData("RenderLog", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showProfiler)
 			RenderProfiler();
+		AddProcessData("RenderProfiler", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showMappingContextEditor)
 			RenderMappingContextEditor();
+		AddProcessData("RenderMappingContextEditor", SDL_GetTicks() - startTime);
+		////
+		startTime = SDL_GetTicks();
 		if (_showSettings)
 			RenderSettings();
+		AddProcessData("RenderSettings", SDL_GetTicks() - startTime);
+		////
 	}
 
 	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset)
@@ -1388,16 +1428,7 @@ namespace FlatEngine { namespace FlatGui {
 		// Loop through scene objects
 		for (std::shared_ptr<GameObject> object : objects)
 		{
-			// If this Scene Object doesn't have a parent, render it and all of its children
-			if (object->GetParentID() == -1 && object->IsActive())
-			{
-				// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
-				Vector2 parentOffset(0, 0);
-				Vector2 parentScale(1, 1);
-
-				// Render self and children recursively
-				RenderSelfThenChildren(object, parentOffset, parentScale, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
-			}
+			Scene_RenderObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 		}
 
 		drawSplitter->Merge(draw_list);
@@ -2227,8 +2258,10 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (_scalesWithZoom)
 		{
+			
 			renderStart = Vector2(scalingXStart, scalingYStart);
 			renderEnd = Vector2(scalingXEnd, scalingYEnd);
+			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), whiteColor, 2, draw_list);
 		}
 		else
 		{

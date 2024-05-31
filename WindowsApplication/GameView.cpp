@@ -110,6 +110,9 @@ namespace FlatEngine { namespace FlatGui {
 		ImVec4 frustrumColor = ImVec4(1, 1, 1, 1);
 
 
+		// For Profiler
+		float cameraStartTime = SDL_GetTicks();
+
 		// If the primaryCamera is found and not nullptr, set the cameraPosition accordingly, else it remains at {0,0} above
 		if (primaryCamera != nullptr)
 		{
@@ -124,61 +127,66 @@ namespace FlatEngine { namespace FlatGui {
 			cameraPosition = Game_GetTotalCameraOffset(primaryCamera);
 		}
 
+		// For Profiler
+		float cameraHangTime = SDL_GetTicks() - cameraStartTime;
+		AddProcessData("##Game_RenderView_Camera", cameraHangTime);
+
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
 		worldCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
 		// Get the center point of the viewport
 		Vector2 viewportCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
-		// Start off with a 0,0 parentOffset because this is the top level object to be rendered.
-		Vector2 parentOffset(0, 0);
-		Vector2 parentScale(1, 1);
+		// For Profiler
+		float renderStartTime = SDL_GetTicks();
 
 		// Render Game Objects
-		for (int i = 0; i < sceneObjects.size(); i++)
+		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
 		{
-			// If this object doesn't have a parent, render it and then its children recursively
-			if (sceneObjects[i]->GetParentID() == -1 && sceneObjects[i]->IsActive())
-				Game_RenderSelfThenChildren(sceneObjects[i], parentOffset, parentScale, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
+			if (sceneObject->IsActive())
+				Game_RenderObject(sceneObject, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter,
 					cameraPosition, cameraWidth, cameraHeight, gameViewGridStep.x);
 		}
 
+		// For Profiler
+		float renderHangTime = SDL_GetTicks() - renderStartTime;
+		AddProcessData("##Game_RenderView_RenderObjects", renderHangTime);
 
 		// Render Primary Camera Frustrum
-		{
-			Texture* frustrum = new Texture();
-			frustrum->loadFromFile("assets/images/frustrum.png");
-			float h_FrustWidth = GAME_VIEWPORT_WIDTH;
-			float h_FrustHeight = (GAME_VIEWPORT_HEIGHT - cameraHeight * gameViewGridStep.x) / 2;
-			float v_FrustWidth = (GAME_VIEWPORT_WIDTH - cameraWidth * gameViewGridStep.x) / 2;
-			float v_FrustHeight = (cameraHeight * gameViewGridStep.x) + GAME_VIEWPORT_HEIGHT;
-			SDL_Texture* frustrumTexture = frustrum->getTexture();
-			bool _frustScales = false;
-			Vector2 frustrumScale = { 1, 1 };
-			// Offsets in px
-			Vector2 topFrustOffset = Vector2(v_FrustWidth, h_FrustHeight);
-			Vector2 botFrustOffset = Vector2(v_FrustWidth, 0);
-			Vector2 leftFrustOffset = Vector2(v_FrustWidth, v_FrustHeight);
-			Vector2 rightFrustOffset = Vector2(0, v_FrustHeight);
-			float redValue = trunc(frustrumColor.x);
-			float greenValue = trunc(frustrumColor.y);
-			float blueValue = trunc(frustrumColor.z);
-			float alphaValue = trunc(frustrumColor.w);
-			ImU32 frustrumColorU32 = (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
+		//{
+		//	Texture* frustrum = new Texture();
+		//	frustrum->loadFromFile("assets/images/frustrum.png");
+		//	float h_FrustWidth = GAME_VIEWPORT_WIDTH;
+		//	float h_FrustHeight = (GAME_VIEWPORT_HEIGHT - cameraHeight * gameViewGridStep.x) / 2;
+		//	float v_FrustWidth = (GAME_VIEWPORT_WIDTH - cameraWidth * gameViewGridStep.x) / 2;
+		//	float v_FrustHeight = (cameraHeight * gameViewGridStep.x) + GAME_VIEWPORT_HEIGHT;
+		//	SDL_Texture* frustrumTexture = frustrum->getTexture();
+		//	bool _frustScales = false;
+		//	Vector2 frustrumScale = { 1, 1 };
+		//	// Offsets in px
+		//	Vector2 topFrustOffset = Vector2(v_FrustWidth, h_FrustHeight);
+		//	Vector2 botFrustOffset = Vector2(v_FrustWidth, 0);
+		//	Vector2 leftFrustOffset = Vector2(v_FrustWidth, v_FrustHeight);
+		//	Vector2 rightFrustOffset = Vector2(0, v_FrustHeight);
+		//	float redValue = trunc(frustrumColor.x);
+		//	float greenValue = trunc(frustrumColor.y);
+		//	float blueValue = trunc(frustrumColor.z);
+		//	float alphaValue = trunc(frustrumColor.w);
+		//	ImU32 frustrumColorU32 = (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
 
-			// Set drawing channel to maxSpriteLayers + 2 for top layer camera UI
-			drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+		//	// Set drawing channel to maxSpriteLayers + 2 for top layer camera UI
+		//	drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-			// Top frustrum
-			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
-			// Bottom frustrum
-			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
-			// Left frustrum
-			//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
-			// Left frustrum
-			//AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
+		//	// Top frustrum
+		//	//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, topFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
+		//	// Bottom frustrum
+		//	//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, h_FrustWidth, h_FrustHeight, botFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
+		//	// Left frustrum
+		//	//AddImageToDrawList(frustrumTexture, Vector2(-cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, leftFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
+		//	// Left frustrum
+		//	//AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
 
-			drawSplitter->Merge(draw_list);
-		}
+		//	drawSplitter->Merge(draw_list);
+		//}
 	}
 
 	Vector2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera)
@@ -194,6 +202,132 @@ namespace FlatEngine { namespace FlatGui {
 
 		return Vector2(offset.x, offset.y);
 	}
+
+
+	void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 worldCenterPoint, Vector2 canvas_p0,
+		Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom)
+	{
+		// Get Components
+		std::shared_ptr<Transform> transform = self->GetTransformComponent();
+		std::shared_ptr<Sprite> sprite = self->GetSpriteComponent();
+		std::shared_ptr<Animation> animation = self->GetAnimationComponent();
+		std::shared_ptr<Text> text = self->GetTextComponent();
+		std::shared_ptr<Button> button = self->GetButtonComponent();
+
+		// Animation component handling
+		if (animation != nullptr)
+		{
+			// If animation component is playing, play the animation
+			if (animation != nullptr && animation->IsPlaying())
+				animation->PlayAnimation(GetEllapsedGameTime());
+		}
+
+
+		// Check if each object has a Transform component
+		if (transform != nullptr)
+		{
+			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
+			Vector2 position = transform->GetTruePosition();
+			Vector2 scale = transform->GetScale();
+
+			// If it has a text component, render that text texture at the objects transform position
+			if (text != nullptr)
+			{
+				// Cast the component to Text shared_ptr
+				std::shared_ptr<Texture> textTexture = text->GetTexture();
+				text->LoadText();
+				SDL_Texture* texture = textTexture->getTexture();
+				float textWidth = (float)textTexture->getWidth();
+				float textHeight = (float)textTexture->getHeight();
+				int renderOrder = text->GetRenderOrder();
+				Vector2 offset = text->GetOffset();
+				bool _spriteScalesWithZoom = true;
+
+
+				// If there is a valid Texture loaded into the Sprite Component
+				if (textTexture != nullptr)
+				{
+					// Change the draw channel for the scene object
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					// Draw the texture
+					AddImageToDrawList(textTexture->getTexture(), position, worldCenterPoint, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, gameViewGridStep.x, draw_list);
+				}
+			}
+
+			// If it has a sprite component, render that sprite texture at the objects transform position
+			if (sprite != nullptr)
+			{
+				SDL_Texture* spriteTexture = sprite->GetTexture();
+				float textureWidth = (float)sprite->GetTextureWidth();
+				float textureHeight = (float)sprite->GetTextureHeight();
+				Vector2 offset = sprite->GetOffset();
+				bool _scalesWithZoom = true;
+				int renderOrder = sprite->GetRenderOrder();
+
+				// Changing the scale here because things are rendering too large and I want them to start off smaller
+				Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
+
+				float spriteLeftEdge = position.x - offset.x * newScale.x;
+				float spriteRightEdge = position.x + offset.x * newScale.x;
+				float spriteTopEdge = position.y + offset.y * newScale.y;
+				float spriteBottomEdge = position.y - offset.y * newScale.y;
+
+				float cameraLeftEdge = cameraPosition.x - cameraWidth / 2;
+				float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
+				float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
+				float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
+
+				bool _isIntersecting = false;
+
+				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge &&
+					spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
+					_isIntersecting = true;
+
+				if (_isIntersecting)
+				{
+					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+					AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, gameViewGridStep.x, draw_list);
+				}
+			}
+
+			// Renders Button Component
+			if (button != nullptr)
+			{
+				float activeWidth = button->GetActiveWidth();
+				float activeHeight = button->GetActiveHeight();
+				Vector2 activeOffset = button->GetActiveOffset();
+				bool _isActive = button->IsActive();
+
+				// Get Active Button bounds to check against later for mouse events
+				float activeLeft = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x - (activeWidth / 2 * scale.x), gameViewGridStep.x, false);
+				float activeRight = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x + (activeWidth / 2 * scale.x), gameViewGridStep.x, false);
+				float activeTop = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y + (activeHeight / 2 * scale.y), gameViewGridStep.x, true);
+				float activeBottom = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y - (activeHeight / 2 * scale.y), gameViewGridStep.x, true);
+
+				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+
+				// FOR DRAWING ACTIVE BUTTON RECTANGLE IN GAME VIEW
+				// 
+				//Vector2 topLeft = { activeLeft, activeTop };
+				//Vector2 bottomRight = { activeRight, activeBottom };
+
+				//drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				//if (_isActive)
+				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
+				//else
+				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+			}
+		}
+	}
+
 
 	void Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2& offset, Vector2& scale)
 	{

@@ -18,7 +18,10 @@ namespace FlatEngine
 {
 	GameLoop::GameLoop()
 	{
+		time = 0;
+		activeTime = 0;
 		startTime = 0;
+		pausedTime = 0;
 		countedTicks = 0;
 		pausedTicks = 0;
 		_started = false;
@@ -29,6 +32,8 @@ namespace FlatEngine
 		deltaTime = 0;
 		startedScene = "";
 		gameManager = nullptr;
+
+		currentTime = 0;
 
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		scripts = std::vector<std::shared_ptr<GameScript>>();
@@ -41,11 +46,16 @@ namespace FlatEngine
 	void GameLoop::Start()
 	{
 		// Handle Game Time
+		time = 0;
+		activeTime = time;
 		_paused = false;
 		lastFrameTime = 0;
-		startTime = SDL_GetTicks();
+		startTime = time;
 		countedTicks = 0;
 		pausedTicks = startTime;
+
+		currentTime = std::fmod(SDL_GetTicks(), 1000);
+
 
 		// Initialize our scripts with the currently loaded scene
 		InitializeScriptObjects();
@@ -131,6 +141,9 @@ namespace FlatEngine
 			}
 		}
 
+		// Add Update Process
+		std::shared_ptr<Process> updateLoopProcess = std::make_shared<Process>("Update Loop");
+		AddProfilerProcess(updateLoopProcess);
 
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
@@ -209,20 +222,34 @@ namespace FlatEngine
 
 	void GameLoop::Update()
 	{
+		// Save time before script update
+		float updateLoopStart = (float)SDL_GetTicks();
+	
 		AddFrame();
+		double frameStart = std::fmod(SDL_GetTicks(), 1000);
+
 
 		if (_paused)
 		{
 			// If paused and advancing a frame through time, artificially add 16 ticks to simulate advancing approx 1 frame through time.
 			countedTicks += 16;
 			pausedTicks += 16;
+			deltaTime = fixedDeltaTime;
+			
+			// New
+			activeTime = time - pausedTime;
 		}
 		else
 		{
 			countedTicks = SDL_GetTicks() - pausedTicks;
 			// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
 			// (in milliseconds) from that frame to this current one. That is deltaTime.
-			deltaTime = 1 / GetAverageFps();
+			deltaTime = (float)fixedDeltaTime; // = 1 / AverageFPS();
+			LogFloat(GetAverageFps(), "FPS: ");
+			LogFloat((float)fixedDeltaTime, "Delta Time: ");
+
+			// New
+			activeTime = time - pausedTime;
 		}
 
 		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
@@ -322,6 +349,26 @@ namespace FlatEngine
 		{
 			rigidBody->ApplyPhysics((float)deltaTime);
 		}
+
+		// Get time Update took to complete
+		double frameTime = std::fmod(SDL_GetTicks(), 1000) - frameStart;
+		int loops = 0;
+
+		LogFloat(frameTime, "Frame Time: ");
+		LogFloat(time, "Time: ");
+		while (frameTime > 0.0)
+		{
+			loops++;
+			float dt = std::min<double>(frameTime, fixedDeltaTime);
+			frameTime -= dt;
+			time += fixedDeltaTime;
+		}
+
+		LogInt(loops, "Loops: ");
+
+		// Get hang time of Update Loop for profiler
+		float hangTime = (float)SDL_GetTicks() - updateLoopStart;
+		AddProcessData("Update Loop", hangTime);
 	}
 
 	void GameLoop::Stop()
@@ -338,6 +385,7 @@ namespace FlatEngine
 		for (int i = 0; i < activeScripts.size(); i++)
 			RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 
+		RemoveProfilerProcess("Update Loop");
 		// Release all active scripts
 		activeScripts.clear();
 
@@ -354,6 +402,9 @@ namespace FlatEngine
 
 			// Store the time that the timer was paused and reset the counted frames
 			countedTicks = SDL_GetTicks() - pausedTicks;
+
+			// New
+			activeTime = time - pausedTime;
 		}
 	}
 
@@ -365,6 +416,9 @@ namespace FlatEngine
 			_paused = false;
 			// Get the ellapsed time since the pause and remove it from total ticks to get current time
 			pausedTicks = SDL_GetTicks() - countedTicks;
+
+			// New
+			pausedTime = time - activeTime;
 		}
 	}
 
@@ -390,7 +444,8 @@ namespace FlatEngine
 	float GameLoop::GetAverageFps()
 	{
 		if (TimeEllapsed() != 0)
-			return (float)framesCounted / (float)countedTicks * 1000;
+			//return (float)framesCounted / (float)countedTicks * 1000;
+			return (float)framesCounted / (float)activeTime * 1000;
 		else
 			return 60;
 	}

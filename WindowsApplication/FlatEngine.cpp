@@ -86,8 +86,15 @@ namespace FlatEngine
 			}
 		}
 
+		// For Profiler
+		float startTime = SDL_GetTicks();
+
 		_hasQuit = _closeProgram;
 		FlatGui::Render(_hasQuit);
+
+		// For Profiler
+		float hangTime = SDL_GetTicks() - startTime;
+		AddProcessData("Render", hangTime);
 
 		// If Release - Start the Game Loop
 		if (_isDebugMode == false && GameLoopStarted() == false)

@@ -46,6 +46,14 @@ namespace FlatEngine
 		int lastFrameTime;
 
 		float deltaTime;
+
+		double time;
+		//const double fixedDeltaTime = 0.03; // 30fps
+		const double fixedDeltaTime = 0.016; // 60fps 
+		double pausedTime;
+		double activeTime;
+		float currentTime;
+
 		std::shared_ptr<GameManager> gameManager;
 
 		std::string startedScene;

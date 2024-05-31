@@ -43,7 +43,7 @@ void PlayerController::Update(float deltaTime)
 		//FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
 		{
-			rigidBody->AddForce(Vector2(0, 1), 1200);
+			rigidBody->AddForce(Vector2(0, 1), 800);
 		}
 
 	}
@@ -63,6 +63,10 @@ void PlayerController::Update(float deltaTime)
 	//	characterController->MoveToward(Vector2(0, 1));
 	//if (mappingContext->GetInputAction("IA_MoveDown").type != 0)
 	//	characterController->MoveToward(Vector2(0, -1));
+
+	//xDir = 30000;
+	//characterController->MoveToward(Vector2(36000, 0));
+	//_moving = true;
 
 	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
 	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
