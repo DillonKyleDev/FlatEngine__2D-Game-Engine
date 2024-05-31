@@ -199,6 +199,7 @@ namespace FlatEngine
 					{
 						float leftRightOverlap = B_RightEdge - A_LeftEdge;
 						float topBottomOverlap = A_TopEdge - B_BottomEdge;
+						// Left/Right
 						if (leftRightOverlap < topBottomOverlap)
 						{
 							_isCollidingLeft = true;
@@ -206,29 +207,29 @@ namespace FlatEngine
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
 
-							// Self
-							/*if (other->_isStatic)*/
-								leftCollision = B_RightEdge;
-
-							// Other
-							//if (_isStatic)							
-								other->rightCollision = A_LeftEdge;							
+							leftCollision = B_RightEdge;						
+							other->rightCollision = A_LeftEdge;							
 						}
+						// Top/Bottom
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
-
-							// Self (ceiling)
-							//if (other->_isStatic)
-								topCollision = B_BottomEdge;
-
-							// Other
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody")/* && _isStatic*/)
+				
+							topCollision = B_BottomEdge;
+							// If gravity is inverted
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
-								other->GetParent()->GetRigidBody()->SetIsGrounded(true);
-								other->bottomCollision = A_TopEdge;
+								if (GetParent()->GetRigidBody()->GetGravity() < 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);
+							}
+							other->bottomCollision = A_TopEdge;
+							// If gravity is normal
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							{
+								if (other->GetParent()->GetRigidBody()->GetGravity() > 0)
+									other->GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
 						}
 					}
@@ -237,6 +238,7 @@ namespace FlatEngine
 					{
 						float leftRightOverlap = B_RightEdge - A_LeftEdge;
 						float topBottomOverlap = B_TopEdge - A_BottomEdge;
+						// Left/Right
 						if (leftRightOverlap < topBottomOverlap)
 						{
 							_isCollidingLeft = true;
@@ -244,30 +246,30 @@ namespace FlatEngine
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
 
-							// Self
-							//if (other->_isStatic)
-								leftCollision = B_RightEdge;
-
-							// Other
-							//if (_isStatic)
-								other->rightCollision = A_LeftEdge;
+							leftCollision = B_RightEdge;
+							other->rightCollision = A_LeftEdge;
 						}
+						// Top/Bottom
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
-
-							// Self
-							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody")/* && other->_isStatic*/)
+							
+							bottomCollision = B_TopEdge;						
+							// If gravity is normal
+							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 							{
-								GetParent()->GetRigidBody()->SetIsGrounded(true);
-								bottomCollision = B_TopEdge;
+								if (GetParent()->GetRigidBody()->GetGravity() > 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);							
+							}	
+							other->topCollision = A_BottomEdge;
+							// If gravity is inverted
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							{
+								if (GetParent()->GetRigidBody()->GetGravity() < 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
-
-							// Other (ceiling)
-							//if (_isStatic)
-								other->topCollision = A_BottomEdge;
 						}
 					}
 				}
@@ -279,6 +281,7 @@ namespace FlatEngine
 					{
 						float leftRightOverlap = A_RightEdge - B_LeftEdge;
 						float topBottomOverlap = A_TopEdge - B_BottomEdge;
+						// Left/Right
 						if (leftRightOverlap < topBottomOverlap)
 						{
 							std::string name = GetParent()->GetName();
@@ -287,29 +290,29 @@ namespace FlatEngine
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
 
-							// Self
-							//if (other->_isStatic)
-								rightCollision = B_LeftEdge;
-
-							// Other
-							//if (_isStatic)
-								other->leftCollision = A_RightEdge;
+							rightCollision = B_LeftEdge;
+							other->leftCollision = A_RightEdge;
 						}
+						// Top/Bottom
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
 							
-							// Self (ceiling)
-							//if (other->_isStatic)
-								topCollision = B_BottomEdge;
-
-							// Other (floor)
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody")/* && _isStatic*/)
+							topCollision = B_BottomEdge;							
+							// If gravity is inverted
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
-								other->GetParent()->GetRigidBody()->SetIsGrounded(true);
-								other->bottomCollision = A_TopEdge;
+								if (GetParent()->GetRigidBody()->GetGravity() < 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);
+							}
+							other->bottomCollision = A_TopEdge;
+							// If gravity is normal
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							{
+								if (other->GetParent()->GetRigidBody()->GetGravity() > 0)
+									other->GetParent()->GetRigidBody()->SetIsGrounded(true);								
 							}
 						}
 					}
@@ -317,6 +320,7 @@ namespace FlatEngine
 					{
 						float leftRightOverlap = A_RightEdge - B_LeftEdge;
 						float topBottomOverlap = B_TopEdge - A_BottomEdge;
+						// Left/Right
 						if (leftRightOverlap < topBottomOverlap)
 						{
 							_isCollidingRight = true;
@@ -324,30 +328,30 @@ namespace FlatEngine
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
 
-							// Self
-							//if (other->_isStatic)
-								rightCollision = B_LeftEdge;
-
-							// Other
-							//if (_isStatic)
-								other->leftCollision = A_RightEdge;
+							rightCollision = B_LeftEdge;
+							other->leftCollision = A_RightEdge;
 						}
+						// Top/Bottom
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
-
-							// Self (floor)
-							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody")/* && other->_isStatic*/)
+							
+							bottomCollision = B_TopEdge;
+							// If gravity is normal
+							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
+							{						
+								if (GetParent()->GetRigidBody()->GetGravity() > 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);								
+							}		
+							other->topCollision = A_BottomEdge;
+							// If gravity is inverted
+							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
-								GetParent()->GetRigidBody()->SetIsGrounded(true);
-								bottomCollision = B_TopEdge;
+								if (GetParent()->GetRigidBody()->GetGravity() < 0)
+									GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
-
-							// Other (ceiling)
-							//if (_isStatic)
-								other->topCollision = A_BottomEdge;
 						}
 					}
 				}

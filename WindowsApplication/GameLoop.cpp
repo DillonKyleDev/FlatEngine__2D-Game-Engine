@@ -18,22 +18,18 @@ namespace FlatEngine
 {
 	GameLoop::GameLoop()
 	{
-		time = 0;
-		activeTime = 0;
-		startTime = 0;
-		pausedTime = 0;
-		countedTicks = 0;
-		pausedTicks = 0;
 		_started = false;
 		_paused = false;
 		_frameSkipped = false;
+		time = 0;
+		activeTime = 0;
+		currentTime = 0;
+		pausedTime = 0;
 		framesCounted = 0;
-		lastFrameTime = 0;
-		deltaTime = 0;
+		deltaTime = 0.005;
+		accumulator = 0.0;
 		startedScene = "";
 		gameManager = nullptr;
-
-		currentTime = 0;
 
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		scripts = std::vector<std::shared_ptr<GameScript>>();
@@ -49,13 +45,8 @@ namespace FlatEngine
 		time = 0;
 		activeTime = time;
 		_paused = false;
-		lastFrameTime = 0;
-		startTime = time;
-		countedTicks = 0;
-		pausedTicks = startTime;
-
-		currentTime = std::fmod(SDL_GetTicks(), 1000);
-
+		accumulator = 0.0;
+		currentTime = (double)SDL_GetTicks();
 
 		// Initialize our scripts with the currently loaded scene
 		InitializeScriptObjects();
@@ -141,17 +132,17 @@ namespace FlatEngine
 			}
 		}
 
-		// Add Update Process
-		std::shared_ptr<Process> updateLoopProcess = std::make_shared<Process>("Update Loop");
-		AddProfilerProcess(updateLoopProcess);
+		// Add Update Time Process		
+		AddProfilerProcess("Update Loop");
+		// Add Update Process for all other time		
+		AddProfilerProcess("Not Update Loop");
 
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
-			// Create a new Process for each script
-			std::shared_ptr<Process> newProcess = std::make_shared<Process>(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
-			AddProfilerProcess(newProcess);
+			// Create a new Process for each script		
+			AddProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 			activeScripts[i]->Awake();
 			activeScripts[i]->Start();
 		}
@@ -220,41 +211,8 @@ namespace FlatEngine
 		}
 	}
 
-	void GameLoop::Update()
+	void GameLoop::UpdateScripts()
 	{
-		// Save time before script update
-		float updateLoopStart = (float)SDL_GetTicks();
-	
-		AddFrame();
-		double frameStart = std::fmod(SDL_GetTicks(), 1000);
-
-
-		if (_paused)
-		{
-			// If paused and advancing a frame through time, artificially add 16 ticks to simulate advancing approx 1 frame through time.
-			countedTicks += 16;
-			pausedTicks += 16;
-			deltaTime = fixedDeltaTime;
-			
-			// New
-			activeTime = time - pausedTime;
-		}
-		else
-		{
-			countedTicks = SDL_GetTicks() - pausedTicks;
-			// The time that this function was called last (the last frame), lastFrameTime, is the marker for how long it has been 
-			// (in milliseconds) from that frame to this current one. That is deltaTime.
-			deltaTime = (float)fixedDeltaTime; // = 1 / AverageFPS();
-			LogFloat(GetAverageFps(), "FPS: ");
-			LogFloat((float)fixedDeltaTime, "Delta Time: ");
-
-			// New
-			activeTime = time - pausedTime;
-		}
-
-		// Update lastFrameTime to this frames time for the next time Update() is called to calculate deltaTime again.
-		lastFrameTime = countedTicks;
-
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			// Save time before script update
@@ -266,11 +224,25 @@ namespace FlatEngine
 
 			AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
 		}
+	}
+
+	void GameLoop::Update()
+	{
+		// Profiler --
+		// Save time before Update starts
+		float updateLoopStart = (float)SDL_GetTicks();
+		static float updateLoopEnd = updateLoopStart;
+		// Get hang time of everything after Update Loop for profiler
+		float everythingElseHangTime = updateLoopStart - updateLoopEnd;
+		AddProcessData("Not Update Loop", everythingElseHangTime);
+	
+
+		AddFrame();
+		UpdateScripts();
+		activeTime = time - pausedTime;
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //
-		//
 		// Check for mouse over on all of our Game Buttons
-
 		static bool _hasLeftClicked = false;
 		static bool _hasRightClicked = false;
 		if (FlatEngine::uiManager->CheckForMouseOver())
@@ -305,23 +277,20 @@ namespace FlatEngine
 
 		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
-		{
 			rigidBody->CalculatePhysics();
-		}
 
 		// Reset BoxCollider collisions before going through all of them again
 		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
 			boxCollider->ResetCollisions();
 
-		static int continuousCounter = 0;
-
 		// Handle BoxCollision updates here
+		static int continuousCounter = 0;
 		for (std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>> boxColliderPair : boxColliderPairs)
 		{
 			std::shared_ptr<BoxCollider> collider1 = boxColliderPair.first;
 			std::shared_ptr<BoxCollider> collider2 = boxColliderPair.second;
 
-			if (collider1 != nullptr && collider1->IsActive() && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
+			if (collider1 != nullptr && collider1->IsActive() && collider2 != nullptr && collider2->IsActive() && (!collider1->IsStatic() || !collider2->IsStatic()) && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
 			{
 				bool _isColliding = false;
 
@@ -337,38 +306,21 @@ namespace FlatEngine
 				}
 			}
 		}
-
-		// Reset continuous counter if appropriate
 		if (continuousCounter >= 10)
 			continuousCounter = 0;
-
 		continuousCounter++;
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
-		{
 			rigidBody->ApplyPhysics((float)deltaTime);
-		}
 
-		// Get time Update took to complete
-		double frameTime = std::fmod(SDL_GetTicks(), 1000) - frameStart;
-		int loops = 0;
 
-		LogFloat(frameTime, "Frame Time: ");
-		LogFloat(time, "Time: ");
-		while (frameTime > 0.0)
-		{
-			loops++;
-			float dt = std::min<double>(frameTime, fixedDeltaTime);
-			frameTime -= dt;
-			time += fixedDeltaTime;
-		}
-
-		LogInt(loops, "Loops: ");
-
+		// Profiler --
 		// Get hang time of Update Loop for profiler
 		float hangTime = (float)SDL_GetTicks() - updateLoopStart;
 		AddProcessData("Update Loop", hangTime);
+		// Save time after update finishes
+		updateLoopEnd = (float)SDL_GetTicks();
 	}
 
 	void GameLoop::Stop()
@@ -376,16 +328,13 @@ namespace FlatEngine
 		_started = false;
 		_paused = false;
 
-		// Reset Ticks and frames counted
-		pausedTicks = 0;
-		countedTicks = 0;
-		framesCounted = 0;
-
 		// Delete script processes
 		for (int i = 0; i < activeScripts.size(); i++)
 			RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 
-		RemoveProfilerProcess("Update Loop");
+		RemoveProfilerProcess("Update Loop");	
+		RemoveProfilerProcess("Not Update Loop");
+
 		// Release all active scripts
 		activeScripts.clear();
 
@@ -399,11 +348,6 @@ namespace FlatEngine
 		if (_started && !_paused)
 		{
 			_paused = true;
-
-			// Store the time that the timer was paused and reset the counted frames
-			countedTicks = SDL_GetTicks() - pausedTicks;
-
-			// New
 			activeTime = time - pausedTime;
 		}
 	}
@@ -414,19 +358,16 @@ namespace FlatEngine
 		if (_started && _paused)
 		{
 			_paused = false;
-			// Get the ellapsed time since the pause and remove it from total ticks to get current time
-			pausedTicks = SDL_GetTicks() - countedTicks;
-
-			// New
 			pausedTime = time - activeTime;
 		}
 	}
 
-	int GameLoop::TimeEllapsed()
+	// In seconds
+	double GameLoop::TimeEllapsed()
 	{
 		if (_started)
 		{
-			return countedTicks;
+			return activeTime;
 		}
 		return 0;
 	}
@@ -444,30 +385,14 @@ namespace FlatEngine
 	float GameLoop::GetAverageFps()
 	{
 		if (TimeEllapsed() != 0)
-			//return (float)framesCounted / (float)countedTicks * 1000;
-			return (float)framesCounted / (float)activeTime * 1000;
+			return (float)framesCounted / (float)activeTime;
 		else
-			return 60;
+			return 200;
 	}
 
 	int GameLoop::GetFramesCounted()
 	{
 		return framesCounted;
-	}
-
-	int GameLoop::GetCountedTicks()
-	{
-		return countedTicks;
-	}
-
-	int GameLoop::GetPausedTicks()
-	{
-		return pausedTicks;
-	}
-
-	int GameLoop::GetLastFrameTime()
-	{
-		return lastFrameTime;
 	}
 
 	void GameLoop::AddFrame()

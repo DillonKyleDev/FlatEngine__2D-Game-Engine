@@ -4,8 +4,9 @@
 
 namespace FlatEngine { 
 	
-	void AddProfilerProcess(std::shared_ptr<Process> process)
+	void AddProfilerProcess(std::string name)
 	{
+		std::shared_ptr<FlatEngine::Process> process = std::make_shared<FlatEngine::Process>(name);
 		profilerProcesses.push_back(process);
 	}
 
@@ -18,7 +19,7 @@ namespace FlatEngine {
 		}
 	}
 
-	void RemoveProfilerProcess(std::string  toRemove)
+	void RemoveProfilerProcess(std::string toRemove)
 	{
 		std::vector<std::shared_ptr<Process>>::iterator iter = profilerProcesses.begin();
 
@@ -42,27 +43,21 @@ namespace FlatEngine {
 
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
-		static bool anim = true;
+		static bool anim = false;
 		static int offset = 0;
 
 		std::string ellapsedTime = "---";
 		std::string averageFPS = "---";
 		std::string deltaTime = "---";
 		std::string framesCounted = "---";
-		std::string lastFrameTime = "---";
-		std::string countedTicks = "---";
-		std::string pausedTicks = "---";
 		std::string sdlTicks = "---";
 
 		if (FlatEngine::GameLoopStarted())
 		{
-			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTime() / 1000);
+			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTime());
 			averageFPS = std::to_string(FlatEngine::GetAverageFps());
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 			framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());
-			lastFrameTime = std::to_string(FlatEngine::gameLoop->GetLastFrameTime());
-			countedTicks = std::to_string(FlatEngine::gameLoop->GetCountedTicks());
-			pausedTicks = std::to_string(FlatEngine::gameLoop->GetPausedTicks());
 			sdlTicks = std::to_string(SDL_GetTicks());
 		}
 
@@ -74,9 +69,6 @@ namespace FlatEngine {
 			RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
 			RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
 			RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-			RenderTextTableRow("##lastFrameTime", "Last Frame Time", lastFrameTime.c_str());
-			RenderTextTableRow("##countedTicks", "Ticks Counted", countedTicks.c_str());
-			RenderTextTableRow("##pausedTicks", "Paused Ticks", pausedTicks.c_str());
 			RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
 			PopTable();
 		}
@@ -117,7 +109,7 @@ namespace FlatEngine {
 						ImGui::SameLine(0, 5);
 						ImGui::Text(processName.c_str());
 						ImGui::TableSetColumnIndex(1);
-						ImGui::Text("%.3f ms", rawDataVector.front());
+						ImGui::Text("%.0f ms", rawDataVector.front());
 						ImGui::TableSetColumnIndex(2);
 						ImGui::PushID(processCounter);
 						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), Vector2(-1, 35));

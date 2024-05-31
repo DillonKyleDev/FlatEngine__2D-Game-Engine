@@ -128,7 +128,6 @@ namespace FlatEngine {
 		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetTruePosition();
-		LogFloat(velocity.y, "Velocity.y: ");
 
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
 	}
@@ -241,16 +240,27 @@ namespace FlatEngine {
 			transform->SetPosition(Vector2(position.x, yPos));
 		}
 		// Inverted Gravity
-		if (gravity < 0 && _isGrounded && pendingForces.y > 0)
+		if (gravity < 0 && pendingForces.y > 0 && boxCollider->_isCollidingTop)
 		{
 			pendingForces.y = 0;
-			float yPos = boxCollider->topCollision + activeHeight / 2 - 0.001f;
+			float yPos = boxCollider->topCollision - activeHeight / 2 - 0.001f;
 			transform->SetPosition(Vector2(position.x, yPos));
 		}
 
 		// Ceilings
+		//
+		// Normal Gravity
+		if (gravity > 0 && pendingForces.y > 0 && boxCollider->_isCollidingTop)
+		{
+			LogString("Colliding TOP!");
+			pendingForces.y = 0;
+			float yPos = boxCollider->topCollision - activeHeight / 2 + 0.001f;
+			transform->SetPosition(Vector2(position.x, yPos));
+		}
+		// Inverted Gravity
 		if (gravity < 0 && pendingForces.y > 0 && boxCollider->_isCollidingTop)
 		{
+			LogString("Colliding TOP!");
 			pendingForces.y = 0;
 			float yPos = boxCollider->topCollision + activeHeight / 2 + 0.001f;
 			transform->SetPosition(Vector2(position.x, yPos));

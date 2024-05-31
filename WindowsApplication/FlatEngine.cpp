@@ -61,6 +61,7 @@ namespace FlatEngine
 	// FlatEngine
 	void Run(bool& _hasQuit)
 	{
+
 		// Manage Controllers
 		static int controllersConnected = 0;
 		if (SDL_NumJoysticks() != controllersConnected)
@@ -86,27 +87,63 @@ namespace FlatEngine
 			}
 		}
 
-		// For Profiler
-		float startTime = SDL_GetTicks();
-
+		float renderStartTime = (float)SDL_GetTicks(); // Profiler
 		_hasQuit = _closeProgram;
 		FlatGui::Render(_hasQuit);
+		AddProcessData("Render", (float)SDL_GetTicks() - renderStartTime); // Profiler
 
-		// For Profiler
-		float hangTime = SDL_GetTicks() - startTime;
-		AddProcessData("Render", hangTime);
 
 		// If Release - Start the Game Loop
 		if (_isDebugMode == false && GameLoopStarted() == false)
-		{
 			StartGameLoop();
-		}
 
 		// Keeping track of the frames passed since we started the GameLoop
 		if (GameLoopStarted() && GameLoopPaused() == false || GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{
-			GameLoopUpdate();
-			gameLoop->SetFrameSkipped(false);
+			// Get time it took to get back to GameLoopUpdate()
+			double frameStart = (double)SDL_GetTicks();
+			double frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
+			gameLoop->currentTime = frameStart;
+
+
+			// Physics Update Version 1
+			// Clamp cycles per Run loop (avoids physics death spiral)
+			//int maxCyclesPerRunLoop = 100;
+			//int cycleCounter = 0;
+			//if (frameTime < gameLoop->deltaTime)
+			//{
+			//	GameLoopUpdate();
+			//	gameLoop->SetFrameSkipped(false);
+			//	float dt = std::min<double>(frameTime, gameLoop->deltaTime);
+			//	frameTime -= dt;
+			//	gameLoop->time += gameLoop->deltaTime;
+			//}
+			//else if (cycleCounter < maxCyclesPerRunLoop)
+			//{
+			//	while (frameTime > 0.0)
+			//	{
+			//		GameLoopUpdate();
+			//		gameLoop->SetFrameSkipped(false);
+			//		float dt = std::min<double>(frameTime, gameLoop->deltaTime);
+			//		frameTime -= dt;
+			//		gameLoop->time += gameLoop->deltaTime;
+			//		
+			//	}
+			//	cycleCounter++;
+			//}
+
+
+			// Physics Update Version 2
+			gameLoop->accumulator += frameTime;
+			if (gameLoop->accumulator >= gameLoop->deltaTime)
+			{
+				GameLoopUpdate();
+				gameLoop->SetFrameSkipped(false);
+				gameLoop->time += gameLoop->deltaTime;
+				gameLoop->accumulator -= gameLoop->deltaTime;
+			}
+			else
+				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
 		}
 
 		FlatGui::RenderClear();
@@ -126,7 +163,7 @@ namespace FlatEngine
 
 	int GetEngineTime()
 	{
-		return SDL_GetTicks();
+		return (int)SDL_GetTicks();
 	}
 
 	json LoadFileData(std::string filename)

@@ -73,61 +73,84 @@ bool init()
 						FlatEngine::LogString("Begin Logging...");
 						FlatEngine::LogSeparator();
 
-						// Add Profiler Processes
-						// 
-						// Render
-						std::shared_ptr<FlatEngine::Process> Render = std::make_shared<FlatEngine::Process>("Render");
-						AddProfilerProcess(Render);
-						// RenderMainMenuBar
-						std::shared_ptr<FlatEngine::Process> RenderMainMenuBar = std::make_shared<FlatEngine::Process>("RenderMainMenuBar");
-						AddProfilerProcess(RenderMainMenuBar);
-						// RenderToolbar
-						std::shared_ptr<FlatEngine::Process> RenderToolbar = std::make_shared<FlatEngine::Process>("RenderToolbar");
-						AddProfilerProcess(RenderToolbar);
-						// RenderHierarchy
-						std::shared_ptr<FlatEngine::Process> RenderHierarchy = std::make_shared<FlatEngine::Process>("RenderHierarchy");
-						AddProfilerProcess(RenderHierarchy);
-						// RenderInspector
-						std::shared_ptr<FlatEngine::Process> RenderInspector = std::make_shared<FlatEngine::Process>("RenderInspector");
-						AddProfilerProcess(RenderInspector);
-						// Game_RenderView
-						std::shared_ptr<FlatEngine::Process> Game_RenderView = std::make_shared<FlatEngine::Process>("Game_RenderView");
-						AddProfilerProcess(Game_RenderView);	
 
+						if (FlatEngine::FlatGui::_showProfiler)
+						{
+							// Add Profiler Processes
+							// 						
+							FlatEngine::AddProfilerProcess("Render");
+							FlatEngine::AddProfilerProcess("Render Present");
+							// RenderMainMenuBar()						
+							//AddProfilerProcess("Render Main Menu Bar");
+							// RenderToolbar()							
+							//AddProfilerProcess("Render Toolbar");
 
-						// Game_RenderView_Camera
-						std::shared_ptr<FlatEngine::Process> Game_RenderView_Camera = std::make_shared<FlatEngine::Process>("##Game_RenderView_Camera");
-						AddProfilerProcess(Game_RenderView_Camera);
-						// Game_RenderView_RenderObject
-						std::shared_ptr<FlatEngine::Process> Game_RenderView_RenderObject = std::make_shared<FlatEngine::Process>("##Game_RenderView_RenderObject");
-						AddProfilerProcess(Game_RenderView_RenderObject);
+							// RenderHierarchy()
+							if (FlatEngine::FlatGui::_showHierarchy)							
+								FlatEngine::AddProfilerProcess("Render Hierarchy");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Hierarchy");
 
+							// RenderInspector()
+							if (FlatEngine::FlatGui::_showInspector)					
+								FlatEngine::AddProfilerProcess("Render Inspector");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Inspector");
 
+							// Game_RenderView
+							if (FlatEngine::FlatGui::_showGameView)			
+								FlatEngine::AddProfilerProcess("Render Game View");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Game View");
 
-						// Scene_RenderView
-						std::shared_ptr<FlatEngine::Process> Scene_RenderView = std::make_shared<FlatEngine::Process>("Scene_RenderView");
-						AddProfilerProcess(Scene_RenderView);
-						// RenderAnimator
-						std::shared_ptr<FlatEngine::Process> RenderAnimator = std::make_shared<FlatEngine::Process>("RenderAnimator");
-						AddProfilerProcess(RenderAnimator);
-						// RenderAnimationPreview
-						std::shared_ptr<FlatEngine::Process> RenderAnimationPreview = std::make_shared<FlatEngine::Process>("RenderAnimationPreview");
-						AddProfilerProcess(RenderAnimationPreview);
-						// RenderKeyFrameEditor
-						std::shared_ptr<FlatEngine::Process> RenderKeyFrameEditor = std::make_shared<FlatEngine::Process>("RenderKeyFrameEditor");
-						AddProfilerProcess(RenderKeyFrameEditor);
-						// RenderLog
-						std::shared_ptr<FlatEngine::Process> RenderLog = std::make_shared<FlatEngine::Process>("RenderLog");
-						AddProfilerProcess(RenderLog);
-						// RenderProfiler
-						std::shared_ptr<FlatEngine::Process> RenderProfiler = std::make_shared<FlatEngine::Process>("RenderProfiler");
-						AddProfilerProcess(RenderProfiler);
-						// RenderMappingContextEditor
-						std::shared_ptr<FlatEngine::Process> RenderMappingContextEditor = std::make_shared<FlatEngine::Process>("RenderMappingContextEditor");
-						AddProfilerProcess(RenderMappingContextEditor);
-						// RenderSettings
-						std::shared_ptr<FlatEngine::Process> RenderSettings = std::make_shared<FlatEngine::Process>("RenderSettings");
-						AddProfilerProcess(RenderSettings);
+							// Scene_RenderView
+							if (FlatEngine::FlatGui::_showSceneView)
+								FlatEngine::AddProfilerProcess("Render Scene View");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Scene View");
+
+							// RenderAnimator
+							if (FlatEngine::FlatGui::_showAnimator)					
+								FlatEngine::AddProfilerProcess("Render Animator");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Animator");
+
+							// RenderAnimationPreview
+							if (FlatEngine::FlatGui::_showAnimationPreview)
+								FlatEngine::AddProfilerProcess("Render Animation Preview");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Animation Preview");
+
+							// RenderKeyFrameEditor
+							if (FlatEngine::FlatGui::_showKeyFrameEditor)			
+								FlatEngine::AddProfilerProcess("Render Key Frame Editor");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Key Frame Editor");
+
+							// RenderLog
+							if (FlatEngine::FlatGui::_showLogger)						
+								FlatEngine::AddProfilerProcess("Render Log");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Log");
+
+							// RenderProfiler
+							if (FlatEngine::FlatGui::_showProfiler)							
+								FlatEngine::AddProfilerProcess("Render Profiler");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Profiler");
+
+							// RenderMappingContextEditor
+							if (FlatEngine::FlatGui::_showMappingContextEditor)						
+								FlatEngine::AddProfilerProcess("Render Mapping Context Editor");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Mapping Context Editor");
+
+							// RenderSettings
+							if (FlatEngine::FlatGui::_showSettings)					
+								FlatEngine::AddProfilerProcess("Render Settings");
+							else
+								FlatEngine::RemoveProfilerProcess("Render Settings");
+						}
 					}
 				}
 			}
@@ -160,23 +183,7 @@ void close()
 
 	// Remove Profiler Processes
 	FlatEngine::RemoveProfilerProcess("Render");
-	FlatEngine::RemoveProfilerProcess("RenderMainMenuBar");
-	FlatEngine::RemoveProfilerProcess("RenderToolbar");
-	FlatEngine::RemoveProfilerProcess("RenderHierarchy");
-	FlatEngine::RemoveProfilerProcess("RenderInspector");
-	FlatEngine::RemoveProfilerProcess("Game_RenderView");
-
-	FlatEngine::RemoveProfilerProcess("##Game_RenderView_Camera");
-	FlatEngine::RemoveProfilerProcess("##Game_RenderView_RenderObject");
-
-	FlatEngine::RemoveProfilerProcess("Scene_RenderView");
-	FlatEngine::RemoveProfilerProcess("RenderAnimator");
-	FlatEngine::RemoveProfilerProcess("RenderAnimationPreview");
-	FlatEngine::RemoveProfilerProcess("RenderKeyFrameEditor");
-	FlatEngine::RemoveProfilerProcess("RenderLog");
-	FlatEngine::RemoveProfilerProcess("RenderProfiler");
-	FlatEngine::RemoveProfilerProcess("RenderMappingContextEditor");
-	FlatEngine::RemoveProfilerProcess("RenderSettings");
+	FlatEngine::RemoveProfilerProcess("Render Present");
 }
 
 

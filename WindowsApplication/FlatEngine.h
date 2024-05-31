@@ -131,7 +131,7 @@ namespace FlatEngine
 	// Profiler
 	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
 	extern bool _logProfilerOutput;
-	extern void AddProfilerProcess(std::shared_ptr<Process> process);
+	extern void AddProfilerProcess(std::string name);
 	extern void AddProcessData(std::string processName, float data);
 	extern void RemoveProfilerProcess(std::string toRemove);
 
@@ -397,16 +397,15 @@ namespace FlatEngine
 		extern void Render(bool& quit);
 		extern void RenderClear();
 		extern void HandleEvents(bool& quit);
+
 		extern void MainMenuBar();
-		extern std::string OpenSaveFileExplorer();
-		extern std::string OpenLoadFileExplorer();
-		extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
 		extern void AddViewports();
 		extern void RenderToolbar();
 		extern void RenderHierarchy();
 		extern void RenderInspector();
 		extern void Game_RenderView();
 		extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
+		extern void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 worldCenterPoint, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 		extern void Scene_RenderView();
 		extern void RenderAnimator();
 		extern void RenderAnimationPreview();
@@ -420,11 +419,14 @@ namespace FlatEngine
 
 		extern void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset);
 		extern void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
-		extern void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
-		extern void Scene_RenderObject(std::shared_ptr<GameObject> self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+		extern void RenderViewObject(std::shared_ptr<GameObject> self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
-		// Helper Functions
+		// Helper Functions //
 		//
+		// File managing
+		extern std::string OpenSaveFileExplorer();
+		extern std::string OpenLoadFileExplorer();
+		extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
 		// 
 		// ImGui Wrappers
 		extern void BeginWindow(std::string name);
@@ -477,12 +479,6 @@ namespace FlatEngine
 		// Recursive - For Rendering Hierarchy Objects and their children
 		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
 		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
-		// Recursive - For adding GameObjects and their children to the scene/game view
-		void Game_RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, Vector2 worldCenterPoint, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
-		void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 worldCenterPoint, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight, float cameraZoom);
-		Vector2 Game_GetTotalCameraOffset(std::shared_ptr<Camera> primaryCamera);
-		// Recursive - For getting gameObjects total offset
-		void Game_GetTotalOffsetAndScale(std::shared_ptr<GameObject> child, Vector2& offset, Vector2& scale);
 	}
 };
 

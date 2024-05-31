@@ -233,7 +233,7 @@ namespace FlatEngine { namespace FlatGui {
 		if (FlatEngine::_isDebugMode == false)
 		{
 			// Load in what is currently in SavedScenes.json
-			FlatEngine::LoadScene("MainMenu.json");
+			//FlatEngine::LoadScene("Level1.json");
 
 			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
 			// we don't want to have to include it in the final release build anyway.
@@ -351,7 +351,10 @@ namespace FlatEngine { namespace FlatGui {
 		SDL_SetRenderDrawColor(Window::renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
 		SDL_RenderClear(Window::renderer);
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+		
+		Uint32 renderPresentStart = (float)SDL_GetTicks(); // Profiler
 		SDL_RenderPresent(Window::renderer);
+		AddProcessData("Render Present", (float)SDL_GetTicks() - renderPresentStart); // Profiler
 
 		// For things we only want to execute once after complete initialization
 		RunOnceAfterInitialization();
@@ -1277,70 +1280,90 @@ namespace FlatEngine { namespace FlatGui {
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
 
-		//// For Profiler
-		float startTime = SDL_GetTicks();
+		float startTime = (float)SDL_GetTicks();
 		MainMenuBar();
-		AddProcessData("MainMenuBar", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+		AddProcessData("Render Main Menu Bar", (float)SDL_GetTicks() - startTime);
+
+		startTime = (float)SDL_GetTicks();
 		RenderToolbar();
-		AddProcessData("RenderToolbar", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+		AddProcessData("Render Toolbar", (float)SDL_GetTicks() - startTime);
+		
 		if (_showHierarchy)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderHierarchy();
-		AddProcessData("RenderHierarchy", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Hierarchy", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showInspector)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderInspector();
-		AddProcessData("RenderInspector", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Inspector", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showGameView)
+		{
+			startTime = (float)SDL_GetTicks();
 			Game_RenderView();
-		AddProcessData("Game_RenderView", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Game View", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showSceneView)
+		{
+			startTime = (float)SDL_GetTicks();
 			Scene_RenderView();
-		AddProcessData("Scene_RenderView", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Scene View", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showAnimator)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderAnimator();
-		AddProcessData("RenderAnimator", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Animator", (float)SDL_GetTicks() - startTime);
+		}
+		
 		if (_showAnimationPreview)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderAnimationPreview();
-		AddProcessData("RenderAnimationPreview", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Animation Preview", (float)SDL_GetTicks() - startTime);
+		}
+		
 		if (_showKeyFrameEditor)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderKeyFrameEditor();
-		AddProcessData("RenderKeyFrameEditor", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Key Frame Editor", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showLogger)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderLog();
-		AddProcessData("RenderLog", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Log", (float)SDL_GetTicks() - startTime);
+		}
+	
 		if (_showProfiler)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderProfiler();
-		AddProcessData("RenderProfiler", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Profiler", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showMappingContextEditor)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderMappingContextEditor();
-		AddProcessData("RenderMappingContextEditor", SDL_GetTicks() - startTime);
-		////
-		startTime = SDL_GetTicks();
+			AddProcessData("Render Mapping Context Editor", (float)SDL_GetTicks() - startTime);
+		}
+
 		if (_showSettings)
+		{
+			startTime = (float)SDL_GetTicks();
 			RenderSettings();
-		AddProcessData("RenderSettings", SDL_GetTicks() - startTime);
-		////
+			AddProcessData("Render Settings", (float)SDL_GetTicks() - startTime);
+		}
 	}
 
 	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset)
@@ -1428,7 +1451,7 @@ namespace FlatEngine { namespace FlatGui {
 		// Loop through scene objects
 		for (std::shared_ptr<GameObject> object : objects)
 		{
-			Scene_RenderObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
+			RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 		}
 
 		drawSplitter->Merge(draw_list);
@@ -1436,7 +1459,8 @@ namespace FlatEngine { namespace FlatGui {
 		drawSplitter = nullptr;
 	}
 
-	void RenderSelfThenChildren(std::shared_ptr<GameObject> self, Vector2 parentOffset, Vector2 parentScale, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	// General in order to be used with multiple views that render objects
+	void RenderViewObject(std::shared_ptr<GameObject> self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Transform> transform = self->GetTransformComponent();
 		std::shared_ptr<Sprite> sprite = self->GetSpriteComponent();
@@ -1450,8 +1474,8 @@ namespace FlatEngine { namespace FlatGui {
 		if (transform != nullptr)
 		{
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
-			Vector2 position = Vector2(transform->GetPosition().x + parentOffset.x, transform->GetPosition().y + parentOffset.y);
-			Vector2 transformScale = Vector2(transform->GetScale().x * parentScale.x, transform->GetScale().y * parentScale.y);
+			Vector2 position = transform->GetTruePosition();
+			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
 
@@ -1485,7 +1509,7 @@ namespace FlatEngine { namespace FlatGui {
 
 					if (is_clicked)
 						SetFocusedGameObjectID(sprite->GetParentID());
-				
+
 					// Show cursor position in scene view when pressing Alt
 					if (is_hovered && inputOutput.KeyAlt)
 						RenderSceneViewTooltip();
@@ -1536,7 +1560,7 @@ namespace FlatEngine { namespace FlatGui {
 						}
 					}
 					//////////////////
-					
+
 					// Change the draw channel for the scene object
 					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
@@ -1636,7 +1660,7 @@ namespace FlatEngine { namespace FlatGui {
 				float activeHeight = button->GetActiveHeight();
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
-				
+
 				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
 				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
 				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
@@ -1721,7 +1745,7 @@ namespace FlatEngine { namespace FlatGui {
 					else if (_isColliding)
 						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
 				}
-				else if(loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
+				else if (loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -1823,7 +1847,7 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 transformPosOffsetFromMouse = Vector2((cursorPosAtClick.x - transformScreenPos.x) / step, (cursorPosAtClick.y - transformScreenPos.y) / step);
 				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / step, (sceneViewCenter.y - inputOutput.MousePos.y) / step);
 				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);
-				
+
 				if (_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					transform->SetPosition(newTransformPos);
 				else if (_xActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
@@ -1835,25 +1859,6 @@ namespace FlatEngine { namespace FlatGui {
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
 				AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
-			}
-		}
-
-		if (self->HasChildren())
-		{
-			if (transform != nullptr)
-			{
-				parentOffset.x += transform->GetPosition().x;
-				parentOffset.y += transform->GetPosition().y;
-				parentScale.x *= transform->GetScale().x;
-				parentScale.y *= transform->GetScale().y;
-			}
-
-			for (int c = 0; c < self->GetChildren().size(); c++)
-			{
-				std::shared_ptr<GameObject> child = FlatEngine::GetObjectById(self->GetChildren()[c]);
-
-				if (child->IsActive())
-					RenderSelfThenChildren(child, parentOffset, parentScale, scrolling, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 			}
 		}
 	}
@@ -2237,76 +2242,6 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopID();
 	}
 
-
-	Vector2 AddImageToDrawList(SDL_Texture *texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList *draw_list, float rotation, ImU32 addColor)
-	{
-		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
-		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
-
-		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
-		float scalingYStart = relativeCenterPoint.y - (positionInGrid.y * zoomMultiplier) - (offsetPx.y * newScale.y * zoomMultiplier);
-		float scalingXEnd = scalingXStart + (textureWidthPx * newScale.x * zoomMultiplier);
-		float scalingYEnd = scalingYStart + (textureHeightPx * newScale.y * zoomMultiplier);
-
-		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
-		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
-	
-		Vector2 renderStart;
-		Vector2 renderEnd;
-		Vector2 UvStart = { 0, 0 };
-		Vector2 UvEnd = { 1, 1 };
-
-		if (_scalesWithZoom)
-		{
-			
-			renderStart = Vector2(scalingXStart, scalingYStart);
-			renderEnd = Vector2(scalingXEnd, scalingYEnd);
-			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), whiteColor, 2, draw_list);
-		}
-		else
-		{
-			renderStart = Vector2(unscaledXStart, unscaledYStart);
-			renderEnd = Vector2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
-		}
-		
-		if (rotation != 0)
-		{
-			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
-			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
-
-			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-
-			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
-			Vector2 pos[4] =
-			{
-				Vector2(center.x + topLeft.x, center.y + topLeft.y),
-				Vector2(center.x + topRight.x, center.y + topRight.y),
-				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
-				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
-			};
-			Vector2 uvs[4] =
-			{
-				Vector2(0.0f, 0.0f),
-				Vector2(1.0f, 0.0f),
-				Vector2(1.0f, 1.0f),
-				Vector2(0.0f, 1.0f)
-			};
-
-			// Render sprite to viewport
-			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
-		}
-		else
-		{
-			// Render sprite to viewport
-			draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
-		}
-	
-		return renderStart;
-	}
-
 	bool RenderButton(std::string text, Vector2 size, float rounding, Vector4 color, Vector4 hoverColor, Vector4 activeColor)
 	{
 		bool _isClicked;
@@ -2447,6 +2382,77 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::SetCursorScreenPos(startingPoint);
 		return ImGui::InvisibleButton(id.c_str(), size, flags);
 	}
+
+
+	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
+	{
+		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
+		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
+
+		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
+		float scalingYStart = relativeCenterPoint.y - (positionInGrid.y * zoomMultiplier) - (offsetPx.y * newScale.y * zoomMultiplier);
+		float scalingXEnd = scalingXStart + (textureWidthPx * newScale.x * zoomMultiplier);
+		float scalingYEnd = scalingYStart + (textureHeightPx * newScale.y * zoomMultiplier);
+
+		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
+		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
+
+		Vector2 renderStart;
+		Vector2 renderEnd;
+		Vector2 UvStart = { 0, 0 };
+		Vector2 UvEnd = { 1, 1 };
+
+		if (_scalesWithZoom)
+		{
+
+			renderStart = Vector2(scalingXStart, scalingYStart);
+			renderEnd = Vector2(scalingXEnd, scalingYEnd);
+			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), whiteColor, 2, draw_list);
+		}
+		else
+		{
+			renderStart = Vector2(unscaledXStart, unscaledYStart);
+			renderEnd = Vector2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
+		}
+
+		if (rotation != 0)
+		{
+			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+
+			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+
+			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
+			Vector2 pos[4] =
+			{
+				Vector2(center.x + topLeft.x, center.y + topLeft.y),
+				Vector2(center.x + topRight.x, center.y + topRight.y),
+				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+			};
+			Vector2 uvs[4] =
+			{
+				Vector2(0.0f, 0.0f),
+				Vector2(1.0f, 0.0f),
+				Vector2(1.0f, 1.0f),
+				Vector2(0.0f, 1.0f)
+			};
+
+			// Render sprite to viewport
+			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+		}
+		else
+		{
+			// Render sprite to viewport
+			draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
+		}
+
+		return renderStart;
+	}
+
 
 	// Hierarchy
 	void ResetHierarchyExpanderTracker()

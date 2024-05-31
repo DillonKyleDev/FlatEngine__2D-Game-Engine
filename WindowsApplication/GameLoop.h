@@ -18,10 +18,11 @@ namespace FlatEngine
 		void UpdateActiveColliders();
 		void UpdateActiveRigidBodies();
 		void Update();
+		void UpdateScripts();
 		void Stop();
 		void Pause();
 		void Unpause();
-		int TimeEllapsed();
+		double TimeEllapsed();
 		bool IsStarted();
 		bool IsPaused();
 		float GetAverageFps();
@@ -30,32 +31,21 @@ namespace FlatEngine
 		void SetFrameSkipped(bool _skipped);
 		bool IsFrameSkipped();
 		int GetFramesCounted();
-		int GetCountedTicks();
-		int GetPausedTicks();
-		int GetLastFrameTime();
+
+		double time;
+		double deltaTime;
+		double currentTime;
+		double accumulator;
 		
 	private:
-		Uint32 startTime;
 		bool _started;
 		bool _paused;
 		bool _frameSkipped;
 		int framesCounted;
-		int countedTicks;
-		int pausedTicks;
-		// For deltaTime
-		int lastFrameTime;
-
-		float deltaTime;
-
-		double time;
-		//const double fixedDeltaTime = 0.03; // 30fps
-		const double fixedDeltaTime = 0.016; // 60fps 
 		double pausedTime;
 		double activeTime;
-		float currentTime;
 
 		std::shared_ptr<GameManager> gameManager;
-
 		std::string startedScene;
 		std::vector<std::shared_ptr<FlatEngine::GameObject>> gameObjects;
 		std::vector<std::shared_ptr<FlatEngine::GameScript>> scripts;

@@ -4,7 +4,7 @@
             "_autoSave": true,
             "_clearLogBuffer": true,
             "_showAnimationPreview": false,
-            "_showAnimator": true,
+            "_showAnimator": false,
             "_showGameView": true,
             "_showHierarchy": true,
             "_showInspector": true,

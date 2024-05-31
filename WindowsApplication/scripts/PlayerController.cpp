@@ -43,7 +43,7 @@ void PlayerController::Update(float deltaTime)
 		//FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
 		{
-			rigidBody->AddForce(Vector2(0, 1), 800);
+			rigidBody->AddForce(Vector2(0, 1), 1300);
 		}
 
 	}
