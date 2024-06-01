@@ -292,17 +292,13 @@ namespace FlatEngine
 
 			if (collider1 != nullptr && collider1->IsActive() && collider2 != nullptr && collider2->IsActive() && (!collider1->IsStatic() || !collider2->IsStatic()) && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
 			{
-				bool _isColliding = false;
-
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
 					collider1->UpdateActiveEdges();
 					collider2->UpdateActiveEdges();
 
-					if (collider1->GetActiveLayer() == collider2->GetActiveLayer() && collider1->CheckForCollision(collider2))
-					{
-						_isColliding = true;
-					}
+					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
+						collider1->CheckForCollision(collider2);
 				}
 			}
 		}

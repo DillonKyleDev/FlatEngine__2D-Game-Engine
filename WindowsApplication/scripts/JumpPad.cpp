@@ -25,14 +25,14 @@ void JumpPadOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject,
 	Vector2 towardCollidedWith = Vector2(collidedPosition.x - myPosition.x, collidedPosition.y - myPosition.y);
 	Vector2 pendingForces = collidedRigidBody->GetPendingForces();
 	collidedRigidBody->SetPendingForces(Vector2(pendingForces.x, 0));
-	collidedRigidBody->AddForce(Vector2(0, 1), 1);
+	collidedRigidBody->AddForce(Vector2(0, 1), 2000);
 }
 
 void JumpPad::Start()
 {	
 	boxCollider = GetOwner()->GetBoxCollider();
 	//boxCollider->SetOnCollisionEnter(JumpPadOnCollisionEnter);
-	boxCollider->SetOnColliding(JumpPadOnCollisionEnter);
+	boxCollider->SetOnCollisionEnter(JumpPadOnCollisionEnter);
 }
 
 void JumpPad::Update(float deltaTime)

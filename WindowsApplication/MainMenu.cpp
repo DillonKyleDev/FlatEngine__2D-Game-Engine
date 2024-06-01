@@ -186,6 +186,11 @@ namespace FlatEngine { namespace FlatGui {
 						newObject->SetName("Block(" + std::to_string(newObject->GetID()) + ")");						
 						SetFocusedGameObjectID(newObject->GetID());
 					}
+					if (ImGui::MenuItem("Wall"))
+						CreateWallPrefab();
+					if (ImGui::MenuItem("JumpPad"))
+						CreateJumpPadPrefab();
+
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Components"))

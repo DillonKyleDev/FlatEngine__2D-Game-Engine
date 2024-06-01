@@ -112,9 +112,13 @@ namespace FlatEngine
 	extern std::shared_ptr<Component> GetObjectComponent(long objectID, ComponentTypes type);
 	extern std::shared_ptr<GameObject> GetObjectById(long objectID);
 	extern std::shared_ptr<GameObject> GetObjectByName(std::string name);
+
+	// Prefabs
 	extern std::shared_ptr<GameObject> CreateTransformPrefab();
 	extern std::shared_ptr<GameObject> CreateSpritePrefab();
 	extern std::shared_ptr<GameObject> CreateButtonPrefab();
+	extern std::shared_ptr<GameObject> CreateWallPrefab();
+	extern std::shared_ptr<GameObject> CreateJumpPadPrefab();
 
 	// Logging Prettification
 	extern void LogString(std::string line = "");

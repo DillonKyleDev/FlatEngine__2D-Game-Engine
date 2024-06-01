@@ -322,12 +322,6 @@ namespace FlatEngine { namespace FlatGui {
 		//Create dockable background space for all viewports
 		ImGui::DockSpaceOverViewport();
 
-		// Probably don't actually need this here
-		//for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
-		//{
-		//	boxCollider->RecalculateBounds();
-		//}
-
 		//Add viewport(s)
 		// 
 		// If Release

@@ -442,6 +442,72 @@ namespace FlatEngine
 		}
 	}
 
+	std::shared_ptr<Transform> GameObject::AddTransformComponent()
+	{
+		return std::static_pointer_cast<Transform>(AddComponent(ComponentTypes::Transform));
+	}
+
+	std::shared_ptr<Sprite> GameObject::AddSpriteComponent()
+	{
+		return std::static_pointer_cast<Sprite>(AddComponent(ComponentTypes::Sprite));
+	}
+
+	std::shared_ptr<Camera> GameObject::AddCameraComponent()
+	{
+		return std::static_pointer_cast<Camera>(AddComponent(ComponentTypes::Camera));
+	}
+
+	std::shared_ptr<ScriptComponent> GameObject::AddScriptComponent()
+	{
+		return std::static_pointer_cast<ScriptComponent>(AddComponent(ComponentTypes::Script));
+	}
+
+	std::shared_ptr<Button> GameObject::AddButtonComponent()
+	{
+		return std::static_pointer_cast<Button>(AddComponent(ComponentTypes::Button));
+	}
+
+	std::shared_ptr<Canvas> GameObject::AddCanvasComponent()
+	{
+		return std::static_pointer_cast<Canvas>(AddComponent(ComponentTypes::Canvas));
+	}
+
+	std::shared_ptr<Animation> GameObject::AddAnimationComponent()
+	{
+		return std::static_pointer_cast<Animation>(AddComponent(ComponentTypes::Animation));
+	}
+
+	std::shared_ptr<Audio> GameObject::AddAudioComponent()
+	{
+		return std::static_pointer_cast<Audio>(AddComponent(ComponentTypes::Audio));
+	}
+
+	std::shared_ptr<Text> GameObject::AddTextComponent()
+	{
+		return std::static_pointer_cast<Text>(AddComponent(ComponentTypes::Text));
+	}
+
+	std::shared_ptr<BoxCollider> GameObject::AddBoxColliderComponent()
+	{
+		return std::static_pointer_cast<BoxCollider>(AddComponent(ComponentTypes::BoxCollider));
+	}
+
+	//std::shared_ptr<CircleCollider> GameObject::AddRigidBodyComponent()
+	//{
+		//return std::static_pointer_cast<CircleCollider>(AddComponent(ComponentTypes::CircleCollider));
+	//}
+
+	std::shared_ptr<RigidBody> GameObject::AddRigidBodyComponent()
+	{
+		return std::static_pointer_cast<RigidBody>(AddComponent(ComponentTypes::RigidBody));
+	}
+
+	std::shared_ptr<CharacterController> GameObject::AddCharacterControllerComponent()
+	{
+		return std::static_pointer_cast<CharacterController>(AddComponent(ComponentTypes::CharacterController));
+	}
+
+
 	std::shared_ptr<Component> GameObject::GetComponent(Component::ComponentTypes type)
 	{
 		for (int i = 0; i < components.size(); i++)

@@ -64,6 +64,8 @@ namespace FlatEngine
 		bool IsContinuous();
 		void SetIsStatic(bool _newStatic);
 		bool IsStatic();
+		void SetIsSolid(bool _solid);
+		bool IsSolid();
 		std::string GetData();
 		void SetRotation(float rotation);
 		void UpdateRotation();
@@ -103,6 +105,11 @@ namespace FlatEngine
 		bool _bottomCollisionStatic;
 		bool _topCollisionStatic;
 
+		bool _rightCollisionSolid;
+		bool _leftCollisionSolid;
+		bool _bottomCollisionSolid;
+		bool _topCollisionSolid;
+
 	private:
 		bool _onActiveCollidingSet;
 		bool _onCollisionEnterSet;
@@ -129,6 +136,7 @@ namespace FlatEngine
 		Vector2 activeOffset;
 		bool _isContinuous;
 		bool _isStatic;
+		bool _isSolid;
 		int activeLayer;
 		bool _activeEdgesSet;
 		Vector2 corners[4];

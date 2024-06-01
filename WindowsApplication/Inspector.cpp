@@ -722,6 +722,7 @@ namespace FlatEngine { namespace FlatGui {
 								Vector2 activeOffset = boxCollider->GetActiveOffset();
 								bool _isContinuous = boxCollider->IsContinuous();
 								bool _isStatic = boxCollider->IsStatic();
+								bool _isSolid = boxCollider->IsSolid();
 								bool _showActiveRadius = boxCollider->GetShowActiveRadius();
 								int activeLayer = boxCollider->GetActiveLayer();	
 								long id = boxCollider->GetID();
@@ -751,6 +752,8 @@ namespace FlatEngine { namespace FlatGui {
 								boxCollider->SetIsContinuous(_isContinuous);
 								RenderCheckbox(" Is Static", _isStatic);
 								boxCollider->SetIsStatic(_isStatic);
+								RenderCheckbox(" Is Solid", _isSolid);
+								boxCollider->SetIsSolid(_isSolid);
 								RenderCheckbox(" Show Active Radius", _showActiveRadius);
 								boxCollider->SetShowActiveRadius(_showActiveRadius);
 							}

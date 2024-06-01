@@ -932,6 +932,7 @@ namespace FlatEngine
 							Vector2 activeOffset = Vector2(0,0);
 							bool _isContinuous = true;
 							bool _isStatic = false;
+							bool _isSolid = true;
 							int activeLayer = 0;
 							bool _showActiveRadius = false;
 
@@ -978,6 +979,10 @@ namespace FlatEngine
 								_isStatic = currentObjectJson["components"][j]["_isStatic"];
 							else
 								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isStatic' in object: ");
+							if (currentObjectJson["components"][j].contains("_isSolid"))
+								_isSolid = currentObjectJson["components"][j]["_isSolid"];
+							else
+								FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isSolid' in object: ");
 							if (currentObjectJson["components"][j].contains("activeLayer"))
 								activeLayer = currentObjectJson["components"][j]["activeLayer"];
 							else
@@ -994,6 +999,7 @@ namespace FlatEngine
 							newBoxCollider->SetActiveOffset(activeOffset);
 							newBoxCollider->SetIsContinuous(_isContinuous);
 							newBoxCollider->SetIsStatic(_isStatic);
+							newBoxCollider->SetIsSolid(_isSolid);
 							newBoxCollider->SetActiveLayer(activeLayer);
 							newBoxCollider->SetRotation(objectRotation);
 							newBoxCollider->SetShowActiveRadius(_showActiveRadius);

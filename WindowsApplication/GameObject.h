@@ -41,8 +41,24 @@ namespace FlatEngine
 		void SetTagList(std::shared_ptr<TagList> tagList);
 		bool HasTag(std::string tagName);
 		void SetTag(std::string tagName, bool _value);
+
+
+		// Components
 		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
+		std::shared_ptr<Transform> AddTransformComponent();
+		std::shared_ptr<Sprite> AddSpriteComponent();
+		std::shared_ptr<Camera> AddCameraComponent();
+		std::shared_ptr<ScriptComponent> AddScriptComponent();
+		std::shared_ptr<Button> AddButtonComponent();
+		std::shared_ptr<Canvas> AddCanvasComponent();
+		std::shared_ptr<Animation> AddAnimationComponent();
+		std::shared_ptr<Audio> AddAudioComponent();
+		std::shared_ptr<Text> AddTextComponent();
+		std::shared_ptr<BoxCollider> AddBoxColliderComponent();
+		// std::shared_ptr<CircleCollider> AddCircleColliderComponent();
+		std::shared_ptr<RigidBody> AddRigidBodyComponent();
+		std::shared_ptr<CharacterController> AddCharacterControllerComponent();
 		std::shared_ptr<Component> GetComponent(ComponentTypes type);
 		bool HasComponent(ComponentTypes type);
 		bool HasComponent(std::string type);
@@ -63,6 +79,8 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();
 		std::vector<std::shared_ptr<Component>> GetScriptInstances();
+
+
 		void SetParentID(long parentID);
 		long GetParentID();
 		std::shared_ptr<GameObject> GetParent();

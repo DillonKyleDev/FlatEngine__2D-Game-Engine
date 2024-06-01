@@ -14,13 +14,14 @@ namespace FlatEngine
 		SetType(ComponentTypes::BoxCollider);
 		SetID(myID);
 		SetParentID(parentID);
-		activeWidth = 5;
-		activeHeight = 3;
+		activeWidth = 2;
+		activeHeight = 2;
 		activeOffset = Vector2(0, 0);
 		activeEdges = Vector4(0, 0, 0, 0);
 		activeLayer = 0;
 		_isContinuous = true;
 		_isStatic = false;
+		_isSolid = true;
 		_isColliding = false;
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
@@ -64,6 +65,11 @@ namespace FlatEngine
 		_bottomCollisionStatic = false;
 		_topCollisionStatic = false;
 
+		_rightCollisionSolid = false;
+		_leftCollisionSolid = false;
+		_bottomCollisionSolid = false;
+		_topCollisionSolid = false;
+
 		rightCollision = 0;
 		leftCollision = 0;
 		bottomCollision = 0;
@@ -82,6 +88,7 @@ namespace FlatEngine
 		activeLayer = toCopy->GetActiveLayer();
 		_isContinuous = toCopy->IsContinuous();
 		_isStatic = toCopy->IsStatic();
+		_isSolid = toCopy->IsSolid();
 		_isColliding = false;
 		_activeEdgesSet = false;
 		previousPosition = Vector2(0, 0);
@@ -116,6 +123,11 @@ namespace FlatEngine
 		_leftCollisionStatic = false;
 		_bottomCollisionStatic = false;
 		_topCollisionStatic = false;
+
+		_rightCollisionSolid = false;
+		_leftCollisionSolid = false;
+		_bottomCollisionSolid = false;
+		_topCollisionSolid = false;
 
 		rightCollision = 0;
 		leftCollision = 0;
@@ -204,8 +216,10 @@ namespace FlatEngine
 						{
 							_isCollidingLeft = true;
 							_leftCollisionStatic = other->_isStatic;
+							_leftCollisionSolid = other->_isSolid;
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
+							other->_rightCollisionSolid = other->_isSolid;
 
 							leftCollision = B_RightEdge;						
 							other->rightCollision = A_LeftEdge;							
@@ -214,19 +228,21 @@ namespace FlatEngine
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
+							_topCollisionSolid = other->_isSolid;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
+							other->_bottomCollisionSolid = _isSolid;
 				
 							topCollision = B_BottomEdge;
 							// If gravity is inverted
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (other->IsSolid() && GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 							{
 								if (GetParent()->GetRigidBody()->GetGravity() < 0)
 									GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
 							other->bottomCollision = A_TopEdge;
 							// If gravity is normal
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (_isSolid && other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
 								if (other->GetParent()->GetRigidBody()->GetGravity() > 0)
 									other->GetParent()->GetRigidBody()->SetIsGrounded(true);
@@ -243,8 +259,10 @@ namespace FlatEngine
 						{
 							_isCollidingLeft = true;
 							_leftCollisionStatic = other->_isStatic;
+							_leftCollisionSolid = other->_isSolid;
 							other->_isCollidingRight = true;
 							other->_rightCollisionStatic = _isStatic;
+							other->_rightCollisionSolid = _isSolid;
 
 							leftCollision = B_RightEdge;
 							other->rightCollision = A_LeftEdge;
@@ -253,22 +271,24 @@ namespace FlatEngine
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
+							_bottomCollisionSolid = other->_isSolid;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
+							other->_topCollisionSolid = _isSolid;
 							
 							bottomCollision = B_TopEdge;						
 							// If gravity is normal
-							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
+							if (other->IsSolid() && GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 							{
 								if (GetParent()->GetRigidBody()->GetGravity() > 0)
 									GetParent()->GetRigidBody()->SetIsGrounded(true);							
 							}	
 							other->topCollision = A_BottomEdge;
 							// If gravity is inverted
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (_isSolid && other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
-								if (GetParent()->GetRigidBody()->GetGravity() < 0)
-									GetParent()->GetRigidBody()->SetIsGrounded(true);
+								if (other->GetParent()->GetRigidBody()->GetGravity() < 0)
+									other->GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
 						}
 					}
@@ -287,8 +307,10 @@ namespace FlatEngine
 							std::string name = GetParent()->GetName();
 							_isCollidingRight = true;
 							_rightCollisionStatic = other->_isStatic;
+							_rightCollisionSolid = other->_isSolid;
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
+							other->_leftCollisionSolid = _isSolid;
 
 							rightCollision = B_LeftEdge;
 							other->leftCollision = A_RightEdge;
@@ -297,19 +319,21 @@ namespace FlatEngine
 						else {
 							_isCollidingTop = true;
 							_topCollisionStatic = other->_isStatic;
+							_topCollisionSolid = other->_isSolid;
 							other->_isCollidingBottom = true;
 							other->_bottomCollisionStatic = _isStatic;
+							other->_bottomCollisionSolid = _isSolid;
 							
 							topCollision = B_BottomEdge;							
 							// If gravity is inverted
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (other->IsSolid() && GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 							{
 								if (GetParent()->GetRigidBody()->GetGravity() < 0)
 									GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
 							other->bottomCollision = A_TopEdge;
 							// If gravity is normal
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (_isSolid && other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
 								if (other->GetParent()->GetRigidBody()->GetGravity() > 0)
 									other->GetParent()->GetRigidBody()->SetIsGrounded(true);								
@@ -325,8 +349,10 @@ namespace FlatEngine
 						{
 							_isCollidingRight = true;
 							_rightCollisionStatic = other->_isStatic;
+							_rightCollisionSolid = other->_isSolid;
 							other->_isCollidingLeft = true;
 							other->_leftCollisionStatic = _isStatic;
+							other->_leftCollisionSolid = _isSolid;
 
 							rightCollision = B_LeftEdge;
 							other->leftCollision = A_RightEdge;
@@ -335,22 +361,24 @@ namespace FlatEngine
 						else {
 							_isCollidingBottom = true;
 							_bottomCollisionStatic = other->_isStatic;
+							_bottomCollisionSolid = other->_isSolid;
 							other->_isCollidingTop = true;
 							other->_topCollisionStatic = _isStatic;
+							other->_topCollisionSolid = _isSolid;
 							
 							bottomCollision = B_TopEdge;
 							// If gravity is normal
-							if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
+							if (other->IsSolid() && GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 							{						
 								if (GetParent()->GetRigidBody()->GetGravity() > 0)
 									GetParent()->GetRigidBody()->SetIsGrounded(true);								
 							}		
 							other->topCollision = A_BottomEdge;
 							// If gravity is inverted
-							if (other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
+							if (_isSolid && other->GetParent() != nullptr && other->GetParent()->HasComponent("RigidBody"))
 							{
-								if (GetParent()->GetRigidBody()->GetGravity() < 0)
-									GetParent()->GetRigidBody()->SetIsGrounded(true);
+								if (other->GetParent()->GetRigidBody()->GetGravity() < 0)
+									other->GetParent()->GetRigidBody()->SetIsGrounded(true);
 							}
 						}
 					}
@@ -412,6 +440,8 @@ namespace FlatEngine
 		// If OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
 		if (OnCollisionEnterSet())
 			OnCollisionEnter(GetParent(), collidedWith);
+		if (collidedWith->GetBoxCollider()->OnCollisionEnterSet())
+			collidedWith->GetBoxCollider()->OnCollisionEnter(collidedWith, GetParent());
 	}
 
 	std::vector<std::shared_ptr<GameObject>> BoxCollider::GetCollidingObjects()
@@ -705,9 +735,14 @@ namespace FlatEngine
 
 	void BoxCollider::ResetCollisions()
 	{
+		// TOOOOO DOOOOOO
+		// Change this later to not reset grounded but instead inside ApplyColliderPhysics use _Collidingbottom bools and velocity to decide if a boxcollider is grounded or not.
+		
 		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 			GetParent()->GetRigidBody()->SetIsGrounded(false);
 		std::string name = GetParent()->GetName();
+
+		collidingObjects.clear();
 
 		_isCollidingRight = false;
 		_isCollidingLeft = false;
@@ -794,6 +829,16 @@ namespace FlatEngine
 		return _isStatic;
 	}
 
+	void BoxCollider::SetIsSolid(bool _solid)
+	{
+		_isSolid = _solid;
+	}
+
+	bool BoxCollider::IsSolid()
+	{
+		return _isSolid;
+	}
+
 	std::string BoxCollider::GetData()
 	{
 		json jsonData = {
@@ -806,6 +851,7 @@ namespace FlatEngine
 			{ "activeOffsetX", activeOffset.x },
 			{ "activeOffsetY", activeOffset.y },
 			{ "_isContinuous", _isContinuous },
+			{ "_isSolid", _isSolid },
 			{ "_isStatic", _isStatic },
 			{ "activeLayer", activeLayer },
 			{ "_showActiveRadius", _showActiveRadius },

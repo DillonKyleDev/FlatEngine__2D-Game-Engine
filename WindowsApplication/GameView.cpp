@@ -184,7 +184,7 @@ namespace FlatEngine { namespace FlatGui {
 		//	// Left frustrum
 		//	//AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
 
-		//	drawSplitter->Merge(draw_list);
+			drawSplitter->Merge(draw_list);
 		//}
 	}
 

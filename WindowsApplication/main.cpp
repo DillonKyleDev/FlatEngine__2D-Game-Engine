@@ -25,6 +25,7 @@ bool init()
 	}
 	else
 	{
+		SDL_GL_SetSwapInterval(0); // vsync disabled -- 1 to activate
 		FlatEngine::logger->LogString("SDL initialized... - Video - Audio - Joystick -");
 
 		//Set texture filtering to linear
@@ -37,7 +38,7 @@ bool init()
 		char* title = &(t[0]);
 
 		//Initialize Window::window
-		if (Window::Init(title, 1920, 1080))
+		if (Window::Init(title, 1600, 800))
 		{
 			FlatEngine::LogString("Window initialized...");
 
