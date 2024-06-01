@@ -108,8 +108,26 @@ namespace FlatEngine
 			double frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
 			gameLoop->currentTime = frameStart;
 
-
 			// Physics Update Version 1
+			gameLoop->accumulator += frameTime;
+			if (gameLoop->accumulator >= gameLoop->deltaTime)
+			{
+				while (gameLoop->accumulator >= gameLoop->deltaTime)
+				{
+					GameLoopUpdate();
+					gameLoop->SetFrameSkipped(false);
+					gameLoop->time += gameLoop->deltaTime;
+					gameLoop->accumulator -= gameLoop->deltaTime;
+				}				
+			}
+			//else
+				//gameLoop->UpdateScripts(); // Because we still need to react to input every frame
+
+			//SDL_Delay(4 - frameTime);
+
+
+
+			// Physics Update Version 2
 			// Clamp cycles per Run loop (avoids physics death spiral)
 			//int maxCyclesPerRunLoop = 100;
 			//int cycleCounter = 0;
@@ -134,21 +152,6 @@ namespace FlatEngine
 			//	}
 			//	cycleCounter++;
 			//}
-
-
-			// Physics Update Version 2
-			gameLoop->accumulator += frameTime;
-			if (gameLoop->accumulator >= gameLoop->deltaTime)
-			{
-				GameLoopUpdate();
-				gameLoop->SetFrameSkipped(false);
-				gameLoop->time += gameLoop->deltaTime;
-				gameLoop->accumulator -= gameLoop->deltaTime;
-			}
-			else
-				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
-
-			//SDL_Delay(4 - frameTime);
 		}
 
 		FlatGui::RenderClear();

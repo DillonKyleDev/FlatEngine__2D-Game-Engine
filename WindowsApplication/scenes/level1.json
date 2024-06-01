@@ -11,10 +11,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -28.290882110595703,
+                    "xPos": -27.955154418945313,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.8689411878585815,
+                    "yPos": -0.49982935190200806,
                     "yScale": 1.0
                 },
                 {
@@ -73,6 +73,20 @@
                     "attachedScript": "PlayerController",
                     "id": 6,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 51,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 50.0
                 }
             ],
             "id": 0,
@@ -127,7 +141,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isPrimaryCamera": true,
+                    "_isPrimaryCamera": false,
                     "frustrumAlpha": 255.0,
                     "frustrumBlue": 255.0,
                     "frustrumGreen": 255.0,
