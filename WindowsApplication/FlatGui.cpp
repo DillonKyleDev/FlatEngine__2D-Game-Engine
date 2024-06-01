@@ -346,6 +346,8 @@ namespace FlatEngine { namespace FlatGui {
 		SDL_RenderClear(Window::renderer);
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 		
+		// TO DO 
+		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
 		Uint32 renderPresentStart = (float)SDL_GetTicks(); // Profiler
 		SDL_RenderPresent(Window::renderer);
 		AddProcessData("Render Present", (float)SDL_GetTicks() - renderPresentStart); // Profiler

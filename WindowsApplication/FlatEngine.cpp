@@ -147,6 +147,8 @@ namespace FlatEngine
 			}
 			else
 				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
+
+			//SDL_Delay(4 - frameTime);
 		}
 
 		FlatGui::RenderClear();
