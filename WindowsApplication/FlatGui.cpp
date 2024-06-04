@@ -16,16 +16,13 @@
 #include "implot.h"
 #include "implot_internal.h"
 #include "Process.h"
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include "ImSequencer.h"
 #include "Text.h"
 #include "Scene.h"
 #include "Camera.h"
 #include "BoxCollider.h"
 //#include "CircleCollider.h"
-
 #include "MappingContext.h"
 
 
@@ -350,12 +347,20 @@ namespace FlatEngine { namespace FlatGui {
 		
 		// TO DO 
 		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
-		Uint32 renderPresentStart = (float)SDL_GetTicks(); // Profiler
+		Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
 		SDL_RenderPresent(Window::renderer);
-		AddProcessData("Render Present", (float)SDL_GetTicks() - renderPresentStart); // Profiler
+		AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
 
 		// For things we only want to execute once after complete initialization
 		RunOnceAfterInitialization();
+	}
+
+	void Cleanup()
+	{
+		ImGui_ImplSDLRenderer2_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImPlot::DestroyContext();
+		ImGui::DestroyContext();
 	}
 
 	void HandleEvents(bool &quit)
@@ -1119,7 +1124,45 @@ namespace FlatEngine { namespace FlatGui {
 				}
 			}
 		}
+
+
+		// BUTTON COMPONENT EVENTS - GameView
+		// 
+		// TODO: Check here if the Game viewport is focused before getting the mouse data //
+		// Check for mouse over on all of our Game Buttons
+		static bool _hasLeftClicked = false;
+		static bool _hasRightClicked = false;
+		if (FlatEngine::uiManager->CheckForMouseOver())
+		{
+			std::vector<std::shared_ptr<FlatEngine::Button>> hoveredButtons = FlatEngine::uiManager->GetHoveredButtons();
+			ImGuiIO inputOutput = ImGui::GetIO();
+			std::shared_ptr<Button> topLevelButton = FlatEngine::uiManager->GetTopLevelButton();
+
+			// Call the OnMouseOverFunction() in the top level button that is hovered
+			std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(FlatEngine::uiManager->GetTopLevelButton()->GetParentID());
+
+			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
+			{
+				_hasLeftClicked = true;
+				topLevelButton->OnLeftClickFunction(thisObject);
+			}
+			// Unclick check
+			if (!inputOutput.MouseDown[0])
+				_hasLeftClicked = false;
+
+			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
+			{
+				_hasRightClicked = true;
+				topLevelButton->OnRightClickFunction(thisObject);
+			}
+			// Unclick check
+			if (!inputOutput.MouseDown[1])
+				_hasRightClicked = false;
+		}
 	}
+
 
 	std::string OpenSaveFileExplorer()
 	{
@@ -1272,98 +1315,101 @@ namespace FlatEngine { namespace FlatGui {
 		return finalName;
 	}
 
+
 	void AddViewports()
 	{
 		// ImGui Demo Window
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
 
-		float startTime = (float)SDL_GetTicks();
+		float startTime = (float)FlatEngine::GetEngineTime();
 		MainMenuBar();
-		AddProcessData("Render Main Menu Bar", (float)SDL_GetTicks() - startTime);
+		AddProcessData("Render Main Menu Bar", (float)FlatEngine::GetEngineTime() - startTime);
 
-		startTime = (float)SDL_GetTicks();
+		startTime = (float)FlatEngine::GetEngineTime();
 		RenderToolbar();
-		AddProcessData("Render Toolbar", (float)SDL_GetTicks() - startTime);
+		AddProcessData("Render Toolbar", (float)FlatEngine::GetEngineTime() - startTime);
 		
 		if (_showHierarchy)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderHierarchy();
-			AddProcessData("Render Hierarchy", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Hierarchy", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showInspector)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderInspector();
-			AddProcessData("Render Inspector", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Inspector", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showGameView)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			Game_RenderView();
-			AddProcessData("Render Game View", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Game View", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showSceneView)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			Scene_RenderView();
-			AddProcessData("Render Scene View", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Scene View", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showAnimator)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderAnimator();
-			AddProcessData("Render Animator", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Animator", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 		
 		if (_showAnimationPreview)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderAnimationPreview();
-			AddProcessData("Render Animation Preview", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Animation Preview", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 		
 		if (_showKeyFrameEditor)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderKeyFrameEditor();
-			AddProcessData("Render Key Frame Editor", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Key Frame Editor", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showLogger)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderLog();
-			AddProcessData("Render Log", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Log", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 	
 		if (_showProfiler)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderProfiler();
-			AddProcessData("Render Profiler", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Profiler", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showMappingContextEditor)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderMappingContextEditor();
-			AddProcessData("Render Mapping Context Editor", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Mapping Context Editor", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showSettings)
 		{
-			startTime = (float)SDL_GetTicks();
+			startTime = (float)FlatEngine::GetEngineTime();
 			RenderSettings();
-			AddProcessData("Render Settings", (float)SDL_GetTicks() - startTime);
+			AddProcessData("Render Settings", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 	}
 
+
+	// General in order to be used with multiple views that render objects (animation preview, scene view, etc)
 	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset)
 	{
 		drawList = ImGui::GetWindowDrawList();
@@ -1458,7 +1504,6 @@ namespace FlatEngine { namespace FlatGui {
 		drawSplitter = nullptr;
 	}
 
-	// General in order to be used with multiple views that render objects
 	void RenderViewObject(std::shared_ptr<GameObject> self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		std::shared_ptr<Transform> transform = self->GetTransformComponent();
@@ -1484,6 +1529,7 @@ namespace FlatEngine { namespace FlatGui {
 				SDL_Texture* spriteTexture = sprite->GetTexture();
 				float spriteTextureWidth = (float)sprite->GetTextureWidth();
 				float spriteTextureHeight = (float)sprite->GetTextureHeight();
+				Vector2 spriteScale = sprite->GetScale();
 				Vector2 spriteOffset = sprite->GetOffset();
 				bool _spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
@@ -1494,17 +1540,14 @@ namespace FlatEngine { namespace FlatGui {
 					// Get Input and Output
 					ImGuiIO& inputOutput = ImGui::GetIO();
 
-					Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y));
+					Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x * spriteScale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y * spriteScale.y));
 					ImGui::SetCursorPos(positionOnScreen);
 					//// This will catch our interactions  - 4096 for overlap or keyword if it works
 					ImGui::SetNextItemAllowOverlap();
-					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 					const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 					const bool is_active = ImGui::IsItemActive();   // Held
 					const bool is_clicked = ImGui::IsItemClicked();
-
-					if (is_hovered || is_active)
-						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
 					if (is_clicked)
 						SetFocusedGameObjectID(sprite->GetParentID());
@@ -1518,7 +1561,7 @@ namespace FlatEngine { namespace FlatGui {
 					if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
 					{
 						sceneViewScrolling.x += inputOutput.MouseDelta.x;
-						sceneViewScrolling.y += inputOutput.MouseDelta.y;
+						sceneViewScrolling.y += inputOutput.MouseDelta.y;						
 					}
 					// Get scroll amount for changing zoom level of scene view
 					Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
@@ -1567,7 +1610,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, transformScale, _spriteScalesWithZoom, step, draw_list, rotation);
+					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation);
 				}
 			}
 
@@ -1720,7 +1763,7 @@ namespace FlatEngine { namespace FlatGui {
 				bool _isColliding = boxCollider->IsColliding();
 				float activeRadius = boxCollider->GetActiveRadiusScreen();
 				bool _showActiveRadius = boxCollider->GetShowActiveRadius();
-				Vector2 center = boxCollider->GetCenter();
+				Vector2 center = boxCollider->GetCenterCoord();
 
 				boxCollider->UpdateActiveEdges();
 
@@ -1860,526 +1903,6 @@ namespace FlatEngine { namespace FlatGui {
 		}
 	}
 
-	// Helper - Get a value from world/grid position converted into viewport position. Just add - canvas_p0 to get Window coordinates
-	float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord)
-	{
-		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
-		float scaleToScreenSizeBy = 1;
-
-		// If we're in Release mode, scale the Game Viewport to the window size
-		if (FlatEngine::_isDebugMode == true && primaryCamera != nullptr)
-			scaleToScreenSizeBy = GAME_VIEWPORT_HEIGHT / primaryCamera->GetHeight() * .05f;
-
-		if (_isYCoord)
-			return centerPoint + (-worldPosition * zoomFactor * scaleToScreenSizeBy);
-		else
-			return centerPoint + (worldPosition * zoomFactor * scaleToScreenSizeBy);
-	}
-
-	// Helper - Get a value from viewport position converted into world/grid position.
-	Vector2 ViewportToWorld(Vector2 viewportPosition)
-	{
-		std::shared_ptr<Camera> primaryCamera = FlatEngine::GetLoadedScene()->GetPrimaryCamera();
-		float zoom = 10;
-
-		if (primaryCamera != nullptr)
-			zoom = primaryCamera->GetZoom();
-
-		float xPos = (viewportPosition.x - worldCenterPoint.x) / zoom;
-		float yPos = -(viewportPosition.y - worldCenterPoint.y) / zoom;
-
-		return Vector2(xPos, yPos);
-	}
-	
-	// ImGui Wrappers
-	void BeginWindow(std::string name)
-	{
-		PushWindowStyles();
-		ImGui::Begin(name.c_str());
-		PopWindowStyles();
-
-		BeginWindowChild(name);
-	}
-
-	void BeginWindow(std::string name, bool& _isOpen)
-	{
-		PushWindowStyles();
-		ImGui::Begin(name.c_str(), &_isOpen);
-		PopWindowStyles();
-
-		BeginWindowChild(name);
-	}
-
-	void EndWindow()
-	{
-		EndWindowChild();
-		ImGui::End();
-	}
-
-	void BeginWindowChild(std::string title)
-	{
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild(title.c_str(), Vector2(0, 0), childFlags);
-		ImGui::PopStyleColor();
-	}
-
-	void BeginResizeWindowChild(std::string title)
-	{
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, outerWindowColor);
-		ImGui::BeginChild(title.c_str(), Vector2(0, 0), resizeChildFlags);
-		ImGui::PopStyleColor();
-	}
-
-	void EndWindowChild()
-	{
-		ImGui::EndChild();
-	}
-
-	void PushWindowStyles()
-	{
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, windowBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, frameBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, frameBgActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, frameBgHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_Tab, tabColor);
-		ImGui::PushStyleColor(ImGuiCol_TabActive, tabActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TabHovered, tabHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, tabUnfocusedColor);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, tabUnfocusedActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, titleBgColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, titleBgActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, titleBgCollapsedColor);
-		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, textSelectedBgColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, resizeGripColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, resizeGripActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, resizeGripHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, popupBgColor);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, navWindowHighlightColor);
-		ImGui::PushStyleColor(ImGuiCol_NavHighlight, navHighlightColor);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, navWindowDimBgColor);
-		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, modalWindowDimBgColor);
-		ImGui::PushStyleColor(ImGuiCol_DockingPreview, dockingPreviewColor);
-		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, dockingPreviewEmptyColor);
-	}
-
-	void PopWindowStyles()
-	{
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
-
-	void PushComboStyles()
-	{
-		ImGui::PushStyleColor(ImGuiCol_Button, comboArrowColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, comboArrowHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, comboBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, comboHoveredColor);
-		// For Selectables
-		ImGui::PushStyleColor(ImGuiCol_Header, comboSelectableColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, comboSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, comboHighlightedColor);
-	}
-
-	void PopComboStyles()
-	{
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		// For Selectables
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
-	
-	void PushMenuStyles()
-	{
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10, 5 });
-		//ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
-	}
-
-	void PopMenuStyles()
-	{
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		//ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
-	}
-
-	void PushTableStyles()
-	{
-		ImGui::PushStyleColor(ImGuiCol_TableRowBg, tableCellDarkColor);
-		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, tableCellLightColor);
-	}
-
-	void PopTableStyles()
-	{
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
-
-	bool PushTable(std::string id, int columns, ImGuiTableFlags flags)
-	{
-		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
-		PushTableStyles();
-		bool _beginTable = ImGui::BeginTable(id.c_str(), columns, tableFlags);
-		if (_beginTable)
-		{
-			for (int i = 0; i < columns; i++)
-			{
-				std::string columnLabel = id + std::to_string(i);
-				ImGui::TableSetupColumn(columnLabel.c_str(), flags, columnWidth);
-			}
-		}
-		else
-			PopTableStyles();
-
-		return _beginTable;
-	}
-
-	bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max)
-	{
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		bool _isChanged = RenderDragFloat(id.c_str(), 0, value, increment, min, max);
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-
-		return _isChanged;
-	}
-
-	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max)
-	{
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		bool _isChanged = RenderDragInt(id.c_str(), 0, value, speed, min, max);
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-
-		return _isChanged;
-	}
-
-	bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value)
-	{
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		bool _checked = RenderCheckbox(fieldName, _value);
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-
-		return _checked;
-	}
-
-	void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option)
-	{
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		RenderSelectable(id, options, current_option);
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-	}
-
-	void RenderTextTableRow(std::string id, std::string fieldName, std::string value)
-	{
-		// Push uneditableTableTextColor text color
-		ImGui::PushStyleColor(ImGuiCol_Text, noEditTableTextColor);
-
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		// Set table cell bg color
-		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowFieldBgColor));
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		// Set table cell bg color
-		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowValueBgColor));
-		ImGui::Text(value.c_str());
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-
-		// Pop text color
-		ImGui::PopStyleColor();
-	}
-
-	void PopTable()
-	{
-		ImGui::EndTable();
-		PopTableStyles();
-	}
-
-	bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles, ImGuiInputTextFlags flags)
-	{
-		bool _editedButton = false;
-		bool _editedInput = false;
-		char newPath[1024];
-		strcpy_s(newPath, value.c_str());
-		std::string pathString = label;
-
-		if (pathString != "")
-		{
-			ImGui::Text(pathString.c_str());
-			ImGui::SameLine(0, 5);
-		}
-		
-		if (_canOpenFiles)
-		{
-			std::string buttonId = id + "openFileButton";
-			if (RenderImageButton(buttonId.c_str(), openFileTexture))
-			{
-				std::string assetPath = OpenLoadFileExplorer();
-				strcpy_s(newPath, assetPath.c_str());				
-				_editedButton = true;
-			}
-			ImGui::SameLine();
-		}
-
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
-		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
-		ImGui::PopStyleColor();
-
-		if (newPath != " ")
-			value = newPath;
-		return _editedButton || _editedInput;
-	}
-
-	void RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
-	{
-		PushComboStyles();
-		PushMenuStyles();
-		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		if (ImGui::BeginCombo(id.c_str(), options[current_option].c_str()))
-		{
-			for (int n = 0; n < options.size(); n++)
-			{
-				bool is_selected = (options[current_option] == options[n]); // You can store your selection however you want, outside or inside your objects
-				if (ImGui::Selectable(options[n].c_str(), is_selected))
-					current_option = n;
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-		PopMenuStyles();
-		PopComboStyles();
-	}
-
-	void PushTreeList(std::string id)
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		PushMenuStyles();
-		ImGui::BeginTable(id.c_str(), 1, tableFlags);
-		ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
-	}
-
-	void PopTreeList()
-	{
-		ImGui::EndTable();
-		PopMenuStyles();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
-	}
-
-	void RenderTreeLeaf(std::string name, std::string& node_clicked)
-	{
-		ImGuiTreeNodeFlags node_flags;
-
-		std::string treeID = name + "_node";
-		if (node_clicked == name)
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-		else
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-		//// TreeNode Opener - No TreePop because it's a leaf
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-
-		ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, name.c_str());
-		if (ImGui::IsItemClicked())
-			node_clicked = name;
-
-		ImGui::PushID(treeID.c_str());
-		ImGui::PopID();
-	}
-
-	bool RenderButton(std::string text, Vector2 size, float rounding, Vector4 color, Vector4 hoverColor, Vector4 activeColor)
-	{
-		bool _isClicked;
-
-		ImGui::PushStyleColor(ImGuiCol_Button, color);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
-
-		if (size.x != 0 || size.y != 0)
-			_isClicked = ImGui::Button(text.c_str(), size);
-		else
-			_isClicked = ImGui::Button(text.c_str());
-
-		// Set Mouse Cursor
-		if (ImGui::IsItemHovered())
-			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		return _isClicked;
-	}
-
-	bool RenderImageButton(std::string id, SDL_Texture *texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor)
-	{
-		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(2, 2));
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
-
-		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uv0, uv1, transparentColor, tint);
-
-		// Set Mouse Cursor
-		if (ImGui::IsItemHovered())
-			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		return _isClicked;
-	}
-
-	bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max)
-	{
-		//ImGui::PushStyleColor(ImGuiCol_SliderGrab, sliderColor);
-		//ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, sliderActiveColor);
-		//
-		//ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		//bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
-		//
-		//ImGui::PopStyleColor();
-
-		return false;
-	}
-
-	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, dragColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, dragActiveColor);
-
-		if (width != 0)
-			ImGui::SetNextItemWidth(width);
-		else
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
-
-		// Set cursor type
-		if (ImGui::IsItemHovered())
-			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		return _sliderChanged;
-	}
-
-	bool RenderCheckbox(std::string text, bool &_toCheck)
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, checkboxBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, checkboxHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, checkboxActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_CheckMark, checkboxCheckColor);
-
-		bool _checked = ImGui::Checkbox(text.c_str(), &_toCheck);
-
-		if (ImGui::IsItemHovered())
-			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		return _checked;
-	}
-
-	void RenderSectionHeader(std::string headerText, float height)
-	{
-		auto cursorPos = ImGui::GetCursorScreenPos();
-		auto regionAvailable = ImGui::GetContentRegionAvail();
-
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
-		Vector2 screenCursor = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(innerWindowColor));
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
-		ImGui::Text(headerText.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-
-		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(componentBorderColor));
-	}
-
-	// *** Sets CursorScreenPos to the starting point! ***
-	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect)
-	{
-		if (_showRect)
-			DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), FlatGui::whiteColor, 1.0f, ImGui::GetWindowDrawList());
-
-		ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight;
-		if (_allowOverlap)
-		{
-			ImGui::SetNextItemAllowOverlap();
-			flags += ImGuiButtonFlags_AllowOverlap;
-		}
-			
-		ImGui::SetCursorScreenPos(startingPoint);
-		return ImGui::InvisibleButton(id.c_str(), size, flags);
-	}
-
 
 	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
 	{
@@ -2401,7 +1924,6 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (_scalesWithZoom)
 		{
-
 			renderStart = Vector2(scalingXStart, scalingYStart);
 			renderEnd = Vector2(scalingXEnd, scalingYEnd);
 			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), whiteColor, 2, draw_list);
@@ -2450,22 +1972,6 @@ namespace FlatEngine { namespace FlatGui {
 		return renderStart;
 	}
 
-
-	// Hierarchy
-	void ResetHierarchyExpanderTracker()
-	{
-		// Initialize Hierarchy scene object expanded tracker
-		FlatEngine::FlatGui::leafExpandedTracker.clear();
-		std::vector<std::shared_ptr<GameObject>> sceneObjects = GetSceneObjects();
-		for (std::vector<std::shared_ptr<GameObject>>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
-		{
-			if (FlatEngine::FlatGui::leafExpandedTracker.count((*object)->GetID()) == 0)
-			{
-				FlatEngine::FlatGui::leafExpandedTracker.emplace((*object)->GetID(), true);
-			}
-		}
-	}
-
 	ImU32 Vector4ToImU32(Vector4 color)
 	{
 		float redValue = color.x;
@@ -2473,420 +1979,6 @@ namespace FlatEngine { namespace FlatGui {
 		float blueValue = color.z;
 		float alphaValue = color.w;
 		return (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
-	}
-
-	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags)
-	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, dragColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, dragHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, dragActiveColor);
-
-		if (width != 0)
-			ImGui::SetNextItemWidth(width);
-		else
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		bool _sliderChanged = ImGui::DragInt(text.c_str(), &value, speed, min, max, "%d", flags);
-		// Set cursor type
-		if (ImGui::IsItemHovered())
-			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		return _sliderChanged;
-	}
-
-	void CreateNewAnimationFile(std::string path)
-	{
-		// Declare file and input stream
-		std::ofstream file_obj;
-
-		// Delete old contents of the file
-		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
-
-		// Opening file in append mode
-		file_obj.open(path, std::ios::app);
-
-		// Array that will hold our gameObject json objects
-		json animationObjectsJsonArray;
-
-		// Set animationObjectsJsonArray to empty
-		animationObjectsJsonArray.push_back("NULL");
-
-		// Create the GameObjects json object and add the empty array as the content
-		json newFileObject = json::object({ {"Animation Properties", animationObjectsJsonArray } });
-
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
-	}
-
-	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
-	{
-		// Declare file and input stream
-		std::ofstream file_obj;
-		std::ifstream ifstream(path);
-
-		// Delete old contents of the file
-		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
-
-		// Opening file in append mode
-		file_obj.open(path, std::ios::app);
-
-		// Array that will hold our gameObject json objects
-		json animationProperties;
-
-		// Create Animation Property Json data object
-		json animationName = json::object({
-			{ "Name", propertiesObject->animationName },
-			{ "Length", propertiesObject->animationLength },
-			{ "Loop", propertiesObject->_loop }
-		});
-		animationProperties.push_back(animationName);
-
-
-		for (std::shared_ptr<Animation::S_Transform> transformProp : propertiesObject->transformProperties)
-		{
-			// Declare components array json object for components
-			json transformPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "transformInterpType", transformProp->transformInterpType },
-				{ "transformSpeed", transformProp->transformSpeed },
-				{ "scaleInterpType", transformProp->scaleInterpType },
-				{ "scaleSpeed", transformProp->scaleSpeed },
-				{ "time", transformProp->time },
-				{ "xMove", transformProp->xMove },
-				{ "yMove", transformProp->yMove },
-				{ "xScale", transformProp->xScale },
-				{ "yScale", transformProp->yScale }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			transformPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Transform" },
-				{ "Frames", transformPropertiesArray }
-			});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Sprite> spriteProp : propertiesObject->spriteProperties)
-		{
-			// Declare components array json object for components
-			json spritePropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "interpType", spriteProp->interpType },
-				{ "speed", spriteProp->speed },
-				{ "time", spriteProp->time },
-				{ "path", spriteProp->path },
-				{ "xOffset", spriteProp->xOffset },
-				{ "yOffset", spriteProp->yOffset }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			spritePropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Sprite" },
-				{ "Frames", spritePropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Camera> cameraProp : propertiesObject->cameraProperties)
-		{
-			// Declare components array json object for components
-			json cameraPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", cameraProp->time },
-				{ "_isPrimaryCamera", cameraProp->_isPrimaryCamera }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			cameraPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Camera" },
-				{ "Frames", cameraPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Script> scriptProp : propertiesObject->scriptProperties)
-		{
-			// Declare components array json object for components
-			json scriptPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", scriptProp->time },
-				{ "path", scriptProp->path }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			scriptPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Script" },
-				{ "Frames", scriptPropertiesArray }
-			});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Button> buttonProp : propertiesObject->buttonProperties)
-		{
-			// Declare components array json object for components
-			json buttonPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", buttonProp->time },
-				{ "_isActive", buttonProp->_isActive }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			buttonPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Button" },
-				{ "Frames", buttonPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Canvas> canvasProp : propertiesObject->canvasProperties)
-		{
-			// Declare components array json object for components
-			json canvasPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", canvasProp->time }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			canvasPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Canvas" },
-				{ "Frames", canvasPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Audio> audioProp : propertiesObject->audioProperties)
-		{
-			// Declare components array json object for components
-			json audioPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", audioProp->time },
-				{ "path", audioProp->path },
-				{ "_isMusic", audioProp->_isMusic }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			audioPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Audio" },
-				{ "Frames", audioPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_Text> textProp : propertiesObject->textProperties)
-		{
-			// Declare components array json object for components
-			json textPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", textProp->time },
-				{ "path", textProp->path },
-				{ "text", textProp->text },
-				{ "color", textProp->color }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			textPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "Text" },
-				{ "Frames", textPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_BoxCollider> boxColliderProp : propertiesObject->boxColliderProperties)
-		{
-			// Declare components array json object for components
-			json boxColliderPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", boxColliderProp->time },
-				{ "_isActive", boxColliderProp->_isActive }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			boxColliderPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "BoxCollider" },
-				{ "Frames", boxColliderPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_CircleCollider> circleColliderProp : propertiesObject->circleColliderProperties)
-		{
-			// Declare components array json object for components
-			json circleColliderPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", circleColliderProp->time },
-				{ "_isActive", circleColliderProp->_isActive }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			circleColliderPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "CircleCollider" },
-				{ "Frames", circleColliderPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_RigidBody> rigidBodyProp : propertiesObject->rigidBodyProperties)
-		{
-			// Declare components array json object for components
-			json rigidBodyPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", rigidBodyProp->time },
-				{ "interpType", rigidBodyProp->interpType },
-				{ "speed", rigidBodyProp->speed },
-				{ "_isActive", rigidBodyProp->_isActive },
-				{ "gravityScale", rigidBodyProp->gravityScale },
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			rigidBodyPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "RigidBody" },
-				{ "Frames", rigidBodyPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-		for (std::shared_ptr<Animation::S_CharacterController> characterControllerProp : propertiesObject->characterControllerProperties)
-		{
-			// Declare components array json object for components
-			json characterControllerPropertiesArray = json::array();
-
-			// Get the objects fields
-			json jsonData = {
-				{ "time", characterControllerProp->time },
-				{ "_isActive", characterControllerProp->_isActive }
-			};
-
-			// Dumped json object with required data for saving
-			std::string data = jsonData.dump();
-
-			// Save to the json array
-			characterControllerPropertiesArray.push_back(json::parse(data));
-
-			// Create Animation Property Json data object
-			json animationProperty = json::object({
-				{ "Property", "CharacterController" },
-				{ "Frames", characterControllerPropertiesArray }
-				});
-
-			// Finally, add the Animation Property json to the animationProperties
-			animationProperties.push_back(animationProperty);
-		}
-
-		// Recreate the Animation Property json object and add the array as the content
-		json newFileObject = json::object({ {"Animation Properties", animationProperties } });
-
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
 	}
 
 	std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path)
@@ -3164,14 +2256,6 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		return animationProperties;
-	}
-
-	void Cleanup()
-	{
-		ImGui_ImplSDLRenderer2_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImPlot::DestroyContext();
-		ImGui::DestroyContext();
 	}
 }
 }

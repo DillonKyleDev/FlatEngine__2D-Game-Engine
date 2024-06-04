@@ -9,7 +9,7 @@
 
 namespace FlatEngine { namespace FlatGui {
 
-	// Scene view
+	// Scene view default values
 	// The multiplier for sceneViewGridStep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
 	Vector2 sceneViewGridStep = Vector2(50,50);
 	float SCENE_VIEWPORT_WIDTH = 600;
@@ -69,9 +69,9 @@ namespace FlatEngine { namespace FlatGui {
 
 
 		//// For Profiler
-		float sceneViewGridStartTime = (float)SDL_GetTicks();
+		float sceneViewGridStartTime = (float)FlatEngine::GetEngineTime();
 		RenderGridView(sceneViewCenter, sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, sceneViewGridStep, centerOffset);
-		AddProcessData("##Scene_RenderView_Grid", (float)SDL_GetTicks() - sceneViewGridStartTime);
+		AddProcessData("##Scene_RenderView_Grid", (float)FlatEngine::GetEngineTime() - sceneViewGridStartTime);
 
 
 		// Get currently loaded scene objects
@@ -85,9 +85,9 @@ namespace FlatEngine { namespace FlatGui {
 
 
 		//// For Profiler
-		float sceneViewObjectsStartTime = (float)SDL_GetTicks();
+		float sceneViewObjectsStartTime = (float)FlatEngine::GetEngineTime();
 		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
-		AddProcessData("##Scene_RenderView_Objects", (float)SDL_GetTicks() - sceneViewObjectsStartTime);
+		AddProcessData("##Scene_RenderView_Objects", (float)FlatEngine::GetEngineTime() - sceneViewObjectsStartTime);
 
 
 		// For panning the scene view

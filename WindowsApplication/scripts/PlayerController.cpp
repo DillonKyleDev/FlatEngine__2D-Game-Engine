@@ -43,7 +43,6 @@ void PlayerController::Update(float deltaTime)
 
 	if (mappingContext != nullptr && rigidBody != nullptr && mappingContext->Fired("IA_Jump"))
 	{
-		//FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
 		{
 			rigidBody->AddForce(Vector2(0, 1), 1300);

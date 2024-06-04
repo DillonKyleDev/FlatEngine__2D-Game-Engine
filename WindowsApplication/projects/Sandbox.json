@@ -12,7 +12,7 @@
             "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": false,
-            "_showProfiler": false,
+            "_showProfiler": true,
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Simple Box",
@@ -25,7 +25,7 @@
             "resolutionWidth": 1920.0,
             "sceneViewGridStepX": 23.69971466064453,
             "sceneViewGridStepY": 23.69971466064453,
-            "sceneViewScrollingX": 654.403076171875,
+            "sceneViewScrollingX": 648.403076171875,
             "sceneViewScrollingY": 319.73046875
         }
     ]

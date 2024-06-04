@@ -13,37 +13,36 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -28.378084182739258,
+                    "xPos": -27.18286895751953,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.25316762924194336,
+                    "yPos": -3.833249568939209,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isMoving": false,
+                    "airControl": 0.20000000298023224,
                     "id": 1,
-                    "runSpeed": 2.0,
-                    "type": "CharacterController",
-                    "walkSpeed": 1.0
+                    "maxAcceleration": 1.0,
+                    "maxSpeed": 0.10000000149011612,
+                    "type": "CharacterController"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": true,
                     "id": 29,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\player.png",
                     "renderOrder": 1,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\player.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinious": false,
                     "_isKinematic": false,
                     "_isStatic": false,
                     "angularDrag": 1.0,
@@ -79,7 +78,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isPrimaryCamera": true,
+                    "_isPrimaryCamera": false,
                     "frustrumAlpha": 255.0,
                     "frustrumBlue": 255.0,
                     "frustrumGreen": 255.0,
@@ -122,7 +121,7 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -0.9799760580062866,
+                    "xPos": -2.7799999713897705,
                     "xScale": 84.30000305175781,
                     "yOrigin": 0.0,
                     "yPos": 2.1847803592681885,
@@ -132,27 +131,27 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 9,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\stream.png",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\stream.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isPrimaryCamera": false,
+                    "_isPrimaryCamera": true,
                     "frustrumAlpha": 255.0,
                     "frustrumBlue": 255.0,
                     "frustrumGreen": 255.0,
                     "frustrumRed": 255.0,
-                    "height": 1.0,
+                    "height": 50.0,
                     "id": 40,
                     "type": "Camera",
-                    "width": 1.0,
-                    "zoom": 16.399999618530273
+                    "width": 50.0,
+                    "zoom": 22.100000381469727
                 }
             ],
             "id": 1,
@@ -186,23 +185,23 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -31.603759765625,
+                    "xPos": -23.585529327392578,
                     "xScale": 4.400000095367432,
                     "yOrigin": 0.0,
-                    "yPos": -6.798829555511475,
+                    "yPos": -10.13224983215332,
                     "yScale": 5.300000190734863
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 17,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -247,396 +246,6 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 5.722869396209717,
-                    "xScale": 6.900000095367432,
-                    "yOrigin": 0.0,
-                    "yPos": 4.256965160369873,
-                    "yScale": 4.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 5,
-            "name": "Wall2",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 19.116214752197266,
-                    "xScale": 3.5999999046325684,
-                    "yOrigin": 0.0,
-                    "yPos": 9.926682472229004,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 11,
-            "name": "Wall3",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -8.234102249145508,
-                    "xScale": 3.5999999046325684,
-                    "yOrigin": 0.0,
-                    "yPos": -5.624735355377197,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 7,
-            "name": "Platform4",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -8.760293006896973,
-                    "xScale": 3.5999999046325684,
-                    "yOrigin": 0.0,
-                    "yPos": 2.185042381286621,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 8,
-            "name": "Platform1",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -0.543834924697876,
-                    "xScale": 3.5999999046325684,
-                    "yOrigin": 0.0,
-                    "yPos": -3.0441946983337402,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 9,
-            "name": "Platform2",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 19,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -17.08971405029297,
-                    "xScale": 3.5999999046325684,
-                    "yOrigin": 0.0,
-                    "yPos": -0.5401753187179565,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isContinuous": false,
-                    "_isSolid": true,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 20,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 25,
-                    "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 10,
-            "name": "Platform3",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
                     "id": 22,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -650,7 +259,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinuous": true,
+                    "_isContinuous": false,
                     "_isSolid": true,
                     "_isStatic": true,
                     "_showActiveRadius": false,
@@ -666,13 +275,13 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 24,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 6,
@@ -706,16 +315,16 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 26.63874053955078,
+                    "xPos": -4.300655841827393,
                     "xScale": 1.899999976158142,
                     "yOrigin": 0.0,
-                    "yPos": 12.221656799316406,
+                    "yPos": -4.085073471069336,
                     "yScale": 0.8999999761581421
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isContinuous": true,
+                    "_isContinuous": false,
                     "_isSolid": true,
                     "_isStatic": true,
                     "_showActiveRadius": false,
@@ -731,13 +340,13 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 39,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 2,
@@ -771,23 +380,23 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 35.99199676513672,
+                    "xPos": 4.273093223571777,
                     "xScale": 5.099999904632568,
                     "yOrigin": 0.0,
-                    "yPos": 14.51494312286377,
+                    "yPos": -4.010984897613525,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 41,
+                    "path": "assets/images/environment/light.png",
                     "renderOrder": 0,
-                    "texture": "assets/images/environment/light.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -836,23 +445,23 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -6.371384620666504,
+                    "xPos": -4.336955547332764,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 3.4599573612213135,
+                    "yPos": -2.9366040229797363,
                     "yScale": 0.30000001192092896
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 44,
+                    "path": "assets/images/environment/tan.png",
                     "renderOrder": 0,
-                    "texture": "assets/images/environment/tan.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -908,23 +517,23 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -23.75556182861328,
+                    "xPos": -13.12465763092041,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -7.552833557128906,
+                    "yPos": -7.462742328643799,
                     "yScale": 0.30000001192092896
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 48,
+                    "path": "assets/images/environment/tan.png",
                     "renderOrder": 0,
-                    "texture": "assets/images/environment/tan.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -980,23 +589,23 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -3.1224005222320557,
+                    "xPos": 7.95896577835083,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -1.7721731662750244,
+                    "yPos": -2.763190984725952,
                     "yScale": 0.30000001192092896
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 52,
+                    "path": "assets/images/environment/tan.png",
                     "renderOrder": 0,
-                    "texture": "assets/images/environment/tan.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -1042,11 +651,10 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "children": [
                 16,
-                17,
-                21
+                17
             ],
             "components": [
                 {
@@ -1055,10 +663,10 @@
                     "id": 52,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -28.378084182739258,
+                    "xOrigin": -27.18286895751953,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.25316762924194336,
+                    "yOrigin": -3.833249568939209,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
@@ -1078,6 +686,18 @@
                     "attachedScript": "PauseMenu",
                     "id": 77,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 57,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\darkOpaque.png",
+                    "renderOrder": 3,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 15.0,
+                    "yOffset": 5.0,
+                    "yScale": 10.0
                 }
             ],
             "id": 3,
@@ -1101,9 +721,8 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "children": [
-                18,
                 19,
                 24
             ],
@@ -1114,10 +733,10 @@
                     "id": 76,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -28.378084182739258,
+                    "xOrigin": -27.18286895751953,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.25316762924194336,
+                    "yOrigin": -3.833249568939209,
                     "yPos": 0.0,
                     "yScale": 1.0
                 }
@@ -1143,7 +762,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "children": [
                 20
             ],
@@ -1169,77 +788,7 @@
             }
         },
         {
-            "_isActive": true,
-            "children": [
-                22
-            ],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 56,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": -28.378084182739258,
-                    "xPos": 0.0,
-                    "xScale": 5.0,
-                    "yOrigin": 0.25316762924194336,
-                    "yPos": 1.2000000476837158,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 57,
-                    "renderOrder": 6,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 58,
-                    "type": "Button"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "SettingsButton",
-                    "id": 59,
-                    "type": "Script"
-                }
-            ],
-            "id": 18,
-            "name": "SettingsButton",
-            "parent": 16,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
+            "_isActive": false,
             "children": [
                 23
             ],
@@ -1250,24 +799,24 @@
                     "id": 60,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -28.378084182739258,
+                    "xOrigin": -27.18286895751953,
                     "xPos": 0.0,
                     "xScale": 5.0,
-                    "yOrigin": 0.25316762924194336,
-                    "yPos": -1.4500000476837158,
+                    "yOrigin": -3.833249568939209,
+                    "yPos": -0.6499999761581421,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 61,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
                     "renderOrder": 6,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -1309,7 +858,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "children": [],
             "components": [],
             "id": 20,
@@ -1333,111 +882,7 @@
             }
         },
         {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 68,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": -28.378084182739258,
-                    "xPos": 0.0,
-                    "xScale": 15.0,
-                    "yOrigin": 0.25316762924194336,
-                    "yPos": 0.0,
-                    "yScale": 10.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 69,
-                    "renderOrder": 5,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\darkOpaque.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "yOffset": 5.0
-                }
-            ],
-            "id": 21,
-            "name": "Overlay",
-            "parent": 3,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 71,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": -28.378084182739258,
-                    "xPos": 0.0,
-                    "xScale": 0.15000000596046448,
-                    "yOrigin": 1.4531676769256592,
-                    "yPos": 0.0,
-                    "yScale": 0.15000000596046448
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "f_alpha": 204,
-                    "f_blue": 1,
-                    "f_green": 1,
-                    "f_red": 1,
-                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
-                    "fontSize": 40,
-                    "id": 72,
-                    "renderOrder": 6,
-                    "text": "Settings",
-                    "type": "Text",
-                    "xOffset": 98.0,
-                    "yOffset": 27.0
-                }
-            ],
-            "id": 22,
-            "name": "SettingsButtonText",
-            "parent": 18,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
+            "_isActive": false,
             "children": [],
             "components": [
                 {
@@ -1446,10 +891,10 @@
                     "id": 73,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -28.378084182739258,
+                    "xOrigin": -27.18286895751953,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -1.1968324184417725,
+                    "yOrigin": -4.483249664306641,
                     "yPos": 0.0,
                     "yScale": 0.15000000596046448
                 },
@@ -1491,7 +936,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "children": [],
             "components": [
                 {
@@ -1500,10 +945,10 @@
                     "id": 75,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -28.378084182739258,
+                    "xOrigin": -27.18286895751953,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": 0.25316762924194336,
+                    "yOrigin": -3.833249568939209,
                     "yPos": 3.799999952316284,
                     "yScale": 0.15000000596046448
                 },
@@ -1527,6 +972,71 @@
             "id": 24,
             "name": "PausedText",
             "parent": 16,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 54,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 18.288761138916016,
+                    "xScale": 4.699999809265137,
+                    "yOrigin": 0.0,
+                    "yPos": -4.414528846740723,
+                    "yScale": 4.199999809265137
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 55,
+                    "path": "assets/images/environment/light.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 56,
+                    "type": "BoxCollider"
+                }
+            ],
+            "id": 10,
+            "name": "Wall(10)",
+            "parent": -1,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

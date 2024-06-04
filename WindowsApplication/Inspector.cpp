@@ -395,6 +395,9 @@ namespace FlatEngine { namespace FlatGui {
 								strcpy_s(newPath, path.c_str());
 								float textureWidth = sprite->GetTextureWidth();
 								float textureHeight = sprite->GetTextureHeight();
+								Vector2 textureScale = sprite->GetScale();
+								float xScale = textureScale.x;
+								float yScale = textureScale.y;
 								int renderOrder = sprite->GetRenderOrder();
 								bool _isActive = sprite->IsActive();
 								Vector2 offset = sprite->GetOffset();
@@ -432,12 +435,16 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##SpriteProperties" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX);
-									RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX);
-									if (path != "")
+									if (RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+										sprite->SetScale(Vector2(xScale, yScale));
+									if (RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
+										sprite->SetScale(Vector2(xScale, yScale));																
+									if (RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 										sprite->SetOffset(Vector2(xOffset, yOffset));
-									RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
-									sprite->SetRenderOrder(renderOrder);
+									if (RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+										sprite->SetOffset(Vector2(xOffset, yOffset));										
+									if (RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers))
+										sprite->SetRenderOrder(renderOrder);
 									RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
 									RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
 									PopTable();
@@ -697,12 +704,12 @@ namespace FlatEngine { namespace FlatGui {
 								}
 							}
 							else if (componentType == "CharacterController")
-							{
-								// Get Character Controller
+							{						
 								std::shared_ptr<CharacterController> characterController = std::static_pointer_cast<CharacterController>(components[i]);
 								bool _isActive = characterController->IsActive();
-								float walkSpeed = characterController->GetWalkSpeed();
-								float runSpeed = characterController->GetRunSpeed();								
+								float maxAcceleration = characterController->GetMaxAcceleration();								
+								float maxSpeed = characterController->GetMaxSpeed();
+								float airControl = characterController->GetAirControl();
 								bool _isMoving = characterController->IsMoving();	
 								long id = characterController->GetID();
 								std::string isMoving = "false";
@@ -716,17 +723,18 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##CharacterControllerProps" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##WalkSpeedDrag" + std::to_string(id), "Walk Speed", walkSpeed, 0.01f, 0.0f, 20.0f);
-									characterController->SetWalkSpeed(walkSpeed);
-									RenderFloatDragTableRow("##RunSpeedDrag" + std::to_string(id), "Run Speed", runSpeed, 0.01f, 0.0f, 20.0f);
-									characterController->SetRunSpeed(runSpeed);
+									if (RenderFloatDragTableRow("##MaxAccelerationDrag" + std::to_string(id), "Max Acceleration", maxAcceleration, 0.01f, 0.0f, 20.0f))
+										characterController->SetMaxAcceleration(maxAcceleration);
+									if (RenderFloatDragTableRow("##MaxSpeedDrag" + std::to_string(id), "Max Speed", maxSpeed, 0.01f, 0.0f, 1000.0f))
+										characterController->SetMaxSpeed(maxSpeed);
+									if (RenderFloatDragTableRow("##AirControlDrag" + std::to_string(id), "Air Control", airControl, 0.01f, 0.0f, 1000.0f))
+										characterController->SetAirControl(airControl);
 									RenderTextTableRow("##IsMoving" + std::to_string(id), "Is Moving", isMoving);
 									PopTable();
 								}
 							}
 							else if (componentType == "BoxCollider")
 							{
-								// Get Character Controller
 								std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(components[i]);
 								bool _isActive = boxCollider->IsActive();
 								bool _isColliding = boxCollider->IsColliding();
@@ -775,22 +783,26 @@ namespace FlatEngine { namespace FlatGui {
 							}
 							else if (componentType == "RigidBody")
 							{
-								// Get Character Controller
 								std::shared_ptr<RigidBody> rigidBody = std::static_pointer_cast<RigidBody>(components[i]);
+								long id = rigidBody->GetID();
 								bool _isActive = rigidBody->IsActive();
 								float mass = rigidBody->GetMass();
 								float gravity = rigidBody->GetGravity();
 								float angularDrag = rigidBody->GetAngularDrag();
-								Vector2 velocity = rigidBody->GetVelocity();
-								bool _isContinious = rigidBody->IsContinuous();
+								float fallingGravity = rigidBody->GetFallingGravity();
+								float terminalVelocity = rigidBody->GetTerminalVelocity();
+								float windResistance = rigidBody->GetWindResistance();
+								float friction = rigidBody->GetFriction();
+								float equilibriumForce = rigidBody->GetEquilibriumForce();
 								bool _isKinematic = rigidBody->IsKinematic();
 								bool _isStatic = rigidBody->IsStatic();
 								bool _isGrounded = rigidBody->IsGrounded();
-								bool _isMoving = rigidBody->IsMoving();	
-								long id = rigidBody->GetID();
-								std::string isMovingString = "false";
-								if (_isMoving)
-									isMovingString = "true";
+
+								// Read only
+								Vector2 velocity = rigidBody->GetVelocity();
+								Vector2 pendingForces = rigidBody->GetPendingForces();
+								Vector2 acceleration = rigidBody->GetAcceleration();
+
 								std::string isGroundedString = "false";
 								if (_isGrounded)
 									isGroundedString = "true";
@@ -802,21 +814,29 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##RigidBodyProps" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX);
-									rigidBody->SetMass(mass);
-									RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX);
-									rigidBody->SetGravity(gravity);
+									if (RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
+										rigidBody->SetMass(mass);
+									if (RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
+										rigidBody->SetGravity(gravity);
+									if (RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(id), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
+										rigidBody->SetFallingGravity(fallingGravity);
+									if (RenderFloatDragTableRow("##TerminalVelocity" + std::to_string(id), "Terminal Velocity", terminalVelocity, 0.01f, 0.001f, 1000))
+										rigidBody->SetTerminalVelocity(terminalVelocity);
+									if (RenderFloatDragTableRow("##WindResistance" + std::to_string(id), "Wind Resistance", windResistance, 0.01f, 0, 1))
+										rigidBody->SetWindResistance(windResistance);
+									if (RenderFloatDragTableRow("##Friction" + std::to_string(id), "Friction", friction, 0.01f, 0, 1))
+										rigidBody->SetFriction(friction);
+									if (RenderFloatDragTableRow("##EquilibriumForce" + std::to_string(id), "Equilibrium Force", equilibriumForce, 0.01f, 0, 1000))
+										rigidBody->SetEquilibriumForce(equilibriumForce);
 									RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
 									RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
-									RenderTextTableRow("##RigidBodyMoving" + std::to_string(id), "Is Moving", isMovingString);
+									RenderTextTableRow("##AccelerationX" + std::to_string(id), "X Acceleration", std::to_string(acceleration.x));
+									RenderTextTableRow("##AccelerationY" + std::to_string(id), "Y Acceleration", std::to_string(acceleration.y));
+									RenderTextTableRow("##PendingForcesX" + std::to_string(id), "X Pending Forces", std::to_string(pendingForces.x));
+									RenderTextTableRow("##PendingForcesY" + std::to_string(id), "Y Pending Forces", std::to_string(pendingForces.y));									
 									RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
 									PopTable();
-								}
-
-								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-								// Continuous Checkbox
-								RenderCheckbox(" Is Continuous", _isContinious);
-								rigidBody->SetIsContinuous(_isContinious);
+								}								
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 								// Kinematic Checkbox

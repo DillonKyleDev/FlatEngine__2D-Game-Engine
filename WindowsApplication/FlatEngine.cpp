@@ -93,28 +93,33 @@ namespace FlatEngine
 		float renderStartTime = 0;
 
 		if (_isDebugMode)
-			renderStartTime = (float)SDL_GetTicks(); // Profiler
+			renderStartTime = (float)FlatEngine::GetEngineTime(); // Profiler
 		_hasQuit = _closeProgram;
 		FlatGui::Render(_hasQuit);
 		if (_isDebugMode)
-			AddProcessData("Render", (float)SDL_GetTicks() - renderStartTime); // Profiler
+			AddProcessData("Render", (float)FlatEngine::GetEngineTime() - renderStartTime); // Profiler
 
 
 		//// If Release - Start the Game Loop
 		if (!_isDebugMode && !GameLoopStarted())
 			StartGameLoop();
 
-		// Keeping track of the frames passed since we started the GameLoop
+
 		if (GameLoopStarted() && !GameLoopPaused() || GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{
+			double frameStart = 0;
+			double frameTime = 0;
+
 			// Get time it took to get back to GameLoopUpdate()
-			double frameStart = (double)SDL_GetTicks();
-			double frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
+			frameStart = (double)FlatEngine::GetEngineTime();
+			frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
 			gameLoop->currentTime = frameStart;
 
 			// Physics Update Version 1
-			gameLoop->accumulator += frameTime;
-			if (gameLoop->accumulator >= gameLoop->deltaTime)
+			if (!gameLoop->IsGamePaused())
+				gameLoop->accumulator += frameTime;
+
+			if (!gameLoop->IsGamePaused() && gameLoop->accumulator >= gameLoop->deltaTime)
 			{
 				while (gameLoop->accumulator >= gameLoop->deltaTime)
 				{
@@ -122,12 +127,8 @@ namespace FlatEngine
 					GameLoopUpdate();
 					gameLoop->SetFrameSkipped(false);
 
-					// Find a way to pause game time independant of the game loop update
-					//if (!gameLoop->IsGamePaused())
-					//{
-						gameLoop->time += gameLoop->deltaTime;
-						gameLoop->accumulator -= gameLoop->deltaTime;
-					//}
+					gameLoop->time += gameLoop->deltaTime;
+					gameLoop->accumulator -= gameLoop->deltaTime;
 				}				
 			}
 			else
@@ -139,31 +140,34 @@ namespace FlatEngine
 			if (!loadedProject->IsVsyncEnabled())
 				SDL_Delay(4 - frameTime);
 
-			// Physics Update Version 2
-			// Clamp cycles per Run loop (avoids physics death spiral)
-			//int maxCyclesPerRunLoop = 100;
-			//int cycleCounter = 0;
-			//if (frameTime < gameLoop->deltaTime)
-			//{
-			//	GameLoopUpdate();
-			//	gameLoop->SetFrameSkipped(false);
-			//	float dt = std::min<double>(frameTime, gameLoop->deltaTime);
-			//	frameTime -= dt;
-			//	gameLoop->time += gameLoop->deltaTime;
-			//}
-			//else if (cycleCounter < maxCyclesPerRunLoop)
-			//{
-			//	while (frameTime > 0.0)
-			//	{
-			//		GameLoopUpdate();
-			//		gameLoop->SetFrameSkipped(false);
-			//		float dt = std::min<double>(frameTime, gameLoop->deltaTime);
-			//		frameTime -= dt;
-			//		gameLoop->time += gameLoop->deltaTime;
-			//		
-			//	}
-			//	cycleCounter++;
-			//}
+			// Physics update V2
+			{
+				// Physics Update Version 2
+				// Clamp cycles per Run loop (avoids physics death spiral)
+				//int maxCyclesPerRunLoop = 100;
+				//int cycleCounter = 0;
+				//if (frameTime < gameLoop->deltaTime)
+				//{
+				//	GameLoopUpdate();
+				//	gameLoop->SetFrameSkipped(false);
+				//	float dt = std::min<double>(frameTime, gameLoop->deltaTime);
+				//	frameTime -= dt;
+				//	gameLoop->time += gameLoop->deltaTime;
+				//}
+				//else if (cycleCounter < maxCyclesPerRunLoop)
+				//{
+				//	while (frameTime > 0.0)
+				//	{
+				//		GameLoopUpdate();
+				//		gameLoop->SetFrameSkipped(false);
+				//		float dt = std::min<double>(frameTime, gameLoop->deltaTime);
+				//		frameTime -= dt;
+				//		gameLoop->time += gameLoop->deltaTime;
+				//		
+				//	}
+				//	cycleCounter++;
+				//}
+			}
 		}
 		else
 			FlatGui::HandleEvents(_hasQuit);
@@ -183,7 +187,7 @@ namespace FlatEngine
 		FlatEngine::_closeProgram = true;
 	}
 
-	int GetEngineTime()
+	Uint32 GetEngineTime()
 	{
 		return (int)SDL_GetTicks();
 	}

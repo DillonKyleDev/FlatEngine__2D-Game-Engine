@@ -82,7 +82,7 @@ namespace FlatEngine
 	// Engine
 	extern void Run(bool &_hasQuit);
 	extern void CloseProgram();
-	extern int GetEngineTime();
+	extern Uint32 GetEngineTime();
 	extern json LoadFileData(std::string filepath);
 
 	// Project Management
@@ -204,7 +204,7 @@ namespace FlatEngine
 		extern Vector4 logBgColor;
 		extern Vector4 logOutlineColor;
 		//////////////////////
-		// Windows ///////////
+		/// Window  Colors ///
 		//////////////////////
 		extern Vector4 windowBgColor;
 		extern Vector4 frameBgColor;
@@ -308,7 +308,7 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> threeDotsIcon;
 		extern std::shared_ptr<Texture> showIcon;
 		extern std::shared_ptr<Texture> hideIcon;
-
+		// SDL_Textures
 		extern SDL_Texture* transformArrowTexture;
 		extern SDL_Texture* transformArrowAllWhiteTexture;
 		extern SDL_Texture* transformArrowXWhiteTexture;
@@ -356,16 +356,6 @@ namespace FlatEngine
 		extern bool _sceneViewLockedOnObject;
 		extern std::shared_ptr<GameObject> sceneViewLockedObject;
 
-		extern void RunOnceAfterInitialization();
-
-		// Animation Manager
-		extern void CreateNewAnimationFile(std::string path);
-		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
-		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
-
-		// Profiler
-		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);
-
 		// Settings
 		extern int iconTransparency;
 		extern bool _clearBufferEveryFrame;
@@ -392,7 +382,6 @@ namespace FlatEngine
 		extern 	float GAME_VIEWPORT_HEIGHT;
 		extern float xGameCenter;
 		extern float yGameCenter;
-		extern Vector2 worldCenterPoint;
 		extern Vector2 gameViewCenter;
 		extern Vector2 gameViewGridStep;
 
@@ -402,7 +391,8 @@ namespace FlatEngine
 		extern void Render(bool& quit);
 		extern void RenderClear();
 		extern void HandleEvents(bool& quit);
-
+		extern void RunOnceAfterInitialization();
+		// Viewports
 		extern void MainMenuBar();
 		extern void AddViewports();
 		extern void RenderToolbar();
@@ -410,7 +400,7 @@ namespace FlatEngine
 		extern void RenderInspector();
 		extern void Game_RenderView();
 		extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
-		extern void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 worldCenterPoint, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
+		extern void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 		extern void Scene_RenderView();
 		extern void RenderAnimator();
 		extern void RenderAnimationPreview();
@@ -421,18 +411,15 @@ namespace FlatEngine
 		extern void RenderMappingContextEditor();
 		extern void RenderSettings();
 		extern void Cleanup();
-
 		extern void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset);
 		extern void RenderViewObjects(std::vector<std::shared_ptr<GameObject>> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
 		extern void RenderViewObject(std::shared_ptr<GameObject> self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 		// Helper Functions //
-		//
 		// File managing
 		extern std::string OpenSaveFileExplorer();
 		extern std::string OpenLoadFileExplorer();
 		extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
-		// 
 		// ImGui Wrappers
 		extern void BeginWindow(std::string name);
 		extern void BeginWindow(std::string name, bool& _isOpen);
@@ -457,8 +444,7 @@ namespace FlatEngine
 		extern void PopTable();
 		extern bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles = false, ImGuiInputTextFlags flags = 0);
 		extern bool RenderButton(std::string text, Vector2 size = Vector2(0,0), float rounding = 1, Vector4 color = buttonColor, Vector4 hoverColor = buttonHoveredColor, Vector4 activeColor = buttonActiveColor);
-		extern bool RenderImageButton(std::string id, SDL_Texture *texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = imageButtonColor, Vector4 tint = imageButtonTintColor, Vector4 hoverColor = imageButtonHoveredColor, Vector4 activeColor = imageButtonActiveColor);
-		extern bool RenderSlider(std::string text, float width, float& value, float increment, float min, float max);
+		extern bool RenderImageButton(std::string id, SDL_Texture *texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = imageButtonColor, Vector4 tint = imageButtonTintColor, Vector4 hoverColor = imageButtonHoveredColor, Vector4 activeColor = imageButtonActiveColor);	
 		extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 		extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 		extern bool RenderCheckbox(std::string text, bool &_toCheck);
@@ -468,22 +454,22 @@ namespace FlatEngine
 		extern void PushTreeList(std::string id);
 		extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
 		extern void PopTreeList();
-
+		// SDL
+		extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
+		// Color converter
 		extern ImU32 Vector4ToImU32(Vector4 color);
-		
-		// Hierarchy
-		extern void ResetHierarchyExpanderTracker();
-
 		// SceneView
 		extern void RenderSceneViewTooltip();
-
-		extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
-		// Just add - canvas_p0 to get Window coordinates
-		extern float WorldToViewport(float centerPoint, float worldPosition, float zoomFactor, bool _isYCoord = false);
-		extern Vector2 ViewportToWorld(Vector2 viewportPosition);
-		// Recursive - For Rendering Hierarchy Objects and their children
+		// Hierarchy
 		extern void AddObjectWithChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
 		extern void AddObjectWithoutChild(std::shared_ptr<GameObject> currentObject, const char* charName, int& node_clicked, long &queuedForDelete, float indent);
+		extern void ResetHierarchyExpanderTracker();
+		// Animation Manager
+		extern void CreateNewAnimationFile(std::string path);
+		extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
+		extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
+		// Profiler
+		void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);
 	}
 };
 

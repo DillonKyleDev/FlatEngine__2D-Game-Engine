@@ -14,25 +14,24 @@ namespace FlatEngine {
 		std::string GetData();
 		void MoveToward(Vector2 direction);
 		void MoveTo(Vector2 location);
-		void SetWalkSpeed(float speed);
-		float GetWalkSpeed();
+		void SetMaxAcceleration(float speed);
+		float GetMaxAcceleration();
+		void SetMaxSpeed(float newMaxSpeed);
 		float GetMaxSpeed();
-		void SetRunSpeed(float speed);
-		float GetRunSpeed();
+		void SetAirControl(float newAirControl);
+		float GetAirControl();
 		void SetMoving(bool _isMoving);
 		bool IsMoving();
 		void SetIsGrounded(bool _grounded);
 		bool IsGrounded();
 
 	private:
-		float walkSpeed;
-		float runSpeed;
+		float maxAcceleration;
 		float maxSpeed;
 		float airControl;
 		float speedCorrection;
 		bool _isMoving;
 		bool _isGrounded;
-
 	};
 }
 

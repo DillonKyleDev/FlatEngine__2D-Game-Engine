@@ -39,7 +39,7 @@ namespace FlatEngine
 
 	void Logger::LogVector2(Vector2 vector, std::string line)
 	{
-		line = line + " Vector.x: " + std::to_string(vector.x) + " Vector.y: " + std::to_string(vector.y) + "\n";
+		line = line + " x: " + std::to_string(vector.x) + " y: " + std::to_string(vector.y) + "\n";
 		this->log->appendf(line.c_str());
 	}
 
@@ -87,13 +87,15 @@ namespace FlatEngine
 			static ImGuiTextBuffer* log = FlatEngine::logger->GetBuffer();
 			static int lines = 0;
 
+			if (RenderButton("Clear"))
+				log->clear(); lines = 0;
+			ImGui::SameLine();
+
 			ImGui::PushStyleColor(ImGuiCol_Text, logTextColor);
 			ImGui::Text("Log buffer contents : % d bytes", log->size());
 			ImGui::SameLine(0, 10);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 			ImGui::PopStyleColor();
-			if (RenderButton("Clear Buffer"))
-				log->clear(); lines = 0;
 
 			ImGui::Separator();
 			ImGui::Separator();

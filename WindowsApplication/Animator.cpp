@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "Text.h"
 #include "math.h"
+#include <fstream>
 
 namespace FlatEngine { namespace FlatGui {
 
@@ -1133,6 +1134,398 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		EndWindow();
+	}
+
+	void CreateNewAnimationFile(std::string path)
+	{
+		// Declare file and input stream
+		std::ofstream file_obj;
+
+		// Delete old contents of the file
+		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open(path, std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json animationObjectsJsonArray;
+
+		// Set animationObjectsJsonArray to empty
+		animationObjectsJsonArray.push_back("NULL");
+
+		// Create the GameObjects json object and add the empty array as the content
+		json newFileObject = json::object({ {"Animation Properties", animationObjectsJsonArray } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
+	}
+
+	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
+	{
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Delete old contents of the file
+		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		// Opening file in append mode
+		file_obj.open(path, std::ios::app);
+
+		// Array that will hold our gameObject json objects
+		json animationProperties;
+
+		// Create Animation Property Json data object
+		json animationName = json::object({
+			{ "Name", propertiesObject->animationName },
+			{ "Length", propertiesObject->animationLength },
+			{ "Loop", propertiesObject->_loop }
+			});
+		animationProperties.push_back(animationName);
+
+
+		for (std::shared_ptr<Animation::S_Transform> transformProp : propertiesObject->transformProperties)
+		{
+			// Declare components array json object for components
+			json transformPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "transformInterpType", transformProp->transformInterpType },
+				{ "transformSpeed", transformProp->transformSpeed },
+				{ "scaleInterpType", transformProp->scaleInterpType },
+				{ "scaleSpeed", transformProp->scaleSpeed },
+				{ "time", transformProp->time },
+				{ "xMove", transformProp->xMove },
+				{ "yMove", transformProp->yMove },
+				{ "xScale", transformProp->xScale },
+				{ "yScale", transformProp->yScale }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			transformPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Transform" },
+				{ "Frames", transformPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Sprite> spriteProp : propertiesObject->spriteProperties)
+		{
+			// Declare components array json object for components
+			json spritePropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "interpType", spriteProp->interpType },
+				{ "speed", spriteProp->speed },
+				{ "time", spriteProp->time },
+				{ "path", spriteProp->path },
+				{ "xOffset", spriteProp->xOffset },
+				{ "yOffset", spriteProp->yOffset }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			spritePropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Sprite" },
+				{ "Frames", spritePropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Camera> cameraProp : propertiesObject->cameraProperties)
+		{
+			// Declare components array json object for components
+			json cameraPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", cameraProp->time },
+				{ "_isPrimaryCamera", cameraProp->_isPrimaryCamera }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			cameraPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Camera" },
+				{ "Frames", cameraPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Script> scriptProp : propertiesObject->scriptProperties)
+		{
+			// Declare components array json object for components
+			json scriptPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", scriptProp->time },
+				{ "path", scriptProp->path }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			scriptPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Script" },
+				{ "Frames", scriptPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Button> buttonProp : propertiesObject->buttonProperties)
+		{
+			// Declare components array json object for components
+			json buttonPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", buttonProp->time },
+				{ "_isActive", buttonProp->_isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			buttonPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Button" },
+				{ "Frames", buttonPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Canvas> canvasProp : propertiesObject->canvasProperties)
+		{
+			// Declare components array json object for components
+			json canvasPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", canvasProp->time }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			canvasPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Canvas" },
+				{ "Frames", canvasPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Audio> audioProp : propertiesObject->audioProperties)
+		{
+			// Declare components array json object for components
+			json audioPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", audioProp->time },
+				{ "path", audioProp->path },
+				{ "_isMusic", audioProp->_isMusic }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			audioPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Audio" },
+				{ "Frames", audioPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_Text> textProp : propertiesObject->textProperties)
+		{
+			// Declare components array json object for components
+			json textPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", textProp->time },
+				{ "path", textProp->path },
+				{ "text", textProp->text },
+				{ "color", textProp->color }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			textPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "Text" },
+				{ "Frames", textPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_BoxCollider> boxColliderProp : propertiesObject->boxColliderProperties)
+		{
+			// Declare components array json object for components
+			json boxColliderPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", boxColliderProp->time },
+				{ "_isActive", boxColliderProp->_isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			boxColliderPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "BoxCollider" },
+				{ "Frames", boxColliderPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_CircleCollider> circleColliderProp : propertiesObject->circleColliderProperties)
+		{
+			// Declare components array json object for components
+			json circleColliderPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", circleColliderProp->time },
+				{ "_isActive", circleColliderProp->_isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			circleColliderPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "CircleCollider" },
+				{ "Frames", circleColliderPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_RigidBody> rigidBodyProp : propertiesObject->rigidBodyProperties)
+		{
+			// Declare components array json object for components
+			json rigidBodyPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", rigidBodyProp->time },
+				{ "interpType", rigidBodyProp->interpType },
+				{ "speed", rigidBodyProp->speed },
+				{ "_isActive", rigidBodyProp->_isActive },
+				{ "gravityScale", rigidBodyProp->gravityScale },
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			rigidBodyPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "RigidBody" },
+				{ "Frames", rigidBodyPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+		for (std::shared_ptr<Animation::S_CharacterController> characterControllerProp : propertiesObject->characterControllerProperties)
+		{
+			// Declare components array json object for components
+			json characterControllerPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "time", characterControllerProp->time },
+				{ "_isActive", characterControllerProp->_isActive }
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			characterControllerPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json animationProperty = json::object({
+				{ "Property", "CharacterController" },
+				{ "Frames", characterControllerPropertiesArray }
+				});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(animationProperty);
+		}
+
+		// Recreate the Animation Property json object and add the array as the content
+		json newFileObject = json::object({ {"Animation Properties", animationProperties } });
+
+		// Add the GameObjects object contents to the file
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+
+		// Close the file
+		file_obj.close();
 	}
 }	
 }

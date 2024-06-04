@@ -17,6 +17,8 @@ namespace FlatEngine
 		~Sprite();
 		void SetTexture(std::string path);
 		SDL_Texture* GetTexture();
+		void SetScale(Vector2 newScale);
+		Vector2 GetScale();
 		float GetTextureWidth();
 		float GetTextureHeight();
 		std::string GetPath();
@@ -32,6 +34,7 @@ namespace FlatEngine
 		int renderOrder;
 		float textureWidth;
 		float textureHeight;
+		Vector2 scale;
 		Vector2 offset;
 		std::string path;
 	};

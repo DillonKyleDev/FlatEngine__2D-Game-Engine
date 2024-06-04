@@ -36,6 +36,12 @@ namespace FlatEngine
 		bool IsFrameSkipped();
 		int GetFramesCounted();
 
+		void IncrementTime();
+		void AddToAccumulator(float frameTime);
+		void DecrementAccumulator();
+		void ResetCurrentTime();
+		float GetGLCurrentTime();
+
 		double time;
 		double deltaTime;
 		double currentTime;

@@ -58,7 +58,7 @@ namespace FlatEngine {
 			averageFPS = std::to_string(FlatEngine::GetAverageFps());
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 			framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());
-			sdlTicks = std::to_string(SDL_GetTicks());
+			sdlTicks = std::to_string(FlatEngine::GetEngineTime());
 		}
 
 		// Render runtime data

@@ -31,26 +31,30 @@ namespace FlatEngine
 		void ApplyEquilibriumForce();
 		void ApplyCollisionForces();
 
-		void Move(Vector2 position);
+		Vector2 GetNextPosition();
+
 		void SetMass(float newMass);
 		float GetMass();
 		void SetAngularDrag(float newAngularDrag);
 		float GetAngularDrag();
 		void SetGravity(float newGravity);
 		float GetGravity();
+		void SetFallingGravity(float newFallingGravity);
+		float GetFallingGravity();
 		void SetVelocity(Vector2 newVelocity);
 		Vector2 GetVelocity();
+		Vector2 GetAcceleration();
 		Vector2 GetPendingForces();
 		void SetPendingForces(Vector2 newPendingForces);
-		Vector2 GetNextPosition();
+		void SetWindResistance(float newWindResistance);
+		float GetWindResistance();
+		float GetFriction();
+		void SetFriction(float newFriction);
 		void SetTerminalVelocity(float newTerminalVelocity);
 		float GetTerminalVelocity();
+		void SetEquilibriumForce(float newEquilibriumForce);
 		float GetEquilibriumForce();
 		void ApplyFriction();
-		void SetIsMoving(bool _moving);
-		bool IsMoving();
-		void SetIsContinuous(bool _continuous);
-		bool IsContinuous();
 		bool IsStatic();
 		void SetIsStatic(bool _static);
 		void SetIsGrounded(bool _grounded);
@@ -63,13 +67,10 @@ namespace FlatEngine
 		float angularDrag;
 		float gravity;
 		float fallingGravity;
-		float gravityCorrection;
 		Vector2 velocity;
 		Vector2 pendingForces;
-		Vector2 instantForces;
 		Vector2 acceleration;
-		bool _isMoving;
-		bool _isContinious;
+		float forceCorrection;
 		bool _isGrounded;
 		bool _isKinematic;
 		bool _isStatic;
@@ -77,6 +78,5 @@ namespace FlatEngine
 		float windResistance;
 		float friction;
 		float equilibriumForce;
-		float forceCorrection;
 	};
 }

@@ -11,8 +11,7 @@ namespace FlatEngine {
 		SetType(ComponentTypes::CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
-		walkSpeed = 1;
-		runSpeed = 2;
+		maxAcceleration = 1;
 		maxSpeed = 0.1f;
 		airControl = 0.2f;
 		speedCorrection = 1;
@@ -27,11 +26,12 @@ namespace FlatEngine {
 		SetID(FlatEngine::GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		walkSpeed = toCopy->GetWalkSpeed();
-		runSpeed = toCopy->GetWalkSpeed();
-		speedCorrection = 0.001f;
-		_isMoving = toCopy->IsMoving();
-		_isGrounded = toCopy->IsGrounded();
+		maxAcceleration = toCopy->maxAcceleration;
+		maxSpeed = toCopy->maxSpeed;
+		airControl = toCopy->airControl;
+		speedCorrection = toCopy->speedCorrection;
+		_isMoving = toCopy->_isMoving;
+		_isGrounded = toCopy->_isGrounded;
 	}
 
 	CharacterController::~CharacterController()
@@ -44,10 +44,10 @@ namespace FlatEngine {
 			{ "type", "CharacterController" },
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "walkSpeed", walkSpeed },
-			{ "runSpeed", runSpeed },
-			{ "_isMoving", _isMoving },
+			{ "_isActive", IsActive() },			
+			{ "maxAcceleration", maxAcceleration },
+			{ "maxSpeed", maxSpeed },
+			{ "airControl", airControl }
 		};
 
 		std::string data = jsonData.dump();
@@ -75,14 +75,14 @@ namespace FlatEngine {
 		// If the object has not hit max speed in negative or positive direction
 		if (pendingForces.x >= 0 || pendingForces.x <= 0 && pendingForces.x > (maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
-			(normalizedX * walkSpeed < 0) ||
+			(normalizedX * maxAcceleration < 0) ||
 			// If velocity exceeds negative max speed but x direction is positive
-			(normalizedX * walkSpeed > 0) && normalizedX != 0)
+			(normalizedX * maxAcceleration > 0) && normalizedX != 0)
 		{
 			if (!rigidBody->IsGrounded())
-				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed * airControl, 0));
+				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration * airControl, 0));
 			else
-				rigidBody->AddVelocity(Vector2(normalizedX * walkSpeed, 0));
+				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration, 0));
 			_isMoving = true;
 		}		
 		
@@ -94,14 +94,19 @@ namespace FlatEngine {
 	{
 	}
 
-	void CharacterController::SetWalkSpeed(float speed)
+	void CharacterController::SetMaxAcceleration(float newMaxAcceleration)
 	{
-		walkSpeed = speed;
+		maxAcceleration = newMaxAcceleration;
 	}
 
-	float CharacterController::GetWalkSpeed()
+	float CharacterController::GetMaxAcceleration()
 	{
-		return walkSpeed;
+		return maxAcceleration;
+	}
+
+	void CharacterController::SetMaxSpeed(float newMaxSpeed)
+	{
+		maxSpeed = newMaxSpeed;
 	}
 
 	float CharacterController::GetMaxSpeed()
@@ -109,14 +114,14 @@ namespace FlatEngine {
 		return maxSpeed;
 	}
 
-	void CharacterController::SetRunSpeed(float speed)
+	void CharacterController::SetAirControl(float newAirControl)
 	{
-		runSpeed = speed;
+		airControl = newAirControl;
 	}
 
-	float CharacterController::GetRunSpeed()
+	float CharacterController::GetAirControl()
 	{
-		return runSpeed;
+		return airControl;
 	}
 
 	void CharacterController::SetMoving(bool _newIsMoving)

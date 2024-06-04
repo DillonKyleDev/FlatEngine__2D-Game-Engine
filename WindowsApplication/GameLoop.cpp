@@ -47,17 +47,19 @@ namespace FlatEngine
 	{
 		// Handle Game Time
 		time = 0;
-		activeTime = time;
+		activeTime = time - pausedTime;
 		_paused = false;
 		accumulator = 0.0;
-		currentTime = (double)SDL_GetTicks();
+		currentTime = (double)FlatEngine::GetEngineTime();
 
 		// Save the name of the scene we started with so we can load it back up when we stop
 		startedScene = FlatEngine::GetLoadedScenePath();
 
 		_started = true;
 
+		// Change this later to init scripts on loading maybe and then you can dynamically change script values without reloading
 		InitializeScriptObjects();
+		Init();
 	}
 
 	void GameLoop::Init()
@@ -243,11 +245,11 @@ namespace FlatEngine
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			// Save time before script update
-			float timeStart = (float)SDL_GetTicks();
+			float timeStart = (float)FlatEngine::GetEngineTime();
 			activeScripts[i]->Update(deltaTime);
 
 			// Get hang time of each script update function for profiler
-			float hangTime = (float)SDL_GetTicks() - timeStart;
+			float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
 
 			AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
 		}
@@ -261,7 +263,7 @@ namespace FlatEngine
 		if (FlatEngine::_isDebugMode)
 		{
 			// Save time before Update starts
-			float updateLoopStart = (float)SDL_GetTicks();
+			updateLoopStart = (float)FlatEngine::GetEngineTime();
 			updateLoopEnd = updateLoopStart;
 			// Get hang time of everything after Update Loop for profiler
 			float everythingElseHangTime = updateLoopStart - updateLoopEnd;
@@ -272,40 +274,6 @@ namespace FlatEngine
 		AddFrame();
 		UpdateScripts();
 		activeTime = time - pausedTime;		
-
-		// TODO: Check here if the Game viewport is focused before getting the mouse data //
-		// Check for mouse over on all of our Game Buttons
-		static bool _hasLeftClicked = false;
-		static bool _hasRightClicked = false;
-		if (FlatEngine::uiManager->CheckForMouseOver())
-		{
-			std::vector<std::shared_ptr<FlatEngine::Button>> hoveredButtons = FlatEngine::uiManager->GetHoveredButtons();
-			ImGuiIO inputOutput = ImGui::GetIO();
-			std::shared_ptr<Button> topLevelButton = FlatEngine::uiManager->GetTopLevelButton();
-
-			// Call the OnMouseOverFunction() in the top level button that is hovered
-			std::shared_ptr<GameObject> thisObject = FlatEngine::GetObjectById(FlatEngine::uiManager->GetTopLevelButton()->GetParentID());
-
-			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
-			{
-				_hasLeftClicked = true;
-				topLevelButton->OnLeftClickFunction(thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[0])
-				_hasLeftClicked = false;
-
-			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
-			{
-				_hasRightClicked = true;
-				topLevelButton->OnRightClickFunction(thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[1])
-				_hasRightClicked = false;
-		}
 
 		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
@@ -347,10 +315,10 @@ namespace FlatEngine
 		if (FlatEngine::_isDebugMode)
 		{
 			// Get hang time of Update Loop for profiler
-			float hangTime = (float)SDL_GetTicks() - updateLoopStart;
+			float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
 			AddProcessData("Update Loop", hangTime);
 			// Save time after update finishes
-			updateLoopEnd = (float)SDL_GetTicks();
+			updateLoopEnd = (float)FlatEngine::GetEngineTime();
 		}
 	}
 
@@ -358,6 +326,7 @@ namespace FlatEngine
 	{
 		_started = false;
 		_paused = false;
+		framesCounted = 0;
 
 		if (FlatEngine::_isDebugMode)
 		{
@@ -392,8 +361,14 @@ namespace FlatEngine
 		if (_started && _paused)
 		{
 			_paused = false;
+			ResetCurrentTime();
 			pausedTime = time - activeTime;
 		}
+	}
+
+	void GameLoop::ResetCurrentTime()
+	{
+		currentTime = FlatEngine::GetEngineTime();
 	}
 
 	bool GameLoop::IsGamePaused()
@@ -456,6 +431,9 @@ namespace FlatEngine
 
 	void GameLoop::SetFrameSkipped(bool _skipped)
 	{
+		if (_skipped)
+			ResetCurrentTime();
+
 		_frameSkipped = _skipped;
 	}
 

@@ -664,5 +664,19 @@ namespace FlatEngine { namespace FlatGui {
 		}
 		ImGui::PopStyleColor();
 	}
+
+	void ResetHierarchyExpanderTracker()
+	{
+		// Initialize Hierarchy scene object expanded tracker
+		FlatEngine::FlatGui::leafExpandedTracker.clear();
+		std::vector<std::shared_ptr<GameObject>> sceneObjects = GetSceneObjects();
+		for (std::vector<std::shared_ptr<GameObject>>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+		{
+			if (FlatEngine::FlatGui::leafExpandedTracker.count((*object)->GetID()) == 0)
+			{
+				FlatEngine::FlatGui::leafExpandedTracker.emplace((*object)->GetID(), true);
+			}
+		}
+	}
 }
 }

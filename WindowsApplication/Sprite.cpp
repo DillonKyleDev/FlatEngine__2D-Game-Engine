@@ -11,6 +11,7 @@ namespace FlatEngine
 		texture = nullptr;
 		textureWidth = 0;
 		textureHeight = 0;
+		scale = Vector2(1, 1);
 		offset = { 0,0 };
 		path = "";
 		renderOrder = 0;
@@ -22,12 +23,13 @@ namespace FlatEngine
 		SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		texture = toCopy->GetTexture();
-		textureWidth = toCopy->GetTextureWidth();
-		textureHeight = toCopy->GetTextureHeight();
-		offset = toCopy->GetOffset();
-		path = toCopy->GetPath();
-		renderOrder = toCopy->GetRenderOrder();
+		texture = toCopy->texture;
+		textureWidth = toCopy->textureHeight;
+		textureHeight = toCopy->textureWidth;
+		scale = toCopy->scale;
+		offset = toCopy->offset;
+		path = toCopy->path;
+		renderOrder = toCopy->renderOrder;
 	}
 
 	Sprite::~Sprite()
@@ -41,9 +43,9 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "texture", path },
-			{ "texture_width", textureWidth },
-			{ "texture_height", textureHeight },
+			{ "path", path },
+			{ "xScale", scale.x },
+			{ "yScale", scale.y },
 			{ "xOffset", offset.x },
 			{ "yOffset", offset.y },
 			{ "renderOrder", renderOrder }
@@ -92,16 +94,26 @@ namespace FlatEngine
 		return texture;
 	}
 
+	void Sprite::SetScale(Vector2 newScale)
+	{
+		scale = newScale;
+	}
+
+	Vector2 Sprite::GetScale()
+	{
+		return scale;
+	}
+
 
 	float Sprite::GetTextureWidth()
 	{
-		return (float)textureWidth;
+		return textureWidth;
 	}
 
 
 	float Sprite::GetTextureHeight()
 	{
-		return (float)textureHeight;
+		return textureHeight;
 	}
 
 	

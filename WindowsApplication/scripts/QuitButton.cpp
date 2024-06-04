@@ -15,6 +15,7 @@ QuitButton::~QuitButton()
 
 void QuitButtonOnMouseOver(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
+	FlatEngine::LogString("MouseOver!");
 }
 
 void QuitButtonOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObject)
@@ -45,7 +46,7 @@ void QuitButton::Start()
 	//clickedAudio->LoadEffect("assets/audio/StartHovered.wav");
 	//clickedAudio->SetIsMusic(false);
 
-	std::shared_ptr<FlatEngine::Button> button = std::static_pointer_cast<FlatEngine::Button>(this->GetOwner()->GetComponent(FlatEngine::ComponentTypes::Button));
+	std::shared_ptr<FlatEngine::Button> button = GetOwner()->GetButtonComponent();
 	// Register Mouse Events functions to the Button
 	button->SetOnMouseOver(QuitButtonOnMouseOver);
 	button->SetOnMouseEnter(QuitButtonOnMouseEnter);

@@ -34,9 +34,6 @@
     <Filter Include="Header Files\FlatEngine">
       <UniqueIdentifier>{4c21b399-5d4a-445f-af72-74efea3e87aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FlatEngine">
-      <UniqueIdentifier>{388cfe3a-612d-4859-a0ca-0614ba2d0187}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\scripts">
       <UniqueIdentifier>{c087bdfc-38f4-4393-b1dd-cddf0d248fa5}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,9 @@
     </Filter>
     <Filter Include="Header Files\Helper">
       <UniqueIdentifier>{66af6a58-2652-46fa-988b-90d266e1d5d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FlatEngine/FlatGui">
+      <UniqueIdentifier>{388cfe3a-612d-4859-a0ca-0614ba2d0187}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -88,10 +88,10 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="FlatEngine.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="FlatGui.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source Files\Managers</Filter>
@@ -169,34 +169,34 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hierarchy.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Toolbar.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Inspector.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="GameView.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Profiler.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Icons.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="SceneView.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Project.cpp">
       <Filter>Source Files</Filter>
@@ -220,7 +220,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MappingContextEditor.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
       <Filter>Source Files\Components</Filter>
@@ -229,7 +229,7 @@
       <Filter>Source Files\Helper</Filter>
     </ClCompile>
     <ClCompile Include="Settings.cpp">
-      <Filter>Source Files\FlatEngine</Filter>
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="scripts\GroundedCheck.cpp">
       <Filter>Source Files\scripts</Filter>
@@ -248,6 +248,12 @@
     </ClCompile>
     <ClCompile Include="scripts\SettingsButton.cpp">
       <Filter>Source Files\scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiWrappers.cpp">
+      <Filter>Source Files\FlatEngine/FlatGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -409,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="scripts\PauseMenu.h">
       <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -111,7 +111,7 @@ namespace FlatEngine { namespace FlatGui {
 
 
 		// For Profiler
-		float cameraStartTime = (float)SDL_GetTicks();
+		float cameraStartTime = (float)FlatEngine::GetEngineTime();
 
 		// If the primaryCamera is found and not nullptr, set the cameraPosition accordingly, else it remains at {0,0} above
 		if (primaryCamera != nullptr)
@@ -130,31 +130,31 @@ namespace FlatEngine { namespace FlatGui {
 		// For Profiler
 		if (FlatEngine::_isDebugMode)
 		{
-			float cameraHangTime = (float)SDL_GetTicks() - cameraStartTime;
+			float cameraHangTime = (float)FlatEngine::GetEngineTime() - cameraStartTime;
 			AddProcessData("##Game_RenderView_Camera", cameraHangTime);
 		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
-		worldCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
+		gameViewCenter = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
 		// Get the center point of the viewport
 		Vector2 viewportCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
 		// For Profiler
 		float renderStartTime = 0;
 		if (FlatEngine::_isDebugMode)
-			renderStartTime = (float)SDL_GetTicks();
+			renderStartTime = (float)FlatEngine::GetEngineTime();
 
 		// Render Game Objects
 		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
 		{
 			if (sceneObject->IsActive())
-				Game_RenderObject(sceneObject, worldCenterPoint, canvas_p0, canvas_sz, draw_list, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
+				Game_RenderObject(sceneObject, canvas_p0, canvas_sz, draw_list, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
 		}
 
 		// For Profiler
 		if (FlatEngine::_isDebugMode)
 		{
-			float renderHangTime = (float)SDL_GetTicks() - renderStartTime;
+			float renderHangTime = (float)FlatEngine::GetEngineTime() - renderStartTime;
 			AddProcessData("##Game_RenderView_RenderObjects", renderHangTime);
 		}
 
@@ -196,9 +196,7 @@ namespace FlatEngine { namespace FlatGui {
 		//}
 	}
 
-
-	void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 worldCenterPoint, Vector2 canvas_p0,
-		Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
+	void Game_RenderObject(std::shared_ptr<GameObject> self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
 	{
 		// Get Components
 		std::shared_ptr<Transform> transform = self->GetTransformComponent();
@@ -206,6 +204,7 @@ namespace FlatEngine { namespace FlatGui {
 		std::shared_ptr<Animation> animation = self->GetAnimationComponent();
 		std::shared_ptr<Text> text = self->GetTextComponent();
 		std::shared_ptr<Button> button = self->GetButtonComponent();
+
 
 		// Animation component handling
 		if (animation != nullptr)
@@ -247,7 +246,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture->getTexture(), position, worldCenterPoint, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, gameViewGridStep.x, draw_list);
+					AddImageToDrawList(textTexture->getTexture(), position, gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, gameViewGridStep.x, draw_list);
 				}
 			}
 
@@ -255,14 +254,15 @@ namespace FlatEngine { namespace FlatGui {
 			if (sprite != nullptr)
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
-				float textureWidth = (float)sprite->GetTextureWidth();
-				float textureHeight = (float)sprite->GetTextureHeight();
+				float textureWidth = sprite->GetTextureWidth();
+				float textureHeight = sprite->GetTextureHeight();
+				Vector2 spriteScale = sprite->GetScale();
 				Vector2 offset = sprite->GetOffset();
 				bool _scalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 
 				// Changing the scale here because things are rendering too large and I want them to start off smaller
-				Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
+				Vector2 newScale = Vector2(scale.x * spriteScale.x * spriteScaleMultiplier, scale.y * spriteScale.y * spriteScaleMultiplier);
 
 				float spriteLeftEdge = position.x - offset.x * newScale.x;
 				float spriteRightEdge = position.x + offset.x * newScale.x;
@@ -286,7 +286,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					AddImageToDrawList(spriteTexture, position, worldCenterPoint, textureWidth, textureHeight, offset, scale, _scalesWithZoom, gameViewGridStep.x, draw_list);
+					AddImageToDrawList(spriteTexture, position, gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, gameViewGridStep.x, draw_list);
 				}
 			}
 
@@ -299,10 +299,10 @@ namespace FlatEngine { namespace FlatGui {
 				bool _isActive = button->IsActive();
 
 				// Get Active Button bounds to check against later for mouse events
-				float activeLeft = worldCenterPoint.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
-				float activeRight = worldCenterPoint.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
-				float activeTop = worldCenterPoint.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
-				float activeBottom = worldCenterPoint.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
+				float activeLeft = gameViewCenter.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
+				float activeRight = gameViewCenter.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
+				float activeTop = gameViewCenter.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
+				float activeBottom = gameViewCenter.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
 
 				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
 
