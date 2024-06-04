@@ -1,0 +1,198 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "children": [
+                1
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 0,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 0,
+            "name": "Parent",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                2
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 2,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 3,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Button.png",
+                    "texture_height": 40.0,
+                    "texture_width": 40.0,
+                    "type": "Sprite",
+                    "xOffset": 20.0,
+                    "yOffset": 20.0
+                }
+            ],
+            "id": 1,
+            "name": "child",
+            "parent": 0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                3
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 4,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 2.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 2.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 5,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\player.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 2,
+            "name": "GrandChild",
+            "parent": 1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 6,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 2.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 2.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 7,
+                    "renderOrder": 0,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\leftidle.png",
+                    "texture_height": 23.0,
+                    "texture_width": 13.0,
+                    "type": "Sprite",
+                    "xOffset": 6.5,
+                    "yOffset": 11.5
+                }
+            ],
+            "id": 3,
+            "name": "GreatGrandChild",
+            "parent": 2,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

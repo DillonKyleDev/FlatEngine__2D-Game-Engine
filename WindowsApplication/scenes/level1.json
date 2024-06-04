@@ -2,7 +2,9 @@
     "Scene GameObjects": [
         {
             "_isActive": true,
-            "children": [],
+            "children": [
+                3
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -11,10 +13,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -27.955154418945313,
+                    "xPos": -28.378084182739258,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -0.49982935190200806,
+                    "yPos": 0.25316762924194336,
                     "yScale": 1.0
                 },
                 {
@@ -86,7 +88,7 @@
                     "id": 51,
                     "type": "Camera",
                     "width": 50.0,
-                    "zoom": 50.0
+                    "zoom": 44.29999923706055
                 }
             ],
             "id": 0,
@@ -120,11 +122,11 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 5.000007629394531,
-                    "xScale": 40.0,
+                    "xPos": -0.9799760580062866,
+                    "xScale": 84.30000305175781,
                     "yOrigin": 0.0,
-                    "yPos": 6.265999794006348,
-                    "yScale": 30.0
+                    "yPos": 2.1847803592681885,
+                    "yScale": 49.0
                 },
                 {
                     "_isActive": true,
@@ -146,10 +148,10 @@
                     "frustrumBlue": 255.0,
                     "frustrumGreen": 255.0,
                     "frustrumRed": 255.0,
-                    "height": 56.29999923706055,
+                    "height": 1.0,
                     "id": 40,
                     "type": "Camera",
-                    "width": 96.80000305175781,
+                    "width": 1.0,
                     "zoom": 16.399999618530273
                 }
             ],
@@ -1022,6 +1024,509 @@
             "id": 15,
             "name": "JumpPad(15)",
             "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                16,
+                17,
+                21
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 52,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_blocksLayers": true,
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "height": 20.0,
+                    "id": 53,
+                    "layerNumber": 0,
+                    "type": "Canvas",
+                    "width": 30.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "PauseMenu",
+                    "id": 77,
+                    "type": "Script"
+                }
+            ],
+            "id": 3,
+            "name": "PauseMenu",
+            "parent": 0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                18,
+                19,
+                24
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 76,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 16,
+            "name": "MainPauseMenu",
+            "parent": 3,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                20
+            ],
+            "components": [],
+            "id": 17,
+            "name": "SettingsMenu",
+            "parent": 3,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                22
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 56,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 5.0,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": 1.2000000476837158,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 57,
+                    "renderOrder": 6,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 58,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "SettingsButton",
+                    "id": 59,
+                    "type": "Script"
+                }
+            ],
+            "id": 18,
+            "name": "SettingsButton",
+            "parent": 16,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                23
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 60,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 5.0,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": -1.4500000476837158,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 61,
+                    "renderOrder": 6,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 62,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "QuitButton",
+                    "id": 63,
+                    "type": "Script"
+                }
+            ],
+            "id": 19,
+            "name": "QuitButton",
+            "parent": 16,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 20,
+            "name": "GameObject(20)",
+            "parent": 17,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 68,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 15.0,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": 0.0,
+                    "yScale": 10.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 69,
+                    "renderOrder": 5,
+                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\darkOpaque.png",
+                    "texture_height": 10.0,
+                    "texture_width": 10.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "id": 21,
+            "name": "Overlay",
+            "parent": 3,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 71,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 0.15000000596046448,
+                    "yOrigin": 1.4531676769256592,
+                    "yPos": 0.0,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 72,
+                    "renderOrder": 6,
+                    "text": "Settings",
+                    "type": "Text",
+                    "xOffset": 98.0,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 22,
+            "name": "SettingsButtonText",
+            "parent": 18,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 73,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 0.15000000596046448,
+                    "yOrigin": -1.1968324184417725,
+                    "yPos": 0.0,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 74,
+                    "renderOrder": 6,
+                    "text": "Quit",
+                    "type": "Text",
+                    "xOffset": 51.5,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 23,
+            "name": "QuitButtonText",
+            "parent": 19,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 75,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -28.378084182739258,
+                    "xPos": 0.0,
+                    "xScale": 0.15000000596046448,
+                    "yOrigin": 0.25316762924194336,
+                    "yPos": 3.799999952316284,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 76,
+                    "renderOrder": 0,
+                    "text": "Paused.",
+                    "type": "Text",
+                    "xOffset": 80.0,
+                    "yOffset": 27.0
+                }
+            ],
+            "id": 24,
+            "name": "PausedText",
+            "parent": 16,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

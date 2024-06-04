@@ -1,5 +1,7 @@
 #include "Project.h"
+#include "Window.h"
 #include "json.hpp"
+#include <SDL.h>
 
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -15,6 +17,8 @@ Project::Project()
 	_autoSave = true;
 	physicsSystem = "Euler";
 	collisionDetection = "Simple Box";
+	resolution = Vector2(1920, 1080);
+	_vsyncEnabled = true;
 }
 
 Project::~Project()
@@ -111,6 +115,47 @@ std::string Project::GetCollisionDetection()
 	return collisionDetection;
 }
 
+void Project::SetResolution(Vector2 newResolution)
+{
+	resolution = newResolution;
+	//Window::SetScreenDimensions(resolution.x, resolution.y);
+	//SDL_bool setIntegerScale = SDL_bool(true);
+	//SDL_RenderSetIntegerScale(Window::renderer, setIntegerScale);
+	//SDL_RenderSetLogicalSize(Window::renderer, resolution.x, resolution.y);
+}
+
+Vector2 Project::GetResolution()
+{
+	return resolution;
+}
+
+void Project::SetFullscreen(bool _newFullscreen)
+{
+	_fullscreen = _newFullscreen;
+	Window::SetFullscreen(_fullscreen);
+}
+
+bool Project::IsFullscreen()
+{
+	return _fullscreen;
+}
+
+void Project::SetVsyncEnabled(bool _vsync)
+{
+	_vsyncEnabled = _vsync;
+	int interval = 0;
+
+if (_vsyncEnabled)
+		interval = 1;
+
+	SDL_RenderSetVSync(Window::renderer, interval); // vsync disabled -- 1 to activate
+}
+
+bool Project::IsVsyncEnabled()
+{
+	return _vsyncEnabled;
+}
+
 
 std::string Project::GetData()
 {
@@ -123,6 +168,10 @@ std::string Project::GetData()
 		{ "_autoSave", _autoSave },
 		{ "physicsSystem", physicsSystem },
 		{ "collisionDetection", collisionDetection },
+		{ "resolutionWidth", resolution.x },
+		{ "resolutionHeight", resolution.y },
+		{ "_fullscreen", _fullscreen },
+		{ "_vsyncEnabled", _vsyncEnabled },
 	};
 
 	std::string data = jsonData.dump();

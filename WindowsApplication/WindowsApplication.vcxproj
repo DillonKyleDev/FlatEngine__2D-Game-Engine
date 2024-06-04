@@ -156,6 +156,7 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="GameView.cpp" />
+    <ClCompile Include="scripts\PauseMenu.cpp" />
     <ClCompile Include="scripts\JumpPad.cpp" />
     <ClCompile Include="scripts\PlayerController.cpp" />
     <ClCompile Include="scripts\GroundedCheck.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScriptComponent.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="scripts\SettingsButton.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="scripts\StartButton.cpp" />
@@ -221,6 +223,7 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="scripts\PauseMenu.h" />
     <ClInclude Include="scripts\JumpPad.h" />
     <ClInclude Include="scripts\PlayerController.h" />
     <ClInclude Include="scripts\GroundedCheck.h" />
@@ -248,6 +251,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScriptComponent.h" />
+    <ClInclude Include="scripts\SettingsButton.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="scripts\StartButton.h" />

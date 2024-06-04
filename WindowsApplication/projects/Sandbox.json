@@ -3,6 +3,7 @@
         {
             "_autoSave": true,
             "_clearLogBuffer": false,
+            "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,
             "_showGameView": true,
@@ -11,18 +12,21 @@
             "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": false,
-            "_showProfiler": true,
+            "_showProfiler": false,
             "_showSceneView": true,
+            "_vsyncEnabled": true,
             "collisionDetection": "Simple Box",
-            "focusedGameObjectID": 3,
+            "focusedGameObjectID": -1,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\dance.json",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\level1.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
+            "resolutionHeight": 1080.0,
+            "resolutionWidth": 1920.0,
             "sceneViewGridStepX": 23.69971466064453,
             "sceneViewGridStepY": 23.69971466064453,
-            "sceneViewScrollingX": 923.403076171875,
-            "sceneViewScrollingY": 274.73046875
+            "sceneViewScrollingX": 654.403076171875,
+            "sceneViewScrollingY": 319.73046875
         }
     ]
 }

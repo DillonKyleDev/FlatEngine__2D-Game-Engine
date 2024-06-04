@@ -27,6 +27,13 @@ public:
 	std::string GetPhysicsSystem();
 	void SetCollisionDetection(std::string system);
 	std::string GetCollisionDetection();
+	void SetResolution(Vector2 resolution);
+	Vector2 GetResolution();
+	void SetFullscreen(bool _newFullscreen);
+	bool IsFullscreen();
+	void SetVsyncEnabled(bool _vsync);
+	bool IsVsyncEnabled();
+
 	std::string GetData();
 
 private:
@@ -39,6 +46,9 @@ private:
 	bool _autoSave;
 	std::string physicsSystem;
 	std::string collisionDetection;
+	Vector2 resolution;
+	bool _fullscreen;
+	bool _vsyncEnabled;
 	// Add more project properties here
 };
 

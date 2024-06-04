@@ -14,6 +14,10 @@
 PlayerController::PlayerController()
 {
 	SetName("PlayerController");
+	mappingContext = nullptr;
+	characterController = nullptr;
+	rigidBody = nullptr;
+	transform = nullptr;
 }
 
 PlayerController::~PlayerController()
@@ -22,38 +26,36 @@ PlayerController::~PlayerController()
 
 void PlayerController::Start()
 {
-	std::shared_ptr<FlatEngine::Audio> clickedAudio = GetOwner()->GetAudioComponent();
+	mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
+	characterController = GetOwner()->GetCharacterController();
+	rigidBody = GetOwner()->GetRigidBody();
+	transform = GetOwner()->GetTransformComponent();
 }
 
 void PlayerController::Update(float deltaTime)
 {
-	// Get Mapping Context
-	std::shared_ptr<FlatEngine::MappingContext> mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
-	std::shared_ptr<FlatEngine::CharacterController> characterController = GetOwner()->GetCharacterController();
-	std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetOwner()->GetRigidBody();
-	std::shared_ptr<FlatEngine::Transform> transform = GetOwner()->GetTransformComponent();
-
 	bool _moving = false;
 	static int xDir = 0;
 	static int yDir = 0;
-	Vector2 velocity = rigidBody->GetVelocity();
+	Vector2 velocity = Vector2(0, 0);
+	if (rigidBody != nullptr)
+		velocity = rigidBody->GetVelocity();
 
-	if (mappingContext->Fired("IA_Jump"))
+	if (mappingContext != nullptr && rigidBody != nullptr && mappingContext->Fired("IA_Jump"))
 	{
 		//FlatEngine::LogString("Jumped!");
 		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
 		{
 			rigidBody->AddForce(Vector2(0, 1), 1300);
 		}
-
 	}
-	if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
+	if (mappingContext != nullptr && characterController != nullptr && mappingContext->GetInputAction("IA_MoveLeft").type != 0)
 	{
 		xDir = -30000;
 		characterController->MoveToward(Vector2(-36000, 0));
 		_moving = true;
 	}
-	if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
+	if (mappingContext != nullptr && characterController != nullptr && mappingContext->GetInputAction("IA_MoveRight").type != 0)
 	{
 		xDir = 30000;
 		characterController->MoveToward(Vector2(36000, 0));
@@ -68,9 +70,16 @@ void PlayerController::Update(float deltaTime)
 	//characterController->MoveToward(Vector2(36000, 0));
 	//_moving = true;
 
-	SDL_Event moveX = mappingContext->GetInputAction("IA_MoveX");
-	SDL_Event moveY = mappingContext->GetInputAction("IA_MoveY");
+	SDL_Event moveX = SDL_Event();
+	SDL_Event moveY = SDL_Event();
 
+	if (mappingContext != nullptr)
+	{
+		{
+			moveX = mappingContext->GetInputAction("IA_MoveX");
+			moveY = mappingContext->GetInputAction("IA_MoveY");
+		} 
+	}
 
 	if (moveX.type != 0)
 		xDir = moveX.jaxis.value;
@@ -81,7 +90,7 @@ void PlayerController::Update(float deltaTime)
 	{
 		//characterController->MoveToward(Vector2((float)xDir, (float)yDir));
 	}
-	FlatEngine::RayCast(transform->GetPosition(), Vector2((float)xDir, -(float)yDir), 2);
+	//FlatEngine::RayCast(transform->GetPosition(), Vector2((float)xDir, -(float)yDir), 2);
 
 	characterController->SetMoving(_moving);
 }

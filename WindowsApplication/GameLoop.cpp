@@ -5,6 +5,8 @@
 #include "BoxCollider.h"
 #include "Transform.h"
 #include "./scripts/GameManager.h"
+#include "./scripts/PauseMenu.h"
+#include "./scripts/SettingsButton.h"
 #include "./scripts/StartButton.h"
 #include "./scripts/RestartButton.h"
 #include "./scripts/QuitButton.h"
@@ -31,6 +33,8 @@ namespace FlatEngine
 		startedScene = "";
 		gameManager = nullptr;
 
+		_gamePaused = false;
+
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		scripts = std::vector<std::shared_ptr<GameScript>>();
 	}
@@ -48,14 +52,19 @@ namespace FlatEngine
 		accumulator = 0.0;
 		currentTime = (double)SDL_GetTicks();
 
-		// Initialize our scripts with the currently loaded scene
-		InitializeScriptObjects();
-		UpdateActiveColliders();
-		UpdateActiveRigidBodies();
 		// Save the name of the scene we started with so we can load it back up when we stop
 		startedScene = FlatEngine::GetLoadedScenePath();
 
 		_started = true;
+
+		InitializeScriptObjects();
+	}
+
+	void GameLoop::Init()
+	{
+		// Initialize objects for use in GameLoop::Update() with the currently loaded scene
+		UpdateActiveColliders();
+		UpdateActiveRigidBodies();
 	}
 
 	void GameLoop::InitializeScriptObjects()
@@ -85,6 +94,20 @@ namespace FlatEngine
 						activeScripts.push_back(gameManagerScript);
 						gameManager = gameManagerScript;
 						FlatEngine::gameManager = gameManagerScript;
+					}
+					else if (attachedScript == "PauseMenu")
+					{
+						std::shared_ptr<PauseMenu> pauseMenuScript = std::make_shared<PauseMenu>();
+						pauseMenuScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(pauseMenuScript);
+						activeScripts.push_back(pauseMenuScript);
+					}
+					else if (attachedScript == "SettingsButton")
+					{
+						std::shared_ptr<SettingsButton> settingsButtonScript = std::make_shared<SettingsButton>();
+						settingsButtonScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(settingsButtonScript);
+						activeScripts.push_back(settingsButtonScript);
 					}
 					else if (attachedScript == "StartButton")
 					{
@@ -132,17 +155,21 @@ namespace FlatEngine
 			}
 		}
 
-		// Add Update Time Process		
-		AddProfilerProcess("Update Loop");
-		// Add Update Process for all other time		
-		AddProfilerProcess("Not Update Loop");
+		if (FlatEngine::_isDebugMode)
+		{
+			// Add Update Time Process		
+			AddProfilerProcess("Update Loop");
+			// Add Update Process for all other time		
+			AddProfilerProcess("Not Update Loop");
+		}
 
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
 
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
-			// Create a new Process for each script		
-			AddProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
+			// Create a new Process for each script	
+			 if (FlatEngine::_isDebugMode)	
+				AddProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 			activeScripts[i]->Awake();
 			activeScripts[i]->Start();
 		}
@@ -228,18 +255,23 @@ namespace FlatEngine
 
 	void GameLoop::Update()
 	{
-		// Profiler --
-		// Save time before Update starts
-		float updateLoopStart = (float)SDL_GetTicks();
-		static float updateLoopEnd = updateLoopStart;
-		// Get hang time of everything after Update Loop for profiler
-		float everythingElseHangTime = updateLoopStart - updateLoopEnd;
-		AddProcessData("Not Update Loop", everythingElseHangTime);
+		// Profiler
+		float updateLoopStart = 0;
+		static float updateLoopEnd = 0;
+		if (FlatEngine::_isDebugMode)
+		{
+			// Save time before Update starts
+			float updateLoopStart = (float)SDL_GetTicks();
+			updateLoopEnd = updateLoopStart;
+			// Get hang time of everything after Update Loop for profiler
+			float everythingElseHangTime = updateLoopStart - updateLoopEnd;
+			AddProcessData("Not Update Loop", everythingElseHangTime);
+		}
 	
 
 		AddFrame();
 		UpdateScripts();
-		activeTime = time - pausedTime;
+		activeTime = time - pausedTime;		
 
 		// TODO: Check here if the Game viewport is focused before getting the mouse data //
 		// Check for mouse over on all of our Game Buttons
@@ -311,12 +343,15 @@ namespace FlatEngine
 			rigidBody->ApplyPhysics((float)deltaTime);
 
 
-		// Profiler --
-		// Get hang time of Update Loop for profiler
-		float hangTime = (float)SDL_GetTicks() - updateLoopStart;
-		AddProcessData("Update Loop", hangTime);
-		// Save time after update finishes
-		updateLoopEnd = (float)SDL_GetTicks();
+		// Profiler
+		if (FlatEngine::_isDebugMode)
+		{
+			// Get hang time of Update Loop for profiler
+			float hangTime = (float)SDL_GetTicks() - updateLoopStart;
+			AddProcessData("Update Loop", hangTime);
+			// Save time after update finishes
+			updateLoopEnd = (float)SDL_GetTicks();
+		}
 	}
 
 	void GameLoop::Stop()
@@ -324,12 +359,15 @@ namespace FlatEngine
 		_started = false;
 		_paused = false;
 
-		// Delete script processes
-		for (int i = 0; i < activeScripts.size(); i++)
-			RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
+		if (FlatEngine::_isDebugMode)
+		{
+			// Delete script processes
+			for (int i = 0; i < activeScripts.size(); i++)
+				RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 
-		RemoveProfilerProcess("Update Loop");	
-		RemoveProfilerProcess("Not Update Loop");
+			RemoveProfilerProcess("Update Loop");
+			RemoveProfilerProcess("Not Update Loop");
+		}
 
 		// Release all active scripts
 		activeScripts.clear();
@@ -356,6 +394,21 @@ namespace FlatEngine
 			_paused = false;
 			pausedTime = time - activeTime;
 		}
+	}
+
+	bool GameLoop::IsGamePaused()
+	{
+		return _gamePaused;
+	}
+
+	void GameLoop::PauseGame()
+	{
+		_gamePaused = true;
+	}
+
+	void GameLoop::UnpauseGame()
+	{
+		_gamePaused = false;
 	}
 
 	// In seconds

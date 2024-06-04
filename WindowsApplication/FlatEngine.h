@@ -143,6 +143,7 @@ namespace FlatEngine
 	extern void StartGameLoop();
 	extern void GameLoopUpdate();
 	extern void PauseGameLoop();
+	extern void PauseGame();
 	extern void StopGameLoop();
 	extern int GetEllapsedGameTime();
 	extern bool GameLoopStarted();

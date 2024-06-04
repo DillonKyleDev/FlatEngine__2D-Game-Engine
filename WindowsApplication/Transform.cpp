@@ -113,7 +113,7 @@ namespace FlatEngine
 				{
 					std::shared_ptr<Transform> childTransform = child->GetTransformComponent();
 					childTransform->SetOrigin(newOrigin);
-					childTransform->UpdateChildOrigins(GetTruePosition());
+					childTransform->UpdateChildOrigins(childTransform->GetTruePosition());
 				}
 			}
 		}

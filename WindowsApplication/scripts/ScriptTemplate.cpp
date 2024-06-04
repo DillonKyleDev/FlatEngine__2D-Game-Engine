@@ -9,7 +9,7 @@
 
 ScriptTemplate::ScriptTemplate()
 {
-	this->SetName("ScriptTemplate");
+	SetName("ScriptTemplate");
 }
 
 ScriptTemplate::~ScriptTemplate()
@@ -19,7 +19,7 @@ ScriptTemplate::~ScriptTemplate()
 
 void ScriptTemplate::Start()
 {
-	FlatEngine::LogString("ScriptTemplate instantiated on: " + this->GetOwner()->GetName());
+	FlatEngine::LogString("ScriptTemplate instantiated on: " + GetOwner()->GetName());
 }
 
 void ScriptTemplate::Update(float deltaTime)

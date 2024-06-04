@@ -25,7 +25,6 @@ bool init()
 	}
 	else
 	{
-		//SDL_GL_SetSwapInterval(0); // vsync disabled -- 1 to activate
 		FlatEngine::logger->LogString("SDL initialized... - Video - Audio - Joystick -");
 
 		//Set texture filtering to linear
@@ -38,7 +37,7 @@ bool init()
 		char* title = &(t[0]);
 
 		//Initialize Window::window
-		if (Window::Init(title, 1920, 1200))
+		if (Window::Init(title, 1920, 1000))
 		{
 			FlatEngine::LogString("Window initialized...");
 
@@ -75,7 +74,7 @@ bool init()
 						FlatEngine::LogSeparator();
 
 
-						if (FlatEngine::FlatGui::_showProfiler)
+						if (FlatEngine::FlatGui::_showProfiler && FlatEngine::_isDebugMode)
 						{
 							// Add Profiler Processes
 							// 						
@@ -183,8 +182,11 @@ void close()
 	SDL_Quit();
 
 	// Remove Profiler Processes
-	FlatEngine::RemoveProfilerProcess("Render");
-	FlatEngine::RemoveProfilerProcess("Render Present");
+	if (FlatEngine::_isDebugMode)
+	{
+		FlatEngine::RemoveProfilerProcess("Render");
+		FlatEngine::RemoveProfilerProcess("Render Present");
+	}
 }
 
 

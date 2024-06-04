@@ -90,18 +90,22 @@ namespace FlatEngine
 			}
 		}
 
-		float renderStartTime = (float)SDL_GetTicks(); // Profiler
+		float renderStartTime = 0;
+
+		if (_isDebugMode)
+			renderStartTime = (float)SDL_GetTicks(); // Profiler
 		_hasQuit = _closeProgram;
 		FlatGui::Render(_hasQuit);
-		AddProcessData("Render", (float)SDL_GetTicks() - renderStartTime); // Profiler
+		if (_isDebugMode)
+			AddProcessData("Render", (float)SDL_GetTicks() - renderStartTime); // Profiler
 
 
-		// If Release - Start the Game Loop
-		if (_isDebugMode == false && GameLoopStarted() == false)
+		//// If Release - Start the Game Loop
+		if (!_isDebugMode && !GameLoopStarted())
 			StartGameLoop();
 
 		// Keeping track of the frames passed since we started the GameLoop
-		if (GameLoopStarted() && GameLoopPaused() == false || GameLoopPaused() && gameLoop->IsFrameSkipped())
+		if (GameLoopStarted() && !GameLoopPaused() || GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{
 			// Get time it took to get back to GameLoopUpdate()
 			double frameStart = (double)SDL_GetTicks();
@@ -114,18 +118,26 @@ namespace FlatEngine
 			{
 				while (gameLoop->accumulator >= gameLoop->deltaTime)
 				{
+					FlatGui::HandleEvents(_hasQuit);
 					GameLoopUpdate();
 					gameLoop->SetFrameSkipped(false);
-					gameLoop->time += gameLoop->deltaTime;
-					gameLoop->accumulator -= gameLoop->deltaTime;
+
+					// Find a way to pause game time independant of the game loop update
+					//if (!gameLoop->IsGamePaused())
+					//{
+						gameLoop->time += gameLoop->deltaTime;
+						gameLoop->accumulator -= gameLoop->deltaTime;
+					//}
 				}				
 			}
-			//else
-				//gameLoop->UpdateScripts(); // Because we still need to react to input every frame
+			else
+			{
+				FlatGui::HandleEvents(_hasQuit);
+				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
+			}
 
-			//SDL_Delay(4 - frameTime);
-
-
+			if (!loadedProject->IsVsyncEnabled())
+				SDL_Delay(4 - frameTime);
 
 			// Physics Update Version 2
 			// Clamp cycles per Run loop (avoids physics death spiral)
@@ -153,6 +165,8 @@ namespace FlatEngine
 			//	cycleCounter++;
 			//}
 		}
+		else
+			FlatGui::HandleEvents(_hasQuit);
 
 		FlatGui::RenderClear();
 	}
@@ -355,6 +369,12 @@ namespace FlatEngine
 						newProject->SetPhysicsSystem(currentObjectJson["physicsSystem"]);
 					if (currentObjectJson.contains("collisionDetection"))
 						newProject->SetCollisionDetection(currentObjectJson["collisionDetection"]);
+					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
+						newProject->SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
+					if (currentObjectJson.contains("_fullscreen"))
+						newProject->SetFullscreen(currentObjectJson["_fullscreen"]);
+					if (currentObjectJson.contains("_vsyncEnabled"))
+						newProject->SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
 				}
 			}
 		}
@@ -416,6 +436,10 @@ namespace FlatEngine
 			{ "_autoSave", loadedProject->AutoSaveOn() },
 			{ "physicsSystem", loadedProject->GetPhysicsSystem() },
 			{ "collisionDetection", loadedProject->GetCollisionDetection() },
+			{ "resolutionWidth", loadedProject->GetResolution().x },
+			{ "resolutionHeight", loadedProject->GetResolution().y },
+			{ "_fullscreen", loadedProject->IsFullscreen() },
+			{ "_vsyncEnabled", loadedProject->IsVsyncEnabled() },
 		});
 		projectProperties.push_back(animationName);
 
@@ -779,6 +803,14 @@ namespace FlatEngine
 			gameLoop->Pause();
 	}
 
+	void PauseGame()
+	{
+		if (gameLoop->IsGamePaused())
+			gameLoop->UnpauseGame();
+		else
+			gameLoop->PauseGame();
+	}
+
 	void StopGameLoop()
 	{
 		gameLoop->Stop();
@@ -886,10 +918,10 @@ namespace FlatEngine
 		float divisor = hypotenuse / distance;
 		Vector2 endPoint = Vector2(correctedOrigin.x + direction.x / divisor * FlatGui::sceneViewGridStep.x, correctedOrigin.y - direction.y / divisor * FlatGui::sceneViewGridStep.y);
 
-		ImGui::Begin("Scene View");
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		DrawLine(correctedOrigin, endPoint, FlatGui::whiteColor, 3, drawList);
-		ImGui::End();
+		//ImGui::Begin("Scene View");
+		//ImDrawList* drawList = ImGui::GetWindowDrawList();
+		//DrawLine(correctedOrigin, endPoint, FlatGui::whiteColor, 3, drawList);
+		//ImGui::End();
 		return std::vector<std::shared_ptr<GameObject>>();
 	}
 

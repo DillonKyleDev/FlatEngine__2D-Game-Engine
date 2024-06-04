@@ -243,6 +243,12 @@
     <ClCompile Include="scripts\JumpPad.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\PauseMenu.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\SettingsButton.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -396,6 +402,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scripts\JumpPad.h">
+      <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\SettingsButton.h">
+      <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\PauseMenu.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
   </ItemGroup>

@@ -240,7 +240,7 @@ namespace FlatEngine { namespace FlatGui {
 			io.IniFilename = NULL;
 
 			// Set fullscreen here for now
-			Window::SetFullscreen(true);
+			Window::SetFullscreen(loadedProject->IsFullscreen());
 		}
 		else
 			CreateNewScene();
@@ -301,8 +301,12 @@ namespace FlatEngine { namespace FlatGui {
 			// Open Project by default
 			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
 			
+			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
+			gameLoop->Init();
+
 			// Hierarchy management
-			FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
+			if (FlatEngine::_isDebugMode)
+				FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 
 			_hasRunOnce = true;
 		}
@@ -312,8 +316,6 @@ namespace FlatEngine { namespace FlatGui {
 
 	void Render(bool& quit)
 	{
-		HandleEvents(quit);
-
 		// Start the Dear ImGui frame
 		ImGui_ImplSDLRenderer2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
@@ -325,9 +327,9 @@ namespace FlatEngine { namespace FlatGui {
 		//Add viewport(s)
 		// 
 		// If Release
-		if (FlatEngine::_isDebugMode == false)
+		if (!FlatEngine::_isDebugMode)
 		{
-			// Just Add GameView
+			// Just Add GameView		
 			Game_RenderView();
 		}
 		// Else add FlatEngine viewports
@@ -1447,7 +1449,8 @@ namespace FlatEngine { namespace FlatGui {
 		// Loop through scene objects
 		for (std::shared_ptr<GameObject> object : objects)
 		{
-			RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
+			if (object->IsActive())
+				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 		}
 
 		drawSplitter->Merge(draw_list);
@@ -1580,7 +1583,6 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 offset = text->GetOffset();
 				bool _spriteScalesWithZoom = true;
 
-
 				// If there is a valid Texture loaded into the Sprite Component
 				if (textTexture != nullptr)
 				{
@@ -1591,7 +1593,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture->getTexture(), position, scrolling, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, step, draw_list, rotation);
+					AddImageToDrawList(textTexture->getTexture(), position, sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, sceneViewGridStep.x, draw_list, rotation);
 				}
 			}
 
@@ -1638,16 +1640,15 @@ namespace FlatEngine { namespace FlatGui {
 				int layerNumber = canvas->GetLayerNumber();
 				bool _blocksLayers = canvas->GetBlocksLayers();
 
-				float unscaledXStart = scrolling.x + (position.x * sceneViewGridStep.x) - (activeWidth / 2 * scale.x);
-				float unscaledYStart = scrolling.y + (-position.y * sceneViewGridStep.y) - (activeHeight / 2 * scale.y);
-				Vector2 renderStart = Vector2(unscaledXStart, unscaledYStart);
-				Vector2 renderEnd = Vector2(unscaledXStart + (activeWidth * scale.x), unscaledYStart + (activeHeight * scale.y));
+				float renderXStart = sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2)) * sceneViewGridStep.x);										
+				float renderYStart = sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2)) * sceneViewGridStep.x);
+				Vector2 renderStart = Vector2(renderXStart, renderYStart);
+				Vector2 renderEnd = Vector2(renderXStart + ((activeWidth * transformScale.x) * sceneViewGridStep.x), renderYStart + ((activeHeight * transformScale.y) * sceneViewGridStep.x));
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, canvasBorderColor, 3.0f, draw_list);
 			}
-
 
 			// Renders Button Component
 			if (button != nullptr)
@@ -1657,10 +1658,10 @@ namespace FlatEngine { namespace FlatGui {
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
 
-				float activeLeft = WorldToViewport(scrolling.x, position.x + activeOffset.x - (activeWidth / 2 * transformScale.x), step, false);
-				float activeRight = WorldToViewport(scrolling.x, position.x + activeOffset.x + (activeWidth / 2 * transformScale.x), step, false);
-				float activeTop = WorldToViewport(scrolling.y, position.y + activeOffset.y + (activeHeight / 2 * transformScale.y), step, true);
-				float activeBottom = WorldToViewport(scrolling.y, position.y + activeOffset.y - (activeHeight / 2 * transformScale.y), step, true);
+				float activeLeft = sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * sceneViewGridStep.x);
+				float activeRight = sceneViewCenter.x + ((position.x + (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * sceneViewGridStep.x);
+				float activeTop = sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * sceneViewGridStep.y);
+				float activeBottom = sceneViewCenter.y - ((position.y - (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * sceneViewGridStep.y);
 
 				Vector2 center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
 
@@ -1676,10 +1677,10 @@ namespace FlatEngine { namespace FlatGui {
 					float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 					float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
-					topLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					topRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, -activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
-					bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * transformScale.x, +activeHeight * step / 2 * transformScale.y), cos_a, sin_a);
+					topLeft = ImRotate(Vector2(-activeWidth * sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					topRight = ImRotate(Vector2(+activeWidth * sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					bottomRight = ImRotate(Vector2(+activeWidth * sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					bottomLeft = ImRotate(Vector2(-activeWidth * sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
 
 					Vector2 pos[4] =
 					{

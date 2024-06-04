@@ -14,6 +14,7 @@ namespace FlatEngine
 		~GameLoop();
 
 		void Start();
+		void Init();
 		void InitializeScriptObjects();
 		void UpdateActiveColliders();
 		void UpdateActiveRigidBodies();
@@ -22,6 +23,9 @@ namespace FlatEngine
 		void Stop();
 		void Pause();
 		void Unpause();
+		bool IsGamePaused();
+		void PauseGame();
+		void UnpauseGame();
 		double TimeEllapsed();
 		bool IsStarted();
 		bool IsPaused();
@@ -44,6 +48,8 @@ namespace FlatEngine
 		int framesCounted;
 		double pausedTime;
 		double activeTime;
+
+		bool _gamePaused;
 
 		std::shared_ptr<GameManager> gameManager;
 		std::string startedScene;

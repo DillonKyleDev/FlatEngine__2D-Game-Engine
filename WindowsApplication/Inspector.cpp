@@ -373,16 +373,18 @@ namespace FlatEngine { namespace FlatGui {
 									transform->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##TransformProperties" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX);
-								RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX);
-								transform->SetPosition(Vector2(xPos, yPos));
-								RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360);
-								transform->SetRotation(rotation);
-								RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000);
-								RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
-								transform->SetScale(Vector2(scaleX, scaleY));								
-								PopTable();			
+								if (PushTable("##TransformProperties" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX);
+									transform->SetPosition(Vector2(xPos, yPos));
+									RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360);
+									transform->SetRotation(rotation);
+									RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000);
+									RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
+									transform->SetScale(Vector2(scaleX, scaleY));
+									PopTable();
+								}
 							}
 							else if (componentType == "Sprite")
 							{
@@ -428,16 +430,18 @@ namespace FlatEngine { namespace FlatGui {
 								ImGui::PopStyleColor();
 
 								// Render Table
-								PushTable("##SpriteProperties" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX);
-								RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX);
-								if (path != "")
-									sprite->SetOffset(Vector2(xOffset, yOffset));
-								RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
-								sprite->SetRenderOrder(renderOrder);
-								RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
-								RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
-								PopTable();
+								if (PushTable("##SpriteProperties" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX);
+									if (path != "")
+										sprite->SetOffset(Vector2(xOffset, yOffset));
+									RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
+									sprite->SetRenderOrder(renderOrder);
+									RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
+									RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
+									PopTable();
+								}
 							}
 							else if (componentType == "Camera")
 							{
@@ -456,13 +460,15 @@ namespace FlatEngine { namespace FlatGui {
 									camera->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##CameraProperties" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000);
-								RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000);
-								camera->SetDimensions(width, height);
-								RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100);
-								camera->SetZoom(zoom);
-								PopTable();
+								if (PushTable("##CameraProperties" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000);
+									RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000);
+									camera->SetDimensions(width, height);
+									RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100);
+									camera->SetZoom(zoom);
+									PopTable();
+								}
 
 								// Frustrum color picker
 								std::string frustrumID = "##FrustrumColor" + std::to_string(id);
@@ -524,14 +530,16 @@ namespace FlatEngine { namespace FlatGui {
 									button->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##ButtonProperties" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000);
-								RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000);
-								button->SetActiveDimensions(activeWidth, activeHeight);
-								RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
-								RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
-								button->SetActiveOffset(activeOffset);
-								PopTable();
+								if (PushTable("##ButtonProperties" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000);
+									RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000);
+									button->SetActiveDimensions(activeWidth, activeHeight);
+									RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
+									button->SetActiveOffset(activeOffset);
+									PopTable();
+								}
 							}
 							else if (componentType == "Canvas")
 							{
@@ -551,13 +559,15 @@ namespace FlatEngine { namespace FlatGui {
 									canvas->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##CanvasProperties" + std::to_string(id), 2);
-								RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20);
-								canvas->SetLayerNumber(layerNumber);
-								RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX);
-								RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX);
-								canvas->SetDimensions(canvasWidth, canvasHeight);
-								PopTable();
+								if (PushTable("##CanvasProperties" + std::to_string(id), 2))
+								{
+									RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20);
+									canvas->SetLayerNumber(layerNumber);
+									RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX);
+									RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX);
+									canvas->SetDimensions(canvasWidth, canvasHeight);
+									PopTable();
+								}
 
 								// _BlocksLayers Checkbox
 								if (RenderCheckbox("Blocks Layers:", _blocksLayers))
@@ -675,14 +685,16 @@ namespace FlatEngine { namespace FlatGui {
 									text->SetFontPath(fontPath);
 
 								// Render Table
-								PushTable("##TextProperties" + std::to_string(id), 2);
-								RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
-								RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
-								RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
-								RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));								
-								RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
-								text->SetRenderOrder(renderOrder);
-								PopTable();
+								if (PushTable("##TextProperties" + std::to_string(id), 2))
+								{
+									RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
+									RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
+									RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
+									RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));
+									RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
+									text->SetRenderOrder(renderOrder);
+									PopTable();
+								}
 							}
 							else if (componentType == "CharacterController")
 							{
@@ -702,13 +714,15 @@ namespace FlatEngine { namespace FlatGui {
 									characterController->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##CharacterControllerProps" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##WalkSpeedDrag" + std::to_string(id), "Walk Speed", walkSpeed, 0.01f, 0.0f, 20.0f);
-								characterController->SetWalkSpeed(walkSpeed);
-								RenderFloatDragTableRow("##RunSpeedDrag" + std::to_string(id), "Run Speed", runSpeed, 0.01f, 0.0f, 20.0f);
-								characterController->SetRunSpeed(runSpeed);
-								RenderTextTableRow("##IsMoving" + std::to_string(id), "Is Moving", isMoving);
-								PopTable();
+								if (PushTable("##CharacterControllerProps" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##WalkSpeedDrag" + std::to_string(id), "Walk Speed", walkSpeed, 0.01f, 0.0f, 20.0f);
+									characterController->SetWalkSpeed(walkSpeed);
+									RenderFloatDragTableRow("##RunSpeedDrag" + std::to_string(id), "Run Speed", runSpeed, 0.01f, 0.0f, 20.0f);
+									characterController->SetRunSpeed(runSpeed);
+									RenderTextTableRow("##IsMoving" + std::to_string(id), "Is Moving", isMoving);
+									PopTable();
+								}
 							}
 							else if (componentType == "BoxCollider")
 							{
@@ -735,17 +749,19 @@ namespace FlatEngine { namespace FlatGui {
 									boxCollider->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##BoxColliderProps" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f);
-								RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f);
-								boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-								RenderFloatDragTableRow("##activeOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
-								RenderFloatDragTableRow("##activeOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
-								boxCollider->SetActiveOffset(activeOffset);
-								RenderIntDragTableRow("##boxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
-								boxCollider->SetActiveLayer(activeLayer);								
-								RenderTextTableRow("##IsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
-								PopTable();
+								if (PushTable("##BoxColliderProps" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f);
+									RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f);
+									boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+									RenderFloatDragTableRow("##activeOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##activeOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
+									boxCollider->SetActiveOffset(activeOffset);
+									RenderIntDragTableRow("##boxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
+									boxCollider->SetActiveLayer(activeLayer);
+									RenderTextTableRow("##IsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+									PopTable();
+								}
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);							
 								RenderCheckbox(" Is Continuous", _isContinuous);
@@ -784,16 +800,18 @@ namespace FlatEngine { namespace FlatGui {
 									rigidBody->SetActive(_isActive);
 
 								// Render Table
-								PushTable("##RigidBodyProps" + std::to_string(id), 2);
-								RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX);
-								rigidBody->SetMass(mass);
-								RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX);
-								rigidBody->SetGravity(gravity);
-								RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
-								RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
-								RenderTextTableRow("##RigidBodyMoving" + std::to_string(id), "Is Moving", isMovingString);
-								RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
-								PopTable();
+								if (PushTable("##RigidBodyProps" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX);
+									rigidBody->SetMass(mass);
+									RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX);
+									rigidBody->SetGravity(gravity);
+									RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
+									RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
+									RenderTextTableRow("##RigidBodyMoving" + std::to_string(id), "Is Moving", isMovingString);
+									RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
+									PopTable();
+								}
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 								// Continuous Checkbox

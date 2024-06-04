@@ -37,9 +37,9 @@ namespace Window
 		SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 		Window::window = SDL_CreateWindow("FlatEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, window_flags);
 		// Vsync on
-		Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		//Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		// Vsync off
-		//Window::renderer = SDL_CreateRenderer(Window::window, -1, 0);
+		Window::renderer = SDL_CreateRenderer(Window::window, -1, 0);
 
 		if (Window::window == NULL)
 		{

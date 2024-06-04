@@ -27,7 +27,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
 		// If Release - Make GameView full screen and disable tab decoration and resizing
-		if (FlatEngine::_isDebugMode == false)
+		if (!FlatEngine::_isDebugMode)
 		{
 			// Get InputOutput
 			ImGuiIO& inputOutput = ImGui::GetIO();
@@ -128,8 +128,11 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// For Profiler
-		float cameraHangTime = (float)SDL_GetTicks() - cameraStartTime;
-		AddProcessData("##Game_RenderView_Camera", cameraHangTime);
+		if (FlatEngine::_isDebugMode)
+		{
+			float cameraHangTime = (float)SDL_GetTicks() - cameraStartTime;
+			AddProcessData("##Game_RenderView_Camera", cameraHangTime);
+		}
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
 		worldCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
@@ -137,7 +140,9 @@ namespace FlatEngine { namespace FlatGui {
 		Vector2 viewportCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
 		// For Profiler
-		float renderStartTime = (float)SDL_GetTicks();
+		float renderStartTime = 0;
+		if (FlatEngine::_isDebugMode)
+			renderStartTime = (float)SDL_GetTicks();
 
 		// Render Game Objects
 		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
@@ -147,8 +152,11 @@ namespace FlatEngine { namespace FlatGui {
 		}
 
 		// For Profiler
-		float renderHangTime = (float)SDL_GetTicks() - renderStartTime;
-		AddProcessData("##Game_RenderView_RenderObjects", renderHangTime);
+		if (FlatEngine::_isDebugMode)
+		{
+			float renderHangTime = (float)SDL_GetTicks() - renderStartTime;
+			AddProcessData("##Game_RenderView_RenderObjects", renderHangTime);
+		}
 
 		// Render Primary Camera Frustrum
 		//{
@@ -291,24 +299,24 @@ namespace FlatEngine { namespace FlatGui {
 				bool _isActive = button->IsActive();
 
 				// Get Active Button bounds to check against later for mouse events
-				float activeLeft = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x - (activeWidth / 2 * scale.x), gameViewGridStep.x, false);
-				float activeRight = WorldToViewport(worldCenterPoint.x, position.x + activeOffset.x + (activeWidth / 2 * scale.x), gameViewGridStep.x, false);
-				float activeTop = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y + (activeHeight / 2 * scale.y), gameViewGridStep.x, true);
-				float activeBottom = WorldToViewport(worldCenterPoint.y, position.y + activeOffset.y - (activeHeight / 2 * scale.y), gameViewGridStep.x, true);
+				float activeLeft = worldCenterPoint.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
+				float activeRight = worldCenterPoint.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
+				float activeTop = worldCenterPoint.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
+				float activeBottom = worldCenterPoint.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
 
 				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
 
 				// FOR DRAWING ACTIVE BUTTON RECTANGLE IN GAME VIEW
 				// 
-				//Vector2 topLeft = { activeLeft, activeTop };
-				//Vector2 bottomRight = { activeRight, activeBottom };
+				Vector2 topLeft = { activeLeft, activeTop };
+				Vector2 bottomRight = { activeRight, activeBottom };
 
-				//drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				//if (_isActive)
-				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::ActiveButtonColor, 3.0f, draw_list);
-				//else
-				//	FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::InactiveButtonColor, 3.0f, draw_list);
+				if (_isActive)
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::FlatGui::buttonActiveColor, 3.0f, draw_list);
+				else
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::FlatGui::buttonColor, 3.0f, draw_list);
 			}
 		}
 	}
