@@ -13,10 +13,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -27.18286895751953,
+                    "xPos": -91.06549835205078,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -3.833249568939209,
+                    "yPos": 0.048653602600097656,
                     "yScale": 1.0
                 },
                 {
@@ -663,10 +663,10 @@
                     "id": 52,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -27.18286895751953,
+                    "xOrigin": -91.06549835205078,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -3.833249568939209,
+                    "yOrigin": 0.048653602600097656,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
@@ -733,10 +733,10 @@
                     "id": 76,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -27.18286895751953,
+                    "xOrigin": -91.06549835205078,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -3.833249568939209,
+                    "yOrigin": 0.048653602600097656,
                     "yPos": 0.0,
                     "yScale": 1.0
                 }
@@ -799,10 +799,10 @@
                     "id": 60,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -27.18286895751953,
+                    "xOrigin": -91.06549835205078,
                     "xPos": 0.0,
                     "xScale": 5.0,
-                    "yOrigin": -3.833249568939209,
+                    "yOrigin": 0.048653602600097656,
                     "yPos": -0.6499999761581421,
                     "yScale": 1.0
                 },
@@ -891,10 +891,10 @@
                     "id": 73,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -27.18286895751953,
+                    "xOrigin": -91.06549835205078,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -4.483249664306641,
+                    "yOrigin": -0.6013463735580444,
                     "yPos": 0.0,
                     "yScale": 0.15000000596046448
                 },
@@ -945,10 +945,10 @@
                     "id": 75,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -27.18286895751953,
+                    "xOrigin": -91.06549835205078,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -3.833249568939209,
+                    "yOrigin": 0.048653602600097656,
                     "yPos": 3.799999952316284,
                     "yScale": 0.15000000596046448
                 },
@@ -1036,6 +1036,44 @@
             ],
             "id": 10,
             "name": "Wall(10)",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 51,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -92.77371978759766,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 7.045905590057373,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 7,
+            "name": "GameObject(7)",
             "parent": -1,
             "tags": {
                 "Enemy": false,

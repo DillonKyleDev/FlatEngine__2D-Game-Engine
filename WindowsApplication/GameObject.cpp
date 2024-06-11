@@ -18,7 +18,7 @@
 #include "Canvas.h"
 #include "CharacterController.h"
 #include "BoxCollider.h"
-//#include "CircleCollider.h"
+#include "CircleCollider.h"
 
 
 namespace FlatEngine
@@ -41,6 +41,7 @@ namespace FlatEngine
 		_isActive = true;
 		childrenIDs = std::vector<long>();
 	}
+
 	// Copy Constructor
 	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& objectVector, long parentID)
 	{
@@ -131,11 +132,11 @@ namespace FlatEngine
 				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
 				components.push_back(newComponent);
 			}
-			//if (component->GetTypeString() == "CircleCollider")
-			//{
-			//	std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
-			//	components.push_back(newComponent);
-			//}
+			if (component->GetTypeString() == "CircleCollider")
+			{
+				std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
+				components.push_back(newComponent);
+			}
 		}
 	}
 
@@ -220,11 +221,11 @@ namespace FlatEngine
 				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
 				components.push_back(newComponent);
 			}
-			//if (component->GetTypeString() == "CircleCollider")
-			//{
-			//	std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
-			//	components.push_back(newComponent);
-			//}
+			if (component->GetTypeString() == "CircleCollider")
+			{
+				std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
+				components.push_back(newComponent);
+			}
 		}
 	}
 
@@ -294,7 +295,7 @@ namespace FlatEngine
 		std::shared_ptr<CharacterController> characterControllerComponent;
 		std::shared_ptr<RigidBody> rigidBodyComponent;
 		std::shared_ptr<BoxCollider> boxColliderComponent;
-		//std::shared_ptr<CircleCollider> circleColliderComponent;
+		std::shared_ptr<CircleCollider> circleColliderComponent;
 
 		std::shared_ptr<GameObject> parent;
 
@@ -402,13 +403,12 @@ namespace FlatEngine
 			return boxColliderComponent;
 			break;
 
-
-		//case ComponentTypes::CircleCollider:
-		//	circleColliderComponent = std::make_shared<CircleCollider>(nextID, ID);
-		//	components.push_back(circleColliderComponent);
-		//	scene->IncrementComponentID();
-		//	return circleColliderComponent;
-		//	break;
+		case ComponentTypes::CircleCollider:
+			circleColliderComponent = std::make_shared<CircleCollider>(nextID, ID);
+			components.push_back(circleColliderComponent);
+			scene->IncrementComponentID();
+			return circleColliderComponent;
+			break;
 
 		default:
 			return nullptr;
@@ -492,10 +492,10 @@ namespace FlatEngine
 		return std::static_pointer_cast<BoxCollider>(AddComponent(ComponentTypes::BoxCollider));
 	}
 
-	//std::shared_ptr<CircleCollider> GameObject::AddRigidBodyComponent()
-	//{
-		//return std::static_pointer_cast<CircleCollider>(AddComponent(ComponentTypes::CircleCollider));
-	//}
+	std::shared_ptr<CircleCollider> GameObject::AddCircleColliderComponent()
+	{
+		return std::static_pointer_cast<CircleCollider>(AddComponent(ComponentTypes::CircleCollider));
+	}
 
 	std::shared_ptr<RigidBody> GameObject::AddRigidBodyComponent()
 	{
@@ -608,11 +608,11 @@ namespace FlatEngine
 		return boxCollider;
 	}
 
-	//std::shared_ptr<CircleCollider> GameObject::GetCircleCollider()
-	//{
-	//	std::shared_ptr<CircleCollider> circleCollider = std::static_pointer_cast<CircleCollider>(GetComponent(ComponentTypes::CircleCollider));
-	//	return circleCollider;
-	//}
+	std::shared_ptr<CircleCollider> GameObject::GetCircleCollider()
+	{
+		std::shared_ptr<CircleCollider> circleCollider = std::static_pointer_cast<CircleCollider>(GetComponent(ComponentTypes::CircleCollider));
+		return circleCollider;
+	}
 
 	std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)
 	{
@@ -719,6 +719,7 @@ namespace FlatEngine
 	{
 		return _isActive;
 	}
+	
 	std::shared_ptr<GameObject> GameObject::GetParent()
 	{
 		return GetObjectById(parentID);

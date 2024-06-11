@@ -16,7 +16,7 @@ Project::Project()
 	focusedGameObjectID = -1;
 	_autoSave = true;
 	physicsSystem = "Euler";
-	collisionDetection = "Simple Box";
+	collisionDetection = "Shared Axis";
 	resolution = Vector2(1920, 1080);
 	_vsyncEnabled = true;
 }

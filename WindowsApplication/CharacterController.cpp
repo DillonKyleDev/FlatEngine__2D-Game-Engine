@@ -16,7 +16,6 @@ namespace FlatEngine {
 		airControl = 0.2f;
 		speedCorrection = 1;
 		_isMoving = false;
-		_isGrounded = false;
 	}
 
 	// Copy constructor
@@ -31,7 +30,6 @@ namespace FlatEngine {
 		airControl = toCopy->airControl;
 		speedCorrection = toCopy->speedCorrection;
 		_isMoving = toCopy->_isMoving;
-		_isGrounded = toCopy->_isGrounded;
 	}
 
 	CharacterController::~CharacterController()
@@ -132,15 +130,5 @@ namespace FlatEngine {
 	bool CharacterController::IsMoving()
 	{
 		return _isMoving;
-	}
-
-	void CharacterController::SetIsGrounded(bool _grounded)
-	{
-		_isGrounded = _grounded;
-	}
-
-	bool CharacterController::IsGrounded()
-	{
-		return _isGrounded;
 	}
 }

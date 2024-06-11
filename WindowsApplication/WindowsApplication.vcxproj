@@ -155,13 +155,13 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="CircleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="GameView.cpp" />
     <ClCompile Include="ImGuiWrappers.cpp" />
     <ClCompile Include="scripts\PauseMenu.cpp" />
     <ClCompile Include="scripts\JumpPad.cpp" />
     <ClCompile Include="scripts\PlayerController.cpp" />
-    <ClCompile Include="scripts\GroundedCheck.cpp" />
     <ClCompile Include="Hierarchy.cpp" />
     <ClCompile Include="Icons.cpp" />
     <ClCompile Include="implot.cpp" />
@@ -225,11 +225,11 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="CircleCollider.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="scripts\PauseMenu.h" />
     <ClInclude Include="scripts\JumpPad.h" />
     <ClInclude Include="scripts\PlayerController.h" />
-    <ClInclude Include="scripts\GroundedCheck.h" />
     <ClInclude Include="implot.h" />
     <ClInclude Include="implot_internal.h" />
     <ClInclude Include="ImSequencer.h" />

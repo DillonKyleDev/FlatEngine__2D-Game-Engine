@@ -26,6 +26,6 @@ void GroundedCheck::Start()
 
 void GroundedCheck::Update(float deltaTime)
 {
-	if (collider != nullptr && collider->IsColliding() && controller != nullptr)
-		controller->SetIsGrounded(true);
+	//if (collider != nullptr && collider->IsColliding() && controller != nullptr)
+	//	controller->SetIsGrounded(true);
 }

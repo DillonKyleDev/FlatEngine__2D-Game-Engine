@@ -22,7 +22,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "BoxCollider.h"
-//#include "CircleCollider.h"
+#include "CircleCollider.h"
 #include "MappingContext.h"
 
 
@@ -54,11 +54,9 @@ namespace FlatEngine { namespace FlatGui {
 	//////////////////////
 	Vector4 componentBorderColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	// Colliders
-	Vector4 boxColliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
-	Vector4 boxColliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
-	Vector4 boxColliderCollidingColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
-	Vector4 circleColliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
-	Vector4 circleColliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
+	Vector4 colliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
+	Vector4 colliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
+	Vector4 colliderCollidingColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
 	// Button Components
 	Vector4 buttonComponentActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
 	Vector4 buttonComponentInctiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
@@ -173,7 +171,7 @@ namespace FlatEngine { namespace FlatGui {
 	int framesDrawn = 0;
 
 	// Settings
-	int iconTransparency = 100;
+	int iconTransparency = 50;
 
 	// Hierarchy	
 	std::map<long, bool> leafExpandedTracker = std::map<long, bool>();
@@ -1513,6 +1511,7 @@ namespace FlatEngine { namespace FlatGui {
 		std::shared_ptr<Canvas> canvas = self->GetCanvasComponent();
 		std::shared_ptr<Text> text = self->GetTextComponent();
 		std::shared_ptr<BoxCollider> boxCollider = self->GetBoxCollider();
+		std::shared_ptr<CircleCollider> circleCollider = self->GetCircleCollider();
 
 		// Check if each object has a Transform component
 		if (transform != nullptr)
@@ -1776,16 +1775,16 @@ namespace FlatEngine { namespace FlatGui {
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				if (loadedProject->GetCollisionDetection() == "Simple Box")
+				if (loadedProject->GetCollisionDetection() == "Shared Axis")
 				{
 					if (_isActive && !_isColliding)
-						DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderActiveColor, 1.0f, draw_list);
 					else if (!_isActive)
-						DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderInactiveColor, 1.0f, draw_list);
 					else if (_isColliding)
-						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderCollidingColor, 1.0f, draw_list);
 				}
-				else if (loadedProject->GetCollisionDetection() == "Separating Axis (Rotational)")
+				else if (loadedProject->GetCollisionDetection() == "Separating Axis")
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -1802,24 +1801,47 @@ namespace FlatEngine { namespace FlatGui {
 					};
 
 					// Draw Normals
-					DrawLine(center, normals[0], boxColliderInactiveColor, 2.0f, draw_list);
-					DrawLine(center, normals[1], boxColliderInactiveColor, 2.0f, draw_list);
-					DrawLine(center, normals[2], boxColliderInactiveColor, 2.0f, draw_list);
-					DrawLine(center, normals[3], boxColliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[0], colliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[1], colliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[2], colliderInactiveColor, 2.0f, draw_list);
+					DrawLine(center, normals[3], colliderInactiveColor, 2.0f, draw_list);
 
 					if (_isActive && !_isColliding)
-						DrawRectangleFromLines(corners, boxColliderActiveColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderActiveColor, 1.0f, draw_list);
 					else if (!_isActive)
-						DrawRectangleFromLines(corners, boxColliderInactiveColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderInactiveColor, 1.0f, draw_list);
 					else if (_isColliding)
-						DrawRectangleFromLines(corners, boxColliderCollidingColor, 1.0f, draw_list);
+						DrawRectangleFromLines(corners, colliderCollidingColor, 1.0f, draw_list);
 				}
 
 				// Draw activeRadius circle
 				if (_showActiveRadius)
-					draw_list->AddCircle(center, activeRadius, ImGui::GetColorU32(boxColliderActiveColor));
+					DrawCircle(center, activeRadius, colliderActiveColor, draw_list);
 			}
 
+			// Renders CircleCollider Component
+			if (circleCollider != nullptr)
+			{
+				Vector2 activeOffset = circleCollider->GetActiveOffset();
+				int activeLayer = circleCollider->GetActiveLayer();
+				bool _isActive = circleCollider->IsActive();
+				bool _isColliding = circleCollider->IsColliding();
+				float activeRadius = circleCollider->GetActiveRadiusGrid() * sceneViewGridStep.x;
+				circleCollider->SetActiveRadiusScreen(activeRadius);
+				bool _showActiveRadius = circleCollider->GetShowActiveRadius();
+				Vector2 center = circleCollider->GetCenterCoord();
+
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				circleCollider->UpdateCenter();
+
+				if (_isActive && !_isColliding)
+					DrawCircle(center, activeRadius, colliderActiveColor, draw_list);
+				else if (!_isActive)						
+					DrawCircle(center, activeRadius, colliderInactiveColor, draw_list);
+				else if (_isColliding)						
+					DrawCircle(center, activeRadius, colliderCollidingColor, draw_list);
+			}
 
 			// Renders Transform Arrow // 
 			//

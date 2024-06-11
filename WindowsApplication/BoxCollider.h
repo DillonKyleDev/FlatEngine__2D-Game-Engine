@@ -1,5 +1,7 @@
 #pragma once
 #include "Component.h"
+#include "CircleCollider.h"
+#include "FlatEngine.h"
 #include <SDL.h>
 #include <string>
 #include "Window.h"
@@ -7,31 +9,32 @@
 #include "Texture.h"
 #include "Vector2.h"
 #include <functional>
-#include "GameObject.h"
 #include "Vector4.h"
 #include <imgui.h>
 
 
 namespace FlatEngine
 {
-	//class GameObject;
-
 	class BoxCollider : public Collider
 	{
+		friend class Collider;
+		friend class CircleCollider;
+		class GameObject;		
+
 	public:
 		BoxCollider(long myID = -1, long parentID = -1);
 		BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID);
+		BoxCollider(BoxCollider* exactCopy);
 		~BoxCollider();
 		
-		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
-		void AddCollidingObject(std::shared_ptr<GameObject> collidedWith);
+		void AddCollidingObject(std::shared_ptr<FlatEngine::GameObject> collidedWith);		
 		void SetActiveDimensions(float width, float height);
 		float GetActiveWidth();
 		float GetActiveHeight();
 		//Vector4(activeTop, activeRight, activeBottom, activeLeft)
 		void SetActiveEdges(Vector4 edges);
 		Vector4 GetActiveEdges();
-		Vector4 UpdateActiveEdges();
+		void UpdateActiveEdges();
 		void UpdateNormals();
 		void UpdateCorners();
 		void UpdateCenter();
@@ -42,15 +45,16 @@ namespace FlatEngine
 		Vector2* GetNormals();
 		std::string GetData();
 		void RecalculateBounds();
-		bool CheckForCollision(std::shared_ptr<BoxCollider> other);
+		bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> other);		
 		void ResetCollisions();
 
-		// Simple Box
-		bool SimpleBoxCheckForCollision(std::shared_ptr<BoxCollider> other);
-		void SimpleBoxUpdateEdges();
-		void SimpleBoxUpdateCorners();
+		// Shared Axis
+		bool SharedAxisCheckForCollision(std::shared_ptr<FlatEngine::Collider> other);
+		void SharedAxisUpdateEdges();
+		void SharedAxisUpdateCorners();
 
-		Vector2 previousPosition;
+		// Separating Axis
+		// Todo
 
 		float rightCollision;
 		float leftCollision;
@@ -72,7 +76,7 @@ namespace FlatEngine
 		bool _bottomCollisionSolid;
 		bool _topCollisionSolid;
 
-	private:
+	private:		
 		float activeWidth;
 		float activeHeight;
 

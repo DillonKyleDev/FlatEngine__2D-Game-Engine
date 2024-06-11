@@ -227,14 +227,21 @@ namespace FlatEngine {
 		// Floor Collision Forces
 		// 
 		// Normal Gravity
-		if (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && boxCollider->_bottomCollisionSolid && gravity > 0 && pendingForces.y < 0)
+		if (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && boxCollider->_bottomCollisionSolid && gravity > 0)
+			_isGrounded = true;
+		// Inverted Gravity
+		else if (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && boxCollider->_bottomCollisionSolid && gravity < 0)
+			_isGrounded = true;			
+		else
+			_isGrounded = false;
+
+		if (_isGrounded && gravity > 0 && pendingForces.y < 0)
 		{
 			pendingForces.y = 0;
 			float yPos = boxCollider->bottomCollision + (activeHeight / 2) - 0.001f;
 			transform->SetPosition(Vector2(position.x, yPos));
 		}
-		// Inverted Gravity
-		if (boxCollider->_isCollidingBottom && boxCollider->_bottomCollisionStatic && boxCollider->_bottomCollisionSolid && gravity < 0 && pendingForces.y < 0)
+		else if (_isGrounded && gravity < 0 && pendingForces.y < 0)
 		{
 			pendingForces.y = 0;
 			float yPos = boxCollider->bottomCollision + (activeHeight / 2) - 0.001f;

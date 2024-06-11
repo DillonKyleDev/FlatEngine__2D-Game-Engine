@@ -231,9 +231,6 @@
     <ClCompile Include="Settings.cpp">
       <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\GroundedCheck.cpp">
-      <Filter>Source Files\scripts</Filter>
-    </ClCompile>
     <ClCompile Include="scripts\PlayerController.cpp">
       <Filter>Source Files\scripts</Filter>
     </ClCompile>
@@ -253,6 +250,9 @@
       <Filter>Source Files\FlatEngine/FlatGui</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleCollider.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -398,9 +398,6 @@
     <ClInclude Include="Vector4.h">
       <Filter>Header Files\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\GroundedCheck.h">
-      <Filter>Header Files\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\PlayerController.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
@@ -416,8 +413,11 @@
     <ClInclude Include="scripts\PauseMenu.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
+    <ClInclude Include="CircleCollider.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,17 +16,19 @@ namespace FlatEngine
 	class Collider : public Component
 	{
 	public:
-		Collider(long myID = -1, long parentID = -1, ComponentTypes type = ComponentTypes::BoxCollider);
-		Collider(std::shared_ptr<Collider> toCopy, long newParentID, ComponentTypes type);
+		Collider(long myID = -1, long parentID = -1);
+		Collider(std::shared_ptr<Collider> toCopy, long newParentID);
 		~Collider();
 
 		virtual void RecalculateBounds();
-		virtual bool CheckForCollision(std::shared_ptr<Collider> other);
+		virtual bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> other);
 		virtual void ResetCollisions();
-		virtual void RemoveCollidingObject(std::shared_ptr<GameObject> object);
+		virtual void AddCollidingObject(std::shared_ptr<GameObject> collidedWith);
 		virtual void UpdateCenter(); // May be useless??
+		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
+		
+		bool CheckForCollisionBoxCircle(std::shared_ptr<FlatEngine::BoxCollider> boxCol, std::shared_ptr<FlatEngine::CircleCollider> circleCol);
 
-		void AddCollidingObject(std::shared_ptr<GameObject> collidedWith);
 		void SetOnActiveCollision(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
 		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
 		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);

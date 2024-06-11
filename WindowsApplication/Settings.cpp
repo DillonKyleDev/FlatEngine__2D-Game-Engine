@@ -34,7 +34,7 @@ namespace FlatEngine { namespace FlatGui {
 			// List settings per grouping
 			if (settingSelected == "Collision Detection")
 			{
-				std::vector<std::string> collisionTypes = { "Simple Box", "Separating Axis (Rotational)" };
+				std::vector<std::string> collisionTypes = { "Shared Axis", "Separating Axis" };
 				static int currentCollisionIndex = 0;
 				for (int c = 0; c < collisionTypes.size(); c++)
 				{

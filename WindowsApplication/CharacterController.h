@@ -22,8 +22,6 @@ namespace FlatEngine {
 		float GetAirControl();
 		void SetMoving(bool _isMoving);
 		bool IsMoving();
-		void SetIsGrounded(bool _grounded);
-		bool IsGrounded();
 
 	private:
 		float maxAcceleration;
@@ -31,7 +29,6 @@ namespace FlatEngine {
 		float airControl;
 		float speedCorrection;
 		bool _isMoving;
-		bool _isGrounded;
 	};
 }
 

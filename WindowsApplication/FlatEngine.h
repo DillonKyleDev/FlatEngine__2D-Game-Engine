@@ -38,6 +38,7 @@ namespace FlatEngine
 	class UIManager;
 	class Logger;
 	class Scene;
+	class Collider;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -75,9 +76,9 @@ namespace FlatEngine
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;
 	extern std::shared_ptr<Sound> soundController;
-	extern std::vector<std::shared_ptr<RigidBody>> rigidBodies;
-	extern std::vector<std::shared_ptr<BoxCollider>> boxColliders;
-	extern std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>> boxColliderPairs;
+	extern std::vector<std::shared_ptr<FlatEngine::RigidBody>> rigidBodies;
+	extern std::vector<std::shared_ptr<FlatEngine::Collider>> colliders;
+	extern std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> colliderPairs;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -129,6 +130,7 @@ namespace FlatEngine
 	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawRectangleFromLines(Vector2* corners, Vector4 color, float thickness, ImDrawList* drawList);
+	extern void DrawCircle(Vector2 center, float radius, Vector4 color, ImDrawList* drawList, float thickness = 1, int segments = 0);
 	extern void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList);
 	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
 
@@ -187,11 +189,9 @@ namespace FlatEngine
 		//////////////////////
  		extern Vector4 componentBorderColor;
 		// Collider borders
-		extern Vector4 boxColliderActiveColor;
-		extern Vector4 boxColliderInactiveColor;
-		extern Vector4 boxColliderCollidingColor;
-		extern Vector4 circleColliderActiveColor;
-		extern Vector4 circleColliderInactiveColor;
+		extern Vector4 colliderActiveColor;
+		extern Vector4 colliderInactiveColor;
+		extern Vector4 colliderCollidingColor;
 		// Button Components
 		extern Vector4 buttonComponentActiveColor;
 		extern Vector4 buttonComponentInctiveColor;

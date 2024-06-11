@@ -3,6 +3,7 @@
 #include "Process.h"
 #include "Scene.h"
 #include "BoxCollider.h"
+#include "CircleCollider.h"
 #include "Transform.h"
 #include "./scripts/GameManager.h"
 #include "./scripts/PauseMenu.h"
@@ -11,7 +12,7 @@
 #include "./scripts/RestartButton.h"
 #include "./scripts/QuitButton.h"
 #include "./scripts/PlayerController.h"
-#include "./scripts/GroundedCheck.h"
+//#include "./scripts/GroundedCheck.h"
 #include "./scripts/JumpPad.h"
 
 
@@ -139,13 +140,13 @@ namespace FlatEngine
 						script->SetScriptInstance(playerControllerScript);
 						activeScripts.push_back(playerControllerScript);
 					}
-					else if (attachedScript == "GroundedCheck")
-					{
-						std::shared_ptr<GroundedCheck> groundCheckScript = std::make_shared<GroundedCheck>();
-						groundCheckScript->SetOwner(gameObjects[i]);
-						script->SetScriptInstance(groundCheckScript);
-						activeScripts.push_back(groundCheckScript);
-					}
+					//else if (attachedScript == "GroundedCheck")
+					//{
+					//	std::shared_ptr<GroundedCheck> groundCheckScript = std::make_shared<GroundedCheck>();
+					//	groundCheckScript->SetOwner(gameObjects[i]);
+					//	script->SetScriptInstance(groundCheckScript);
+					//	activeScripts.push_back(groundCheckScript);
+					//}
 					else if (attachedScript == "JumpPad")
 					{
 						std::shared_ptr<JumpPad> jumpPadScript = std::make_shared<JumpPad>();
@@ -181,7 +182,7 @@ namespace FlatEngine
 	{
 		// Get currently loaded scenes GameObjects
 		gameObjects = FlatEngine::GetSceneObjects();
-		boxColliders.clear();
+		colliders.clear();
 		//circleColliders.clear();
 
 		// Find all script components on Scene GameObjects and add those GameObjects
@@ -195,24 +196,25 @@ namespace FlatEngine
 				if (components[j]->GetTypeString() == "BoxCollider")
 				{
 					// Collect all BoxCollider components for collision detection in Update()
-					boxColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
+					colliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
 				}
 				if (components[j]->GetTypeString() == "CircleCollider")
 				{
 					// Collect all BoxCollider components for collision detection in Update()
-					//circleColliders.push_back(std::static_pointer_cast<BoxCollider>(components[j]));
+					colliders.push_back(std::static_pointer_cast<CircleCollider>(components[j]));
 				}
 			}
 		}
 
-		// Remake boxColliderPairs
-		boxColliderPairs.clear();
-		for (int i = 0; i < boxColliders.size(); i++)
+		// Remake colliderPairs
+		colliderPairs.clear();
+
+		for (int i = 0; i < colliders.size(); i++)
 		{
-			for (int j = i + 1; j < boxColliders.size(); j++)
+			for (int j = i + 1; j < colliders.size(); j++)
 			{
-				std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>> newPair = { boxColliders.at(i), boxColliders.at(j) };
-				boxColliderPairs.push_back(newPair);
+				std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> newPair = { colliders.at(i), colliders.at(j) };
+				colliderPairs.push_back(newPair);
 			}
 		}
 	}
@@ -279,23 +281,23 @@ namespace FlatEngine
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			rigidBody->CalculatePhysics();
 
-		// Reset BoxCollider collisions before going through all of them again
-		for (std::shared_ptr<BoxCollider> boxCollider : boxColliders)
-			boxCollider->ResetCollisions();
+		// Reset Collider collisions before going through all of them again
+		for (std::shared_ptr<Collider> collider : colliders)
+			collider->ResetCollisions();
 
-		// Handle BoxCollision updates here
+		// Handle Collision updates here
 		static int continuousCounter = 0;
-		for (std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>> boxColliderPair : boxColliderPairs)
+		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
 		{
-			std::shared_ptr<BoxCollider> collider1 = boxColliderPair.first;
-			std::shared_ptr<BoxCollider> collider2 = boxColliderPair.second;
+			std::shared_ptr<Collider> collider1 = colliderPair.first;
+			std::shared_ptr<Collider> collider2 = colliderPair.second;
 
 			if (collider1 != nullptr && collider1->IsActive() && collider2 != nullptr && collider2->IsActive() && (!collider1->IsStatic() || !collider2->IsStatic()) && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
 			{
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
-					collider1->UpdateActiveEdges();
-					collider2->UpdateActiveEdges();
+					collider1->RecalculateBounds();
+					collider2->RecalculateBounds();
 
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
 						collider1->CheckForCollision(collider2);

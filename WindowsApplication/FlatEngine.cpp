@@ -40,9 +40,8 @@ namespace FlatEngine
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
 	std::vector<std::shared_ptr<RigidBody>> rigidBodies = std::vector<std::shared_ptr<RigidBody>>();
-	std::vector<std::shared_ptr<BoxCollider>> boxColliders = std::vector<std::shared_ptr<BoxCollider>>();
-	//std::vector<std::shared_ptr<CircleCollider>> circleColliders = std::vector<std::shared_ptr<CircleCollider>>();
-	std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>> boxColliderPairs = std::vector<std::pair<std::shared_ptr<BoxCollider>, std::shared_ptr<BoxCollider>>>();
+	std::vector<std::shared_ptr<Collider>> colliders = std::vector<std::shared_ptr<Collider>>();	
+	std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>> colliderPairs = std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>>();
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
@@ -129,7 +128,7 @@ namespace FlatEngine
 
 					gameLoop->time += gameLoop->deltaTime;
 					gameLoop->accumulator -= gameLoop->deltaTime;
-				}				
+				}
 			}
 			else
 			{
@@ -780,6 +779,11 @@ namespace FlatEngine
 		DrawLine(corners[1], corners[2], color, thickness, drawList);
 		DrawLine(corners[2], corners[3], color, thickness, drawList);
 		DrawLine(corners[3], corners[0], color, thickness, drawList);
+	}
+
+	void DrawCircle(Vector2 center, float radius, Vector4 color, ImDrawList* drawList, float thickness, int segments)
+	{
+		drawList->AddCircle(center, radius, ImGui::GetColorU32(color), segments, thickness);
 	}
 
 	void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList)

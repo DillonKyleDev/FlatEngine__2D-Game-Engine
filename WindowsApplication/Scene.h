@@ -11,6 +11,7 @@ namespace FlatEngine
 
 	class Scene
 	{
+		friend class SceneManager;
 	public:
 		Scene();
 		~Scene();

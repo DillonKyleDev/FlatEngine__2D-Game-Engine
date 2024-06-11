@@ -7,7 +7,7 @@
 #include "Audio.h"
 #include "CharacterController.h"
 #include "BoxCollider.h"
-//#include "CircleCollider.h"
+#include "CircleCollider.h"
 #include "RigidBody.h"
 
 namespace FlatEngine { namespace FlatGui {
@@ -762,12 +762,12 @@ namespace FlatEngine { namespace FlatGui {
 									RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f);
 									RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f);
 									boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-									RenderFloatDragTableRow("##activeOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
-									RenderFloatDragTableRow("##activeOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
 									boxCollider->SetActiveOffset(activeOffset);
-									RenderIntDragTableRow("##boxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
+									RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
 									boxCollider->SetActiveLayer(activeLayer);
-									RenderTextTableRow("##IsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+									RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
 									PopTable();
 								}
 
@@ -780,6 +780,48 @@ namespace FlatEngine { namespace FlatGui {
 								boxCollider->SetIsSolid(_isSolid);
 								RenderCheckbox(" Show Active Radius", _showActiveRadius);
 								boxCollider->SetShowActiveRadius(_showActiveRadius);
+							}
+							else if (componentType == "CircleCollider")
+							{
+								std::shared_ptr<CircleCollider> circleCollider = std::static_pointer_cast<CircleCollider>(components[i]);
+								bool _isActive = circleCollider->IsActive();
+								bool _isColliding = circleCollider->IsColliding();
+								float activeRadius = circleCollider->GetActiveRadiusGrid();
+								Vector2 activeOffset = circleCollider->GetActiveOffset();
+								bool _isContinuous = circleCollider->IsContinuous();
+								bool _isStatic = circleCollider->IsStatic();
+								bool _isSolid = circleCollider->IsSolid();								
+								int activeLayer = circleCollider->GetActiveLayer();
+								long id = circleCollider->GetID();
+								std::string isCollidingString = "false";
+								if (_isColliding)
+									isCollidingString = "true";
+
+								// Active Checkbox
+								if (L_IsActiveCheckbox(_isActive))
+									circleCollider->SetActive(_isActive);
+
+								// Render Table
+								if (PushTable("##CircleColliderProps" + std::to_string(id), 2))
+								{
+									RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f);
+									circleCollider->SetActiveRadiusGrid(activeRadius);
+									RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
+									RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
+									circleCollider->SetActiveOffset(activeOffset);
+									RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
+									circleCollider->SetActiveLayer(activeLayer);
+									RenderTextTableRow("##CircleColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+									PopTable();
+								}
+
+								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+								RenderCheckbox(" Is Continuous", _isContinuous);
+								circleCollider->SetIsContinuous(_isContinuous);
+								RenderCheckbox(" Is Static", _isStatic);
+								circleCollider->SetIsStatic(_isStatic);
+								RenderCheckbox(" Is Solid", _isSolid);
+								circleCollider->SetIsSolid(_isSolid);
 							}
 							else if (componentType == "RigidBody")
 							{
