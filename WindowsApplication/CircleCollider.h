@@ -13,45 +13,14 @@ namespace FlatEngine
 	public:
 		CircleCollider(long myID = -1, long parentID = -1);
 		CircleCollider(std::shared_ptr<CircleCollider> toCopy, long newParentID);
-		CircleCollider(CircleCollider* exactCopy);
 		~CircleCollider();
 
-		void AddCollidingObject(std::shared_ptr<FlatEngine::GameObject> collidedWith);
 		void UpdateCenter();
 		void UpdateActiveEdges();
 		void SharedAxisUpdateActiveEdges();
 		std::string GetData();
-		void RecalculateBounds();
-		bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> other);		
-		void ResetCollisions();
-
-		// Shared Axis
-		bool SharedAxisCheckForCollision(std::shared_ptr<FlatEngine::Collider> other);		
-
-		// Separating Axis
-		// Todo
-
-		Vector2 collisionOffset;
-
-		float rightCollision;
-		float leftCollision;
-		float bottomCollision;
-		float topCollision;
-
-		bool _isCollidingRight;
-		bool _isCollidingLeft;
-		bool _isCollidingBottom;
-		bool _isCollidingTop;
-
-		bool _rightCollisionStatic;
-		bool _leftCollisionStatic;
-		bool _bottomCollisionStatic;
-		bool _topCollisionStatic;
-
-		bool _rightCollisionSolid;
-		bool _leftCollisionSolid;
-		bool _bottomCollisionSolid;
-		bool _topCollisionSolid;
+		void RecalculateBounds();	
+		//void ResetCollisions();
 
 	private:
 		Vector2 activeOffset;

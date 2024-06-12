@@ -15,20 +15,23 @@ namespace FlatEngine
 {
 	class Collider : public Component
 	{
+		friend class RigidBody;
 	public:
 		Collider(long myID = -1, long parentID = -1);
 		Collider(std::shared_ptr<Collider> toCopy, long newParentID);
 		~Collider();
 
-		virtual void RecalculateBounds();
-		virtual bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> other);
-		virtual void ResetCollisions();
-		virtual void AddCollidingObject(std::shared_ptr<GameObject> collidedWith);
-		virtual void UpdateCenter(); // May be useless??
-		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
-		
-		bool CheckForCollisionBoxCircle(std::shared_ptr<FlatEngine::BoxCollider> boxCol, std::shared_ptr<FlatEngine::CircleCollider> circleCol);
+		static bool SharedAxisCheckForCollision(std::shared_ptr<FlatEngine::Collider> collider1, std::shared_ptr<FlatEngine::Collider> collider2);
+		static bool CheckForCollisionBoxCircle(std::shared_ptr<FlatEngine::BoxCollider> boxCol, std::shared_ptr<FlatEngine::CircleCollider> circleCol);
+		static bool CheckForCollisionBoxBox(std::shared_ptr<FlatEngine::BoxCollider> boxCol1, std::shared_ptr<FlatEngine::BoxCollider> boxCol2);
 
+		virtual void RecalculateBounds();
+		static bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> collider1, std::shared_ptr<FlatEngine::Collider> collider2);
+		virtual void ResetCollisions();
+		virtual void UpdateCenter(); // May be useless??
+
+		void AddCollidingObject(std::shared_ptr<Collider> collidedWith);
+		void RemoveCollidingObject(std::shared_ptr<GameObject> object);
 		void SetOnActiveCollision(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
 		void SetOnCollisionEnter(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
 		void SetOnCollisionLeave(std::function<void(std::shared_ptr<GameObject> self, std::shared_ptr<GameObject> collidedWith)> callback);
@@ -78,6 +81,45 @@ namespace FlatEngine
 		void SetRotation(float rotation);
 		void UpdateRotation();
 		float GetRotation();
+
+		Vector2 collidedPosition;
+		Vector2 leftCollidedPosition;
+		Vector2 rightCollidedPosition;
+		Vector2 bottomCollidedPosition;
+		Vector2 topCollidedPosition;
+		Vector2 topRightCollidedPosition;
+		Vector2 bottomRightCollidedPosition;
+		Vector2 topLeftCollidedPosition;
+		Vector2 bottomLeftCollidedPosition;
+
+		float rightCollision;
+		float leftCollision;
+		float bottomCollision;
+		float topCollision;
+
+		bool _isCollidingRight;
+		bool _isCollidingLeft;
+		bool _isCollidingBottom;
+		bool _isCollidingTop;
+
+		bool _isCollidingTopRight;
+		bool _isCollidingTopLeft;
+		bool _isCollidingBottomRight;
+		bool _isCollidingBottomLeft;
+
+		bool _rightCollisionStatic;
+		bool _leftCollisionStatic;
+		bool _bottomCollisionStatic;
+		bool _topCollisionStatic;
+		bool _bottomLeftCollisionStatic;
+		bool _bottomRightCollisionStatic;
+		//bool _topLeftCollisionStatic;
+		//bool _topRightCollisionStatic;
+
+		bool _rightCollisionSolid;
+		bool _leftCollisionSolid;
+		bool _bottomCollisionSolid;
+		bool _topCollisionSolid;
 
 	private:
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;

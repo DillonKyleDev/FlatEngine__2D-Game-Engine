@@ -24,10 +24,8 @@ namespace FlatEngine
 	public:
 		BoxCollider(long myID = -1, long parentID = -1);
 		BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID);
-		BoxCollider(BoxCollider* exactCopy);
 		~BoxCollider();
-		
-		void AddCollidingObject(std::shared_ptr<FlatEngine::GameObject> collidedWith);		
+					
 		void SetActiveDimensions(float width, float height);
 		float GetActiveWidth();
 		float GetActiveHeight();
@@ -44,37 +42,15 @@ namespace FlatEngine
 		void SetNormals(Vector2 normals[4]);
 		Vector2* GetNormals();
 		std::string GetData();
-		void RecalculateBounds();
-		bool CheckForCollision(std::shared_ptr<FlatEngine::Collider> other);		
-		void ResetCollisions();
+		void RecalculateBounds();	
+		//void ResetCollisions();
 
 		// Shared Axis
-		bool SharedAxisCheckForCollision(std::shared_ptr<FlatEngine::Collider> other);
 		void SharedAxisUpdateEdges();
 		void SharedAxisUpdateCorners();
 
 		// Separating Axis
 		// Todo
-
-		float rightCollision;
-		float leftCollision;
-		float bottomCollision;
-		float topCollision;
-
-		bool _isCollidingRight;
-		bool _isCollidingLeft;
-		bool _isCollidingBottom;
-		bool _isCollidingTop;
-
-		bool _rightCollisionStatic;
-		bool _leftCollisionStatic;
-		bool _bottomCollisionStatic;
-		bool _topCollisionStatic;
-
-		bool _rightCollisionSolid;
-		bool _leftCollisionSolid;
-		bool _bottomCollisionSolid;
-		bool _topCollisionSolid;
 
 	private:		
 		float activeWidth;

@@ -74,7 +74,9 @@ namespace FlatEngine
 		std::shared_ptr<CharacterController> GetCharacterController();
 		std::shared_ptr<RigidBody> GetRigidBody();
 		std::shared_ptr<BoxCollider> GetBoxCollider();
+		std::vector<std::shared_ptr<BoxCollider>> GetBoxColliders();
 		std::shared_ptr<CircleCollider> GetCircleCollider();
+		std::vector<std::shared_ptr<CircleCollider>> GetCircleColliders();
 		std::shared_ptr<GameScript> GetGameScriptByName(std::string scriptName);
 		std::vector<std::shared_ptr<Component>> GetComponentsOfType(ComponentTypes type);
 		std::vector<std::shared_ptr<Component>> &GetComponents();

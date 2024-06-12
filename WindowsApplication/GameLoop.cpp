@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "Process.h"
 #include "Scene.h"
+#include "Collider.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "Transform.h"
@@ -300,7 +301,7 @@ namespace FlatEngine
 					collider2->RecalculateBounds();
 
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
-						collider1->CheckForCollision(collider2);
+						Collider::CheckForCollision(collider1, collider2);
 				}
 			}
 		}

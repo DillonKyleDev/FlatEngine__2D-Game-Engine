@@ -11,10 +11,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -7.763806343078613,
+                    "xPos": 1.983016014099121,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 2.784843683242798,
+                    "yPos": 5.5935797691345215,
                     "yScale": 1.0
                 },
                 {
@@ -25,66 +25,42 @@
                     "_isStatic": false,
                     "_showActiveRadius": false,
                     "activeLayer": 0,
-                    "activeRadius": 3.569999933242798,
+                    "activeRadius": 2.0,
                     "id": 14,
                     "type": "CircleCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 28,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.4000000059604645,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "PlayerController",
+                    "id": 36,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "airControl": 0.20000000298023224,
+                    "id": 37,
+                    "maxAcceleration": 1.0,
+                    "maxSpeed": 0.10000000149011612,
+                    "type": "CharacterController"
                 }
             ],
             "id": 6,
-            "name": "GameObject(6)",
-            "parent": -1,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 17,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 2.44728684425354,
-                    "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": -2.278508424758911,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinuous": true,
-                    "_isSolid": true,
-                    "_isStatic": false,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 18,
-                    "type": "BoxCollider"
-                }
-            ],
-            "id": 8,
-            "name": "GameObject(8)",
+            "name": "Circle",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -117,7 +93,7 @@
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.0,
+                    "yPos": 2.6850693225860596,
                     "yScale": 1.0
                 },
                 {
@@ -125,7 +101,7 @@
                     "_isCollapsed": false,
                     "_isContinuous": true,
                     "_isSolid": true,
-                    "_isStatic": false,
+                    "_isStatic": true,
                     "_showActiveRadius": false,
                     "activeHeight": 2.0,
                     "activeLayer": 0,
@@ -137,7 +113,7 @@
                 }
             ],
             "id": 9,
-            "name": "BoxCollider(9)",
+            "name": "Box Floor",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -163,12 +139,12 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 21,
+                    "id": 40,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 16.600000381469727,
                     "yOrigin": 0.0,
                     "yPos": 0.0,
                     "yScale": 1.0
@@ -178,16 +154,19 @@
                     "_isCollapsed": false,
                     "_isContinuous": true,
                     "_isSolid": true,
-                    "_isStatic": false,
+                    "_isStatic": true,
                     "_showActiveRadius": false,
+                    "activeHeight": 2.0,
                     "activeLayer": 0,
-                    "activeRadius": 1.5,
-                    "id": 22,
-                    "type": "CircleCollider"
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 41,
+                    "type": "BoxCollider"
                 }
             ],
             "id": 10,
-            "name": "CircleCollider(10)",
+            "name": "BoxCollider(10)",
             "parent": -1,
             "tags": {
                 "Enemy": false,

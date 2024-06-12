@@ -608,10 +608,30 @@ namespace FlatEngine
 		return boxCollider;
 	}
 
+	std::vector<std::shared_ptr<BoxCollider>> GameObject::GetBoxColliders()
+	{
+		std::vector<std::shared_ptr<BoxCollider>> boxColliders;
+		for (std::shared_ptr<Component> component : components)
+			if (component->GetTypeString() == "BoxCollider")
+				boxColliders.push_back(std::static_pointer_cast<BoxCollider>(component));
+
+		return boxColliders;
+	}
+
 	std::shared_ptr<CircleCollider> GameObject::GetCircleCollider()
 	{
 		std::shared_ptr<CircleCollider> circleCollider = std::static_pointer_cast<CircleCollider>(GetComponent(ComponentTypes::CircleCollider));
 		return circleCollider;
+	}
+
+	std::vector<std::shared_ptr<CircleCollider>> GameObject::GetCircleColliders()
+	{
+		std::vector<std::shared_ptr<CircleCollider>> circleColliders;
+		for (std::shared_ptr<Component> component : components)
+			if (component->GetTypeString() == "CircleCollider")
+				circleColliders.push_back(std::static_pointer_cast<CircleCollider>(component));
+
+		return circleColliders;
 	}
 
 	std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)

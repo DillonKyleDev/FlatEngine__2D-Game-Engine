@@ -1,5 +1,6 @@
 #pragma once
 #include "FlatEngine.h"
+#include "Collider.h"
 #include "Component.h"
 #include "Vector2.h"
 #include <string>
@@ -7,7 +8,6 @@
 
 namespace FlatEngine 
 {
-
 	class RigidBody : public Component
 	{
 	public:
@@ -30,6 +30,7 @@ namespace FlatEngine
 		void AddForce(Vector2 direction, float power);
 		void ApplyEquilibriumForce();
 		void ApplyCollisionForces();
+		void ApplyCollisionForce(std::shared_ptr<FlatEngine::Collider> collider, float halfWidth, float halfHeight);
 
 		Vector2 GetNextPosition();
 
