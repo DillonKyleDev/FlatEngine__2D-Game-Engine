@@ -251,7 +251,7 @@ namespace FlatEngine {
 		// 
 		// Check if grounded normal gravity
 		if (collider->_isCollidingBottom || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && gravity > 0))
-		//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity > 0)
+			//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity > 0)
 			_isGrounded = true;
 		// Check if grounded inverted gravity
 		else if (collider->_isCollidingBottom && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity < 0)
@@ -265,7 +265,7 @@ namespace FlatEngine {
 			if ((pendingForces.y < 0 && gravity > 0) || (pendingForces.y > 0 && gravity < 0))
 			{
 				pendingForces.y = 0;
-				
+
 				if (collider->_isCollidingBottomRight)
 				{
 					newYPos = collider->bottomRightCollidedPosition.y;
@@ -290,8 +290,7 @@ namespace FlatEngine {
 		if (gravity > 0 && pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
 		{
 			pendingForces.y = 0;
-			newYPos = collider->topCollision - halfHeight + 0.001f;
-			transform->SetPosition(Vector2(position.x, newYPos));
+			transform->SetPosition(Vector2(position.x, collider->topCollidedPosition.y));
 		}
 		// Inverted Gravity
 		if (gravity < 0 && pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
@@ -303,8 +302,23 @@ namespace FlatEngine {
 
 		// Horizontal Collision Forces
 		// 
-		// If moving left up a corner while not colliding on bottom
-		if (velocity.x < 0 && collider->_isCollidingBottomLeft)
+		if (collider->GetTypeString() == "BoxCollider")
+		{
+			// Collision on right side when moving to the right
+			if (collider->_isCollidingRight && collider->_rightCollisionStatic && collider->_rightCollisionSolid && velocity.x > 0)
+			{
+				pendingForces.x = 0;
+				transform->SetPosition(Vector2(collider->rightCollidedPosition.x, position.y));
+			}
+			// Collision on left side when moving to the left
+			else if (collider->_isCollidingLeft && collider->_leftCollisionStatic && collider->_leftCollisionSolid && velocity.x < 0)
+			{
+				pendingForces.x = 0;
+				transform->SetPosition(Vector2(collider->leftCollidedPosition.x, position.y));
+			}
+		}
+		// If not BoxCollider and moving left up a corner while not colliding on bottom
+		else if (velocity.x < 0 && collider->_isCollidingBottomLeft)
 		{
 			//transform->SetPosition(Vector2(position.x, newYPos));
 			transform->SetPosition(collider->bottomLeftCollidedPosition);

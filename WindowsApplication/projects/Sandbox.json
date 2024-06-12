@@ -16,17 +16,17 @@
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",
-            "focusedGameObjectID": 6,
+            "focusedGameObjectID": -1,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\dance.json",
-            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\BoxCollisionTesting.json",
+            "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\level1.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,
             "resolutionWidth": 1920.0,
-            "sceneViewGridStepX": 48.999725341796875,
-            "sceneViewGridStepY": 48.999725341796875,
-            "sceneViewScrollingX": 326.403076171875,
-            "sceneViewScrollingY": 437.73046875
+            "sceneViewGridStepX": 18.999725341796875,
+            "sceneViewGridStepY": 18.999725341796875,
+            "sceneViewScrollingX": 541.403076171875,
+            "sceneViewScrollingY": 327.73046875
         }
     ]
 }
