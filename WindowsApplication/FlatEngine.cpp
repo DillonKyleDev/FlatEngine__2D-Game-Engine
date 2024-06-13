@@ -460,7 +460,6 @@ namespace FlatEngine
 	// Mapping Context Management
 	void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context)
 	{
-
 		// Declare file and input stream
 		std::ofstream file_obj;
 		std::ifstream ifstream(path);
@@ -689,6 +688,29 @@ namespace FlatEngine
 
 
 	// Prefabs
+	std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID)
+	{
+		std::shared_ptr<GameObject> instantiatedObject;
+
+		if (prefabName == "BlasterRound")
+		{
+			instantiatedObject = CreateGameObject(parentID);
+			std::shared_ptr<Transform> transform = instantiatedObject->AddTransformComponent();
+			std::shared_ptr<RigidBody> rigidBody = instantiatedObject->AddRigidBodyComponent();
+			std::shared_ptr<BoxCollider> boxCollider = instantiatedObject->AddBoxColliderComponent();
+			std::shared_ptr<Sprite> sprite = instantiatedObject->AddSpriteComponent();
+			transform->SetOrigin(position);
+			rigidBody->SetGravity(0);
+			rigidBody->SetVelocity(Vector2(1, 0));
+			rigidBody->SetFriction(1);
+			rigidBody->SetWindResistance(1);
+			boxCollider->SetActiveDimensions(0.5f, 0.5f);
+			sprite->SetTexture("assets/images/sprites/blasterBullet.png");
+		}
+
+		return instantiatedObject;
+	}
+
 	std::shared_ptr<GameObject> CreateWallPrefab()
 	{
 		std::shared_ptr<GameObject> newObject = CreateGameObject(-1);

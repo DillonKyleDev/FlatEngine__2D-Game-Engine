@@ -1518,6 +1518,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			long focusedObjectID = FlatEngine::GetFocusedGameObjectID();
 			Vector2 position = transform->GetTruePosition();
+			Vector2 origin = transform->GetOrigin();
 			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
@@ -1899,23 +1900,24 @@ namespace FlatEngine { namespace FlatGui {
 
 				static Vector2 transformScreenPos = Vector2(0, 0);
 				static Vector2 cursorPosAtClick = inputOutput.MousePos;
+				Vector2 relativePosition = transform->GetPosition();
 
 				if (_baseClicked || _xClicked || _yClicked)
 				{
 					cursorPosAtClick = inputOutput.MousePos;
-					transformScreenPos = Vector2(sceneViewCenter.x + (position.x * step), sceneViewCenter.y - (position.y * step));
+					transformScreenPos = Vector2(origin.x + (relativePosition.x * step), origin.y - (relativePosition.y * step));
 				}
 
 				Vector2 transformPosOffsetFromMouse = Vector2((cursorPosAtClick.x - transformScreenPos.x) / step, (cursorPosAtClick.y - transformScreenPos.y) / step);
-				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / step, (sceneViewCenter.y - inputOutput.MousePos.y) / step);
-				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);
+				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - origin.x) / step, (origin.y - inputOutput.MousePos.y) / step);
+				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);				
 
 				if (_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					transform->SetPosition(newTransformPos);
 				else if (_xActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-					transform->SetPosition(Vector2(newTransformPos.x, position.y));
+					transform->SetPosition(Vector2(newTransformPos.x, relativePosition.y));
 				else if (_yActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-					transform->SetPosition(Vector2(position.x, newTransformPos.y));
+					transform->SetPosition(Vector2(relativePosition.x, newTransformPos.y));
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow

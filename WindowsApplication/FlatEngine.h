@@ -115,6 +115,7 @@ namespace FlatEngine
 	extern std::shared_ptr<GameObject> GetObjectByName(std::string name);
 
 	// Prefabs
+	extern std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID = -1);
 	extern std::shared_ptr<GameObject> CreateTransformPrefab();
 	extern std::shared_ptr<GameObject> CreateSpritePrefab();
 	extern std::shared_ptr<GameObject> CreateButtonPrefab();

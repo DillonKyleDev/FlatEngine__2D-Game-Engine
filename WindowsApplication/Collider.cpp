@@ -254,7 +254,7 @@ namespace FlatEngine
 		Vector2 boxCenterGrid = boxCol->GetCenterGrid();
 		Vector2 circlePos = circleCol->GetParent()->GetTransformComponent()->GetTruePosition();
 		Vector2 boxPos = boxCol->GetParent()->GetTransformComponent()->GetTruePosition();
-		float boxHalfWidth = boxCol->GetActiveWidth() / 2;
+		float boxHalfWidth = boxCol->GetActiveWidth() / 2; //* scale.x;
 		float boxHalfHeight = boxCol->GetActiveHeight() / 2;
 		float circleActiveRadius = circleCol->GetActiveRadiusGrid();
 
@@ -547,14 +547,18 @@ namespace FlatEngine
 	bool Collider::CheckForCollisionBoxBox(std::shared_ptr<FlatEngine::BoxCollider> boxCol1, std::shared_ptr<FlatEngine::BoxCollider> boxCol2)
 	{
 		bool _colliding = false;
+		std::shared_ptr<FlatEngine::Transform> box1Transform = boxCol1->GetParent()->GetTransformComponent();
+		std::shared_ptr<FlatEngine::Transform> box2Transform = boxCol2->GetParent()->GetTransformComponent();
+		Vector2 box1Scale = box1Transform->GetScale();
+		Vector2 box2Scale = box2Transform->GetScale();
 		Vector2 collider1CenterGrid = boxCol1->GetCenterGrid();
 		Vector2 collider2CenterGrid = boxCol2->GetCenterGrid();
 		Vector2 col1Pos = boxCol1->GetParent()->GetTransformComponent()->GetTruePosition();
 		Vector2 col2Pos = boxCol2->GetParent()->GetTransformComponent()->GetTruePosition();
-		float box1HalfHeight = boxCol1->GetActiveHeight() / 2;
-		float box1HalfWidth = boxCol1->GetActiveWidth() / 2;
-		float box2HalfHeight = boxCol2->GetActiveHeight() / 2;
-		float box2HalfWidth = boxCol2->GetActiveWidth() / 2;
+		float box1HalfHeight = boxCol1->GetActiveHeight() / 2 * box1Scale.y;
+		float box1HalfWidth = boxCol1->GetActiveWidth() / 2 * box1Scale.x;
+		float box2HalfHeight = boxCol2->GetActiveHeight() / 2 * box2Scale.y;
+		float box2HalfWidth = boxCol2->GetActiveWidth() / 2 * box2Scale.x;
 
 		float A_TopEdge = boxCol1->nextActiveTop;
 		float A_RightEdge = boxCol1->nextActiveRight;

@@ -261,7 +261,6 @@ namespace FlatEngine {
 	{
 		json jsonData = {
 			{ "name", name },
-
 			{ "XInput_A", keyBindings.at("XInput_A") },
 			{ "XInput_B", keyBindings.at("XInput_B") },
 			{ "XInput_X", keyBindings.at("XInput_X") },
@@ -278,16 +277,15 @@ namespace FlatEngine {
 			{ "XInput_DPadDown", keyBindings.at("XInput_DPadDown") },
 			{ "XInput_DPadLeft", keyBindings.at("XInput_DPadLeft") },
 			{ "XInput_DPadRight", keyBindings.at("XInput_DPadRight") },
-			{ "XInput_LeftJoystick", keyBindings.at("XInput_LeftJoystick") },
+			{ "XInput_LeftJoystickX", keyBindings.at("XInput_LeftJoystickX") },
+			{ "XInput_LeftJoystickY", keyBindings.at("XInput_LeftJoystickY") },
 			{ "XInput_RightJoystick", keyBindings.at("XInput_RightJoystick") },
 			{ "XInput_LT", keyBindings.at("XInput_LT") },
 			{ "XInput_RT", keyBindings.at("XInput_RT") },
-
 			{ "SDLK_UP", keyBindings.at("SDLK_UP") },
 			{ "SDLK_DOWN", keyBindings.at("SDLK_DOWN") },
 			{ "SDLK_LEFT", keyBindings.at("SDLK_LEFT") },
 			{ "SDLK_RIGHT", keyBindings.at("SDLK_RIGHT") },
-
 			{ "SDLK_a", keyBindings.at("SDLK_a") },
 			{ "SDLK_b", keyBindings.at("SDLK_b") },
 			{ "SDLK_c", keyBindings.at("SDLK_c") },

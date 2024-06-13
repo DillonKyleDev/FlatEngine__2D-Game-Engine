@@ -13,10 +13,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -20.648025512695313,
+                    "xPos": -22.67146110534668,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.048653602600097656,
+                    "yPos": -4.791238307952881,
                     "yScale": 1.0
                 },
                 {
@@ -74,20 +74,6 @@
                     "attachedScript": "PlayerController",
                     "id": 6,
                     "type": "Script"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isPrimaryCamera": false,
-                    "frustrumAlpha": 255.0,
-                    "frustrumBlue": 255.0,
-                    "frustrumGreen": 255.0,
-                    "frustrumRed": 255.0,
-                    "height": 30.0,
-                    "id": 51,
-                    "type": "Camera",
-                    "width": 50.0,
-                    "zoom": 44.29999923706055
                 }
             ],
             "id": 0,
@@ -138,24 +124,10 @@
                     "xScale": 1.0,
                     "yOffset": 5.0,
                     "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isPrimaryCamera": true,
-                    "frustrumAlpha": 255.0,
-                    "frustrumBlue": 255.0,
-                    "frustrumGreen": 255.0,
-                    "frustrumRed": 255.0,
-                    "height": 50.0,
-                    "id": 40,
-                    "type": "Camera",
-                    "width": 50.0,
-                    "zoom": 22.100000381469727
                 }
             ],
             "id": 1,
-            "name": "Level1",
+            "name": "Background",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -185,10 +157,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -23.585529327392578,
+                    "xPos": -21.414066314697266,
                     "xScale": 4.400000095367432,
                     "yOrigin": 0.0,
-                    "yPos": -10.13224983215332,
+                    "yPos": -11.090238571166992,
                     "yScale": 5.300000190734863
                 },
                 {
@@ -220,8 +192,8 @@
                 }
             ],
             "id": 4,
-            "name": "Wall1",
-            "parent": -1,
+            "name": "Wall Short",
+            "parent": 25,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -253,8 +225,8 @@
                     "xPos": 2.9397552013397217,
                     "xScale": 100.0,
                     "yOrigin": 0.0,
-                    "yPos": -11.525087356567383,
-                    "yScale": 3.799999952316284
+                    "yPos": -13.425000190734863,
+                    "yScale": 5.900000095367432
                 },
                 {
                     "_isActive": true,
@@ -276,7 +248,7 @@
                     "_isCollapsed": false,
                     "id": 24,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "renderOrder": 0,
+                    "renderOrder": 4,
                     "type": "Sprite",
                     "xOffset": 5.0,
                     "xScale": 1.0,
@@ -306,7 +278,9 @@
         },
         {
             "_isActive": true,
-            "children": [],
+            "children": [
+                13
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -318,8 +292,8 @@
                     "xPos": -4.300655841827393,
                     "xScale": 1.899999976158142,
                     "yOrigin": 0.0,
-                    "yPos": -4.085073471069336,
-                    "yScale": 0.8999999761581421
+                    "yPos": -4.0,
+                    "yScale": 1.0
                 },
                 {
                     "_isActive": true,
@@ -341,7 +315,7 @@
                     "_isCollapsed": false,
                     "id": 39,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
-                    "renderOrder": 0,
+                    "renderOrder": 1,
                     "type": "Sprite",
                     "xOffset": 5.0,
                     "xScale": 1.0,
@@ -350,8 +324,8 @@
                 }
             ],
             "id": 2,
-            "name": "Wall4",
-            "parent": -1,
+            "name": "Platform",
+            "parent": 25,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -371,7 +345,9 @@
         },
         {
             "_isActive": true,
-            "children": [],
+            "children": [
+                15
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -380,10 +356,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 4.273093223571777,
+                    "xPos": 5.046051025390625,
                     "xScale": 5.099999904632568,
                     "yOrigin": 0.0,
-                    "yPos": -4.010984897613525,
+                    "yPos": -4.0,
                     "yScale": 1.0
                 },
                 {
@@ -391,7 +367,7 @@
                     "_isCollapsed": false,
                     "id": 41,
                     "path": "assets/images/environment/light.png",
-                    "renderOrder": 0,
+                    "renderOrder": 1,
                     "type": "Sprite",
                     "xOffset": 5.0,
                     "xScale": 1.0,
@@ -415,8 +391,8 @@
                 }
             ],
             "id": 12,
-            "name": "Wall(12)",
-            "parent": -1,
+            "name": "Platform",
+            "parent": 25,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -444,11 +420,11 @@
                     "id": 43,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -4.336955547332764,
+                    "xOrigin": -4.300655841827393,
+                    "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": -2.9366040229797363,
+                    "yOrigin": -4.0,
+                    "yPos": 1.0,
                     "yScale": 0.30000001192092896
                 },
                 {
@@ -487,8 +463,8 @@
                 }
             ],
             "id": 13,
-            "name": "JumpPad(13)",
-            "parent": -1,
+            "name": "JumpPad",
+            "parent": 2,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -517,10 +493,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -13.12465763092041,
+                    "xPos": -13.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -7.462742328643799,
+                    "yPos": -7.511051177978516,
                     "yScale": 0.30000001192092896
                 },
                 {
@@ -559,8 +535,8 @@
                 }
             ],
             "id": 14,
-            "name": "JumpPad(14)",
-            "parent": -1,
+            "name": "JumpPad",
+            "parent": 25,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -588,11 +564,11 @@
                     "id": 51,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 7.95896577835083,
+                    "xOrigin": 5.046051025390625,
+                    "xPos": 3.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": -2.763190984725952,
+                    "yOrigin": -4.0,
+                    "yPos": 1.0,
                     "yScale": 0.30000001192092896
                 },
                 {
@@ -631,8 +607,8 @@
                 }
             ],
             "id": 15,
-            "name": "JumpPad(15)",
-            "parent": -1,
+            "name": "JumpPad",
+            "parent": 12,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -663,10 +639,10 @@
                     "id": 52,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -20.648025512695313,
+                    "xOrigin": -22.67146110534668,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.048653602600097656,
+                    "yOrigin": -4.791238307952881,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
@@ -733,10 +709,10 @@
                     "id": 76,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -20.648025512695313,
+                    "xOrigin": -22.67146110534668,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.048653602600097656,
+                    "yOrigin": -4.791238307952881,
                     "yPos": 0.0,
                     "yScale": 1.0
                 }
@@ -763,9 +739,7 @@
         },
         {
             "_isActive": false,
-            "children": [
-                20
-            ],
+            "children": [],
             "components": [],
             "id": 17,
             "name": "SettingsMenu",
@@ -799,10 +773,10 @@
                     "id": 60,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -20.648025512695313,
+                    "xOrigin": -22.67146110534668,
                     "xPos": 0.0,
                     "xScale": 5.0,
-                    "yOrigin": 0.048653602600097656,
+                    "yOrigin": -4.791238307952881,
                     "yPos": -0.6499999761581421,
                     "yScale": 1.0
                 },
@@ -860,30 +834,6 @@
         {
             "_isActive": false,
             "children": [],
-            "components": [],
-            "id": 20,
-            "name": "GameObject(20)",
-            "parent": 17,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": false,
-            "children": [],
             "components": [
                 {
                     "_isActive": true,
@@ -891,10 +841,10 @@
                     "id": 73,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -20.648025512695313,
+                    "xOrigin": -22.67146110534668,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -0.6013463735580444,
+                    "yOrigin": -5.4412384033203125,
                     "yPos": 0.0,
                     "yScale": 0.15000000596046448
                 },
@@ -945,10 +895,10 @@
                     "id": 75,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -20.648025512695313,
+                    "xOrigin": -22.67146110534668,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": 0.048653602600097656,
+                    "yOrigin": -4.791238307952881,
                     "yPos": 3.799999952316284,
                     "yScale": 0.15000000596046448
                 },
@@ -1035,7 +985,75 @@
                 }
             ],
             "id": 10,
-            "name": "Wall(10)",
+            "name": "Wall Tall",
+            "parent": 25,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                4,
+                2,
+                12,
+                14,
+                10
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 96,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 25,
+            "name": "Obstacle1",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 26,
+            "name": "Obstacle2",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -1061,19 +1079,111 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 51,
+                    "id": 97,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -24.80865478515625,
+                    "xPos": 22.600000381469727,
+                    "xScale": 1.0,
+                    "yOrigin": -4.791238307952881,
+                    "yPos": 4.300000190734863,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 98,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 23.200000762939453
+                }
+            ],
+            "id": 27,
+            "name": "Camera",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 99,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -92.77371978759766,
+                    "xPos": -19.30506134033203,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 7.045905590057373,
+                    "yPos": -4.796238422393799,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 100,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.4000000059604645,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 101,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 102,
+                    "path": "assets/images/sprites/blasterBullet.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
                     "yScale": 1.0
                 }
             ],
-            "id": 7,
-            "name": "GameObject(7)",
+            "id": 31,
+            "name": "BlasterBullet",
             "parent": -1,
             "tags": {
                 "Enemy": false,

@@ -96,7 +96,10 @@ namespace FlatEngine {
 
 	void RigidBody::CalculateEulerPhysics()
 	{		
-		acceleration = Vector2(pendingForces.x / mass, pendingForces.y / mass);
+		if (mass == 0)
+			acceleration = Vector2(pendingForces.x, pendingForces.y);
+		else 
+			acceleration = Vector2(pendingForces.x / mass, pendingForces.y / mass);
 	}
 
 	void RigidBody::CalculateVerletPhysics()
@@ -224,8 +227,13 @@ namespace FlatEngine {
 		// BoxColliders
 		for (std::shared_ptr<FlatEngine::BoxCollider> boxCollider : boxColliders)
 		{
-			float halfWidth = boxCollider->GetActiveWidth() / 2;
-			float halfHeight = boxCollider->GetActiveHeight() / 2;
+			Vector2 scale = Vector2(1, 1);
+			std::shared_ptr<FlatEngine::Transform> transform = boxCollider->GetParent()->GetTransformComponent();
+			if (transform != nullptr)
+				scale = transform->GetScale();
+
+			float halfWidth = boxCollider->GetActiveWidth() / 2 * scale.x;
+			float halfHeight = boxCollider->GetActiveHeight() / 2 * scale.y;
 
 			ApplyCollisionForce(boxCollider, halfWidth, halfHeight);
 		}
@@ -241,9 +249,7 @@ namespace FlatEngine {
 	void RigidBody::ApplyCollisionForce(std::shared_ptr<FlatEngine::Collider> collider, float halfWidth, float halfHeight)
 	{
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		Vector2 position = GetParent()->GetTransformComponent()->GetTruePosition();
-		static Vector2 previousCollisionPos = collider->collidedPosition;
-		Vector2 collisionPosition;
+		Vector2 position = GetParent()->GetTransformComponent()->GetPosition();				
 		float newYPos;
 		float newXPos;
 
@@ -337,8 +343,6 @@ namespace FlatEngine {
 			newXPos = collider->leftCollidedPosition.x;
 			transform->SetPosition(Vector2(newXPos, position.y));
 		}
-
-		previousCollisionPos = collider->collidedPosition;
 	}
 
 	void RigidBody::AddForce(Vector2 direction, float power)

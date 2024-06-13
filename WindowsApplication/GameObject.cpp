@@ -314,7 +314,7 @@ namespace FlatEngine
 			if (parentID != -1)
 			{
 				parent = GetObjectById(parentID);
-				if (parent->HasComponent("Transform"))
+				if (parent != nullptr && parent->HasComponent("Transform"))
 				{
 					std::shared_ptr <Transform> parentTransform = parent->GetTransformComponent();
 					Vector2 parentTruePosition = parentTransform->GetTruePosition();

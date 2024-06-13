@@ -11,6 +11,12 @@
 #include "../Transform.h"
 #include "../Vector2.h"
 
+#include "GameObject.h"
+#include "Transform.h"
+#include "RigidBody.h"
+#include "BoxCollider.h"
+#include "Sprite.h"
+
 PlayerController::PlayerController()
 {
 	SetName("PlayerController");
@@ -35,30 +41,65 @@ void PlayerController::Start()
 void PlayerController::Update(float deltaTime)
 {
 	bool _moving = false;
+	bool _isGrounded = false;
 	static int xDir = 0;
 	static int yDir = 0;
 	Vector2 velocity = Vector2(0, 0);
-	if (rigidBody != nullptr)
-		velocity = rigidBody->GetVelocity();
 
-	if (mappingContext != nullptr && rigidBody != nullptr && mappingContext->Fired("IA_Jump"))
+	if (rigidBody != nullptr)
 	{
-		if (rigidBody->IsGrounded() && velocity.y < 0.001f && velocity.y > -0.001f)
+		velocity = rigidBody->GetVelocity();
+		_isGrounded = rigidBody->IsGrounded();
+	}
+
+	if (mappingContext != nullptr)
+	{
+		if (mappingContext->Fired("IA_Jump"))
 		{
-			rigidBody->AddForce(Vector2(0, 1), 1300);
+			if (_isGrounded && velocity.y < 0.001f && velocity.y > -0.001f)
+			{
+				rigidBody->AddForce(Vector2(0, 1), 1300);
+			}
 		}
-	}
-	if (mappingContext != nullptr && characterController != nullptr && mappingContext->GetInputAction("IA_MoveLeft").type != 0)
-	{
-		xDir = -30000;
-		characterController->MoveToward(Vector2(-36000, 0));
-		_moving = true;
-	}
-	if (mappingContext != nullptr && characterController != nullptr && mappingContext->GetInputAction("IA_MoveRight").type != 0)
-	{
-		xDir = 30000;
-		characterController->MoveToward(Vector2(36000, 0));
-		_moving = true;
+		if (mappingContext->Fired("IA_Shoot"))
+		{
+			//FlatEngine::Instantiate("BlasterRound", transform->GetTruePosition());
+			std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::CreateGameObject(-1);
+			instantiatedObject->SetName("BlasterBullet");
+			std::shared_ptr<FlatEngine::Transform> newTransform = instantiatedObject->AddTransformComponent();
+			std::shared_ptr<FlatEngine::RigidBody> rigidBody = instantiatedObject->AddRigidBodyComponent();
+			std::shared_ptr<FlatEngine::BoxCollider> boxCollider = instantiatedObject->AddBoxColliderComponent();
+			std::shared_ptr<FlatEngine::Sprite> sprite = instantiatedObject->AddSpriteComponent();
+			newTransform->SetOrigin(Vector2(0, 0));
+			newTransform->SetPosition(transform->GetTruePosition());
+			//newTransform->SetScale(Vector2(0.25f, 0.25f));
+			rigidBody->SetGravity(1);
+			rigidBody->SetMass(1);
+			rigidBody->SetFallingGravity(1.25);
+			rigidBody->SetVelocity(Vector2(1, 0));
+	
+			//rigidBody->SetFriction(1);
+			//rigidBody->SetWindResistance(1);
+			//boxCollider->SetActiveDimensions(0.5f, 0.5f);
+			sprite->SetTexture("assets/images/sprites/blasterBullet.png");
+			FlatEngine::gameLoop->UpdateActiveColliders();
+			FlatEngine::gameLoop->UpdateActiveRigidBodies();
+		}
+		if (characterController != nullptr)
+		{
+			if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
+			{
+				xDir = -30000;
+				characterController->MoveToward(Vector2(-36000, 0));
+				_moving = true;
+			}
+			if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
+			{
+				xDir = 30000;
+				characterController->MoveToward(Vector2(36000, 0));
+				_moving = true;
+			}
+		}
 	}
 	//if (mappingContext->GetInputAction("IA_MoveUp").type != 0)
 	//	characterController->MoveToward(Vector2(0, 1));
