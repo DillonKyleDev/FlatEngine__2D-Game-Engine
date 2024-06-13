@@ -1,17 +1,20 @@
 #include "Sound.h"
-
+#include "FlatEngine.h"
 
 
 namespace FlatEngine
 {
 	Sound::Sound()
 	{
-		this->path = "";
+		path = "";
+		_isPaused = false;
+		music = nullptr;
+		effect = nullptr;
 	}
 	Sound::~Sound()
 	{
-		this->music = nullptr;
-		this->effect = nullptr;
+		music = nullptr;
+		effect = nullptr;
 	}
 
 	Mix_Music* Sound::LoadMusic(std::string path)
@@ -81,7 +84,7 @@ namespace FlatEngine
 	void Sound::PlayEffect(int channel)
 	{
 		// Play effect on channel, repeat 0 times
-		Mix_PlayChannel(channel, this->effect, 0);
+		LogInt(Mix_PlayChannel(channel, this->effect, 0), "Sound Played: ");
 	}
 
 	void Sound::HaultChannel(int channel)

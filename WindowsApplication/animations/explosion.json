@@ -1,0 +1,100 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 28.470050811767578,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_2.png",
+                    "speed": 0.10000000149011612,
+                    "time": 54.531402587890625,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_3.png",
+                    "speed": 0.10000000149011612,
+                    "time": 83.02685546875,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\blasterRound.png",
+                    "speed": 0.10000000149011612,
+                    "time": 0.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_4.png",
+                    "speed": 0.10000000149011612,
+                    "time": 110.70372009277344,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_5.png",
+                    "speed": 0.10000000149011612,
+                    "time": 143.01670837402344,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion\\explosion_6.png",
+                    "speed": 0.10000000149011612,
+                    "time": 175.64312744140625,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}

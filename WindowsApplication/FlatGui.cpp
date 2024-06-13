@@ -297,7 +297,7 @@ namespace FlatEngine { namespace FlatGui {
 			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
 			
 			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
-			gameLoop->Init();
+			gameLoop->CollectPhysicsBodies();
 
 			// Hierarchy management
 			if (FlatEngine::_isDebugMode)

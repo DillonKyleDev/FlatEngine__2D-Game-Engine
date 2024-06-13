@@ -184,7 +184,8 @@ namespace FlatEngine
 		Vector2 collider1Center = collider1->GetCenterGrid();
 		Vector2 collider2Center = collider2->GetCenterGrid();
 
-		LogString("Checking Collision for " + collider1->GetParent()->GetName() + " and " + collider2->GetParent()->GetName());
+		//LogString("Checking Collision for " + collider1->GetParent()->GetName() + " and " + collider2->GetParent()->GetName());
+		
 		// Calculate center distance with pythag
 		float rise = std::abs(collider1Center.y - collider2Center.y);
 		float run = std::abs(collider1Center.x - collider2Center.x);
@@ -193,37 +194,44 @@ namespace FlatEngine
 		// If they are close enough to check for collision ( actually colliding if they are both CircleColliders )
 		if (centerDistance < collider1->GetActiveRadiusGrid() + collider2->GetActiveRadiusGrid())
 		{
-			// Both BoxColliders
-			if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "BoxCollider")
+			if (!(collider1->GetParent()->HasTag("IgnorePlayer") && collider2->GetParent()->HasTag("Player")) &&
+				!(collider1->GetParent()->HasTag("Player") && collider2->GetParent()->HasTag("IgnorePlayer")) && 
+				!(collider1->GetParent()->HasTag("IgnoreEnemy") && collider2->GetParent()->HasTag("Enemy")) &&
+				!(collider1->GetParent()->HasTag("Enemy") && collider2->GetParent()->HasTag("IgnoreEnemy")) &&
+				!(collider1->GetParent()->HasTag("Projectile") && collider2->GetParent()->HasTag("Projectile")))
 			{
-				std::shared_ptr<FlatEngine::BoxCollider> boxCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-				std::shared_ptr<FlatEngine::BoxCollider> boxCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+				// Both BoxColliders
+				if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "BoxCollider")
+				{
+					std::shared_ptr<FlatEngine::BoxCollider> boxCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+					std::shared_ptr<FlatEngine::BoxCollider> boxCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
 
-				_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
-			}
-			// First CircleCollider second BoxCollider
-			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "BoxCollider")
-			{
-				std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider1);
-				std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+					_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
+				}
+				// First CircleCollider second BoxCollider
+				else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "BoxCollider")
+				{
+					std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider1);
+					std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
 
-				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
-			}
-			// First BoxCollider second CircleCollider
-			else if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "CircleCollider")
-			{
-				std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-				std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider2);
+					_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+				}
+				// First BoxCollider second CircleCollider
+				else if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "CircleCollider")
+				{
+					std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+					std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider2);
 
-				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
-			}
-			// Both CircleColliders ( already true if made if past activeRadius check )
-			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "CircleCollider")
-			{
-				std::shared_ptr<FlatEngine::BoxCollider> circleCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-				std::shared_ptr<FlatEngine::BoxCollider> circleCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
-	
-				_colliding = true;
+					_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+				}
+				// Both CircleColliders ( already true if made if past activeRadius check )
+				else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "CircleCollider")
+				{
+					std::shared_ptr<FlatEngine::BoxCollider> circleCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+					std::shared_ptr<FlatEngine::BoxCollider> circleCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+
+					_colliding = true;
+				}
 			}
 		}
 
@@ -578,6 +586,7 @@ namespace FlatEngine
 		if (_colliding)
 		{
 			// Check which direction the collision is happening from //
+			// 
 			// if boxCol1 is to the right of boxCol2
 			if (collider1CenterGrid.x > collider2CenterGrid.x)
 			{
@@ -597,7 +606,7 @@ namespace FlatEngine
 						boxCol2->_rightCollisionSolid = boxCol2->IsSolid();
 						boxCol1->leftCollision = B_RightEdge;
 						boxCol2->rightCollision = A_LeftEdge;
-						
+
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
 						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - 0.001f, col1Pos.y);
 						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth + 0.001f, col2Pos.y);
@@ -655,6 +664,22 @@ namespace FlatEngine
 						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
 					}
 				}
+				// if both are at the same y Pos the it's a left/right collision
+				else
+				{
+					boxCol1->_isCollidingLeft = true;
+					boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
+					boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
+					boxCol2->_isCollidingRight = true;
+					boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
+					boxCol2->_rightCollisionSolid = boxCol1->IsSolid();
+					boxCol1->leftCollision = B_RightEdge;
+					boxCol2->rightCollision = A_LeftEdge;
+
+					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+					boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - 0.001f, col1Pos.y);
+					boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth + 0.001f, col2Pos.y);
+				}
 			}
 			// if boxCol1 is to the left of boxCol2
 			else if (collider1CenterGrid.x < collider2CenterGrid.x)
@@ -667,7 +692,6 @@ namespace FlatEngine
 					// Left/Right
 					if (leftRightOverlap < topBottomOverlap)
 					{
-						std::string name = boxCol1->GetParent()->GetName();
 						boxCol1->_isCollidingRight = true;
 						boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
 						boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
@@ -733,6 +757,58 @@ namespace FlatEngine
 						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
 					}
 				}
+				// if both are at the same y Pos the it's a left/right collision
+				else
+				{
+					boxCol1->_isCollidingRight = true;
+					boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
+					boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
+					boxCol2->_isCollidingLeft = true;
+					boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
+					boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
+					boxCol1->rightCollision = B_LeftEdge;
+					boxCol2->leftCollision = A_RightEdge;
+
+					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+					boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth + 0.001f, col1Pos.y);
+					boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - 0.001f, col2Pos.y);
+				}
+			}
+			// Both boxes are at the same x Pos
+			else
+			{
+				// if boxCol1 is below boxCol2
+				if (collider1CenterGrid.y < collider2CenterGrid.y)
+				{
+					boxCol1->_isCollidingTop = true;
+					boxCol1->_topCollisionStatic = boxCol2->IsStatic();
+					boxCol1->_topCollisionSolid = boxCol2->IsSolid();
+					boxCol2->_isCollidingBottom = true;
+					boxCol2->_bottomCollisionStatic = boxCol1->IsStatic();
+					boxCol2->_bottomCollisionSolid = boxCol1->IsSolid();
+					boxCol1->topCollision = B_BottomEdge;
+					boxCol2->bottomCollision = A_TopEdge;
+
+					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+					boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight + 0.001f);
+					boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - 0.001f);
+				}
+				// if boxCol1 is above boxCol2
+				else
+				{
+					boxCol1->_isCollidingBottom = true;
+					boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
+					boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
+					boxCol2->_isCollidingTop = true;
+					boxCol2->_topCollisionStatic = boxCol1->IsStatic();
+					boxCol2->_topCollisionSolid = boxCol1->IsSolid();
+					boxCol1->bottomCollision = B_TopEdge;
+					boxCol2->topCollision = A_BottomEdge;
+
+					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+					boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - 0.001f);
+					boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
+				}
 			}
 		}
 
@@ -786,21 +862,27 @@ namespace FlatEngine
 
 	void Collider::AddCollidingObject(std::shared_ptr<Collider> collidedWith)
 	{
-		for (std::shared_ptr<FlatEngine::GameObject> object : GetCollidingObjects())
+		// Make sure we haven't already tracked it for this frame
+		for (std::shared_ptr<FlatEngine::GameObject> object : collidingObjects)
 		{
 			// Leave function if the object is already known to be in active collision
-			if (object->GetID() == collidedWith->GetID())
+			if (object->GetID() == collidedWith->GetParent()->GetID())
+				return;
+		}
+		// else add the collided object
+		collidingObjects.push_back(collidedWith->GetParent());
+
+		// See if they were colliding in the last frame as well
+		for (std::shared_ptr<FlatEngine::GameObject> object : collidingLastFrame)
+		{
+			// Leave function if the object has already fired OnCollisionEnter();
+			if (object->GetID() == collidedWith->GetParent()->GetID())
 				return;
 		}
 
-		// Add collided object
-		collidingObjects.push_back(collidedWith->GetParent());
-
-		// If OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
+		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
 		if (OnCollisionEnterSet())
 			OnCollisionEnter(GetParent(), collidedWith->GetParent());
-		if (collidedWith->OnCollisionEnterSet())
-			collidedWith->OnCollisionEnter(collidedWith->GetParent(), GetParent());
 	}
 
 	std::vector<std::shared_ptr<GameObject>> Collider::GetCollidingObjects()
@@ -810,6 +892,24 @@ namespace FlatEngine
 
 	void Collider::ClearCollidingObjects()
 	{
+		// Check which objects have left collision state since last frame
+		for (std::shared_ptr<FlatEngine::GameObject> collidedLastFrame : collidingLastFrame)
+		{		
+			bool _objectStillColliding = false;
+
+			for (std::shared_ptr<FlatEngine::GameObject> collidedThisFrame : collidingObjects)
+				if (collidedLastFrame->GetID() == collidedThisFrame->GetID())
+					_objectStillColliding = true;
+
+			// Fire OnLeave if not colliding
+			if (!_objectStillColliding)
+				for (std::shared_ptr<FlatEngine::BoxCollider> boxCollider : collidedLastFrame->GetBoxColliders())
+					if (boxCollider->OnCollisionLeaveSet())
+						OnCollisionLeave(GetParent(), GetParent());
+		}
+
+		// Save colliding objects for next frame
+		collidingLastFrame = collidingObjects;
 		collidingObjects.clear();
 	}
 

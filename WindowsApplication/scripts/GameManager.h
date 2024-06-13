@@ -4,7 +4,7 @@
 class GameManager : public FlatEngine::GameScript
 {
 public:
-	GameManager();
+	GameManager(long ownerID);
 	~GameManager();
 
 	void Start();

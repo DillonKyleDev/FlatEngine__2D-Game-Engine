@@ -442,6 +442,16 @@ namespace FlatEngine
 		}
 	}
 
+	void GameObject::DeleteComponents()
+	{
+		for (std::shared_ptr<Component> component : components)
+		{
+			component = nullptr;
+		}
+
+		components.clear();
+	}
+
 	std::shared_ptr<Transform> GameObject::AddTransformComponent()
 	{
 		return std::static_pointer_cast<Transform>(AddComponent(ComponentTypes::Transform));

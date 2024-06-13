@@ -54,7 +54,7 @@ namespace FlatEngine {
 
 		if (FlatEngine::GameLoopStarted())
 		{
-			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTime());
+			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTimeInSec());
 			averageFPS = std::to_string(FlatEngine::GetAverageFps());
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 			framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());

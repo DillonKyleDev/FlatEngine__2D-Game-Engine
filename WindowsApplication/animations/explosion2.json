@@ -1,0 +1,113 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 7.575656890869141,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_4.png",
+                    "speed": 0.10000000149011612,
+                    "time": 221.05877685546875,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 55.47115707397461,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_3.png",
+                    "speed": 0.10000000149011612,
+                    "time": 165.3046417236328,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_2.png",
+                    "speed": 0.10000000149011612,
+                    "time": 109.55055236816406,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_5.png",
+                    "speed": 0.10000000149011612,
+                    "time": 282.4308166503906,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_6.png",
+                    "speed": 0.10000000149011612,
+                    "time": 340.9940490722656,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_7.png",
+                    "speed": 0.10000000149011612,
+                    "time": 393.9393615722656,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}

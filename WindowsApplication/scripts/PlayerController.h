@@ -1,6 +1,6 @@
 #pragma once
-#include "../FlatEngine.h"
-#include "../GameScript.h"
+#include "FlatEngine.h"
+#include "GameScript.h"
 
 class PlayerController : public FlatEngine::GameScript
 {
@@ -10,7 +10,7 @@ class PlayerController : public FlatEngine::GameScript
 	class Transform;
 
 public:
-	PlayerController();
+	PlayerController(long ownerID);
 	~PlayerController();
 
 	void Start();

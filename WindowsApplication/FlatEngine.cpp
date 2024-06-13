@@ -108,7 +108,9 @@ namespace FlatEngine
 		{
 			double frameStart = 0;
 			double frameTime = 0;
-			LogString("Ran through!");
+
+			//LogString("FlatEngine::Run()");
+	
 			// Get time it took to get back to GameLoopUpdate()
 			frameStart = (double)FlatEngine::GetEngineTime();
 			frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
@@ -705,7 +707,7 @@ namespace FlatEngine
 			rigidBody->SetFriction(1);
 			rigidBody->SetWindResistance(1);
 			boxCollider->SetActiveDimensions(0.5f, 0.5f);
-			sprite->SetTexture("assets/images/sprites/blasterBullet.png");
+			sprite->SetTexture("assets/images/sprites/BlasterRound.png");
 		}
 
 		return instantiatedObject;
@@ -846,9 +848,14 @@ namespace FlatEngine
 		gameLoop->Stop();
 	}
 
-	int GetEllapsedGameTime()
+	long GetEllapsedGameTimeInSec()
 	{
-		return gameLoop->TimeEllapsed();
+		return gameLoop->TimeEllapsedInSec();
+	}
+
+	double GetEllapsedGameTimeInMs()
+	{
+		return gameLoop->TimeEllapsedInMs();
 	}
 
 	bool GameLoopStarted()

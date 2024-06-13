@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 class GroundedCheck : public FlatEngine::GameScript
 {

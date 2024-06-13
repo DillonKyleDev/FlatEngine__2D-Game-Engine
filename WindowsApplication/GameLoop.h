@@ -3,6 +3,7 @@
 #include "GameScript.h"
 #include "./scripts/GameManager.h"
 #include "GameObject.h"
+#include "Collider.h"
 
 
 namespace FlatEngine
@@ -14,8 +15,12 @@ namespace FlatEngine
 		~GameLoop();
 
 		void Start();
-		void Init();
+		void CollectPhysicsBodies();
 		void InitializeScriptObjects();
+		void AddScript(std::shared_ptr<GameObject> owner, std::shared_ptr<ScriptComponent> scriptComponent, std::shared_ptr<GameScript> scriptInstance);
+		void RemoveScript(long scriptID);
+		void RemoveRigidBody(long rigidBodyID);
+		void RemoveCollider(long colliderID);
 		void UpdateActiveColliders();
 		void UpdateActiveRigidBodies();
 		void Update();
@@ -26,7 +31,8 @@ namespace FlatEngine
 		bool IsGamePaused();
 		void PauseGame();
 		void UnpauseGame();
-		double TimeEllapsed();
+		long TimeEllapsedInSec();
+		double TimeEllapsedInMs();
 		bool IsStarted();
 		bool IsPaused();
 		float GetAverageFps();
@@ -57,6 +63,8 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<FlatEngine::GameObject>> gameObjects;
 		std::vector<std::shared_ptr<FlatEngine::GameScript>> scripts;
 		std::vector<std::shared_ptr<FlatEngine::GameScript>> activeScripts;
+		std::vector<std::shared_ptr<FlatEngine::RigidBody>> rigidBodies;
+		std::vector<std::shared_ptr<FlatEngine::Collider>> colliders;
+		std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> colliderPairs;
 	};
 }
-

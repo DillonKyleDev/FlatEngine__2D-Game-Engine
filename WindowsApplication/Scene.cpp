@@ -127,6 +127,28 @@ namespace FlatEngine
 			std::shared_ptr<GameObject> parent = FlatEngine::GetObjectById(parentID);
 			parent->RemoveChild(sceneObjectID);
 		}
+
+		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
+		for (std::shared_ptr<Component> component : objectToDelete->GetComponents())
+		{
+			if (component->GetTypeString() == "Script")
+			{				 
+				std::shared_ptr<ScriptComponent> scriptComponent = std::static_pointer_cast<ScriptComponent>(component);
+				long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
+				gameLoop->RemoveScript(scriptID);
+			}
+			if (component->GetTypeString() == "RigidBody")
+			{
+				long rigidBodyID = component->GetID();
+				gameLoop->RemoveRigidBody(rigidBodyID);
+			}
+			if (component->GetTypeString() == "Collider")
+			{
+				long colliderID = component->GetID();
+				gameLoop->RemoveCollider(colliderID);
+			}
+		}
+
 		// Check for children and delete those as well
 		Scene::DeleteChildrenAndSelf(objectToDelete);
 	}
@@ -160,6 +182,7 @@ namespace FlatEngine
 				if (objectToDelete->GetID() == cameraObjectID)
 					loadedScene->RemovePrimaryCamera();
 
+				sceneObjects[i]->DeleteComponents();
 				sceneObjects.erase(sceneObjects.begin() + i);
 			}
 		}

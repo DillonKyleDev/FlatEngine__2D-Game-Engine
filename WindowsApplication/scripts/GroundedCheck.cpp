@@ -1,7 +1,7 @@
 #include "GroundedCheck.h"
-#include "../FlatEngine.h"
-#include "../BoxCollider.h"
-#include "../CharacterController.h"
+#include "FlatEngine.h"
+#include "BoxCollider.h"
+#include "CharacterController.h"
 
 
 GroundedCheck::GroundedCheck()

@@ -207,16 +207,19 @@ namespace FlatEngine {
 		if (characterController != nullptr)
 			maxSpeed = characterController->GetMaxSpeed();
 
-		// Horizontal speed control
-		if (velocity.x > maxSpeed)
-			pendingForces.x -= equilibriumForce;
-		else if (velocity.x < -maxSpeed)
-			pendingForces.x += equilibriumForce;
-		// Vertical speed control
-		//if (velocity.y > maxSpeed)
-		//	pendingForces.y -= equilibriumForce;
-		//else if (velocity.y < -maxSpeed)
-		//	pendingForces.y += equilibriumForce;		
+		if (characterController != nullptr || friction != 1)
+		{
+			// Horizontal speed control
+			if (characterController != nullptr && velocity.x > maxSpeed || velocity.x > terminalVelocity)
+				pendingForces.x -= equilibriumForce;
+			else if (characterController != nullptr && velocity.x < -maxSpeed || velocity.x < -terminalVelocity)
+				pendingForces.x += equilibriumForce;
+			// Vertical speed control
+			//if (velocity.y > maxSpeed)
+			//	pendingForces.y -= equilibriumForce;
+			//else if (velocity.y < -maxSpeed)
+			//	pendingForces.y += equilibriumForce;		
+		}
 	}
 
 	void RigidBody::ApplyCollisionForces()
@@ -256,7 +259,7 @@ namespace FlatEngine {
 		// "Floor" Collision Forces
 		// 
 		// Check if grounded normal gravity
-		if (collider->_isCollidingBottom || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && gravity > 0))
+		if (collider->_isCollidingBottom && collider->_bottomCollisionSolid || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && gravity > 0))
 			//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity > 0)
 			_isGrounded = true;
 		// Check if grounded inverted gravity
@@ -271,22 +274,22 @@ namespace FlatEngine {
 			if ((pendingForces.y < 0 && gravity > 0) || (pendingForces.y > 0 && gravity < 0))
 			{
 				pendingForces.y = 0;
+			}
 
-				if (collider->_isCollidingBottomRight)
-				{
-					newYPos = collider->bottomRightCollidedPosition.y;
-					transform->SetPosition(Vector2(position.x, newYPos));
-				}
-				else if (collider->_isCollidingBottomLeft)
-				{
-					newYPos = collider->bottomLeftCollidedPosition.y;
-					transform->SetPosition(Vector2(position.x, newYPos));
-				}
-				else if (collider->_isCollidingBottom)
-				{
-					newYPos = collider->bottomCollidedPosition.y;
-					transform->SetPosition(Vector2(position.x, newYPos));
-				}
+			if (collider->_isCollidingBottomRight)
+			{
+				newYPos = collider->bottomRightCollidedPosition.y;
+				transform->SetPosition(Vector2(position.x, newYPos));
+			}
+			else if (collider->_isCollidingBottomLeft)
+			{
+				newYPos = collider->bottomLeftCollidedPosition.y;
+				transform->SetPosition(Vector2(position.x, newYPos));
+			}
+			else if (collider->_isCollidingBottom)
+			{
+				newYPos = collider->bottomCollidedPosition.y;
+				transform->SetPosition(Vector2(position.x, newYPos));
 			}
 		}
 
@@ -311,13 +314,13 @@ namespace FlatEngine {
 		if (collider->GetTypeString() == "BoxCollider")
 		{
 			// Collision on right side when moving to the right
-			if (collider->_isCollidingRight && collider->_rightCollisionStatic && collider->_rightCollisionSolid && velocity.x > 0)
+			if (collider->_isCollidingRight && collider->_rightCollisionSolid && velocity.x > 0)
 			{
 				pendingForces.x = 0;
 				transform->SetPosition(Vector2(collider->rightCollidedPosition.x, position.y));
 			}
 			// Collision on left side when moving to the left
-			else if (collider->_isCollidingLeft && collider->_leftCollisionStatic && collider->_leftCollisionSolid && velocity.x < 0)
+			else if (collider->_isCollidingLeft && collider->_leftCollisionSolid && velocity.x < 0)
 			{
 				pendingForces.x = 0;
 				transform->SetPosition(Vector2(collider->leftCollidedPosition.x, position.y));

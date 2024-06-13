@@ -211,7 +211,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			// If animation component is playing, play the animation
 			if (animation != nullptr && animation->IsPlaying())
-				animation->PlayAnimation(GetEllapsedGameTime());
+				animation->PlayAnimation(GetEllapsedGameTimeInMs());
 		}
 
 

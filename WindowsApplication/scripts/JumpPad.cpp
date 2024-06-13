@@ -3,9 +3,10 @@
 #include "../BoxCollider.h"
 #include "../RigidBody.h"
 #include "../Transform.h"
+#include "Audio.h"
 
 
-JumpPad::JumpPad()
+JumpPad::JumpPad(long ownerID) : GameScript(ownerID)
 {
 	this->SetName("JumpPad");
 }
@@ -16,7 +17,10 @@ JumpPad::~JumpPad()
 
 void JumpPadOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
 {
-	FlatEngine::LogString("Collided!");
+	std::shared_ptr<FlatEngine::Audio> audio = thisObject->AddAudioComponent();
+	audio->SetPath("assets/audio/bounce.wav");
+	audio->SetIsMusic(false);
+	audio->Play();
 	std::shared_ptr<FlatEngine::RigidBody> collidedRigidBody = collidedWith->GetRigidBody();
 	std::shared_ptr<FlatEngine::Transform> myTransform = thisObject->GetTransformComponent();
 	std::shared_ptr<FlatEngine::Transform> collidedTransform = collidedWith->GetTransformComponent();
@@ -30,8 +34,7 @@ void JumpPadOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject,
 
 void JumpPad::Start()
 {	
-	boxCollider = GetOwner()->GetBoxCollider();
-	//boxCollider->SetOnCollisionEnter(JumpPadOnCollisionEnter);
+	boxCollider = GetOwner()->GetBoxCollider();	
 	boxCollider->SetOnCollisionEnter(JumpPadOnCollisionEnter);
 }
 

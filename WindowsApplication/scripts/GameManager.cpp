@@ -5,7 +5,7 @@
 #include "../Transform.h"
 
 
-GameManager::GameManager()
+GameManager::GameManager(long ownerID) : GameScript(ownerID)
 {
 	this->SetName("GameManager");
 	_paused = false;

@@ -3,7 +3,7 @@
 #include "../Transform.h"
 
 
-SettingsButton::SettingsButton()
+SettingsButton::SettingsButton(long ownerID) : GameScript(ownerID)
 {
 	SetName("SettingsButton");
 }

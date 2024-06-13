@@ -1,6 +1,6 @@
 #include "ButtonScriptTemplate.h"
-#include "../FlatEngine.h"
-#include "../Transform.h"
+#include "FlatEngine.h"
+#include "Transform.h"
 
 
 ButtonScriptTemplate::ButtonScriptTemplate()

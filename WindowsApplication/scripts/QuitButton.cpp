@@ -4,7 +4,7 @@
 #include "../Audio.h"
 #include "../Sprite.h"
 
-QuitButton::QuitButton()
+QuitButton::QuitButton(long ownerID) : GameScript(ownerID)
 {
 	this->SetName("QuitButton");
 }

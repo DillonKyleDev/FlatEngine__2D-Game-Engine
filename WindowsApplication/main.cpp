@@ -67,6 +67,7 @@ bool init()
 					}
 					else
 					{
+						Mix_AllocateChannels(100);
 						FlatEngine::LogString("SDL_mixer initialized...");
 						FlatEngine::LogString("Ready...");
 						FlatEngine::LogSeparator();

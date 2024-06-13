@@ -123,6 +123,7 @@ namespace FlatEngine
 
 	private:
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;
+		std::vector<std::shared_ptr<GameObject>> collidingLastFrame;
 		Vector2 activeOffset;
 		Vector2 previousPosition;
 		Vector2 centerGrid;

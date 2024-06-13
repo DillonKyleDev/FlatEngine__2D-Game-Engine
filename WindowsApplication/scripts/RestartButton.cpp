@@ -4,7 +4,7 @@
 #include "../Audio.h"
 #include "../Sprite.h"
 
-RestartButton::RestartButton()
+RestartButton::RestartButton(long ownerID) : GameScript(ownerID)
 {
 	this->SetName("RestartButton");
 }

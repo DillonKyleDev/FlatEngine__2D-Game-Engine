@@ -1,6 +1,6 @@
 #pragma once
-#include "../FlatEngine.h"
-#include "../GameScript.h"
+#include "FlatEngine.h"
+#include "GameScript.h"
 
 class PauseMenu : public FlatEngine::GameScript
 {
@@ -8,7 +8,7 @@ class PauseMenu : public FlatEngine::GameScript
 	class GameObject;
 
 public:
-	PauseMenu();
+	PauseMenu(long ownerID);
 	~PauseMenu();
 
 	void Start();

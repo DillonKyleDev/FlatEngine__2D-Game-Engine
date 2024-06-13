@@ -76,9 +76,6 @@ namespace FlatEngine
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;
 	extern std::shared_ptr<Sound> soundController;
-	extern std::vector<std::shared_ptr<FlatEngine::RigidBody>> rigidBodies;
-	extern std::vector<std::shared_ptr<FlatEngine::Collider>> colliders;
-	extern std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> colliderPairs;
 
 	// Engine
 	extern void Run(bool &_hasQuit);
@@ -148,7 +145,8 @@ namespace FlatEngine
 	extern void PauseGameLoop();
 	extern void PauseGame();
 	extern void StopGameLoop();
-	extern int GetEllapsedGameTime();
+	extern long GetEllapsedGameTimeInSec();
+	extern double GetEllapsedGameTimeInMs();
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();

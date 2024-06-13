@@ -599,7 +599,7 @@ namespace FlatEngine { namespace FlatGui {
 								if (GameLoopStarted() && !GameLoopPaused())
 								{
 									if (RenderButton("Play Animation"))
-										animation->Play(GetEllapsedGameTime());
+										animation->Play(GetEllapsedGameTimeInMs());
 
 									if (animation->GetAnimationPath() != "")
 										ImGui::SameLine(0, 5);

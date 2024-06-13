@@ -46,6 +46,7 @@ namespace FlatEngine
 		// Components
 		std::shared_ptr<Component> AddComponent(ComponentTypes type);
 		void RemoveComponent(long componentID);
+		void DeleteComponents();
 		std::shared_ptr<Transform> AddTransformComponent();
 		std::shared_ptr<Sprite> AddSpriteComponent();
 		std::shared_ptr<Camera> AddCameraComponent();

@@ -8,7 +8,7 @@
 // Add a new if branch for the script name in GameLoop()::Start() function
 
 
-PauseMenu::PauseMenu()
+PauseMenu::PauseMenu(long ownerID) : GameScript(ownerID)
 {
 	SetName("PauseMenu");
 	mappingContext = nullptr;

@@ -1,5 +1,5 @@
 #include "ScriptTemplate.h"
-#include "../FlatEngine.h"
+#include "FlatEngine.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script

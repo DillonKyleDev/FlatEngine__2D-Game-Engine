@@ -1,10 +1,10 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 class QuitButton : public FlatEngine::GameScript
 {
 public:
-	QuitButton();
+	QuitButton(long ownerID);
 	~QuitButton();
 
 	void Start();

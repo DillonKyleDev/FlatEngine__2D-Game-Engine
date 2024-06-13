@@ -1,10 +1,10 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 class StartButton : public FlatEngine::GameScript
 {
 public:
-	StartButton();
+	StartButton(long ownerID);
 	~StartButton();
 
 	void Start();

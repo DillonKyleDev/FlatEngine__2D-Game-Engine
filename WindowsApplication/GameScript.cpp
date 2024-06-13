@@ -4,10 +4,10 @@
 
 namespace FlatEngine
 {
-	GameScript::GameScript()
+	GameScript::GameScript(long newOwnerID)
 	{
-		this->entities = std::vector<std::shared_ptr<GameObject>>();
 		this->_isActive = true;
+		ownerID = newOwnerID;
 	}
 
 	GameScript::~GameScript()
@@ -25,19 +25,19 @@ namespace FlatEngine
 		return this->name;
 	}
 
-	void GameScript::AddEntity(std::shared_ptr<GameObject> entity)
+	long GameScript::GetOwnerID()
 	{
-		this->entities.push_back(entity);
+		return ownerID;
 	}
 
-	std::vector<std::shared_ptr<GameObject>> GameScript::GetEntities()
+	void GameScript::SetOwnerID(long newID)
 	{
-		return this->entities;
+		ownerID = newID;
 	}
 
-	void GameScript::SetOwner(std::shared_ptr<GameObject> owner)
+	void GameScript::SetOwner(std::shared_ptr<GameObject> newOwner)
 	{
-		this->owner = owner;
+		owner = newOwner;
 	}
 
 	std::shared_ptr<GameObject> GameScript::GetOwner()

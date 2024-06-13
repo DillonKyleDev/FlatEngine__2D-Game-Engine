@@ -15,6 +15,7 @@
 #include "./scripts/PlayerController.h"
 //#include "./scripts/GroundedCheck.h"
 #include "./scripts/JumpPad.h"
+#include "BlasterRound.h"
 
 
 
@@ -38,7 +39,12 @@ namespace FlatEngine
 		_gamePaused = false;
 
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
-		scripts = std::vector<std::shared_ptr<GameScript>>();
+		scripts = std::vector<std::shared_ptr<GameScript>>(); // Not being used??
+
+		activeScripts = std::vector<std::shared_ptr<GameScript>>();
+		rigidBodies = std::vector<std::shared_ptr<FlatEngine::RigidBody>>();
+		colliders = std::vector<std::shared_ptr<FlatEngine::Collider>>();
+		colliderPairs = std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>>();
 	}
 
 	GameLoop::~GameLoop()
@@ -60,19 +66,79 @@ namespace FlatEngine
 		_started = true;
 
 		// Change this later to init scripts on loading maybe and then you can dynamically change script values without reloading
+		CollectPhysicsBodies();
 		InitializeScriptObjects();
-		Init();
+
+		if (FlatEngine::_isDebugMode)
+		{
+			// Add Update Time Process		
+			AddProfilerProcess("Update Loop");
+			// Add Update Process for all other time		
+			AddProfilerProcess("Not Update Loop");
+		}
 	}
 
-	void GameLoop::Init()
+	void GameLoop::CollectPhysicsBodies()
 	{
 		// Initialize objects for use in GameLoop::Update() with the currently loaded scene
 		UpdateActiveColliders();
 		UpdateActiveRigidBodies();
 	}
 
+	void GameLoop::AddScript(std::shared_ptr<GameObject> owner, std::shared_ptr<ScriptComponent> scriptComponent, std::shared_ptr<GameScript> scriptInstance)
+	{
+		scriptComponent->SetScriptInstance(scriptInstance);
+		scriptInstance->SetOwner(owner);
+		activeScripts.push_back(scriptInstance);
+		scriptInstance->Awake();
+		scriptInstance->Start();
+	}
+
+	void GameLoop::RemoveScript(long scriptID)
+	{
+		for (std::vector<std::shared_ptr<GameScript>>::iterator iter = activeScripts.begin(); iter != activeScripts.end();)
+		{
+			if ((*iter)->GetOwnerID() == scriptID)
+			{
+				RemoveProfilerProcess((*iter)->GetName() + "-on-" + (*iter)->GetOwner()->GetName());
+				activeScripts.erase(iter);
+				return;
+			}
+			iter++;
+		}
+	}
+
+	void GameLoop::RemoveRigidBody(long rigidBodyID)
+	{
+		for (std::vector<std::shared_ptr<RigidBody>>::iterator iter = rigidBodies.begin(); iter != rigidBodies.end();)
+		{
+			if ((*iter)->GetID() == rigidBodyID)
+			{
+				rigidBodies.erase(iter);
+				return;
+			}
+			iter++;
+		}
+	}
+
+	void GameLoop::RemoveCollider(long colliderID)
+	{
+		for (std::vector<std::shared_ptr<Collider>>::iterator iter = colliders.begin(); iter != colliders.end();)
+		{
+			if ((*iter)->GetID() == colliderID)
+			{
+				colliders.erase(iter);
+				UpdateActiveColliders();
+				return;
+			}
+			iter++;
+		}
+	}
+
 	void GameLoop::InitializeScriptObjects()
 	{
+		activeScripts.clear();
+
 		// Get currently loaded scenes GameObjects
 		gameObjects = FlatEngine::GetSceneObjects();
 
@@ -92,7 +158,7 @@ namespace FlatEngine
 
 					if (attachedScript == "GameManager")
 					{
-						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>();
+						std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>(script->GetID());
 						gameManagerScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(gameManagerScript);
 						activeScripts.push_back(gameManagerScript);
@@ -101,74 +167,65 @@ namespace FlatEngine
 					}
 					else if (attachedScript == "PauseMenu")
 					{
-						std::shared_ptr<PauseMenu> pauseMenuScript = std::make_shared<PauseMenu>();
+						std::shared_ptr<PauseMenu> pauseMenuScript = std::make_shared<PauseMenu>(script->GetID());
 						pauseMenuScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(pauseMenuScript);
 						activeScripts.push_back(pauseMenuScript);
 					}
 					else if (attachedScript == "SettingsButton")
 					{
-						std::shared_ptr<SettingsButton> settingsButtonScript = std::make_shared<SettingsButton>();
+						std::shared_ptr<SettingsButton> settingsButtonScript = std::make_shared<SettingsButton>(script->GetID());
 						settingsButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(settingsButtonScript);
 						activeScripts.push_back(settingsButtonScript);
 					}
 					else if (attachedScript == "StartButton")
 					{
-						std::shared_ptr<StartButton> startButtonScript = std::make_shared<StartButton>();
+						std::shared_ptr<StartButton> startButtonScript = std::make_shared<StartButton>(script->GetID());
 						startButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(startButtonScript);
 						activeScripts.push_back(startButtonScript);
 					}
 					else if (attachedScript == "RestartButton")
 					{
-						std::shared_ptr<RestartButton> restartButtonScript = std::make_shared<RestartButton>();
+						std::shared_ptr<RestartButton> restartButtonScript = std::make_shared<RestartButton>(script->GetID());
 						restartButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(restartButtonScript);
 						activeScripts.push_back(restartButtonScript);
 					}
 					else if (attachedScript == "QuitButton")
 					{
-						std::shared_ptr<QuitButton> quitButtonScript = std::make_shared<QuitButton>();
+						std::shared_ptr<QuitButton> quitButtonScript = std::make_shared<QuitButton>(script->GetID());
 						quitButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(quitButtonScript);
 						activeScripts.push_back(quitButtonScript);
 					}
 					else if (attachedScript == "PlayerController")
 					{
-						std::shared_ptr<PlayerController> playerControllerScript = std::make_shared<PlayerController>();
+						std::shared_ptr<PlayerController> playerControllerScript = std::make_shared<PlayerController>(script->GetID());
 						playerControllerScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(playerControllerScript);
 						activeScripts.push_back(playerControllerScript);
 					}
-					//else if (attachedScript == "GroundedCheck")
-					//{
-					//	std::shared_ptr<GroundedCheck> groundCheckScript = std::make_shared<GroundedCheck>();
-					//	groundCheckScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(groundCheckScript);
-					//	activeScripts.push_back(groundCheckScript);
-					//}
 					else if (attachedScript == "JumpPad")
 					{
-						std::shared_ptr<JumpPad> jumpPadScript = std::make_shared<JumpPad>();
+						std::shared_ptr<JumpPad> jumpPadScript = std::make_shared<JumpPad>(script->GetID());
 						jumpPadScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(jumpPadScript);
 						activeScripts.push_back(jumpPadScript);
+					}
+					else if (attachedScript == "BlasterRound")
+					{
+						std::shared_ptr<BlasterRound> blasterRoundScript = std::make_shared<BlasterRound>(script->GetID());
+						blasterRoundScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(blasterRoundScript);
+						activeScripts.push_back(blasterRoundScript);
 					}
 				}
 			}
 		}
 
-		if (FlatEngine::_isDebugMode)
-		{
-			// Add Update Time Process		
-			AddProfilerProcess("Update Loop");
-			// Add Update Process for all other time		
-			AddProfilerProcess("Not Update Loop");
-		}
-
 		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
-
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
 			// Create a new Process for each script	
@@ -184,7 +241,6 @@ namespace FlatEngine
 		// Get currently loaded scenes GameObjects
 		gameObjects = FlatEngine::GetSceneObjects();
 		colliders.clear();
-		//circleColliders.clear();
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
@@ -253,8 +309,8 @@ namespace FlatEngine
 
 			// Get hang time of each script update function for profiler
 			float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
-
-			AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
+			if (activeScripts.size() > i && activeScripts[i])
+				AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
 		}
 	}
 
@@ -282,11 +338,10 @@ namespace FlatEngine
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			rigidBody->CalculatePhysics();
 
+		//LogString("Resetting Collisions...");
 		// Reset Collider collisions before going through all of them again
 		for (std::shared_ptr<Collider> collider : colliders)
 			collider->ResetCollisions();
-
-		LogString("Resetting Collisions...");
 
 		// Handle Collision updates here
 		static int continuousCounter = 0;
@@ -295,7 +350,7 @@ namespace FlatEngine
 			std::shared_ptr<Collider> collider1 = colliderPair.first;
 			std::shared_ptr<Collider> collider2 = colliderPair.second;
 
-			if (collider1 != nullptr && collider1->IsActive() && collider2 != nullptr && collider2->IsActive() && (!collider1->IsStatic() || !collider2->IsStatic()) && (collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)))
+			if (collider1->GetParent() != nullptr && collider1 != nullptr && collider1->IsActive() && collider2->GetParent() != nullptr && collider2 != nullptr && collider2->IsActive() && (!collider1->IsStatic() || !collider2->IsStatic()) && ((collider1->IsContinuous() || (!collider1->IsContinuous() && continuousCounter == 10)) || (collider2->IsContinuous() || (!collider2->IsContinuous() && continuousCounter == 10))))
 			{
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
@@ -392,11 +447,21 @@ namespace FlatEngine
 	}
 
 	// In seconds
-	double GameLoop::TimeEllapsed()
+	long GameLoop::TimeEllapsedInSec()
 	{
 		if (_started)
 		{
 			return activeTime;
+		}
+		return 0;
+	}
+
+	// In ms
+	double GameLoop::TimeEllapsedInMs()
+	{
+		if (_started)
+		{
+			return time * 1000;
 		}
 		return 0;
 	}
@@ -413,7 +478,7 @@ namespace FlatEngine
 
 	float GameLoop::GetAverageFps()
 	{
-		if (TimeEllapsed() != 0)
+		if (TimeEllapsedInSec() != 0)
 			return (float)framesCounted / (float)activeTime;
 		else
 			return 200;

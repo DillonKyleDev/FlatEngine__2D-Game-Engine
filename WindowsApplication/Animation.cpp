@@ -113,20 +113,20 @@ namespace FlatEngine
 		//}
 
 		// For 500 ticks, do this:
-		if (animationStartTime + 500 > FlatEngine::GetEllapsedGameTime())
+		if (animationStartTime + 500 > FlatEngine::GetEllapsedGameTimeInMs())
 		{
 			// Do first frame things
 			transform->SetScale(FlatEngine::Lerp(transform->GetScale(), Vector2(2, 2), 0.1f));
 		}
-		else if (animationStartTime + 1000 > FlatEngine::GetEllapsedGameTime())
+		else if (animationStartTime + 1000 > FlatEngine::GetEllapsedGameTimeInMs())
 		{
 			transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(startingPoint.x + 16, startingPoint.y), 0.5f));
 		}
-		else if (animationStartTime + 1300 > FlatEngine::GetEllapsedGameTime())
+		else if (animationStartTime + 1300 > FlatEngine::GetEllapsedGameTimeInMs())
 		{
 			transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), startingPoint, 0.1f));
 		}
-		else if (animationStartTime + 2000 > FlatEngine::GetEllapsedGameTime())
+		else if (animationStartTime + 2000 > FlatEngine::GetEllapsedGameTimeInMs())
 		{
 			transform->SetScale(FlatEngine::Lerp(transform->GetScale(), Vector2(1, 1), 0.1f));
 		}
@@ -207,7 +207,6 @@ namespace FlatEngine
 
 					if (spriteFrame->path != "")
 						sprite->SetTexture(spriteFrame->path);
-
 					Vector2 spriteOffset = sprite->GetOffset();
 					sprite->SetOffset(Vector2(spriteOffset.x + spriteFrame->xOffset, spriteOffset.y + spriteFrame->yOffset));
 					break;

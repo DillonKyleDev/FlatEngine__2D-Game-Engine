@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 
 class JumpPad : public FlatEngine::GameScript
@@ -7,7 +7,7 @@ class JumpPad : public FlatEngine::GameScript
 	class BoxCollider;
 
 public:
-	JumpPad();
+	JumpPad(long ownerID);
 	~JumpPad();
 
 	void Start();

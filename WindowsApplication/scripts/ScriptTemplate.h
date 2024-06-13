@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 
 // After copying the contents of these files to the newly created .h and .cpp files of your new script

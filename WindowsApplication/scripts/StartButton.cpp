@@ -11,7 +11,7 @@
 #include "../Transform.h"
 #include "../Vector2.h"
 
-StartButton::StartButton()
+StartButton::StartButton(long ownerID) : GameScript(ownerID)
 {
 	SetName("StartButton");
 }

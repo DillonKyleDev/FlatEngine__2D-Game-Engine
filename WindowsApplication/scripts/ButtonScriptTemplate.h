@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameScript.h"
+#include "GameScript.h"
 
 
 class ButtonScriptTemplate : public FlatEngine::GameScript
