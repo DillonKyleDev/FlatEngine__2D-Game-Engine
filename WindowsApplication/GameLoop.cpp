@@ -286,6 +286,8 @@ namespace FlatEngine
 		for (std::shared_ptr<Collider> collider : colliders)
 			collider->ResetCollisions();
 
+		LogString("Resetting Collisions...");
+
 		// Handle Collision updates here
 		static int continuousCounter = 0;
 		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)

@@ -108,7 +108,7 @@ namespace FlatEngine
 		{
 			double frameStart = 0;
 			double frameTime = 0;
-
+			LogString("Ran through!");
 			// Get time it took to get back to GameLoopUpdate()
 			frameStart = (double)FlatEngine::GetEngineTime();
 			frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)

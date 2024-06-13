@@ -184,6 +184,7 @@ namespace FlatEngine
 		Vector2 collider1Center = collider1->GetCenterGrid();
 		Vector2 collider2Center = collider2->GetCenterGrid();
 
+		LogString("Checking Collision for " + collider1->GetParent()->GetName() + " and " + collider2->GetParent()->GetName());
 		// Calculate center distance with pythag
 		float rise = std::abs(collider1Center.y - collider2Center.y);
 		float run = std::abs(collider1Center.x - collider2Center.x);
