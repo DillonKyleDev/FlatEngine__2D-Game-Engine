@@ -1,0 +1,183 @@
+{
+    "Name": "camera",
+    "Prefab": [
+        {
+            "_isActive": true,
+            "children": [
+                63
+            ],
+            "components": [],
+            "id": 62,
+            "name": "camera",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [],
+            "components": [],
+            "id": 66,
+            "name": "QuitButtonText",
+            "parent": 65,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [
+                66
+            ],
+            "components": [],
+            "id": 65,
+            "name": "QuitButton",
+            "parent": 64,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [],
+            "components": [],
+            "id": 67,
+            "name": "PausedText",
+            "parent": 64,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [
+                65,
+                67
+            ],
+            "components": [],
+            "id": 64,
+            "name": "MainPauseMenu",
+            "parent": 63,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [],
+            "components": [],
+            "id": 68,
+            "name": "SettingsMenu",
+            "parent": 63,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": false,
+            "children": [
+                64,
+                68
+            ],
+            "components": [],
+            "id": 63,
+            "name": "PauseMenu",
+            "parent": 62,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

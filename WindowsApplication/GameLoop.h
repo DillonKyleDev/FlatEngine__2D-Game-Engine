@@ -16,7 +16,7 @@ namespace FlatEngine
 
 		void Start();
 		void CollectPhysicsBodies();
-		void InitializeScriptObjects();
+		void InitializeScriptObjects(std::vector<std::shared_ptr<GameObject>> gameObjects);
 		void AddScript(std::shared_ptr<GameObject> owner, std::shared_ptr<ScriptComponent> scriptComponent, std::shared_ptr<GameScript> scriptInstance);
 		void RemoveScript(long scriptID);
 		void RemoveRigidBody(long rigidBodyID);

@@ -195,23 +195,7 @@ namespace FlatEngine
 
 	long Scene::GetNextGameObjectID()
 	{
-		for (std::shared_ptr<GameObject> sceneObject : sceneObjects)
-		{
-			if (sceneObject->GetID() == nextGameObjectID)
-			{
-				IncrementGameObjectID();
-				GetNextGameObjectID();
-			}
-		}
-		for (std::shared_ptr<GameObject> animationObject : animatorPreviewObjects)
-		{
-			if (animationObject->GetID() == nextGameObjectID)
-			{
-				IncrementGameObjectID();
-				GetNextGameObjectID();
-			}
-		}
-
+		IncrementGameObjectID();
 		return nextGameObjectID;
 	}
 

@@ -255,8 +255,14 @@
     <ClCompile Include="CircleCollider.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="BlasterRound.cpp">
+    <ClCompile Include="scripts\BlasterRound.cpp">
       <Filter>Source Files\scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\MovingPlatform.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="PrefabManager.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -419,11 +425,17 @@
     <ClInclude Include="Collider.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="BlasterRound.h">
+    <ClInclude Include="scripts\BlasterRound.h">
       <Filter>Header Files\scripts</Filter>
     </ClInclude>
     <ClInclude Include="scripts\GameManager.h">
       <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MovingPlatform.h">
+      <Filter>Header Files\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PrefabManager.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,8 @@
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_sdlrenderer2.h"
 
+#include "PrefabManager.h"
+
 
 namespace FlatEngine
 {
@@ -112,6 +114,9 @@ namespace FlatEngine
 	extern std::shared_ptr<GameObject> GetObjectByName(std::string name);
 
 	// Prefabs
+	extern std::shared_ptr<PrefabManager> prefabManager;
+	extern void CreatePrefab(std::string path, std::shared_ptr<GameObject> gameObject);
+	extern void InitializePrefabs();
 	extern std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID = -1);
 	extern std::shared_ptr<GameObject> CreateTransformPrefab();
 	extern std::shared_ptr<GameObject> CreateSpritePrefab();

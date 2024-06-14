@@ -15,7 +15,7 @@
 #include "./scripts/PlayerController.h"
 //#include "./scripts/GroundedCheck.h"
 #include "./scripts/JumpPad.h"
-#include "BlasterRound.h"
+#include "./scripts/BlasterRound.h"
 
 
 
@@ -65,9 +65,13 @@ namespace FlatEngine
 
 		_started = true;
 
-		// Change this later to init scripts on loading maybe and then you can dynamically change script values without reloading
+		// Get currently loaded scenes GameObjects and instantiate script objects for them
+		gameObjects = FlatEngine::GetSceneObjects();
+		activeScripts.clear();
+		InitializeScriptObjects(gameObjects);
+
 		CollectPhysicsBodies();
-		InitializeScriptObjects();
+
 
 		if (FlatEngine::_isDebugMode)
 		{
@@ -135,12 +139,9 @@ namespace FlatEngine
 		}
 	}
 
-	void GameLoop::InitializeScriptObjects()
+	void GameLoop::InitializeScriptObjects(std::vector<std::shared_ptr<GameObject>> gameObjects)
 	{
-		activeScripts.clear();
-
-		// Get currently loaded scenes GameObjects
-		gameObjects = FlatEngine::GetSceneObjects();
+		std::vector<std::shared_ptr<GameScript>> newScripts = std::vector<std::shared_ptr<GameScript>>();
 
 		// Find all script components on Scene GameObjects and add those GameObjects
 		// to their corresponding script class entity vector members
@@ -162,6 +163,7 @@ namespace FlatEngine
 						gameManagerScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(gameManagerScript);
 						activeScripts.push_back(gameManagerScript);
+						newScripts.push_back(gameManagerScript);
 						gameManager = gameManagerScript;
 						FlatEngine::gameManager = gameManagerScript;
 					}
@@ -171,6 +173,7 @@ namespace FlatEngine
 						pauseMenuScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(pauseMenuScript);
 						activeScripts.push_back(pauseMenuScript);
+						newScripts.push_back(pauseMenuScript);
 					}
 					else if (attachedScript == "SettingsButton")
 					{
@@ -178,6 +181,7 @@ namespace FlatEngine
 						settingsButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(settingsButtonScript);
 						activeScripts.push_back(settingsButtonScript);
+						newScripts.push_back(settingsButtonScript);
 					}
 					else if (attachedScript == "StartButton")
 					{
@@ -185,6 +189,7 @@ namespace FlatEngine
 						startButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(startButtonScript);
 						activeScripts.push_back(startButtonScript);
+						newScripts.push_back(startButtonScript);
 					}
 					else if (attachedScript == "RestartButton")
 					{
@@ -192,6 +197,7 @@ namespace FlatEngine
 						restartButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(restartButtonScript);
 						activeScripts.push_back(restartButtonScript);
+						newScripts.push_back(restartButtonScript);
 					}
 					else if (attachedScript == "QuitButton")
 					{
@@ -199,6 +205,7 @@ namespace FlatEngine
 						quitButtonScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(quitButtonScript);
 						activeScripts.push_back(quitButtonScript);
+						newScripts.push_back(quitButtonScript);
 					}
 					else if (attachedScript == "PlayerController")
 					{
@@ -206,6 +213,7 @@ namespace FlatEngine
 						playerControllerScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(playerControllerScript);
 						activeScripts.push_back(playerControllerScript);
+						newScripts.push_back(playerControllerScript);
 					}
 					else if (attachedScript == "JumpPad")
 					{
@@ -213,6 +221,7 @@ namespace FlatEngine
 						jumpPadScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(jumpPadScript);
 						activeScripts.push_back(jumpPadScript);
+						newScripts.push_back(jumpPadScript);
 					}
 					else if (attachedScript == "BlasterRound")
 					{
@@ -220,19 +229,20 @@ namespace FlatEngine
 						blasterRoundScript->SetOwner(gameObjects[i]);
 						script->SetScriptInstance(blasterRoundScript);
 						activeScripts.push_back(blasterRoundScript);
+						newScripts.push_back(blasterRoundScript);
 					}
 				}
 			}
 		}
 
-		// CALL AWAKE ON ALL SCRIPTS HERE ONCE IT'S IMPLEMENTED //
-		for (int i = 0; i < activeScripts.size(); i++)
+		// Call Awake and Start on all newly added scripts
+		for (int i = 0; i < newScripts.size(); i++)
 		{
 			// Create a new Process for each script	
 			 if (FlatEngine::_isDebugMode)	
-				AddProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
-			activeScripts[i]->Awake();
-			activeScripts[i]->Start();
+				AddProfilerProcess(newScripts[i]->GetName() + "-on-" + newScripts[i]->GetOwner()->GetName());
+			 newScripts[i]->Awake();
+			 newScripts[i]->Start();
 		}
 	}
 
@@ -338,7 +348,6 @@ namespace FlatEngine
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			rigidBody->CalculatePhysics();
 
-		//LogString("Resetting Collisions...");
 		// Reset Collider collisions before going through all of them again
 		for (std::shared_ptr<Collider> collider : colliders)
 			collider->ResetCollisions();

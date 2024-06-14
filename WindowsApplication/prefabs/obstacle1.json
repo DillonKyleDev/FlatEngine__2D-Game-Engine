@@ -1,0 +1,207 @@
+{
+    "Name": "obstacle1",
+    "Prefab": [
+        {
+            "_isActive": true,
+            "children": [
+                50,
+                51,
+                53,
+                55,
+                56
+            ],
+            "components": [],
+            "id": 49,
+            "name": "obstacle1",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 50,
+            "name": "Wall Short",
+            "parent": 49,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": true
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 52,
+            "name": "JumpPad",
+            "parent": 51,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                52
+            ],
+            "components": [],
+            "id": 51,
+            "name": "Platform",
+            "parent": 49,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 54,
+            "name": "JumpPad",
+            "parent": 53,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [
+                54
+            ],
+            "components": [],
+            "id": 53,
+            "name": "Platform",
+            "parent": 49,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 55,
+            "name": "JumpPad",
+            "parent": 49,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 56,
+            "name": "Wall Tall",
+            "parent": 49,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

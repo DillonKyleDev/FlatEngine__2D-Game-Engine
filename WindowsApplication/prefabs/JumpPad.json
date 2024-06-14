@@ -1,0 +1,77 @@
+{
+    "Name": "JumpPad",
+    "Prefab": [
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 218,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -4.300655841827393,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -4.0,
+                    "yPos": 1.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 219,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": false,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 220,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "JumpPad",
+                    "id": 221,
+                    "type": "Script"
+                }
+            ],
+            "id": 52,
+            "name": "JumpPad",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

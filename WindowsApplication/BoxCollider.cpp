@@ -48,12 +48,12 @@ namespace FlatEngine
 		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
 		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());	
 		SetShowActiveRadius(toCopy->GetShowActiveRadius());
-		SetOnActiveCollisionSet(toCopy->OnActiveCollisionSet());
-		SetOnCollisionEnterSet(toCopy->OnCollisionEnterSet());
-		SetOnCollisionLeaveSet(toCopy->OnCollisionLeaveSet());
 		SetOnActiveCollision(toCopy->OnActiveCollision);
 		SetOnCollisionEnter(toCopy->OnCollisionEnter);
 		SetOnCollisionLeave(toCopy->OnCollisionLeave);
+		SetOnActiveCollisionSet(toCopy->OnActiveCollisionSet());
+		SetOnCollisionEnterSet(toCopy->OnCollisionEnterSet());
+		SetOnCollisionLeaveSet(toCopy->OnCollisionLeaveSet());
 
 		activeWidth = toCopy->activeWidth;
 		activeHeight = toCopy->activeHeight;

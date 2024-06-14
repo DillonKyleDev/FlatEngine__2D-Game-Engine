@@ -8,6 +8,7 @@ class PlayerController : public FlatEngine::GameScript
 	class CharacterController;
 	class RigidBody;
 	class Transform;
+	class Audio;
 
 public:
 	PlayerController(long ownerID);
@@ -21,4 +22,5 @@ private:
 	std::shared_ptr<FlatEngine::CharacterController> characterController;
 	std::shared_ptr<FlatEngine::RigidBody> rigidBody;
 	std::shared_ptr<FlatEngine::Transform> transform;
+	std::shared_ptr<FlatEngine::Audio> audio;
 };

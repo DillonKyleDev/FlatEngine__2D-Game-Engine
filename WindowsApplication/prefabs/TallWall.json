@@ -1,0 +1,29 @@
+{
+    "Name": "TallWall",
+    "Prefab": [
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [],
+            "id": 70,
+            "name": "TallWall",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        }
+    ]
+}

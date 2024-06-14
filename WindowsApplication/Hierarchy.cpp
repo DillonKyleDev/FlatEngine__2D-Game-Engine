@@ -257,6 +257,7 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				// Set parent ID of dropped object to -1
 				dropped->SetParentID(-1);
+				dropped->GetTransformComponent()->SetOrigin(Vector2(0, 0));
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -348,6 +349,14 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
+			if (ImGui::MenuItem("Create Prefab"))
+			{
+				std::string prefabPath = OpenSaveFileExplorer();
+				std::string prefabName = GetFilenameFromPath(prefabPath);
+				CreatePrefab(prefabPath, currentObject);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
@@ -410,6 +419,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Add dropped object to this object as a child
 				currentObject->AddChild(dropped->GetID());
 				dropped->SetParentID(currentObject->GetID());
+				dropped->GetTransformComponent()->SetOrigin(currentObject->GetTransformComponent()->GetTruePosition());
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -517,6 +527,7 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				// Set parent ID of dropped object to -1
 				dropped->SetParentID(-1);
+				dropped->GetTransformComponent()->SetOrigin(Vector2(0, 0));
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -599,6 +610,14 @@ namespace FlatEngine { namespace FlatGui {
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
+			if (ImGui::MenuItem("Create Prefab"))
+			{
+				std::string prefabPath = OpenSaveFileExplorer();
+				std::string prefabName = GetFilenameFromPath(prefabPath);
+				CreatePrefab(prefabPath, currentObject);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject"))
 			{
 				queuedForDelete = currentObject->GetID();
@@ -659,6 +678,7 @@ namespace FlatEngine { namespace FlatGui {
 				// Add dropped object to this object as a child
 				currentObject->AddChild(dropped->GetID());
 				dropped->SetParentID(currentObject->GetID());
+				dropped->GetTransformComponent()->SetOrigin(currentObject->GetTransformComponent()->GetTruePosition());
 			}
 			ImGui::EndDragDropTarget();
 		}

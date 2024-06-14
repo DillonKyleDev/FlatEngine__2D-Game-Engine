@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <cmath>
 #include "MappingContext.h"
+#include "PrefabManager.h"
 
 /*
 ######################################
@@ -23,6 +24,9 @@
 */
 
 
+
+
+
 namespace FlatEngine
 {
 	bool _isDebugMode = true;
@@ -31,6 +35,8 @@ namespace FlatEngine
 	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
 	int JOYSTICK_DEAD_ZONE = 4000;
 
+
+	// Managers
 	std::shared_ptr<GameManager> FlatEngine::gameManager = nullptr;
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 	long FlatEngine::FocusedGameObjectID = -1;
@@ -42,6 +48,7 @@ namespace FlatEngine
 	std::vector<std::shared_ptr<RigidBody>> rigidBodies = std::vector<std::shared_ptr<RigidBody>>();
 	std::vector<std::shared_ptr<Collider>> colliders = std::vector<std::shared_ptr<Collider>>();	
 	std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>> colliderPairs = std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>>();
+	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
@@ -245,7 +252,7 @@ namespace FlatEngine
 			{
 				std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
 				animatorObjects.clear();
-				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, -1);
+				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, GetLoadedScene()->GetAnimatorPreviewObjects(), -1);
 				std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
 				transform->SetPosition(Vector2(0,0));
 				animatorObjects.push_back(objectForFocusedAnimation);
@@ -650,7 +657,7 @@ namespace FlatEngine
 
 		// If the GameLoop is running, reinitialize the new scene's GameObjects
 		if (GameLoopStarted())
-			gameLoop->InitializeScriptObjects();
+			gameLoop->InitializeScriptObjects(GetSceneObjects());
 	}
 	
 
@@ -690,27 +697,19 @@ namespace FlatEngine
 
 
 	// Prefabs
+	void CreatePrefab(std::string path, std::shared_ptr<GameObject> gameObject)
+	{
+		prefabManager->CreatePrefab(path, gameObject);
+	}
+
+	void InitializePrefabs()
+	{
+		prefabManager->InitializePrefabs();
+	}
+
 	std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID)
 	{
-		std::shared_ptr<GameObject> instantiatedObject;
-
-		if (prefabName == "BlasterRound")
-		{
-			instantiatedObject = CreateGameObject(parentID);
-			std::shared_ptr<Transform> transform = instantiatedObject->AddTransformComponent();
-			std::shared_ptr<RigidBody> rigidBody = instantiatedObject->AddRigidBodyComponent();
-			std::shared_ptr<BoxCollider> boxCollider = instantiatedObject->AddBoxColliderComponent();
-			std::shared_ptr<Sprite> sprite = instantiatedObject->AddSpriteComponent();
-			transform->SetOrigin(position);
-			rigidBody->SetGravity(0);
-			rigidBody->SetVelocity(Vector2(1, 0));
-			rigidBody->SetFriction(1);
-			rigidBody->SetWindResistance(1);
-			boxCollider->SetActiveDimensions(0.5f, 0.5f);
-			sprite->SetTexture("assets/images/sprites/BlasterRound.png");
-		}
-
-		return instantiatedObject;
+		return prefabManager->Instantiate(prefabName, position, parentID);
 	}
 
 	std::shared_ptr<GameObject> CreateWallPrefab()

@@ -303,6 +303,9 @@ namespace FlatEngine { namespace FlatGui {
 			if (FlatEngine::_isDebugMode)
 				FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
 
+			// Initialize prefab objects
+			FlatEngine::prefabManager->InitializePrefabs();
+
 			_hasRunOnce = true;
 		}
 

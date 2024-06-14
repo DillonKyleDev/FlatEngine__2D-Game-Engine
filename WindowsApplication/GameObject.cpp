@@ -30,8 +30,6 @@ namespace FlatEngine
 		else
 		{
 			ID = GetLoadedScene()->GetNextGameObjectID();
-			// Increment GameObjectID counter in the scene for next GameObject
-			GetLoadedScene()->IncrementGameObjectID();
 		}
 	
 		tagList = std::make_shared<TagList>();
@@ -43,7 +41,7 @@ namespace FlatEngine
 	}
 
 	// Copy Constructor
-	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& objectVector, long parentID)
+	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& childObjectVector, std::vector<std::shared_ptr<GameObject>> objectPool, long parentID)
 	{
 		tagList = toCopy->GetTagList();
 		SetParentID(parentID);
@@ -53,175 +51,88 @@ namespace FlatEngine
 
 		for (long childID : toCopy->childrenIDs)
 		{
-			std::shared_ptr<GameObject> childToCopy = GetObjectById(childID);
-			// Probably not assigning children right here. Original component with 1 child endsd up with 2 somehow
-			std::shared_ptr<GameObject> newChild = std::make_shared<GameObject>(childToCopy, objectVector, GetID());
-			objectVector.push_back(newChild);
-			AddChild(newChild->GetID());
-			std::vector<long> childrenIDs = childToCopy->GetChildren();
+			std::shared_ptr<GameObject> actualChild = nullptr;
 
-			for (long gChildID : childrenIDs) {
-				RecursiveChildrenCopy(newChild, objectVector, gChildID);
-			}
+			// Find child in object pool provided
+			if (childID != -1)
+				for (std::shared_ptr<GameObject> object : objectPool)
+					if (ID == object->GetID())
+						actualChild = object;
+				
+			std::shared_ptr<GameObject> childCopy = std::make_shared<GameObject>(actualChild, childObjectVector, objectPool, GetID());
+			childObjectVector.push_back(childCopy);
+			AddChild(childCopy->GetID());
 		}
 		
-		for (std::shared_ptr<Component> component : toCopy->GetComponents())
+		std::vector<std::shared_ptr<Component>> toCopyComponents = toCopy->GetComponents();
+		for (std::shared_ptr<Component> component : toCopyComponents)
 		{
 			if (component->GetTypeString() == "Transform")
 			{
 				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Sprite")
+			else if (component->GetTypeString() == "Sprite")
 			{
 				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Animation")
+			else if (component->GetTypeString() == "Animation")
 			{
 				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Audio")
+			else if (component->GetTypeString() == "Audio")
 			{
 				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Button")
+			else if (component->GetTypeString() == "Button")
 			{
 				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "BoxCollider")
+			else if (component->GetTypeString() == "BoxCollider")
 			{
 				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Camera")
+			else if (component->GetTypeString() == "Camera")
 			{
 				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Canvas")
+			else if (component->GetTypeString() == "Canvas")
 			{
 				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Script")
+			else if (component->GetTypeString() == "Script")
 			{
 				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "Text")
+			else if (component->GetTypeString() == "Text")
 			{
 				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "CharacterController")
+			else if (component->GetTypeString() == "CharacterController")
 			{
 				std::shared_ptr<CharacterController> newComponent = std::make_shared<CharacterController>(std::static_pointer_cast<CharacterController>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "RigidBody")
+			else if (component->GetTypeString() == "RigidBody")
 			{
 				std::shared_ptr<RigidBody> newComponent = std::make_shared<RigidBody>(std::static_pointer_cast<RigidBody>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "BoxCollider")
+			else if (component->GetTypeString() == "BoxCollider")
 			{
 				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
 				components.push_back(newComponent);
 			}
-			if (component->GetTypeString() == "CircleCollider")
-			{
-				std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
-				components.push_back(newComponent);
-			}
-		}
-	}
-
-	void GameObject::RecursiveChildrenCopy(std::shared_ptr<GameObject> &parent, std::vector<std::shared_ptr<GameObject>> &objectVector, long childID)
-	{
-		std::shared_ptr<GameObject> childToCopy = GetObjectById(childID);
-		std::shared_ptr<GameObject> newChild = std::make_shared<GameObject>(childToCopy, objectVector, parent->GetID());
-		objectVector.push_back(newChild);
-		parent->AddChild(newChild->GetID());
-		std::vector<long> childrenIDs = childToCopy->GetChildren();
-
-		for (long gChildID : childrenIDs)
-		{
-			RecursiveChildrenCopy(newChild, objectVector, gChildID);
-		}
-
-
-		for (std::shared_ptr<Component> component : parent->GetComponents())
-		{
-			if (component->GetTypeString() == "Transform")
-			{
-				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Sprite")
-			{
-				std::shared_ptr<Sprite> newComponent = std::make_shared<Sprite>(std::static_pointer_cast<Sprite>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Animation")
-			{
-				std::shared_ptr<Animation> newComponent = std::make_shared<Animation>(std::static_pointer_cast<Animation>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Audio")
-			{
-				std::shared_ptr<Audio> newComponent = std::make_shared<Audio>(std::static_pointer_cast<Audio>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Button")
-			{
-				std::shared_ptr<Button> newComponent = std::make_shared<Button>(std::static_pointer_cast<Button>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "BoxCollider")
-			{
-				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Camera")
-			{
-				std::shared_ptr<Camera> newComponent = std::make_shared<Camera>(std::static_pointer_cast<Camera>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Canvas")
-			{
-				std::shared_ptr<Canvas> newComponent = std::make_shared<Canvas>(std::static_pointer_cast<Canvas>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Script")
-			{
-				std::shared_ptr<ScriptComponent> newComponent = std::make_shared<ScriptComponent>(std::static_pointer_cast<ScriptComponent>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "Text")
-			{
-				std::shared_ptr<Text> newComponent = std::make_shared<Text>(std::static_pointer_cast<Text>(component), GetID());
-				parent->components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "CharacterController")
-			{
-				std::shared_ptr<CharacterController> newComponent = std::make_shared<CharacterController>(std::static_pointer_cast<CharacterController>(component), GetID());
-				components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "RigidBody")
-			{
-				std::shared_ptr<RigidBody> newComponent = std::make_shared<RigidBody>(std::static_pointer_cast<RigidBody>(component), GetID());
-				components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "BoxCollider")
-			{
-				std::shared_ptr<BoxCollider> newComponent = std::make_shared<BoxCollider>(std::static_pointer_cast<BoxCollider>(component), GetID());
-				components.push_back(newComponent);
-			}
-			if (component->GetTypeString() == "CircleCollider")
+			else if (component->GetTypeString() == "CircleCollider")
 			{
 				std::shared_ptr<CircleCollider> newComponent = std::make_shared<CircleCollider>(std::static_pointer_cast<CircleCollider>(component), GetID());
 				components.push_back(newComponent);
