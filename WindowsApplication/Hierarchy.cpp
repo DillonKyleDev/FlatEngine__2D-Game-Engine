@@ -346,6 +346,7 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				std::shared_ptr<GameObject> childObject = CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
+				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -607,6 +608,7 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				std::shared_ptr<GameObject> childObject = CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
+				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();

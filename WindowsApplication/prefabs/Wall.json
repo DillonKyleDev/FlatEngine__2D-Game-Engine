@@ -1,5 +1,5 @@
 {
-    "Name": "background",
+    "Name": "Wall",
     "Prefab": [
         {
             "_isActive": true,
@@ -8,31 +8,46 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 119,
+                    "id": 102,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -2.7799999713897705,
-                    "xScale": 84.30000305175781,
+                    "xPos": -21.414066314697266,
+                    "xScale": 4.400000095367432,
                     "yOrigin": 0.0,
-                    "yPos": 2.1847803592681885,
-                    "yScale": 49.0
+                    "yPos": -11.037605285644531,
+                    "yScale": 5.300000190734863
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 120,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\stream.png",
+                    "id": 103,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\light.png",
                     "renderOrder": 0,
                     "type": "Sprite",
                     "xOffset": 5.0,
                     "xScale": 1.0,
                     "yOffset": 5.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 104,
+                    "type": "BoxCollider"
                 }
             ],
             "id": 34,
-            "name": "background",
+            "name": "Wall",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -48,7 +63,7 @@
                 "OnlyForPlayer": false,
                 "Player": false,
                 "Projectile": false,
-                "Terrain": false
+                "Terrain": true
             }
         }
     ]

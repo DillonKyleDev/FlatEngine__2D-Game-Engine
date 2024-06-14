@@ -10,7 +10,7 @@ namespace FlatEngine
 {
 	PrefabManager::PrefabManager()
 	{
-		prefabs = std::vector<std::shared_ptr<FlatEngine::GameObject>>();
+		m_prefabs = std::map<std::string, std::vector<std::shared_ptr<FlatEngine::GameObject>>>();
 	}
 
 	PrefabManager::~PrefabManager()
@@ -60,19 +60,19 @@ namespace FlatEngine
 
 		// Close the file
 		file_obj.close();
+
+		// Reinitialize prefabs
+		InitializePrefabs();
 	}
 
 	void PrefabManager::InitializePrefabs()
 	{
-		if (prefabs.size() > 0)
-			prefabs.clear();
+		m_prefabs.clear();
 
 		std::string path = "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\prefabs";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
-			std::shared_ptr<FlatEngine::GameObject> newPrefab;
-
-			// Create a new context to save the loaded keybindings to
+			std::vector<std::shared_ptr<GameObject>> prefabContainer;
 			std::shared_ptr<FlatEngine::GameObject> prefabObject = std::make_shared<FlatEngine::GameObject>();
 
 			json prefab = LoadFileData(entry.path().string());
@@ -89,9 +89,12 @@ namespace FlatEngine
 					for (int i = 0; i < prefabObjects.size(); i++)
 					{
 						// Add created GameObject to our freshScene
-						prefabs.push_back(SceneManager::CreateObjectFromJson(prefabObjects[i]));
+						prefabContainer.push_back(SceneManager::CreateObjectFromJson(prefabObjects[i]));
 					}
 				}
+
+				// Add pair to m_prefabs
+				m_prefabs.emplace(prefab["Name"], prefabContainer);
 			}
 		}
 	}
@@ -101,69 +104,45 @@ namespace FlatEngine
 		std::shared_ptr<FlatEngine::GameObject> instantiatedObject = nullptr;
 		std::vector<std::shared_ptr<GameObject>> children = std::vector<std::shared_ptr<GameObject>>();
 
-		for (std::shared_ptr<GameObject> prefab : prefabs)
+		for (std::pair<std::string, std::vector<std::shared_ptr<GameObject>>> pair : m_prefabs)
 		{
-			if (prefab->GetName() == prefabName)
+			if (pair.first == prefabName)
 			{
-				instantiatedObject = std::make_shared<GameObject>(prefab, children, prefabs, parentID);
-
-				if (instantiatedObject->HasComponent("Transform"))
+				for (std::shared_ptr<GameObject> prefabObject : pair.second)
 				{
-					if (parentID == -1)
-						instantiatedObject->GetTransformComponent()->SetOrigin(Vector2(0,0));
-					instantiatedObject->GetTransformComponent()->SetPosition(position);
+					if (prefabObject->GetName() == prefabName)
+					{
+						instantiatedObject = std::make_shared<GameObject>(prefabObject, children, pair.second, parentID);
+
+						if (instantiatedObject->HasComponent("Transform"))
+						{
+							if (parentID == -1)
+								instantiatedObject->GetTransformComponent()->SetOrigin(Vector2(0, 0));
+							instantiatedObject->GetTransformComponent()->SetPosition(position);
+						}
+
+						// A little janky but there you go
+						children.push_back(instantiatedObject);
+
+						// Track instantiated object and children in the scene
+						for (std::shared_ptr<GameObject> newObject : children)
+							FlatEngine::GetLoadedScene()->AddSceneObject(newObject);
+
+						FlatEngine::gameLoop->UpdateActiveColliders();
+						FlatEngine::gameLoop->UpdateActiveRigidBodies();
+						FlatEngine::gameLoop->InitializeScriptObjects(children);
+
+						return instantiatedObject;
+					}
 				}
-				
-
-				// A little janky but there you go
-				children.push_back(instantiatedObject);
-
-				// Track instantiated object and children in the scene
-				for (std::shared_ptr<GameObject> newObject : children)
-					FlatEngine::GetLoadedScene()->AddSceneObject(newObject);
-
-				FlatEngine::gameLoop->UpdateActiveColliders();
-				FlatEngine::gameLoop->UpdateActiveRigidBodies();
-				FlatEngine::gameLoop->InitializeScriptObjects(children);
-
-				return instantiatedObject;
 			}
 		}
 
 		return instantiatedObject;
 	}
 
-	std::shared_ptr<FlatEngine::GameObject> PrefabManager::CreateWallPrefab()
+	std::map<std::string, std::vector<std::shared_ptr<GameObject>>> PrefabManager::GetPrefabs()
 	{
-		std::shared_ptr<FlatEngine::GameObject> newObject = CreateGameObject(-1);
-		//newObject->AddComponent(ComponentTypes::Transform);
-		//newObject->SetName("Wall(" + std::to_string(newObject->GetID()) + ")");
-		//std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
-		//sprite->SetTexture("assets/images/environment/light.png");
-		//std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
-		//boxCollider->SetIsStatic(true);
-		//boxCollider->SetIsContinuous(false);
-		//SetFocusedGameObjectID(newObject->GetID());
-
-		return newObject;
-	}
-
-	std::shared_ptr<FlatEngine::GameObject> PrefabManager::CreateJumpPadPrefab()
-	{
-		std::shared_ptr<FlatEngine::GameObject> newObject = CreateGameObject(-1);
-		//std::shared_ptr<Transform> transform = newObject->AddTransformComponent();
-		//transform->SetScale(Vector2(1, 0.3f));
-		//newObject->SetName("JumpPad(" + std::to_string(newObject->GetID()) + ")");
-		//std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
-		//sprite->SetTexture("assets/images/environment/tan.png");
-		//std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
-		//boxCollider->SetIsStatic(true);
-		//boxCollider->SetIsSolid(false);
-		//boxCollider->SetIsContinuous(false);
-		//std::shared_ptr<ScriptComponent> script = newObject->AddScriptComponent();
-		//script->SetAttachedScript("JumpPad");
-		//SetFocusedGameObjectID(newObject->GetID());
-
-		return newObject;
+		return m_prefabs;
 	}
 }

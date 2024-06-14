@@ -711,40 +711,12 @@ namespace FlatEngine
 	{
 		return prefabManager->Instantiate(prefabName, position, parentID);
 	}
-
-	std::shared_ptr<GameObject> CreateWallPrefab()
+	
+	std::map<std::string, std::vector<std::shared_ptr<GameObject>>> GetPrefabs()
 	{
-		std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
-		newObject->AddComponent(ComponentTypes::Transform);
-		newObject->SetName("Wall(" + std::to_string(newObject->GetID()) + ")");
-		std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));		
-		sprite->SetTexture("assets/images/environment/light.png");
-		std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
-		boxCollider->SetIsStatic(true);
-		boxCollider->SetIsContinuous(false);
-		SetFocusedGameObjectID(newObject->GetID());
-
-		return newObject;
+		return prefabManager->GetPrefabs();
 	}
 
-	std::shared_ptr<GameObject> CreateJumpPadPrefab()
-	{
-		std::shared_ptr<GameObject> newObject = CreateGameObject(-1);
-		std::shared_ptr<Transform> transform = newObject->AddTransformComponent();
-		transform->SetScale(Vector2(1, 0.3f));
-		newObject->SetName("JumpPad(" + std::to_string(newObject->GetID()) + ")");
-		std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(newObject->AddComponent(ComponentTypes::Sprite));
-		sprite->SetTexture("assets/images/environment/tan.png");
-		std::shared_ptr<BoxCollider> boxCollider = std::static_pointer_cast<BoxCollider>(newObject->AddComponent(ComponentTypes::BoxCollider));
-		boxCollider->SetIsStatic(true);
-		boxCollider->SetIsSolid(false);
-		boxCollider->SetIsContinuous(false);
-		std::shared_ptr<ScriptComponent> script = newObject->AddScriptComponent();
-		script->SetAttachedScript("JumpPad");
-		SetFocusedGameObjectID(newObject->GetID());
-
-		return newObject;
-	}
 
 	// Logging Abstraction
 	void LogString(std::string line)

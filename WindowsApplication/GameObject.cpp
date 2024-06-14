@@ -55,9 +55,15 @@ namespace FlatEngine
 
 			// Find child in object pool provided
 			if (childID != -1)
+			{
 				for (std::shared_ptr<GameObject> object : objectPool)
-					if (ID == object->GetID())
+				{
+					if (childID == object->GetID())
+					{
 						actualChild = object;
+					}
+				}
+			}
 				
 			std::shared_ptr<GameObject> childCopy = std::make_shared<GameObject>(actualChild, childObjectVector, objectPool, GetID());
 			childObjectVector.push_back(childCopy);

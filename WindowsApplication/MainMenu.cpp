@@ -186,11 +186,6 @@ namespace FlatEngine { namespace FlatGui {
 						newObject->SetName("Block(" + std::to_string(newObject->GetID()) + ")");						
 						SetFocusedGameObjectID(newObject->GetID());
 					}
-					if (ImGui::MenuItem("Wall"))
-						CreateWallPrefab();
-					if (ImGui::MenuItem("JumpPad"))
-						CreateJumpPadPrefab();
-
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Components"))
@@ -298,6 +293,25 @@ namespace FlatEngine { namespace FlatGui {
 						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Prefabs"))
+				{
+					std::map<std::string, std::vector<std::shared_ptr<GameObject>>> prefabs = GetPrefabs();
+					if (prefabs.size() > 0)
+					{
+						for (std::pair<std::string, std::vector<std::shared_ptr<GameObject>>> pair : prefabs)
+						{
+							if (ImGui::MenuItem(pair.first.c_str()))
+							{
+								std::shared_ptr<GameObject> instantiatedObject = Instantiate(pair.first, Vector2(0, 0), -1);
+								SetFocusedGameObjectID(instantiatedObject->GetID());
+							}
+						}
+					}
+					else
+						ImGui::Text("Right click GameObject in hierarchy to create a Prefab");
+
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Asset files"))

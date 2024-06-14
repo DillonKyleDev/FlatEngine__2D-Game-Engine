@@ -1,14 +1,42 @@
 {
-    "Name": "camera",
+    "Name": "Camera",
     "Prefab": [
         {
             "_isActive": true,
             "children": [
-                63
+                82
             ],
-            "components": [],
-            "id": 62,
-            "name": "camera",
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 244,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -24.80865478515625,
+                    "xPos": 17.26300048828125,
+                    "xScale": 1.0,
+                    "yOrigin": -4.791238307952881,
+                    "yPos": 4.300000190734863,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 39.70000076293945,
+                    "id": 245,
+                    "type": "Camera",
+                    "width": 65.80000305175781,
+                    "zoom": 23.200000762939453
+                }
+            ],
+            "id": 81,
+            "name": "Camera",
             "parent": -1,
             "tags": {
                 "Enemy": false,
@@ -30,10 +58,40 @@
         {
             "_isActive": false,
             "children": [],
-            "components": [],
-            "id": 66,
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 231,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -7.545654296875,
+                    "xPos": 0.0,
+                    "xScale": 0.15000000596046448,
+                    "yOrigin": -1.1412380933761597,
+                    "yPos": 0.0,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 232,
+                    "renderOrder": 13,
+                    "text": "Quit",
+                    "type": "Text",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "id": 85,
             "name": "QuitButtonText",
-            "parent": 65,
+            "parent": 84,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -54,12 +112,56 @@
         {
             "_isActive": false,
             "children": [
-                66
+                85
             ],
-            "components": [],
-            "id": 65,
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 233,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -7.545654296875,
+                    "xPos": 0.0,
+                    "xScale": 5.0,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": -0.6499999761581421,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 234,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
+                    "renderOrder": 13,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 235,
+                    "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "QuitButton",
+                    "id": 236,
+                    "type": "Script"
+                }
+            ],
+            "id": 84,
             "name": "QuitButton",
-            "parent": 64,
+            "parent": 83,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -80,10 +182,40 @@
         {
             "_isActive": false,
             "children": [],
-            "components": [],
-            "id": 67,
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 237,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -7.545654296875,
+                    "xPos": 0.0,
+                    "xScale": 0.15000000596046448,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": 3.799999952316284,
+                    "yScale": 0.15000000596046448
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "f_alpha": 204,
+                    "f_blue": 1,
+                    "f_green": 1,
+                    "f_red": 1,
+                    "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 238,
+                    "renderOrder": 10,
+                    "text": "Paused.",
+                    "type": "Text",
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "id": 86,
             "name": "PausedText",
-            "parent": 64,
+            "parent": 83,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -104,13 +236,27 @@
         {
             "_isActive": false,
             "children": [
-                65,
-                67
+                84,
+                86
             ],
-            "components": [],
-            "id": 64,
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 239,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -7.545654296875,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 83,
             "name": "MainPauseMenu",
-            "parent": 63,
+            "parent": 82,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -132,9 +278,9 @@
             "_isActive": false,
             "children": [],
             "components": [],
-            "id": 68,
+            "id": 87,
             "name": "SettingsMenu",
-            "parent": 63,
+            "parent": 82,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -155,13 +301,56 @@
         {
             "_isActive": false,
             "children": [
-                64,
-                68
+                83,
+                87
             ],
-            "components": [],
-            "id": 63,
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 240,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -7.545654296875,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_blocksLayers": true,
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "height": 20.0,
+                    "id": 241,
+                    "layerNumber": 0,
+                    "type": "Canvas",
+                    "width": 30.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "PauseMenu",
+                    "id": 242,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 243,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\darkOpaque.png",
+                    "renderOrder": 10,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 26.399999618530273,
+                    "yOffset": 5.0,
+                    "yScale": 16.200000762939453
+                }
+            ],
+            "id": 82,
             "name": "PauseMenu",
-            "parent": 62,
+            "parent": 81,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

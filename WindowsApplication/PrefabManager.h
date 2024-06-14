@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <map>
 #include <vector>
 #include "Vector2.h"
 
@@ -17,13 +18,9 @@ namespace FlatEngine
 		void CreatePrefab(std::string path, std::shared_ptr<FlatEngine::GameObject> gameObject);
 		void InitializePrefabs();
 		std::shared_ptr<FlatEngine::GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID = -1);
-		std::shared_ptr<FlatEngine::GameObject> CreateTransformPrefab();
-		std::shared_ptr<FlatEngine::GameObject> CreateSpritePrefab();
-		std::shared_ptr<FlatEngine::GameObject> CreateButtonPrefab();
-		std::shared_ptr<FlatEngine::GameObject> CreateWallPrefab();
-		std::shared_ptr<FlatEngine::GameObject> CreateJumpPadPrefab();
+		std::map<std::string, std::vector<std::shared_ptr<GameObject>>> GetPrefabs();
 
 	private:
-		std::vector<std::shared_ptr<FlatEngine::GameObject>> prefabs;
+		std::map<std::string, std::vector<std::shared_ptr<FlatEngine::GameObject>>> m_prefabs;
 	};
 }
