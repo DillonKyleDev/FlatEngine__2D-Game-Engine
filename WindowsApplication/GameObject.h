@@ -28,9 +28,15 @@ namespace FlatEngine
 	public:
 		GameObject(long parentID = -1, long myID = -1);
 		// Copy Constructor
-		GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>> &objectVector, std::vector<std::shared_ptr<GameObject>> objectPool, long parentID = -1);
+		GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>> &objectVector, std::vector<std::shared_ptr<GameObject>> objectPool, long parentID = -1, long ID = -1);
 		~GameObject();
 	
+		void SetIsPrefab(bool _newIsPrefab);
+		bool IsPrefab();
+		void SetPrefabName(std::string newPrefabName);
+		std::string GetPrefabName();
+		void SetPrefabSpawnLocation(Vector2 newSpawnLocation);
+		Vector2 GetPrefabSpawnLocation();
 		void SetID(long ID);
 		long GetID();
 		void SetName(std::string name);
@@ -94,6 +100,9 @@ namespace FlatEngine
 		bool IsActive();
 
 	private:
+		bool _isPrefab;
+		std::string prefabName;
+		Vector2 prefabSpawnLocation;
 		std::shared_ptr<TagList> tagList;
 		long ID;
 		long parentID;

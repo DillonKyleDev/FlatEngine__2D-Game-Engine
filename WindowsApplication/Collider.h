@@ -120,6 +120,10 @@ namespace FlatEngine
 		bool _leftCollisionSolid;
 		bool _bottomCollisionSolid;
 		bool _topCollisionSolid;
+		bool _bottomLeftCollisionSolid;
+		bool _bottomRightCollisionSolid;
+		bool _topLeftCollisionSolid;
+		bool _topRightCollisionSolid;
 
 	private:
 		std::vector<std::shared_ptr<GameObject>> collidingObjects;

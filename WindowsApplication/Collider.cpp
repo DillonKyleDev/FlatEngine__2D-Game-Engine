@@ -59,6 +59,10 @@ namespace FlatEngine
 		_leftCollisionSolid = false;
 		_bottomCollisionSolid = false;
 		_topCollisionSolid = false;
+		_bottomLeftCollisionSolid = false;
+		_bottomRightCollisionSolid = false;
+		_topLeftCollisionSolid = false;
+		_topRightCollisionSolid = false;
 
 		rightCollision = 0;
 		leftCollision = 0;
@@ -126,6 +130,10 @@ namespace FlatEngine
 		_leftCollisionSolid = false;
 		_bottomCollisionSolid = false;
 		_topCollisionSolid = false;
+		_bottomLeftCollisionSolid = false;
+		_bottomRightCollisionSolid = false;
+		_topLeftCollisionSolid = false;
+		_topRightCollisionSolid = false;
 
 		rightCollision = 0;
 		leftCollision = 0;
@@ -258,12 +266,11 @@ namespace FlatEngine
 	bool Collider::CheckForCollisionBoxCircle(std::shared_ptr<FlatEngine::BoxCollider> boxCol, std::shared_ptr<FlatEngine::CircleCollider> circleCol)
 	{
 		bool _colliding = false;
-		Vector2 circleCenterGrid = circleCol->GetCenterGrid();
-		Vector2 circleNextCenterGrid = circleCol->GetNextCenterGrid();
-		Vector2 boxCenterGrid = boxCol->GetCenterGrid();
+		Vector2 circleCenterGrid = circleCol->GetNextCenterGrid(); // Get next center so no overlap happens this frame
+		Vector2 boxCenterGrid = boxCol->GetNextCenterGrid();       // -- ^^^
 		Vector2 circlePos = circleCol->GetParent()->GetTransformComponent()->GetTruePosition();
 		Vector2 boxPos = boxCol->GetParent()->GetTransformComponent()->GetTruePosition();
-		float boxHalfWidth = boxCol->GetActiveWidth() / 2; //* scale.x;
+		float boxHalfWidth = boxCol->GetActiveWidth() / 2;
 		float boxHalfHeight = boxCol->GetActiveHeight() / 2;
 		float circleActiveRadius = circleCol->GetActiveRadiusGrid();
 
@@ -276,6 +283,9 @@ namespace FlatEngine
 		float B_RightEdge = boxCol->nextActiveRight;
 		float B_BottomEdge = boxCol->nextActiveBottom;
 		float B_LeftEdge = boxCol->nextActiveLeft;
+
+		double yFromCol;
+		double xFromCol;
 
 		// Check how colliders are oriented in relation to each other //
 
@@ -313,7 +323,6 @@ namespace FlatEngine
 			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
 			circleCol->leftCollidedPosition = Vector2(B_RightEdge + circleActiveRadius - 0.001f, circlePos.y);
 			boxCol->rightCollidedPosition = Vector2(A_LeftEdge - boxHalfWidth + 0.001f, boxPos.y);
-			LogFloat(circleCol->collidedPosition.x, "CircleCollision.x: ");
 		}
 		// Circle Top - Box Bottom
 		else if (circleCenterGrid.y > boxCenterGrid.y && circleCenterGrid.x < B_RightEdge && circleCenterGrid.x > B_LeftEdge && (circleCenterGrid.y - B_TopEdge < circleActiveRadius))
@@ -329,7 +338,7 @@ namespace FlatEngine
 			boxCol->topCollision = A_BottomEdge;
 
 			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-			boxCol->topCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight + 0.001f);
+			boxCol->topCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
 			circleCol->bottomCollidedPosition = Vector2(circlePos.x, B_TopEdge + circleActiveRadius - 0.001f);
 		}
 		// Circle Bottom - Box Top
@@ -347,7 +356,7 @@ namespace FlatEngine
 
 			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
 			boxCol->bottomCollidedPosition = Vector2(boxPos.x, A_TopEdge + boxHalfHeight - 0.001f);
-			circleCol->topCollidedPosition = Vector2(circlePos.x, B_TopEdge - circleActiveRadius + 0.001f);
+			circleCol->topCollidedPosition = Vector2(circlePos.x, B_BottomEdge - circleActiveRadius + 0.001f);
 		}
 		// Check for all other (corner) collisions
 		// 
@@ -362,30 +371,43 @@ namespace FlatEngine
 				float run = std::abs(B_RightEdge - circleCenterGrid.x);
 				float cornerDistance = std::sqrt((rise * rise) + (run * run));
 
+				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-
 					float leftRightOverlap = B_RightEdge - A_LeftEdge;
 					float topBottomOverlap = A_TopEdge - B_BottomEdge;
-					// Left/Right
+
+					// Circle is approaching from the right (keep y pos, calculate x pos)
 					if (leftRightOverlap < topBottomOverlap)
 					{
 						circleCol->_isCollidingLeft = true;
 						circleCol->_isCollidingTopLeft = true;
+						circleCol->_topLeftCollisionSolid = boxCol->IsSolid(); // new
 						circleCol->_leftCollisionStatic = boxCol->IsStatic();
 						circleCol->_leftCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingRight = true;
-						boxCol->_isCollidingBottomRight = true;
+						boxCol->_isCollidingRight = true;						
 						boxCol->_rightCollisionStatic = circleCol->IsStatic();
 						boxCol->_rightCollisionSolid = boxCol->IsSolid();
 						circleCol->leftCollision = B_RightEdge;
 						boxCol->rightCollision = A_LeftEdge;
+						
+						// We know y and r, get x with pythag
+						yFromCol = circleCenterGrid.y - B_BottomEdge;
+
+						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0) // no square roots of negatives
+							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							xFromCol = 0;
+
+						//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+						circleCol->topLeftCollidedPosition = Vector2(B_RightEdge + xFromCol - 0.001f, circlePos.y);
 					}
-					// Top/Bottom
+					// Circle is approaching from the bottom (keep x pos, calculate y pos)
 					else {
 						circleCol->_isCollidingTop = true;
 						circleCol->_isCollidingTopLeft = true;
+						circleCol->_topLeftCollisionSolid = boxCol->IsSolid();
 						circleCol->_topCollisionStatic = boxCol->IsStatic();
 						circleCol->_topCollisionSolid = boxCol->IsSolid();
 						boxCol->_isCollidingBottom = true;
@@ -394,28 +416,40 @@ namespace FlatEngine
 						boxCol->_bottomCollisionSolid = circleCol->IsSolid();
 						circleCol->topCollision = B_BottomEdge;
 						boxCol->bottomCollision = A_TopEdge;
+						
+						// We know x and r, get y with pythag
+						xFromCol = circleCenterGrid.x - B_RightEdge;
+
+						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							yFromCol = 0;
+
+						//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+						circleCol->topLeftCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
 					}
 				}
 			}
 			// if circleCol is above boxCol
 			else if (circleCenterGrid.y > boxCenterGrid.y)
 			{
-				// Calculate distance from corner with pythag
 				float rise = std::abs(B_TopEdge - circleCenterGrid.y);
 				float run = std::abs(B_RightEdge - circleCenterGrid.x);
 				float cornerDistance = std::sqrt((rise * rise) + (run * run));
 
+				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-
 					float leftRightOverlap = B_RightEdge - A_LeftEdge;
 					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-					// Circle approaching from the right
+
+					// Circle is approaching from the right (keep y pos, calculate x pos)
 					if (leftRightOverlap < topBottomOverlap)
 					{
 						circleCol->_isCollidingLeft = true;
 						circleCol->_isCollidingBottomLeft = true;
+						circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
 						circleCol->_leftCollisionStatic = boxCol->IsStatic();
 						circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic(); // New
 						circleCol->_leftCollisionSolid = boxCol->IsSolid();
@@ -426,37 +460,39 @@ namespace FlatEngine
 						circleCol->leftCollision = B_RightEdge;
 						boxCol->rightCollision = A_LeftEdge;
 
-						// Calculate offset of circle overhang
-						double xFromCol = circleNextCenterGrid.x - B_RightEdge;
-						double yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
-						double totalYOffset = circleActiveRadius - yFromCol;
+						yFromCol = circleCenterGrid.y - B_TopEdge;
 
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + (circleActiveRadius - totalYOffset - 0.001f));
+						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							xFromCol = 0;
+
+						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+						circleCol->bottomLeftCollidedPosition = Vector2(B_RightEdge + xFromCol - 0.001f, circlePos.y);
 					}
-					// Circle approaching from the top
+					// Circle is approaching from the top (keep x value, calculate y value)
 					else {
 						circleCol->_isCollidingBottom = true;
 						circleCol->_isCollidingBottomLeft = true;
 						circleCol->_bottomCollisionStatic = boxCol->IsStatic();
-						circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic(); // New
+						circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic();
+						circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
 						circleCol->_bottomCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingTop = true;
-						boxCol->_isCollidingTopRight = true;
+						boxCol->_isCollidingTop = true;						
 						boxCol->_topCollisionStatic = circleCol->IsStatic();
 						boxCol->_topCollisionSolid = circleCol->IsSolid();
 						circleCol->bottomCollision = B_TopEdge;
 						boxCol->topCollision = A_BottomEdge;
 
-						// Calculate offset of circle overhang
-						double xFromCol = circleNextCenterGrid.x - B_RightEdge;
-						double yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
-						double totalYOffset = circleActiveRadius - yFromCol;
-						
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + (circleActiveRadius - totalYOffset - 0.001f));
+						xFromCol = circleCenterGrid.x - B_RightEdge;
+
+						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							yFromCol = 0;
+
+						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+						circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);
 					}
 				}
 			}
@@ -467,34 +503,45 @@ namespace FlatEngine
 			// if circleCol is below boxCol
 			if (circleCenterGrid.y < boxCenterGrid.y)
 			{
-				// Calculate distance from corner with pythag
 				float rise = std::abs(B_BottomEdge - circleCenterGrid.y);
 				float run = std::abs(B_LeftEdge - circleCenterGrid.x);
 				float cornerDistance = std::sqrt((rise * rise) + (run * run));
 
+				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-
 					float leftRightOverlap = A_RightEdge - B_LeftEdge;
 					float topBottomOverlap = A_TopEdge - B_BottomEdge;
-					// Left/Right
+
+					// Circle is approaching from the left (keep y value, calculate x value)
 					if (leftRightOverlap < topBottomOverlap)
 					{
 						circleCol->_isCollidingRight = true;
 						circleCol->_isCollidingTopRight = true;
+						circleCol->_topRightCollisionSolid = boxCol->IsSolid(); // new
 						circleCol->_rightCollisionStatic = boxCol->IsStatic();
 						circleCol->_rightCollisionSolid = boxCol->IsSolid();
 						boxCol->_isCollidingLeft = true;
-						boxCol->_isCollidingBottomLeft = true;
 						boxCol->_leftCollisionStatic = circleCol->IsStatic();
 						boxCol->_leftCollisionSolid = circleCol->IsSolid();
 						circleCol->rightCollision = B_LeftEdge;
 						boxCol->leftCollision = A_RightEdge;
+
+						yFromCol = circleCenterGrid.y - B_BottomEdge;
+
+						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							xFromCol = 0;
+
+						circleCol->topRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
 					}
-					// Top/Bottom
+					// Circle is approaching from the bottom (keep x value, calculate y value)
 					else {
 						circleCol->_isCollidingTop = true;
+						circleCol->_isCollidingTopRight = true;
+						circleCol->_topRightCollisionSolid = boxCol->IsSolid();
 						circleCol->_topCollisionStatic = boxCol->IsStatic();
 						circleCol->_topCollisionSolid = boxCol->IsSolid();
 						boxCol->_isCollidingBottom = true;
@@ -502,28 +549,38 @@ namespace FlatEngine
 						boxCol->_bottomCollisionSolid = circleCol->IsSolid();
 						circleCol->topCollision = B_BottomEdge;
 						boxCol->bottomCollision = A_TopEdge;
+
+						xFromCol = B_LeftEdge - circleCenterGrid.x;
+
+						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							yFromCol = 0;
+
+						circleCol->topRightCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
 					}
 				}
 			}
-			// if circleCol is above
+			// if circleCol is above boxCol
 			else if (circleCenterGrid.y > boxCenterGrid.y)
 			{
-				// Calculate distance from corner with pythag
 				float rise = std::abs(B_TopEdge - circleCenterGrid.y);
 				float run = std::abs(B_LeftEdge - circleCenterGrid.x);
 				float cornerDistance = std::sqrt((rise * rise) + (run * run));
 
+				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-
 					float leftRightOverlap = A_RightEdge - B_LeftEdge;
 					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-					// Left/Right
+
+					// Circle is approaching from the left (keep y value, calculate x value)
 					if (leftRightOverlap < topBottomOverlap)
 					{
 						circleCol->_isCollidingRight = true;
 						circleCol->_isCollidingBottomRight = true;
+						circleCol->_bottomRightCollisionSolid = boxCol->IsSolid(); // new
 						circleCol->_rightCollisionStatic = boxCol->IsStatic();
 						circleCol->_rightCollisionSolid = boxCol->IsSolid();
 						boxCol->_isCollidingLeft = true;
@@ -532,11 +589,21 @@ namespace FlatEngine
 						boxCol->_leftCollisionSolid = circleCol->IsSolid();
 						circleCol->rightCollision = B_LeftEdge;
 						boxCol->leftCollision = A_RightEdge;
+
+						yFromCol = circleCenterGrid.y - B_TopEdge;
+
+						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							xFromCol = 0;
+						
+						circleCol->bottomRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
 					}
-					// Top/Bottom
+					// Circle is approaching from the top (keep x value, calculate y value)
 					else {
 						circleCol->_isCollidingBottom = true;
 						circleCol->_isCollidingBottomRight = true;
+						circleCol->_bottomRightCollisionSolid = boxCol->IsSolid();
 						circleCol->_bottomCollisionStatic = boxCol->IsStatic();
 						circleCol->_bottomCollisionSolid = boxCol->IsSolid();
 						boxCol->_isCollidingTop = true;
@@ -545,6 +612,15 @@ namespace FlatEngine
 						boxCol->_topCollisionSolid = circleCol->IsSolid();
 						circleCol->bottomCollision = B_TopEdge;
 						boxCol->topCollision = A_BottomEdge;
+
+						xFromCol = B_LeftEdge - circleCenterGrid.x;
+
+						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+						else
+							yFromCol = 0;
+
+						circleCol->bottomRightCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);
 					}
 				}
 			}
@@ -1022,6 +1098,10 @@ namespace FlatEngine
 		_leftCollisionSolid = false;
 		_bottomCollisionSolid = false;
 		_topCollisionSolid = false;
+		_bottomLeftCollisionSolid = false;
+		_bottomRightCollisionSolid = false;
+		_topLeftCollisionSolid = false;
+		_topRightCollisionSolid = false;
 
 		rightCollision = 0;
 		leftCollision = 0;

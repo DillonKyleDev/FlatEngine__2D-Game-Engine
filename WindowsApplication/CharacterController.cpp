@@ -55,10 +55,21 @@ namespace FlatEngine {
 
 	void CharacterController::MoveToward(Vector2 direction)
 	{
+		Vector2 pendingForces = Vector2(0, 0);
 		std::shared_ptr<FlatEngine::RigidBody> rigidBody = GetParent()->GetRigidBody();
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
+		float gravity = 0;
 		float normalizedX = direction.x / 32760;
 		float normalizedY = direction.y / 32760;
+
+		if (rigidBody != nullptr)
+		{
+			pendingForces = rigidBody->GetPendingForces();
+			gravity = rigidBody->GetGravity();
+		}
+		else
+			LogString("CharacterController.cpp - RigidBody == nullptr");
+
 
 		if (normalizedX > 1)
 			normalizedX = 1;
@@ -69,7 +80,7 @@ namespace FlatEngine {
 		if (normalizedY < -1)
 			normalizedY = -1;
 
-		Vector2 pendingForces = rigidBody->GetPendingForces();
+
 		// If the object has not hit max speed in negative or positive direction
 		if (pendingForces.x >= 0 || pendingForces.x <= 0 && pendingForces.x > (maxSpeed * -1) ||
 			// If velocity exceeds positive max speed but x direction is negative
@@ -77,10 +88,10 @@ namespace FlatEngine {
 			// If velocity exceeds negative max speed but x direction is positive
 			(normalizedX * maxAcceleration > 0) && normalizedX != 0)
 		{
-			if (!rigidBody->IsGrounded())
-				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration * airControl, 0));
-			else
-				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration, 0));
+			if (rigidBody != nullptr && (gravity != 0 && !rigidBody->IsGrounded()))
+				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration * airControl, normalizedY * maxAcceleration * airControl));
+			else if (rigidBody != nullptr)
+				rigidBody->AddVelocity(Vector2(normalizedX * maxAcceleration, normalizedY * maxAcceleration));
 			_isMoving = true;
 		}		
 		

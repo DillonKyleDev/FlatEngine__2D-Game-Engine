@@ -353,8 +353,11 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::MenuItem("Create Prefab"))
 			{
 				std::string prefabPath = OpenSaveFileExplorer();
-				std::string prefabName = GetFilenameFromPath(prefabPath);
-				CreatePrefab(prefabPath, currentObject);
+				if (prefabPath != "")
+				{
+					std::string prefabName = GetFilenameFromPath(prefabPath);
+					CreatePrefab(prefabPath, currentObject);
+				}
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -615,8 +618,11 @@ namespace FlatEngine { namespace FlatGui {
 			if (ImGui::MenuItem("Create Prefab"))
 			{
 				std::string prefabPath = OpenSaveFileExplorer();
-				std::string prefabName = GetFilenameFromPath(prefabPath);
-				CreatePrefab(prefabPath, currentObject);
+				if (prefabPath != "")
+				{
+					std::string prefabName = GetFilenameFromPath(prefabPath);
+					CreatePrefab(prefabPath, currentObject);
+				}
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();

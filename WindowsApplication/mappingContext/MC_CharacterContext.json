@@ -23,7 +23,7 @@
             "SDLK_p": "",
             "SDLK_q": "",
             "SDLK_r": "",
-            "SDLK_s": "",
+            "SDLK_s": "IA_MoveDown",
             "SDLK_t": "",
             "SDLK_u": "",
             "SDLK_v": "",

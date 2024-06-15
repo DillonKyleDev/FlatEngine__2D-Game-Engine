@@ -117,7 +117,7 @@ namespace FlatEngine
 	extern std::shared_ptr<PrefabManager> prefabManager;
 	extern void CreatePrefab(std::string path, std::shared_ptr<GameObject> gameObject);
 	extern void InitializePrefabs();
-	extern std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID = -1);
+	extern std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
 	extern std::map<std::string, std::vector<std::shared_ptr<GameObject>>> GetPrefabs();
 
 	// Logging Prettification

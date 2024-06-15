@@ -99,7 +99,7 @@ namespace FlatEngine
 		}
 	}
 
-	std::shared_ptr<FlatEngine::GameObject> PrefabManager::Instantiate(std::string prefabName, Vector2 position, long parentID)
+	std::shared_ptr<FlatEngine::GameObject> PrefabManager::Instantiate(std::string prefabName, Vector2 position, long parentID, long ID)
 	{
 		std::shared_ptr<FlatEngine::GameObject> instantiatedObject = nullptr;
 		std::vector<std::shared_ptr<GameObject>> children = std::vector<std::shared_ptr<GameObject>>();
@@ -112,7 +112,7 @@ namespace FlatEngine
 				{
 					if (prefabObject->GetName() == prefabName)
 					{
-						instantiatedObject = std::make_shared<GameObject>(prefabObject, children, pair.second, parentID);
+						instantiatedObject = std::make_shared<GameObject>(prefabObject, children, pair.second, parentID, ID);
 
 						if (instantiatedObject->HasComponent("Transform"))
 						{
@@ -131,6 +131,11 @@ namespace FlatEngine
 						FlatEngine::gameLoop->UpdateActiveColliders();
 						FlatEngine::gameLoop->UpdateActiveRigidBodies();
 						FlatEngine::gameLoop->InitializeScriptObjects(children);
+
+						// Figure this out later so Prefabs stay up-to-date with their json files on reloading
+						//instantiatedObject->SetIsPrefab(true);
+						//instantiatedObject->SetPrefabName(prefabName);
+						//instantiatedObject->SetPrefabSpawnLocation(position);
 
 						return instantiatedObject;
 					}

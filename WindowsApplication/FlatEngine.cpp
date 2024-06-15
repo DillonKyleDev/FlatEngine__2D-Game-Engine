@@ -707,9 +707,9 @@ namespace FlatEngine
 		prefabManager->InitializePrefabs();
 	}
 
-	std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID)
+	std::shared_ptr<GameObject> Instantiate(std::string prefabName, Vector2 position, long parentID, long ID)
 	{
-		return prefabManager->Instantiate(prefabName, position, parentID);
+		return prefabManager->Instantiate(prefabName, position, parentID, ID);
 	}
 	
 	std::map<std::string, std::vector<std::shared_ptr<GameObject>>> GetPrefabs()

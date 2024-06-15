@@ -293,6 +293,9 @@ namespace FlatEngine { namespace FlatGui {
 			// Initialize Mapping Contexts
 			InitializeMappingContexts();
 
+			// Initialize prefab objects
+			FlatEngine::prefabManager->InitializePrefabs();
+
 			// Open Project by default
 			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
 			
@@ -302,9 +305,6 @@ namespace FlatEngine { namespace FlatGui {
 			// Hierarchy management
 			if (FlatEngine::_isDebugMode)
 				FlatEngine::FlatGui::ResetHierarchyExpanderTracker();
-
-			// Initialize prefab objects
-			FlatEngine::prefabManager->InitializePrefabs();
 
 			_hasRunOnce = true;
 		}

@@ -113,6 +113,9 @@ namespace FlatEngine
 	{
 		std::shared_ptr<GameObject> objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
 
+		if (GetFocusedGameObjectID() == sceneObjectID)
+			SetFocusedGameObjectID(-1);
+
 		// If this GameObject was the primary camera, unset it as the primaryCamera and set primaryCamera to nullptr
 		if (primaryCamera != nullptr && primaryCamera->GetParentID() == objectToDelete->GetID())
 		{

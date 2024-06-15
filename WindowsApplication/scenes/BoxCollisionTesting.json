@@ -11,10 +11,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -5.498515605926514,
+                    "xPos": -1.73773193359375,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 3.998000144958496,
+                    "yPos": 2.1027584075927734,
                     "yScale": 1.0
                 },
                 {
@@ -35,31 +35,14 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "attachedScript": "PlayerController",
-                    "id": 42,
-                    "type": "Script"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "airControl": 0.20000000298023224,
-                    "id": 43,
-                    "maxAcceleration": 1.0,
-                    "maxSpeed": 0.10000000149011612,
-                    "type": "CharacterController"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isKinematic": false,
-                    "_isStatic": false,
-                    "angularDrag": 1.0,
-                    "gravity": 1.0,
-                    "id": 44,
-                    "mass": 1.0,
-                    "terminalVelocity": 0.4000000059604645,
-                    "type": "RigidBody",
-                    "windResistance": 1.0
+                    "id": 194,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 9,
@@ -113,6 +96,18 @@
                     "activeWidth": 2.0,
                     "id": 41,
                     "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 186,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\chasm.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 10,
@@ -142,14 +137,165 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 47,
+                    "id": 50,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -5.368503570556641,
+                    "xPos": 13.332018852233887,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 1.9989999532699585,
+                    "yPos": 2.690000057220459,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeLayer": 0,
+                    "activeRadius": 1.690000057220459,
+                    "id": 51,
+                    "type": "CircleCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": true,
+                    "airControl": 0.20000000298023224,
+                    "id": 54,
+                    "maxAcceleration": 0.5,
+                    "maxSpeed": 0.10000000149011612,
+                    "type": "CharacterController"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": true,
+                    "attachedScript": "PlayerController",
+                    "id": 55,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "gravity": 1.0,
+                    "id": 116,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.4000000059604645,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 177,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\ball.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 279.0,
+                    "xScale": 0.029999999329447746,
+                    "yOffset": 279.0,
+                    "yScale": 0.029999999329447746
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 185,
+                    "path": "assets/audio/lazerFire.wav",
+                    "type": "Audio"
+                }
+            ],
+            "id": 13,
+            "name": "Circle",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": true,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 206,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 1.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 4.800000190734863,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isPrimaryCamera": true,
+                    "frustrumAlpha": 255.0,
+                    "frustrumBlue": 255.0,
+                    "frustrumGreen": 255.0,
+                    "frustrumRed": 255.0,
+                    "height": 30.0,
+                    "id": 207,
+                    "type": "Camera",
+                    "width": 50.0,
+                    "zoom": 32.5
+                }
+            ],
+            "id": 15,
+            "name": "Camera(15)",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 333,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -3.7069225311279297,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 4.080488204956055,
                     "yScale": 1.0
                 },
                 {
@@ -164,25 +310,89 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 48,
+                    "id": 334,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isKinematic": false,
-                    "_isStatic": false,
-                    "angularDrag": 1.0,
-                    "gravity": 1.0,
-                    "id": 49,
-                    "mass": 1.0,
-                    "terminalVelocity": 0.4000000059604645,
-                    "type": "RigidBody",
-                    "windResistance": 1.0
+                    "id": 335,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
-            "id": 11,
-            "name": "BoxCollider(11)",
+            "id": 33,
+            "name": "box",
+            "parent": -1,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 336,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -5.689695358276367,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 6.120732307434082,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 337,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 338,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 34,
+            "name": "box",
             "parent": -1,
             "tags": {
                 "Enemy": false,

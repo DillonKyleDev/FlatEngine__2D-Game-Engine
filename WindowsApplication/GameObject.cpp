@@ -32,6 +32,9 @@ namespace FlatEngine
 			ID = GetLoadedScene()->GetNextGameObjectID();
 		}
 	
+		_isPrefab = false;
+		prefabName = "";
+		prefabSpawnLocation = Vector2(0, 0);
 		tagList = std::make_shared<TagList>();
 		parentID = newParentID;
 		name = "GameObject(" + std::to_string(ID) + ")";
@@ -41,11 +44,17 @@ namespace FlatEngine
 	}
 
 	// Copy Constructor
-	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& childObjectVector, std::vector<std::shared_ptr<GameObject>> objectPool, long parentID)
+	GameObject::GameObject(std::shared_ptr<GameObject> toCopy, std::vector<std::shared_ptr<GameObject>>& childObjectVector, std::vector<std::shared_ptr<GameObject>> objectPool, long parentID, long ID)
 	{
+		_isPrefab = toCopy->_isPrefab;
+		prefabName = toCopy->prefabName;
+		prefabSpawnLocation = toCopy->prefabSpawnLocation;
 		tagList = toCopy->GetTagList();
 		SetParentID(parentID);
-		SetID(GetNextGameObjectID());
+		if (ID != -1)
+			SetID(ID);
+		else
+			SetID(GetNextGameObjectID());
 		SetName(toCopy->GetName());
 		SetActive(toCopy->IsActive());
 
@@ -156,6 +165,36 @@ namespace FlatEngine
 				components[i] = nullptr;
 			}
 		}
+	}
+
+	void GameObject::SetIsPrefab(bool _newIsPrefab)
+	{
+		_isPrefab = _newIsPrefab;
+	}
+
+	bool GameObject::IsPrefab()
+	{
+		return _isPrefab;
+	}
+
+	void GameObject::SetPrefabName(std::string newPrefabName)
+	{
+		prefabName = newPrefabName;
+	}
+
+	std::string GameObject::GetPrefabName()
+	{
+		return prefabName;
+	}
+
+	void GameObject::SetPrefabSpawnLocation(Vector2 newSpawnLocation)
+	{
+		prefabSpawnLocation = newSpawnLocation;
+	}
+
+	Vector2 GameObject::GetPrefabSpawnLocation()
+	{
+		return prefabSpawnLocation;
 	}
 
 	void GameObject::SetID(long newID)

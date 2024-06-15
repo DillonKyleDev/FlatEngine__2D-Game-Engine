@@ -41,7 +41,11 @@ void PlayerController::Start()
 	characterController = GetOwner()->GetCharacterController();
 	rigidBody = GetOwner()->GetRigidBody();
 	transform = GetOwner()->GetTransformComponent();
-	audio = GetOwner()->AddAudioComponent();
+	if (!GetOwner()->HasComponent("Audio"))
+		audio = GetOwner()->AddAudioComponent();
+	else
+		audio = GetOwner()->GetAudioComponent();
+
 	audio->SetPath("assets/audio/lazerFire.wav");
 	audio->SetIsMusic(false);
 }
@@ -50,8 +54,8 @@ void PlayerController::Update(float deltaTime)
 {
 	bool _moving = false;
 	bool _isGrounded = false;
-	static int xDir = 0;
-	static int yDir = 0;
+	int xDir = 0;
+	int yDir = 0;
 	Vector2 velocity = Vector2(0, 0);
 
 	if (rigidBody != nullptr)
@@ -84,15 +88,26 @@ void PlayerController::Update(float deltaTime)
 			if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
 			{
 				xDir = -30000;
-				characterController->MoveToward(Vector2(-36000, 0));
 				_moving = true;
 			}
 			if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
 			{
-				xDir = 30000;
-				characterController->MoveToward(Vector2(36000, 0));
+				xDir = 30000;				
 				_moving = true;
 			}
+			//if (mappingContext->GetInputAction("IA_MoveDown").type != 0)
+			//{
+			//	yDir = -30000;				
+			//	_moving = true;
+			//}
+			//if (mappingContext->GetInputAction("IA_MoveUp").type != 0)
+			//{
+			//	yDir = 30000;				
+			//	_moving = true;
+			//}
+
+			if (xDir != 0 || yDir != 0)
+				characterController->MoveToward(Vector2(xDir, yDir));
 		}
 	}
 	//if (mappingContext->GetInputAction("IA_MoveUp").type != 0)
