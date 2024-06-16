@@ -3,19 +3,20 @@
     "Prefab": [
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 226,
+                    "id": 126,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0,
+                    "xPos": -12.321443557739258,
                     "xScale": 0.25,
                     "yOrigin": 0.0,
-                    "yPos": 0,
+                    "yPos": -4.73860502243042,
                     "yScale": 0.25
                 },
                 {
@@ -24,8 +25,10 @@
                     "_isKinematic": false,
                     "_isStatic": false,
                     "angularDrag": 1.0,
+                    "equilibriumForce": 2.0,
+                    "friction": 1.0,
                     "gravity": 0.0,
-                    "id": 227,
+                    "id": 127,
                     "mass": 0.10000000149011612,
                     "terminalVelocity": 0.4000000059604645,
                     "type": "RigidBody",
@@ -43,13 +46,13 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 228,
+                    "id": 128,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 229,
+                    "id": 129,
                     "path": "assets/images/sprites/BlasterRound.png",
                     "renderOrder": 4,
                     "type": "Sprite",
@@ -62,13 +65,13 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "BlasterRound",
-                    "id": 230,
+                    "id": 130,
                     "type": "Script"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 231,
+                    "id": 131,
                     "path": "animations/explosion2.json",
                     "type": "Animation"
                 },
@@ -76,14 +79,17 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_isMusic": false,
-                    "id": 232,
+                    "id": 132,
                     "path": "",
                     "type": "Audio"
                 }
             ],
-            "id": 54,
+            "id": 36,
             "name": "BlasterRound",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -12.321443557739258,
+            "spawnLocationY": -4.73860502243042,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

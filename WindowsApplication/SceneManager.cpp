@@ -1121,9 +1121,13 @@ namespace FlatEngine
 					std::shared_ptr<RigidBody> newRigidBody = std::static_pointer_cast<RigidBody>(loadedObject->AddComponent(ComponentTypes::RigidBody));
 
 					// Default values
-					float mass = 1;
-					float angularDrag = 1;
-					float gravity = 1;
+					float mass = 1.0f;
+					float angularDrag = 1.0f;
+					float gravity = 1.0f;
+					float friction = 1.0f;
+					float equilibriumForce = 2.0f;
+					float terminalVelocity = 0.4f;
+					float windResistance = 1.0f;
 					bool _isKinematic = false;
 					bool _isStatic = false;
 
@@ -1158,6 +1162,23 @@ namespace FlatEngine
 						gravity = currentObjectJson["components"][j]["gravity"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'gravity' in object: " + loadedName);
+
+					if (currentObjectJson["components"][j].contains("friction"))
+						friction = currentObjectJson["components"][j]["friction"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'friction' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("equilibriumForce"))
+						equilibriumForce = currentObjectJson["components"][j]["equilibriumForce"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'equilibriumForce' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("terminalVelocity"))
+						terminalVelocity = currentObjectJson["components"][j]["terminalVelocity"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'terminalVelocity' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("windResistance"))
+						windResistance = currentObjectJson["components"][j]["windResistance"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'windResistance' in object: " + loadedName);
 					if (currentObjectJson["components"][j].contains("_isKinematic"))
 						_isKinematic = currentObjectJson["components"][j]["_isKinematic"];
 					else
@@ -1174,6 +1195,10 @@ namespace FlatEngine
 					newRigidBody->SetMass(mass);
 					newRigidBody->SetAngularDrag(angularDrag);
 					newRigidBody->SetGravity(gravity);
+					newRigidBody->SetFriction(friction);
+					newRigidBody->SetWindResistance(windResistance);
+					newRigidBody->SetEquilibriumForce(equilibriumForce);
+					newRigidBody->SetTerminalVelocity(terminalVelocity);
 					newRigidBody->SetIsKinematic(_isKinematic);
 					newRigidBody->SetIsStatic(_isStatic);
 				}

@@ -137,8 +137,11 @@ namespace FlatEngine
 			if (component->GetTypeString() == "Script")
 			{				 
 				std::shared_ptr<ScriptComponent> scriptComponent = std::static_pointer_cast<ScriptComponent>(component);
-				long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
-				gameLoop->RemoveScript(scriptID);
+				if (scriptComponent->GetScriptInstance())
+				{
+					long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
+					gameLoop->RemoveScript(scriptID);
+				}
 			}
 			if (component->GetTypeString() == "RigidBody")
 			{
