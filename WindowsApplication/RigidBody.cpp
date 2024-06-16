@@ -279,22 +279,21 @@ namespace FlatEngine {
 				}
 				else if (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid)
 				{
-					newXPos = position.x + cornerFriction * -pendingForces.y; // Give some slide away from the edge based on pendingForces
+					newXPos = collider->bottomLeftCollidedPosition.x;
 					newYPos = collider->bottomLeftCollidedPosition.y;
-					pendingForces.y = 0;
-					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
+					transform->SetPosition(Vector2(newXPos, newYPos));
 				}
 				else if (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid)
 				{
 					newXPos = position.x - cornerFriction * -pendingForces.y; // Give some slide away from the edge based on pendingForces
 					newYPos = collider->bottomRightCollidedPosition.y;
-					pendingForces.y = 0;
+					//pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}	
 
 			// Normal gravity
-			if (gravity > 0 && (collider->_isCollidingBottom && collider->_bottomCollisionSolid) || (collider->_isCollidingBottomLeft && !collider->_bottomLeftCollisionSolid) || (collider->_isCollidingBottomRight && !collider->_bottomRightCollisionSolid))
+			if (gravity > 0 && (collider->_isCollidingBottom && collider->_bottomCollisionSolid) || (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid))
 				_isGrounded = true;
 			// Inverted gravity
 			else if (gravity < 0 && (collider->_isCollidingTop && collider->_topCollisionSolid) || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid) || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid))

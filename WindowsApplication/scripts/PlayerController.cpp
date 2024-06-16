@@ -81,7 +81,7 @@ void PlayerController::Update(float deltaTime)
 		}
 		if (mappingContext->Fired("IA_Jump"))
 		{
-			//std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::Instantiate("JumpPad", transform->GetTruePosition(), -1);
+			std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::Instantiate("JumpPad", transform->GetTruePosition(), -1);
 		}
 		if (characterController != nullptr)
 		{

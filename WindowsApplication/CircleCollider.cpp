@@ -11,11 +11,9 @@
 
 namespace FlatEngine {
 
-	CircleCollider::CircleCollider(long myID, long parentID)
+	CircleCollider::CircleCollider(long myID, long parentID) : Collider(myID, parentID)
 	{
 		SetType(ComponentTypes::CircleCollider);
-		SetID(myID);
-		SetParentID(parentID);
 		SetActiveRadiusGrid(1.5);
 
 		_activeEdgesSet = false;
@@ -30,27 +28,12 @@ namespace FlatEngine {
 		nextActiveTop = 0;
 	}
 
-	CircleCollider::CircleCollider(std::shared_ptr<CircleCollider> toCopy, long newParentID)
+	CircleCollider::CircleCollider(std::shared_ptr<CircleCollider> toCopy, long newParentID) : Collider(toCopy, newParentID)
 	{		
 		SetType(ComponentTypes::CircleCollider);
-		SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		SetActiveLayer(toCopy->GetActiveLayer());
-		SetIsContinuous(toCopy->IsContinuous());
-		SetIsStatic(toCopy->IsStatic());
-		SetIsSolid(toCopy->IsSolid());
-		SetColliding(toCopy->IsColliding());
-		SetPreviousPosition(toCopy->GetPreviousPosition());
 		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
 		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());
 		SetShowActiveRadius(toCopy->GetShowActiveRadius());
-		SetOnActiveCollisionSet(toCopy->OnActiveCollisionSet());
-		SetOnCollisionEnterSet(toCopy->OnCollisionEnterSet());
-		SetOnCollisionLeaveSet(toCopy->OnCollisionLeaveSet());
-		SetOnActiveCollision(toCopy->OnActiveCollision);
-		SetOnCollisionEnter(toCopy->OnCollisionEnter);
-		SetOnCollisionLeave(toCopy->OnCollisionLeave);
 
 		_activeEdgesSet = false;
 

@@ -11,7 +11,7 @@ BlasterRound::BlasterRound(long ownerID) : GameScript(ownerID)
 {
 	SetName("BlasterRound");
 
-	boxCollider = nullptr;	
+	circleCollider = nullptr;	
 	startTime = FlatEngine::GetEllapsedGameTimeInSec();
 	lifeLength = 2;
 }
@@ -22,11 +22,9 @@ BlasterRound::~BlasterRound()
 
 void BlasterRoundOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
 {	
-	std::shared_ptr<FlatEngine::Audio> audio = thisObject->AddAudioComponent();
-	audio->SetPath("assets/audio/explosion.wav");
-	audio->SetIsMusic(false);
+	std::shared_ptr<FlatEngine::Audio> audio = thisObject->GetAudioComponent();
 	audio->Play();
-	thisObject->GetBoxCollider()->SetActive(false);
+	thisObject->GetCircleCollider()->SetActive(false);
 	thisObject->GetTransformComponent()->SetScale(Vector2(1, 1));
 	thisObject->GetRigidBody()->SetPendingForces(Vector2(0, 0));
 	thisObject->GetRigidBody()->SetVelocity(Vector2(0, 0));
@@ -35,8 +33,8 @@ void BlasterRoundOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisOb
 
 void BlasterRound::Start()
 {
-	boxCollider = GetOwner()->GetBoxCollider();	
-	boxCollider->SetOnCollisionEnter(BlasterRoundOnCollisionEnter);	
+	circleCollider = GetOwner()->GetCircleCollider();
+	circleCollider->SetOnCollisionEnter(BlasterRoundOnCollisionEnter);
 }
 
 void BlasterRound::Update(float deltaTime)

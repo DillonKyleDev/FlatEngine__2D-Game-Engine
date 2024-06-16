@@ -326,20 +326,6 @@ namespace FlatEngine
 
 	void GameLoop::Update()
 	{
-		// Profiler
-		float updateLoopStart = 0;
-		static float updateLoopEnd = 0;
-		if (FlatEngine::_isDebugMode)
-		{
-			// Save time before Update starts
-			updateLoopStart = (float)FlatEngine::GetEngineTime();
-			updateLoopEnd = updateLoopStart;
-			// Get hang time of everything after Update Loop for profiler
-			float everythingElseHangTime = updateLoopStart - updateLoopEnd;
-			AddProcessData("Not Update Loop", everythingElseHangTime);
-		}
-	
-
 		AddFrame();
 		UpdateScripts();
 		activeTime = time - pausedTime;		
@@ -378,17 +364,6 @@ namespace FlatEngine
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			rigidBody->ApplyPhysics((float)deltaTime);
-
-
-		// Profiler
-		if (FlatEngine::_isDebugMode)
-		{
-			// Get hang time of Update Loop for profiler
-			float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
-			AddProcessData("Update Loop", hangTime);
-			// Save time after update finishes
-			updateLoopEnd = (float)FlatEngine::GetEngineTime();
-		}
 	}
 
 	void GameLoop::Stop()

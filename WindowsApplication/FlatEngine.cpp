@@ -70,7 +70,6 @@ namespace FlatEngine
 	// FlatEngine
 	void Run(bool& _hasQuit)
 	{
-
 		// Manage Controllers
 		static int controllersConnected = 0;
 		if (SDL_NumJoysticks() != controllersConnected)
@@ -113,6 +112,19 @@ namespace FlatEngine
 
 		if (GameLoopStarted() && !GameLoopPaused() || GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{
+			// Profiler
+			float updateLoopStart = 0;
+			static float updateLoopEnd = 0;
+			if (FlatEngine::_isDebugMode)
+			{
+				// Save time before Update starts
+				updateLoopStart = (float)FlatEngine::GetEngineTime();
+				// Get hang time of everything after Update Loop for profiler
+				float everythingElseHangTime = updateLoopStart - updateLoopEnd;
+				AddProcessData("Not Update Loop", everythingElseHangTime);
+				updateLoopEnd = updateLoopStart;
+			}
+
 			double frameStart = 0;
 			double frameTime = 0;
 
@@ -145,8 +157,19 @@ namespace FlatEngine
 				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
 			}
 
-			if (!loadedProject->IsVsyncEnabled())
-				SDL_Delay(4 - frameTime);
+			// Artificially slow GameLoop if frameTime is less than 
+			if (!loadedProject->IsVsyncEnabled() && frameTime < GetDeltaTime())
+				SDL_Delay(GetDeltaTime() - frameTime);
+
+			// Profiler
+			if (FlatEngine::_isDebugMode)
+			{
+				// Get hang time of Update Loop for profiler
+				float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
+				AddProcessData("Update Loop", hangTime);
+				// Save time after update finishes
+				updateLoopEnd = (float)FlatEngine::GetEngineTime();
+			}
 
 			// Physics update V2
 			{

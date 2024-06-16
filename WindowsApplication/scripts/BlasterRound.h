@@ -12,7 +12,7 @@ public:
 
 	void Start();
 	void Update(float deltaTime);
-	std::shared_ptr<FlatEngine::BoxCollider> boxCollider;		
+	std::shared_ptr<FlatEngine::CircleCollider> circleCollider;
 	int startTime;
 	int lifeLength;
 };

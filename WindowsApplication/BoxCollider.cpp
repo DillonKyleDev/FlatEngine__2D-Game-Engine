@@ -11,11 +11,9 @@
 
 namespace FlatEngine
 {
-	BoxCollider::BoxCollider(long myID, long parentID)
+	BoxCollider::BoxCollider(long myID, long parentID) : Collider(myID, parentID)
 	{		
 		SetType(ComponentTypes::BoxCollider);
-		SetID(myID);
-		SetParentID(parentID);
 		activeWidth = 2;
 		activeHeight = 2;
 		activeOffset = Vector2(0, 0);
@@ -33,27 +31,12 @@ namespace FlatEngine
 		nextCorners;
 	}
 
-	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID)
+	BoxCollider::BoxCollider(std::shared_ptr<BoxCollider> toCopy, long newParentID) : Collider(toCopy, newParentID)
 	{		
 		SetType(ComponentTypes::BoxCollider);
-		SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		SetActiveLayer(toCopy->GetActiveLayer());
-		SetIsContinuous(toCopy->IsContinuous());
-		SetIsStatic(toCopy->IsStatic());
-		SetIsSolid(toCopy->IsSolid());
-		SetColliding(toCopy->IsColliding());
-		SetPreviousPosition(toCopy->GetPreviousPosition());
 		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
 		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());	
 		SetShowActiveRadius(toCopy->GetShowActiveRadius());
-		SetOnActiveCollision(toCopy->OnActiveCollision);
-		SetOnCollisionEnter(toCopy->OnCollisionEnter);
-		SetOnCollisionLeave(toCopy->OnCollisionLeave);
-		SetOnActiveCollisionSet(toCopy->OnActiveCollisionSet());
-		SetOnCollisionEnterSet(toCopy->OnCollisionEnterSet());
-		SetOnCollisionLeaveSet(toCopy->OnCollisionLeaveSet());
 
 		activeWidth = toCopy->activeWidth;
 		activeHeight = toCopy->activeHeight;

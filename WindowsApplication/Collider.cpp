@@ -467,8 +467,16 @@ namespace FlatEngine
 						else
 							xFromCol = 0;
 
+						//FlatGui::PushWindowStyles();
+						//ImGui::Begin("Scene View", 0, 16 | 8);
+						//FlatGui::PopWindowStyles();
+						//DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
+						//DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList()); // Vertical
+						//ImGui::End();
+
 						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->bottomLeftCollidedPosition = Vector2(B_RightEdge + xFromCol - 0.001f, circlePos.y);
+						/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
+						circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
 					}
 					// Circle is approaching from the top (keep x value, calculate y value)
 					else {
@@ -484,19 +492,29 @@ namespace FlatEngine
 						circleCol->bottomCollision = B_TopEdge;
 						boxCol->topCollision = A_BottomEdge;
 
-						xFromCol = circleCenterGrid.x - B_RightEdge;
+						yFromCol = circleCenterGrid.y - B_TopEdge;
 
-						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
 						else
-							yFromCol = 0;
+							xFromCol = 0;
+
+						/*FlatGui::PushWindowStyles();
+						ImGui::Begin("Scene View", 0, 16 | 8);
+						FlatGui::PopWindowStyles();
+						DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
+						DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());*/ // Vertical
+						//ImGui::End();
 
 						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);
+						/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
+						circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
 					}
 				}
 			}
 		}
+
+		//LogFloat(xFromCol, "Final X From Coll: ");
 		// if circleCol is to the left of boxCol
 		else if (circleCenterGrid.x < boxCenterGrid.x)
 		{

@@ -12,7 +12,7 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -22.67146110534668,
+                    "xPos": -19.8428955078125,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
                     "yPos": -4.73860502243042,
@@ -24,7 +24,7 @@
                     "airControl": 0.20000000298023224,
                     "id": 1,
                     "maxAcceleration": 1.0,
-                    "maxSpeed": 0.10000000149011612,
+                    "maxSpeed": 0.09000000357627869,
                     "type": "CharacterController"
                 },
                 {
@@ -89,7 +89,7 @@
             "name": "Hopper",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": -22.67146110534668,
+            "spawnLocationX": -19.8428955078125,
             "spawnLocationY": -4.73860502243042,
             "tags": {
                 "Enemy": false,
@@ -493,6 +493,94 @@
                     "attachedScript": "JumpPad",
                     "id": 46,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 159,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 160,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 161,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 164,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 166,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 170,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 174,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 176,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 178,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 183,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 238,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
                 }
             ],
             "id": 13,
@@ -569,6 +657,142 @@
                     "attachedScript": "JumpPad",
                     "id": 50,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 151,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 152,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 153,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 154,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 155,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 156,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 157,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 158,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 165,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 167,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 168,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 169,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 172,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 173,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 177,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 181,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 182,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
                 }
             ],
             "id": 14,
@@ -645,6 +869,62 @@
                     "attachedScript": "JumpPad",
                     "id": 54,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 162,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 163,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 171,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 175,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 179,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 180,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 184,
+                    "path": "assets/audio/bounce.wav",
+                    "type": "Audio"
                 }
             ],
             "id": 15,

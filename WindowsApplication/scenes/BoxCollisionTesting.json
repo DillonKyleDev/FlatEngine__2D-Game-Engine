@@ -2,6 +2,7 @@
     "Scene GameObjects": [
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -11,10 +12,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -1.73773193359375,
-                    "xScale": 1.0,
+                    "xPos": -3.504213333129883,
+                    "xScale": 5.199999809265137,
                     "yOrigin": 0.0,
-                    "yPos": 2.1027584075927734,
+                    "yPos": 2.072817802429199,
                     "yScale": 1.0
                 },
                 {
@@ -48,6 +49,9 @@
             "id": 9,
             "name": "Box",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -3.504213333129883,
+            "spawnLocationY": 2.072817802429199,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -67,6 +71,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -113,6 +118,9 @@
             "id": 10,
             "name": "Floor",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -132,6 +140,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -141,10 +150,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 13.332018852233887,
+                    "xPos": 0.6857030987739563,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 2.690000057220459,
+                    "yPos": 4.761817932128906,
                     "yScale": 1.0
                 },
                 {
@@ -161,11 +170,11 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
-                    "airControl": 0.20000000298023224,
+                    "_isCollapsed": false,
+                    "airControl": 0.5600000023841858,
                     "id": 54,
                     "maxAcceleration": 0.5,
-                    "maxSpeed": 0.10000000149011612,
+                    "maxSpeed": 0.07000000029802322,
                     "type": "CharacterController"
                 },
                 {
@@ -181,24 +190,14 @@
                     "_isKinematic": false,
                     "_isStatic": false,
                     "angularDrag": 1.0,
+                    "equilibriumForce": 2.0,
+                    "friction": 0.8199999928474426,
                     "gravity": 1.0,
                     "id": 116,
                     "mass": 1.0,
                     "terminalVelocity": 0.4000000059604645,
                     "type": "RigidBody",
                     "windResistance": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 177,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\ball.png",
-                    "renderOrder": 0,
-                    "type": "Sprite",
-                    "xOffset": 279.0,
-                    "xScale": 0.029999999329447746,
-                    "yOffset": 279.0,
-                    "yScale": 0.029999999329447746
                 },
                 {
                     "_isActive": true,
@@ -212,6 +211,9 @@
             "id": 13,
             "name": "Circle",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.6857030987739563,
+            "spawnLocationY": 4.761817932128906,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -231,6 +233,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -243,7 +246,7 @@
                     "xPos": 1.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 4.800000190734863,
+                    "yPos": 9.199999809265137,
                     "yScale": 1.0
                 },
                 {
@@ -264,6 +267,9 @@
             "id": 15,
             "name": "Camera(15)",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 1.0,
+            "spawnLocationY": 9.199999809265137,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -283,6 +289,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -329,6 +336,9 @@
             "id": 33,
             "name": "box",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -3.7069225311279297,
+            "spawnLocationY": 4.080488204956055,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -348,6 +358,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -394,6 +405,147 @@
             "id": 34,
             "name": "box",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -5.689695358276367,
+            "spawnLocationY": 6.120732307434082,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 339,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -7.724601745605469,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 4.131763458251953,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 340,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 341,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 35,
+            "name": "box",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -7.724601745605469,
+            "spawnLocationY": 4.131763458251953,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 342,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -9.700662612915039,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 2.0359411239624023,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 343,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 344,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 36,
+            "name": "box",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": -9.700662612915039,
+            "spawnLocationY": 2.0359411239624023,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
