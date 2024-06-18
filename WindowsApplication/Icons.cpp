@@ -10,7 +10,6 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> transformArrowXWhite = std::make_shared<Texture>();
 	std::shared_ptr<Texture> transformArrowYWhite = std::make_shared<Texture>();
 	std::shared_ptr<Texture> cameraIcon = std::make_shared<Texture>();
-
 	std::shared_ptr<Texture> playIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> pauseIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> stopIcon = std::make_shared<Texture>();
@@ -27,6 +26,7 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> threeDotsIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> showIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> hideIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> prefabCubeIcon = std::make_shared<Texture>();
 
 	Vector2 uv0 = Vector2(0.0f, 0.0f);
 	Vector2 uv1 = Vector2(1.0f, 1.0f);
@@ -38,7 +38,6 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* transformArrowXWhiteTexture = nullptr;
 	SDL_Texture* transformArrowYWhiteTexture = nullptr;
 	SDL_Texture* cameraTexture = nullptr;
-
 	SDL_Texture* playTexture = nullptr;
 	SDL_Texture* pauseTexture = nullptr;
 	SDL_Texture* stopTexture = nullptr;
@@ -55,6 +54,7 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* threeDotsTexture = nullptr;
 	SDL_Texture* showTexture = nullptr;
 	SDL_Texture* hideTexture = nullptr;
+	SDL_Texture* prefabCubeTexture = nullptr;
 
 	void CreateIcons()
 	{
@@ -66,7 +66,6 @@ namespace FlatEngine { namespace FlatGui {
 		transformArrowXWhiteTexture = transformArrowXWhite->getTexture();
 		transformArrowYWhite->loadFromFile("assets/images/icons/transformArrowYWhite.png");
 		transformArrowYWhiteTexture = transformArrowYWhite->getTexture();
-
 		cameraIcon->loadFromFile("assets/images/icons/camera.png");
 		cameraTexture = cameraIcon->getTexture();
 		// Attribution for Camera icon
@@ -102,6 +101,8 @@ namespace FlatEngine { namespace FlatGui {
 		showTexture = showIcon->getTexture();
 		hideIcon->loadFromFile("assets/images/icons/hide.png");
 		hideTexture = hideIcon->getTexture();
+		prefabCubeIcon->loadFromFile("assets/images/icons/prefabCube.png");
+		prefabCubeTexture = prefabCubeIcon->getTexture();
 
 		timelineScrubberIcon->loadFromFile("assets/images/icons/timelineScrubber.png");
 		timelineScrubberTexture = timelineScrubberIcon->getTexture();

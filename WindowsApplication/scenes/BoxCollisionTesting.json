@@ -164,6 +164,8 @@
                     "_isStatic": false,
                     "_showActiveRadius": false,
                     "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
                     "activeRadius": 1.690000057220459,
                     "id": 51,
                     "type": "CircleCollider"
@@ -171,7 +173,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "airControl": 0.5600000023841858,
+                    "airControl": 0.20000000298023224,
                     "id": 54,
                     "maxAcceleration": 0.5,
                     "maxSpeed": 0.07000000029802322,

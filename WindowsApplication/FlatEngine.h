@@ -308,6 +308,7 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> threeDotsIcon;
 		extern std::shared_ptr<Texture> showIcon;
 		extern std::shared_ptr<Texture> hideIcon;
+		extern std::shared_ptr<Texture> prefabCubeIcon;
 		// SDL_Textures
 		extern SDL_Texture* transformArrowTexture;
 		extern SDL_Texture* transformArrowAllWhiteTexture;
@@ -330,6 +331,7 @@ namespace FlatEngine
 		extern SDL_Texture* threeDotsTexture;
 		extern SDL_Texture* showTexture;
 		extern SDL_Texture* hideTexture;
+		extern SDL_Texture* prefabCubeTexture;
 		// Texture Colors
 		extern Vector2 uv0;
 		extern Vector2 uv1;

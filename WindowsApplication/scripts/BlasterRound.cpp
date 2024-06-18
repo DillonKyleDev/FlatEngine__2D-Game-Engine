@@ -13,7 +13,7 @@ BlasterRound::BlasterRound(long ownerID) : GameScript(ownerID)
 
 	circleCollider = nullptr;	
 	startTime = FlatEngine::GetEllapsedGameTimeInSec();
-	lifeLength = 2;
+	lifeLength = 3;
 }
 
 BlasterRound::~BlasterRound()

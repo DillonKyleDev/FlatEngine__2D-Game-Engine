@@ -3,21 +3,22 @@
     "Prefab": [
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [
-                82
+                60
             ],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 244,
+                    "id": 468,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -24.80865478515625,
-                    "xPos": 17.26300048828125,
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -4.791238307952881,
-                    "yPos": 4.300000190734863,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
@@ -29,15 +30,18 @@
                     "frustrumGreen": 255.0,
                     "frustrumRed": 255.0,
                     "height": 39.70000076293945,
-                    "id": 245,
+                    "id": 469,
                     "type": "Camera",
                     "width": 65.80000305175781,
                     "zoom": 23.200000762939453
                 }
             ],
-            "id": 81,
+            "id": 59,
             "name": "Camera",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -57,18 +61,19 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 231,
+                    "id": 455,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -7.545654296875,
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -1.1412380933761597,
+                    "yOrigin": -0.6499999761581421,
                     "yPos": 0.0,
                     "yScale": 0.15000000596046448
                 },
@@ -81,7 +86,7 @@
                     "f_red": 1,
                     "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
                     "fontSize": 40,
-                    "id": 232,
+                    "id": 456,
                     "renderOrder": 13,
                     "text": "Quit",
                     "type": "Text",
@@ -89,9 +94,12 @@
                     "yOffset": 0.0
                 }
             ],
-            "id": 85,
+            "id": 63,
             "name": "QuitButtonText",
-            "parent": 84,
+            "parent": 62,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -111,27 +119,28 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [
-                85
+                63
             ],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 233,
+                    "id": 457,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -7.545654296875,
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 5.0,
-                    "yOrigin": -0.4912381172180176,
+                    "yOrigin": 0.0,
                     "yPos": -0.6499999761581421,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 234,
+                    "id": 458,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\rock.png",
                     "renderOrder": 13,
                     "type": "Sprite",
@@ -148,20 +157,23 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 235,
+                    "id": 459,
                     "type": "Button"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "QuitButton",
-                    "id": 236,
+                    "id": 460,
                     "type": "Script"
                 }
             ],
-            "id": 84,
+            "id": 62,
             "name": "QuitButton",
-            "parent": 83,
+            "parent": 61,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": -0.6499999761581421,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -181,18 +193,19 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 237,
+                    "id": 461,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -7.545654296875,
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 0.15000000596046448,
-                    "yOrigin": -0.4912381172180176,
+                    "yOrigin": 0.0,
                     "yPos": 3.799999952316284,
                     "yScale": 0.15000000596046448
                 },
@@ -205,7 +218,7 @@
                     "f_red": 1,
                     "fontPath": "assets/fonts/Cinzel/Cinzel-Black.ttf",
                     "fontSize": 40,
-                    "id": 238,
+                    "id": 462,
                     "renderOrder": 10,
                     "text": "Paused.",
                     "type": "Text",
@@ -213,9 +226,12 @@
                     "yOffset": 0.0
                 }
             ],
-            "id": 86,
+            "id": 64,
             "name": "PausedText",
-            "parent": 83,
+            "parent": 61,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 3.799999952316284,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -235,28 +251,32 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [
-                84,
-                86
+                62,
+                64
             ],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 239,
+                    "id": 463,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -7.545654296875,
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -0.4912381172180176,
+                    "yOrigin": 0.0,
                     "yPos": 0.0,
                     "yScale": 1.0
                 }
             ],
-            "id": 83,
+            "id": 61,
             "name": "MainPauseMenu",
-            "parent": 82,
+            "parent": 60,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -276,11 +296,15 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [],
             "components": [],
-            "id": 87,
+            "id": 65,
             "name": "SettingsMenu",
-            "parent": 82,
+            "parent": 60,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -300,21 +324,22 @@
         },
         {
             "_isActive": false,
+            "_isPrefab": false,
             "children": [
-                83,
-                87
+                61,
+                65
             ],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 240,
+                    "id": 464,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -7.545654296875,
+                    "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -0.4912381172180176,
+                    "yOrigin": 0.0,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
@@ -323,7 +348,7 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "height": 20.0,
-                    "id": 241,
+                    "id": 465,
                     "layerNumber": 0,
                     "type": "Canvas",
                     "width": 30.0
@@ -332,13 +357,13 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "PauseMenu",
-                    "id": 242,
+                    "id": 466,
                     "type": "Script"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 243,
+                    "id": 467,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\resources\\darkOpaque.png",
                     "renderOrder": 10,
                     "type": "Sprite",
@@ -348,9 +373,12 @@
                     "yScale": 16.200000762939453
                 }
             ],
-            "id": 82,
+            "id": 60,
             "name": "PauseMenu",
-            "parent": 81,
+            "parent": 59,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

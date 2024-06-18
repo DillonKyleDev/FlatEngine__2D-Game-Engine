@@ -20,6 +20,7 @@ namespace FlatEngine
 		SetActive(toCopy->IsActive());
 		_isMusic = toCopy->IsMusic();
 		sound = toCopy->sound;
+		path = toCopy->path;
 	}
 
 	Audio::~Audio()

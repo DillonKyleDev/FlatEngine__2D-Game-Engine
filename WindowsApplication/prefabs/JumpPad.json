@@ -3,26 +3,27 @@
     "Prefab": [
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 218,
+                    "id": 157,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -4.300655841827393,
+                    "xOrigin": 4.8454742431640625,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -4.0,
+                    "yOrigin": -4.143267631530762,
                     "yPos": 1.0,
-                    "yScale": 0.30000001192092896
+                    "yScale": 0.20000000298023224
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 219,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "id": 158,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\steel.png",
                     "renderOrder": 0,
                     "type": "Sprite",
                     "xOffset": 5.0,
@@ -42,20 +43,31 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 220,
+                    "id": 159,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "JumpPad",
-                    "id": 221,
+                    "id": 160,
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 161,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\audio\\bounce2.wav",
+                    "type": "Audio"
                 }
             ],
-            "id": 52,
+            "id": 49,
             "name": "JumpPad",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 1.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

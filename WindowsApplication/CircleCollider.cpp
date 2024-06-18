@@ -158,6 +158,8 @@ namespace FlatEngine {
 			{ "activeLayer", GetActiveLayer() },
 			{ "activeRadius", GetActiveRadiusGrid() },
 			{ "_showActiveRadius", GetShowActiveRadius()},
+			{ "activeOffsetX", activeOffset.x },
+			{ "activeOffsetY", activeOffset.y },
 		};
 
 		std::string data = jsonData.dump();

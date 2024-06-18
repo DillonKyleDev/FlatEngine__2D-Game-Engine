@@ -121,7 +121,7 @@ namespace FlatEngine
 				updateLoopStart = (float)FlatEngine::GetEngineTime();
 				// Get hang time of everything after Update Loop for profiler
 				float everythingElseHangTime = updateLoopStart - updateLoopEnd;
-				AddProcessData("Not Update Loop", everythingElseHangTime);
+				AddProcessData("Not GameLoop", everythingElseHangTime);
 				updateLoopEnd = updateLoopStart;
 			}
 
@@ -166,7 +166,7 @@ namespace FlatEngine
 			{
 				// Get hang time of Update Loop for profiler
 				float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
-				AddProcessData("Update Loop", hangTime);
+				AddProcessData("GameLoop (variable executions)", hangTime);
 				// Save time after update finishes
 				updateLoopEnd = (float)FlatEngine::GetEngineTime();
 			}

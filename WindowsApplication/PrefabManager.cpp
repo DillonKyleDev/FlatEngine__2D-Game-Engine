@@ -38,6 +38,9 @@ namespace FlatEngine
 		std::vector<std::shared_ptr<GameObject>> childrenVector = std::vector<std::shared_ptr<GameObject>>();
 		std::shared_ptr<GameObject> copy = std::make_shared<GameObject>(gameObject, childrenVector, GetSceneObjects(), -1);
 		copy->SetName(prefabName);
+		copy->SetIsPrefab(false);
+		copy->SetPrefabName("");
+		copy->SetPrefabSpawnLocation(Vector2(0, 0));
 
 		// Push the parent
 		prefabObjectJsonArray.push_back(SceneManager::CreateJsonFromObject(copy));
@@ -133,11 +136,9 @@ namespace FlatEngine
 						FlatEngine::gameLoop->InitializeScriptObjects(children);
 
 						// Figure this out later so Prefabs stay up-to-date with their json files on reloading
-						//instantiatedObject->SetIsPrefab(true);
-						//instantiatedObject->SetPrefabName(prefabName);
-						//instantiatedObject->SetPrefabSpawnLocation(position);
-
-						return instantiatedObject;
+						instantiatedObject->SetIsPrefab(true);
+						instantiatedObject->SetPrefabName(prefabName);
+						instantiatedObject->SetPrefabSpawnLocation(position);
 					}
 				}
 			}

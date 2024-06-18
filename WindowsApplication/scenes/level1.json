@@ -12,10 +12,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -19.8428955078125,
+                    "xPos": -15.791206359863281,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -4.73860502243042,
+                    "yPos": 1.655732274055481,
                     "yScale": 1.0
                 },
                 {
@@ -89,8 +89,8 @@
             "name": "Hopper",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": -19.8428955078125,
-            "spawnLocationY": -4.73860502243042,
+            "spawnLocationX": -15.791206359863281,
+            "spawnLocationY": 1.655732274055481,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -173,10 +173,10 @@
                     "id": 16,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": -0.2005767822265625,
                     "xPos": -21.414066314697266,
                     "xScale": 4.400000095367432,
-                    "yOrigin": 0.0,
+                    "yOrigin": -0.14326763153076172,
                     "yPos": -11.037605285644531,
                     "yScale": 5.300000190734863
                 },
@@ -304,7 +304,7 @@
             "_isActive": true,
             "_isPrefab": false,
             "children": [
-                13
+                45
             ],
             "components": [
                 {
@@ -313,10 +313,10 @@
                     "id": 24,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": -0.2005767822265625,
                     "xPos": -4.300655841827393,
                     "xScale": 1.899999976158142,
-                    "yOrigin": 0.0,
+                    "yOrigin": -0.14326763153076172,
                     "yPos": -4.0,
                     "yScale": 1.0
                 },
@@ -375,7 +375,7 @@
             "_isActive": true,
             "_isPrefab": false,
             "children": [
-                15
+                46
             ],
             "components": [
                 {
@@ -384,10 +384,10 @@
                     "id": 40,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": -0.2005767822265625,
                     "xPos": 5.046051025390625,
                     "xScale": 5.099999904632568,
-                    "yOrigin": 0.0,
+                    "yOrigin": -0.14326763153076172,
                     "yPos": -4.0,
                     "yScale": 1.0
                 },
@@ -425,514 +425,6 @@
             "prefabName": "",
             "spawnLocationX": 5.046051025390625,
             "spawnLocationY": -4.0,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "_isPrefab": false,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 43,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": -4.300655841827393,
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yOrigin": -4.0,
-                    "yPos": 1.0,
-                    "yScale": 0.30000001192092896
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 44,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
-                    "renderOrder": 0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "xScale": 1.0,
-                    "yOffset": 5.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinuous": false,
-                    "_isSolid": false,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 45,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "JumpPad",
-                    "id": 46,
-                    "type": "Script"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 159,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 160,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 161,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 164,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 166,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 170,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 174,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 176,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 178,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 183,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 238,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                }
-            ],
-            "id": 13,
-            "name": "JumpPad",
-            "parent": 2,
-            "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": 1.0,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "_isPrefab": false,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 47,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": -8.789413452148438,
-                    "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": -7.511051177978516,
-                    "yScale": 0.30000001192092896
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 48,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
-                    "renderOrder": 0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "xScale": 1.0,
-                    "yOffset": 5.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinuous": false,
-                    "_isSolid": false,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 49,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "JumpPad",
-                    "id": 50,
-                    "type": "Script"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 151,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 152,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 153,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 154,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 155,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 156,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 157,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 158,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 165,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 167,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 168,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 169,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 172,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 173,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 177,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 181,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 182,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                }
-            ],
-            "id": 14,
-            "name": "JumpPad",
-            "parent": 25,
-            "prefabName": "",
-            "spawnLocationX": -8.789413452148438,
-            "spawnLocationY": -7.511051177978516,
-            "tags": {
-                "Enemy": false,
-                "IgnoreEnemy": false,
-                "IgnoreNpc": false,
-                "IgnorePlayer": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "OnlyForEnemy": false,
-                "OnlyForNpc": false,
-                "OnlyForPlayer": false,
-                "Player": false,
-                "Projectile": false,
-                "Terrain": false
-            }
-        },
-        {
-            "_isActive": true,
-            "_isPrefab": false,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 51,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 5.046051025390625,
-                    "xPos": 3.0,
-                    "xScale": 1.0,
-                    "yOrigin": -4.0,
-                    "yPos": 1.0,
-                    "yScale": 0.30000001192092896
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 52,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
-                    "renderOrder": 0,
-                    "type": "Sprite",
-                    "xOffset": 5.0,
-                    "xScale": 1.0,
-                    "yOffset": 5.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isContinuous": false,
-                    "_isSolid": false,
-                    "_isStatic": true,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 53,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "JumpPad",
-                    "id": 54,
-                    "type": "Script"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 162,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 163,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 171,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 175,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 179,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 180,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isMusic": false,
-                    "id": 184,
-                    "path": "assets/audio/bounce.wav",
-                    "type": "Audio"
-                }
-            ],
-            "id": 15,
-            "name": "JumpPad",
-            "parent": 12,
-            "prefabName": "",
-            "spawnLocationX": 3.0,
-            "spawnLocationY": 1.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -1298,10 +790,10 @@
                     "id": 54,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": -0.2005767822265625,
                     "xPos": 18.288761138916016,
                     "xScale": 4.699999809265137,
-                    "yOrigin": 0.0,
+                    "yOrigin": -0.14326763153076172,
                     "yPos": -6.782983779907227,
                     "yScale": 4.199999809265137
                 },
@@ -1363,7 +855,6 @@
                 4,
                 2,
                 12,
-                14,
                 10,
                 31
             ],
@@ -1375,10 +866,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0.0,
+                    "xPos": -0.2005767822265625,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.0,
+                    "yPos": -0.14326763153076172,
                     "yScale": 1.0
                 }
             ],
@@ -1386,8 +877,8 @@
             "name": "ObstacleSet1",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": 0.0,
+            "spawnLocationX": -0.2005767822265625,
+            "spawnLocationY": -0.14326763153076172,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -1465,19 +956,19 @@
         },
         {
             "_isActive": true,
-            "_isPrefab": false,
+            "_isPrefab": true,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 99,
+                    "id": 136,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": -0.2005767822265625,
                     "xPos": -15.26846694946289,
                     "xScale": 3.4000000953674316,
-                    "yOrigin": 0.0,
+                    "yOrigin": -0.14326763153076172,
                     "yPos": -0.20000000298023224,
                     "yScale": 1.0
                 },
@@ -1493,14 +984,14 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 100,
+                    "id": 137,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 101,
-                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\midnight.png",
+                    "id": 138,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\chasm.png",
                     "renderOrder": 0,
                     "type": "Sprite",
                     "xOffset": 5.0,
@@ -1512,11 +1003,248 @@
             "id": 31,
             "name": "Platform",
             "parent": 25,
-            "prefabName": "",
+            "prefabName": "Platform",
             "spawnLocationX": -15.26846694946289,
             "spawnLocationY": -0.20000000298023224,
             "tags": {
                 "Enemy": true,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 139,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.20056915283203125,
+                    "xScale": 3.4000000953674316,
+                    "yOrigin": 0.0,
+                    "yPos": 2.0630526542663574,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 140,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 141,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\chasm.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 43,
+            "name": "Platform",
+            "parent": -1,
+            "prefabName": "Platform",
+            "spawnLocationX": 0.20056915283203125,
+            "spawnLocationY": 2.0630526542663574,
+            "tags": {
+                "Enemy": true,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 142,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -4.501232624053955,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -4.143267631530762,
+                    "yPos": 1.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 143,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\steel.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": false,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 144,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "JumpPad",
+                    "id": 145,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 146,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\audio\\bounce2.wav",
+                    "type": "Audio"
+                }
+            ],
+            "id": 45,
+            "name": "JumpPad",
+            "parent": 2,
+            "prefabName": "JumpPad",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 1.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 147,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 4.8454742431640625,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -4.143267631530762,
+                    "yPos": 1.0,
+                    "yScale": 0.20000000298023224
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 148,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\steel.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": false,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 149,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "JumpPad",
+                    "id": 150,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isMusic": false,
+                    "id": 151,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\audio\\bounce2.wav",
+                    "type": "Audio"
+                }
+            ],
+            "id": 46,
+            "name": "JumpPad",
+            "parent": 12,
+            "prefabName": "JumpPad",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 1.0,
+            "tags": {
+                "Enemy": false,
                 "IgnoreEnemy": false,
                 "IgnoreNpc": false,
                 "IgnorePlayer": false,

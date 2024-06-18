@@ -85,6 +85,10 @@ namespace FlatEngine
 			if (component->GetTypeString() == "Transform")
 			{
 				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
+				if (parentID != -1)
+				{
+					newComponent->SetOrigin(GetObjectById(parentID)->GetTransformComponent()->GetTruePosition());
+				}
 				components.push_back(newComponent);
 			}
 			else if (component->GetTypeString() == "Sprite")

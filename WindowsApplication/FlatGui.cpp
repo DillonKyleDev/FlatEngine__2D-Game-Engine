@@ -293,11 +293,11 @@ namespace FlatEngine { namespace FlatGui {
 			// Initialize Mapping Contexts
 			InitializeMappingContexts();
 
-			// Open Project by default
-			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
-			
 			// Initialize prefab objects
 			FlatEngine::prefabManager->InitializePrefabs();
+
+			// Open Project by default
+			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
 
 			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
 			gameLoop->CollectPhysicsBodies();

@@ -2,6 +2,7 @@
     "Scene GameObjects": [
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [
                 1
             ],
@@ -23,6 +24,9 @@
             "id": 0,
             "name": "Parent",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -42,6 +46,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [
                 2
             ],
@@ -63,18 +68,21 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 3,
+                    "path": "",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Button.png",
-                    "texture_height": 40.0,
-                    "texture_width": 40.0,
                     "type": "Sprite",
                     "xOffset": 20.0,
-                    "yOffset": 20.0
+                    "xScale": 1.0,
+                    "yOffset": 20.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 1,
             "name": "child",
             "parent": 0,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -94,6 +102,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [
                 3
             ],
@@ -115,18 +124,21 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 5,
+                    "path": "",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\player.png",
-                    "texture_height": 10.0,
-                    "texture_width": 10.0,
                     "type": "Sprite",
                     "xOffset": 5.0,
-                    "yOffset": 5.0
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
                 }
             ],
             "id": 2,
             "name": "GrandChild",
             "parent": 1,
+            "prefabName": "",
+            "spawnLocationX": 2.0,
+            "spawnLocationY": 2.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,
@@ -146,6 +158,7 @@
         },
         {
             "_isActive": true,
+            "_isPrefab": false,
             "children": [],
             "components": [
                 {
@@ -165,18 +178,97 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 7,
+                    "path": "",
                     "renderOrder": 0,
-                    "texture": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\leftidle.png",
-                    "texture_height": 23.0,
-                    "texture_width": 13.0,
                     "type": "Sprite",
                     "xOffset": 6.5,
-                    "yOffset": 11.5
+                    "xScale": 1.0,
+                    "yOffset": 11.5,
+                    "yScale": 1.0
                 }
             ],
             "id": 3,
             "name": "GreatGrandChild",
             "parent": 2,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": true,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 10,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 0.30000001192092896
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 11,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\orange.png",
+                    "renderOrder": 0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isContinuous": false,
+                    "_isSolid": false,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 12,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "JumpPad",
+                    "id": 13,
+                    "type": "Script"
+                }
+            ],
+            "id": 6,
+            "name": "JumpPad",
+            "parent": -1,
+            "prefabName": "JumpPad",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "IgnoreEnemy": false,

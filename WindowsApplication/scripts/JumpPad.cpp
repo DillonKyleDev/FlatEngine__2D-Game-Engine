@@ -9,6 +9,7 @@
 JumpPad::JumpPad(long ownerID) : GameScript(ownerID)
 {
 	this->SetName("JumpPad");
+	boxCollider = nullptr;
 }
 
 JumpPad::~JumpPad()
@@ -17,10 +18,14 @@ JumpPad::~JumpPad()
 
 void JumpPadOnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
 {
-	std::shared_ptr<FlatEngine::Audio> audio = thisObject->AddAudioComponent();
-	audio->SetPath("assets/audio/bounce.wav");
-	audio->SetIsMusic(false);
-	audio->Play();
+	std::shared_ptr<FlatEngine::Audio> audio = thisObject->GetAudioComponent();
+	if (audio != nullptr)
+	{
+		audio->SetPath("assets/audio/bounce.wav");
+		audio->SetIsMusic(false);
+		audio->Play();
+	}
+
 	std::shared_ptr<FlatEngine::RigidBody> collidedRigidBody = collidedWith->GetRigidBody();
 	std::shared_ptr<FlatEngine::Transform> myTransform = thisObject->GetTransformComponent();
 	std::shared_ptr<FlatEngine::Transform> collidedTransform = collidedWith->GetTransformComponent();

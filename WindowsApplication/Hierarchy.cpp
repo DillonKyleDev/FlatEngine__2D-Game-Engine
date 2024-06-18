@@ -54,6 +54,7 @@ namespace FlatEngine { namespace FlatGui {
 		{
 			float objectColumnWidth = ImGui::GetContentRegionAvail().x;
 			float visibleIconColumnWidth = 20;
+			float isPrefabIconColumnWidth = 20;
 			static float currentIndent = 10;
 			static bool _allAreVisible = false;
 			std::vector<std::shared_ptr<GameObject>> sceneObjects = FlatEngine::GetSceneObjects();
@@ -61,10 +62,11 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-			ImGui::BeginTable("##HierarchyTable", 2, tableFlags);		
+			ImGui::BeginTable("##HierarchyTable", 3, tableFlags);		
 
 			ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
 			ImGui::TableSetupColumn("##OBJECT", 0, objectColumnWidth);
+			ImGui::TableSetupColumn("##ISPREFAB", 0, isPrefabIconColumnWidth);
 			ImGui::TableNextRow();
 
 			// Visible/Invisible all gameObjects at once
@@ -72,7 +74,7 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
 			if (_allAreVisible)
 			{
-				if (RenderImageButton("##SetAllInVisible", showTexture, Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+				if (RenderImageButton("##SetAllInvisible", showTexture, Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
 					for (std::shared_ptr<GameObject> currentObject : sceneObjects)
 						currentObject->SetActive(false);
@@ -96,6 +98,15 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 7, ImGui::GetCursorPosY() + 4));
 			ImGui::Text("ALL SCENE OBJECTS");
 			ImGui::PopStyleColor();
+
+			ImGui::TableSetColumnIndex(2);
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 1));
+			if (RenderImageButton("##PrefabCubes", prefabCubeTexture, Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
+			{
+				//
+			}
+
+			ImGui::TableNextRow();
 			ImGui::TableNextRow();
 			ImGui::TableNextRow();
 			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(buttonActiveColor));
@@ -194,7 +205,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Draw visibility eye icon
 		ImGui::TableSetColumnIndex(0);
-		std::string visibleID = "VisibleID" + currentObject->GetID();
+		std::string visibleID = "VisibleID" + std::to_string(currentObject->GetID());
 
 		float extraIndent = 0;
 		if (indent > 0)
@@ -236,7 +247,7 @@ namespace FlatEngine { namespace FlatGui {
 		Vector2 size = Vector2(availSpace.x + 30 - cursorPos.x, 2);
 		if (size.x < 30)
 			size.x = 30;
-		std::string id = "##SwapDropSource" + index;
+		std::string id = "##SwapDropSource" + std::to_string(index);
 
 		ImGui::InvisibleButton(id.c_str(), size);		
 		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, buttonHoveredColor);	
@@ -357,6 +368,9 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					std::string prefabName = GetFilenameFromPath(prefabPath);
 					CreatePrefab(prefabPath, currentObject);
+					currentObject->SetIsPrefab(true);
+					currentObject->SetPrefabName(prefabName);
+					currentObject->SetPrefabSpawnLocation(currentObject->GetTransformComponent()->GetPosition());
 				}
 				ImGui::CloseCurrentPopup();
 			}
@@ -449,6 +463,30 @@ namespace FlatEngine { namespace FlatGui {
 
 			ImGui::TreePop(); // TreeNode Closer
 		}
+
+		// Render Prefab Cube if it is a prefab object		
+		if (currentObject->IsPrefab())
+		{
+			ImGui::TableSetColumnIndex(2);
+			std::string prefabIDImageButton = "PrefabID" + std::to_string(currentObject->GetID());
+			std::string prefabIDContextMenu = "PrefabID" + std::to_string(currentObject->GetID());
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
+			RenderImageButton(prefabIDImageButton.c_str(), prefabCubeTexture, Vector2(16, 16), 0, transparentColor, whiteColor, buttonHoveredColor, buttonActiveColor);
+			PushMenuStyles();
+
+			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			{
+				if (ImGui::MenuItem("Disassemble prefab"))
+				{
+					currentObject->SetIsPrefab(false);
+					currentObject->SetPrefabName("");
+					currentObject->SetPrefabSpawnLocation(Vector2(0, 0));
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+			PopMenuStyles();
+		}
 	}
 
 	// Helper function for Hierarchy child rendering
@@ -468,7 +506,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Draw visibility eye icon
 		ImGui::TableSetColumnIndex(0);
-		std::string visibleID = "VisibleID" + currentObject->GetID();
+		std::string visibleID = "VisibleID" + std::to_string(currentObject->GetID());
 		
 		float extraIndent = 0;
 		if (indent > 0)
@@ -510,7 +548,7 @@ namespace FlatEngine { namespace FlatGui {
 		Vector2 size = Vector2(availSpace.x + 30 - cursorPos.x, 2);
 		if (size.x < 30)
 			size.x = 30;
-		std::string id = "##SwapDropSource" + index;
+		std::string id = "##SwapDropSource" + std::to_string(index);
 		
 		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, buttonHoveredColor);
 		ImGui::InvisibleButton(id.c_str(), size);
@@ -622,6 +660,9 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					std::string prefabName = GetFilenameFromPath(prefabPath);
 					CreatePrefab(prefabPath, currentObject);
+					currentObject->SetIsPrefab(true);
+					currentObject->SetPrefabName(prefabName);
+					currentObject->SetPrefabSpawnLocation(currentObject->GetTransformComponent()->GetPosition());
 				}
 				ImGui::CloseCurrentPopup();
 			}
@@ -691,6 +732,29 @@ namespace FlatEngine { namespace FlatGui {
 			ImGui::EndDragDropTarget();
 		}
 		ImGui::PopStyleColor();
+
+		// Render Prefab Cube if it is a prefab object
+		if (currentObject->IsPrefab())
+		{
+			std::string prefabIDImageButton = "PrefabID" + std::to_string(currentObject->GetID());
+			std::string prefabIDContextMenu = "PrefabID" + std::to_string(currentObject->GetID());
+			ImGui::TableSetColumnIndex(2);
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY()));
+			RenderImageButton(prefabIDImageButton.c_str(), prefabCubeTexture, Vector2(16, 16), 0, transparentColor, whiteColor, buttonHoveredColor, buttonActiveColor);
+			PushMenuStyles();
+			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			{
+				if (ImGui::MenuItem("Disassemble prefab"))
+				{
+					currentObject->SetIsPrefab(false);
+					currentObject->SetPrefabName("");
+					currentObject->SetPrefabSpawnLocation(Vector2(0, 0));
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+			PopMenuStyles();
+		}
 	}
 
 	void ResetHierarchyExpanderTracker()

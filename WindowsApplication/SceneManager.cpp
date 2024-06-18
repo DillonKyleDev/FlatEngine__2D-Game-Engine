@@ -149,7 +149,10 @@ namespace FlatEngine
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{
 					// Add created GameObject to our freshScene
-					freshScene->AddSceneObject(CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene));
+					std::shared_ptr<GameObject> loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene);
+					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
+					if (!loadedObject->IsPrefab())
+						freshScene->AddSceneObject(loadedObject);
 				}
 			}
 		}
@@ -278,6 +281,13 @@ namespace FlatEngine
 		else
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for 'children' in object: " + loadedName);
 
+		// Check _isActive key exists
+		if (currentObjectJson.contains("_isActive"))
+			_isActive = currentObjectJson["_isActive"];
+		else
+			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for '_isActive' in object: " + loadedName);
+
+
 		// Create new GameObject to load the data into
 		std::shared_ptr<GameObject> loadedObject;
 
@@ -339,8 +349,6 @@ namespace FlatEngine
 				FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for 'tags' in object: " + loadedName);
 
 			loadedObject->SetTagList(tags);
-			loadedObject->SetName(loadedName);
-			loadedObject->SetActive(_isActive);
 
 			float objectRotation = 0;
 
@@ -1207,6 +1215,15 @@ namespace FlatEngine
 					loadedScene->nextComponentID = id + 1;
 			}
 		}
+
+		loadedObject->SetName(loadedName);
+		loadedObject->SetActive(_isActive);
+
+		//if (loadedParentID != -1)
+		//{
+		//	Vector2 origin = GetObjectById(loadedParentID)->GetTransformComponent()->GetTruePosition();
+		//	loadedObject->GetTransformComponent()->SetOrigin(origin);
+		//}
 
 		// Add children
 		for (int c = 0; c < currentObjectJson["children"].size(); c++)

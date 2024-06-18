@@ -76,9 +76,9 @@ namespace FlatEngine
 		if (FlatEngine::_isDebugMode)
 		{
 			// Add Update Time Process		
-			AddProfilerProcess("Update Loop");
+			AddProfilerProcess("GameLoop (variable executions)");
 			// Add Update Process for all other time		
-			AddProfilerProcess("Not Update Loop");
+			AddProfilerProcess("Not GameLoop");
 		}
 	}
 
@@ -338,6 +338,7 @@ namespace FlatEngine
 		for (std::shared_ptr<Collider> collider : colliders)
 			collider->ResetCollisions();
 
+		LogFloat(GetEngineTime(), "Start Collision Detection: ");
 		// Handle Collision updates here
 		static int continuousCounter = 0;
 		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
@@ -360,6 +361,7 @@ namespace FlatEngine
 		if (continuousCounter >= 10)
 			continuousCounter = 0;
 		continuousCounter++;
+		LogFloat(GetEngineTime(), "End Collision Detection: ");
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
@@ -378,8 +380,8 @@ namespace FlatEngine
 			for (int i = 0; i < activeScripts.size(); i++)
 				RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 
-			RemoveProfilerProcess("Update Loop");
-			RemoveProfilerProcess("Not Update Loop");
+			RemoveProfilerProcess("GameLoop (variable executions)");
+			RemoveProfilerProcess("Not GameLoop");
 		}
 
 		// Release all active scripts
