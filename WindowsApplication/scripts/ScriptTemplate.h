@@ -10,10 +10,9 @@
 class ScriptTemplate : public FlatEngine::GameScript
 {
 public:
-	ScriptTemplate();
+	ScriptTemplate(long ownerID);
 	~ScriptTemplate();
 
 	void Start();
 	void Update(float deltaTime);
 };
-

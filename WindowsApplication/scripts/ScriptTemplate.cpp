@@ -7,7 +7,7 @@
 // Add a new if branch for the script name in GameLoop()::Start() function
 
 
-ScriptTemplate::ScriptTemplate()
+ScriptTemplate::ScriptTemplate() : GameScript(ownerID)
 {
 	SetName("ScriptTemplate");
 }

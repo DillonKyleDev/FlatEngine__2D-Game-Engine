@@ -13,7 +13,7 @@
 #include "./scripts/RestartButton.h"
 #include "./scripts/QuitButton.h"
 #include "./scripts/PlayerController.h"
-//#include "./scripts/GroundedCheck.h"
+#include "./scripts/Health.h"
 #include "./scripts/JumpPad.h"
 #include "./scripts/BlasterRound.h"
 
@@ -35,12 +35,9 @@ namespace FlatEngine
 		accumulator = 0.0;
 		startedScene = "";
 		gameManager = nullptr;
-
 		_gamePaused = false;
 
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
-		scripts = std::vector<std::shared_ptr<GameScript>>(); // Not being used??
-
 		activeScripts = std::vector<std::shared_ptr<GameScript>>();
 		rigidBodies = std::vector<std::shared_ptr<FlatEngine::RigidBody>>();
 		colliders = std::vector<std::shared_ptr<FlatEngine::Collider>>();
@@ -214,6 +211,14 @@ namespace FlatEngine
 						script->SetScriptInstance(playerControllerScript);
 						activeScripts.push_back(playerControllerScript);
 						newScripts.push_back(playerControllerScript);
+					}
+					else if (attachedScript == "Health")
+					{
+						std::shared_ptr<Health> healthScript = std::make_shared<Health>(script->GetID());
+						healthScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(healthScript);
+						activeScripts.push_back(healthScript);
+						newScripts.push_back(healthScript);
 					}
 					else if (attachedScript == "JumpPad")
 					{

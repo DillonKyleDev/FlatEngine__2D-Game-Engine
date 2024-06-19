@@ -5,7 +5,7 @@
 class ButtonScriptTemplate : public FlatEngine::GameScript
 {
 public:
-	ButtonScriptTemplate();
+	ButtonScriptTemplate(long ownerID);
 	~ButtonScriptTemplate();
 
 	void Start();

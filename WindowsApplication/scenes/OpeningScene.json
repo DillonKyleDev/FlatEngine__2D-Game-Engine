@@ -794,7 +794,8 @@
             "_isActive": true,
             "_isPrefab": false,
             "children": [
-                3
+                3,
+                56
             ],
             "components": [
                 {
@@ -1185,7 +1186,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 117,
                     "path": "assets/images/Sprites/Player/idle.png",
                     "renderOrder": 5,
@@ -1239,6 +1240,13 @@
                     "id": 121,
                     "path": "assets/audio/lazerFire.wav",
                     "type": "Audio"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "Health",
+                    "id": 152,
+                    "type": "Script"
                 }
             ],
             "id": 47,
@@ -1272,7 +1280,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 122,
+                    "id": 153,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 13.173019409179688,
@@ -1285,7 +1293,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 123,
+                    "id": 154,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\steel.png",
                     "renderOrder": 0,
                     "type": "Sprite",
@@ -1306,21 +1314,21 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 2.0,
-                    "id": 124,
+                    "id": 155,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "attachedScript": "JumpPad",
-                    "id": 125,
+                    "id": 156,
                     "type": "Script"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_isMusic": false,
-                    "id": 126,
+                    "id": 157,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\audio\\bounce2.wav",
                     "type": "Audio"
                 }
@@ -1420,6 +1428,225 @@
                 "OnlyForNpc": false,
                 "OnlyForPlayer": false,
                 "Player": true,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [
+                57
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 166,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 12.093765258789063,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_blocksLayers": true,
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "height": 30.0,
+                    "id": 167,
+                    "layerNumber": 0,
+                    "type": "Canvas",
+                    "width": 50.0
+                }
+            ],
+            "id": 56,
+            "name": "UI",
+            "parent": 27,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [
+                58,
+                59
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 168,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 12.093765258789063,
+                    "xPos": -20.100000381469727,
+                    "xScale": 1.0,
+                    "yOrigin": -0.4912381172180176,
+                    "yPos": 13.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 169,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\cave.png",
+                    "renderOrder": 55,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 7.199999809265137,
+                    "yOffset": 5.0,
+                    "yScale": 0.699999988079071
+                }
+            ],
+            "id": 57,
+            "name": "Healthbar",
+            "parent": 56,
+            "prefabName": "",
+            "spawnLocationX": -20.100000381469727,
+            "spawnLocationY": 13.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 170,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -8.006235122680664,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 12.50876235961914,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 171,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\chasm.png",
+                    "renderOrder": 55,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 6.900000095367432,
+                    "yOffset": 5.0,
+                    "yScale": 0.5
+                }
+            ],
+            "id": 58,
+            "name": "HealthbarBackground",
+            "parent": 57,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 172,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -8.006235122680664,
+                    "xPos": -0.5,
+                    "xScale": 1.0,
+                    "yOrigin": 12.50876235961914,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 173,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\environment\\green.png",
+                    "renderOrder": 55,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 6.5,
+                    "yOffset": 5.0,
+                    "yScale": 0.5
+                }
+            ],
+            "id": 59,
+            "name": "Health",
+            "parent": 57,
+            "prefabName": "",
+            "spawnLocationX": -0.5,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "IgnoreEnemy": false,
+                "IgnoreNpc": false,
+                "IgnorePlayer": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "OnlyForEnemy": false,
+                "OnlyForNpc": false,
+                "OnlyForPlayer": false,
+                "Player": false,
                 "Projectile": false,
                 "Terrain": false
             }
