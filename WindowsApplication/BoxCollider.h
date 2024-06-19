@@ -69,7 +69,6 @@ namespace FlatEngine
 		float nextActiveTop;
 
 		Vector4 activeEdges;
-		Vector2 activeOffset;
 		bool _activeEdgesSet;
 		Vector2 corners[4];
 		Vector2 nextCorners[4];

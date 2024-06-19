@@ -151,11 +151,11 @@ namespace FlatEngine
 					gameLoop->accumulator -= gameLoop->deltaTime;
 				}
 			}
-			else
-			{
-				FlatGui::HandleEvents(_hasQuit);
-				gameLoop->UpdateScripts(); // Because we still need to react to input every frame
-			}
+			//else
+			//{
+			//	FlatGui::HandleEvents(_hasQuit);
+			//	gameLoop->UpdateScripts(); // Because we still need to react to input every frame
+			//}
 
 			// Artificially slow GameLoop if frameTime is less than 
 			if (!loadedProject->IsVsyncEnabled() && frameTime < GetDeltaTime())

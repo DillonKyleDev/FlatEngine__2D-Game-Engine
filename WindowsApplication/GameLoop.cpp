@@ -327,7 +327,6 @@ namespace FlatEngine
 	void GameLoop::Update()
 	{
 		AddFrame();
-		UpdateScripts();
 		activeTime = time - pausedTime;		
 
 		// Calculate RigidBody physics to use in collisions
@@ -338,7 +337,8 @@ namespace FlatEngine
 		for (std::shared_ptr<Collider> collider : colliders)
 			collider->ResetCollisions();
 
-		LogFloat(GetEngineTime(), "Start Collision Detection: ");
+		//LogFloat(GetEngineTime(), "Start Collision Detection: ");
+		
 		// Handle Collision updates here
 		static int continuousCounter = 0;
 		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
@@ -361,11 +361,14 @@ namespace FlatEngine
 		if (continuousCounter >= 10)
 			continuousCounter = 0;
 		continuousCounter++;
-		LogFloat(GetEngineTime(), "End Collision Detection: ");
+
+		//LogFloat(GetEngineTime(), "End Collision Detection: ");
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			rigidBody->ApplyPhysics((float)deltaTime);
+
+		UpdateScripts();
 	}
 
 	void GameLoop::Stop()

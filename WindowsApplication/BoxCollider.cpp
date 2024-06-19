@@ -16,7 +16,6 @@ namespace FlatEngine
 		SetType(ComponentTypes::BoxCollider);
 		activeWidth = 2;
 		activeHeight = 2;
-		activeOffset = Vector2(0, 0);
 		activeEdges = Vector4(0, 0, 0, 0);
 		_activeEdgesSet = false;
 
@@ -40,7 +39,6 @@ namespace FlatEngine
 
 		activeWidth = toCopy->activeWidth;
 		activeHeight = toCopy->activeHeight;
-		activeOffset = toCopy->activeOffset;
 		_activeEdgesSet = toCopy->_activeEdgesSet;
 		activeLeft = 0;
 		activeRight = 0;
@@ -139,6 +137,7 @@ namespace FlatEngine
 			Vector2 centerPoint = FlatGui::sceneViewCenter;
 			std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 			Vector2 scale = transform->GetScale();
+			Vector2 activeOffset = GetActiveOffset();
 
 			// For visual representation ( screen space values )
 			SetCenterGrid(transform->GetTruePosition());
@@ -295,6 +294,7 @@ namespace FlatEngine
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 scale = transform->GetScale();
 		Vector2 position = transform->GetTruePosition();
+		Vector2 activeOffset = GetActiveOffset();
 
 		activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
 		activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
@@ -348,8 +348,8 @@ namespace FlatEngine
 			{ "_isActive", IsActive() },
 			{ "activeWidth", activeWidth },
 			{ "activeHeight", activeHeight },
-			{ "activeOffsetX", activeOffset.x },
-			{ "activeOffsetY", activeOffset.y },
+			{ "activeOffsetX", GetActiveOffset().x},
+			{ "activeOffsetY", GetActiveOffset().y },
 			{ "_isContinuous", IsContinuous()},
 			{ "_isSolid", IsSolid() },
 			{ "_isStatic", IsStatic() },

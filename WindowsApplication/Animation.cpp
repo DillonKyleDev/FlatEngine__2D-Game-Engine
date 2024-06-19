@@ -88,6 +88,8 @@ namespace FlatEngine
 	{
 		animationPath = path;
 		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(path);
+		if (path != "")
+			animationName = FlatEngine::FlatGui::GetFilenameFromPath(path);
 	}
 
 	std::string Animation::GetAnimationPath()
@@ -208,7 +210,7 @@ namespace FlatEngine
 					if (spriteFrame->path != "")
 						sprite->SetTexture(spriteFrame->path);
 					Vector2 spriteOffset = sprite->GetOffset();
-					sprite->SetOffset(Vector2(spriteOffset.x + spriteFrame->xOffset, spriteOffset.y + spriteFrame->yOffset));
+					sprite->SetOffset(Vector2(spriteFrame->xOffset, spriteFrame->yOffset));
 					break;
 				}
 			}

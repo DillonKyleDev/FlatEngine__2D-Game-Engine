@@ -1090,42 +1090,26 @@ namespace FlatEngine { namespace FlatGui {
 					sprite->path = newPath;
 				ImGui::PopStyleColor();
 
-				//ImGui::Text(textureWidthString.c_str());
-				//ImGui::Text(textureHeightString.c_str());
-
-				// Render Order
-				//ImGui::Text("Render order: ");
-				//if (ImGui::SliderInt("Sprite Render Order", &renderOrder, 0, maxSpriteLayers, "%d"))
-				//	sprite->SetRenderOrder(renderOrder);
-
-				// Push Item Width Setting
-				//ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
 				// Sprite offset variables
-				//Vector2 offset = sprite->GetOffset();
-				//float xOffset = offset.x;
-				//float yOffset = offset.y;
-				//ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+				float xOffset = sprite->xOffset;
+				float yOffset = sprite->yOffset;
+				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 
-				//// Render Drags for offset of texture editing
-				//ImGui::Text("xOffset:");
-				//ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-				//ImGui::Text("yOffset:");
-				//ImGui::DragFloat("##xOffset", &xOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-				//// Set cursor type
-				//if (ImGui::IsItemHovered())
-				//	ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-				//ImGui::SameLine(0, 5);
-				//ImGui::DragFloat("##yOffset", &yOffset, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-				//// Set cursor type
-				//if (ImGui::IsItemHovered())
-				//	ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-				// Pop Width Setting
-				//ImGui::PopItemWidth();
-
-				// Assign the new slider values to the sprites pivotPoint
-				//sprite->SetOffset(Vector2(xOffset, yOffset));
+				// Render Table
+				if (PushTable("##AnimatedSpriteProperties", 2))
+				{
+					/*if (RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+						sprite->SetScale(Vector2(xScale, yScale));
+					if (RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
+						sprite->SetScale(Vector2(xScale, yScale));*/
+					if (RenderFloatDragTableRow("##AnimatedxSpriteOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+						sprite->xOffset = xOffset;
+					if (RenderFloatDragTableRow("##AnimatedySpriteOffsetDrag", "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+						sprite->yOffset = yOffset;
+					/*	if (RenderIntDragTableRow("##AnimatedrenderOrder", "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers))
+						sprite->SetRenderOrder(renderOrder);*/
+					PopTable();
+				}
 			}
 		}
 		else

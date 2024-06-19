@@ -759,14 +759,16 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##BoxColliderProps" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f);
-									RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f);
-									boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-									RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
-									RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
-									boxCollider->SetActiveOffset(activeOffset);
-									RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
-									boxCollider->SetActiveLayer(activeLayer);
+									if (RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f))
+										boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+									if (RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f))
+										boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+									if (RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+										boxCollider->SetActiveOffset(activeOffset);
+									if (RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+										boxCollider->SetActiveOffset(activeOffset);
+									if (RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+										boxCollider->SetActiveLayer(activeLayer);
 									RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
 									PopTable();
 								}

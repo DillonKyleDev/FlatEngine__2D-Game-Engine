@@ -1,0 +1,126 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 28.286182403564453,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 51.569271087646484,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip2.png",
+                    "speed": 0.10000000149011612,
+                    "time": 72.96159362792969,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip3.png",
+                    "speed": 0.10000000149011612,
+                    "time": 277.2404479980469,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip2.png",
+                    "speed": 0.10000000149011612,
+                    "time": 330.0186767578125,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip1.png",
+                    "speed": 0.10000000149011612,
+                    "time": 400.94024658203125,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\nowhip.png",
+                    "speed": 0.10000000149011612,
+                    "time": 501.6388854980469,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip0.png",
+                    "speed": 0.10000000149011612,
+                    "time": 11.759269714355469,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\whip0.png",
+                    "speed": 0.10000000149011612,
+                    "time": 461.77728271484375,
+                    "xOffset": 42,
+                    "yOffset": 2.0
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}
