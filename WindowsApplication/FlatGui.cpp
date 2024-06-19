@@ -136,6 +136,7 @@ namespace FlatEngine { namespace FlatGui {
 	Vector4 buttonHoveredColor = Vector4(0.35f, 0.35f, 0.75f, 1.0f);
 	Vector4 buttonActiveColor = Vector4(0.2f, 0.2f, 0.5f, 0.8f);
 	Vector4 imageButtonColor = Vector4(0.18f, 0.18f, 0.18f, 1.0f);
+	Vector4 imageButtonDarkColor = Vector4(0.15f, 0.15f, 0.15f, 1.0f);
 	Vector4 imageButtonHoveredColor = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
 	Vector4 imageButtonActiveColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
 	Vector4 imageButtonTintColor = whiteColor;
@@ -1527,94 +1528,93 @@ namespace FlatEngine { namespace FlatGui {
 			Vector2 scale = transform->GetScale();
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
-			if (sprite != nullptr)
+			if (sprite != nullptr && sprite->GetTexture() != nullptr)
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
 				float spriteTextureWidth = (float)sprite->GetTextureWidth();
 				float spriteTextureHeight = (float)sprite->GetTextureHeight();
 				Vector2 spriteScale = sprite->GetScale();
+				Vector2 pivotOffset = sprite->GetPivotOffset();
 				Vector2 spriteOffset = sprite->GetOffset();
 				bool _spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
+				Vector4 tintColor = sprite->GetTintColor();
 				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());
 
-				if (spriteTexture != nullptr)
+				// Get Input and Output
+				ImGuiIO& inputOutput = ImGui::GetIO();
+
+				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * spriteScaleMultiplier * step) * scale.x * spriteScale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * spriteScaleMultiplier * step) * scale.y * spriteScale.y));
+				ImGui::SetCursorPos(positionOnScreen);
+				//// This will catch our interactions  - 4096 for overlap or keyword if it works
+				ImGui::SetNextItemAllowOverlap();
+				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+				const bool is_active = ImGui::IsItemActive();   // Held
+				const bool is_clicked = ImGui::IsItemClicked();
+
+				if (is_clicked)
+					SetFocusedGameObjectID(sprite->GetParentID());
+
+				// Show cursor position in scene view when pressing Alt
+				if (is_hovered && inputOutput.KeyAlt)
+					RenderSceneViewTooltip();
+
+				// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
+				////////////////////////
+				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
 				{
-					// Get Input and Output
-					ImGuiIO& inputOutput = ImGui::GetIO();
-
-					Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((spriteOffset.x * spriteScaleMultiplier * step) * scale.x * spriteScale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((spriteOffset.y * spriteScaleMultiplier * step) * scale.y * spriteScale.y));
-					ImGui::SetCursorPos(positionOnScreen);
-					//// This will catch our interactions  - 4096 for overlap or keyword if it works
-					ImGui::SetNextItemAllowOverlap();
-					ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-					const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-					const bool is_active = ImGui::IsItemActive();   // Held
-					const bool is_clicked = ImGui::IsItemClicked();
-
-					if (is_clicked)
-						SetFocusedGameObjectID(sprite->GetParentID());
-
-					// Show cursor position in scene view when pressing Alt
-					if (is_hovered && inputOutput.KeyAlt)
-						RenderSceneViewTooltip();
-
-					// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
-					////////////////////////
-					if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
-					{
-						sceneViewScrolling.x += inputOutput.MouseDelta.x;
-						sceneViewScrolling.y += inputOutput.MouseDelta.y;						
-					}
-					// Get scroll amount for changing zoom level of scene view
-					Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-					float scrollInput = inputOutput.MouseWheel;
-					float weight = 0.01f;
-					float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-					float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-					bool _weightedScroll = true;
-					float zoomSpeed = 0.1f;
-					float zoomMultiplier = 10;
-					float finalZoomSpeed = zoomSpeed;
-
-					if (ImGui::GetIO().KeyCtrl)
-						finalZoomSpeed *= zoomMultiplier;
-
-					// Change scrolling offset based on mouse position and weight
-					if (is_hovered)
-					{
-						if (scrollInput > 0)
-						{
-							if (_weightedScroll)
-							{
-								sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-								sceneViewScrolling.y -= trunc(signedMousePosY * weight);
-							}
-							sceneViewGridStep.x += finalZoomSpeed;
-							sceneViewGridStep.y += finalZoomSpeed;
-						}
-						else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
-						{
-							if (_weightedScroll)
-							{
-								sceneViewScrolling.x += trunc(signedMousePosX * weight);
-								sceneViewScrolling.y += trunc(signedMousePosY * weight);
-							}
-							sceneViewGridStep.x -= finalZoomSpeed;
-							sceneViewGridStep.y -= finalZoomSpeed;
-						}
-					}
-					//////////////////
-
-					// Change the draw channel for the scene object
-					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
-						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
-					else
-						drawSplitter->SetCurrentChannel(draw_list, 0);
-
-					// Draw the texture
-					AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, spriteOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation);
+					sceneViewScrolling.x += inputOutput.MouseDelta.x;
+					sceneViewScrolling.y += inputOutput.MouseDelta.y;						
 				}
+				// Get scroll amount for changing zoom level of scene view
+				Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+				float scrollInput = inputOutput.MouseWheel;
+				float weight = 0.01f;
+				float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+				float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+				bool _weightedScroll = true;
+				float zoomSpeed = 0.1f;
+				float zoomMultiplier = 10;
+				float finalZoomSpeed = zoomSpeed;
+
+				if (ImGui::GetIO().KeyCtrl)
+					finalZoomSpeed *= zoomMultiplier;
+
+				// Change scrolling offset based on mouse position and weight
+				if (is_hovered)
+				{
+					if (scrollInput > 0)
+					{
+						if (_weightedScroll)
+						{
+							sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+							sceneViewScrolling.y -= trunc(signedMousePosY * weight);
+						}
+						sceneViewGridStep.x += finalZoomSpeed;
+						sceneViewGridStep.y += finalZoomSpeed;
+					}
+					else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
+					{
+						if (_weightedScroll)
+						{
+							sceneViewScrolling.x += trunc(signedMousePosX * weight);
+							sceneViewScrolling.y += trunc(signedMousePosY * weight);
+						}
+						sceneViewGridStep.x -= finalZoomSpeed;
+						sceneViewGridStep.y -= finalZoomSpeed;
+					}
+				}
+				//////////////////
+
+				// Change the draw channel for the scene object
+				if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+				else
+					drawSplitter->SetCurrentChannel(draw_list, 0);
+
+				// Draw the texture
+				AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			// If it has a text component, render that text texture at the objects transform position

@@ -459,6 +459,8 @@ namespace FlatEngine
 					float xOffset = 0;
 					float yOffset = 0;
 					int renderOrder = 0;
+					std::string pivotPoint = "Center";
+					Vector4 tintColor = Vector4(1, 1, 1, 1);
 
 					// Load ID
 					if (currentObjectJson["components"][j].contains("id"))
@@ -489,6 +491,10 @@ namespace FlatEngine
 						yScale = currentObjectJson["components"][j]["yScale"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'yScale' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("pivotPoint"))
+						pivotPoint = currentObjectJson["components"][j]["pivotPoint"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'pivotPoint' in object: " + loadedName);
 					if (currentObjectJson["components"][j].contains("xOffset"))
 						xOffset = currentObjectJson["components"][j]["xOffset"];
 					else
@@ -503,6 +509,24 @@ namespace FlatEngine
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'renderOrder' in object: " + loadedName);
 
+					// Tint color
+					if (currentObjectJson["components"][j].contains("tintColorX"))
+						tintColor.x = currentObjectJson["components"][j]["tintColorX"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'tintColorX' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("tintColorY"))
+						tintColor.y = currentObjectJson["components"][j]["tintColorY"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'tintColorY' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("tintColorZ"))
+						tintColor.z = currentObjectJson["components"][j]["tintColorZ"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'tintColorZ' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("tintColorW"))
+						tintColor.w = currentObjectJson["components"][j]["tintColorW"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'tintColorW' in object: " + loadedName);
+
 					Vector2 scale = Vector2(xScale, yScale);
 
 					newSprite->SetID(id);
@@ -510,8 +534,10 @@ namespace FlatEngine
 					newSprite->SetActive(_isActive);
 					newSprite->SetTexture(path);
 					newSprite->SetScale(scale);
+					newSprite->SetPivotPoint(pivotPoint);
 					newSprite->SetOffset(Vector2(xOffset, yOffset));
 					newSprite->SetRenderOrder(renderOrder);
+					newSprite->SetTintColor(tintColor);
 				}
 				else if (type == "Camera")
 				{

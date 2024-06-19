@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include <SDL.h>
 #include "json.hpp"
+#include "Vector4.h"
 using json = nlohmann::json;
 using namespace nlohmann::literals;
 
@@ -12,6 +13,18 @@ namespace FlatEngine
 	class Sprite : public Component
 	{
 	public:
+		enum PivotPoint {
+			Center,
+			Left,
+			Right,
+			Top,
+			Bottom,
+			TopLeft,
+			TopRight,
+			BottomRight,
+			BottomLeft
+		};
+
 		Sprite(long myID = -1, long parentID = -1);
 		Sprite(std::shared_ptr<Sprite> toCopy, long newParentID);
 		~Sprite();
@@ -27,6 +40,14 @@ namespace FlatEngine
 		void SetOffset(Vector2 offset);
 		Vector2 GetOffset();
 		void RemoveTexture();
+		void SetPivotPoint(PivotPoint newPivot);
+		PivotPoint GetPivotPoint();
+		std::string GetPivotPointString();
+		void SetPivotOffset(Vector2 newPivotOffset);
+		void SetPivotPoint(std::string newPivot);
+		Vector2 GetPivotOffset();
+		void SetTintColor(Vector4 newTintColor);
+		Vector4 GetTintColor();
 		std::string GetData();
 
 	private:
@@ -35,7 +56,10 @@ namespace FlatEngine
 		float textureWidth;
 		float textureHeight;
 		Vector2 scale;
+		PivotPoint pivotPoint;
+		Vector2 pivotOffset;
 		Vector2 offset;
 		std::string path;
+		Vector4 tintColor;
 	};
 }

@@ -27,6 +27,15 @@ namespace FlatEngine { namespace FlatGui {
 	std::shared_ptr<Texture> showIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> hideIcon = std::make_shared<Texture>();
 	std::shared_ptr<Texture> prefabCubeIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> leftIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> rightIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> downIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> upIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> upLeftIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> upRightIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> downLeftIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> downRightIcon = std::make_shared<Texture>();
+	std::shared_ptr<Texture> centerIcon = std::make_shared<Texture>();
 
 	Vector2 uv0 = Vector2(0.0f, 0.0f);
 	Vector2 uv1 = Vector2(1.0f, 1.0f);
@@ -55,6 +64,15 @@ namespace FlatEngine { namespace FlatGui {
 	SDL_Texture* showTexture = nullptr;
 	SDL_Texture* hideTexture = nullptr;
 	SDL_Texture* prefabCubeTexture = nullptr;
+	SDL_Texture* leftTexture = nullptr;
+	SDL_Texture* rightTexture = nullptr;
+	SDL_Texture* upTexture = nullptr;
+	SDL_Texture* downTexture = nullptr;
+	SDL_Texture* upLeftTexture = nullptr;
+	SDL_Texture* upRightTexture = nullptr;
+	SDL_Texture* downLeftTexture = nullptr;
+	SDL_Texture* downRightTexture = nullptr;
+	SDL_Texture* centerTexture = nullptr;
 
 	void CreateIcons()
 	{
@@ -103,6 +121,25 @@ namespace FlatEngine { namespace FlatGui {
 		hideTexture = hideIcon->getTexture();
 		prefabCubeIcon->loadFromFile("assets/images/icons/prefabCube.png");
 		prefabCubeTexture = prefabCubeIcon->getTexture();
+		leftIcon->loadFromFile("assets/images/icons/left.png");
+		leftTexture = leftIcon->getTexture();
+		rightIcon->loadFromFile("assets/images/icons/right.png");
+		rightTexture = rightIcon->getTexture();
+		downIcon->loadFromFile("assets/images/icons/down.png");
+		downTexture = downIcon->getTexture();
+		upIcon->loadFromFile("assets/images/icons/up.png");
+		upTexture = upIcon->getTexture();
+		upLeftIcon->loadFromFile("assets/images/icons/upLeft.png");
+		upLeftTexture = upLeftIcon->getTexture();
+		upRightIcon->loadFromFile("assets/images/icons/upRight.png");
+		upRightTexture = upRightIcon->getTexture();
+		downLeftIcon->loadFromFile("assets/images/icons/downLeft.png");
+		downLeftTexture = downLeftIcon->getTexture();
+		downRightIcon->loadFromFile("assets/images/icons/downRight.png");
+		downRightTexture = downRightIcon->getTexture();
+		centerIcon->loadFromFile("assets/images/icons/center.png");
+		centerTexture = centerIcon->getTexture();
+
 
 		timelineScrubberIcon->loadFromFile("assets/images/icons/timelineScrubber.png");
 		timelineScrubberTexture = timelineScrubberIcon->getTexture();

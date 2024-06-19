@@ -257,9 +257,11 @@ namespace FlatEngine { namespace FlatGui {
 				float textureWidth = sprite->GetTextureWidth();
 				float textureHeight = sprite->GetTextureHeight();
 				Vector2 spriteScale = sprite->GetScale();
-				Vector2 offset = sprite->GetOffset();
+				Vector2 offset = sprite->GetPivotOffset();
 				bool _scalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
+				Vector4 tintColor = sprite->GetTintColor();
+				float rotation = transform->GetRotation();
 
 				// Changing the scale here because things are rendering too large and I want them to start off smaller
 				Vector2 newScale = Vector2(scale.x * spriteScale.x * spriteScaleMultiplier, scale.y * spriteScale.y * spriteScaleMultiplier);
@@ -286,7 +288,7 @@ namespace FlatEngine { namespace FlatGui {
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					AddImageToDrawList(spriteTexture, position, gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, gameViewGridStep.x, draw_list);
+					AddImageToDrawList(spriteTexture, position, gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 

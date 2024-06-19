@@ -264,6 +264,7 @@ namespace FlatEngine
 		extern Vector4 buttonHoveredColor;
 		extern Vector4 buttonActiveColor;
 		extern Vector4 imageButtonColor;
+		extern Vector4 imageButtonDarkColor;
 		extern Vector4 imageButtonHoveredColor;
 		extern Vector4 imageButtonActiveColor;
 		extern Vector4 imageButtonTintColor;
@@ -309,6 +310,16 @@ namespace FlatEngine
 		extern std::shared_ptr<Texture> showIcon;
 		extern std::shared_ptr<Texture> hideIcon;
 		extern std::shared_ptr<Texture> prefabCubeIcon;
+		extern std::shared_ptr<Texture> leftIcon;
+		extern std::shared_ptr<Texture> rightIcon;
+		extern std::shared_ptr<Texture> downIcon;
+		extern std::shared_ptr<Texture> upIcon;
+		extern std::shared_ptr<Texture> upLeftIcon;
+		extern std::shared_ptr<Texture> upRightIcon;
+		extern std::shared_ptr<Texture> downLeftIcon;
+		extern std::shared_ptr<Texture> downRightIcon;
+		extern std::shared_ptr<Texture> centerIcon;
+
 		// SDL_Textures
 		extern SDL_Texture* transformArrowTexture;
 		extern SDL_Texture* transformArrowAllWhiteTexture;
@@ -332,6 +343,16 @@ namespace FlatEngine
 		extern SDL_Texture* showTexture;
 		extern SDL_Texture* hideTexture;
 		extern SDL_Texture* prefabCubeTexture;
+		extern SDL_Texture* leftTexture;
+		extern SDL_Texture* rightTexture;
+		extern SDL_Texture* downTexture;
+		extern SDL_Texture* upTexture;
+		extern SDL_Texture* upLeftTexture;
+		extern SDL_Texture* upRightTexture;
+		extern SDL_Texture* downLeftTexture;
+		extern SDL_Texture* downRightTexture;
+		extern SDL_Texture* centerTexture;
+
 		// Texture Colors
 		extern Vector2 uv0;
 		extern Vector2 uv1;

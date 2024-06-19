@@ -389,13 +389,15 @@ namespace FlatEngine { namespace FlatGui {
 							else if (componentType == "Sprite")
 							{
 								// Sprite path and texture dimension variables
-								std::shared_ptr<FlatEngine::Sprite> sprite = std::static_pointer_cast<FlatEngine::Sprite>(components[i]);
+								std::shared_ptr<Sprite> sprite = std::static_pointer_cast<Sprite>(components[i]);
 								std::string path = sprite->GetPath();
 								char newPath[1024];
 								strcpy_s(newPath, path.c_str());
 								float textureWidth = sprite->GetTextureWidth();
 								float textureHeight = sprite->GetTextureHeight();
 								Vector2 textureScale = sprite->GetScale();
+								Sprite::PivotPoint pivotPoint = sprite->GetPivotPoint();
+								std::string pivotString = sprite->GetPivotPointString();
 								float xScale = textureScale.x;
 								float yScale = textureScale.y;
 								int renderOrder = sprite->GetRenderOrder();
@@ -406,6 +408,7 @@ namespace FlatEngine { namespace FlatGui {
 								std::string pathString = "Path: ";
 								std::string textureWidthString = std::to_string(textureWidth);
 								std::string textureHeightString = std::to_string(textureHeight);
+								Vector4 tintColor = sprite->GetTintColor();
 								long id = sprite->GetID();
 
 								// Active Checkbox
@@ -449,6 +452,63 @@ namespace FlatEngine { namespace FlatGui {
 									RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
 									PopTable();
 								}
+
+								// Pivot Point								
+								ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+								Vector2 cellSize = Vector2(76, 78);
+								Vector2 cursorScreen = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+
+								// TopLeft, Top, TopRight
+								ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(logBgColor));
+								ImGui::SetCursorScreenPos(Vector2(cursorScreen.x + 5, cursorScreen.y + 5));
+								if (RenderImageButton("##PivotTopLeftButton", upLeftTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::TopLeft);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotTopButton", upTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::Top);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotTopRightButton", upRightTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::TopRight);
+								
+								ImGui::SameLine(0, 17);
+								ImGui::Text("Pivot Point:");
+
+								// Left, Center, Right
+								ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
+								if (RenderImageButton("##PivotLeftButton", leftTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::Left);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotCenterButton", centerTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::Center);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotRightButton", rightTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::Right);
+								
+								ImGui::SameLine(0, 17);
+								ImGui::Text(pivotString.c_str());
+
+								// BottomLeft, Bottom, BottomRight
+								ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
+								if (RenderImageButton("##PivotBottomLeftButton", downLeftTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::BottomLeft);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotBottomButton", downTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::Bottom);
+								ImGui::SameLine(0, 3);
+								if (RenderImageButton("##PivotBottomRightButton", downRightTexture, Vector2(16, 16), 1, imageButtonDarkColor))
+									sprite->SetPivotPoint(Sprite::PivotPoint::BottomRight);
+
+								ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
+
+								// Tint color picker
+								std::string tintID = "##SpriteTintColor" + std::to_string(id) + "-" + std::to_string(focusedObjectID);
+								ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+								if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+								{
+									sprite->SetTintColor(tintColor);
+								}
+								ImGui::SameLine(0, 5);
+								ImGui::Text("Tint color");
 							}
 							else if (componentType == "Camera")
 							{
