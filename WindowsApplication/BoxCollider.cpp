@@ -140,25 +140,25 @@ namespace FlatEngine
 			Vector2 activeOffset = GetActiveOffset();
 
 			// For visual representation ( screen space values )
-			SetCenterGrid(transform->GetTruePosition());
+			SetCenterGrid(Vector2(transform->GetTruePosition().x + activeOffset.x, transform->GetTruePosition().y + activeOffset.y));
 
-			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
-			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
-			activeRight = centerPoint.x + (GetCenterGrid().x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
-			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeWidth * scale.x / 2)) * step;
+			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2)) * step;
+			activeRight = centerPoint.x + (GetCenterGrid().x + (activeWidth * scale.x / 2)) * step;
+			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2)) * step;
 
 			SetCenterCoord(Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2));
 
 			// For collision detection ( grid space values )
 			if (rigidBody != nullptr)
-				SetNextCenterGrid(rigidBody->GetNextPosition());
+				SetNextCenterGrid(Vector2(rigidBody->GetNextPosition().x + activeOffset.x, rigidBody->GetNextPosition().y + activeOffset.y));
 			else
-				SetNextCenterGrid(transform->GetTruePosition());
+				SetNextCenterGrid(GetCenterGrid());
 
-			nextActiveLeft = GetNextCenterGrid().x - (activeWidth * scale.x / 2) + activeOffset.x;
-			nextActiveTop = GetNextCenterGrid().y + (activeHeight * scale.y / 2) + activeOffset.y;
-			nextActiveRight = GetNextCenterGrid().x + (activeWidth * scale.x / 2) + activeOffset.x;
-			nextActiveBottom = GetNextCenterGrid().y - (activeHeight * scale.y / 2) + activeOffset.y;
+			nextActiveLeft = GetNextCenterGrid().x - (activeWidth * scale.x / 2);
+			nextActiveTop = GetNextCenterGrid().y + (activeHeight * scale.y / 2);
+			nextActiveRight = GetNextCenterGrid().x + (activeWidth * scale.x / 2);
+			nextActiveBottom = GetNextCenterGrid().y - (activeHeight * scale.y / 2);
 		
 			SetNextCenterCoord(Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2));
 

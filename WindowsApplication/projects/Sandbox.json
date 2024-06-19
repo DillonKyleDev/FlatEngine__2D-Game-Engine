@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": false,
+            "_clearLogBuffer": true,
             "_fullscreen": false,
             "_showAnimationPreview": true,
             "_showAnimator": true,
@@ -16,17 +16,17 @@
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",
-            "focusedGameObjectID": 53,
+            "focusedGameObjectID": -1,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_PlayerStab.json",
             "loadedScenePath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\OpeningScene.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,
             "resolutionWidth": 1920.0,
-            "sceneViewGridStepX": 27.99977684020996,
-            "sceneViewGridStepY": 27.99977684020996,
-            "sceneViewScrollingX": 390.403076171875,
-            "sceneViewScrollingY": 378.73046875
+            "sceneViewGridStepX": 52.49977111816406,
+            "sceneViewGridStepY": 52.49977111816406,
+            "sceneViewScrollingX": 1036.403076171875,
+            "sceneViewScrollingY": 127.73046875
         }
     ]
 }

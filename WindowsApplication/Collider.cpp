@@ -656,8 +656,10 @@ namespace FlatEngine
 		Vector2 box2Scale = box2Transform->GetScale();
 		Vector2 collider1CenterGrid = boxCol1->GetCenterGrid();
 		Vector2 collider2CenterGrid = boxCol2->GetCenterGrid();
-		Vector2 col1Pos = boxCol1->GetParent()->GetTransformComponent()->GetTruePosition();
-		Vector2 col2Pos = boxCol2->GetParent()->GetTransformComponent()->GetTruePosition();
+		Vector2 col1Pos = boxCol1->GetParent()->GetTransformComponent()->GetPosition();
+		Vector2 col2Pos = boxCol2->GetParent()->GetTransformComponent()->GetPosition();
+		Vector2 col1Offset = boxCol1->GetActiveOffset();
+		Vector2 col2Offset = boxCol2->GetActiveOffset();
 		float box1HalfHeight = boxCol1->GetActiveHeight() / 2 * box1Scale.y;
 		float box1HalfWidth = boxCol1->GetActiveWidth() / 2 * box1Scale.x;
 		float box2HalfHeight = boxCol2->GetActiveHeight() / 2 * box2Scale.y;
@@ -702,8 +704,8 @@ namespace FlatEngine
 						boxCol2->rightCollision = A_LeftEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - 0.001f, col1Pos.y);
-						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth + 0.001f, col2Pos.y);
+						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
+						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
 					}
 					// Top/Bottom
 					else {
@@ -717,8 +719,8 @@ namespace FlatEngine
 						boxCol2->bottomCollision = A_TopEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight + 0.001f);
-						boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - 0.001f);
+						boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
+						boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);
 					}
 				}
 				// if boxCol1 is above boxCol2
@@ -739,8 +741,8 @@ namespace FlatEngine
 						boxCol2->rightCollision = A_LeftEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - 0.001f, col1Pos.y);
-						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth + 0.001f, col2Pos.y);
+						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
+						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
 					}
 					// Top/Bottom
 					else {
@@ -754,8 +756,8 @@ namespace FlatEngine
 						boxCol2->topCollision = A_BottomEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - 0.001f);
-						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
+						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
+						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
 					}
 				}
 				// if both are at the same y Pos the it's a left/right collision
@@ -771,8 +773,8 @@ namespace FlatEngine
 					boxCol2->rightCollision = A_LeftEdge;
 
 					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - 0.001f, col1Pos.y);
-					boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth + 0.001f, col2Pos.y);
+					boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
+					boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
 				}
 			}
 			// if boxCol1 is to the left of boxCol2
@@ -796,8 +798,8 @@ namespace FlatEngine
 						boxCol2->leftCollision = A_RightEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth + 0.001f, col1Pos.y);
-						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - 0.001f, col2Pos.y);
+						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
 					}
 					// Top/Bottom
 					else {
@@ -811,8 +813,8 @@ namespace FlatEngine
 						boxCol2->bottomCollision = A_TopEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight + 0.001f);
-						boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - 0.001f);
+						boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
+						boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);						
 					}
 				}
 				else if (collider1CenterGrid.y > collider2CenterGrid.y)
@@ -832,8 +834,8 @@ namespace FlatEngine
 						boxCol2->leftCollision = A_RightEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth + 0.001f, col1Pos.y);
-						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - 0.001f, col2Pos.y);
+						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
 					}
 					// Top/Bottom
 					else {
@@ -847,8 +849,8 @@ namespace FlatEngine
 						boxCol2->topCollision = A_BottomEdge;
 
 						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - 0.001f);
-						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
+						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
+						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
 					}
 				}
 				// if both are at the same y Pos the it's a left/right collision
@@ -864,8 +866,8 @@ namespace FlatEngine
 					boxCol2->leftCollision = A_RightEdge;
 
 					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth + 0.001f, col1Pos.y);
-					boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - 0.001f, col2Pos.y);
+					boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+					boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
 				}
 			}
 			// Both boxes are at the same x Pos
@@ -884,8 +886,8 @@ namespace FlatEngine
 					boxCol2->bottomCollision = A_TopEdge;
 
 					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight + 0.001f);
-					boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - 0.001f);
+					boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
+					boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);
 				}
 				// if boxCol1 is above boxCol2
 				else
@@ -900,8 +902,8 @@ namespace FlatEngine
 					boxCol2->topCollision = A_BottomEdge;
 
 					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - 0.001f);
-					boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight + 0.001f);
+					boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
+					boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
 				}
 			}
 		}
