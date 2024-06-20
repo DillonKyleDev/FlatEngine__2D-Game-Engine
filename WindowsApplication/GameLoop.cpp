@@ -5,6 +5,7 @@
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
+#include "CompositeCollider.h"
 #include "Transform.h"
 #include "./scripts/GameManager.h"
 #include "./scripts/PauseMenu.h"
@@ -13,6 +14,7 @@
 #include "./scripts/RestartButton.h"
 #include "./scripts/QuitButton.h"
 #include "./scripts/PlayerController.h"
+#include "./scripts/EnemyController.h"
 #include "./scripts/Health.h"
 #include "./scripts/JumpPad.h"
 #include "./scripts/BlasterRound.h"
@@ -212,6 +214,14 @@ namespace FlatEngine
 						activeScripts.push_back(playerControllerScript);
 						newScripts.push_back(playerControllerScript);
 					}
+					else if (attachedScript == "EnemyController")
+					{
+						std::shared_ptr<EnemyController> enemyControllerScript = std::make_shared<EnemyController>(script->GetID());
+						enemyControllerScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(enemyControllerScript);
+						activeScripts.push_back(enemyControllerScript);
+						newScripts.push_back(enemyControllerScript);
+					}
 					else if (attachedScript == "Health")
 					{
 						std::shared_ptr<Health> healthScript = std::make_shared<Health>(script->GetID());
@@ -275,6 +285,11 @@ namespace FlatEngine
 					// Collect all BoxCollider components for collision detection in Update()
 					colliders.push_back(std::static_pointer_cast<CircleCollider>(components[j]));
 				}
+				if (components[j]->GetTypeString() == "CompositeCollider")
+				{
+					// Collect all CompositeCollider components for collision detection in Update()
+					colliders.push_back(std::static_pointer_cast<CompositeCollider>(components[j]));
+				}
 			}
 		}
 
@@ -285,8 +300,12 @@ namespace FlatEngine
 		{
 			for (int j = i + 1; j < colliders.size(); j++)
 			{
-				std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> newPair = { colliders.at(i), colliders.at(j) };
-				colliderPairs.push_back(newPair);
+				// If colliders don't belong to the same GameObject
+				if (colliders.at(i)->GetParentID() != colliders.at(j)->GetParentID() && colliders.at(i)->GetTypeString() != "CompositeCollider" && colliders.at(j)->GetTypeString() != "CompositeCollider")
+				{
+					std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> newPair = { colliders.at(i), colliders.at(j) };
+					colliderPairs.push_back(newPair);
+				}
 			}
 		}
 	}

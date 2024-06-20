@@ -46,7 +46,10 @@ namespace FlatEngine
 		animationProperties = FlatEngine::FlatGui::LoadAnimationFile(animationPath);
 		_playing = true;
 		// Start animation timer
-		animationStartTime = startTime;
+		if (startTime != -1)
+			animationStartTime = startTime;
+		else
+			animationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
 	}
 
 	void Animation::Stop()

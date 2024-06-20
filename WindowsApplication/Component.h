@@ -28,6 +28,7 @@ namespace FlatEngine
 			Text,
 			BoxCollider,
 			CircleCollider,
+			CompositeCollider,
 			RigidBody,
 			CharacterController,
 		};

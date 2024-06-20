@@ -355,6 +355,7 @@ namespace FlatEngine
 			{ "_isStatic", IsStatic() },
 			{ "activeLayer", GetActiveLayer() },
 			{ "_showActiveRadius", GetShowActiveRadius()},
+			{ "_isComposite", IsComposite() },
 		};
 
 		std::string data = jsonData.dump();

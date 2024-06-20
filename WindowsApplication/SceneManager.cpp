@@ -1011,6 +1011,7 @@ namespace FlatEngine
 					bool _isSolid = true;
 					int activeLayer = 0;
 					bool _showActiveRadius = false;
+					bool _isComposite = false;
 
 					// Load ID
 					if (currentObjectJson["components"][j].contains("id"))
@@ -1067,6 +1068,10 @@ namespace FlatEngine
 						_showActiveRadius = currentObjectJson["components"][j]["_showActiveRadius"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_showActiveRadius' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("_isComposite"))
+						_isComposite = currentObjectJson["components"][j]["_isComposite"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isComposite' in object: " + loadedName);
 
 					newBoxCollider->SetID(id);
 					newBoxCollider->SetCollapsed(_isCollapsed);
@@ -1079,6 +1084,7 @@ namespace FlatEngine
 					newBoxCollider->SetActiveLayer(activeLayer);
 					newBoxCollider->SetRotation(objectRotation);
 					newBoxCollider->SetShowActiveRadius(_showActiveRadius);
+					newBoxCollider->SetIsComposite(_isComposite);
 				}
 				else if (type == "CircleCollider")
 				{
@@ -1091,6 +1097,7 @@ namespace FlatEngine
 					bool _isStatic = false;
 					bool _isSolid = true;
 					int activeLayer = 0;
+					bool _isComposite = false;
 
 					// Load ID
 					if (currentObjectJson["components"][j].contains("id"))
@@ -1139,6 +1146,10 @@ namespace FlatEngine
 						activeLayer = currentObjectJson["components"][j]["activeLayer"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'activeLayer' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("_isComposite"))
+						_isComposite = currentObjectJson["components"][j]["_isComposite"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isComposite' in object: " + loadedName);
 
 					newCircleCollider->SetID(id);
 					newCircleCollider->SetCollapsed(_isCollapsed);
@@ -1149,6 +1160,7 @@ namespace FlatEngine
 					newCircleCollider->SetIsStatic(_isStatic);
 					newCircleCollider->SetIsSolid(_isSolid);
 					newCircleCollider->SetActiveLayer(activeLayer);
+					newCircleCollider->SetIsComposite(_isComposite);
 				}
 				else if (type == "RigidBody")
 				{
@@ -1244,12 +1256,6 @@ namespace FlatEngine
 
 		loadedObject->SetName(loadedName);
 		loadedObject->SetActive(_isActive);
-
-		//if (loadedParentID != -1)
-		//{
-		//	Vector2 origin = GetObjectById(loadedParentID)->GetTransformComponent()->GetTruePosition();
-		//	loadedObject->GetTransformComponent()->SetOrigin(origin);
-		//}
 
 		// Add children
 		for (int c = 0; c < currentObjectJson["children"].size(); c++)

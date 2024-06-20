@@ -807,6 +807,7 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isSolid = boxCollider->IsSolid();
 								bool _showActiveRadius = boxCollider->GetShowActiveRadius();
 								int activeLayer = boxCollider->GetActiveLayer();	
+								bool _isComposite = boxCollider->IsComposite();
 								long id = boxCollider->GetID();
 								std::string isCollidingString = "false";
 								if (_isColliding)
@@ -834,14 +835,16 @@ namespace FlatEngine { namespace FlatGui {
 								}
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);							
-								RenderCheckbox(" Is Continuous", _isContinuous);
-								boxCollider->SetIsContinuous(_isContinuous);
-								RenderCheckbox(" Is Static", _isStatic);
-								boxCollider->SetIsStatic(_isStatic);
-								RenderCheckbox(" Is Solid", _isSolid);
-								boxCollider->SetIsSolid(_isSolid);
-								RenderCheckbox(" Show Active Radius", _showActiveRadius);
-								boxCollider->SetShowActiveRadius(_showActiveRadius);
+								if (RenderCheckbox(" Is Continuous", _isContinuous))
+									boxCollider->SetIsContinuous(_isContinuous);
+								if (RenderCheckbox(" Is Static", _isStatic))
+									boxCollider->SetIsStatic(_isStatic);
+								if (RenderCheckbox(" Is Solid", _isSolid))
+									boxCollider->SetIsSolid(_isSolid);
+								if (RenderCheckbox(" Show Active Radius", _showActiveRadius))
+									boxCollider->SetShowActiveRadius(_showActiveRadius);
+								if (RenderCheckbox(" Is Composite", _isComposite))
+									boxCollider->SetIsComposite(_isComposite);
 							}
 							else if (componentType == "CircleCollider")
 							{
@@ -854,6 +857,7 @@ namespace FlatEngine { namespace FlatGui {
 								bool _isStatic = circleCollider->IsStatic();
 								bool _isSolid = circleCollider->IsSolid();								
 								int activeLayer = circleCollider->GetActiveLayer();
+								bool _isComposite = circleCollider->IsComposite();
 								long id = circleCollider->GetID();
 								std::string isCollidingString = "false";
 								if (_isColliding)
@@ -866,24 +870,27 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##CircleColliderProps" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f);
-									circleCollider->SetActiveRadiusGrid(activeRadius);
-									RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX);
-									RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX);
-									circleCollider->SetActiveOffset(activeOffset);
-									RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100);
-									circleCollider->SetActiveLayer(activeLayer);
+									if (RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f))
+										circleCollider->SetActiveRadiusGrid(activeRadius);
+									if (RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+										circleCollider->SetActiveOffset(activeOffset);
+									if (RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+										circleCollider->SetActiveOffset(activeOffset);
+									if (RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+										circleCollider->SetActiveLayer(activeLayer);
 									RenderTextTableRow("##CircleColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
 									PopTable();
 								}
 
 								ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-								RenderCheckbox(" Is Continuous", _isContinuous);
-								circleCollider->SetIsContinuous(_isContinuous);
-								RenderCheckbox(" Is Static", _isStatic);
-								circleCollider->SetIsStatic(_isStatic);
-								RenderCheckbox(" Is Solid", _isSolid);
-								circleCollider->SetIsSolid(_isSolid);
+								if (RenderCheckbox(" Is Continuous", _isContinuous))
+									circleCollider->SetIsContinuous(_isContinuous);
+								if (RenderCheckbox(" Is Static", _isStatic))
+									circleCollider->SetIsStatic(_isStatic);
+								if (RenderCheckbox(" Is Solid", _isSolid))
+									circleCollider->SetIsSolid(_isSolid);
+								if (RenderCheckbox(" Is Composite", _isComposite))
+									circleCollider->SetIsComposite(_isComposite);
 							}
 							else if (componentType == "RigidBody")
 							{

@@ -9,7 +9,7 @@
             "SDLK_b": "",
             "SDLK_c": "",
             "SDLK_d": "IA_MoveRight",
-            "SDLK_e": "",
+            "SDLK_e": "IA_Slash",
             "SDLK_f": "IA_Stab",
             "SDLK_g": "",
             "SDLK_h": "",

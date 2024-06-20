@@ -153,6 +153,8 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="CompositeCollider.cpp" />
+    <ClCompile Include="scripts\EnemyController.cpp" />
     <ClCompile Include="scripts\Health.cpp" />
     <ClCompile Include="PrefabManager.cpp" />
     <ClCompile Include="scripts\BlasterRound.cpp" />
@@ -227,6 +229,8 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="CompositeCollider.h" />
+    <ClInclude Include="scripts\EnemyController.h" />
     <ClInclude Include="scripts\Health.h" />
     <ClInclude Include="PrefabManager.h" />
     <ClInclude Include="scripts\BlasterRound.h" />

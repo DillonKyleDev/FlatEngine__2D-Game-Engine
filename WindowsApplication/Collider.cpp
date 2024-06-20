@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "imgui_internal.h"
 #include <cmath>
+#include "CompositeCollider.h"
 
 
 namespace FlatEngine
@@ -16,6 +17,7 @@ namespace FlatEngine
 		SetID(myID);
 		SetParentID(parentID);
 		
+		_isComposite = false;
 		OnActiveCollision = nullptr;
 		OnCollisionEnter = nullptr;
 		OnCollisionLeave = nullptr;
@@ -85,6 +87,7 @@ namespace FlatEngine
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
 
+		_isComposite = toCopy->_isComposite;
 		OnActiveCollision = toCopy->OnActiveCollision;
 		OnCollisionEnter = toCopy->OnCollisionEnter;
 		OnCollisionLeave = toCopy->OnCollisionLeave;
@@ -250,14 +253,35 @@ namespace FlatEngine
 			collider2->SetColliding(true);
 
 			// Add colliding objects
-			collider1->AddCollidingObject(collider2);
-			collider2->AddCollidingObject(collider1);
+			if (!collider1->_isComposite)
+			{
+				collider1->AddCollidingObject(collider2);
+				// For Collider events - Fire OnActiveCollision while there is a collision happening
+				if (collider1->OnActiveCollisionSet())
+					collider1->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
+			}
+			else
+			{
+				std::shared_ptr<FlatEngine::CompositeCollider> compositeCollider = collider1->GetParent()->GetCompositeCollider();
+				compositeCollider->AddCollidingObject(collider2);
+				if (compositeCollider->OnActiveCollisionSet())
+					compositeCollider->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
+			}
 
-			// For Collider events - Fire OnActiveCollision while there is a collision happening
-			if (collider1->OnActiveCollisionSet())
-				collider1->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
-			if (collider2->OnActiveCollisionSet())
-				collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
+			if (!collider2->_isComposite)
+			{
+				collider2->AddCollidingObject(collider1);
+				// For Collider events - Fire OnActiveCollision while there is a collision happening
+				if (collider2->OnActiveCollisionSet())
+					collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
+			}
+			else
+			{				
+				std::shared_ptr<FlatEngine::CompositeCollider> compositeCollider = collider2->GetParent()->GetCompositeCollider();
+				compositeCollider->AddCollidingObject(collider1);
+				if (compositeCollider->OnActiveCollisionSet())
+					compositeCollider->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
+			}
 		}
 
 		return _colliding;
@@ -294,69 +318,81 @@ namespace FlatEngine
 		if (circleCenterGrid.x < boxCenterGrid.x && circleCenterGrid.y < B_TopEdge && circleCenterGrid.y > B_BottomEdge && (B_LeftEdge - circleCenterGrid.x < circleActiveRadius))
 		{
 			_colliding = true;
-			circleCol->_isCollidingRight = true;
-			circleCol->_rightCollisionStatic = boxCol->IsStatic();
-			circleCol->_rightCollisionSolid = boxCol->IsSolid();
-			boxCol->_isCollidingLeft = true;
-			boxCol->_leftCollisionStatic = circleCol->IsStatic();
-			boxCol->_leftCollisionSolid = circleCol->IsSolid();
-			circleCol->rightCollision = B_LeftEdge;
-			boxCol->leftCollision = A_RightEdge;
+			if (circleCol->IsSolid() && boxCol->IsSolid())
+			{
+				circleCol->_isCollidingRight = true;
+				circleCol->_rightCollisionStatic = boxCol->IsStatic();
+				circleCol->_rightCollisionSolid = boxCol->IsSolid();
+				boxCol->_isCollidingLeft = true;
+				boxCol->_leftCollisionStatic = circleCol->IsStatic();
+				boxCol->_leftCollisionSolid = circleCol->IsSolid();
+				circleCol->rightCollision = B_LeftEdge;
+				boxCol->leftCollision = A_RightEdge;
 
-			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-			circleCol->rightCollidedPosition = Vector2(B_LeftEdge - circleActiveRadius + 0.001f, circlePos.y);
-			boxCol->leftCollidedPosition = Vector2(A_RightEdge + boxHalfWidth - 0.001f, boxPos.y);
+				// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+				circleCol->rightCollidedPosition = Vector2(B_LeftEdge - circleActiveRadius + 0.001f, circlePos.y);
+				boxCol->leftCollidedPosition = Vector2(A_RightEdge + boxHalfWidth - 0.001f, boxPos.y);
+			}
 		}
 		// Circle right - Box left
 		else if (circleCenterGrid.x > boxCenterGrid.x && circleCenterGrid.y < B_TopEdge && circleCenterGrid.y > B_BottomEdge && (circleCenterGrid.x - B_RightEdge < circleActiveRadius))
 		{
 			_colliding = true;
-			circleCol->_isCollidingLeft = true;
-			circleCol->_leftCollisionStatic = boxCol->IsStatic();
-			circleCol->_leftCollisionSolid = boxCol->IsSolid();
-			boxCol->_isCollidingRight = true;
-			boxCol->_rightCollisionStatic = circleCol->IsStatic();
-			boxCol->_rightCollisionSolid = boxCol->IsSolid();
-			circleCol->leftCollision = B_RightEdge;
-			boxCol->rightCollision = A_LeftEdge;
+			if (circleCol->IsSolid() && boxCol->IsSolid())
+			{
+				circleCol->_isCollidingLeft = true;
+				circleCol->_leftCollisionStatic = boxCol->IsStatic();
+				circleCol->_leftCollisionSolid = boxCol->IsSolid();
+				boxCol->_isCollidingRight = true;
+				boxCol->_rightCollisionStatic = circleCol->IsStatic();
+				boxCol->_rightCollisionSolid = circleCol->IsSolid();
+				circleCol->leftCollision = B_RightEdge;
+				boxCol->rightCollision = A_LeftEdge;
 
-			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-			circleCol->leftCollidedPosition = Vector2(B_RightEdge + circleActiveRadius - 0.001f, circlePos.y);
-			boxCol->rightCollidedPosition = Vector2(A_LeftEdge - boxHalfWidth + 0.001f, boxPos.y);
+				// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+				circleCol->leftCollidedPosition = Vector2(B_RightEdge + circleActiveRadius - 0.001f, circlePos.y);
+				boxCol->rightCollidedPosition = Vector2(A_LeftEdge - boxHalfWidth + 0.001f, boxPos.y);
+			}
 		}
 		// Circle Top - Box Bottom
 		else if (circleCenterGrid.y > boxCenterGrid.y && circleCenterGrid.x < B_RightEdge && circleCenterGrid.x > B_LeftEdge && (circleCenterGrid.y - B_TopEdge < circleActiveRadius))
 		{
 			_colliding = true;
-			circleCol->_isCollidingBottom = true;
-			circleCol->_bottomCollisionStatic = boxCol->IsStatic();
-			circleCol->_bottomCollisionSolid = boxCol->IsSolid();
-			boxCol->_isCollidingTop = true;
-			boxCol->_topCollisionStatic = circleCol->IsStatic();
-			boxCol->_topCollisionSolid = circleCol->IsSolid();
-			circleCol->bottomCollision = B_TopEdge;
-			boxCol->topCollision = A_BottomEdge;
+			if (circleCol->IsSolid() && boxCol->IsSolid())
+			{
+				circleCol->_isCollidingBottom = true;
+				circleCol->_bottomCollisionStatic = boxCol->IsStatic();
+				circleCol->_bottomCollisionSolid = boxCol->IsSolid();
+				boxCol->_isCollidingTop = true;
+				boxCol->_topCollisionStatic = circleCol->IsStatic();
+				boxCol->_topCollisionSolid = circleCol->IsSolid();
+				circleCol->bottomCollision = B_TopEdge;
+				boxCol->topCollision = A_BottomEdge;
 
-			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-			boxCol->topCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-			circleCol->bottomCollidedPosition = Vector2(circlePos.x, B_TopEdge + circleActiveRadius - 0.001f);
+				// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+				boxCol->topCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+				circleCol->bottomCollidedPosition = Vector2(circlePos.x, B_TopEdge + circleActiveRadius - 0.001f);
+			}
 		}
 		// Circle Bottom - Box Top
 		else if (circleCenterGrid.y < boxCenterGrid.y && circleCenterGrid.x < B_RightEdge && circleCenterGrid.x > B_LeftEdge && (B_BottomEdge - circleCenterGrid.y < circleActiveRadius))
 		{
 			_colliding = true;
-			circleCol->_isCollidingTop = true;
-			circleCol->_topCollisionStatic = boxCol->IsStatic();
-			circleCol->_topCollisionSolid = boxCol->IsSolid();
-			boxCol->_isCollidingBottom = true;
-			boxCol->_bottomCollisionStatic = circleCol->IsStatic();
-			boxCol->_bottomCollisionSolid = circleCol->IsSolid();
-			circleCol->topCollision = B_BottomEdge;
-			boxCol->bottomCollision = A_TopEdge;
+			if (circleCol->IsSolid() && boxCol->IsSolid())
+			{
+				circleCol->_isCollidingTop = true;
+				circleCol->_topCollisionStatic = boxCol->IsStatic();
+				circleCol->_topCollisionSolid = boxCol->IsSolid();
+				boxCol->_isCollidingBottom = true;
+				boxCol->_bottomCollisionStatic = circleCol->IsStatic();
+				boxCol->_bottomCollisionSolid = circleCol->IsSolid();
+				circleCol->topCollision = B_BottomEdge;
+				boxCol->bottomCollision = A_TopEdge;
 
-			// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-			boxCol->bottomCollidedPosition = Vector2(boxPos.x, A_TopEdge + boxHalfHeight - 0.001f);
-			circleCol->topCollidedPosition = Vector2(circlePos.x, B_BottomEdge - circleActiveRadius + 0.001f);
+				// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+				boxCol->bottomCollidedPosition = Vector2(boxPos.x, A_TopEdge + boxHalfHeight - 0.001f);
+				circleCol->topCollidedPosition = Vector2(circlePos.x, B_BottomEdge - circleActiveRadius + 0.001f);
+			}
 		}
 		// Check for all other (corner) collisions
 		// 
@@ -375,58 +411,61 @@ namespace FlatEngine
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-					float leftRightOverlap = B_RightEdge - A_LeftEdge;
-					float topBottomOverlap = A_TopEdge - B_BottomEdge;
-
-					// Circle is approaching from the right (keep y pos, calculate x pos)
-					if (leftRightOverlap < topBottomOverlap)
+					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
-						circleCol->_isCollidingLeft = true;
-						circleCol->_isCollidingTopLeft = true;
-						circleCol->_topLeftCollisionSolid = boxCol->IsSolid(); // new
-						circleCol->_leftCollisionStatic = boxCol->IsStatic();
-						circleCol->_leftCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingRight = true;						
-						boxCol->_rightCollisionStatic = circleCol->IsStatic();
-						boxCol->_rightCollisionSolid = boxCol->IsSolid();
-						circleCol->leftCollision = B_RightEdge;
-						boxCol->rightCollision = A_LeftEdge;
-						
-						// We know y and r, get x with pythag
-						yFromCol = circleCenterGrid.y - B_BottomEdge;
+						float leftRightOverlap = B_RightEdge - A_LeftEdge;
+						float topBottomOverlap = A_TopEdge - B_BottomEdge;
 
-						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0) // no square roots of negatives
-							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							xFromCol = 0;
+						// Circle is approaching from the right (keep y pos, calculate x pos)
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							circleCol->_isCollidingLeft = true;
+							circleCol->_isCollidingTopLeft = true;
+							circleCol->_topLeftCollisionSolid = boxCol->IsSolid(); // new
+							circleCol->_leftCollisionStatic = boxCol->IsStatic();
+							circleCol->_leftCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingRight = true;
+							boxCol->_rightCollisionStatic = circleCol->IsStatic();
+							boxCol->_rightCollisionSolid = boxCol->IsSolid();
+							circleCol->leftCollision = B_RightEdge;
+							boxCol->rightCollision = A_LeftEdge;
 
-						//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->topLeftCollidedPosition = Vector2(B_RightEdge + xFromCol - 0.001f, circlePos.y);
-					}
-					// Circle is approaching from the bottom (keep x pos, calculate y pos)
-					else {
-						circleCol->_isCollidingTop = true;
-						circleCol->_isCollidingTopLeft = true;
-						circleCol->_topLeftCollisionSolid = boxCol->IsSolid();
-						circleCol->_topCollisionStatic = boxCol->IsStatic();
-						circleCol->_topCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingBottom = true;
-						boxCol->_isCollidingBottomRight = true;
-						boxCol->_bottomCollisionStatic = circleCol->IsStatic();
-						boxCol->_bottomCollisionSolid = circleCol->IsSolid();
-						circleCol->topCollision = B_BottomEdge;
-						boxCol->bottomCollision = A_TopEdge;
-						
-						// We know x and r, get y with pythag
-						xFromCol = circleCenterGrid.x - B_RightEdge;
+							// We know y and r, get x with pythag
+							yFromCol = circleCenterGrid.y - B_BottomEdge;
 
-						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							yFromCol = 0;
+							if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0) // no square roots of negatives
+								xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								xFromCol = 0;
 
-						//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						circleCol->topLeftCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
+							//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+							circleCol->topLeftCollidedPosition = Vector2(B_RightEdge + xFromCol - 0.001f, circlePos.y);
+						}
+						// Circle is approaching from the bottom (keep x pos, calculate y pos)
+						else {
+							circleCol->_isCollidingTop = true;
+							circleCol->_isCollidingTopLeft = true;
+							circleCol->_topLeftCollisionSolid = boxCol->IsSolid();
+							circleCol->_topCollisionStatic = boxCol->IsStatic();
+							circleCol->_topCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingBottom = true;
+							boxCol->_isCollidingBottomRight = true;
+							boxCol->_bottomCollisionStatic = circleCol->IsStatic();
+							boxCol->_bottomCollisionSolid = circleCol->IsSolid();
+							circleCol->topCollision = B_BottomEdge;
+							boxCol->bottomCollision = A_TopEdge;
+
+							// We know x and r, get y with pythag
+							xFromCol = circleCenterGrid.x - B_RightEdge;
+
+							if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								yFromCol = 0;
+
+							//boxCol->bottomRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+							circleCol->topLeftCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
+						}
 					}
 				}
 			}
@@ -441,79 +480,81 @@ namespace FlatEngine
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-					float leftRightOverlap = B_RightEdge - A_LeftEdge;
-					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-
-					// Circle is approaching from the right (keep y pos, calculate x pos)
-					if (leftRightOverlap < topBottomOverlap)
+					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
-						circleCol->_isCollidingLeft = true;
-						circleCol->_isCollidingBottomLeft = true;
-						circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
-						circleCol->_leftCollisionStatic = boxCol->IsStatic();
-						circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic(); // New
-						circleCol->_leftCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingRight = true;
-						boxCol->_isCollidingTopRight = true;
-						boxCol->_rightCollisionStatic = circleCol->IsStatic();
-						boxCol->_rightCollisionSolid = circleCol->IsSolid();
-						circleCol->leftCollision = B_RightEdge;
-						boxCol->rightCollision = A_LeftEdge;
+						float leftRightOverlap = B_RightEdge - A_LeftEdge;
+						float topBottomOverlap = B_TopEdge - A_BottomEdge;
 
-						yFromCol = circleCenterGrid.y - B_TopEdge;
+						// Circle is approaching from the right (keep y pos, calculate x pos)
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							circleCol->_isCollidingLeft = true;
+							circleCol->_isCollidingBottomLeft = true;
+							circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
+							circleCol->_leftCollisionStatic = boxCol->IsStatic();
+							circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic(); // New
+							circleCol->_leftCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingRight = true;
+							boxCol->_isCollidingTopRight = true;
+							boxCol->_rightCollisionStatic = circleCol->IsStatic();
+							boxCol->_rightCollisionSolid = circleCol->IsSolid();
+							circleCol->leftCollision = B_RightEdge;
+							boxCol->rightCollision = A_LeftEdge;
 
-						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							xFromCol = 0;
+							yFromCol = circleCenterGrid.y - B_TopEdge;
 
-						//FlatGui::PushWindowStyles();
-						//ImGui::Begin("Scene View", 0, 16 | 8);
-						//FlatGui::PopWindowStyles();
-						//DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
-						//DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList()); // Vertical
-						//ImGui::End();
+							if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								xFromCol = 0;
 
-						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
-						circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
-					}
-					// Circle is approaching from the top (keep x value, calculate y value)
-					else {
-						circleCol->_isCollidingBottom = true;
-						circleCol->_isCollidingBottomLeft = true;
-						circleCol->_bottomCollisionStatic = boxCol->IsStatic();
-						circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic();
-						circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
-						circleCol->_bottomCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingTop = true;						
-						boxCol->_topCollisionStatic = circleCol->IsStatic();
-						boxCol->_topCollisionSolid = circleCol->IsSolid();
-						circleCol->bottomCollision = B_TopEdge;
-						boxCol->topCollision = A_BottomEdge;
+							//FlatGui::PushWindowStyles();
+							//ImGui::Begin("Scene View", 0, 16 | 8);
+							//FlatGui::PopWindowStyles();
+							//DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
+							//DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList()); // Vertical
+							//ImGui::End();
 
-						yFromCol = circleCenterGrid.y - B_TopEdge;
+							//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+							/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
+							circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
+						}
+						// Circle is approaching from the top (keep x value, calculate y value)
+						else {
+							circleCol->_isCollidingBottom = true;
+							circleCol->_isCollidingBottomLeft = true;
+							circleCol->_bottomCollisionStatic = boxCol->IsStatic();
+							circleCol->_bottomLeftCollisionStatic = boxCol->IsStatic();
+							circleCol->_bottomLeftCollisionSolid = boxCol->IsSolid();
+							circleCol->_bottomCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingTop = true;
+							boxCol->_topCollisionStatic = circleCol->IsStatic();
+							boxCol->_topCollisionSolid = circleCol->IsSolid();
+							circleCol->bottomCollision = B_TopEdge;
+							boxCol->topCollision = A_BottomEdge;
 
-						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							xFromCol = 0;
+							yFromCol = circleCenterGrid.y - B_TopEdge;
 
-						/*FlatGui::PushWindowStyles();
-						ImGui::Begin("Scene View", 0, 16 | 8);
-						FlatGui::PopWindowStyles();
-						DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
-						DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());*/ // Vertical
-						//ImGui::End();
+							if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								xFromCol = 0;
 
-						//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
-						/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
-						circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
+							/*FlatGui::PushWindowStyles();
+							ImGui::Begin("Scene View", 0, 16 | 8);
+							FlatGui::PopWindowStyles();
+							DrawLine(Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector2(circleCol->GetCenterCoord().x + (xFromCol - (circlePos.x - B_RightEdge)) * FlatGui::sceneViewGridStep.x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());
+							DrawLine(circleCol->GetCenterCoord(), Vector2(circleCol->GetCenterCoord().x, circleCol->GetCenterCoord().y + yFromCol * FlatGui::sceneViewGridStep.y), Vector4(0, 0, 0, 1), 1, ImGui::GetWindowDrawList());*/ // Vertical
+							//ImGui::End();
+
+							//boxCol->topRightCollidedPosition = Vector2(boxPos.x, A_BottomEdge - boxHalfHeight - 0.001f);
+							/*circleCol->bottomLeftCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);*/
+							circleCol->bottomLeftCollidedPosition = Vector2(circleCenterGrid.x + (xFromCol - (circleCenterGrid.x - B_RightEdge)), circleCenterGrid.y);
+						}
 					}
 				}
 			}
 		}
-
 		//LogFloat(xFromCol, "Final X From Coll: ");
 		// if circleCol is to the left of boxCol
 		else if (circleCenterGrid.x < boxCenterGrid.x)
@@ -529,53 +570,56 @@ namespace FlatEngine
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-					float leftRightOverlap = A_RightEdge - B_LeftEdge;
-					float topBottomOverlap = A_TopEdge - B_BottomEdge;
-
-					// Circle is approaching from the left (keep y value, calculate x value)
-					if (leftRightOverlap < topBottomOverlap)
+					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
-						circleCol->_isCollidingRight = true;
-						circleCol->_isCollidingTopRight = true;
-						circleCol->_topRightCollisionSolid = boxCol->IsSolid(); // new
-						circleCol->_rightCollisionStatic = boxCol->IsStatic();
-						circleCol->_rightCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingLeft = true;
-						boxCol->_leftCollisionStatic = circleCol->IsStatic();
-						boxCol->_leftCollisionSolid = circleCol->IsSolid();
-						circleCol->rightCollision = B_LeftEdge;
-						boxCol->leftCollision = A_RightEdge;
+						float leftRightOverlap = A_RightEdge - B_LeftEdge;
+						float topBottomOverlap = A_TopEdge - B_BottomEdge;
 
-						yFromCol = circleCenterGrid.y - B_BottomEdge;
+						// Circle is approaching from the left (keep y value, calculate x value)
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							circleCol->_isCollidingRight = true;
+							circleCol->_isCollidingTopRight = true;
+							circleCol->_topRightCollisionSolid = boxCol->IsSolid(); // new
+							circleCol->_rightCollisionStatic = boxCol->IsStatic();
+							circleCol->_rightCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingLeft = true;
+							boxCol->_leftCollisionStatic = circleCol->IsStatic();
+							boxCol->_leftCollisionSolid = circleCol->IsSolid();
+							circleCol->rightCollision = B_LeftEdge;
+							boxCol->leftCollision = A_RightEdge;
 
-						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							xFromCol = 0;
+							yFromCol = circleCenterGrid.y - B_BottomEdge;
 
-						circleCol->topRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
-					}
-					// Circle is approaching from the bottom (keep x value, calculate y value)
-					else {
-						circleCol->_isCollidingTop = true;
-						circleCol->_isCollidingTopRight = true;
-						circleCol->_topRightCollisionSolid = boxCol->IsSolid();
-						circleCol->_topCollisionStatic = boxCol->IsStatic();
-						circleCol->_topCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingBottom = true;
-						boxCol->_bottomCollisionStatic = circleCol->IsStatic();
-						boxCol->_bottomCollisionSolid = circleCol->IsSolid();
-						circleCol->topCollision = B_BottomEdge;
-						boxCol->bottomCollision = A_TopEdge;
+							if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								xFromCol = 0;
 
-						xFromCol = B_LeftEdge - circleCenterGrid.x;
+							circleCol->topRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
+						}
+						// Circle is approaching from the bottom (keep x value, calculate y value)
+						else {
+							circleCol->_isCollidingTop = true;
+							circleCol->_isCollidingTopRight = true;
+							circleCol->_topRightCollisionSolid = boxCol->IsSolid();
+							circleCol->_topCollisionStatic = boxCol->IsStatic();
+							circleCol->_topCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingBottom = true;
+							boxCol->_bottomCollisionStatic = circleCol->IsStatic();
+							boxCol->_bottomCollisionSolid = circleCol->IsSolid();
+							circleCol->topCollision = B_BottomEdge;
+							boxCol->bottomCollision = A_TopEdge;
 
-						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							yFromCol = 0;
+							xFromCol = B_LeftEdge - circleCenterGrid.x;
 
-						circleCol->topRightCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
+							if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								yFromCol = 0;
+
+							circleCol->topRightCollidedPosition = Vector2(circlePos.x, B_BottomEdge - yFromCol - 0.001f);
+						}
 					}
 				}
 			}
@@ -590,55 +634,58 @@ namespace FlatEngine
 				if (cornerDistance < circleActiveRadius)
 				{
 					_colliding = true;
-					float leftRightOverlap = A_RightEdge - B_LeftEdge;
-					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-
-					// Circle is approaching from the left (keep y value, calculate x value)
-					if (leftRightOverlap < topBottomOverlap)
+					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
-						circleCol->_isCollidingRight = true;
-						circleCol->_isCollidingBottomRight = true;
-						circleCol->_bottomRightCollisionSolid = boxCol->IsSolid(); // new
-						circleCol->_rightCollisionStatic = boxCol->IsStatic();
-						circleCol->_rightCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingLeft = true;
-						boxCol->_isCollidingTopLeft = true;
-						boxCol->_leftCollisionStatic = circleCol->IsStatic();
-						boxCol->_leftCollisionSolid = circleCol->IsSolid();
-						circleCol->rightCollision = B_LeftEdge;
-						boxCol->leftCollision = A_RightEdge;
+						float leftRightOverlap = A_RightEdge - B_LeftEdge;
+						float topBottomOverlap = B_TopEdge - A_BottomEdge;
 
-						yFromCol = circleCenterGrid.y - B_TopEdge;
+						// Circle is approaching from the left (keep y value, calculate x value)
+						if (leftRightOverlap < topBottomOverlap)
+						{
+							circleCol->_isCollidingRight = true;
+							circleCol->_isCollidingBottomRight = true;
+							circleCol->_bottomRightCollisionSolid = boxCol->IsSolid(); // new
+							circleCol->_rightCollisionStatic = boxCol->IsStatic();
+							circleCol->_rightCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingLeft = true;
+							boxCol->_isCollidingTopLeft = true;
+							boxCol->_leftCollisionStatic = circleCol->IsStatic();
+							boxCol->_leftCollisionSolid = circleCol->IsSolid();
+							circleCol->rightCollision = B_LeftEdge;
+							boxCol->leftCollision = A_RightEdge;
 
-						if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							xFromCol = 0;
-						
-						circleCol->bottomRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
-					}
-					// Circle is approaching from the top (keep x value, calculate y value)
-					else {
-						circleCol->_isCollidingBottom = true;
-						circleCol->_isCollidingBottomRight = true;
-						circleCol->_bottomRightCollisionSolid = boxCol->IsSolid();
-						circleCol->_bottomCollisionStatic = boxCol->IsStatic();
-						circleCol->_bottomCollisionSolid = boxCol->IsSolid();
-						boxCol->_isCollidingTop = true;
-						boxCol->_isCollidingTopLeft = true;
-						boxCol->_topCollisionStatic = circleCol->IsStatic();
-						boxCol->_topCollisionSolid = circleCol->IsSolid();
-						circleCol->bottomCollision = B_TopEdge;
-						boxCol->topCollision = A_BottomEdge;
+							yFromCol = circleCenterGrid.y - B_TopEdge;
 
-						xFromCol = B_LeftEdge - circleCenterGrid.x;
+							if (-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								xFromCol = std::sqrt(-(yFromCol * yFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								xFromCol = 0;
 
-						if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
-							yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
-						else
-							yFromCol = 0;
+							circleCol->bottomRightCollidedPosition = Vector2(B_LeftEdge - xFromCol - 0.001f, circlePos.y);
+						}
+						// Circle is approaching from the top (keep x value, calculate y value)
+						else {
+							circleCol->_isCollidingBottom = true;
+							circleCol->_isCollidingBottomRight = true;
+							circleCol->_bottomRightCollisionSolid = boxCol->IsSolid();
+							circleCol->_bottomCollisionStatic = boxCol->IsStatic();
+							circleCol->_bottomCollisionSolid = boxCol->IsSolid();
+							boxCol->_isCollidingTop = true;
+							boxCol->_isCollidingTopLeft = true;
+							boxCol->_topCollisionStatic = circleCol->IsStatic();
+							boxCol->_topCollisionSolid = circleCol->IsSolid();
+							circleCol->bottomCollision = B_TopEdge;
+							boxCol->topCollision = A_BottomEdge;
 
-						circleCol->bottomRightCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);
+							xFromCol = B_LeftEdge - circleCenterGrid.x;
+
+							if (-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius) > 0)
+								yFromCol = std::sqrt(-(xFromCol * xFromCol) + (circleActiveRadius * circleActiveRadius));
+							else
+								yFromCol = 0;
+
+							circleCol->bottomRightCollidedPosition = Vector2(circlePos.x, B_TopEdge + yFromCol - 0.001f);
+						}
 					}
 				}
 			}
@@ -694,21 +741,223 @@ namespace FlatEngine
 					// Left/Right
 					if (leftRightOverlap < topBottomOverlap)
 					{
-						boxCol1->_isCollidingLeft = true;
-						boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingRight = true;
-						boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_rightCollisionSolid = boxCol2->IsSolid();
-						boxCol1->leftCollision = B_RightEdge;
-						boxCol2->rightCollision = A_LeftEdge;
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingLeft = true;
+							boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingRight = true;
+							boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_rightCollisionSolid = boxCol2->IsSolid();
+							boxCol1->leftCollision = B_RightEdge;
+							boxCol2->rightCollision = A_LeftEdge;
 
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
-						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
+							boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
+						}
 					}
 					// Top/Bottom
 					else {
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingTop = true;
+							boxCol1->_topCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_topCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingBottom = true;
+							boxCol2->_bottomCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_bottomCollisionSolid = boxCol1->IsSolid();
+							boxCol1->topCollision = B_BottomEdge;
+							boxCol2->bottomCollision = A_TopEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
+							boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);
+						}
+					}
+				}
+				// if boxCol1 is above boxCol2
+				else if (collider1CenterGrid.y > collider2CenterGrid.y)
+				{
+					float leftRightOverlap = B_RightEdge - A_LeftEdge;
+					float topBottomOverlap = B_TopEdge - A_BottomEdge;
+					// Left/Right
+					if (leftRightOverlap < topBottomOverlap)
+					{
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingLeft = true;
+							boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingRight = true;
+							boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_rightCollisionSolid = boxCol1->IsSolid();
+							boxCol1->leftCollision = B_RightEdge;
+							boxCol2->rightCollision = A_LeftEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
+							boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
+						}
+					}
+					// Top/Bottom
+					else {
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingBottom = true;
+							boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingTop = true;
+							boxCol2->_topCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_topCollisionSolid = boxCol1->IsSolid();
+							boxCol1->bottomCollision = B_TopEdge;
+							boxCol2->topCollision = A_BottomEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
+							boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
+						}
+					}
+				}
+				// if both are at the same y Pos the it's a left/right collision
+				else
+				{
+					if (boxCol1->IsSolid() && boxCol2->IsSolid())
+					{
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingLeft = true;
+							boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingRight = true;
+							boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_rightCollisionSolid = boxCol1->IsSolid();
+							boxCol1->leftCollision = B_RightEdge;
+							boxCol2->rightCollision = A_LeftEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth + col1Offset.x - 0.001f, col1Pos.y);
+							boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
+						}
+					}
+				}
+			}
+			// if boxCol1 is to the left of boxCol2
+			else if (collider1CenterGrid.x < collider2CenterGrid.x)
+			{
+				// if boxCol1 is below boxCol2
+				if (collider1CenterGrid.y < collider2CenterGrid.y)
+				{
+					float leftRightOverlap = A_RightEdge - B_LeftEdge;
+					float topBottomOverlap = A_TopEdge - B_BottomEdge;
+					// Left/Right
+					if (leftRightOverlap < topBottomOverlap)
+					{
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingRight = true;
+							boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingLeft = true;
+							boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
+							boxCol1->rightCollision = B_LeftEdge;
+							boxCol2->leftCollision = A_RightEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+							boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
+						}
+					}
+					// Top/Bottom
+					else {
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingTop = true;
+							boxCol1->_topCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_topCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingBottom = true;
+							boxCol2->_bottomCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_bottomCollisionSolid = boxCol1->IsSolid();
+							boxCol1->topCollision = B_BottomEdge;
+							boxCol2->bottomCollision = A_TopEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
+							boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);
+						}
+					}
+				}
+				else if (collider1CenterGrid.y > collider2CenterGrid.y)
+				{
+					float leftRightOverlap = A_RightEdge - B_LeftEdge;
+					float topBottomOverlap = B_TopEdge - A_BottomEdge;
+					// Left/Right
+					if (leftRightOverlap < topBottomOverlap)
+					{
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingRight = true;
+							boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingLeft = true;
+							boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
+							boxCol1->rightCollision = B_LeftEdge;
+							boxCol2->leftCollision = A_RightEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+							boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
+						}
+					}
+					// Top/Bottom
+					else {
+						if (boxCol1->IsSolid() && boxCol2->IsSolid())
+						{
+							boxCol1->_isCollidingBottom = true;
+							boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
+							boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
+							boxCol2->_isCollidingTop = true;
+							boxCol2->_topCollisionStatic = boxCol1->IsStatic();
+							boxCol2->_topCollisionSolid = boxCol1->IsSolid();
+							boxCol1->bottomCollision = B_TopEdge;
+							boxCol2->topCollision = A_BottomEdge;
+
+							// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+							boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
+							boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
+						}
+					}
+				}
+				// if both are at the same y Pos the it's a left/right collision
+				else
+				{
+					if (boxCol1->IsSolid() && boxCol2->IsSolid())
+					{
+						boxCol1->_isCollidingRight = true;
+						boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
+						boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
+						boxCol2->_isCollidingLeft = true;
+						boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
+						boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
+						boxCol1->rightCollision = B_LeftEdge;
+						boxCol2->leftCollision = A_RightEdge;
+
+						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
+						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
+						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
+					}
+				}
+			}
+			// Both boxes are at the same x Pos
+			else
+			{
+				// if boxCol1 is below boxCol2
+				if (collider1CenterGrid.y < collider2CenterGrid.y)
+				{
+					if (boxCol1->IsSolid() && boxCol2->IsSolid())
+					{
 						boxCol1->_isCollidingTop = true;
 						boxCol1->_topCollisionStatic = boxCol2->IsStatic();
 						boxCol1->_topCollisionSolid = boxCol2->IsSolid();
@@ -724,28 +973,10 @@ namespace FlatEngine
 					}
 				}
 				// if boxCol1 is above boxCol2
-				else if (collider1CenterGrid.y > collider2CenterGrid.y)
+				else
 				{
-					float leftRightOverlap = B_RightEdge - A_LeftEdge;
-					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-					// Left/Right
-					if (leftRightOverlap < topBottomOverlap)
+					if (boxCol1->IsSolid() && boxCol2->IsSolid())
 					{
-						boxCol1->_isCollidingLeft = true;
-						boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingRight = true;
-						boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_rightCollisionSolid = boxCol1->IsSolid();
-						boxCol1->leftCollision = B_RightEdge;
-						boxCol2->rightCollision = A_LeftEdge;
-
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
-						boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
-					}
-					// Top/Bottom
-					else {
 						boxCol1->_isCollidingBottom = true;
 						boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
 						boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
@@ -759,151 +990,6 @@ namespace FlatEngine
 						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
 						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
 					}
-				}
-				// if both are at the same y Pos the it's a left/right collision
-				else
-				{
-					boxCol1->_isCollidingLeft = true;
-					boxCol1->_leftCollisionStatic = boxCol2->IsStatic();
-					boxCol1->_leftCollisionSolid = boxCol2->IsSolid();
-					boxCol2->_isCollidingRight = true;
-					boxCol2->_rightCollisionStatic = boxCol1->IsStatic();
-					boxCol2->_rightCollisionSolid = boxCol1->IsSolid();
-					boxCol1->leftCollision = B_RightEdge;
-					boxCol2->rightCollision = A_LeftEdge;
-
-					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->leftCollidedPosition = Vector2(B_RightEdge + box1HalfWidth - col1Offset.x - 0.001f, col1Pos.y);
-					boxCol2->rightCollidedPosition = Vector2(A_LeftEdge - box2HalfWidth - col2Offset.x + 0.001f, col2Pos.y);
-				}
-			}
-			// if boxCol1 is to the left of boxCol2
-			else if (collider1CenterGrid.x < collider2CenterGrid.x)
-			{
-				// if boxCol1 is below boxCol2
-				if (collider1CenterGrid.y < collider2CenterGrid.y)
-				{
-					float leftRightOverlap = A_RightEdge - B_LeftEdge;
-					float topBottomOverlap = A_TopEdge - B_BottomEdge;
-					// Left/Right
-					if (leftRightOverlap < topBottomOverlap)
-					{
-						boxCol1->_isCollidingRight = true;
-						boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingLeft = true;
-						boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
-						boxCol1->rightCollision = B_LeftEdge;
-						boxCol2->leftCollision = A_RightEdge;
-
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
-						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
-					}
-					// Top/Bottom
-					else {
-						boxCol1->_isCollidingTop = true;
-						boxCol1->_topCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_topCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingBottom = true;
-						boxCol2->_bottomCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_bottomCollisionSolid = boxCol1->IsSolid();
-						boxCol1->topCollision = B_BottomEdge;
-						boxCol2->bottomCollision = A_TopEdge;
-
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
-						boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);						
-					}
-				}
-				else if (collider1CenterGrid.y > collider2CenterGrid.y)
-				{
-					float leftRightOverlap = A_RightEdge - B_LeftEdge;
-					float topBottomOverlap = B_TopEdge - A_BottomEdge;
-					// Left/Right
-					if (leftRightOverlap < topBottomOverlap)
-					{
-						boxCol1->_isCollidingRight = true;
-						boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingLeft = true;
-						boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
-						boxCol1->rightCollision = B_LeftEdge;
-						boxCol2->leftCollision = A_RightEdge;
-
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
-						boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
-					}
-					// Top/Bottom
-					else {
-						boxCol1->_isCollidingBottom = true;
-						boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
-						boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
-						boxCol2->_isCollidingTop = true;
-						boxCol2->_topCollisionStatic = boxCol1->IsStatic();
-						boxCol2->_topCollisionSolid = boxCol1->IsSolid();
-						boxCol1->bottomCollision = B_TopEdge;
-						boxCol2->topCollision = A_BottomEdge;
-
-						// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-						boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
-						boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
-					}
-				}
-				// if both are at the same y Pos the it's a left/right collision
-				else
-				{
-					boxCol1->_isCollidingRight = true;
-					boxCol1->_rightCollisionStatic = boxCol2->IsStatic();
-					boxCol1->_rightCollisionSolid = boxCol2->IsSolid();
-					boxCol2->_isCollidingLeft = true;
-					boxCol2->_leftCollisionStatic = boxCol1->IsStatic();
-					boxCol2->_leftCollisionSolid = boxCol1->IsSolid();
-					boxCol1->rightCollision = B_LeftEdge;
-					boxCol2->leftCollision = A_RightEdge;
-
-					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->rightCollidedPosition = Vector2(B_LeftEdge - box1HalfWidth - col1Offset.x + 0.001f, col1Pos.y);
-					boxCol2->leftCollidedPosition = Vector2(A_RightEdge + box2HalfWidth - col2Offset.x - 0.001f, col2Pos.y);
-				}
-			}
-			// Both boxes are at the same x Pos
-			else
-			{
-				// if boxCol1 is below boxCol2
-				if (collider1CenterGrid.y < collider2CenterGrid.y)
-				{
-					boxCol1->_isCollidingTop = true;
-					boxCol1->_topCollisionStatic = boxCol2->IsStatic();
-					boxCol1->_topCollisionSolid = boxCol2->IsSolid();
-					boxCol2->_isCollidingBottom = true;
-					boxCol2->_bottomCollisionStatic = boxCol1->IsStatic();
-					boxCol2->_bottomCollisionSolid = boxCol1->IsSolid();
-					boxCol1->topCollision = B_BottomEdge;
-					boxCol2->bottomCollision = A_TopEdge;
-
-					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->topCollidedPosition = Vector2(col1Pos.x, B_BottomEdge - box1HalfHeight - col1Offset.y + 0.001f);
-					boxCol2->bottomCollidedPosition = Vector2(col2Pos.x, A_TopEdge + box2HalfHeight - col2Offset.y - 0.001f);
-				}
-				// if boxCol1 is above boxCol2
-				else
-				{
-					boxCol1->_isCollidingBottom = true;
-					boxCol1->_bottomCollisionStatic = boxCol2->IsStatic();
-					boxCol1->_bottomCollisionSolid = boxCol2->IsSolid();
-					boxCol2->_isCollidingTop = true;
-					boxCol2->_topCollisionStatic = boxCol1->IsStatic();
-					boxCol2->_topCollisionSolid = boxCol1->IsSolid();
-					boxCol1->bottomCollision = B_TopEdge;
-					boxCol2->topCollision = A_BottomEdge;
-
-					// Calculate at what Transform positions the collision technically happened and store it for repositioning in RigidBody
-					boxCol1->bottomCollidedPosition = Vector2(col2Pos.x, B_TopEdge + box1HalfHeight - col1Offset.y - 0.001f);
-					boxCol2->topCollidedPosition = Vector2(col1Pos.x, A_BottomEdge - box2HalfHeight - col2Offset.y + 0.001f);
 				}
 			}
 		}
@@ -1225,6 +1311,16 @@ namespace FlatEngine
 	float Collider::GetRotation()
 	{
 		return rotation;
+	}
+
+	void Collider::SetIsComposite(bool _newComposite)
+	{
+		_isComposite = _newComposite;
+	}
+
+	bool Collider::IsComposite()
+	{
+		return _isComposite;
 	}
 
 	void Collider::RecalculateBounds()

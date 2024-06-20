@@ -159,7 +159,7 @@ namespace FlatEngine
 		~Animation();
 
 		void AddFrame();
-		void Play(int startTime);
+		void Play(int startTime = -1);
 		void Stop();
 
 		bool IsPlaying();

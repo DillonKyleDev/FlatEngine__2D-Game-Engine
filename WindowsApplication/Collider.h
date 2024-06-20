@@ -81,6 +81,8 @@ namespace FlatEngine
 		void SetRotation(float rotation);
 		void UpdateRotation();
 		float GetRotation();
+		void SetIsComposite(bool _newComposite);
+		bool IsComposite();
 
 		Vector2 collidedPosition;
 		Vector2 leftCollidedPosition;
@@ -146,5 +148,6 @@ namespace FlatEngine
 		bool _onActiveCollidingSet;
 		bool _onCollisionEnterSet;
 		bool _onCollisionLeaveSet;
+		bool _isComposite;
 	};
 }

@@ -19,6 +19,7 @@
 #include "CharacterController.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
+#include "CompositeCollider.h"
 
 
 namespace FlatEngine
@@ -85,7 +86,7 @@ namespace FlatEngine
 			if (component->GetTypeString() == "Transform")
 			{
 				std::shared_ptr<Transform> newComponent = std::make_shared<Transform>(std::static_pointer_cast<Transform>(component), GetID());
-				if (parentID != -1)
+				if (parentID != -1 && GetObjectById(parentID) != nullptr)
 				{
 					newComponent->SetOrigin(GetObjectById(parentID)->GetTransformComponent()->GetTruePosition());
 				}
@@ -255,6 +256,7 @@ namespace FlatEngine
 		std::shared_ptr<CharacterController> characterControllerComponent;
 		std::shared_ptr<RigidBody> rigidBodyComponent;
 		std::shared_ptr<BoxCollider> boxColliderComponent;
+		std::shared_ptr<CompositeCollider> compositeColliderComponent;
 		std::shared_ptr<CircleCollider> circleColliderComponent;
 
 		std::shared_ptr<GameObject> parent;
@@ -370,6 +372,13 @@ namespace FlatEngine
 			return circleColliderComponent;
 			break;
 
+		case ComponentTypes::CompositeCollider:
+			compositeColliderComponent = std::make_shared<CompositeCollider>(nextID, ID);
+			components.push_back(compositeColliderComponent);
+			scene->IncrementComponentID();
+			return compositeColliderComponent;
+			break;
+
 		default:
 			return nullptr;
 			break;
@@ -465,6 +474,11 @@ namespace FlatEngine
 	std::shared_ptr<CircleCollider> GameObject::AddCircleColliderComponent()
 	{
 		return std::static_pointer_cast<CircleCollider>(AddComponent(ComponentTypes::CircleCollider));
+	}
+
+	std::shared_ptr<CompositeCollider> GameObject::AddCompositeColliderComponent()
+	{
+		return std::static_pointer_cast<CompositeCollider>(AddComponent(ComponentTypes::CompositeCollider));
 	}
 
 	std::shared_ptr<RigidBody> GameObject::AddRigidBodyComponent()
@@ -602,6 +616,12 @@ namespace FlatEngine
 				circleColliders.push_back(std::static_pointer_cast<CircleCollider>(component));
 
 		return circleColliders;
+	}
+
+	std::shared_ptr<CompositeCollider> GameObject::GetCompositeCollider()
+	{
+		std::shared_ptr<CompositeCollider> compositeCollider = std::static_pointer_cast<CompositeCollider>(GetComponent(ComponentTypes::CompositeCollider));
+		return compositeCollider;
 	}
 
 	std::shared_ptr<GameScript> GameObject::GetGameScriptByName(std::string scriptName)

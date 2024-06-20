@@ -63,16 +63,17 @@ namespace FlatEngine {
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 		Vector2 position = transform->GetTruePosition();
 		float activeRadius = GetActiveRadiusGrid();
+		Vector2 activeOffset = GetActiveOffset();
 
 		float xCenter = centerPoint.x + (position.x + activeOffset.x) * step;
 		float yCenter = centerPoint.y - (position.y + activeOffset.y) * step;
 		
-		SetCenterCoord(Vector2(xCenter, yCenter));
 		SetCenterGrid(Vector2(position.x + activeOffset.x, position.y + activeOffset.y));
+		SetCenterCoord(Vector2(xCenter, yCenter));
 	}
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
-// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
+	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	void CircleCollider::UpdateActiveEdges()
 	{
 		if (loadedProject->GetCollisionDetection() == "Shared Axis")
@@ -123,24 +124,30 @@ namespace FlatEngine {
 			Vector2 centerPoint = FlatGui::sceneViewCenter;
 			std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
 			Vector2 scale = transform->GetScale();
+			Vector2 activeOffset = GetActiveOffset();
 
-			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeRadius * scale.x) + activeOffset.x) * step;
-			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeRadius * scale.y) + activeOffset.y) * step;
-			activeRight = centerPoint.x + (GetCenterGrid().x + (activeRadius * scale.x) + activeOffset.x) * step;
-			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeRadius * scale.y) + activeOffset.y) * step;
+			// For visual representation ( screen space values )
+			SetCenterGrid(Vector2(transform->GetTruePosition().x + activeOffset.x, transform->GetTruePosition().y + activeOffset.y));
+
+			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeRadius * scale.x)) * step;
+			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeRadius * scale.y)) * step;
+			activeRight = centerPoint.x + (GetCenterGrid().x + (activeRadius * scale.x)) * step;
+			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeRadius * scale.y)) * step;
+
+			SetCenterCoord(Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2));
 
 			// For collision detection ( grid space values )
 			if (rigidBody != nullptr)
-				SetNextCenterGrid(rigidBody->GetNextPosition());
+				SetNextCenterGrid(Vector2(rigidBody->GetNextPosition().x + activeOffset.x, rigidBody->GetNextPosition().y + activeOffset.y));
 			else
-				SetNextCenterGrid(transform->GetTruePosition());
+				SetNextCenterGrid(GetCenterGrid());
 
-			nextActiveLeft = GetNextCenterGrid().x - (activeRadius * scale.x) + activeOffset.x;
-			nextActiveTop = GetNextCenterGrid().y + (activeRadius * scale.y) + activeOffset.y;
-			nextActiveRight = GetNextCenterGrid().x + (activeRadius * scale.x) + activeOffset.x;
-			nextActiveBottom = GetNextCenterGrid().y - (activeRadius * scale.y) + activeOffset.y;
+			nextActiveLeft = GetNextCenterGrid().x - (activeRadius * scale.x);
+			nextActiveTop = GetNextCenterGrid().y + (activeRadius * scale.y);
+			nextActiveRight = GetNextCenterGrid().x + (activeRadius * scale.x);
+			nextActiveBottom = GetNextCenterGrid().y - (activeRadius * scale.y);
 
-			//SetNextCenterCoord(Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2));			
+			SetNextCenterCoord(Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2));
 			_activeEdgesSet = true;
 		}
 	}
@@ -158,8 +165,9 @@ namespace FlatEngine {
 			{ "activeLayer", GetActiveLayer() },
 			{ "activeRadius", GetActiveRadiusGrid() },
 			{ "_showActiveRadius", GetShowActiveRadius()},
-			{ "activeOffsetX", activeOffset.x },
-			{ "activeOffsetY", activeOffset.y },
+			{ "activeOffsetX", GetActiveOffset().x },
+			{ "activeOffsetY", GetActiveOffset().y },
+			{ "_isComposite", IsComposite() },
 		};
 
 		std::string data = jsonData.dump();

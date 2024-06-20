@@ -1,34 +1,22 @@
 #pragma once
-#include "FlatEngine.h"
 #include "GameScript.h"
 #include "Health.h"
 
 
-class PlayerController : public FlatEngine::GameScript
+class EnemyController : public FlatEngine::GameScript
 {
-	class MappingContext;
-	class CharacterController;
-	class BoxCollider;
-	class RigidBody;
-	class Transform;
-	class Animation;
-	class Sprite;
-	class Audio;
-	class GameObject;
-
 public:
-	PlayerController(long ownerID);
-	~PlayerController();
+	EnemyController(long ownerID);
+	~EnemyController();
 
 	void Start();
 	void Update(float deltaTime);
-	void HandleInput();
 
 private:
 	std::shared_ptr<Health> health;
-	std::shared_ptr<FlatEngine::MappingContext> mappingContext;
-	std::shared_ptr<FlatEngine::CharacterController> characterController;
 	std::shared_ptr<FlatEngine::BoxCollider> boxCollider;
+	std::vector<std::shared_ptr<FlatEngine::CircleCollider>> circleColliders;
+	std::shared_ptr<FlatEngine::CompositeCollider> compositeCollider;
 	std::shared_ptr<FlatEngine::RigidBody> rigidBody;
 	std::shared_ptr<FlatEngine::Transform> transform;
 	std::shared_ptr<FlatEngine::Animation> animator;

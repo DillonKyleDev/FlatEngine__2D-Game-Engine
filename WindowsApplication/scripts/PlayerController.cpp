@@ -24,6 +24,7 @@
 PlayerController::PlayerController(long ownerID) : GameScript(ownerID)
 {
 	SetName("PlayerController");
+	health = nullptr;
 	mappingContext = nullptr;
 	characterController = nullptr;
 	boxCollider = nullptr;
@@ -41,6 +42,7 @@ PlayerController::~PlayerController()
 
 void PlayerController::Start()
 {
+	health = std::static_pointer_cast<Health>(GetOwner()->GetGameScriptByName("Health"));
 	mappingContext = FlatEngine::GetMappingContext("MC_CharacterContext.json");
 	characterController = GetOwner()->GetCharacterController();
 	boxCollider = GetOwner()->GetBoxCollider();
@@ -53,10 +55,14 @@ void PlayerController::Start()
 	if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
 		whipArm = GetOwner()->GetFirstChild();
 	animator = whipArm->GetAnimationComponent();
-
 }
 
 void PlayerController::Update(float deltaTime)
+{
+	HandleInput();
+}
+
+void PlayerController::HandleInput()
 {
 	bool _moving = false;
 	bool _isGrounded = false;
@@ -86,9 +92,14 @@ void PlayerController::Update(float deltaTime)
 			audio->Play();
 		}
 		if (mappingContext->Fired("IA_Stab"))
+		{			
+			animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
+			animator->Play();
+		}
+		if (mappingContext->Fired("IA_Slash"))
 		{
-			//animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
-			animator->Play(FlatEngine::GetEllapsedGameTimeInMs());
+			animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerSlash.json");
+			animator->Play();
 		}
 		if (characterController != nullptr)
 		{
@@ -104,7 +115,7 @@ void PlayerController::Update(float deltaTime)
 			}
 			if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
 			{
-				xDir = 30000;				
+				xDir = 30000;
 				_moving = true;
 				_movingRight = true;
 				sprite->SetTexture("assets/images/Sprites/Player/walkRight.png");
@@ -138,11 +149,11 @@ void PlayerController::Update(float deltaTime)
 			sprite->SetTexture("assets/images/Sprites/Player/jumpLeft.png");
 		else if (xDir > 0)
 			sprite->SetTexture("assets/images/Sprites/Player/jumpRight.png");
-		else 
+		else
 			sprite->SetTexture("assets/images/Sprites/Player/jumpStraight.png");
 		sprite->SetOffset(Vector2(10, 15));
 	}
-	else 
+	else
 	{
 		//sprite->SetOffset(Vector2(10, 11));
 		if (!_moving)
@@ -164,7 +175,7 @@ void PlayerController::Update(float deltaTime)
 		{
 			moveX = mappingContext->GetInputAction("IA_MoveX");
 			moveY = mappingContext->GetInputAction("IA_MoveY");
-		} 
+		}
 	}
 
 	if (moveX.type != 0)

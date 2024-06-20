@@ -105,6 +105,10 @@ namespace FlatEngine
 			return "CircleCollider";
 			break;
 
+		case ComponentTypes::CompositeCollider:
+			return "CompositeCollider";
+			break;
+
 		case ComponentTypes::RigidBody:
 			return "RigidBody";
 			break;

@@ -23,7 +23,6 @@ namespace FlatEngine
 		//void ResetCollisions();
 
 	private:
-		Vector2 activeOffset;
 		bool _activeEdgesSet;
 
 		// Current

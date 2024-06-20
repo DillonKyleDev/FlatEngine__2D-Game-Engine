@@ -3,7 +3,7 @@
 #include "Transform.h"
 
 
-ButtonScriptTemplate::ButtonScriptTemplate() : GameScript(ownerID)
+ButtonScriptTemplate::ButtonScriptTemplate(long ownerID) : GameScript(ownerID)
 {
 	SetName("ButtonScriptTemplate");
 }
