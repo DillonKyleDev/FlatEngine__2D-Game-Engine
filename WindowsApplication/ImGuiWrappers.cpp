@@ -1,6 +1,7 @@
 #include "FlatEngine.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "TagList.h"
 
 
 namespace FlatEngine { namespace FlatGui {
@@ -161,13 +162,13 @@ namespace FlatEngine { namespace FlatGui {
 	{
 		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
 		PushTableStyles();
-		bool _beginTable = ImGui::BeginTable(id.c_str(), columns, tableFlags);
+		bool _beginTable = ImGui::BeginTable(id.c_str(), columns, flags);
 		if (_beginTable)
 		{
 			for (int i = 0; i < columns; i++)
 			{
 				std::string columnLabel = id + std::to_string(i);
-				ImGui::TableSetupColumn(columnLabel.c_str(), flags, columnWidth);
+				ImGui::TableSetupColumn(columnLabel.c_str());
 			}
 		}
 		else
@@ -188,6 +189,41 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopID();
 
 		return _isChanged;
+	}
+
+	bool RenderTagListTableRow(std::string id, std::string fieldName, std::shared_ptr<FlatEngine::TagList> &tagList)
+	{
+		bool _changed = false;
+		bool _hasTag = tagList->HasTag(fieldName);
+		bool _ignoreTag = tagList->IgnoresTag(fieldName);
+		std::string hasTagID = "##" + fieldName + "CheckboxHasTagID";
+		std::string ignoreTagID = "##" + fieldName + "CheckboxIgnoreTagID";
+
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		if (RenderCheckbox(hasTagID.c_str(), _hasTag))
+		{
+			tagList->ToggleTag(fieldName);
+			_changed = true;
+		}
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		if (RenderCheckbox(ignoreTagID.c_str(), _ignoreTag))
+		{
+			tagList->ToggleIgnore(fieldName);
+			_changed = true;
+		}
+
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return _changed;
 	}
 
 	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max)
@@ -230,7 +266,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::PopID();
 	}
 
-	void RenderTextTableRow(std::string id, std::string fieldName, std::string value)
+	void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2)
 	{
 		// Push uneditableTableTextColor text color
 		ImGui::PushStyleColor(ImGuiCol_Text, noEditTableTextColor);
@@ -245,6 +281,13 @@ namespace FlatEngine { namespace FlatGui {
 		// Set table cell bg color
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowValueBgColor));
 		ImGui::Text(value.c_str());
+		if (value2 != "")
+		{
+			ImGui::TableSetColumnIndex(2);
+			// Set table cell bg color
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(noEditTableRowValueBgColor));
+			ImGui::Text(value2.c_str());
+		}
 		ImGui::PushID(id.c_str());
 		ImGui::PopID();
 

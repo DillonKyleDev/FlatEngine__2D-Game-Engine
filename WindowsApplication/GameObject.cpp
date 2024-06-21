@@ -75,9 +75,12 @@ namespace FlatEngine
 				}
 			}
 				
-			std::shared_ptr<GameObject> childCopy = std::make_shared<GameObject>(actualChild, childObjectVector, objectPool, GetID());
-			childObjectVector.push_back(childCopy);
-			AddChild(childCopy->GetID());
+			if (actualChild != nullptr)
+			{
+				std::shared_ptr<GameObject> childCopy = std::make_shared<GameObject>(actualChild, childObjectVector, objectPool, GetID());
+				childObjectVector.push_back(childCopy);
+				AddChild(childCopy->GetID());
+			}
 		}
 		
 		std::vector<std::shared_ptr<Component>> toCopyComponents = toCopy->GetComponents();
@@ -630,7 +633,7 @@ namespace FlatEngine
 		{
 			if (components[i]->GetType() == ComponentTypes::Script)
 			{
-				std::shared_ptr<ScriptComponent> scriptComponent = std::static_pointer_cast<ScriptComponent>(GetComponent(ComponentTypes::Script));
+				std::shared_ptr<ScriptComponent> scriptComponent = std::static_pointer_cast<ScriptComponent>(components[i]);
 				if (scriptComponent->GetAttachedScript() == scriptName)
 					return scriptComponent->GetScriptInstance();
 			}

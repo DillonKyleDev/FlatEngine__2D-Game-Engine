@@ -110,7 +110,7 @@ namespace FlatEngine { namespace FlatGui {
 
 		std::shared_ptr<Animation::S_AnimationProperties> animProps = GetFocusedAnimation();
 
-		const char* properties[] = { "- select property -", "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
+		const char* properties[] = { "- select property -", "Event", "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
 		static int current_property = 0;
 		static std::string node_clicked = "";
 
@@ -118,7 +118,13 @@ namespace FlatEngine { namespace FlatGui {
 		auto L_PushBackKeyFrame = [&](std::string property)
 		{
 			// Add property to animation object
-			if (property == "Transform")
+			if (property == "Event")
+			{
+				std::shared_ptr<Animation::S_Event> eventProperties = std::make_shared<Animation::S_Event>();
+				eventProperties->name = "Event";
+				animProps->eventProperties.push_back(eventProperties);
+			}
+			else if (property == "Transform")
 			{
 				std::shared_ptr<Animation::S_Transform> transformProperties = std::make_shared<Animation::S_Transform>();
 				transformProperties->name = "Transform";
@@ -215,7 +221,8 @@ namespace FlatEngine { namespace FlatGui {
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(properties); n++)
 				{
-					if (animProps->transformProperties.size() == 0 && properties[n] == "Transform" ||
+					if (animProps->eventProperties.size() == 0 && properties[n] == "Event" ||
+						animProps->transformProperties.size() == 0 && properties[n] == "Transform" ||
 						animProps->spriteProperties.size() == 0 && properties[n] == "Sprite" ||
 						animProps->cameraProperties.size() == 0 && properties[n] == "Camera" ||
 						animProps->scriptProperties.size() == 0 && properties[n] == "Script" ||
@@ -229,7 +236,7 @@ namespace FlatEngine { namespace FlatGui {
 						animProps->characterControllerProperties.size() == 0 && properties[n] == "CharacterController"
 						)
 					{
-						bool is_selected = (properties[current_property] == properties[n]); // You can store your selection however you want, outside or inside your objects
+						bool is_selected = (properties[current_property] == properties[n]);
 						if (ImGui::Selectable(properties[n], is_selected))
 							current_property = n;
 						if (is_selected)
@@ -256,7 +263,8 @@ namespace FlatEngine { namespace FlatGui {
 			PushMenuStyles();
 
 			// Conditionally begin the table
-			if (animProps->transformProperties.size() > 0 ||
+			if (animProps->eventProperties.size() > 0 ||
+				animProps->transformProperties.size() > 0 ||
 				animProps->spriteProperties.size() > 0 ||
 				animProps->cameraProperties.size() > 0 ||
 				animProps->scriptProperties.size() > 0 ||
@@ -300,6 +308,7 @@ namespace FlatEngine { namespace FlatGui {
 				};
 
 
+				RenderPropertyButton("Event", (int)animProps->eventProperties.size(), node_clicked);
 				RenderPropertyButton("Transform", (int)animProps->transformProperties.size(), node_clicked);
 				RenderPropertyButton("Sprite", (int)animProps->spriteProperties.size(), node_clicked);
 				RenderPropertyButton("Camera", (int)animProps->cameraProperties.size(), node_clicked);
@@ -381,8 +390,8 @@ namespace FlatEngine { namespace FlatGui {
 				{
 					if (animation != nullptr)
 					{
-						previewAnimationStartTime = GetEngineTime();
-						previewAnimationTime = GetEngineTime();
+						previewAnimationStartTime = GetEllapsedGameTimeInMs();
+						previewAnimationTime = GetEllapsedGameTimeInMs();
 						animation->Play(previewAnimationStartTime);
 						_isPreviewing = true;
 					}
@@ -615,6 +624,25 @@ namespace FlatEngine { namespace FlatGui {
 		int IDCounter = 0;
 
 		// Draw colored box for transform keyframes
+		if (animProps->eventProperties.size() > 0)
+		{
+			rectColor = Vector4(255, 255, 255, 100);
+			std::vector<float> keyFrameTimes = std::vector<float>();
+			L_RenderPropertyInTimeline("Event", keyFrameTimes, rectColor);
+
+			for (std::shared_ptr<Animation::S_Event> keyFrame : animProps->eventProperties)
+			{
+				std::string ID = "Event";
+				// Get keyFrame time and convert to seconds
+				float keyFrameX = keyFrame->time / 1000;
+				Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
+				//if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
+				L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+				IDCounter++;
+			}
+			propertyYPos--;
+			propertyCounter++;
+		}
 		if (animProps->transformProperties.size() > 0)
 		{
 			rectColor = Vector4(214, 8, 118, 100);
@@ -911,7 +939,7 @@ namespace FlatEngine { namespace FlatGui {
 				// If animation component is playing, play the animation
 				if (animation != nullptr && animation->IsPlaying())
 				{
-					previewAnimationTime = GetEngineTime();
+					previewAnimationTime = GetEllapsedGameTimeInMs();
 					animation->PlayAnimation(previewAnimationTime);
 				}
 			}
@@ -958,7 +986,14 @@ namespace FlatEngine { namespace FlatGui {
 		if (selectedKeyFrameToEdit != nullptr)
 		{
 			// Here we should steal code from the components rendering in Inpsector window.
-			if (selectedKeyFrameToEdit->name == "Transform")
+			if (selectedKeyFrameToEdit->name == "Event")
+			{
+				std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(selectedKeyFrameToEdit);
+				std::string functionName = event->functionName;
+				if (RenderInput("AnimationEventName", "Function Name", functionName))
+					event->functionName = functionName;
+			}
+			else if (selectedKeyFrameToEdit->name == "Transform")
 			{
 				// Position, scale, and rotation of transform
 				std::shared_ptr<Animation::S_Transform> transform = std::static_pointer_cast<Animation::S_Transform>(selectedKeyFrameToEdit);
@@ -1067,6 +1102,7 @@ namespace FlatEngine { namespace FlatGui {
 				std::string path = sprite->path;
 				char newPath[1024];
 				strcpy_s(newPath, path.c_str());
+				Vector4 tintColor = sprite->tintColor;
 
 				// Sprite Path Strings
 				std::string pathString = "Path: ";
@@ -1110,6 +1146,16 @@ namespace FlatEngine { namespace FlatGui {
 						sprite->SetRenderOrder(renderOrder);*/
 					PopTable();
 				}
+
+				// Tint color picker
+				std::string tintID = "##AnimationFrameSpriteTintColorPicker";
+				ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+				if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+				{
+					sprite->tintColor = tintColor;
+				}
+				ImGui::SameLine(0, 5);
+				ImGui::Text("Tint color");
 			}
 		}
 		else
@@ -1173,6 +1219,32 @@ namespace FlatEngine { namespace FlatGui {
 		animationProperties.push_back(animationName);
 
 
+		for (std::shared_ptr<Animation::S_Event> eventProp : propertiesObject->eventProperties)
+		{
+			// Declare components array json object for components
+			json eventPropertiesArray = json::array();
+
+			// Get the objects fields
+			json jsonData = {
+				{ "functionName", eventProp->functionName },
+				{ "time", eventProp->time },
+			};
+
+			// Dumped json object with required data for saving
+			std::string data = jsonData.dump();
+
+			// Save to the json array
+			eventPropertiesArray.push_back(json::parse(data));
+
+			// Create Animation Property Json data object
+			json eventProperty = json::object({
+				{ "Property", "Event" },
+				{ "Frames", eventPropertiesArray }
+			});
+
+			// Finally, add the Animation Property json to the animationProperties
+			animationProperties.push_back(eventProperty);
+		}
 		for (std::shared_ptr<Animation::S_Transform> transformProp : propertiesObject->transformProperties)
 		{
 			// Declare components array json object for components
@@ -1218,7 +1290,11 @@ namespace FlatEngine { namespace FlatGui {
 				{ "time", spriteProp->time },
 				{ "path", spriteProp->path },
 				{ "xOffset", spriteProp->xOffset },
-				{ "yOffset", spriteProp->yOffset }
+				{ "yOffset", spriteProp->yOffset },
+				{ "tintColorX", spriteProp->tintColor.x },
+				{ "tintColorY", spriteProp->tintColor.y },
+				{ "tintColorZ", spriteProp->tintColor.z },
+				{ "tintColorW", spriteProp->tintColor.w },
 			};
 
 			// Dumped json object with required data for saving
@@ -1510,6 +1586,314 @@ namespace FlatEngine { namespace FlatGui {
 
 		// Close the file
 		file_obj.close();
+	}
+
+	std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path)
+	{
+		std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+		std::shared_ptr<Animation::S_Event> eventProperties;
+		std::shared_ptr<Animation::S_Transform> transformProperties;
+		std::shared_ptr<Animation::S_Sprite > spriteProperties;
+
+		// Save the path to the animationProperties struct
+		animationProperties->animationPath = path;
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Open file in in mode
+		file_obj.open(path, std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		if (file_obj.good())
+		{
+			// Go from string to json object
+			json fileContentJson = json::parse(fileContent);
+
+			if (fileContentJson["Animation Properties"][0] != "NULL")
+			{
+				// Getting data from the json 
+				// auto properties = fileContentJson["Animation Properties"];
+				// std::string name = properties[0]["name"];
+
+				// Set default values
+				animationProperties->animationName = "New Animation";
+
+				// Loop through the saved Properties in the JSON file
+				for (int i = 0; i < fileContentJson["Animation Properties"].size(); i++)
+				{
+					// Get data from the loaded object
+					json currentObjectJson = fileContentJson["Animation Properties"][i];
+
+					if (currentObjectJson.contains("Name"))
+						animationProperties->animationName = currentObjectJson["Name"];
+					if (currentObjectJson.contains("Length"))
+						animationProperties->animationLength = currentObjectJson["Length"];
+					if (currentObjectJson.contains("Loop"))
+						animationProperties->_loop = currentObjectJson["Loop"];
+					if (currentObjectJson.contains("Property"))
+					{
+						// Event property
+						if (currentObjectJson["Property"] == "Event")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Event> eventFrames = std::make_shared<Animation::S_Event>();
+									eventFrames->name = "Event";
+									if (currentObjectJson["Frames"][f]["functionName"] != "")
+										eventFrames->functionName = currentObjectJson["Frames"][f]["functionName"];
+									eventFrames->time = currentObjectJson["Frames"][f]["time"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->eventProperties.push_back(eventFrames);
+								}
+							}
+						}
+						// Transform property
+						else if (currentObjectJson["Property"] == "Transform")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Transform> transformFrames = std::make_shared<Animation::S_Transform>();
+									transformFrames->name = "Transform";
+									if (currentObjectJson["Frames"][f]["transformInterpType"] == Animation::InterpType::Lerp)
+										transformFrames->transformInterpType = Animation::InterpType::Lerp;
+									if (currentObjectJson["Frames"][f]["transformInterpType"] == Animation::InterpType::Slerp)
+										transformFrames->transformInterpType = Animation::InterpType::Slerp;
+									transformFrames->transformSpeed = currentObjectJson["Frames"][f]["transformSpeed"];
+									if (currentObjectJson["Frames"][f]["scaleInterpType"] == "Lerp")
+										transformFrames->scaleInterpType = Animation::InterpType::Lerp;
+									transformFrames->scaleSpeed = currentObjectJson["Frames"][f]["scaleSpeed"];
+									transformFrames->time = currentObjectJson["Frames"][f]["time"];
+									transformFrames->xMove = currentObjectJson["Frames"][f]["xMove"];
+									transformFrames->yMove = currentObjectJson["Frames"][f]["yMove"];
+									transformFrames->xScale = currentObjectJson["Frames"][f]["xScale"];
+									transformFrames->yScale = currentObjectJson["Frames"][f]["yScale"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->transformProperties.push_back(transformFrames);
+								}
+							}
+						}
+						// Sprite property
+						else if (currentObjectJson["Property"] == "Sprite")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									Vector4 tintColor = Vector4(1, 1, 1, 1);
+									std::shared_ptr<Animation::S_Sprite> spriteFrames = std::make_shared<Animation::S_Sprite>();
+									spriteFrames->name = "Sprite";
+									if (currentObjectJson["Frames"][f]["interpType"] == "Lerp")
+										spriteFrames->interpType = Animation::InterpType::Lerp;
+									spriteFrames->speed = currentObjectJson["Frames"][f]["speed"];
+									spriteFrames->time = currentObjectJson["Frames"][f]["time"];
+									spriteFrames->xOffset = currentObjectJson["Frames"][f]["xOffset"];
+									spriteFrames->yOffset = currentObjectJson["Frames"][f]["yOffset"];
+									spriteFrames->path = currentObjectJson["Frames"][f]["path"];
+									if (currentObjectJson["Frames"][f].contains("tintColorX"))
+										tintColor.x = currentObjectJson["Frames"][f]["tintColorX"];
+									if (currentObjectJson["Frames"][f].contains("tintColorY"))
+										tintColor.y = currentObjectJson["Frames"][f]["tintColorY"];
+									if (currentObjectJson["Frames"][f].contains("tintColorZ"))
+										tintColor.z = currentObjectJson["Frames"][f]["tintColorZ"];
+									if (currentObjectJson["Frames"][f].contains("tintColorW"))
+										tintColor.w = currentObjectJson["Frames"][f]["tintColorW"];
+									spriteFrames->tintColor = tintColor;
+
+									// Save the data to the animationProperties struct
+									animationProperties->spriteProperties.push_back(spriteFrames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Camera")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Camera> cameraFrames = std::make_shared<Animation::S_Camera>();
+									cameraFrames->name = "Camera";
+									cameraFrames->_isPrimaryCamera = currentObjectJson["Frames"][f]["_isPrimaryCamera"];
+									cameraFrames->time = currentObjectJson["Frames"][f]["time"];
+
+									animationProperties->cameraProperties.push_back(cameraFrames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Script")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Script> Frames = std::make_shared<Animation::S_Script>();
+									Frames->name = "Script";
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+
+									animationProperties->scriptProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Button")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Button> Frames = std::make_shared<Animation::S_Button>();
+									Frames->name = "Button";
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+
+									animationProperties->buttonProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Canvas")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Canvas> Frames = std::make_shared<Animation::S_Canvas>();
+									Frames->name = "Canvas";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+
+									animationProperties->canvasProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Audio")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Audio> Frames = std::make_shared<Animation::S_Audio>();
+									Frames->name = "Audio";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->_isMusic = currentObjectJson["Frames"][f]["_isMusic"];
+
+									animationProperties->audioProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "Text")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_Text> Frames = std::make_shared<Animation::S_Text>();
+									Frames->name = "Text";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->path = currentObjectJson["Frames"][f]["path"];
+									Frames->text = currentObjectJson["Frames"][f]["text"];
+									Frames->color = currentObjectJson["Frames"][f]["color"];
+
+									animationProperties->textProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "BoxCollider")
+						{
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_BoxCollider> Frames = std::make_shared<Animation::S_BoxCollider>();
+									Frames->name = "BoxCollider";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									animationProperties->boxColliderProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "CircleCollider")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_CircleCollider> Frames = std::make_shared<Animation::S_CircleCollider>();
+									Frames->name = "CircleCollider";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->circleColliderProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "RigidBody")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_RigidBody> Frames = std::make_shared<Animation::S_RigidBody>();
+									Frames->name = "RigidBody";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+									Frames->interpType = currentObjectJson["Frames"][f]["interpType"];
+									Frames->speed = currentObjectJson["Frames"][f]["speed"];
+									Frames->gravityScale = currentObjectJson["Frames"][f]["gravityScale"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->rigidBodyProperties.push_back(Frames);
+								}
+							}
+						}
+						else if (currentObjectJson["Property"] == "CharacterController")
+						{
+							// Check Frames key exists
+							if (currentObjectJson.contains("Frames"))
+							{
+								for (int f = 0; f < currentObjectJson["Frames"].size(); f++)
+								{
+									std::shared_ptr<Animation::S_CharacterController> Frames = std::make_shared<Animation::S_CharacterController>();
+									Frames->name = "CharacterController";
+									Frames->time = currentObjectJson["Frames"][f]["time"];
+									Frames->_isActive = currentObjectJson["Frames"][f]["_isActive"];
+
+									// Save the data to the animationProperties struct
+									animationProperties->characterControllerProperties.push_back(Frames);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return animationProperties;
 	}
 }	
 }

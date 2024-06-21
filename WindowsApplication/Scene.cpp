@@ -131,6 +131,10 @@ namespace FlatEngine
 			parent->RemoveChild(sceneObjectID);
 		}
 
+		// To be updated right after GameObject and its components are deleted
+		bool _hadRigidBody = false;
+		bool _hadCollider = false;
+
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
 		for (std::shared_ptr<Component> component : objectToDelete->GetComponents())
 		{
@@ -145,18 +149,23 @@ namespace FlatEngine
 			}
 			if (component->GetTypeString() == "RigidBody")
 			{
-				long rigidBodyID = component->GetID();
-				gameLoop->RemoveRigidBody(rigidBodyID);
+				//gameLoop->RemoveRigidBody(component->GetID());
+				_hadRigidBody = true;
 			}
-			if (component->GetTypeString() == "Collider")
+			if (component->GetTypeString() == "CircleCollider" || component->GetTypeString() == "BoxCollider")
 			{
-				long colliderID = component->GetID();
-				gameLoop->RemoveCollider(colliderID);
+				//gameLoop->RemoveCollider(component->GetID());
+				_hadCollider = true;
 			}
 		}
 
 		// Check for children and delete those as well
 		Scene::DeleteChildrenAndSelf(objectToDelete);
+
+		if (_hadRigidBody)
+			gameLoop->UpdateActiveRigidBodies();
+		if (_hadCollider)
+			gameLoop->UpdateActiveColliders();
 	}
 
 	// Recursive

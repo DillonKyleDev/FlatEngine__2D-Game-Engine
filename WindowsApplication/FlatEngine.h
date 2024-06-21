@@ -41,6 +41,7 @@ namespace FlatEngine
 	class Logger;
 	class Scene;
 	class Collider;
+	class TagList;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -365,6 +366,7 @@ namespace FlatEngine
 		extern ImGuiChildFlags resizeChildFlags;
 		extern ImGuiChildFlags headerFlags;
 		extern ImGuiTableFlags tableFlags;
+		extern ImGuiTableFlags resizeableTableFlags;
 
 		// Scene view
 		extern float SCENE_VIEWPORT_WIDTH;
@@ -458,12 +460,13 @@ namespace FlatEngine
 		extern void PopMenuStyles();
 		extern void PushTableStyles();
 		extern void PopTableStyles();
-		extern bool PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);
+		extern bool PushTable(std::string id, int columns, ImGuiTableFlags flags = tableFlags);		
 		extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float &value, float increment, float min, float max);
+		extern bool RenderTagListTableRow(std::string id, std::string fieldName, std::shared_ptr<FlatEngine::TagList> &tagList);
 		extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
 		extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool &_value);
 		extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
-		extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value);
+		extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 		extern void PopTable();
 		extern bool RenderInput(std::string id, std::string label, std::string &value, bool _canOpenFiles = false, ImGuiInputTextFlags flags = 0);
 		extern bool RenderButton(std::string text, Vector2 size = Vector2(0,0), float rounding = 1, Vector4 color = buttonColor, Vector4 hoverColor = buttonHoveredColor, Vector4 activeColor = buttonActiveColor);

@@ -174,34 +174,19 @@ namespace FlatEngine { namespace FlatGui {
 			PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
-				if (ImGui::MenuItem("Player", NULL, tagList->HasTag("Player")))
-					tagList->ToggleTag("Player");
-				if (ImGui::MenuItem("Enemy", NULL,  tagList->HasTag("Enemy")))
-					tagList->ToggleTag("Enemy");
-				if (ImGui::MenuItem("Npc", NULL,  tagList->HasTag("Npc")))
-					tagList->ToggleTag("Npc");
-				if (ImGui::MenuItem("OnlyForPlayer", NULL,  tagList->HasTag("OnlyForPlayer")))
-					tagList->ToggleTag("OnlyForPlayer");
-				if (ImGui::MenuItem("OnlyForEnemy", NULL,  tagList->HasTag("OnlyForEnemy")))
-					tagList->ToggleTag("OnlyForEnemy");
-				if (ImGui::MenuItem("OnlyForNpc", NULL,  tagList->HasTag("OnlyForNpc")))
-					tagList->ToggleTag("OnlyForNpc");
-				if (ImGui::MenuItem("IgnorePlayer", NULL,  tagList->HasTag("IgnorePlayer")))
-					tagList->ToggleTag("IgnorePlayer");
-				if (ImGui::MenuItem("IgnoreEnemy", NULL,  tagList->HasTag("IgnoreEnemy")))
-					tagList->ToggleTag("IgnoreEnemy");
-				if (ImGui::MenuItem("IgnoreNpc", NULL,  tagList->HasTag("IgnoreNpc")))
-					tagList->ToggleTag("IgnoreNpc");
-				if (ImGui::MenuItem("Projectile", NULL,  tagList->HasTag("Projectile")))
-					tagList->ToggleTag("Projectile");
-				if (ImGui::MenuItem("Terrain", NULL,  tagList->HasTag("Terrain")))
-					tagList->ToggleTag("Terrain");
-				if (ImGui::MenuItem("InteractableItem", NULL,  tagList->HasTag("InteractableItem")))
-					tagList->ToggleTag("InteractableItem");
-				if (ImGui::MenuItem("InteractableObject", NULL,  tagList->HasTag("InteractableObject")))
-					tagList->ToggleTag("InteractableObject");
-				if (ImGui::MenuItem("Item", NULL,  tagList->HasTag("Item")))
-					tagList->ToggleTag("Item");
+				std::string labels[2] = { "Tag", "Ignore" };
+				if (PushTable("TagsTable", 3, resizeableTableFlags))
+				{
+					RenderTextTableRow("TagsTableHeaders", "Tag", "Has", "Ignore");
+
+					for (std::pair<std::string, bool> tag : tagList->GetTagsMap())
+					{
+						std::string tableRowId = tag.first + "TagCheckboxTableRow";
+						RenderTagListTableRow(tableRowId.c_str(), tag.first, tagList);
+					}
+				
+					PopTable();
+				}
 				ImGui::EndPopup();
 			}
 			PopMenuStyles();

@@ -3,6 +3,7 @@
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "CompositeCollider.h"
+#include "Animation.h"
 
 
 EnemyController::EnemyController(long ownerID) : GameScript(ownerID)
@@ -27,7 +28,29 @@ EnemyController::~EnemyController()
 
 void OnCollisionEnter(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
 {
-	FlatEngine::LogString(collidedWith->GetName());
+	//FlatEngine::LogString(collidedWith->GetName());
+}
+
+void OnTakeDamage(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> damagedBy, float damageAmount)
+{
+	if (thisObject->HasComponent("Animation"))
+	{
+		thisObject->GetAnimationComponent()->Play();
+	}
+}
+
+void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> killedBy)
+{
+	if (thisObject->HasComponent("Animation"))
+	{
+		thisObject->GetAnimationComponent()->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/explosion2.json");
+		thisObject->GetAnimationComponent()->Play();
+	}
+}
+
+void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject)
+{
+	FlatEngine::DeleteGameObject(thisObject->GetID());
 }
 
 void EnemyController::Start()
@@ -42,9 +65,8 @@ void EnemyController::Start()
 	audio = GetOwner()->GetAudioComponent();
 	//audio->SetPath("assets/audio/lazerFire.wav");
 	//audio->SetIsMusic(false);
-	if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
-		whipArm = GetOwner()->GetFirstChild();
-	animator = whipArm->GetAnimationComponent();
+	animator = GetOwner()->GetAnimationComponent();
+	animator->AddEventFunction("DestroySelf", DestroySelf);
 
 	//boxCollider->SetOnCollisionEnter(OnCollisionEnter);
 	//for (std::shared_ptr<FlatEngine::CircleCollider> circleCollider : circleColliders)
@@ -56,6 +78,10 @@ void EnemyController::Start()
 	//	compositeCollider = GetOwner()->GetCompositeCollider();
 	//
 	//compositeCollider->SetOnCollisionEnter(OnCollisionEnter);
+
+	// HEALTH
+	health->SetOnTakeDamage(OnTakeDamage);
+	health->SetOnDeath(OnDeath);
 }
 
 void EnemyController::Update(float deltaTime)

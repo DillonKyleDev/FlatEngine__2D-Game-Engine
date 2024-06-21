@@ -100,6 +100,17 @@ namespace FlatEngine
 		return animationPath;
 	}
 
+	void Animation::AddEventFunction(std::string name, std::function<void(std::shared_ptr<GameObject>)> callback)
+	{
+		std::pair <std::string, std::function<void(std::shared_ptr<GameObject>)>> functionPair = std::pair <std::string, std::function<void(std::shared_ptr<GameObject>)>>(name, callback);
+		eventFunctions.emplace(functionPair);
+	}
+
+	std::map<std::string, std::function<void(std::shared_ptr<GameObject>)>> Animation::GetEventFunctions()
+	{
+		return eventFunctions;
+	}
+
 
 	void Animation::LerpToCenter()
 	{
@@ -154,6 +165,21 @@ namespace FlatEngine
 		// While the animation is not over
 		if (props->animationLength > ellapsedTime - animationStartTime)
 		{
+			// Event Animation Frames
+			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProperties)
+			{
+				if (!eventFrame->_fired && (ellapsedTime >= animationStartTime + eventFrame->time || eventFrame->time == 0))
+				{
+					for (std::pair<std::string, std::function<void(std::shared_ptr<GameObject>)>> eventFunction : eventFunctions)
+					{
+						if (eventFunction.first == eventFrame->functionName)
+						{
+							eventFunction.second(GetParent());
+							eventFrame->_fired = true;
+						}
+					}
+				}
+			}
 			// Transform Animation Frames
 			for (std::vector<std::shared_ptr<S_Transform>>::iterator transformFrame = props->transformProperties.begin(); transformFrame != props->transformProperties.end();)
 			{ 
@@ -214,6 +240,7 @@ namespace FlatEngine
 						sprite->SetTexture(spriteFrame->path);
 					Vector2 spriteOffset = sprite->GetOffset();
 					sprite->SetOffset(Vector2(spriteFrame->xOffset, spriteFrame->yOffset));
+					sprite->SetTintColor(spriteFrame->tintColor);
 					break;
 				}
 			}

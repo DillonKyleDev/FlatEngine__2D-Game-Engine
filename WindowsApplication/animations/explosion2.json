@@ -8,10 +8,32 @@
         {
             "Frames": [
                 {
+                    "functionName": "DestroySelf",
+                    "time": 540.361083984375
+                }
+            ],
+            "Property": "Event"
+        },
+        {
+            "Frames": [
+                {
+                    "functionName": "",
+                    "time": 600.0
+                }
+            ],
+            "Property": "Event"
+        },
+        {
+            "Frames": [
+                {
                     "interpType": 0,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_1.png",
                     "speed": 0.10000000149011612,
                     "time": 7.575656890869141,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -25,6 +47,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_4.png",
                     "speed": 0.10000000149011612,
                     "time": 221.05877685546875,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -38,6 +64,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_1.png",
                     "speed": 0.10000000149011612,
                     "time": 55.47115707397461,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -51,6 +81,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_3.png",
                     "speed": 0.10000000149011612,
                     "time": 165.3046417236328,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -64,6 +98,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_2.png",
                     "speed": 0.10000000149011612,
                     "time": 109.55055236816406,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -77,6 +115,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_5.png",
                     "speed": 0.10000000149011612,
                     "time": 282.4308166503906,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -90,6 +132,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_6.png",
                     "speed": 0.10000000149011612,
                     "time": 340.9940490722656,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }
@@ -103,6 +149,10 @@
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\explosion2\\explosion_7.png",
                     "speed": 0.10000000149011612,
                     "time": 393.9393615722656,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "xOffset": 0.0,
                     "yOffset": 0.0
                 }

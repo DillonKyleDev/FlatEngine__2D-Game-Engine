@@ -8,17 +8,26 @@ namespace FlatEngine {
 		tags.emplace("Player", false);
 		tags.emplace("Enemy", false);
 		tags.emplace("Npc", false);
-		tags.emplace("OnlyForPlayer", false);
-		tags.emplace("OnlyForEnemy", false);
-		tags.emplace("OnlyForNpc", false);
-		tags.emplace("IgnorePlayer", false);
-		tags.emplace("IgnoreEnemy", false);
-		tags.emplace("IgnoreNpc", false);
-		tags.emplace("Projectile", false);
 		tags.emplace("Terrain", false);
+		tags.emplace("PlayerDamage", false);
+		tags.emplace("EnemyDamage", false);
+		tags.emplace("EnvironmentalDamage", false);
+		tags.emplace("Projectile", false);
 		tags.emplace("InteractableItem", false);
 		tags.emplace("InteractableObject", false);
 		tags.emplace("Item", false);
+
+		ignoreTags.emplace("Player", false);
+		ignoreTags.emplace("Enemy", false);
+		ignoreTags.emplace("Npc", false);
+		ignoreTags.emplace("Terrain", false);
+		ignoreTags.emplace("PlayerDamage", false);
+		ignoreTags.emplace("EnemyDamage", false);
+		ignoreTags.emplace("EnvironmentalDamage", false);
+		ignoreTags.emplace("Projectile", false);
+		ignoreTags.emplace("InteractableItem", false);
+		ignoreTags.emplace("InteractableObject", false);
+		ignoreTags.emplace("Item", false);
 	}
 
 	TagList::TagList(const std::shared_ptr<TagList> toCopy)
@@ -56,6 +65,25 @@ namespace FlatEngine {
 		else return false;
 	}
 
+	void TagList::SetIgnore(std::string tag, bool _value)
+	{
+		if (ignoreTags.count(tag) > 0)
+			ignoreTags.at(tag) = _value;
+	}
+
+	void TagList::ToggleIgnore(std::string tag)
+	{
+		if (ignoreTags.count(tag) > 0)
+			ignoreTags.at(tag) = !ignoreTags.at(tag);
+	}
+
+	bool TagList::IgnoresTag(std::string tag)
+	{
+		if (ignoreTags.count(tag) > 0)
+			return ignoreTags.at(tag);
+		else return false;
+	}
+
 	void TagList::CreateNewTag(std::string tagName, bool _value)
 	{
 		tags.emplace(tagName, _value);
@@ -70,6 +98,22 @@ namespace FlatEngine {
 	std::map<std::string, bool> TagList::GetTagsMap()
 	{
 		return tags;
+	}
+
+	std::map<std::string, bool> TagList::GetIgnoreTagsMap()
+	{
+		return ignoreTags;
+	}
+
+	std::vector<std::string> TagList::GetIgnoredTags()
+	{
+		std::vector<std::string> ignoredTags;
+		for (std::pair<std::string, bool> ignoreTag : ignoreTags)
+		{
+			if (ignoreTag.second)
+				ignoredTags.push_back(ignoreTag.first);
+		}
+		return ignoredTags;
 	}
 
 }

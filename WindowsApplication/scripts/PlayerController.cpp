@@ -19,6 +19,7 @@
 #include "BlasterRound.h"
 #include "Animation.h"
 #include "Audio.h"
+#include "Health.h"
 
 
 PlayerController::PlayerController(long ownerID) : GameScript(ownerID)
@@ -40,6 +41,45 @@ PlayerController::~PlayerController()
 {
 }
 
+void WhipAttackStart(std::shared_ptr<FlatEngine::GameObject> thisObject)
+{	
+	thisObject->GetBoxCollider()->SetActive(true);
+}
+
+void WhipAttackEnd(std::shared_ptr<FlatEngine::GameObject> thisObject)
+{	
+	thisObject->GetBoxCollider()->SetActive(false);
+}
+
+void OnWhipAttackConnect(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
+{
+	if (collidedWith->HasComponent("RigidBody") && collidedWith->HasComponent("Transform"))
+	{
+		Vector2 collidedPosition = collidedWith->GetTransformComponent()->GetTruePosition();
+		Vector2 thisPosition = thisObject->GetTransformComponent()->GetTruePosition();
+		float awayFromMeX = collidedPosition.x - thisPosition.x;
+		Vector2 normalizedAway = Vector2(0, 1);
+		if (awayFromMeX > 0)
+			normalizedAway.x = 1;
+		else
+			normalizedAway.x = -1;
+
+		collidedWith->GetRigidBody()->AddForce(normalizedAway, 500);
+
+		thisObject->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Spark13.wav");
+		thisObject->GetAudioComponent()->Play();
+	}
+
+	if (collidedWith->HasComponent("Script"))
+	{
+		std::shared_ptr<Health> enemyHealth = std::static_pointer_cast<Health>(collidedWith->GetGameScriptByName("Health"));
+		if (enemyHealth != nullptr)
+		{
+			enemyHealth->Damage(thisObject, 20);
+		}
+	}
+}
+
 void PlayerController::Start()
 {
 	health = std::static_pointer_cast<Health>(GetOwner()->GetGameScriptByName("Health"));
@@ -52,9 +92,14 @@ void PlayerController::Start()
 	audio = GetOwner()->GetAudioComponent();
 	audio->SetPath("assets/audio/lazerFire.wav");
 	audio->SetIsMusic(false);
+
+	// Whip arm
 	if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
 		whipArm = GetOwner()->GetFirstChild();
 	animator = whipArm->GetAnimationComponent();
+	animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
+	animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
+	whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
 }
 
 void PlayerController::Update(float deltaTime)
@@ -95,6 +140,8 @@ void PlayerController::HandleInput()
 		{			
 			animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
 			animator->Play();
+			whipArm->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Swoosh.wav");
+			whipArm->GetAudioComponent()->Play();
 		}
 		if (mappingContext->Fired("IA_Slash"))
 		{

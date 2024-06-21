@@ -40,7 +40,10 @@ namespace FlatEngine
 	void Audio::SetPath(std::string newPath)
 	{
 		path = newPath;
-		LoadEffect(newPath);
+		if (_isMusic)
+			LoadMusic(path);
+		else
+			LoadEffect(path);
 	}
 
 	std::string Audio::GetPath()

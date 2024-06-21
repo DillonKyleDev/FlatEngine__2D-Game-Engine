@@ -51,6 +51,7 @@ namespace FlatEngine {
 		std::string deltaTime = "---";
 		std::string framesCounted = "---";
 		std::string sdlTicks = "---";
+		std::string numberOfColliderPairs = "---";
 
 		if (FlatEngine::GameLoopStarted())
 		{
@@ -59,6 +60,7 @@ namespace FlatEngine {
 			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
 			framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());
 			sdlTicks = std::to_string(FlatEngine::GetEngineTime());
+			numberOfColliderPairs = std::to_string(gameLoop->GetColliderPairs().size());
 		}
 
 		// Render runtime data
@@ -70,9 +72,30 @@ namespace FlatEngine {
 			RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
 			RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
 			RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+			RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
 			PopTable();
 		}
 
+		static bool _showColliderPairs = true;
+		RenderCheckbox("Show Collider Pairs", _showColliderPairs);
+		if (_showColliderPairs)
+		{
+			// Render runtime data
+			if (PushTable("##RunTimeData", 2))
+			{
+				RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
+
+				for (std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> pair : gameLoop->GetColliderPairs())
+				{
+					std::string col1String = pair.first->GetParent()->GetName();
+					std::string col2String = pair.second->GetParent()->GetName();
+					std::string TableRowID = "##ColliderPairID-" + std::to_string(pair.first->GetParent()->GetID()) + std::to_string(pair.second->GetParent()->GetID());					
+
+					RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
+				}
+				PopTable();
+			}
+		}
 
 		RenderCheckbox("Animate", anim);
 		if (anim)

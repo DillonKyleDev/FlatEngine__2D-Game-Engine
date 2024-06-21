@@ -1,0 +1,43 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 200.0,
+                    "tintColorW": 1.0,
+                    "tintColorX": 0.529411792755127,
+                    "tintColorY": 0.0,
+                    "tintColorZ": 0.0,
+                    "xOffset": 8.0,
+                    "yOffset": 12.5
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 1320.0,
+                    "tintColorW": 1.0,
+                    "tintColorX": 0.0,
+                    "tintColorY": 0.0,
+                    "tintColorZ": 0.0,
+                    "xOffset": 8.0,
+                    "yOffset": 12.5
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}

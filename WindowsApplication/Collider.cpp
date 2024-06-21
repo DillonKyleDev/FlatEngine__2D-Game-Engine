@@ -205,44 +205,37 @@ namespace FlatEngine
 		// If they are close enough to check for collision ( actually colliding if they are both CircleColliders )
 		if (centerDistance < collider1->GetActiveRadiusGrid() + collider2->GetActiveRadiusGrid())
 		{
-			if (!(collider1->GetParent()->HasTag("IgnorePlayer") && collider2->GetParent()->HasTag("Player")) &&
-				!(collider1->GetParent()->HasTag("Player") && collider2->GetParent()->HasTag("IgnorePlayer")) && 
-				!(collider1->GetParent()->HasTag("IgnoreEnemy") && collider2->GetParent()->HasTag("Enemy")) &&
-				!(collider1->GetParent()->HasTag("Enemy") && collider2->GetParent()->HasTag("IgnoreEnemy")) &&
-				!(collider1->GetParent()->HasTag("Projectile") && collider2->GetParent()->HasTag("Projectile")))
+			// Both BoxColliders
+			if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "BoxCollider")
 			{
-				// Both BoxColliders
-				if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "BoxCollider")
-				{
-					std::shared_ptr<FlatEngine::BoxCollider> boxCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-					std::shared_ptr<FlatEngine::BoxCollider> boxCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+				std::shared_ptr<FlatEngine::BoxCollider> boxCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+				std::shared_ptr<FlatEngine::BoxCollider> boxCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
 
-					_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
-				}
-				// First CircleCollider second BoxCollider
-				else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "BoxCollider")
-				{
-					std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider1);
-					std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+				_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
+			}
+			// First CircleCollider second BoxCollider
+			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "BoxCollider")
+			{
+				std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider1);
+				std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
 
-					_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
-				}
-				// First BoxCollider second CircleCollider
-				else if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "CircleCollider")
-				{
-					std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-					std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider2);
+				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+			}
+			// First BoxCollider second CircleCollider
+			else if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "CircleCollider")
+			{
+				std::shared_ptr<FlatEngine::BoxCollider> boxCol = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+				std::shared_ptr<FlatEngine::CircleCollider> circleCol = std::static_pointer_cast<FlatEngine::CircleCollider>(collider2);
 
-					_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
-				}
-				// Both CircleColliders ( already true if made if past activeRadius check )
-				else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "CircleCollider")
-				{
-					std::shared_ptr<FlatEngine::BoxCollider> circleCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
-					std::shared_ptr<FlatEngine::BoxCollider> circleCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
+				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+			}
+			// Both CircleColliders ( already true if made if past activeRadius check )
+			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "CircleCollider")
+			{
+				std::shared_ptr<FlatEngine::BoxCollider> circleCol1 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider1);
+				std::shared_ptr<FlatEngine::BoxCollider> circleCol2 = std::static_pointer_cast<FlatEngine::BoxCollider>(collider2);
 
-					_colliding = true;
-				}
+				_colliding = true;
 			}
 		}
 

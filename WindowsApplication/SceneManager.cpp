@@ -194,22 +194,34 @@ namespace FlatEngine
 
 		// Declare tags object for GameObject Tags	
 		std::map <std::string, bool> tagList = currentObject->GetTagList()->GetTagsMap();
+		std::map <std::string, bool> ignoreTagList = currentObject->GetTagList()->GetIgnoreTagsMap();
 
 		json tagsObjectJson = json::object({
 			{ "Player", tagList.at("Player") },
 			{ "Enemy", tagList.at("Enemy") },
 			{ "Npc", tagList.at("Npc") },
-			{ "OnlyForPlayer", tagList.at("OnlyForPlayer") },
-			{ "OnlyForEnemy", tagList.at("OnlyForEnemy") },
-			{ "OnlyForNpc", tagList.at("OnlyForNpc") },
-			{ "IgnorePlayer", tagList.at("IgnorePlayer") },
-			{ "IgnoreEnemy", tagList.at("IgnoreEnemy") },
-			{ "IgnoreNpc", tagList.at("IgnoreNpc") },
-			{ "Projectile", tagList.at("Projectile") },
 			{ "Terrain", tagList.at("Terrain") },
+			{ "PlayerDamage", tagList.at("PlayerDamage") },
+			{ "EnemyDamage", tagList.at("EnemyDamage") },
+			{ "EnvironmentalDamage", tagList.at("EnvironmentalDamage") },
+			{ "Projectile", tagList.at("Projectile") },
 			{ "InteractableItem", tagList.at("InteractableItem") },
 			{ "InteractableObject", tagList.at("InteractableObject") },
 			{ "Item", tagList.at("Item") },
+		});
+
+		json ignoreTagsObjectJson = json::object({
+			{ "Player", ignoreTagList.at("Player") },
+			{ "Enemy", ignoreTagList.at("Enemy") },
+			{ "Npc", ignoreTagList.at("Npc") },
+			{ "Terrain", ignoreTagList.at("Terrain") },
+			{ "PlayerDamage", ignoreTagList.at("PlayerDamage") },
+			{ "EnemyDamage", ignoreTagList.at("EnemyDamage") },
+			{ "EnvironmentalDamage", ignoreTagList.at("EnvironmentalDamage") },
+			{ "Projectile", ignoreTagList.at("Projectile") },
+			{ "InteractableItem", ignoreTagList.at("InteractableItem") },
+			{ "InteractableObject", ignoreTagList.at("InteractableObject") },
+			{ "Item", ignoreTagList.at("Item") },
 		});
 
 		// Get object name
@@ -231,6 +243,7 @@ namespace FlatEngine
 			{ "children", childrenArray },
 			{ "components", componentsArray },
 			{ "tags", tagsObjectJson },
+			{ "ignoreTags", ignoreTagsObjectJson },
 		});
 
 		return gameObjectJson;
@@ -333,20 +346,33 @@ namespace FlatEngine
 				tags->SetTag("Player", currentObjectJson["tags"]["Player"]);
 				tags->SetTag("Enemy", currentObjectJson["tags"]["Enemy"]);
 				tags->SetTag("Npc", currentObjectJson["tags"]["Npc"]);
-				tags->SetTag("OnlyForPlayer", currentObjectJson["tags"]["OnlyForPlayer"]);
-				tags->SetTag("OnlyForEnemy", currentObjectJson["tags"]["OnlyForEnemy"]);
-				tags->SetTag("OnlyForNpc", currentObjectJson["tags"]["OnlyForNpc"]);
-				tags->SetTag("IgnorePlayer", currentObjectJson["tags"]["IgnorePlayer"]);
-				tags->SetTag("IgnoreEnemy", currentObjectJson["tags"]["IgnoreEnemy"]);
-				tags->SetTag("IgnoreNpc", currentObjectJson["tags"]["IgnoreNpc"]);
-				tags->SetTag("Projectile", currentObjectJson["tags"]["Projectile"]);
 				tags->SetTag("Terrain", currentObjectJson["tags"]["Terrain"]);
+				tags->SetTag("PlayerDamage", currentObjectJson["tags"]["PlayerDamage"]);
+				tags->SetTag("EnemyDamage", currentObjectJson["tags"]["EnemyDamage"]);
+				tags->SetTag("EnvironmentalDamage", currentObjectJson["tags"]["EnvironmentalDamage"]);
+				tags->SetTag("Projectile", currentObjectJson["tags"]["Projectile"]);			
 				tags->SetTag("InteractableItem", currentObjectJson["tags"]["InteractableItem"]);
 				tags->SetTag("InteractableObject", currentObjectJson["tags"]["InteractableObject"]);
 				tags->SetTag("Item", currentObjectJson["tags"]["Item"]);
 			}
 			else
 				FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for 'tags' in object: " + loadedName);
+			if (currentObjectJson.contains("ignoreTags"))
+			{
+				tags->SetIgnore("Player", currentObjectJson["ignoreTags"]["Player"]);
+				tags->SetIgnore("Enemy", currentObjectJson["ignoreTags"]["Enemy"]);
+				tags->SetIgnore("Npc", currentObjectJson["ignoreTags"]["Npc"]);
+				tags->SetIgnore("Terrain", currentObjectJson["ignoreTags"]["Terrain"]);
+				tags->SetIgnore("PlayerDamage", currentObjectJson["ignoreTags"]["PlayerDamage"]);
+				tags->SetIgnore("EnemyDamage", currentObjectJson["ignoreTags"]["EnemyDamage"]);
+				tags->SetIgnore("EnvironmentalDamage", currentObjectJson["ignoreTags"]["EnvironmentalDamage"]);
+				tags->SetIgnore("Projectile", currentObjectJson["ignoreTags"]["Projectile"]);
+				tags->SetIgnore("InteractableItem", currentObjectJson["ignoreTags"]["InteractableItem"]);
+				tags->SetIgnore("InteractableObject", currentObjectJson["ignoreTags"]["InteractableObject"]);
+				tags->SetIgnore("Item", currentObjectJson["ignoreTags"]["Item"]);
+			}
+			else
+				FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for 'ignoreTags' in object: " + loadedName);
 
 			loadedObject->SetTagList(tags);
 
@@ -819,7 +845,7 @@ namespace FlatEngine
 
 					// Default values
 					bool _isMusic = false;
-					std::string path = "";
+					std::string audioPath = "";
 
 
 					// Load ID
@@ -846,7 +872,7 @@ namespace FlatEngine
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_isMusic' in object: " + loadedName);
 
 					if (currentObjectJson["components"][j].contains("path"))
-						path = currentObjectJson["components"][j]["path"];
+						audioPath = currentObjectJson["components"][j]["path"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'path' in object: " + loadedName);
 
@@ -854,12 +880,8 @@ namespace FlatEngine
 					newAudio->SetID(id);
 					newAudio->SetCollapsed(_isCollapsed);
 					newAudio->SetActive(_isActive);
-					newAudio->SetPath(path);
 					newAudio->SetIsMusic(_isMusic);
-					if (_isMusic)
-						newAudio->LoadMusic(path);
-					else
-						newAudio->LoadEffect(path);
+					newAudio->SetPath(audioPath);
 				}
 				else if (type == "Text")
 				{

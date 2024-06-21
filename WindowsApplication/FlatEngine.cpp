@@ -96,14 +96,14 @@ namespace FlatEngine
 		}
 
 		float renderStartTime = 0;
-		static double frameStart = FlatEngine::GetEngineTime();
+		static double frameStart = GetEngineTime();
 
 		if (_isDebugMode)
-			renderStartTime = (float)FlatEngine::GetEngineTime(); // Profiler
+			renderStartTime = (float)GetEngineTime(); // Profiler
 		_hasQuit = _closeProgram;
 		FlatGui::Render(_hasQuit);
 		if (_isDebugMode)
-			AddProcessData("Render", (float)FlatEngine::GetEngineTime() - renderStartTime); // Profiler
+			AddProcessData("Render", (float)GetEngineTime() - renderStartTime); // Profiler
 
 
 		//// If Release - Start the Game Loop
@@ -116,17 +116,17 @@ namespace FlatEngine
 			// Profiler
 			float updateLoopStart = 0;
 			static float updateLoopEnd = 0;
-			if (FlatEngine::_isDebugMode)
+			if (_isDebugMode)
 			{
 				// Save time before Update starts
-				updateLoopStart = (float)FlatEngine::GetEngineTime();
+				updateLoopStart = (float)GetEngineTime();
 				// Get hang time of everything after Update Loop for profiler
 				float everythingElseHangTime = updateLoopStart - updateLoopEnd;
 				AddProcessData("Not GameLoop", everythingElseHangTime);
 				updateLoopEnd = updateLoopStart;
 			}
 
-			double frameTime = (FlatEngine::GetEngineTime() - frameStart) / 1000; // actual deltaTime (in seconds)
+			double frameTime = (GetEngineTime() - frameStart) / 1000; // actual deltaTime (in seconds)
 
 			// Physics Update Version 1
 			if (!gameLoop->IsGamePaused())
@@ -136,39 +136,33 @@ namespace FlatEngine
 			{
 				while (gameLoop->accumulator >= gameLoop->deltaTime)
 				{
-					float t0 = GetEngineTime();
+					//float t0 = GetEngineTime();
 					FlatGui::HandleEvents(_hasQuit);
 					GameLoopUpdate();
 					gameLoop->SetFrameSkipped(false);
 
 					gameLoop->time += gameLoop->deltaTime;
 					gameLoop->accumulator -= gameLoop->deltaTime;
-					float t1 = GetEngineTime() - t0;
+					//float t1 = GetEngineTime() - t0;
 					//LogFloat(t1, "T1: ");
 				}
 			}
 
 			// Get time it took to get back to GameLoopUpdate()
-			frameStart = (double)FlatEngine::GetEngineTime();
-
-			//else
-			//{
-			//	FlatGui::HandleEvents(_hasQuit);
-			//	gameLoop->UpdateScripts(); // Because we still need to react to input every frame
-			//}
+			frameStart = (double)GetEngineTime();
 
 			// Artificially slow GameLoop if frameTime is less than 
 			if (!loadedProject->IsVsyncEnabled() && frameTime < GetDeltaTime())
 				SDL_Delay(GetDeltaTime() - frameTime);
 
 			// Profiler
-			if (FlatEngine::_isDebugMode)
+			if (_isDebugMode)
 			{
 				// Get hang time of Update Loop for profiler
-				float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
+				float hangTime = (float)GetEngineTime() - updateLoopStart;
 				AddProcessData("GameLoop (variable executions)", hangTime);
 				// Save time after update finishes
-				updateLoopEnd = (float)FlatEngine::GetEngineTime();
+				updateLoopEnd = (float)GetEngineTime();
 			}
 
 			// Physics update V2
@@ -202,6 +196,10 @@ namespace FlatEngine
 		}
 		else
 			FlatGui::HandleEvents(_hasQuit);
+
+		// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a stutter on first starting gameloop
+		if (!gameLoop->IsStarted())
+			frameStart = GetEngineTime();
 
 		FlatGui::RenderClear();
 	}
@@ -275,7 +273,7 @@ namespace FlatEngine
 			{
 				std::vector<std::shared_ptr<GameObject>> animatorObjects = std::vector<std::shared_ptr<GameObject>>();
 				animatorObjects.clear();
-				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, GetLoadedScene()->GetAnimatorPreviewObjects(), -1);
+				objectForFocusedAnimation = std::make_shared<GameObject>(GetObjectById(ID), animatorObjects, GetLoadedScene()->GetSceneObjects(), -1);
 				std::shared_ptr<Transform> transform = objectForFocusedAnimation->GetTransformComponent();
 				transform->SetPosition(Vector2(0,0));
 				animatorObjects.push_back(objectForFocusedAnimation);

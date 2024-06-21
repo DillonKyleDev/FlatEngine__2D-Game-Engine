@@ -15,22 +15,26 @@ public:
 	void SetCurrentHealth(int newHealth);
 	int GetTotalHealth();
 	void SetTotalHealth(int newTotalHealth);
-	void Damage(int amount);
-	void Heal(int amount);
-	void Revive(int healthRecovered);
+	void Damage(std::shared_ptr<FlatEngine::GameObject> damagedBy, int amount);
+	void Heal(std::shared_ptr<FlatEngine::GameObject> healedBy, int amount);
+	void Revive(std::shared_ptr<FlatEngine::GameObject> revivedBy, int healthRecovered);
 
+	void SetOnTakeDamage(std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> damagedBy, float damageAmount)> callback);
 	void SetOnDeath(std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> killedBy)> callback);
-	void SetOnRevive(std::function<void(std::shared_ptr<FlatEngine::GameObject> self)> callback);
+	void SetOnRevive(std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> revivedBy, int healthRecovered)> callback);
+	std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> damagedBy, float damageAmount)> OnTakeDamage;
 	std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> killedBy)> OnDeath;
-	std::function<void(std::shared_ptr<FlatEngine::GameObject> self)> OnRevive;
+	std::function<void(std::shared_ptr<FlatEngine::GameObject> self, std::shared_ptr<FlatEngine::GameObject> revivedBy, int healthRecovered)> OnRevive;
 	bool OnDeathSet();
 	bool OnReviveSet();
+	void SetOnTakeDamageSet(bool _set);
 	void SetOnDeathSet(bool _set);
 	void SetOnReviveSet(bool _set);
 
 private:
 	int totalHealth;
 	int currentHealth;
+	bool _onTakeDamageSet;
 	bool _onDeathSet;
 	bool _onReviveSet;
 };

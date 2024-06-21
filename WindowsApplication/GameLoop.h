@@ -22,6 +22,7 @@ namespace FlatEngine
 		void RemoveRigidBody(long rigidBodyID);
 		void RemoveCollider(long colliderID);
 		void UpdateActiveColliders();
+		std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> GetColliderPairs();
 		void UpdateActiveRigidBodies();
 		void Update();
 		void UpdateScripts();
@@ -55,7 +56,6 @@ namespace FlatEngine
 		int framesCounted;
 		double pausedTime;
 		double activeTime;
-
 		bool _gamePaused;
 
 		std::shared_ptr<GameManager> gameManager;

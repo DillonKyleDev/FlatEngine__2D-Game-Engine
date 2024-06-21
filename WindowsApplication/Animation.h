@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include <map>
+#include "Vector4.h"
 
 
 namespace FlatEngine
@@ -52,6 +53,7 @@ namespace FlatEngine
 			std::string path = "";
 			float xOffset = 0;
 			float yOffset = 0;
+			Vector4 tintColor = Vector4(1, 1, 1, 1);
 		};
 		struct S_Camera : public S_Property {
 			bool _isPrimaryCamera = false;
@@ -88,6 +90,10 @@ namespace FlatEngine
 		struct S_CharacterController : public S_Property {
 			bool _isActive = true;
 		};
+		struct S_Event : public S_Property {
+			std::string functionName = "";
+			bool _fired = false;
+		};
 
 		struct S_AnimationProperties {
 			std::string animationName = "";
@@ -96,17 +102,18 @@ namespace FlatEngine
 			bool _isSorted = false;
 			bool _loop = false;
 			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
-			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector< std::shared_ptr<S_Sprite>>();
-			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector< std::shared_ptr<S_Camera>>();
-			std::vector<std::shared_ptr<S_Script>> scriptProperties = std::vector< std::shared_ptr<S_Script>>();
-			std::vector<std::shared_ptr<S_Button>> buttonProperties = std::vector< std::shared_ptr<S_Button>>();
-			std::vector<std::shared_ptr<S_Canvas>> canvasProperties = std::vector< std::shared_ptr<S_Canvas>>();
-			std::vector<std::shared_ptr<S_Audio>> audioProperties = std::vector< std::shared_ptr<S_Audio>>();
-			std::vector<std::shared_ptr<S_Text>> textProperties = std::vector< std::shared_ptr<S_Text>>();
-			std::vector<std::shared_ptr<S_BoxCollider>> boxColliderProperties = std::vector< std::shared_ptr<S_BoxCollider>>();
-			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProperties = std::vector< std::shared_ptr<S_CircleCollider>>();
-			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProperties = std::vector< std::shared_ptr<S_RigidBody>>();
-			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProperties = std::vector< std::shared_ptr<S_CharacterController>>();
+			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector<std::shared_ptr<S_Sprite>>();
+			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector<std::shared_ptr<S_Camera>>();
+			std::vector<std::shared_ptr<S_Script>> scriptProperties = std::vector<std::shared_ptr<S_Script>>();
+			std::vector<std::shared_ptr<S_Button>> buttonProperties = std::vector<std::shared_ptr<S_Button>>();
+			std::vector<std::shared_ptr<S_Canvas>> canvasProperties = std::vector<std::shared_ptr<S_Canvas>>();
+			std::vector<std::shared_ptr<S_Audio>> audioProperties = std::vector<std::shared_ptr<S_Audio>>();
+			std::vector<std::shared_ptr<S_Text>> textProperties = std::vector<std::shared_ptr<S_Text>>();
+			std::vector<std::shared_ptr<S_BoxCollider>> boxColliderProperties = std::vector<std::shared_ptr<S_BoxCollider>>();
+			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProperties = std::vector<std::shared_ptr<S_CircleCollider>>();
+			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProperties = std::vector<std::shared_ptr<S_RigidBody>>();
+			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProperties = std::vector<std::shared_ptr<S_CharacterController>>();
+			std::vector<std::shared_ptr<S_Event>> eventProperties = std::vector< std::shared_ptr<S_Event>>();
 
 			void SortKeyFrames() 
 			{
@@ -147,6 +154,23 @@ namespace FlatEngine
 				{
 					lastKeyFrameEndTime = spriteProperties.back()->time;
 				}
+
+				bool _didntSwapEvent = false;
+				while (!_didntSwapEvent)
+				{
+					_didntSwapEvent = true;
+					for (std::vector<std::shared_ptr<S_Event>>::iterator keyFrame = eventProperties.begin(); keyFrame != eventProperties.end(); keyFrame++)
+					{
+						std::vector<std::shared_ptr<S_Event>>::iterator keyFrame2 = keyFrame + 1;
+						if (keyFrame2 != eventProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
+						{
+							std::swap(*keyFrame, *keyFrame2);
+							_didntSwapEvent = false;
+						}
+					}
+				}
+				if (eventProperties.size() > 0 && eventProperties.back()->time > lastKeyFrameEndTime)
+					lastKeyFrameEndTime = eventProperties.back()->time;
 				
 				animationLength = lastKeyFrameEndTime;
 
@@ -161,24 +185,27 @@ namespace FlatEngine
 		void AddFrame();
 		void Play(int startTime = -1);
 		void Stop();
-
+		
+		void PlayAnimation(int ellapsedTime);
 		bool IsPlaying();
 		std::string GetData();
 		void SetAnimationName(std::string animationName);
 		std::string GetAnimationName();
 		void SetAnimationPath(std::string animationPath);
 		std::string GetAnimationPath();
+		void AddEventFunction(std::string name, std::function<void(std::shared_ptr<GameObject>)> callback);
+		std::map<std::string, std::function<void(std::shared_ptr<GameObject>)>> GetEventFunctions();
 
 		// Test Animations
 		void LerpToCenter();
-		void PlayAnimation(int ellapsedTime);
-
+	
 	private:
 		std::shared_ptr<S_AnimationProperties> animationProperties;
 		std::string animationName;
 		std::string animationPath;
 		bool _playing;
 		int animationStartTime;
+		std::map<std::string, std::function<void(std::shared_ptr<GameObject>)>> eventFunctions;
 	};
 }
 

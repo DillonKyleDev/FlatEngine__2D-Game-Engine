@@ -7,6 +7,7 @@
 #include "CircleCollider.h"
 #include "CompositeCollider.h"
 #include "Transform.h"
+#include "TagList.h"
 #include "./scripts/GameManager.h"
 #include "./scripts/PauseMenu.h"
 #include "./scripts/SettingsButton.h"
@@ -21,11 +22,13 @@
 
 
 
+
 namespace FlatEngine
 {
 	GameLoop::GameLoop()
 	{
 		_started = false;
+		_gamePaused = false;
 		_paused = false;
 		_frameSkipped = false;
 		time = 0;
@@ -37,7 +40,6 @@ namespace FlatEngine
 		accumulator = deltaTime;
 		startedScene = "";
 		gameManager = nullptr;
-		_gamePaused = false;
 
 		gameObjects = std::vector<std::shared_ptr<GameObject>>();
 		activeScripts = std::vector<std::shared_ptr<GameScript>>();
@@ -57,7 +59,6 @@ namespace FlatEngine
 		activeTime = time - pausedTime;
 		_paused = false;
 		accumulator = 0.0;
-		currentTime = (double)FlatEngine::GetEngineTime();
 
 		// Save the name of the scene we started with so we can load it back up when we stop
 		startedScene = FlatEngine::GetLoadedScenePath();
@@ -79,6 +80,8 @@ namespace FlatEngine
 			// Add Update Process for all other time		
 			AddProfilerProcess("Not GameLoop");
 		}
+
+		currentTime = (double)FlatEngine::GetEngineTime();
 	}
 
 	void GameLoop::CollectPhysicsBodies()
@@ -303,11 +306,46 @@ namespace FlatEngine
 				// If colliders don't belong to the same GameObject
 				if (colliders.at(i)->GetParentID() != colliders.at(j)->GetParentID() && colliders.at(i)->GetTypeString() != "CompositeCollider" && colliders.at(j)->GetTypeString() != "CompositeCollider")
 				{
-					std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> newPair = { colliders.at(i), colliders.at(j) };
-					colliderPairs.push_back(newPair);
+					std::shared_ptr<TagList> coll1TagList = colliders.at(i)->GetParent()->GetTagList();
+					std::shared_ptr<TagList> coll2TagList = colliders.at(j)->GetParent()->GetTagList();
+
+					std::vector<std::string> coll1Ignored = coll1TagList->GetIgnoredTags();
+					std::vector<std::string> coll2Ignored = coll2TagList->GetIgnoredTags();
+
+					bool _ignorePair = false;
+
+					for (std::string ignoredTag : coll1Ignored)
+					{
+						if (coll2TagList->HasTag(ignoredTag))
+						{
+							_ignorePair = true;
+							break;
+						}
+					}
+					if (!_ignorePair)
+					{
+						for (std::string ignoredTag : coll2Ignored)
+						{
+							if (coll1TagList->HasTag(ignoredTag))
+							{
+								_ignorePair = true;
+								break;
+							}
+						}
+					}
+					if (!_ignorePair)
+					{
+						std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>> newPair = { colliders.at(i), colliders.at(j) };
+						colliderPairs.push_back(newPair);
+					}
 				}
 			}
 		}
+	}
+
+	std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> GameLoop::GetColliderPairs()
+	{
+		return colliderPairs;
 	}
 
 	void GameLoop::UpdateActiveRigidBodies()
@@ -324,7 +362,7 @@ namespace FlatEngine
 
 			for (int j = 0; j < components.size(); j++)
 			{
-				if (components[j]->GetTypeString() == "RigidBody")
+				if (components[j]->GetTypeString() == "RigidBody" && components[j]->IsActive())
 				{
 					// Collect all BoxCollider components for collision detection in Update()
 					rigidBodies.push_back(std::static_pointer_cast<RigidBody>(components[j]));
@@ -337,14 +375,23 @@ namespace FlatEngine
 	{
 		for (int i = 0; i < activeScripts.size(); i++)
 		{
-			// Save time before script update
-			float timeStart = (float)FlatEngine::GetEngineTime();
-			activeScripts[i]->Update(deltaTime);
+			if (activeScripts[i]->_isActive)
+			{
+				// Profiler
+				float timeStart = 0;
+				if (_isDebugMode)
+					timeStart = (float)FlatEngine::GetEngineTime();
 
-			// Get hang time of each script update function for profiler
-			float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
-			if (activeScripts.size() > i && activeScripts[i])
-				AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
+				activeScripts[i]->Update(deltaTime);
+
+				// Profiler
+				if (_isDebugMode)
+				{
+					float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
+					if (activeScripts.size() > i && activeScripts[i])
+						AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
+				}
+			}
 		}
 	}
 
@@ -355,11 +402,16 @@ namespace FlatEngine
 
 		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
-			rigidBody->CalculatePhysics();
+		{
+			if (rigidBody->IsActive())
+				rigidBody->CalculatePhysics();
+		}
 
-		// Reset Collider collisions before going through all of them again
-		for (std::shared_ptr<Collider> collider : colliders)
-			collider->ResetCollisions();
+		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
+		{			
+			colliderPair.first->ResetCollisions();
+			colliderPair.second->ResetCollisions();
+		}
 
 		//LogFloat(GetEngineTime(), "Start Collision Detection: ");
 		
@@ -390,7 +442,8 @@ namespace FlatEngine
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
-			rigidBody->ApplyPhysics((float)deltaTime);
+			if (rigidBody->IsActive())
+				rigidBody->ApplyPhysics((float)deltaTime);
 
 		UpdateScripts();
 	}
