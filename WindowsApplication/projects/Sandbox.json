@@ -12,7 +12,7 @@
             "_showKeyFrameEditor": true,
             "_showLogger": true,
             "_showMappingContextEditor": false,
-            "_showProfiler": true,
+            "_showProfiler": false,
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",

@@ -96,6 +96,7 @@ namespace FlatEngine
 		}
 
 		float renderStartTime = 0;
+		static double frameStart = FlatEngine::GetEngineTime();
 
 		if (_isDebugMode)
 			renderStartTime = (float)FlatEngine::GetEngineTime(); // Profiler
@@ -125,32 +126,31 @@ namespace FlatEngine
 				updateLoopEnd = updateLoopStart;
 			}
 
-			double frameStart = 0;
-			double frameTime = 0;
-
-			//LogString("FlatEngine::Run()");
-	
-			// Get time it took to get back to GameLoopUpdate()
-			frameStart = (double)FlatEngine::GetEngineTime();
-			frameTime = (frameStart - gameLoop->currentTime) / 1000; // actual deltaTime (in seconds)
-			gameLoop->currentTime = frameStart;
+			double frameTime = (FlatEngine::GetEngineTime() - frameStart) / 1000; // actual deltaTime (in seconds)
 
 			// Physics Update Version 1
 			if (!gameLoop->IsGamePaused())
 				gameLoop->accumulator += frameTime;
 
-			if (!gameLoop->IsGamePaused() && gameLoop->accumulator >= gameLoop->deltaTime)
+			if (!gameLoop->IsGamePaused())
 			{
 				while (gameLoop->accumulator >= gameLoop->deltaTime)
 				{
+					float t0 = GetEngineTime();
 					FlatGui::HandleEvents(_hasQuit);
 					GameLoopUpdate();
 					gameLoop->SetFrameSkipped(false);
 
 					gameLoop->time += gameLoop->deltaTime;
 					gameLoop->accumulator -= gameLoop->deltaTime;
+					float t1 = GetEngineTime() - t0;
+					//LogFloat(t1, "T1: ");
 				}
 			}
+
+			// Get time it took to get back to GameLoopUpdate()
+			frameStart = (double)FlatEngine::GetEngineTime();
+
 			//else
 			//{
 			//	FlatGui::HandleEvents(_hasQuit);

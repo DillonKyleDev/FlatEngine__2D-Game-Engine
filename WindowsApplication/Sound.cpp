@@ -84,7 +84,7 @@ namespace FlatEngine
 	void Sound::PlayEffect(int channel)
 	{
 		// Play effect on channel, repeat 0 times
-		LogInt(Mix_PlayChannel(channel, this->effect, 0), "Sound Played: ");
+		Mix_PlayChannel(channel, this->effect, 0);
 	}
 
 	void Sound::HaultChannel(int channel)

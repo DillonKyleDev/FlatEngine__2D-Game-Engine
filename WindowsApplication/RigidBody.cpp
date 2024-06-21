@@ -126,7 +126,7 @@ namespace FlatEngine {
 		// Then apply to transform
 		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
 		std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-		Vector2 position = transform->GetTruePosition();
+		Vector2 position = transform->GetPosition();
 
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
 	}

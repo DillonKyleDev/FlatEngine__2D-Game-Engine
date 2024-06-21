@@ -50,12 +50,12 @@ void EnemyController::Start()
 	//for (std::shared_ptr<FlatEngine::CircleCollider> circleCollider : circleColliders)
 	//	circleCollider->SetOnCollisionEnter(OnCollisionEnter);
 
-	if (!GetOwner()->HasComponent("CompositeCollider"))
-		compositeCollider = GetOwner()->AddCompositeColliderComponent();
-	else
-		compositeCollider = GetOwner()->GetCompositeCollider();
-	
-	compositeCollider->SetOnCollisionEnter(OnCollisionEnter);
+	//if (!GetOwner()->HasComponent("CompositeCollider"))
+	//	compositeCollider = GetOwner()->AddCompositeColliderComponent();
+	//else
+	//	compositeCollider = GetOwner()->GetCompositeCollider();
+	//
+	//compositeCollider->SetOnCollisionEnter(OnCollisionEnter);
 }
 
 void EnemyController::Update(float deltaTime)
