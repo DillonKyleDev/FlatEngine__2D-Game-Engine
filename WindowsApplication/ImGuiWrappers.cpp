@@ -247,7 +247,7 @@ namespace FlatEngine { namespace FlatGui {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		bool _checked = RenderCheckbox(fieldName, _value);
+		bool _checked = RenderCheckbox("", _value);
 		ImGui::PushID(id.c_str());
 		ImGui::PopID();
 

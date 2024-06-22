@@ -13,7 +13,6 @@ namespace FlatEngine {
 
 		std::string GetData();
 		void MoveToward(Vector2 direction);
-		void MoveTo(Vector2 location);
 		void SetMaxAcceleration(float speed);
 		float GetMaxAcceleration();
 		void SetMaxSpeed(float newMaxSpeed);

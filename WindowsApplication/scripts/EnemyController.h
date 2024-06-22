@@ -11,6 +11,11 @@ public:
 
 	void Start();
 	void Update(float deltaTime);
+	void MoveToObject(std::shared_ptr<FlatEngine::GameObject> object);
+	void AttackObject(std::shared_ptr<FlatEngine::GameObject> object);
+	void SetSeesPlayer(bool _newSeesPlayer);
+	void StartChaseTimeout();
+	void StopChaseTimeout();
 
 private:
 	std::shared_ptr<Health> health;
@@ -22,5 +27,15 @@ private:
 	std::shared_ptr<FlatEngine::Animation> animator;
 	std::shared_ptr<FlatEngine::Sprite> sprite;
 	std::shared_ptr<FlatEngine::Audio> audio;
+
+	// Attached Objects
 	std::shared_ptr<FlatEngine::GameObject> whipArm;
+	std::shared_ptr<FlatEngine::GameObject> lineOfSight;
+
+	bool _seesPlayer;
+	int chaseTimeout;
+	int chaseTimerStarted;
+	int maxHealth;
+	int attackDamage;
+
 };

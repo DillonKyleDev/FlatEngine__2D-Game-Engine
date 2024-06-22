@@ -49,6 +49,7 @@ namespace FlatEngine
 	std::vector<std::shared_ptr<Collider>> colliders = std::vector<std::shared_ptr<Collider>>();	
 	std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>> colliderPairs = std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>>();
 	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
+	std::shared_ptr<GameObject> playerObject = nullptr;
 
 	// Loaded Project
 	std::shared_ptr<Project> loadedProject = std::make_shared<Project>();
@@ -679,6 +680,9 @@ namespace FlatEngine
 		// If the GameLoop is running, reinitialize the new scene's GameObjects
 		if (GameLoopStarted())
 			gameLoop->InitializeScriptObjects(GetSceneObjects());
+
+		if (GetObjectByName("Player") != nullptr)
+			playerObject = GetObjectByName("Player");
 	}
 	
 
@@ -868,6 +872,19 @@ namespace FlatEngine
 	float GetDeltaTime()
 	{
 		return gameLoop->GetDeltaTime();
+	}
+
+	std::shared_ptr<GameObject> GetPlayerObject()
+	{
+		return playerObject;
+	}
+
+	std::shared_ptr<Camera> GetPrimaryCamera()
+	{
+		if (GetLoadedScene() != nullptr)
+			return GetLoadedScene()->GetPrimaryCamera();
+		else
+			return nullptr;
 	}
 
 

@@ -17,7 +17,6 @@ namespace FlatEngine
 		Camera(std::shared_ptr<Camera> toCopy, long newParentID);
 		~Camera();
 
-		void FollowTarget(FlatEngine::Transform transform, float ease);
 		void SetPrimaryCamera(bool _isPrimary);
 		bool IsPrimary();
 		void SetDimensions(float width, float height);
@@ -27,6 +26,13 @@ namespace FlatEngine
 		float GetHeight();
 		void SetFrustrumColor(ImVec4 color);
 		ImVec4 GetFrustrumColor();
+		void Follow();
+		void SetShouldFollow(bool _shouldFollow);
+		bool GetShouldFollow();
+		void SetFollowing(long toFollow);
+		long GetFollowing();
+		void SetFollowSmoothing(float smoothing);
+		float GetFollowSmoothing();
 		std::string GetData();
 
 	private:
@@ -35,6 +41,9 @@ namespace FlatEngine
 		float zoom;
 		ImVec4 frustrumColor;
 		bool _isPrimaryCamera;
+		bool _follow;
+		long following;
+		float followSmoothing;
 	};
 }
 

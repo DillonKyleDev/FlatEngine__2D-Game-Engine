@@ -97,6 +97,7 @@ namespace FlatEngine
 		void AddChild(long childID);
 		void RemoveChild(long childID);
 		std::shared_ptr<GameObject> GetFirstChild();
+		std::shared_ptr<GameObject> FindChildByName(std::string name);
 		std::vector<long> GetChildren();
 		bool HasChildren();
 		void SetActive(bool _isActive);

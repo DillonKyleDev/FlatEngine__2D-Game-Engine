@@ -578,6 +578,9 @@ namespace FlatEngine
 					float f_green = 1;
 					float f_blue = 1;
 					float f_alpha = 1;
+					bool _follow = false;
+					long following = -1;
+					float followSmoothing = 0.9f;
 
 					// Load ID
 					if (currentObjectJson["components"][j].contains("id"))
@@ -631,6 +634,19 @@ namespace FlatEngine
 						f_alpha = currentObjectJson["components"][j]["frustrumAlpha"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'frustrumAlpha' in object: " + loadedName);
+					
+					if (currentObjectJson["components"][j].contains("_follow"))
+						_follow = currentObjectJson["components"][j]["_follow"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for '_follow' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("following"))
+						following = currentObjectJson["components"][j]["following"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'following' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("followSmoothing"))
+						followSmoothing = currentObjectJson["components"][j]["followSmoothing"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'followSmoothing' in object: " + loadedName);
 
 					Vector4 frustrumColor = Vector4(f_red, f_green, f_blue, f_alpha);
 
@@ -641,6 +657,9 @@ namespace FlatEngine
 					newCamera->SetPrimaryCamera(_isPrimaryCamera);
 					newCamera->SetZoom(zoom);
 					newCamera->SetFrustrumColor(frustrumColor);
+					newCamera->SetShouldFollow(_follow);
+					newCamera->SetFollowSmoothing(followSmoothing);
+					newCamera->SetFollowing(following);
 
 					// If this camera is the primary camera, set it in the Scene as the primaryCamera
 					if (_isPrimaryCamera && loadedScene != nullptr)

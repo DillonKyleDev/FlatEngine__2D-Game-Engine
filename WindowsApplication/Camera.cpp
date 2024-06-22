@@ -17,6 +17,9 @@ namespace FlatEngine
 		height = 30;
 		zoom = 10;
 		frustrumColor = ImVec4(255,255,255,255);
+		_follow = false;
+		following = -1;
+		followSmoothing = 0.9f;
 	}
 
 	Camera::Camera(std::shared_ptr<Camera> toCopy, long newParentID)
@@ -30,15 +33,13 @@ namespace FlatEngine
 		height = toCopy->GetHeight();
 		zoom = toCopy->GetZoom();
 		frustrumColor = toCopy->GetFrustrumColor();
+		_follow = toCopy->_follow;
+		following = toCopy->following;
+		followSmoothing = toCopy->followSmoothing;
 	}
 
 	Camera::~Camera()
 	{
-	}
-
-	void Camera::FollowTarget(FlatEngine::Transform transform, float ease)
-	{
-
 	}
 
 	void Camera::SetPrimaryCamera(bool _isPrimary)
@@ -59,6 +60,49 @@ namespace FlatEngine
 	ImVec4 Camera::GetFrustrumColor()
 	{
 		return frustrumColor;
+	}
+
+	void Camera::Follow()
+	{
+		std::shared_ptr<GameObject> followTarget = GetObjectById(following);
+		if (_follow && GetParent()->HasComponent("Transform") && followTarget != nullptr && followTarget->HasComponent("Transform"))
+		{
+			std::shared_ptr<FlatEngine::Transform> cameraTransform = GetParent()->GetTransformComponent();
+			Vector2 followPos = followTarget->GetTransformComponent()->GetTruePosition();
+			Vector2 currentPos = cameraTransform->GetPosition(); // Shouldn't have a parent if following so don't need GetTruePosition()
+
+			cameraTransform->SetPosition(Lerp(currentPos, followPos, followSmoothing));
+		}
+	}
+
+	void Camera::SetShouldFollow(bool _shouldFollow)
+	{
+		_follow = _shouldFollow;
+	}
+
+	bool Camera::GetShouldFollow()
+	{
+		return _follow;
+	}
+
+	void Camera::SetFollowing(long toFollow)
+	{
+		following = toFollow;
+	}
+
+	long Camera::GetFollowing()
+	{
+		return following;
+	}
+
+	void Camera::SetFollowSmoothing(float smoothing)
+	{
+		followSmoothing = smoothing;
+	}
+
+	float Camera::GetFollowSmoothing()
+	{
+		return followSmoothing;
 	}
 
 	void Camera::SetZoom(float newZoom)
@@ -103,6 +147,9 @@ namespace FlatEngine
 			{ "frustrumGreen", frustrumColor.y },
 			{ "frustrumBlue", frustrumColor.z },
 			{ "frustrumAlpha", frustrumColor.w },
+			{ "_follow", _follow },
+			{ "followSmoothing", followSmoothing },
+			{ "following", following },
 		};
 
 		std::string data = jsonData.dump();

@@ -8,6 +8,7 @@
 #include "CompositeCollider.h"
 #include "Transform.h"
 #include "TagList.h"
+#include "Camera.h"
 #include "./scripts/GameManager.h"
 #include "./scripts/PauseMenu.h"
 #include "./scripts/SettingsButton.h"
@@ -19,6 +20,7 @@
 #include "./scripts/Health.h"
 #include "./scripts/JumpPad.h"
 #include "./scripts/BlasterRound.h"
+
 
 
 
@@ -397,6 +399,11 @@ namespace FlatEngine
 
 	void GameLoop::Update()
 	{
+		if (GetPrimaryCamera() != nullptr)
+		{
+			GetPrimaryCamera()->Follow();
+		}
+
 		AddFrame();
 		activeTime = time - pausedTime;		
 

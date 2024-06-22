@@ -506,6 +506,11 @@ namespace FlatEngine { namespace FlatGui {
 								ImVec4 frustrumColor = camera->GetFrustrumColor();
 								bool _isActive = camera->IsActive();
 								long id = camera->GetID();
+								bool _follow = camera->GetShouldFollow();
+								std::string following = "";
+								if (camera->GetFollowing() != -1)
+									following = GetObjectById(camera->GetFollowing())->GetName();
+								float followSmoothing = camera->GetFollowSmoothing();
 
 								// Active Checkbox
 								if (L_IsActiveCheckbox(_isActive))
@@ -514,13 +519,21 @@ namespace FlatEngine { namespace FlatGui {
 								// Render Table
 								if (PushTable("##CameraProperties" + std::to_string(id), 2))
 								{
-									RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000);
-									RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000);
-									camera->SetDimensions(width, height);
-									RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100);
-									camera->SetZoom(zoom);
+									if (RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000))
+										camera->SetDimensions(width, height);
+									if (RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000))
+										camera->SetDimensions(width, height);
+									if (RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100))
+										camera->SetZoom(zoom);
+									if (RenderCheckboxTableRow("##CameraShouldFollowTargetCheckbox", "Follow", _follow))
+										camera->SetShouldFollow(_follow);
+									if (RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(id), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
+										camera->SetFollowSmoothing(followSmoothing);
 									PopTable();
 								}
+
+								if (RenderInput("##FollowInput", "To Follow", following))
+									camera->SetFollowing(GetObjectByName(following)->GetID());
 
 								// Frustrum color picker
 								std::string frustrumID = "##FrustrumColor" + std::to_string(id);

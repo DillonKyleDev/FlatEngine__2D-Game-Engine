@@ -153,6 +153,9 @@ namespace FlatEngine
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
 	extern float GetDeltaTime();
+	extern std::shared_ptr<GameObject> GetPlayerObject();
+	extern std::shared_ptr<GameObject> playerObject;
+	extern std::shared_ptr<Camera> GetPrimaryCamera();
 
 	// Helper Functions
 	extern bool AreCollidingWorld(Vector4 ObjectA, Vector4 ObjectB);

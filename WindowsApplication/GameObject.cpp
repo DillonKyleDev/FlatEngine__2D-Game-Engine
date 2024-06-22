@@ -708,6 +708,19 @@ namespace FlatEngine
 		return GetObjectById(childrenIDs[0]);
 	}
 
+	std::shared_ptr<GameObject> GameObject::FindChildByName(std::string name)
+	{
+		for (int i = 0; i < childrenIDs.size(); i++)
+		{
+			if (GetObjectById(childrenIDs[i])->GetName() == name)
+			{
+				return GetObjectById(childrenIDs[i]);
+			}
+		}
+
+		return nullptr;
+	}
+
 	std::vector<long> GameObject::GetChildren()
 	{
 		return childrenIDs;
