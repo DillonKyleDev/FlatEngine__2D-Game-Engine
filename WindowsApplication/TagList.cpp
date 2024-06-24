@@ -1,4 +1,5 @@
 #include "TagList.h"
+#include "FlatEngine.h"
 
 
 namespace FlatEngine {
@@ -50,12 +51,14 @@ namespace FlatEngine {
 	{
 		if (tags.count(tag) > 0)
 			tags.at(tag) = _value;
+		FlatEngine::gameLoop->UpdateActiveColliders();
 	}
 
 	void TagList::ToggleTag(std::string tag)
 	{
 		if (tags.count(tag) > 0)
 			tags.at(tag) = !tags.at(tag);
+		FlatEngine::gameLoop->UpdateActiveColliders();
 	}
 
 	bool TagList::HasTag(std::string tag)
@@ -69,12 +72,14 @@ namespace FlatEngine {
 	{
 		if (ignoreTags.count(tag) > 0)
 			ignoreTags.at(tag) = _value;
+		FlatEngine::gameLoop->UpdateActiveColliders();
 	}
 
 	void TagList::ToggleIgnore(std::string tag)
 	{
 		if (ignoreTags.count(tag) > 0)
 			ignoreTags.at(tag) = !ignoreTags.at(tag);
+		FlatEngine::gameLoop->UpdateActiveColliders();
 	}
 
 	bool TagList::IgnoresTag(std::string tag)

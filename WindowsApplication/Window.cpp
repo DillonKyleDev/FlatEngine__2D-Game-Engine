@@ -40,7 +40,8 @@ namespace Window
 		//Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		// Vsync off
 		Window::renderer = SDL_CreateRenderer(Window::window, -1, 0);
-
+		SDL_RenderSetLogicalSize(Window::renderer, width, height);
+		SDL_RenderSetIntegerScale(Window::renderer, SDL_bool(true));
 		if (Window::window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
