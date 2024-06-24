@@ -1,0 +1,150 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "functionName": "DestroySelf",
+                    "time": 1280.0
+                }
+            ],
+            "Property": "Event"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 1.0,
+                    "yMove": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 656.249755859375,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.10000000149011612,
+                    "yMove": 0.0,
+                    "yScale": 0.10000000149011612
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 50.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 1.0,
+                    "yMove": 0.0,
+                    "yScale": 1.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 740.367431640625,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.10000000149011612,
+                    "yMove": 0.0,
+                    "yScale": 0.10000000149011612
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 0.0,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 649.3211059570313,
+                    "tintColorW": 0.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "",
+                    "speed": 0.10000000149011612,
+                    "time": 32.307647705078125,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "xOffset": 5.0,
+                    "yOffset": 5.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\nowhip.png",
+                    "speed": 0.10000000149011612,
+                    "time": 744.3436279296875,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}

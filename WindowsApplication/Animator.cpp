@@ -519,9 +519,9 @@ namespace FlatEngine { namespace FlatGui {
 
 		if (is_hovered)
 			if (scrollInput > 0)
-				animatorGridStep += 1;
+				animatorGridStep += 10;
 			else if (scrollInput < 0 && animatorGridStep > 2)
-				animatorGridStep -= 1;
+				animatorGridStep -= 10;
 
 		if (scrolling.x > 0)
 			scrolling.x = 0;
@@ -939,7 +939,7 @@ namespace FlatEngine { namespace FlatGui {
 				// If animation component is playing, play the animation
 				if (animation != nullptr && animation->IsPlaying())
 				{
-					previewAnimationTime = GetEllapsedGameTimeInMs();
+					previewAnimationTime = GetEngineTime();
 					animation->PlayAnimation(previewAnimationTime);
 				}
 			}

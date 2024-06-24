@@ -798,7 +798,7 @@
                     "airControl": 0.20000000298023224,
                     "id": 116,
                     "maxAcceleration": 1.0,
-                    "maxSpeed": 12.0,
+                    "maxSpeed": 20.0,
                     "type": "CharacterController"
                 },
                 {
@@ -1000,7 +1000,7 @@
                 "Item": false,
                 "Npc": false,
                 "Player": false,
-                "PlayerDamage": true,
+                "PlayerDamage": false,
                 "Projectile": false,
                 "Terrain": false
             }
@@ -1347,12 +1347,12 @@
                 "InteractableObject": false,
                 "Item": true,
                 "Npc": true,
-                "Player": false,
+                "Player": true,
                 "PlayerDamage": true,
                 "Projectile": true,
                 "Terrain": true
             },
-            "name": "WhipArm",
+            "name": "WhipArmEnemy",
             "parent": 71,
             "prefabName": "",
             "spawnLocationX": 0.0,
@@ -1548,7 +1548,7 @@
                 "InteractableObject": true,
                 "Item": true,
                 "Npc": true,
-                "Player": false,
+                "Player": true,
                 "PlayerDamage": true,
                 "Projectile": true,
                 "Terrain": true
@@ -1556,6 +1556,228 @@
             "name": "LineOfSight",
             "parent": 71,
             "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 307,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": -11.372699737548828,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": -2.156890869140625,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 308,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\blob.png",
+                    "pivotPoint": "Center",
+                    "renderOrder": 3,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 309,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
+                    "type": "Animation"
+                }
+            ],
+            "id": 81,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": false
+            },
+            "name": "BlobAnim",
+            "parent": 80,
+            "prefabName": "",
+            "spawnLocationX": -11.372699737548828,
+            "spawnLocationY": -2.156890869140625,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 310,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 311,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\blob.png",
+                    "pivotPoint": "Center",
+                    "renderOrder": 3,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 312,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
+                    "type": "Animation"
+                }
+            ],
+            "id": 83,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": false
+            },
+            "name": "BlobAnim",
+            "parent": 80,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": true,
+            "children": [
+                83,
+                81
+            ],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 313,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isKinematic": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "equilibriumForce": 2.0,
+                    "friction": 0.8600000143051147,
+                    "gravity": 0.0,
+                    "id": 314,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.4000000059604645,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                }
+            ],
+            "id": 80,
+            "ignoreTags": {
+                "Enemy": true,
+                "EnemyDamage": true,
+                "EnvironmentalDamage": true,
+                "InteractableItem": true,
+                "InteractableObject": true,
+                "Item": true,
+                "Npc": true,
+                "Player": true,
+                "PlayerDamage": true,
+                "Projectile": true,
+                "Terrain": true
+            },
+            "name": "P_BlobParticle",
+            "parent": -1,
+            "prefabName": "P_BlobParticle",
             "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,
             "tags": {

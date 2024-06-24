@@ -1067,6 +1067,12 @@ namespace FlatEngine
 
 	void Collider::ClearCollidingObjects()
 	{
+		
+		std::string colliderName = GetParent()->GetName();
+		if (colliderName == "WhipArm")
+		{
+			float test = 1;
+		}
 		// Check which objects have left collision state since last frame
 		for (std::shared_ptr<FlatEngine::GameObject> collidedLastFrame : collidingLastFrame)
 		{		

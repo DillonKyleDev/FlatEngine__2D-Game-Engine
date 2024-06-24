@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include <random>
 
 // Event functions
 void OnTakeDamage(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> damagedBy, float damageAmount)
@@ -22,6 +23,32 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 	{
 		thisObject->GetAnimationComponent()->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/explosion2.json");
 		thisObject->GetAnimationComponent()->Play();
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dir(0, 200); // distribution in range [-1, 1]
+
+		std::uniform_int_distribution<std::mt19937::result_type> pow(2000, 4000); // distribution in range [-1, 1]
+		Vector2 direction = Vector2(dir(rng), dir(rng));
+		if (direction.x >= 100)
+			direction.x *= -.01;
+		else
+			direction.x *= .01;
+		if (direction.y >= 100)
+			direction.y *= -.01;
+		else
+			direction.y *= .01;
+
+		float power = pow(rng);
+
+		std::shared_ptr<FlatEngine::GameObject> blobParticle = FlatEngine::Instantiate("P_BlobParticle", thisObject->GetTransformComponent()->GetTruePosition());
+		std::shared_ptr<FlatEngine::RigidBody> blobRigidBody = blobParticle->GetRigidBody();
+		blobParticle->GetFirstChild()->GetAnimationComponent()->Play();
+
+		blobRigidBody->AddForce(direction, power);
 	}
 }
 void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject)
