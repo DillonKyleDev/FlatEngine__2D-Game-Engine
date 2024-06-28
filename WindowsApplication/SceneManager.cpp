@@ -145,15 +145,20 @@ namespace FlatEngine
 				//Getting data from the json 
 				//std::string name = firstObjectName[0]["name"];
 
+				LogFloat(GetEngineTime(), "Start Load: ");
+
 				// Loop through the saved GameObjects in the JSON file
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{
+					LogString("Creating Object...");
 					// Add created GameObject to our freshScene
 					std::shared_ptr<GameObject> loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene);
 					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
 					if (!loadedObject->IsPrefab())
 						freshScene->AddSceneObject(loadedObject);
 				}
+
+				LogFloat(GetEngineTime(), "End Load: ");
 			}
 		}
 

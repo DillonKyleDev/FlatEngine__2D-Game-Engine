@@ -8,6 +8,7 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "Animation.h"
+#include "Sprite.h"
 #include <random>
 
 
@@ -137,15 +138,22 @@ void EnemyController::Update(float deltaTime)
 
 		}
 	}
+	else if (GetOwner()->GetSpriteComponent()->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png")
+		GetOwner()->GetSpriteComponent()->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png");
 }
 
 void EnemyController::MoveToObject(std::shared_ptr<FlatEngine::GameObject> object)
 {
 	if (object->HasComponent("Transform") && GetOwner()->HasComponent("CharacterController"))
 	{
+		std::shared_ptr<FlatEngine::Sprite> sprite = GetOwner()->GetSpriteComponent();
 		Vector2 moveTo = object->GetTransformComponent()->GetTruePosition() - GetOwner()->GetTransformComponent()->GetTruePosition();
 		GetOwner()->GetCharacterController()->MoveToward(moveTo.NormalizeCardinal());
 		FlatEngine::LogVector2(moveTo.NormalizeCardinal());
+		if (moveTo.x < 0 && sprite->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkLeft.png")
+			sprite->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkLeft.png");
+		else if (moveTo.x > 0 && sprite->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkRight.png")
+			sprite->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkRight.png");
 	}
 }
 

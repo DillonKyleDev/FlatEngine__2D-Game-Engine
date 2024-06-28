@@ -40,6 +40,7 @@ namespace FlatEngine
 		pausedTime = 0;
 		framesCounted = 0;
 		deltaTime = 0.005;
+
 		accumulator = deltaTime;
 		startedScene = "";
 		gameManager = nullptr;
