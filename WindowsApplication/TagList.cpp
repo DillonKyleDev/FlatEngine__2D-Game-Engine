@@ -10,6 +10,11 @@ namespace FlatEngine {
 		tags.emplace("Enemy", false);
 		tags.emplace("Npc", false);
 		tags.emplace("Terrain", false);
+		tags.emplace("PlayerTrigger", false);
+		tags.emplace("EnemyTrigger", false);
+		tags.emplace("NpcTrigger", false);
+		tags.emplace("EnvironmentalTrigger", false);
+		tags.emplace("TerrainTrigger", false);
 		tags.emplace("PlayerDamage", false);
 		tags.emplace("EnemyDamage", false);
 		tags.emplace("EnvironmentalDamage", false);
@@ -22,6 +27,11 @@ namespace FlatEngine {
 		ignoreTags.emplace("Enemy", false);
 		ignoreTags.emplace("Npc", false);
 		ignoreTags.emplace("Terrain", false);
+		ignoreTags.emplace("PlayerTrigger", false);
+		ignoreTags.emplace("EnemyTrigger", false);
+		ignoreTags.emplace("NpcTrigger", false);
+		ignoreTags.emplace("EnvironmentalTrigger", false);
+		ignoreTags.emplace("TerrainTrigger", false);
 		ignoreTags.emplace("PlayerDamage", false);
 		ignoreTags.emplace("EnemyDamage", false);
 		ignoreTags.emplace("EnvironmentalDamage", false);
@@ -120,5 +130,4 @@ namespace FlatEngine {
 		}
 		return ignoredTags;
 	}
-
 }

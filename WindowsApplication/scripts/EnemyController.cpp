@@ -7,7 +7,9 @@
 #include "Transform.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include "Animation.h"
 #include <random>
+
 
 // Event functions
 void OnTakeDamage(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> damagedBy, float damageAmount)
@@ -21,17 +23,17 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 {
 	if (thisObject->HasComponent("Animation"))
 	{
-		thisObject->GetAnimationComponent()->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/explosion2.json");
-		thisObject->GetAnimationComponent()->Play();
+		//thisObject->GetAnimationComponent()->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/explosion2.json");
+		//thisObject->GetAnimationComponent()->Play();
 	}
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		std::random_device dev;
 		std::mt19937 rng(dev());
 		std::uniform_int_distribution<std::mt19937::result_type> dir(0, 200); // distribution in range [-1, 1]
 
-		std::uniform_int_distribution<std::mt19937::result_type> pow(2000, 4000); // distribution in range [-1, 1]
+		std::uniform_int_distribution<std::mt19937::result_type> pow(500, 3000); // distribution in range [-1, 1]
 		Vector2 direction = Vector2(dir(rng), dir(rng));
 		if (direction.x >= 100)
 			direction.x *= -.01;
@@ -50,9 +52,7 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 
 		blobRigidBody->AddForce(direction, power);
 	}
-}
-void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject)
-{
+
 	FlatEngine::DeleteGameObject(thisObject->GetID());
 }
 void OnEnterLineOfSight(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
@@ -112,7 +112,7 @@ void EnemyController::Start()
 	sprite = GetOwner()->GetSpriteComponent();
 	audio = GetOwner()->GetAudioComponent();
 	animator = GetOwner()->GetAnimationComponent();
-	animator->AddEventFunction("DestroySelf", DestroySelf);
+	animator->AddEventFunction("DestroySelf", FlatEngine::DestroySelf);
 
 	// Health
 	health->SetOnTakeDamage(OnTakeDamage);

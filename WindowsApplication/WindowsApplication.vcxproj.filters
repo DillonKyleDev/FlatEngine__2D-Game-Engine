@@ -273,6 +273,9 @@
     <ClCompile Include="CompositeCollider.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\BlobParticle.cpp">
+      <Filter>Source Files\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -454,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="CompositeCollider.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\BlobParticle.h">
+      <Filter>Header Files\scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

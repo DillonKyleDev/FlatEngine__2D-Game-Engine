@@ -20,6 +20,7 @@
 #include "./scripts/Health.h"
 #include "./scripts/JumpPad.h"
 #include "./scripts/BlasterRound.h"
+#include "./scripts/BlobParticle.h"
 
 
 
@@ -250,6 +251,14 @@ namespace FlatEngine
 						script->SetScriptInstance(blasterRoundScript);
 						activeScripts.push_back(blasterRoundScript);
 						newScripts.push_back(blasterRoundScript);
+					}
+					else if (attachedScript == "BlobParticle")
+					{
+						std::shared_ptr<BlobParticle> blobParticleScript = std::make_shared<BlobParticle>(script->GetID());
+						blobParticleScript->SetOwner(gameObjects[i]);
+						script->SetScriptInstance(blobParticleScript);
+						activeScripts.push_back(blobParticleScript);
+						newScripts.push_back(blobParticleScript);
 					}
 				}
 			}

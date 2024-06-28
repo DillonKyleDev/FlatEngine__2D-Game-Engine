@@ -75,7 +75,7 @@ void OnWhipAttackConnect(std::shared_ptr<FlatEngine::GameObject> thisObject, std
 		std::shared_ptr<Health> enemyHealth = std::static_pointer_cast<Health>(collidedWith->GetGameScriptByName("Health"));
 		if (enemyHealth != nullptr)
 		{
-			enemyHealth->Damage(thisObject, 20);
+			enemyHealth->Damage(thisObject, 100);
 		}
 	}
 }

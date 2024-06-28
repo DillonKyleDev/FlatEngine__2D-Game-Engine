@@ -170,7 +170,7 @@ namespace FlatEngine
 			// Event Animation Frames
 			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProperties)
 			{
-				if (!eventFrame->_fired && (ellapsedTime >= animationStartTime + eventFrame->time || eventFrame->time == 0))
+				if ((eventFrame->time == 0 && !eventFrame->_fired) || (!eventFrame->_fired && (ellapsedTime >= animationStartTime + eventFrame->time || eventFrame->time == 0)))
 				{
 					for (std::pair<std::string, std::function<void(std::shared_ptr<GameObject>)>> eventFunction : eventFunctions)
 					{
@@ -250,12 +250,17 @@ namespace FlatEngine
 
 					int timeLeft = (int)(*spriteFrame)->time - ellapsedTime - animationStartTime;
 					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*spriteFrame)->time - (*lastFrame)->time);
+					
+					Vector4 correctedTintColor = (*spriteFrame)->tintColor;
 
-					lastFrameSpriteTint = (*lastFrame)->tintColor;
-					Vector4 correctedTintColor = Vector4(lastFrameSpriteTint.x + ((*spriteFrame)->tintColor.x - lastFrameSpriteTint.x) * percentDone,
-						lastFrameSpriteTint.y + ((*spriteFrame)->tintColor.y - lastFrameSpriteTint.y) * percentDone,
-						lastFrameSpriteTint.z + ((*spriteFrame)->tintColor.z - lastFrameSpriteTint.z) * percentDone,
-						lastFrameSpriteTint.w + ((*spriteFrame)->tintColor.w - lastFrameSpriteTint.w) * percentDone);
+					if (!(*spriteFrame)->_instantTintChange)
+					{
+						lastFrameSpriteTint = (*lastFrame)->tintColor;
+						correctedTintColor = Vector4(lastFrameSpriteTint.x + ((*spriteFrame)->tintColor.x - lastFrameSpriteTint.x) * percentDone,
+							lastFrameSpriteTint.y + ((*spriteFrame)->tintColor.y - lastFrameSpriteTint.y) * percentDone,
+							lastFrameSpriteTint.z + ((*spriteFrame)->tintColor.z - lastFrameSpriteTint.z) * percentDone,
+							lastFrameSpriteTint.w + ((*spriteFrame)->tintColor.w - lastFrameSpriteTint.w) * percentDone);
+					}
 
 					if ((*spriteFrame)->path != "")
 						sprite->SetTexture((*spriteFrame)->path);

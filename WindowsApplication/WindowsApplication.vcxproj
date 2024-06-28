@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="scripts\BlobParticle.cpp" />
     <ClCompile Include="CompositeCollider.cpp" />
     <ClCompile Include="scripts\EnemyController.cpp" />
     <ClCompile Include="scripts\Health.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\..\..\..\Desktop\DevelopmentLibraries\imgui-docking\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="scripts\BlobParticle.h" />
     <ClInclude Include="CompositeCollider.h" />
     <ClInclude Include="scripts\EnemyController.h" />
     <ClInclude Include="scripts\Health.h" />

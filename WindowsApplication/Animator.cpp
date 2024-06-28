@@ -1102,7 +1102,12 @@ namespace FlatEngine { namespace FlatGui {
 				std::string path = sprite->path;
 				char newPath[1024];
 				strcpy_s(newPath, path.c_str());
+				// Sprite offset variables
+				float xOffset = sprite->xOffset;
+				float yOffset = sprite->yOffset;
+				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 				Vector4 tintColor = sprite->tintColor;
+				bool _instantlyChangeTint = sprite->_instantTintChange;
 
 				// Sprite Path Strings
 				std::string pathString = "Path: ";
@@ -1126,24 +1131,13 @@ namespace FlatEngine { namespace FlatGui {
 					sprite->path = newPath;
 				ImGui::PopStyleColor();
 
-				// Sprite offset variables
-				float xOffset = sprite->xOffset;
-				float yOffset = sprite->yOffset;
-				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
-
 				// Render Table
 				if (PushTable("##AnimatedSpriteProperties", 2))
 				{
-					/*if (RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
-						sprite->SetScale(Vector2(xScale, yScale));
-					if (RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
-						sprite->SetScale(Vector2(xScale, yScale));*/
 					if (RenderFloatDragTableRow("##AnimatedxSpriteOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 						sprite->xOffset = xOffset;
 					if (RenderFloatDragTableRow("##AnimatedySpriteOffsetDrag", "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 						sprite->yOffset = yOffset;
-					/*	if (RenderIntDragTableRow("##AnimatedrenderOrder", "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers))
-						sprite->SetRenderOrder(renderOrder);*/
 					PopTable();
 				}
 
@@ -1156,6 +1150,9 @@ namespace FlatEngine { namespace FlatGui {
 				}
 				ImGui::SameLine(0, 5);
 				ImGui::Text("Tint color");
+
+				if (RenderCheckbox("Instantly change tint", _instantlyChangeTint))
+					sprite->_instantTintChange = _instantlyChangeTint;
 			}
 		}
 		else
@@ -1295,6 +1292,7 @@ namespace FlatEngine { namespace FlatGui {
 				{ "tintColorY", spriteProp->tintColor.y },
 				{ "tintColorZ", spriteProp->tintColor.z },
 				{ "tintColorW", spriteProp->tintColor.w },
+				{ "_instantTintChange", spriteProp->_instantTintChange },
 			};
 
 			// Dumped json object with required data for saving
@@ -1721,6 +1719,8 @@ namespace FlatEngine { namespace FlatGui {
 									if (currentObjectJson["Frames"][f].contains("tintColorW"))
 										tintColor.w = currentObjectJson["Frames"][f]["tintColorW"];
 									spriteFrames->tintColor = tintColor;
+									if (currentObjectJson["Frames"][f].contains("_instantTintChange"))
+										spriteFrames->_instantTintChange = currentObjectJson["Frames"][f]["_instantTintChange"];
 
 									// Save the data to the animationProperties struct
 									animationProperties->spriteProperties.push_back(spriteFrames);

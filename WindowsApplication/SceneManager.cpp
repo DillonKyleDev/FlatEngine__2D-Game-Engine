@@ -201,6 +201,11 @@ namespace FlatEngine
 			{ "Enemy", tagList.at("Enemy") },
 			{ "Npc", tagList.at("Npc") },
 			{ "Terrain", tagList.at("Terrain") },
+			{ "PlayerTrigger", tagList.at("PlayerTrigger") },
+			{ "EnemyTrigger", tagList.at("EnemyTrigger") },
+			{ "NpcTrigger", tagList.at("NpcTrigger") },
+			{ "EnvironmentalTrigger", tagList.at("EnvironmentalTrigger") },
+			{ "TerrainTrigger", tagList.at("TerrainTrigger") },
 			{ "PlayerDamage", tagList.at("PlayerDamage") },
 			{ "EnemyDamage", tagList.at("EnemyDamage") },
 			{ "EnvironmentalDamage", tagList.at("EnvironmentalDamage") },
@@ -215,6 +220,11 @@ namespace FlatEngine
 			{ "Enemy", ignoreTagList.at("Enemy") },
 			{ "Npc", ignoreTagList.at("Npc") },
 			{ "Terrain", ignoreTagList.at("Terrain") },
+			{ "PlayerTrigger", ignoreTagList.at("PlayerTrigger") },
+			{ "EnemyTrigger", ignoreTagList.at("EnemyTrigger") },
+			{ "NpcTrigger", ignoreTagList.at("NpcTrigger") },
+			{ "EnvironmentalTrigger", ignoreTagList.at("EnvironmentalTrigger") },
+			{ "TerrainTrigger", ignoreTagList.at("TerrainTrigger") },
 			{ "PlayerDamage", ignoreTagList.at("PlayerDamage") },
 			{ "EnemyDamage", ignoreTagList.at("EnemyDamage") },
 			{ "EnvironmentalDamage", ignoreTagList.at("EnvironmentalDamage") },
@@ -347,6 +357,17 @@ namespace FlatEngine
 				tags->SetTag("Enemy", currentObjectJson["tags"]["Enemy"]);
 				tags->SetTag("Npc", currentObjectJson["tags"]["Npc"]);
 				tags->SetTag("Terrain", currentObjectJson["tags"]["Terrain"]);
+				if (currentObjectJson["tags"].contains("PlayerTrigger"))
+					tags->SetTag("PlayerTrigger", currentObjectJson["tags"]["PlayerTrigger"]);
+				if (currentObjectJson["tags"].contains("EnemyTrigger"))
+					tags->SetTag("EnemyTrigger", currentObjectJson["tags"]["EnemyTrigger"]);
+				if (currentObjectJson["tags"].contains("NpcTrigger"))
+					tags->SetTag("NpcTrigger", currentObjectJson["tags"]["NpcTrigger"]);
+				if (currentObjectJson["tags"].contains("EnvironmentalTrigger"))
+					tags->SetTag("EnvironmentalTrigger", currentObjectJson["tags"]["EnvironmentalTrigger"]);
+				if (currentObjectJson["tags"].contains("TerrainTrigger"))
+					tags->SetTag("TerrainTrigger", currentObjectJson["tags"]["TerrainTrigger"]);
+				tags->SetTag("Projectile", currentObjectJson["tags"]["Projectile"]);
 				tags->SetTag("PlayerDamage", currentObjectJson["tags"]["PlayerDamage"]);
 				tags->SetTag("EnemyDamage", currentObjectJson["tags"]["EnemyDamage"]);
 				tags->SetTag("EnvironmentalDamage", currentObjectJson["tags"]["EnvironmentalDamage"]);
@@ -363,6 +384,16 @@ namespace FlatEngine
 				tags->SetIgnore("Enemy", currentObjectJson["ignoreTags"]["Enemy"]);
 				tags->SetIgnore("Npc", currentObjectJson["ignoreTags"]["Npc"]);
 				tags->SetIgnore("Terrain", currentObjectJson["ignoreTags"]["Terrain"]);
+				if (currentObjectJson["tags"].contains("PlayerTrigger"))
+					tags->SetIgnore("PlayerTrigger", currentObjectJson["tags"]["PlayerTrigger"]);
+				if (currentObjectJson["tags"].contains("EnemyTrigger"))
+					tags->SetIgnore("EnemyTrigger", currentObjectJson["tags"]["EnemyTrigger"]);
+				if (currentObjectJson["tags"].contains("NpcTrigger"))
+					tags->SetIgnore("NpcTrigger", currentObjectJson["tags"]["NpcTrigger"]);
+				if (currentObjectJson["tags"].contains("EnvironmentalTrigger"))
+					tags->SetIgnore("EnvironmentalTrigger", currentObjectJson["tags"]["EnvironmentalTrigger"]);
+				if (currentObjectJson["tags"].contains("TerrainTrigger"))
+					tags->SetIgnore("TerrainTrigger", currentObjectJson["tags"]["TerrainTrigger"]);
 				tags->SetIgnore("PlayerDamage", currentObjectJson["ignoreTags"]["PlayerDamage"]);
 				tags->SetIgnore("EnemyDamage", currentObjectJson["ignoreTags"]["EnemyDamage"]);
 				tags->SetIgnore("EnvironmentalDamage", currentObjectJson["ignoreTags"]["EnvironmentalDamage"]);

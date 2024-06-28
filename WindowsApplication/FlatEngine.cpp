@@ -298,6 +298,10 @@ namespace FlatEngine
 		return FocusedAnimation;
 	}
 
+	void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject)
+	{
+		FlatEngine::DeleteGameObject(thisObject->GetID());
+	}
 	
 	// Project Management
 	void OpenProject(std::string path)

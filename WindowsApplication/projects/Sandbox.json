@@ -23,9 +23,9 @@
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,
             "resolutionWidth": 1920.0,
-            "sceneViewGridStepX": 31.29985809326172,
-            "sceneViewGridStepY": 31.29985809326172,
-            "sceneViewScrollingX": 562.403076171875,
+            "sceneViewGridStepX": 18.299808502197266,
+            "sceneViewGridStepY": 18.299808502197266,
+            "sceneViewScrollingX": 432.403076171875,
             "sceneViewScrollingY": 262.73046875
         }
     ]

@@ -17,6 +17,15 @@
         {
             "Frames": [
                 {
+                    "functionName": "",
+                    "time": 1400.0
+                }
+            ],
+            "Property": "Event"
+        },
+        {
+            "Frames": [
+                {
                     "scaleInterpType": 0,
                     "scaleSpeed": 0.10000000149011612,
                     "time": 0.0,
@@ -81,6 +90,23 @@
         {
             "Frames": [
                 {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 1560.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.10000000149011612,
+                    "yMove": 0.0,
+                    "yScale": 0.10000000149011612
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "_instantTintChange": false,
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
@@ -98,6 +124,7 @@
         {
             "Frames": [
                 {
+                    "_instantTintChange": false,
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
@@ -115,6 +142,7 @@
         {
             "Frames": [
                 {
+                    "_instantTintChange": false,
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
@@ -132,6 +160,7 @@
         {
             "Frames": [
                 {
+                    "_instantTintChange": false,
                     "interpType": 0,
                     "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\Whip\\nowhip.png",
                     "speed": 0.10000000149011612,

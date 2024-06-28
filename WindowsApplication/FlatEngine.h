@@ -70,6 +70,8 @@ namespace FlatEngine
 	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
+	// Global Animation Event Functions
+	extern void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject);
 
 	// Managers
 	extern std::shared_ptr<GameManager> gameManager;

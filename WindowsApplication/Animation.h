@@ -36,6 +36,7 @@ namespace FlatEngine
 		struct S_Property {
 			float time = 0;
 			std::string name;
+			bool _fired;
 		};
 		struct S_Transform : public S_Property {
 			InterpType transformInterpType = Lerp;
@@ -54,6 +55,7 @@ namespace FlatEngine
 			float xOffset = 0;
 			float yOffset = 0;
 			Vector4 tintColor = Vector4(1, 1, 1, 1);
+			bool _instantTintChange = false;
 		};
 		struct S_Camera : public S_Property {
 			bool _isPrimaryCamera = false;
@@ -92,7 +94,6 @@ namespace FlatEngine
 		};
 		struct S_Event : public S_Property {
 			std::string functionName = "";
-			bool _fired = false;
 		};
 
 		struct S_AnimationProperties {
@@ -176,6 +177,12 @@ namespace FlatEngine
 
 				_isSorted = true;
 			};
+		};
+
+		// Inherit from this struct to create new event property structs with useful event information to pass
+		// to calling event function.
+		struct S_EventProperties {
+			// Event properties you might need to pass to calling event function
 		};
 
 		Animation(long myID = -1, long parentID = -1);

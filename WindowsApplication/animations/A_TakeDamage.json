@@ -8,6 +8,7 @@
         {
             "Frames": [
                 {
+                    "_instantTintChange": true,
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
@@ -25,6 +26,7 @@
         {
             "Frames": [
                 {
+                    "_instantTintChange": true,
                     "interpType": 0,
                     "path": "",
                     "speed": 0.10000000149011612,
