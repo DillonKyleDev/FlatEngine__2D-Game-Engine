@@ -1298,7 +1298,7 @@ namespace FlatEngine { namespace FlatGui {
 		f_Files->Release();
 		f_FileSystem->Release();
 		CoUninitialize();
-		return sFilePath.substr(currentDirIndex);
+		return sFilePath.substr(currentDirIndex + 19);
 	}
 
 	std::string GetFilenameFromPath(std::string path, bool _keepExtension)
