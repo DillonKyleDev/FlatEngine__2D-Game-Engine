@@ -26,6 +26,8 @@ project "FlatEngine"
         "../Vendor/includes/SDL2_Mixer/include",
         "../Vendor/includes/SDL2_Mixer/lib/x64",
         "../Vendor/includes/Json_Formatter",
+        "../Vendor/includes/ImPlot",
+        "../Vendor/includes/ImSequencer",
     }
 
     libdirs 
@@ -34,18 +36,20 @@ project "FlatEngine"
          "../Vendor/includes/SDL2_Image/lib/x64",
          "../Vendor/includes/SDL2_Text/lib/x64",
          "../Vendor/includes/SDL2_Mixer/lib/x64",
+         "../Vendor/includes/ImPlot",
+         "../Vendor/includes/ImSequencer",
     }
  
     links
     {
-         "SDL2.lib",
-         "SDL2main.lib",
-         "SDL2_ttf.lib",
-         "SDL2_image.lib",
-         "d3d12.lib",
-         "d3dcompiler.lib",
-         "dxgi.lib",
-         "SDL2_mixer.lib",
+        "SDL2.lib",
+        "SDL2main.lib",
+        "SDL2_ttf.lib",
+        "SDL2_image.lib",
+        "d3d12.lib",
+        "d3dcompiler.lib",
+        "dxgi.lib",
+        "SDL2_mixer.lib",
     }
 
    defines

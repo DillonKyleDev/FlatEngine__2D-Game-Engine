@@ -28,6 +28,12 @@
     <Filter Include="Vendor\includes\ImGui\ImGui_Docking\misc\fonts">
       <UniqueIdentifier>{5F8CFC5F-4B0A-4DF9-3402-0B91201F8F21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Vendor\includes\ImPlot">
+      <UniqueIdentifier>{DD9530B4-C98F-5906-B2FC-EF169E95BF72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\ImSequencer">
+      <UniqueIdentifier>{299AADF1-95A7-DBD7-1E8E-D7C28A9AA78E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Vendor\includes\Json_Formatter">
       <UniqueIdentifier>{5576637F-419C-2DE6-2AE2-B2B116A752B2}</UniqueIdentifier>
     </Filter>
@@ -119,6 +125,15 @@
     </ClInclude>
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\cpp\imgui_stdlib.h">
       <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\ImPlot\implot.h">
+      <Filter>Vendor\includes\ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\ImPlot\implot_internal.h">
+      <Filter>Vendor\includes\ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\ImSequencer\ImSequencer.h">
+      <Filter>Vendor\includes\ImSequencer</Filter>
     </ClInclude>
     <ClInclude Include="..\Vendor\includes\Json_Formatter\json.hpp">
       <Filter>Vendor\includes\Json_Formatter</Filter>
@@ -493,6 +508,18 @@
     </ClCompile>
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\binary_to_compressed_c.cpp">
       <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot.cpp">
+      <Filter>Vendor\includes\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot_demo.cpp">
+      <Filter>Vendor\includes\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot_items.cpp">
+      <Filter>Vendor\includes\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Vendor\includes\ImSequencer\ImSequencer.cpp">
+      <Filter>Vendor\includes\ImSequencer</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />

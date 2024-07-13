@@ -59,7 +59,7 @@
     <IntDir>..\Binaries\Intermediates\windows-x86_64\Debug\FlatEngine\</IntDir>
     <TargetName>FlatEngine</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -67,7 +67,7 @@
     <IntDir>..\Binaries\Intermediates\windows-x86_64\Release\FlatEngine\</IntDir>
     <TargetName>FlatEngine</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -75,7 +75,7 @@
     <IntDir>..\Binaries\Intermediates\windows-x86_64\Dist\FlatEngine\</IntDir>
     <TargetName>FlatEngine</TargetName>
     <TargetExt>.exe</TargetExt>
-    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdlrenderer2.h" />
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imconfig.h" />
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui.h" />
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_internal.h" />
@@ -157,6 +159,9 @@
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imstb_textedit.h" />
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imstb_truetype.h" />
     <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="..\Vendor\includes\ImPlot\implot.h" />
+    <ClInclude Include="..\Vendor\includes\ImPlot\implot_internal.h" />
+    <ClInclude Include="..\Vendor\includes\ImSequencer\ImSequencer.h" />
     <ClInclude Include="..\Vendor\includes\Json_Formatter\json.hpp" />
     <ClInclude Include="..\Vendor\includes\Json_Formatter\json_fwd.hpp" />
     <ClInclude Include="..\Vendor\includes\SDL2\include\SDL.h" />
@@ -277,11 +282,6 @@
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="WidgetsManager.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="backends\imgui_impl_dx12.h" />
-    <ClInclude Include="backends\imgui_impl_sdl2.h" />
-    <ClInclude Include="backends\imgui_impl_sdlrenderer2.h" />
-    <ClInclude Include="implot.h" />
-    <ClInclude Include="implot_internal.h" />
     <ClInclude Include="scripts\BlasterRound.h" />
     <ClInclude Include="scripts\BlobParticle.h" />
     <ClInclude Include="scripts\ButtonScriptTemplate.h" />
@@ -300,6 +300,8 @@
     <ClInclude Include="scripts\StartButton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdlrenderer2.cpp" />
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui.cpp" />
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_demo.cpp" />
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_draw.cpp" />
@@ -307,6 +309,10 @@
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_widgets.cpp" />
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\binary_to_compressed_c.cpp" />
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot.cpp" />
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot_demo.cpp" />
+    <ClCompile Include="..\Vendor\includes\ImPlot\implot_items.cpp" />
+    <ClCompile Include="..\Vendor\includes\ImSequencer\ImSequencer.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Audio.cpp" />
@@ -328,7 +334,6 @@
     <ClCompile Include="Hierarchy.cpp" />
     <ClCompile Include="Icons.cpp" />
     <ClCompile Include="ImGuiWrappers.cpp" />
-    <ClCompile Include="ImSequencer.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -357,16 +362,6 @@
     <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="WidgetsManager.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="backends\imgui_impl_dx12.cpp" />
-    <ClCompile Include="backends\imgui_impl_sdl2.cpp">
-      <ObjectFileName>$(IntDir)\imgui_impl_sdl21.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="backends\imgui_impl_sdlrenderer2.cpp">
-      <ObjectFileName>$(IntDir)\imgui_impl_sdlrenderer21.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="implot.cpp" />
-    <ClCompile Include="implot_demo.cpp" />
-    <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scripts\BlasterRound.cpp" />
     <ClCompile Include="scripts\BlobParticle.cpp" />
