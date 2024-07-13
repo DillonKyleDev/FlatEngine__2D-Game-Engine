@@ -98,13 +98,6 @@ void PlayerController::Start()
 	animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
 	animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
 	whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
-
-	
-	std::shared_ptr<FlatEngine::GameObject> blob = FlatEngine::Instantiate("P_BlobParticle", Vector2(0, 0), -1, 1000);
-	std::shared_ptr<BlobParticle> script = std::static_pointer_cast<BlobParticle>(blob->GetFirstChild()->GetGameScriptByName("BlobParticle"));
-	script->LogObjectName();
-	script->GetTestObject().SetName("NewName");
-	script->LogObjectName();
 }
 
 void PlayerController::Update(float deltaTime)

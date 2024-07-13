@@ -28,7 +28,7 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 		//thisObject->GetAnimationComponent()->Play();
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		std::random_device dev;
 		std::mt19937 rng(dev());

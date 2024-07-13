@@ -355,7 +355,7 @@ namespace FlatEngine
 		}
 	}
 
-	std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> GameLoop::GetColliderPairs()
+	std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> &GameLoop::GetColliderPairs()
 	{
 		return colliderPairs;
 	}

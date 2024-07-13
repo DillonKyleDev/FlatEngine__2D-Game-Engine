@@ -132,8 +132,8 @@ namespace FlatEngine
 		}
 
 		// To be updated right after GameObject and its components are deleted
-		bool _hadRigidBody = false;
-		bool _hadCollider = false;
+		bool _hadRigidBody = objectToDelete->HasComponent("RigidBody");
+		bool _hadCollider = objectToDelete->HasComponent("BoxCollider");
 
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
 		for (std::shared_ptr<Component> component : objectToDelete->GetComponents())
@@ -146,16 +146,6 @@ namespace FlatEngine
 					long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
 					gameLoop->RemoveScript(scriptID);
 				}
-			}
-			if (component->GetTypeString() == "RigidBody")
-			{
-				//gameLoop->RemoveRigidBody(component->GetID());
-				_hadRigidBody = true;
-			}
-			if (component->GetTypeString() == "CircleCollider" || component->GetTypeString() == "BoxCollider")
-			{
-				//gameLoop->RemoveCollider(component->GetID());
-				_hadCollider = true;
 			}
 		}
 

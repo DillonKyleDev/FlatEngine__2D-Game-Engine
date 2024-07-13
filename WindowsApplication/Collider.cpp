@@ -1037,28 +1037,31 @@ namespace FlatEngine
 
 	void Collider::AddCollidingObject(std::shared_ptr<Collider> collidedWith)
 	{
-		LogString(GetParent()->GetName() + " adding collided..");
-		// Make sure we haven't already tracked it for this frame
-		for (std::shared_ptr<FlatEngine::GameObject> object : collidingObjects)
+		if (GetParent() != nullptr)
 		{
-			// Leave function if the object is already known to be in active collision
-			if (object->GetID() == collidedWith->GetParent()->GetID())
-				return;
-		}
-		// else add the collided object
-		collidingObjects.push_back(collidedWith->GetParent());
+			LogString(GetParent()->GetName() + " adding collided..");
+			// Make sure we haven't already tracked it for this frame
+			for (std::shared_ptr<FlatEngine::GameObject> object : collidingObjects)
+			{
+				// Leave function if the object is already known to be in active collision
+				if (object->GetID() == collidedWith->GetParent()->GetID())
+					return;
+			}
+			// else add the collided object
+			collidingObjects.push_back(collidedWith->GetParent());
 
-		// See if they were colliding in the last frame as well
-		for (std::shared_ptr<FlatEngine::GameObject> object : collidingLastFrame)
-		{
-			// Leave function if the object has already fired OnCollisionEnter();
-			if (object->GetID() == collidedWith->GetParent()->GetID())
-				return;
-		}
+			// See if they were colliding in the last frame as well
+			for (std::shared_ptr<FlatEngine::GameObject> object : collidingLastFrame)
+			{
+				// Leave function if the object has already fired OnCollisionEnter();
+				if (object->GetID() == collidedWith->GetParent()->GetID())
+					return;
+			}
 
-		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
-		if (OnCollisionEnterSet())
-			OnCollisionEnter(GetParent(), collidedWith->GetParent());
+			// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
+			if (OnCollisionEnterSet())
+				OnCollisionEnter(GetParent(), collidedWith->GetParent());
+		}
 	}
 
 	std::vector<std::shared_ptr<GameObject>> Collider::GetCollidingObjects()

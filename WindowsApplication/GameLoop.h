@@ -22,7 +22,7 @@ namespace FlatEngine
 		void RemoveRigidBody(long rigidBodyID);
 		void RemoveCollider(long colliderID);
 		void UpdateActiveColliders();
-		std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> GetColliderPairs();
+		std::vector<std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>>> &GetColliderPairs();
 		void UpdateActiveRigidBodies();
 		void Update();
 		void UpdateScripts();

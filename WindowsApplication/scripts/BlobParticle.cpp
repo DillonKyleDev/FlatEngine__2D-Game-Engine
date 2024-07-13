@@ -21,13 +21,3 @@ void BlobParticle::Start()
 void BlobParticle::Update(float deltaTime)
 {
 }
-
-void BlobParticle::LogObjectName()
-{
-	FlatEngine::LogString("Object Name: " + m_TestObject.GetName());
-}
-
-FlatEngine::GameObject& BlobParticle::GetTestObject()
-{
-	return m_TestObject;
-}

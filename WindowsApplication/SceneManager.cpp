@@ -99,6 +99,10 @@ namespace FlatEngine
 
 	void SceneManager::LoadScene(std::string filePath)
 	{
+		// Unload scene first and all containing objects
+		// Have a scene object own colliderPairs and all other things that need to be deleted when loading a new scene
+		gameLoop->GetColliderPairs().clear();
+
 		loadedScenePath = filePath;
 
 		// Remove loaded scene from memory
