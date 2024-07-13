@@ -42,6 +42,7 @@ namespace FlatEngine
 	class Scene;
 	class Collider;
 	class TagList;
+	class Process;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -77,7 +78,7 @@ namespace FlatEngine
 	// Managers
 	extern std::shared_ptr<GameManager> gameManager;
 	extern FlatEngine::SceneManager *sceneManager;
-	extern FlatEngine::Logger *logger;
+	extern Logger F_Logger;
 	extern FlatEngine::GameLoop *gameLoop;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager;

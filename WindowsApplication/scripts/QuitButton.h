@@ -1,5 +1,6 @@
 #pragma once
-#include "GameScript.h"
+#include "../FlatEngine.h"
+#include "../GameScript.h"
 
 class QuitButton : public FlatEngine::GameScript
 {

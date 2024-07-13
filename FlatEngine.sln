@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FlatEngine", "FlatEngine", "{A92B6C44-9524-8B96-BE56-701BAAAE6AA2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlatEngine", "WindowsApplication\FlatEngine.vcxproj", "{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Dist|x64 = Dist|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Debug|x64.ActiveCfg = Debug|x64
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Debug|x64.Build.0 = Debug|x64
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Dist|x64.ActiveCfg = Dist|x64
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Dist|x64.Build.0 = Dist|x64
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Release|x64.ActiveCfg = Release|x64
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{822E5B84-6EE6-9CD1-D7ED-752DC3C437C2} = {A92B6C44-9524-8B96-BE56-701BAAAE6AA2}
+	EndGlobalSection
+EndGlobal

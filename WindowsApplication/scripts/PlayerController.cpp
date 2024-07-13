@@ -8,18 +8,16 @@
 #include "imgui.h"
 
 #include "../MappingContext.h"
-#include "../Transform.h"
 #include "../Vector2.h"
 
-#include "GameObject.h"
-#include "Transform.h"
-#include "RigidBody.h"
-#include "BoxCollider.h"
-#include "Sprite.h"
+#include "../GameObject.h"
+#include "../Transform.h"
+#include "../BoxCollider.h"
 #include "BlasterRound.h"
-#include "Animation.h"
-#include "Audio.h"
+#include "../Animation.h"
 #include "Health.h"
+
+#include "BlobParticle.h"
 
 
 PlayerController::PlayerController(long ownerID) : GameScript(ownerID)
@@ -100,6 +98,13 @@ void PlayerController::Start()
 	animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
 	animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
 	whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
+
+	
+	std::shared_ptr<FlatEngine::GameObject> blob = FlatEngine::Instantiate("P_BlobParticle", Vector2(0, 0), -1, 1000);
+	std::shared_ptr<BlobParticle> script = std::static_pointer_cast<BlobParticle>(blob->GetFirstChild()->GetGameScriptByName("BlobParticle"));
+	script->LogObjectName();
+	script->GetTestObject().SetName("NewName");
+	script->LogObjectName();
 }
 
 void PlayerController::Update(float deltaTime)

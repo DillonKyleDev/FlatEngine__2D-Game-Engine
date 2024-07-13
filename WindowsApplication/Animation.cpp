@@ -196,8 +196,8 @@ namespace FlatEngine
 					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
 					std::shared_ptr<FlatEngine::Transform> transform = GetParent()->GetTransformComponent();
-					LogFloat(percentDone, "Percent Done: ");
-					LogVector2(lastFrameScale, "lastFrameScale: ");
+					//LogFloat(percentDone, "Percent Done: ");
+					//LogVector2(lastFrameScale, "lastFrameScale: ");
 					//LogFloat(lastFrameScale, "lastFrameScale: ");
 					switch ((*transformFrame)->transformInterpType)
 					{

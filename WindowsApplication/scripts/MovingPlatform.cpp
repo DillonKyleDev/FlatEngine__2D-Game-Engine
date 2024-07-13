@@ -1,5 +1,5 @@
 #include "MovingPlatform.h"
-#include "FlatEngine.h"
+#include "../FlatEngine.h"
 
 
 MovingPlatform::MovingPlatform()

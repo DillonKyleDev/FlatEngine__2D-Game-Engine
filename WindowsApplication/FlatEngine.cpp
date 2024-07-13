@@ -41,7 +41,7 @@ namespace FlatEngine
 	std::shared_ptr<Sound> soundController = std::make_shared<Sound>();
 	long FlatEngine::FocusedGameObjectID = -1;
 	FlatEngine::SceneManager* FlatEngine::sceneManager = new FlatEngine::SceneManager();
-	FlatEngine::Logger* FlatEngine::logger = new FlatEngine::Logger();
+	Logger F_Logger = Logger();
 	FlatEngine::GameLoop* FlatEngine::gameLoop = new FlatEngine::GameLoop();
 	std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager(new FlatEngine::FlatGui::WidgetsManager());
 	std::shared_ptr<FlatEngine::FlatGui::UIManager> uiManager(new FlatEngine::FlatGui::UIManager());
@@ -404,7 +404,7 @@ namespace FlatEngine
 					if (currentObjectJson.contains("_clearLogBuffer"))
 					{
 						FlatGui::_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
-						FlatEngine::logger->ClearBuffer();
+						F_Logger.ClearBuffer();
 					}
 					if (currentObjectJson.contains("_autoSave"))
 						newProject->SetAutoSave(currentObjectJson["_autoSave"]);
@@ -755,27 +755,27 @@ namespace FlatEngine
 	// Logging Abstraction
 	void LogString(std::string line)
 	{
-		logger->LogString(line);
+		F_Logger.LogString(line);
 	}
 
 	void LogSeparator()
 	{
-		logger->LogSeparator();
+		F_Logger.LogSeparator();
 	}
 
 	void LogFloat(float var, std::string line)
 	{
-		logger->LogFloat(var, line);
+		F_Logger.LogFloat(var, line);
 	}
 
 	void LogInt(int var, std::string line)
 	{
-		logger->LogInt(var, line);
+		F_Logger.LogInt(var, line);
 	}
 
 	void LogVector2(Vector2 vector, std::string line)
 	{
-		logger->LogVector2(vector, line);
+		F_Logger.LogVector2(vector, line);
 	}
 
 	void DrawRectangle(Vector2 startingPoint, Vector2 endPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)
@@ -789,17 +789,17 @@ namespace FlatEngine
 		if (endPoint.y > canvas_p0.y + canvas_sz.y)
 			endPoint.y = canvas_p0.y + canvas_sz.y;
 
-		logger->DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
+		F_Logger.DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
 	}
 
 	void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList)
 	{
-		logger->DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
+		F_Logger.DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
 	}
 
 	void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList)
 	{
-		logger->DrawLine(startingPoint, endingPoint, color, thickness, drawList);
+		F_Logger.DrawLine(startingPoint, endingPoint, color, thickness, drawList);
 	}
 
 	void DrawRectangleFromLines(Vector2* corners, Vector4 color, float thickness, ImDrawList* drawList)
@@ -817,7 +817,7 @@ namespace FlatEngine
 
 	void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList)
 	{
-		logger->DrawPoint(point, color, drawList);
+		F_Logger.DrawPoint(point, color, drawList);
 	}
 
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "FlatEngine.h"
-#include "GameScript.h"
+#include "../FlatEngine.h"
+#include "../GameScript.h"
 
 class PauseMenu : public FlatEngine::GameScript
 {

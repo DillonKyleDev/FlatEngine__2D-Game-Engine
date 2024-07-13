@@ -25,7 +25,7 @@ bool init()
 	}
 	else
 	{
-		FlatEngine::logger->LogString("SDL initialized... - Video - Audio - Joystick -");
+		FlatEngine::F_Logger.LogString("SDL initialized... - Video - Audio - Joystick -");
 
 		//Set texture filtering to linear
 		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
@@ -37,7 +37,7 @@ bool init()
 		char* title = &(t[0]);
 
 		//Initialize Window::window
-		if (Window::Init(title, 1920, 1000))
+		if (Window::Init(title, 1900, 1000))
 		{
 			FlatEngine::LogString("Window initialized...");
 

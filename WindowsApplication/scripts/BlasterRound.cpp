@@ -1,10 +1,9 @@
 #include "BlasterRound.h"
-#include "FlatEngine.h"
-#include "BoxCollider.h"
-#include "RigidBody.h"
-#include "Transform.h"
-#include "FlatEngine.h"
-#include "Audio.h"
+#include "../FlatEngine.h"
+#include "../BoxCollider.h"
+#include "../RigidBody.h"
+#include "../Transform.h"
+#include "../Audio.h"
 
 
 BlasterRound::BlasterRound(long ownerID) : GameScript(ownerID)

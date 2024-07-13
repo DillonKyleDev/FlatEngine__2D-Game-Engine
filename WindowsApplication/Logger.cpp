@@ -82,9 +82,9 @@ namespace FlatEngine
 			BeginWindow("Logger", _showLogger);
 
 			if (RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
-				FlatEngine::logger->ClearBuffer();
+				FlatEngine::F_Logger.ClearBuffer();
 
-			static ImGuiTextBuffer* log = FlatEngine::logger->GetBuffer();
+			static ImGuiTextBuffer* log = FlatEngine::F_Logger.GetBuffer();
 			static int lines = 0;
 
 			if (RenderButton("Clear"))
@@ -121,7 +121,7 @@ namespace FlatEngine
 			// For keeping the log from filling up when logging continuous values
 			if (_clearBufferEveryFrame)
 			{
-				FlatEngine::logger->ClearBuffer();
+				FlatEngine::F_Logger.ClearBuffer();
 				FlatEngine::LogString("Log buffer is being cleared...");
 			}
 		}

@@ -1037,6 +1037,7 @@ namespace FlatEngine
 
 	void Collider::AddCollidingObject(std::shared_ptr<Collider> collidedWith)
 	{
+		LogString(GetParent()->GetName() + " adding collided..");
 		// Make sure we haven't already tracked it for this frame
 		for (std::shared_ptr<FlatEngine::GameObject> object : collidingObjects)
 		{

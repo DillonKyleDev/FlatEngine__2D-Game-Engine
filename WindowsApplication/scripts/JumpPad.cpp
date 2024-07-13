@@ -3,7 +3,7 @@
 #include "../BoxCollider.h"
 #include "../RigidBody.h"
 #include "../Transform.h"
-#include "Audio.h"
+#include "../Audio.h"
 
 
 JumpPad::JumpPad(long ownerID) : GameScript(ownerID)
