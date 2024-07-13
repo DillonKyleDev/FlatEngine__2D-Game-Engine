@@ -112,7 +112,7 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "id": 117,
-                    "path": "Source/assets/images/sprites/Player/idle.png",
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\idle.png",
                     "pivotPoint": "Center",
                     "renderOrder": 5,
                     "tintColorW": 1.0,

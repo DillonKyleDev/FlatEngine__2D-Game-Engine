@@ -1290,14 +1290,15 @@ namespace FlatEngine { namespace FlatGui {
 
 		//  FORMAT STRING FOR EXECUTABLE NAME
 		const size_t slash = sFilePath.find_last_of("/\\");
-		sSelectedFile = sFilePath.substr(slash + 1);
-
+		//  Removes absolute path from the beginning of the selected filepath
+		const size_t currentDirIndex = sFilePath.find("WindowsApplication");
+		sSelectedFile = sFilePath.substr(slash);
 		//  SUCCESS, CLEAN UP
 		CoTaskMemFree(f_Path);
 		f_Files->Release();
 		f_FileSystem->Release();
 		CoUninitialize();
-		return sFilePath;
+		return sFilePath.substr(currentDirIndex);
 	}
 
 	std::string GetFilenameFromPath(std::string path, bool _keepExtension)
