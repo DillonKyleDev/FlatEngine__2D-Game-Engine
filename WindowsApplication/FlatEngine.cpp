@@ -165,35 +165,6 @@ namespace FlatEngine
 				// Save time after update finishes
 				updateLoopEnd = (float)GetEngineTime();
 			}
-
-			// Physics update V2
-			{
-				// Physics Update Version 2
-				// Clamp cycles per Run loop (avoids physics death spiral)
-				//int maxCyclesPerRunLoop = 100;
-				//int cycleCounter = 0;
-				//if (frameTime < gameLoop->deltaTime)
-				//{
-				//	GameLoopUpdate();
-				//	gameLoop->SetFrameSkipped(false);
-				//	float dt = std::min<double>(frameTime, gameLoop->deltaTime);
-				//	frameTime -= dt;
-				//	gameLoop->time += gameLoop->deltaTime;
-				//}
-				//else if (cycleCounter < maxCyclesPerRunLoop)
-				//{
-				//	while (frameTime > 0.0)
-				//	{
-				//		GameLoopUpdate();
-				//		gameLoop->SetFrameSkipped(false);
-				//		float dt = std::min<double>(frameTime, gameLoop->deltaTime);
-				//		frameTime -= dt;
-				//		gameLoop->time += gameLoop->deltaTime;
-				//		
-				//	}
-				//	cycleCounter++;
-				//}
-			}
 		}
 		else if (GameLoopPaused() && gameLoop->IsFrameSkipped())
 		{

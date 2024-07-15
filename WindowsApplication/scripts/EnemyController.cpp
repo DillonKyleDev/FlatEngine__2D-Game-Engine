@@ -149,7 +149,7 @@ void EnemyController::MoveToObject(std::shared_ptr<FlatEngine::GameObject> objec
 		std::shared_ptr<FlatEngine::Sprite> sprite = GetOwner()->GetSpriteComponent();
 		Vector2 moveTo = object->GetTransformComponent()->GetTruePosition() - GetOwner()->GetTransformComponent()->GetTruePosition();
 		GetOwner()->GetCharacterController()->MoveToward(moveTo.NormalizeCardinal());
-		FlatEngine::LogVector2(moveTo.NormalizeCardinal());
+		//FlatEngine::LogVector2(moveTo.NormalizeCardinal());
 		if (moveTo.x < 0 && sprite->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkLeft.png")
 			sprite->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkLeft.png");
 		else if (moveTo.x > 0 && sprite->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkRight.png")

@@ -241,7 +241,12 @@ namespace FlatEngine
 
 		if (_colliding)
 		{
-			LogString("Collider colliding: " + collider1->GetParent()->GetName());
+			std::string collider1Name = collider1->GetParent()->GetName();
+			std::string collider2Name = collider2->GetParent()->GetName();
+			if (collider1Name == "WhipArm" || collider2Name == "WhipArm")
+			{
+				LogString("Whip arm COLLIDING.");
+			}
 			// Set _colliding
 			collider1->SetColliding(true);
 			collider2->SetColliding(true);
@@ -1075,9 +1080,9 @@ namespace FlatEngine
 		std::string colliderName = GetParent()->GetName();
 		if (colliderName == "WhipArm")
 		{
-			float test = 1;
+			LogString("Whip arm clear collided.");
 		}
-		LogString("Clearing collided for : " + colliderName);
+	
 
 		// Check which objects have left collision state since last frame
 		for (std::shared_ptr<FlatEngine::GameObject> collidedLastFrame : collidingLastFrame)

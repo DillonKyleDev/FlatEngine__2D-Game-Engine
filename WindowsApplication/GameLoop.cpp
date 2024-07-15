@@ -427,12 +427,18 @@ namespace FlatEngine
 		}
 
 		processTime -= (float)FlatEngine::GetEngineTime();
-		LogFloat(processTime, "CalculatePhysics: ");
+		//LogFloat(processTime, "CalculatePhysics: ");
 
-		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
-		{			
-			colliderPair.first->ResetCollisions();
-			colliderPair.second->ResetCollisions();
+		//for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
+		//{			
+		//	colliderPair.first->ResetCollisions();
+		//	colliderPair.second->ResetCollisions();
+		//}
+
+		for (std::shared_ptr<FlatEngine::Collider> collider : colliders)
+		{
+			collider->ResetCollisions();
+			collider->RecalculateBounds();
 		}
 
 		processTime = (float)FlatEngine::GetEngineTime();
@@ -448,8 +454,8 @@ namespace FlatEngine
 			{
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
-					collider1->RecalculateBounds();
-					collider2->RecalculateBounds();
+					//collider1->RecalculateBounds();
+					//collider2->RecalculateBounds();
 
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
 						Collider::CheckForCollision(collider1, collider2);
@@ -461,7 +467,7 @@ namespace FlatEngine
 		continuousCounter++;
 
 		processTime -= (float)FlatEngine::GetEngineTime();
-		LogFloat(processTime, "Collision Detection: ");
+		//LogFloat(processTime, "Collision Detection: ");
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
@@ -472,13 +478,13 @@ namespace FlatEngine
 				rigidBody->ApplyPhysics((float)deltaTime);
 
 		processTime -= (float)FlatEngine::GetEngineTime();
-		LogFloat(processTime, "Apply Physics: ");
+		//LogFloat(processTime, "Apply Physics: ");
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
 		UpdateScripts();
 		processTime -= (float)FlatEngine::GetEngineTime();
-		LogFloat(processTime, "Update Scripts: ");
+		//LogFloat(processTime, "Update Scripts: ");
 	}
 
 	void GameLoop::Stop()
