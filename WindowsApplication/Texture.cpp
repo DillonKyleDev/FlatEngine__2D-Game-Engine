@@ -14,6 +14,16 @@ Texture::Texture(std::string path)
 	this->font = TTF_OpenFont("assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 }
 
+Texture::Texture(const Texture* toCopy)
+{
+	//Initialize
+	this->texture = toCopy->texture;
+	this->surface = toCopy->surface;
+	this->textureWidth = toCopy->textureWidth;
+	this->textureHeight = toCopy->textureHeight;
+	this->font = toCopy->font;
+}
+
 
 //Deallocatees memory
 Texture::~Texture()
@@ -25,13 +35,12 @@ Texture::~Texture()
 
 bool Texture::loadFromFile(std::string path)
 {
-	//Remove existing texture
-	this->freeTexture();
-
-	//The final texture
+	// Remove existing texture
+	// freeTexture();
+	// The final texture
 	SDL_Texture* newTexture = NULL;
 
-	//Load image at specified path
+	// Load image at specified path
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
@@ -51,8 +60,8 @@ bool Texture::loadFromFile(std::string path)
 		else
 		{
 			//Set image dimensions
-			this->textureWidth = loadedSurface->w;
-			this->textureHeight = loadedSurface->h;
+			textureWidth = loadedSurface->w;
+			textureHeight = loadedSurface->h;
 		}
 
 		//Get rid of old loaded surface
@@ -60,8 +69,8 @@ bool Texture::loadFromFile(std::string path)
 	}
 
 	//Return success
-	this->texture = newTexture;
-	return this->texture != NULL;
+	texture = newTexture;
+	return texture != nullptr;
 }
 
 
@@ -152,7 +161,7 @@ void Texture::freeTexture()
 	//Free texture if it exists
 	if (this->texture != NULL)
 	{
-		SDL_DestroyTexture(this->texture);
+		SDL_DestroyTexture(texture);
 		this->texture = NULL;
 		this->textureWidth = 0;
 		this->textureHeight = 0;
@@ -162,7 +171,7 @@ void Texture::freeTexture()
 
 SDL_Texture* Texture::getTexture()
 {
-	return this->texture;
+	return texture;
 }
 
 

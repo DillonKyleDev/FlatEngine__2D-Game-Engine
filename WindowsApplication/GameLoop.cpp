@@ -414,6 +414,8 @@ namespace FlatEngine
 			GetPrimaryCamera()->Follow();
 		}
 
+		float processTime = (float)FlatEngine::GetEngineTime();
+
 		AddFrame();
 		activeTime = time - pausedTime;		
 
@@ -424,13 +426,16 @@ namespace FlatEngine
 				rigidBody->CalculatePhysics();
 		}
 
+		processTime -= (float)FlatEngine::GetEngineTime();
+		LogFloat(processTime, "CalculatePhysics: ");
+
 		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
 		{			
 			colliderPair.first->ResetCollisions();
 			colliderPair.second->ResetCollisions();
 		}
 
-		//LogFloat(GetEngineTime(), "Start Collision Detection: ");
+		processTime = (float)FlatEngine::GetEngineTime();
 		
 		// Handle Collision updates here
 		static int continuousCounter = 0;
@@ -455,14 +460,25 @@ namespace FlatEngine
 			continuousCounter = 0;
 		continuousCounter++;
 
-		//LogFloat(GetEngineTime(), "End Collision Detection: ");
+		processTime -= (float)FlatEngine::GetEngineTime();
+		LogFloat(processTime, "Collision Detection: ");
+
+
+		processTime = (float)FlatEngine::GetEngineTime();
 
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			if (rigidBody->IsActive())
 				rigidBody->ApplyPhysics((float)deltaTime);
 
+		processTime -= (float)FlatEngine::GetEngineTime();
+		LogFloat(processTime, "Apply Physics: ");
+
+
+		processTime = (float)FlatEngine::GetEngineTime();
 		UpdateScripts();
+		processTime -= (float)FlatEngine::GetEngineTime();
+		LogFloat(processTime, "Update Scripts: ");
 	}
 
 	void GameLoop::Stop()

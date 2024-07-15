@@ -11,6 +11,7 @@ class Texture
 {
 public:
 	Texture(std::string path = "");
+	Texture(const Texture* toCopy);
 	~Texture();
 	bool loadFromFile(std::string path);
 	bool loadSurface(std::string path, SDL_Surface* screenSurface);

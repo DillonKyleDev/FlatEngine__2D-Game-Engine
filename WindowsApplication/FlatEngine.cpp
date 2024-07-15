@@ -112,7 +112,7 @@ namespace FlatEngine
 			StartGameLoop();
 
 
-		if (GameLoopStarted() && !GameLoopPaused() || GameLoopPaused() && gameLoop->IsFrameSkipped())
+		if (GameLoopStarted() && !GameLoopPaused())
 		{
 			// Profiler
 			float updateLoopStart = 0;
@@ -195,11 +195,20 @@ namespace FlatEngine
 				//}
 			}
 		}
+		else if (GameLoopPaused() && gameLoop->IsFrameSkipped())
+		{
+			FlatGui::HandleEvents(_hasQuit);
+			GameLoopUpdate();
+			gameLoop->SetFrameSkipped(false);
+
+			gameLoop->time += gameLoop->deltaTime;
+			gameLoop->accumulator -= gameLoop->deltaTime;
+		}
 		else
 			FlatGui::HandleEvents(_hasQuit);
 
 		// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a stutter on first starting gameloop
-		if (!gameLoop->IsStarted())
+		if (!gameLoop->IsStarted() || gameLoop->IsPaused())
 			frameStart = GetEngineTime();
 
 		FlatGui::RenderClear();

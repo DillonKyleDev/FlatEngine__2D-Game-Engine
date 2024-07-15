@@ -51,7 +51,7 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		SDL_Texture* texture;
+		Texture texture;		
 		int renderOrder;
 		float textureWidth;
 		float textureHeight;

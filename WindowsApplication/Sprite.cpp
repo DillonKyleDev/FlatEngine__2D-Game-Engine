@@ -8,7 +8,7 @@ namespace FlatEngine
 		SetType(Component::ComponentTypes::Sprite);
 		SetID(myID);
 		SetParentID(parentID);
-		texture = nullptr;
+		texture = Texture();
 		textureWidth = 0;
 		textureHeight = 0;
 		scale = Vector2(1, 1);
@@ -26,20 +26,21 @@ namespace FlatEngine
 		SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		texture = toCopy->texture;
 		textureWidth = toCopy->textureHeight;
 		textureHeight = toCopy->textureWidth;
 		scale = toCopy->scale;
 		pivotPoint = toCopy->pivotPoint;
 		pivotOffset = toCopy->pivotOffset;
 		offset = toCopy->offset;
-		path = toCopy->path;
 		tintColor = toCopy->tintColor;
 		renderOrder = toCopy->renderOrder;
+		SetTexture(toCopy->path);
 	}
 
 	Sprite::~Sprite()
 	{
+		texture.freeTexture();
+		texture.freeSurface();
 	}
 
 	std::string Sprite::GetData()
@@ -68,24 +69,19 @@ namespace FlatEngine
 
 	void Sprite::SetTexture(std::string newPath)
 	{
-		if (newPath != "")
+		if (newPath != "" && newPath != path)
 		{
 			// Save path for referencing later if needed
-			path = newPath;
-			Texture* newTexture = new Texture();
-			if (newTexture->loadFromFile(newPath))
+			path = newPath;	
+			
+			if (texture.loadFromFile(newPath))
 			{
-				texture = newTexture->getTexture();
-				textureWidth = (float)newTexture->getWidth();
-				textureHeight = (float)newTexture->getHeight();
-
+				//texture = tempTexture;
 				// Set pivot point to the center of the texture by default
-				offset = { textureWidth / 2, textureHeight / 2 };
+				offset = { (float)texture.getWidth() / 2, (float)texture.getHeight() / 2 };
 				pivotOffset = offset;
 			}
 		}
-		else
-			texture = nullptr;
 	}
 
 
@@ -104,7 +100,7 @@ namespace FlatEngine
 
 	SDL_Texture* Sprite::GetTexture()
 	{
-		return texture;
+		return texture.getTexture();
 	}
 
 	void Sprite::SetScale(Vector2 newScale)
@@ -175,13 +171,13 @@ namespace FlatEngine
 
 	float Sprite::GetTextureWidth()
 	{
-		return textureWidth;
+		return texture.getWidth();
 	}
 
 
 	float Sprite::GetTextureHeight()
 	{
-		return textureHeight;
+		return texture.getHeight();
 	}
 
 	
@@ -202,7 +198,7 @@ namespace FlatEngine
 
 	void Sprite::RemoveTexture()
 	{
-		texture = NULL;
+		texture = Texture();
 	}
 
 	void Sprite::SetPivotPoint(PivotPoint newPivot)

@@ -16,17 +16,17 @@
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",
-            "focusedGameObjectID": 47,
+            "focusedGameObjectID": -1,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
             "loadedScenePath": "scenes\\OpeningScene.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,
             "resolutionWidth": 1920.0,
-            "sceneViewGridStepX": 25.49980926513672,
-            "sceneViewGridStepY": 25.49980926513672,
-            "sceneViewScrollingX": 510.403076171875,
-            "sceneViewScrollingY": 202.73046875
+            "sceneViewGridStepX": 9.19980239868164,
+            "sceneViewGridStepY": 9.19980239868164,
+            "sceneViewScrollingX": 515.403076171875,
+            "sceneViewScrollingY": 308.73046875
         }
     ]
 }

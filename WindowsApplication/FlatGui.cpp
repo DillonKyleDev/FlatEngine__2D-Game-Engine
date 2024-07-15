@@ -1616,7 +1616,7 @@ namespace FlatEngine { namespace FlatGui {
 					drawSplitter->SetCurrentChannel(draw_list, 0);
 
 				// Draw the texture
-				AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				AddImageToDrawList(sprite->GetTexture(), position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			// If it has a text component, render that text texture at the objects transform position
