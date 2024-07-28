@@ -3,10 +3,12 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "TagList.h"
+#include "Component.h"
+#include "Transform.h"
 
 
-namespace FlatGui {
-
+namespace FlatGui 
+{
 	// ImGui Wrappers
 	void BeginWindow(std::string name)
 	{
@@ -545,5 +547,140 @@ namespace FlatGui {
 
 		ImGui::SetCursorScreenPos(startingPoint);
 		return ImGui::InvisibleButton(id.c_str(), size, flags);
+	}
+
+	void BeginComponent(FlatEngine::Component* component, long &queuedForDelete)
+	{
+		// Is Collapsed
+		bool _isCollapsed = component->IsCollapsed();
+		long id = component->GetID();
+
+		// Component Name
+		std::string componentType = component->GetTypeString();
+		// Get Component ID in to keep the child unique
+		std::string componentID = componentType + std::to_string(component->GetID());
+
+		// Begin Component Child
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
+		//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+
+		ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), autoResizeChildFlags);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		//ImGui::PopStyleVar();
+
+		// Border around each component
+		auto wPos = ImGui::GetWindowPos();
+		auto wSize = ImGui::GetWindowSize();
+		ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, ImColor(componentBorderColor.x, componentBorderColor.y, componentBorderColor.z, componentBorderColor.w));
+
+		// Component Name
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+		ImGui::Text(componentType.c_str());
+
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - (childPadding + 42), 5);
+
+		// Pushes	
+		ImGui::PushItemWidth(-1.0f);
+		ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(1.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
+
+		std::string expandID = "##expandIcon-" + id;
+		std::string trashcanID = "##trashIcon-" + id;
+		std::string openFileID = "##openFileIcon-" + id;
+
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+		// Trash Can Icon for removing Component from Focused Object
+		if (RenderImageButton(trashcanID.c_str(), trashIcon.GetTexture()))
+			queuedForDelete = component->GetID();
+
+		ImGui::SameLine(0, 5);
+
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+		// Draw Expand Icon for expanding/collapsing current component information
+		if (_isCollapsed)
+		{
+			if (RenderImageButton(expandID.c_str(), expandIcon.GetTexture()))
+				component->SetCollapsed(!_isCollapsed);
+		}
+		else
+			if (RenderImageButton(expandID.c_str(), expandFlippedIcon.GetTexture()))
+				component->SetCollapsed(!_isCollapsed);
+
+
+		if (!_isCollapsed)
+		{
+			ImGui::Separator();
+			ImGui::Separator();
+		}
+		else {
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 15));
+			ImGui::Text("");
+		}
+
+		// Pops
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
+		ImGui::PopStyleColor();
+	}
+
+	void EndComponent()
+	{
+		// Pops
+		ImGui::PopItemWidth();
+		ImGui::PopStyleColor();
+
+		// Add some space to the bottom of each component
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+
+		ImGui::EndChild();
+		ImGui::EndChild();
+	}
+
+	bool RenderIsActiveCheckbox(bool& _isActive)
+	{
+		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 1));
+		bool _checked = RenderCheckbox("Active", _isActive);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		return _checked;
+	}
+
+	void RenderTransformComponent(FlatEngine::Transform* transform)
+	{
+		// Position, scale, and rotation of transform
+		Vector2 position = transform->GetPosition();
+		float xPos = position.x;
+		float yPos = position.y;
+		Vector2 scale = transform->GetScale();
+		float scaleX = scale.x;
+		float scaleY = scale.y;
+		float rotation = transform->GetRotation();
+		bool _isActive = transform->IsActive();
+		long id = transform->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			transform->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##TransformProperties" + std::to_string(id), 2))
+		{
+			RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX);
+			RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX);
+			transform->SetPosition(Vector2(xPos, yPos));
+			RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360);
+			transform->SetRotation(rotation);
+			RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000);
+			RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
+			transform->SetScale(Vector2(scaleX, scaleY));
+			PopTable();
+		}
 	}
 }

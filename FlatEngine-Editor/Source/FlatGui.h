@@ -24,6 +24,8 @@ namespace FlatEngine {
 	class SceneManager;
 	class Scene;
 	class Process;
+	class Component;
+	class Transform;
 }
 
 using GameObject = FlatEngine::GameObject;
@@ -34,6 +36,8 @@ using Project = FlatEngine::Project;
 using SceneManager = FlatEngine::SceneManager;
 using Scene = FlatEngine::Scene;
 using Process = FlatEngine::Process;
+using Component = FlatEngine::Component;
+using Transform = FlatEngine::Transform;
 
 namespace FlatGui
 {
@@ -352,6 +356,10 @@ namespace FlatGui
 	extern void PushTreeList(std::string id);
 	extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
 	extern void PopTreeList();
+	extern void BeginComponent(FlatEngine::Component* component, long& queuedForDelete);
+	extern void EndComponent();
+	extern bool RenderIsActiveCheckbox(bool &_isActive);
+	extern void RenderTransformComponent(FlatEngine::Transform* transform);
 	// SDL
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 	// Color converter

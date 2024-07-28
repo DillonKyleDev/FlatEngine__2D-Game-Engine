@@ -337,6 +337,7 @@ namespace FlatEngine
 		sprite.SetCollapsed(_collapsed);
 		components.push_back(&sprite);
 
+		components.push_back(&sprite);
 		F_ECSManager.m_Sprites.push_back(sprite);
 		F_ECSManager.m_spriteMap.emplace(this->ID, (long)F_ECSManager.m_Sprites.size() - 1);
 		return &F_ECSManager.m_Sprites.at(F_ECSManager.m_spriteMap.at(this->ID));
