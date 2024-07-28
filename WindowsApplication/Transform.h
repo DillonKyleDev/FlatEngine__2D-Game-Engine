@@ -27,6 +27,7 @@ namespace FlatEngine
 		Vector2 GetPosition();
 		Vector2 GetScale();
 		float GetRotation();
+		void LookAt(Vector2 lookAt);
 		std::string GetData();
 
 	private:

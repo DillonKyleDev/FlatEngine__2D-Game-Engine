@@ -245,7 +245,7 @@ namespace FlatEngine
 			std::string collider2Name = collider2->GetParent()->GetName();
 			if (collider1Name == "WhipArm" || collider2Name == "WhipArm")
 			{
-				LogString("Whip arm COLLIDING.");
+				//LogString("Whip arm COLLIDING.");
 			}
 			// Set _colliding
 			collider1->SetColliding(true);
@@ -1080,7 +1080,7 @@ namespace FlatEngine
 		std::string colliderName = GetParent()->GetName();
 		if (colliderName == "WhipArm")
 		{
-			LogString("Whip arm clear collided.");
+			//LogString("Whip arm clear collided.");
 		}
 	
 

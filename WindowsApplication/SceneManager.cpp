@@ -1251,6 +1251,7 @@ namespace FlatEngine
 					float mass = 1.0f;
 					float angularDrag = 1.0f;
 					float gravity = 1.0f;
+					float fallingGravity = 1.2f;
 					float friction = 1.0f;
 					float equilibriumForce = 2.0f;
 					float terminalVelocity = 0.4f;
@@ -1289,6 +1290,10 @@ namespace FlatEngine
 						gravity = currentObjectJson["components"][j]["gravity"];
 					else
 						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'gravity' in object: " + loadedName);
+					if (currentObjectJson["components"][j].contains("fallingGravity"))
+						fallingGravity = currentObjectJson["components"][j]["fallingGravity"];
+					else
+						FlatEngine::LogInt(j, "SceneManager::Load() - Saved scene json does not contain a value for 'fallingGravity' in object: " + loadedName);
 
 					if (currentObjectJson["components"][j].contains("friction"))
 						friction = currentObjectJson["components"][j]["friction"];
@@ -1322,6 +1327,7 @@ namespace FlatEngine
 					newRigidBody->SetMass(mass);
 					newRigidBody->SetAngularDrag(angularDrag);
 					newRigidBody->SetGravity(gravity);
+					newRigidBody->SetFallingGravity(fallingGravity);
 					newRigidBody->SetFriction(friction);
 					newRigidBody->SetWindResistance(windResistance);
 					newRigidBody->SetEquilibriumForce(equilibriumForce);

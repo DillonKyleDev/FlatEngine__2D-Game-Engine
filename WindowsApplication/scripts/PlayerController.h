@@ -1,10 +1,11 @@
 #pragma once
 #include "../FlatEngine.h"
 #include "../GameScript.h"
+#include "../Spring.h"
 #include "Health.h"
 
 
-class PlayerController : public FlatEngine::GameScript
+namespace FlatEngine
 {
 	class MappingContext;
 	class CharacterController;
@@ -15,7 +16,11 @@ class PlayerController : public FlatEngine::GameScript
 	class Sprite;
 	class Audio;
 	class GameObject;
+	class Spring;
+}
 
+class PlayerController : public FlatEngine::GameScript
+{
 public:
 	PlayerController(long ownerID);
 	~PlayerController();
@@ -35,4 +40,6 @@ private:
 	std::shared_ptr<FlatEngine::Sprite> sprite;
 	std::shared_ptr<FlatEngine::Audio> audio;
 	std::shared_ptr<FlatEngine::GameObject> whipArm;
+
+	FlatEngine::Spring spring;
 };

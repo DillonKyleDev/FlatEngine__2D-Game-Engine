@@ -65,14 +65,26 @@ Vector2 Vector2::operator-(const Vector2& right)
 
 Vector2 Vector2::Normalize()
 {
-	float hypotenuse = std::sqrt((x * x) + (y * y));
-	if (hypotenuse > 0)
-		hypotenuse *= -1;
+	if (x == 0 && y != 0)
+	{
+		y = 1;
+	}
+	else if (y == 0 && x != 0)
+	{
+		x = 1;
+	}
+	else
+	{
+		float hypotenuse = std::sqrt((x * x) + (y * y));
 
-	x = x / hypotenuse;
-	y = y / hypotenuse;
+		x /= hypotenuse;
+		y /= hypotenuse;
 
-	float newhypotenuse = std::sqrt((x * x) + (y * y));
+		x += 0.02f;
+		y += 0.02f;
+
+		float newhypotenuse = std::sqrt((x * x) + (y * y));
+	}
 
 	return *this;
 }

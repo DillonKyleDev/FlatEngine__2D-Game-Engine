@@ -414,35 +414,38 @@ namespace FlatEngine
 			GetPrimaryCamera()->Follow();
 		}
 
-		float processTime = (float)FlatEngine::GetEngineTime();
-
 		AddFrame();
 		activeTime = time - pausedTime;		
 
+
+		//processTime = (float)FlatEngine::GetEngineTime();
+		UpdateScripts();
+		//processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		//LogFloat(processTime, "Update Scripts: ");
+
+
+		float processTime = (float)FlatEngine::GetEngineTime();
 		// Calculate RigidBody physics to use in collisions
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 		{
 			if (rigidBody->IsActive())
 				rigidBody->CalculatePhysics();
 		}
-
-		processTime -= (float)FlatEngine::GetEngineTime();
+		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "CalculatePhysics: ");
 
-		//for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
-		//{			
-		//	colliderPair.first->ResetCollisions();
-		//	colliderPair.second->ResetCollisions();
-		//}
 
+		processTime = (float)FlatEngine::GetEngineTime();
 		for (std::shared_ptr<FlatEngine::Collider> collider : colliders)
 		{
 			collider->ResetCollisions();
 			collider->RecalculateBounds();
 		}
+		processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		//LogFloat(processTime, "ResetCollisions & Bounds: ");
+
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		
 		// Handle Collision updates here
 		static int continuousCounter = 0;
 		for (std::pair<std::shared_ptr<FlatEngine::Collider>, std::shared_ptr<FlatEngine::Collider>> colliderPair : colliderPairs)
@@ -466,25 +469,19 @@ namespace FlatEngine
 			continuousCounter = 0;
 		continuousCounter++;
 
-		processTime -= (float)FlatEngine::GetEngineTime();
+		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "Collision Detection: ");
 
 
-		processTime = (float)FlatEngine::GetEngineTime();
 
+		processTime = (float)FlatEngine::GetEngineTime();
 		// Apply RigidBody physics calculations
 		for (std::shared_ptr<RigidBody> rigidBody : rigidBodies)
 			if (rigidBody->IsActive())
 				rigidBody->ApplyPhysics((float)deltaTime);
 
-		processTime -= (float)FlatEngine::GetEngineTime();
+		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "Apply Physics: ");
-
-
-		processTime = (float)FlatEngine::GetEngineTime();
-		UpdateScripts();
-		processTime -= (float)FlatEngine::GetEngineTime();
-		//LogFloat(processTime, "Update Scripts: ");
 	}
 
 	void GameLoop::Stop()

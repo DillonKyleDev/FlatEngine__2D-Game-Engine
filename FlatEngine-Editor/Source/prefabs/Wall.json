@@ -1,0 +1,90 @@
+{
+    "Name": "Wall",
+    "Prefab": [
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 275,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 13.173019409179688,
+                    "xPos": 18.288761138916016,
+                    "xScale": 4.699999809265137,
+                    "yOrigin": 0.46138763427734375,
+                    "yPos": -9.706741333007813,
+                    "yScale": 4.199999809265137
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 276,
+                    "path": "assets/images/environment/light.png",
+                    "pivotPoint": "Center",
+                    "renderOrder": 0,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isComposite": false,
+                    "_isContinuous": false,
+                    "_isSolid": true,
+                    "_isStatic": true,
+                    "_showActiveRadius": false,
+                    "activeHeight": 2.0,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": 0.0,
+                    "activeWidth": 2.0,
+                    "id": 277,
+                    "type": "BoxCollider"
+                }
+            ],
+            "id": 74,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": true,
+                "EnvironmentalDamage": true,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": true,
+                "Projectile": true,
+                "Terrain": true
+            },
+            "name": "Wall",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 18.288761138916016,
+            "spawnLocationY": -9.706741333007813,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnvironmentalDamage": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "Projectile": false,
+                "Terrain": true
+            }
+        }
+    ]
+}

@@ -421,17 +421,6 @@
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="WidgetsManager.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="backends\imgui_impl_dx12.h">
-      <Filter>backends</Filter>
-    </ClInclude>
-    <ClInclude Include="backends\imgui_impl_sdl2.h">
-      <Filter>backends</Filter>
-    </ClInclude>
-    <ClInclude Include="backends\imgui_impl_sdlrenderer2.h">
-      <Filter>backends</Filter>
-    </ClInclude>
-    <ClInclude Include="implot.h" />
-    <ClInclude Include="implot_internal.h" />
     <ClInclude Include="scripts\BlasterRound.h">
       <Filter>scripts</Filter>
     </ClInclude>
@@ -480,6 +469,7 @@
     <ClInclude Include="scripts\StartButton.h">
       <Filter>scripts</Filter>
     </ClInclude>
+    <ClInclude Include="Spring.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp">
@@ -542,7 +532,6 @@
     <ClCompile Include="Hierarchy.cpp" />
     <ClCompile Include="Icons.cpp" />
     <ClCompile Include="ImGuiWrappers.cpp" />
-    <ClCompile Include="ImSequencer.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -571,18 +560,6 @@
     <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="WidgetsManager.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="backends\imgui_impl_dx12.cpp">
-      <Filter>backends</Filter>
-    </ClCompile>
-    <ClCompile Include="backends\imgui_impl_sdl2.cpp">
-      <Filter>backends</Filter>
-    </ClCompile>
-    <ClCompile Include="backends\imgui_impl_sdlrenderer2.cpp">
-      <Filter>backends</Filter>
-    </ClCompile>
-    <ClCompile Include="implot.cpp" />
-    <ClCompile Include="implot_demo.cpp" />
-    <ClCompile Include="implot_items.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scripts\BlasterRound.cpp">
       <Filter>scripts</Filter>
@@ -632,6 +609,7 @@
     <ClCompile Include="scripts\StartButton.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Vendor\includes\ImGui\ImGui_Docking\.editorconfig">

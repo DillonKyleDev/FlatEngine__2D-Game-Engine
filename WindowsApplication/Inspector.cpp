@@ -533,7 +533,12 @@ namespace FlatEngine { namespace FlatGui {
 								}
 
 								if (RenderInput("##FollowInput", "To Follow", following))
-									camera->SetFollowing(GetObjectByName(following)->GetID());
+								{
+									std::shared_ptr<GameObject> toFollow = GetObjectByName(following);
+									if (toFollow != nullptr)
+										camera->SetFollowing(toFollow->GetID());
+								}
+									
 
 								// Frustrum color picker
 								std::string frustrumID = "##FrustrumColor" + std::to_string(id);

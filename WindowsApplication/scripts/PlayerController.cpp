@@ -5,20 +5,19 @@
 #include "../Audio.h"
 #include "../CharacterController.h"
 #include "../RigidBody.h"
-#include "imgui.h"
-
 #include "../MappingContext.h"
 #include "../Vector2.h"
-
 #include "../GameObject.h"
 #include "../Transform.h"
 #include "../BoxCollider.h"
-#include "BlasterRound.h"
 #include "../Animation.h"
-#include "Health.h"
+#include "../Spring.h"
 
+#include "BlasterRound.h"
+#include "Health.h"
 #include "BlobParticle.h"
 
+#include "imgui.h"
 
 PlayerController::PlayerController(long ownerID) : GameScript(ownerID)
 {
@@ -33,6 +32,7 @@ PlayerController::PlayerController(long ownerID) : GameScript(ownerID)
 	sprite = nullptr;
 	audio = nullptr;
 	whipArm = nullptr;
+	spring = FlatEngine::Spring();
 }
 
 PlayerController::~PlayerController()
@@ -92,17 +92,42 @@ void PlayerController::Start()
 	audio->SetIsMusic(false);
 
 	// Whip arm
-	if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
-		whipArm = GetOwner()->GetFirstChild();
-	animator = whipArm->GetAnimationComponent();
-	animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
-	animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
-	whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
+	//if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
+	//	whipArm = GetOwner()->GetFirstChild();
+	//animator = whipArm->GetAnimationComponent();
+	//animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
+	//animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
+	//whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
+
+	// Swinging
+	//spring.attachedTo = FlatEngine::GetObjectByName("Grab");
+	spring.radius = 10.0f;
 }
 
 void PlayerController::Update(float deltaTime)
 {
 	HandleInput();
+
+	//Vector2 attachedPos = spring.attachedTo->GetTransformComponent()->GetTruePosition();
+	Vector2 myPos = GetOwner()->GetTransformComponent()->GetTruePosition();
+
+	//// Calculate center distance with pythag
+	//float rise = attachedPos.y - myPos.y;
+	//float run = attachedPos.x - myPos.x;
+	//float distance = std::sqrt((rise * rise) + (run * run));
+	//float damp = 0.1f;
+	//float dir = rise * 0.1f * (distance - spring.radius) * damp;
+
+	//
+	//if (spring.radius <= distance)
+	//{
+	//	Vector2 direction = Vector2(run, rise).Normalize();
+	//	Vector2 correctedDirection = Vector2(direction.x, direction.y * rigidBody->GetPendingForces().y);
+	//	FlatEngine::LogVector2(direction, "Direction: ");
+	//	//rigidBody->AddVelocity(Vector2(0, 1));
+	//	//FlatEngine::LogVector2(direction);
+	//	rigidBody->SetPendingForces(correctedDirection);
+	//}
 }
 
 void PlayerController::HandleInput()
@@ -112,6 +137,7 @@ void PlayerController::HandleInput()
 	int xDir = 0;
 	int yDir = 0;
 	Vector2 velocity = Vector2(0, 0);
+	std::shared_ptr<FlatEngine::Animation> animator = GetOwner()->GetAnimationComponent();
 
 	if (rigidBody != nullptr)
 	{
@@ -123,23 +149,28 @@ void PlayerController::HandleInput()
 	{
 		if (mappingContext->Fired("IA_Jump"))
 		{
-			if (_isGrounded && velocity.y < 0.001f && velocity.y > -0.001f)
-			{
-				rigidBody->AddForce(Vector2(0, 1), 1300);
-			}
+			//if (_isGrounded && velocity.y < 0.001f && velocity.y > -0.001f)
+			//{
+				rigidBody->SetPendingForces(Vector2(rigidBody->GetPendingForces().x, 0));
+				rigidBody->AddForce(Vector2(0, 1), 1700);
+				animator->Play();
+			//}
 		}
 		if (mappingContext->Fired("IA_Shoot"))
 		{
-			std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::Instantiate("BlasterRound", transform->GetTruePosition(), -1);
-			instantiatedObject->GetRigidBody()->AddForce(Vector2(1, 0), 150);
-			audio->Play();
+			std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::Instantiate("P_IceSpike", transform->GetTruePosition(), -1);
+			instantiatedObject->GetRigidBody()->AddForce(Vector2(1, 0), 1000);
+			//audio->Play();
 		}
 		if (mappingContext->Fired("IA_Stab"))
 		{			
-			animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
-			animator->Play();
-			whipArm->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Swoosh.wav");
-			whipArm->GetAudioComponent()->Play();
+			//animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
+			//animator->Play();
+			//whipArm->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Swoosh.wav");
+			//whipArm->GetAudioComponent()->Play();
+			std::shared_ptr<FlatEngine::GameObject> instantiatedObject = FlatEngine::Instantiate("P_IceSpike", transform->GetTruePosition(), -1);
+			instantiatedObject->GetRigidBody()->AddForce(Vector2(1, 0), 4000);
+			instantiatedObject->GetTransformComponent()->LookAt(Vector2(0, 0));
 		}
 		if (mappingContext->Fired("IA_Slash"))
 		{
@@ -156,14 +187,14 @@ void PlayerController::HandleInput()
 				xDir = -30000;
 				_moving = true;
 				_movingLeft = true;
-				sprite->SetTexture("assets/images/Sprites/Player/walkLeft.png");
+				sprite->SetTexture("assets/images/Sprites/owl/walkLeft.png");
 			}
 			if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
 			{
 				xDir = 30000;
 				_moving = true;
 				_movingRight = true;
-				sprite->SetTexture("assets/images/Sprites/Player/walkRight.png");
+				sprite->SetTexture("assets/images/Sprites/owl/walkRight.png");
 			}
 
 			if (_movingRight && _movingLeft)
@@ -193,20 +224,20 @@ void PlayerController::HandleInput()
 
 	if (!rigidBody->IsGrounded())
 	{
-		if (xDir < 0)
-			sprite->SetTexture("assets/images/Sprites/Player/jumpLeft.png");
-		else if (xDir > 0)
-			sprite->SetTexture("assets/images/Sprites/Player/jumpRight.png");
-		else
-			sprite->SetTexture("assets/images/Sprites/Player/jumpStraight.png");
-		sprite->SetOffset(Vector2(10, 15));
+		//if (xDir < 0)
+		//	sprite->SetTexture("assets/images/Sprites/Player/jumpLeft.png");
+		//else if (xDir > 0)
+		//	sprite->SetTexture("assets/images/Sprites/Player/jumpRight.png");
+		//else
+		//	sprite->SetTexture("assets/images/Sprites/Player/jumpStraight.png");
+		//sprite->SetOffset(Vector2(10, 15));
 	}
 	else
 	{
 		//sprite->SetOffset(Vector2(10, 11));
 		if (!_moving)
 		{
-			sprite->SetTexture("assets/images/Sprites/Player/idle.png");
+			sprite->SetTexture("assets/images/Sprites/owl/idle.png");
 		}
 	}
 

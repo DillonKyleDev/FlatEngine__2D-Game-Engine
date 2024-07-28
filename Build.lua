@@ -2,7 +2,7 @@
 workspace "FlatEngine"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "FlatEngine"
+   startproject "FlatEngine-Editor"
 
    -- Workspace-wide build options for MSVC
    filter "system:windows"
@@ -10,8 +10,9 @@ workspace "FlatEngine"
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
-group "FlatEngine"
-	include "WindowsApplication/Build-Core.lua"
+group "Core"
+	include "FlatEngine-Core/Build-Core.lua"
 group ""
 
-include "WindowsApplication/Build-Core.lua"
+include "FlatEngine-Editor/Build-Editor.lua"
+include "FlatEngine-Runtime/Build-Runtime.lua"

@@ -1,0 +1,121 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": true,
+            "Name": "MoveAround.json"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 1600.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 7.5,
+                    "xScale": 0.0,
+                    "yMove": 6.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 2280.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 1.0,
+                    "xScale": 0.0,
+                    "yMove": 4.5,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 3020.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": -5.0,
+                    "xScale": 0.0,
+                    "yMove": -4.5,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 3800.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 800.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 3.5,
+                    "xScale": 0.0,
+                    "yMove": 1.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 3960.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        }
+    ]
+}

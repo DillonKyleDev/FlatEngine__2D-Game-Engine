@@ -63,6 +63,8 @@ namespace FlatEngine
 		void SetIsKinematic(bool _kinematic);
 		bool IsKinematic();
 
+		bool _isCircular;
+
 	private:
 		float mass;
 		float angularDrag;
@@ -75,9 +77,11 @@ namespace FlatEngine
 		bool _isGrounded;
 		bool _isKinematic;
 		bool _isStatic;
+		
 		float terminalVelocity;
 		float windResistance;
 		float friction;
 		float equilibriumForce;
+
 	};
 }

@@ -1527,6 +1527,16 @@ namespace FlatEngine { namespace FlatGui {
 			Vector2 origin = transform->GetOrigin();
 			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
+			float parentRotation = 45;
+			float totalRotation = 45;
+			Vector2 parentPosition = Vector2();
+			std::shared_ptr<GameObject> parentObject = self->GetParent();
+			if (parentObject != nullptr)
+			{
+				parentPosition = parentObject->GetTransformComponent()->GetPosition();
+			}
+
+
 			Vector2 scale = transform->GetScale();
 
 			// If it has a sprite component, render that sprite texture at the objects transform position with offsets

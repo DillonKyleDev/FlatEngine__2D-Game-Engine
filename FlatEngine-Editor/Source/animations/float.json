@@ -1,0 +1,105 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": true,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 0.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 3000.63525390625,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": -1.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 2000.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 1000.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 1.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        },
+        {
+            "Frames": [
+                {
+                    "scaleInterpType": 0,
+                    "scaleSpeed": 0.10000000149011612,
+                    "time": 4000.0,
+                    "transformInterpType": 0,
+                    "transformSpeed": 0.10000000149011612,
+                    "xMove": 0.0,
+                    "xScale": 0.0,
+                    "yMove": 0.0,
+                    "yScale": 0.0
+                }
+            ],
+            "Property": "Transform"
+        }
+    ]
+}

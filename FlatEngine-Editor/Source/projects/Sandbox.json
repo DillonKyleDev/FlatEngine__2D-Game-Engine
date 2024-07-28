@@ -1,0 +1,32 @@
+{
+    "Project Properties": [
+        {
+            "_autoSave": true,
+            "_clearLogBuffer": false,
+            "_fullscreen": false,
+            "_showAnimationPreview": true,
+            "_showAnimator": true,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": true,
+            "_showLogger": true,
+            "_showMappingContextEditor": false,
+            "_showProfiler": true,
+            "_showSceneView": true,
+            "_vsyncEnabled": true,
+            "collisionDetection": "Shared Axis",
+            "focusedGameObjectID": 25,
+            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
+            "loadedScenePath": "Source\\scenes\\Chains.json",
+            "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json",
+            "physicsSystem": "Euler",
+            "resolutionHeight": 1200.0,
+            "resolutionWidth": 1920.0,
+            "sceneViewGridStepX": 8.29978084564209,
+            "sceneViewGridStepY": 8.29978084564209,
+            "sceneViewScrollingX": 672.403076171875,
+            "sceneViewScrollingY": 158.73046875
+        }
+    ]
+}

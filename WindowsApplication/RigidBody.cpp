@@ -24,6 +24,7 @@ namespace FlatEngine {
 		_isGrounded = false;
 		_isKinematic = false;
 		_isStatic = false;
+		_isCircular = false;
 		forceCorrection = 0.03f;
 	}
 
@@ -46,6 +47,7 @@ namespace FlatEngine {
 		_isGrounded = toCopy->_isGrounded;
 		_isKinematic = toCopy->_isKinematic;
 		_isStatic = toCopy->_isStatic;
+		_isCircular = toCopy->_isCircular;
 		forceCorrection = toCopy->forceCorrection;
 	}
 
@@ -63,6 +65,7 @@ namespace FlatEngine {
 			{ "mass", mass},
 			{ "angularDrag", angularDrag },
 			{ "gravity", gravity },
+			{ "fallingGravity", fallingGravity },
 			{ "friction", friction },
 			{ "equilibriumForce", equilibriumForce },
 			{ "terminalVelocity", terminalVelocity },
@@ -151,12 +154,31 @@ namespace FlatEngine {
 	{
 		if (gravity > 0)
 		{
-			if (!_isGrounded && velocity.y > -terminalVelocity)
+			if (!_isGrounded && velocity.y > -terminalVelocity && !_isCircular)
 			{
 				if (velocity.y < 0)
 					pendingForces.y -= fallingGravity;
 				else
 					pendingForces.y -= gravity;
+			}
+			else if (!_isGrounded && velocity.y > -terminalVelocity && _isCircular)
+			{
+				//std::shared_ptr<FlatEngine::GameObject> grabObject = FlatEngine::GetObjectByName("Grab");
+				//std::shared_ptr<FlatEngine::Transform> grabTransform = grabObject->GetTransformComponent();
+				//std::shared_ptr<FlatEngine::Transform> myTransform = GetParent()->GetTransformComponent();
+				//float rotation = grabTransform->GetRotation();
+				//Vector2 attachedPos = grabTransform->GetTruePosition();
+				//Vector2 myPos = GetParent()->GetTransformComponent()->GetTruePosition();
+				//float radius = 5;
+
+				//float cos_a = radius * cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+				//float sin_a = radius * sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+
+				//if (rotation <= 0)
+				//{
+				//	pendingForces.y -= 0.01f;
+				//	//grabTransform->SetRotation(rotation + pendingForces.y);
+				//}
 			}
 		}
 		else if (gravity < 0)

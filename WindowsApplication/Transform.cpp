@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "FlatEngine.h"
 #include "BoxCollider.h"
+#include <math.h>
 
 namespace FlatEngine
 {
@@ -145,5 +146,12 @@ namespace FlatEngine
 	float Transform::GetRotation()
 	{
 		return rotation;
+	}
+	void Transform::LookAt(Vector2 lookAt)
+	{
+		Vector2 slope = Vector2(lookAt.x - GetTruePosition().x, lookAt.y - GetTruePosition().y);
+		float angle = atan(slope.y / slope.x) * 180 / M_PI;
+		LogFloat(angle, "Angle: ");
+		rotation = angle;
 	}
 }

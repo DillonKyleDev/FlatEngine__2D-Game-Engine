@@ -1,0 +1,28 @@
+{
+    "Project Properties": [
+        {
+            "_autoSave": true,
+            "_clearLogBuffer": true,
+            "_showAnimationPreview": false,
+            "_showAnimator": true,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": false,
+            "_showProfiler": false,
+            "_showSceneView": true,
+            "collisionDetection": "Simple Box",
+            "focusedGameObjectID": -1,
+            "loadedAnimationPath": "",
+            "loadedScenePath": "",
+            "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\scenes\\Hopper.json",
+            "physicsSystem": "Euler",
+            "sceneViewGridStepX": 27.69999122619629,
+            "sceneViewGridStepY": 27.69999122619629,
+            "sceneViewScrollingX": 317.403076171875,
+            "sceneViewScrollingY": 361.73046875
+        }
+    ]
+}
