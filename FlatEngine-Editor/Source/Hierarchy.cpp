@@ -117,7 +117,7 @@ namespace FlatGui {
 
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
-
+			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start: ");*/
 			for (std::vector<GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 			{
 				// Add new scene Objects to the tracker as they appear
@@ -140,6 +140,7 @@ namespace FlatGui {
 						AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete, 0);
 				}
 			}
+			//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");
 			if (node_clicked != -1)
 			{
 				// Update selection state
@@ -193,7 +194,7 @@ namespace FlatGui {
 	}
 
 	// Helper function for Hierarchy child rendering (Recursive)
-	void AddObjectWithChild(GameObject &currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
+	void AddObjectWithChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = GetFocusedGameObjectID();
@@ -239,12 +240,12 @@ namespace FlatGui {
 		}
 		
 		// Swap Drag and Drop 
-		std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		auto it = std::find(sceneObjects.begin(), sceneObjects.end(), currentObject);
+		//std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+		//auto it = std::find(sceneObjects.begin(), sceneObjects.end(), currentObject);
 		int index = -1;
 		// If element was found 
-		if (it != sceneObjects.end())
-			index = (int)(it - sceneObjects.begin());
+		//if (it != sceneObjects.end())
+		//	index = (int)(it - sceneObjects.begin());
 
 		Vector2 cursorPos = ImGui::GetCursorPos();
 		Vector2 availSpace = ImGui::GetContentRegionAvail();
@@ -277,10 +278,10 @@ namespace FlatGui {
 			ImGui::EndDragDropTarget();
 		}
 
-		if (it == sceneObjects.begin())
-			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
-		else
-			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
+		//if (it == sceneObjects.begin())
+		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
+		//else
+		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
 
 		ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject.GetID()));
 
@@ -451,7 +452,7 @@ namespace FlatGui {
 		if (node_open)
 		{
 			std::vector<long> childrenIDs = currentObject.GetChildren();
-
+			
 			// Render SceneObject children
 			for (long childID : childrenIDs)
 			{
@@ -464,6 +465,7 @@ namespace FlatGui {
 				else
 					AddObjectWithoutChild(*child, childName, node_clicked, queuedForDelete, indent);
 			}
+			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");*/
 
 			ImGui::TreePop(); // TreeNode Closer
 		}
@@ -494,8 +496,9 @@ namespace FlatGui {
 	}
 
 	// Helper function for Hierarchy child rendering
-	void AddObjectWithoutChild(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
+	void AddObjectWithoutChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
+		
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = GetFocusedGameObjectID();
 
@@ -539,13 +542,16 @@ namespace FlatGui {
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
 		}
 
+		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "No Child Start: ");
 		// Swap Drag and Drop 
-		std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		auto it = std::find(sceneObjects.begin(), sceneObjects.end(), &currentObject);
+		//std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+		//auto it = std::find(sceneObjects.begin(), sceneObjects.end(), &currentObject);
 		int index = -1;
 		// If element was found 
-		if (it != sceneObjects.end())
-			index = (int)(it - sceneObjects.begin());
+		//if (it != sceneObjects.end())
+		//	index = (int)(it - sceneObjects.begin());
+
+		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "No Child End: ");
 
 		Vector2 cursorPos = ImGui::GetCursorPos();
 		Vector2 availSpace = ImGui::GetContentRegionAvail();
@@ -577,10 +583,10 @@ namespace FlatGui {
 			}
 			ImGui::EndDragDropTarget();
 		}
-		if (it == sceneObjects.begin())
-			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
-		else
-			ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
+		//if (it == sceneObjects.begin())
+		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
+		//else
+		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
 
 		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
@@ -759,6 +765,7 @@ namespace FlatGui {
 			}
 			PopMenuStyles();
 		}
+		
 	}
 
 	void ResetHierarchyExpanderTracker()

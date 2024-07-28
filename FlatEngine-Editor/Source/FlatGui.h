@@ -313,7 +313,7 @@ namespace FlatGui
 	extern void Cleanup();
 	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset);
 	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
-	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+	extern void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 	// Helper Functions //
 
@@ -359,8 +359,8 @@ namespace FlatGui
 	// SceneView
 	extern void RenderSceneViewTooltip();
 	// Hierarchy
-	extern void AddObjectWithChild(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
-	extern void AddObjectWithoutChild(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
+	extern void AddObjectWithChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
+	extern void AddObjectWithoutChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
 	extern void ResetHierarchyExpanderTracker();
 	// Profiler
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);

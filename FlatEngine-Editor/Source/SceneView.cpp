@@ -11,8 +11,8 @@
 
 using Transform = FlatEngine::Transform;
 
-namespace FlatGui {
-
+namespace FlatGui 
+{
 	// Scene view default values
 	// The multiplier for sceneViewGridStep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
 	Vector2 sceneViewGridStep = Vector2(50,50);
@@ -89,10 +89,11 @@ namespace FlatGui {
 
 
 		//// For Profiler
+		FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start View Objects: ");
 		float sceneViewObjectsStartTime = (float)FlatEngine::GetEngineTime();
 		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
 		AddProcessData("##Scene_RenderView_Objects", (float)FlatEngine::GetEngineTime() - sceneViewObjectsStartTime);
-
+		FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End View Objects: ");
 
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;

@@ -1724,7 +1724,7 @@ namespace FlatGui
 		drawSplitter = nullptr;
 	}
 
-	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
 		Transform* transform = self.GetTransformComponent();
 		Sprite* sprite = self.GetSpriteComponent();
