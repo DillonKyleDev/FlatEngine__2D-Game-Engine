@@ -291,10 +291,10 @@ namespace FlatGui {
 				}
 				if (ImGui::BeginMenu("Prefabs"))
 				{
-					std::map<std::string, std::vector<GameObject*>> prefabs = FlatEngine::GetPrefabs();
+					std::map<std::string, std::vector<GameObject>> prefabs = FlatEngine::GetPrefabs();
 					if (prefabs.size() > 0)
 					{
-						for (std::pair<std::string, std::vector<GameObject*>> pair : prefabs)
+						for (std::pair<std::string, std::vector<GameObject>> pair : prefabs)
 						{
 							if (ImGui::MenuItem(pair.first.c_str()))
 							{

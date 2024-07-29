@@ -931,7 +931,7 @@ namespace FlatGui {
 
 		if (objectForFocusedAnimation != nullptr)
 		{
-			std::vector<GameObject*> focusedObjectVector;
+			std::vector<GameObject> focusedObjectVector;
 			focusedObjectVector.push_back(&objectForFocusedAnimation);
 	
 			// Animate the focused object

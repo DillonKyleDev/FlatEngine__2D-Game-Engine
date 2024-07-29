@@ -1319,13 +1319,13 @@ namespace FlatGui
 			if (FlatGui::_showAnimator && FocusedAnimation != nullptr &&
 				animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
 			{
-				std::vector<GameObject*> animatorObjects = std::vector<GameObject*>();
+				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
 				objectForFocusedAnimation = GameObject(FlatEngine::GetObjectById(ID), animatorObjects, FlatEngine::GetLoadedScene()->GetSceneObjects(), -1);
 				FlatEngine::Transform* transform = objectForFocusedAnimation.GetTransformComponent();
 				transform->SetPosition(Vector2(0, 0));
 				animatorObjects.push_back(&objectForFocusedAnimation);
-				FlatEngine::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects);
+				//FlatEngine::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
 			}
 		}
 	}
@@ -1704,7 +1704,7 @@ namespace FlatGui
 		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
-	void RenderViewObjects(std::vector<GameObject*> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
+	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -1714,9 +1714,9 @@ namespace FlatGui
 		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
 
 		// Loop through scene objects
-		for (GameObject* object : objects)
+		for (GameObject object : objects)
 		{
-			if (object->IsActive())
+			if (object.IsActive())
 				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
 		}
 
@@ -1725,16 +1725,16 @@ namespace FlatGui
 		drawSplitter = nullptr;
 	}
 
-	void RenderViewObject(GameObject* self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
-		Transform* transform = self->GetTransformComponent();
-		Sprite* sprite = self->GetSpriteComponent();
-		Camera* camera = self->GetCameraComponent();
-		Button* button = self->GetButtonComponent();
-		Canvas* canvas = self->GetCanvasComponent();
-		Text* text = self->GetTextComponent();
-		std::vector<BoxCollider*> boxColliders = self->GetBoxColliders();
-		std::vector<CircleCollider*> circleColliders = self->GetCircleColliders();
+		Transform* transform = self.GetTransformComponent();
+		Sprite* sprite = self.GetSpriteComponent();
+		Camera* camera = self.GetCameraComponent();
+		Button* button = self.GetButtonComponent();
+		Canvas* canvas = self.GetCanvasComponent();
+		Text* text = self.GetTextComponent();
+		std::vector<BoxCollider*> boxColliders = self.GetBoxColliders();
+		std::vector<CircleCollider*> circleColliders = self.GetCircleColliders();
 
 		// Check if each object has a Transform component
 		if (transform != nullptr)
@@ -2074,7 +2074,7 @@ namespace FlatGui
 			// Renders Transform Arrow // 
 			//
 			// Should be last in line here to be rendered top-most -- If this obect is focused
-			if (focusedObjectID != -1 && focusedObjectID == self->GetID())
+			if (focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
 				GameObject focusedObject = FlatEngine::GetObjectById(focusedObjectID);
 				SDL_Texture* arrowToRender = transformArrow.GetTexture();

@@ -94,7 +94,7 @@ namespace FlatGui {
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
-		std::vector<GameObject*> sceneObjects;
+		std::vector<GameObject> sceneObjects;
 		FlatEngine::Camera* primaryCamera;
 		Transform* cameraTransform;
 
@@ -106,7 +106,7 @@ namespace FlatGui {
 		}
 		else
 		{
-			sceneObjects = std::vector<GameObject*>();
+			sceneObjects = std::vector<GameObject>();
 			primaryCamera = nullptr;
 		}
 
