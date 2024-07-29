@@ -61,7 +61,7 @@ namespace FlatGui {
 			float isPrefabIconColumnWidth = 20;
 			static float currentIndent = 10;
 			static bool _allAreVisible = false;
-			std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+			std::vector<GameObject*> sceneObjects = FlatEngine::GetSceneObjects();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
@@ -118,14 +118,14 @@ namespace FlatGui {
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
 			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start: ");*/
-			for (std::vector<GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+			for (std::vector<GameObject*>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 			{
 				// Add new scene Objects to the tracker as they appear
-				if (leafExpandedTracker.count((*object).GetID()) == 0)
-					leafExpandedTracker.emplace((*object).GetID(), true);
+				if (leafExpandedTracker.count((*object)->GetID()) == 0)
+					leafExpandedTracker.emplace((*object)->GetID(), true);
 
 				// If this object does not have a parent we render it and all of its children.
-				if ((*object).GetParentID() == -1)
+				if ((*object)->GetParentID() == -1)
 				{
 					// Get Object name
 					GameObject currentObject = (*object);
@@ -772,12 +772,12 @@ namespace FlatGui {
 	{
 		// Initialize Hierarchy scene object expanded tracker
 		leafExpandedTracker.clear();
-		std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		for (std::vector<GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+		std::vector<GameObject*> sceneObjects = FlatEngine::GetSceneObjects();
+		for (std::vector<GameObject*>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 		{
-			if (leafExpandedTracker.count((*object).GetID()) == 0)
+			if (leafExpandedTracker.count((*object)->GetID()) == 0)
 			{
-				leafExpandedTracker.emplace((*object).GetID(), true);
+				leafExpandedTracker.emplace((*object)->GetID(), true);
 			}
 		}
 	}

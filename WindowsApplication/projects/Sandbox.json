@@ -18,7 +18,7 @@
             "collisionDetection": "Shared Axis",
             "focusedGameObjectID": 104,
             "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
-            "loadedScenePath": "Source\\scenes\\Chains.json",
+            "loadedScenePath": "Source\\scenes\\level1.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,

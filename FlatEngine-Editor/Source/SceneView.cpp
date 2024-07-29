@@ -80,12 +80,12 @@ namespace FlatGui
 
 		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
-		std::vector<GameObject> sceneObjects;
+		std::vector<GameObject*> sceneObjects;
 
 		if (loadedScene != nullptr)
 			sceneObjects = loadedScene->GetSceneObjects();
 		else
-			sceneObjects = std::vector<GameObject>();
+			sceneObjects = std::vector<GameObject*>();
 
 
 		//// For Profiler

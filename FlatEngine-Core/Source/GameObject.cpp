@@ -308,7 +308,6 @@ namespace FlatEngine
 		Transform transform = Transform(nextID, ID);
 		transform.SetActive(_active);
 		transform.SetCollapsed(_collapsed);
-		components.push_back(&transform);
 		F_ECSManager.m_Transforms.push_back(transform);
 		F_ECSManager.m_transformMap.emplace(this->ID, (long)F_ECSManager.m_Transforms.size() - 1);
 
@@ -324,6 +323,7 @@ namespace FlatEngine
 			}
 		}
 
+		components.push_back(&F_ECSManager.m_Transforms.at(F_ECSManager.m_transformMap.at(this->ID)));
 		return &F_ECSManager.m_Transforms.at(F_ECSManager.m_transformMap.at(this->ID));
 	}
 
@@ -523,10 +523,10 @@ namespace FlatEngine
 		CharacterController characterController = CharacterController(nextID, ID);
 		characterController.SetActive(_active);
 		characterController.SetCollapsed(_collapsed);
-		components.push_back(&characterController);
 
 		F_ECSManager.m_CharacterControllers.push_back(characterController);
 		F_ECSManager.m_characterControllerMap.emplace(this->ID, (long)F_ECSManager.m_CharacterControllers.size() - 1);
+		components.push_back(&F_ECSManager.m_CharacterControllers.at(F_ECSManager.m_characterControllerMap.at(this->ID)));
 		return &F_ECSManager.m_CharacterControllers.at(F_ECSManager.m_characterControllerMap.at(this->ID));
 	}
 

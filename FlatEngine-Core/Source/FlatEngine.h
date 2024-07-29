@@ -79,10 +79,10 @@ namespace FlatEngine
 	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filePath);
 	extern void LoadScene(std::string name);
 	std::string GetLoadedScenePath();
-	extern std::vector<GameObject> GetSceneObjects();
-	extern GameObject CreateGameObject(long parentID = -1);
+	extern std::vector<GameObject> &GetSceneObjects();
+	extern GameObject* CreateGameObject(long parentID = -1);
 	extern void DeleteGameObject(int sceneObjectID);
-	extern Component *GetObjectComponent(long objectID, ComponentTypes type);
+	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectById(long objectID);
 	extern GameObject* GetObjectByName(std::string name);
 

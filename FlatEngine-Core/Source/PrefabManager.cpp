@@ -93,7 +93,8 @@ namespace FlatEngine
 					for (int i = 0; i < prefabObjects.size(); i++)
 					{
 						// Add created GameObject to our freshScene
-						prefabContainer.push_back(SceneManager::CreateObjectFromJson(prefabObjects[i]));
+						GameObject prefab = SceneManager::CreateObjectFromJson(prefabObjects[i]);
+						prefabContainer.push_back(&prefab);
 					}
 				}
 
@@ -126,7 +127,7 @@ namespace FlatEngine
 						}
 
 						// A little janky but there you go
-						children.push_back(instantiatedObject);
+						children.push_back(&instantiatedObject);
 
 						// Track instantiated object and children in the scene
 						for (GameObject newObject : children)

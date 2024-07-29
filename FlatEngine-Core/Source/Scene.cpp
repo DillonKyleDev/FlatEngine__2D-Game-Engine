@@ -13,7 +13,7 @@ namespace FlatEngine
 		name = "New Scene";
 		path = "";
 		sceneObjects = std::vector<GameObject>();		
-		animatorPreviewObjects = std::vector<GameObject>();
+		animatorPreviewObjects = std::vector<GameObject*>();
 		primaryCamera = nullptr;
 		nextGameObjectID = 0;
 		nextComponentID = 0;
@@ -43,10 +43,10 @@ namespace FlatEngine
 		return path;
 	}
 
-	GameObject Scene::AddSceneObject(GameObject sceneObject)
+	GameObject* Scene::AddSceneObject(GameObject sceneObject)
 	{
 		sceneObjects.push_back(sceneObject);
-		return sceneObject;
+		return &sceneObject;
 	}
 
 	std::vector<GameObject> &Scene::GetSceneObjects()
@@ -54,12 +54,12 @@ namespace FlatEngine
 		return sceneObjects;
 	}
 
-	void Scene::SetAnimatorPreviewObjects(std::vector<GameObject> previewObjects)
+	void Scene::SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects)
 	{
 		animatorPreviewObjects = previewObjects;
 	}
 
-	std::vector<GameObject> &Scene::GetAnimatorPreviewObjects()
+	std::vector<GameObject*> Scene::GetAnimatorPreviewObjects()
 	{
 		return animatorPreviewObjects;
 	}
@@ -77,9 +77,9 @@ namespace FlatEngine
 			}
 			for (int i = 0; i < animatorPreviewObjects.size(); i++)
 			{
-				if (ID == animatorPreviewObjects[i].GetID())
+				if (ID == animatorPreviewObjects[i]->GetID())
 				{
-					return &animatorPreviewObjects[i];
+					return animatorPreviewObjects[i];
 				}
 			}
 			return nullptr;
@@ -96,11 +96,11 @@ namespace FlatEngine
 				return &sceneObjects[i];
 			}
 		}
-		for (GameObject animPreviewObject : animatorPreviewObjects)
+		for (GameObject *animPreviewObject : animatorPreviewObjects)
 		{
-			if (name == animPreviewObject.GetName())
+			if (name == animPreviewObject->GetName())
 			{
-				return &animPreviewObject;
+				return animPreviewObject;
 			}
 		}
 		return nullptr;
@@ -109,30 +109,29 @@ namespace FlatEngine
 	GameObject* Scene::CreateGameObject(long parentID)
 	{
 		GameObject newObject = GameObject(parentID);
-		AddSceneObject(newObject);
-		return &newObject;
+		return AddSceneObject(&newObject);
 	}
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
+		GameObject *objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
 
 		//if (GetFocusedGameObjectID() == sceneObjectID)
 		//	SetFocusedGameObjectID(-1);
 
 		// If this GameObject was the primary camera, unset it as the primaryCamera and set primaryCamera to nullptr
-		if (primaryCamera != nullptr && primaryCamera->GetParentID() == objectToDelete.GetID())
+		if (primaryCamera != nullptr && primaryCamera->GetParentID() == objectToDelete->GetID())
 		{
 			primaryCamera->SetPrimaryCamera(false);
 			primaryCamera = nullptr;
 		}
 
 		// Check for a parent and remove the child object reference
-		long parentID = objectToDelete.GetParentID();
+		long parentID = objectToDelete->GetParentID();
 		if (parentID != -1)
 		{
-			GameObject parent = FlatEngine::GetObjectById(parentID);
-			parent.RemoveChild(sceneObjectID);
+			GameObject *parent = FlatEngine::GetObjectById(parentID);
+			parent->RemoveChild(sceneObjectID);
 		}
 
 		// To be updated right after GameObject and its components are deleted
@@ -140,7 +139,7 @@ namespace FlatEngine
 		bool _hadCollider = false;
 
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
-		for (Component* component : objectToDelete.GetComponents())
+		for (Component* component : objectToDelete->GetComponents())
 		{
 			if (component->GetTypeString() == "Script")
 			{				 
@@ -173,7 +172,7 @@ namespace FlatEngine
 	}
 
 	// Recursive
-	void Scene::DeleteChildrenAndSelf(GameObject objectToDelete)
+	void Scene::DeleteChildrenAndSelf(GameObject *objectToDelete)
 	{
 		// Must remove the primaryCamera pointer from the loaded scene before deleting the GameObject.
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
@@ -183,27 +182,29 @@ namespace FlatEngine
 			cameraObjectID = FlatEngine::GetObjectById(primaryCamera->GetParentID())->GetID();
 
 		// Check for children
-		if (objectToDelete.HasChildren())
+		if (objectToDelete->HasChildren())
 		{
 			// Call this function again on this objects children
-			for (int c = 0; c < objectToDelete.GetChildren().size(); c++)
+			for (int c = 0; c < objectToDelete->GetChildren().size(); c++)
 			{
-				GameObject child = FlatEngine::GetObjectById(objectToDelete.GetChildren()[c]);
+				GameObject *child = FlatEngine::GetObjectById(objectToDelete->GetChildren()[c]);
 				Scene::DeleteChildrenAndSelf(child);
 			}
 		}
 		// Then delete this GameObject
-		for (int i = 0; i < sceneObjects.size(); i++)
+		
+		for (std::vector<GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
 		{
-			if (sceneObjects[i].GetID() == objectToDelete.GetID())
+			if ((*iter).GetID() == objectToDelete->GetID())
 			{
 				// Remove the primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
-				if (objectToDelete.GetID() == cameraObjectID)
+				if (objectToDelete->GetID() == cameraObjectID)
 					loadedScene->RemovePrimaryCamera();
 
-				sceneObjects[i].DeleteComponents();
-				sceneObjects.erase(sceneObjects.begin() + i);
+				(*iter).DeleteComponents();
+				sceneObjects.erase(iter);
 			}
+			iter++;
 		}
 	}
 

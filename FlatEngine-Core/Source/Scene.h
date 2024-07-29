@@ -20,15 +20,15 @@ namespace FlatEngine
 		std::string GetName();
 		void SetPath(std::string path);
 		std::string GetPath();
-		GameObject AddSceneObject(GameObject sceneObject);
+		GameObject* AddSceneObject(GameObject sceneObject);
 		std::vector<GameObject> &GetSceneObjects();
-		void SetAnimatorPreviewObjects(std::vector<GameObject> previewObjects);
-		std::vector<GameObject> &GetAnimatorPreviewObjects();
+		void SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects);
+		std::vector<GameObject*> GetAnimatorPreviewObjects();
 		GameObject* GetObjectById(long ID);
 		GameObject* GetObjectByName(std::string name);
 		GameObject* CreateGameObject(long parentID = -1);
 		void DeleteGameObject(long sceneObjectID);
-		void DeleteChildrenAndSelf(GameObject objectToDelete); // Recursive
+		void DeleteChildrenAndSelf(GameObject *objectToDelete); // Recursive
 		void IncrementGameObjectID();
 		long GetNextGameObjectID();
 		void IncrementComponentID();
@@ -40,8 +40,9 @@ namespace FlatEngine
 	private:
 		std::string name;
 		std::string path;
-		std::vector<GameObject> sceneObjects;	
-		std::vector<GameObject> animatorPreviewObjects;
+		std::vector<GameObject> sceneObjects;
+		std::vector<GameObject*> sceneObjectPtrs;	
+		std::vector<GameObject*> animatorPreviewObjects;
 		Camera *primaryCamera;
 		long nextGameObjectID;
 		long nextComponentID;

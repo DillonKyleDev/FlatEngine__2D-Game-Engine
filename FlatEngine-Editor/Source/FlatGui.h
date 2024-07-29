@@ -26,6 +26,18 @@ namespace FlatEngine {
 	class Process;
 	class Component;
 	class Transform;
+	class Sprite;
+	class Camera;
+	class ScriptComponent;
+	class Button;
+	class Canvas;
+	class Animation;
+	class Audio;
+	class Text;
+	class CharacterController;
+	class BoxCollider;
+	class CircleCollider;
+	class RigidBody;
 }
 
 using GameObject = FlatEngine::GameObject;
@@ -38,6 +50,20 @@ using Scene = FlatEngine::Scene;
 using Process = FlatEngine::Process;
 using Component = FlatEngine::Component;
 using Transform = FlatEngine::Transform;
+using Sprite = FlatEngine::Sprite;
+using Camera = FlatEngine::Camera;
+using ScriptComponent = FlatEngine::ScriptComponent;
+using Button = FlatEngine::Button;
+using Canvas = FlatEngine::Canvas;
+using Animation = FlatEngine::Animation;
+using Audio = FlatEngine::Audio;
+using Text = FlatEngine::Text;
+using CharacterController = FlatEngine::CharacterController;
+using BoxCollider = FlatEngine::BoxCollider;
+using CircleCollider = FlatEngine::CircleCollider;
+using RigidBody = FlatEngine::RigidBody;
+
+using ComponentTypes = FlatEngine::Component::ComponentTypes;
 
 namespace FlatGui
 {
@@ -212,6 +238,7 @@ namespace FlatGui
 	extern ImGuiChildFlags headerFlags;
 	extern ImGuiTableFlags tableFlags;
 	extern ImGuiTableFlags resizeableTableFlags;
+	extern ImGuiInputTextFlags inputFlags;
 
 	// Project Management
 	extern std::shared_ptr<Project> loadedProject;
@@ -316,8 +343,8 @@ namespace FlatGui
 	extern void RenderSettings();
 	extern void Cleanup();
 	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset);
-	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
-	extern void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+	extern void RenderViewObjects(std::vector<GameObject*> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
+	extern void RenderViewObject(GameObject *self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 
 	// Helper Functions //
 
@@ -356,10 +383,23 @@ namespace FlatGui
 	extern void PushTreeList(std::string id);
 	extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
 	extern void PopTreeList();
-	extern void BeginComponent(FlatEngine::Component* component, long& queuedForDelete);
-	extern void EndComponent();
+	extern void BeginComponent(Component* component, long& queuedForDelete);
+	extern void EndComponent(Component* component);
 	extern bool RenderIsActiveCheckbox(bool &_isActive);
-	extern void RenderTransformComponent(FlatEngine::Transform* transform);
+	extern void RenderTransformComponent(Transform* transform);
+	extern void RenderSpriteComponent(Sprite* sprite);
+	extern void RenderCameraComponent(Camera* camera);
+	extern void RenderScriptComponent(ScriptComponent* script);
+	extern void RenderButtonComponent(Button* button);
+	extern void RenderCanvasComponent(Canvas* canvas);
+	extern void RenderAnimationComponent(Animation* animation);
+	extern void RenderAudioComponent(Audio* audio);
+	extern void RenderTextComponent(Text* text);
+	extern void RenderCharacterControllerComponent(CharacterController* characterController);
+	extern void RenderBoxColliderComponent(BoxCollider* boxCollider);
+	extern void RenderCircleColliderComponent(CircleCollider* circleCollider);
+	extern void RenderRigidBodyComponent(RigidBody* rigidBody);
+
 	// SDL
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 	// Color converter

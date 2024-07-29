@@ -17,7 +17,7 @@ namespace FlatEngine
 		void SaveScene(std::shared_ptr<Scene> scene, std::string filename);
 		void SaveCurrentScene();
 		void LoadScene(std::string name);
-		static json CreateJsonFromObject(GameObject& gameObject);
+		static json CreateJsonFromObject(GameObject gameObject);
 		static GameObject CreateObjectFromJson(json objectJson, std::shared_ptr<Scene> loadedScene = nullptr);
 		std::shared_ptr<Scene> GetLoadedScene();
 		std::string GetLoadedScenePath();
@@ -29,7 +29,7 @@ namespace FlatEngine
 	private:
 		std::shared_ptr<Scene> loadedScene;
 		std::string loadedScenePath;
-		std::vector<GameObject> animatorPreviewObjects;
+		std::vector<GameObject*> animatorPreviewObjects;
 	};
 }
 

@@ -205,7 +205,7 @@ namespace FlatGui {
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 12);
 			Animation* animation = nullptr;
-			if (objectForFocusedAnimation.IsValid())
+			if (objectForFocusedAnimation != nullptr)
 				animation = objectForFocusedAnimation.GetAnimationComponent();
 
 			if (RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
@@ -372,7 +372,7 @@ namespace FlatGui {
 				L_PushBackKeyFrame(node_clicked);
 		}
 
-		if (objectForFocusedAnimation.IsValid())
+		if (objectForFocusedAnimation != nullptr)
 		{
 			// Animate the focused object
 			Animation* animation = objectForFocusedAnimation.GetAnimationComponent();
@@ -929,10 +929,10 @@ namespace FlatGui {
 		bool _weightedScroll = false;
 		RenderGridView(centerPoint, scrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
-		if (objectForFocusedAnimation.IsValid())
+		if (objectForFocusedAnimation != nullptr)
 		{
-			std::vector<GameObject> focusedObjectVector;
-			focusedObjectVector.push_back(objectForFocusedAnimation);
+			std::vector<GameObject*> focusedObjectVector;
+			focusedObjectVector.push_back(&objectForFocusedAnimation);
 	
 			// Animate the focused object
 			if (_playPreviewAnimation)

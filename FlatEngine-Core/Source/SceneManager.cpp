@@ -32,7 +32,7 @@ namespace FlatEngine
 	SceneManager::SceneManager()
 	{
 		this->loadedScene;
-		animatorPreviewObjects = std::vector<GameObject>();
+		animatorPreviewObjects = std::vector<GameObject*>();
 	}
 
 	SceneManager::~SceneManager()
@@ -154,7 +154,7 @@ namespace FlatEngine
 					GameObject loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene);
 					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
 					if (!loadedObject.IsPrefab())
-						freshScene->AddSceneObject(loadedObject);
+						freshScene->AddSceneObject(&loadedObject);
 				}
 			}
 		}
@@ -165,7 +165,7 @@ namespace FlatEngine
 		F_Application->OnLoadScene(fileName);
 	}
 
-	json SceneManager::CreateJsonFromObject(GameObject& currentObject)
+	json SceneManager::CreateJsonFromObject(GameObject currentObject)
 	{
 		// Declare components array json object for components
 		json componentsArray = json::array();

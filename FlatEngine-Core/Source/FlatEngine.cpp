@@ -297,15 +297,15 @@ namespace FlatEngine
 		return F_SceneManager.GetLoadedScenePath();
 	}
 
-	std::vector<GameObject> GetSceneObjects()
+	std::vector<GameObject> &GetSceneObjects()
 	{
-		if (GetLoadedScene() != nullptr)
+		//if (GetLoadedScene() != nullptr)
 			return GetLoadedScene()->GetSceneObjects();
-		else
-			return std::vector<GameObject>();
+		//else
+		//	return std::vector<GameObject>();
 	}
 
-	GameObject CreateGameObject(long parentID)
+	GameObject* CreateGameObject(long parentID)
 	{
 		return GetLoadedScene()->CreateGameObject(parentID);
 	}

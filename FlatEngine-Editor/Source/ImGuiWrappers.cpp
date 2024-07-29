@@ -5,6 +5,20 @@
 #include "TagList.h"
 #include "Component.h"
 #include "Transform.h"
+#include "Sprite.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "ScriptComponent.h"
+#include "Button.h"
+#include "Canvas.h"
+#include "Animation.h"
+#include "Audio.h"
+#include "Text.h"
+#include "CharacterController.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "RigidBody.h"
+#include "Project.h"
 
 
 namespace FlatGui 
@@ -563,13 +577,13 @@ namespace FlatGui
 		// Begin Component Child
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, innerWindowColor);
 		ImGui::PushStyleColor(ImGuiCol_Border, componentBorderColor);
-		//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
 
 		ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), autoResizeChildFlags);
 
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		//ImGui::PopStyleVar();
 
 		// Border around each component
 		auto wPos = ImGui::GetWindowPos();
@@ -588,9 +602,9 @@ namespace FlatGui
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(1.0f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
 
-		std::string expandID = "##expandIcon-" + id;
-		std::string trashcanID = "##trashIcon-" + id;
-		std::string openFileID = "##openFileIcon-" + id;
+		std::string expandID = "##expandIcon-" + std::to_string(id);
+		std::string trashcanID = "##trashIcon-" + std::to_string(id);
+		std::string openFileID = "##openFileIcon-" + std::to_string(id);
 
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 		// Trash Can Icon for removing Component from Focused Object
@@ -610,7 +624,6 @@ namespace FlatGui
 			if (RenderImageButton(expandID.c_str(), expandFlippedIcon.GetTexture()))
 				component->SetCollapsed(!_isCollapsed);
 
-
 		if (!_isCollapsed)
 		{
 			ImGui::Separator();
@@ -621,23 +634,30 @@ namespace FlatGui
 			ImGui::Text("");
 		}
 
-		// Pops
-		ImGui::PopStyleColor();
-		ImGui::PopStyleVar();
-		ImGui::PopItemWidth();
-		ImGui::PopStyleColor();
+		 //Component Data - Give it background color and padding
+		std::string componentItemID = "##ComponentItem-" + componentType;
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, singleItemColor);
+		// Make full width Push
+
+		if (!component->IsCollapsed())
+			ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), autoResizeChildFlags);
 	}
 
-	void EndComponent()
+	void EndComponent(Component* component)
 	{
 		// Pops
-		ImGui::PopItemWidth();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 
 		// Add some space to the bottom of each component
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		if (!component->IsCollapsed())
+		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+			ImGui::EndChild();
+		}
 
-		ImGui::EndChild();
 		ImGui::EndChild();
 	}
 
@@ -652,7 +672,7 @@ namespace FlatGui
 		return _checked;
 	}
 
-	void RenderTransformComponent(FlatEngine::Transform* transform)
+	void RenderTransformComponent(Transform* transform)
 	{
 		// Position, scale, and rotation of transform
 		Vector2 position = transform->GetPosition();
@@ -682,5 +702,586 @@ namespace FlatGui
 			transform->SetScale(Vector2(scaleX, scaleY));
 			PopTable();
 		}
+	}
+
+	void RenderSpriteComponent(Sprite* sprite)
+	{
+		std::string path = sprite->GetPath();
+		char newPath[1024];
+		strcpy_s(newPath, path.c_str());
+		float textureWidth = sprite->GetTextureWidth();
+		float textureHeight = sprite->GetTextureHeight();
+		Vector2 textureScale = sprite->GetScale();
+		Sprite::PivotPoint pivotPoint = sprite->GetPivotPoint();
+		std::string pivotString = sprite->GetPivotPointString();
+		float xScale = textureScale.x;
+		float yScale = textureScale.y;
+		int renderOrder = sprite->GetRenderOrder();
+		bool _isActive = sprite->IsActive();
+		Vector2 offset = sprite->GetOffset();
+		float xOffset = offset.x;
+		float yOffset = offset.y;
+		std::string pathString = "Path: ";
+		std::string textureWidthString = std::to_string(textureWidth);
+		std::string textureHeightString = std::to_string(textureHeight);
+		Vector4 tintColor = sprite->GetTintColor();
+		long id = sprite->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			sprite->SetActive(_isActive);								
+
+		// Render Sprite Path
+		ImGui::Text(pathString.c_str());
+		ImGui::SameLine(0, 5);
+
+		// Load From File
+		std::string openFileID = "##OpenFileIcon" + std::to_string(sprite->GetID());
+		if (RenderImageButton(openFileID.c_str(), openFileIcon.GetTexture()))
+		{
+			std::string assetPath = FlatEngine::OpenLoadFileExplorer();
+			strcpy_s(newPath, assetPath.c_str());
+			sprite->SetTexture(newPath);
+		}
+		ImGui::SameLine(0, 5);
+								
+		// Sprite Path Edit
+		std::string spriteID = "##spritePath" + std::to_string(id);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
+		if (ImGui::InputText(spriteID.c_str(), newPath, IM_ARRAYSIZE(newPath), inputFlags))
+			sprite->SetTexture(newPath);
+		ImGui::PopStyleColor();
+
+		// Render Table
+		if (PushTable("##SpriteProperties" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+				sprite->SetScale(Vector2(xScale, yScale));
+			if (RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
+				sprite->SetScale(Vector2(xScale, yScale));																
+			if (RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+				sprite->SetOffset(Vector2(xOffset, yOffset));
+			if (RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+				sprite->SetOffset(Vector2(xOffset, yOffset));										
+			if (RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers))
+				sprite->SetRenderOrder(renderOrder);
+			RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
+			RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
+			PopTable();
+		}
+
+		// Pivot Point Buttons							
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+		Vector2 cellSize = Vector2(76, 78);
+		Vector2 cursorScreen = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+
+		// TopLeft, Top, TopRight
+		ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(logBgColor));
+		ImGui::SetCursorScreenPos(Vector2(cursorScreen.x + 5, cursorScreen.y + 5));
+		if (RenderImageButton("##PivotTopLeftButton", upLeftIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::TopLeft);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotTopButton", upIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::Top);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotTopRightButton", upRightIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::TopRight);
+								
+		ImGui::SameLine(0, 17);
+		ImGui::Text("Pivot Point:");
+
+		// Left, Center, Right
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
+		if (RenderImageButton("##PivotLeftButton", leftIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::Left);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotCenterButton", centerIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::Center);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotRightButton", rightIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::Right);
+								
+		ImGui::SameLine(0, 17);
+		ImGui::Text(pivotString.c_str());
+
+		// BottomLeft, Bottom, BottomRight
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
+		if (RenderImageButton("##PivotBottomLeftButton", downLeftIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::BottomLeft);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotBottomButton", downIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::Bottom);
+		ImGui::SameLine(0, 3);
+		if (RenderImageButton("##PivotBottomRightButton", downRightIcon.GetTexture(), Vector2(16, 16), 1, imageButtonDarkColor))
+			sprite->SetPivotPoint(Sprite::PivotPoint::BottomRight);
+
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
+
+		// Tint color picker
+		std::string tintID = "##SpriteTintColor" + std::to_string(id) + "-" + std::to_string(id);
+		ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+		if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+		{
+			sprite->SetTintColor(tintColor);
+		}
+		ImGui::SameLine(0, 5);
+		ImGui::Text("Tint color");
+	}
+
+	void RenderCameraComponent(Camera* camera)
+	{	
+		float width = camera->GetWidth();
+		float height = camera->GetHeight();
+		bool _isPrimary = camera->IsPrimary();
+		float zoom = camera->GetZoom();
+		ImVec4 frustrumColor = camera->GetFrustrumColor();
+		bool _isActive = camera->IsActive();
+		long id = camera->GetID();
+		bool _follow = camera->GetShouldFollow();
+		std::string following = "";
+		if (camera->GetFollowing() != -1)
+			following = FlatEngine::GetObjectById(camera->GetFollowing())->GetName();
+		float followSmoothing = camera->GetFollowSmoothing();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			camera->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##CameraProperties" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000))
+				camera->SetDimensions(width, height);
+			if (RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000))
+				camera->SetDimensions(width, height);
+			if (RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100))
+				camera->SetZoom(zoom);
+			if (RenderCheckboxTableRow("##CameraShouldFollowTargetCheckbox", "Follow", _follow))
+				camera->SetShouldFollow(_follow);
+			if (RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(id), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
+				camera->SetFollowSmoothing(followSmoothing);
+			PopTable();
+		}
+
+		if (RenderInput("##FollowInput", "To Follow", following))
+			camera->SetFollowing(FlatEngine::GetObjectByName(following)->GetID());
+
+		// Frustrum color picker
+		std::string frustrumID = "##FrustrumColor" + std::to_string(id);
+		ImVec4 color = ImVec4(frustrumColor.x / 255.0f, frustrumColor.y / 255.0f, frustrumColor.z / 255.0f, frustrumColor.w / 255.0f);
+		ImGui::ColorEdit4(frustrumID.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+		ImGui::SameLine(0, 5);
+		ImGui::Text("Frustrum color");
+		camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
+
+		// Before allowing this camera to be set as primary, we need to ensure it has a transform component
+		if (camera->GetParent()->HasComponent(ComponentTypes::Transform))
+		{									
+			if (RenderCheckbox("Is Primary Camera", _isPrimary))
+			{
+				if (_isPrimary)
+					FlatEngine::GetLoadedScene()->SetPrimaryCamera(camera);
+				else
+					FlatEngine::GetLoadedScene()->RemovePrimaryCamera();
+			}									
+		}
+		else
+		{
+			bool temp = false;
+			if (RenderCheckbox("Is Primary Camera", temp))
+				FlatEngine::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
+			temp = false;
+			ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
+		}
+
+		camera->SetPrimaryCamera(_isPrimary);
+	}
+
+	void RenderScriptComponent(ScriptComponent* script)
+	{		
+		std::string path = script->GetAttachedScript();
+		bool _isActive = script->IsActive();
+		long id = script->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			script->SetActive(_isActive);
+
+		std::string inputId = "##scriptName" + std::to_string(id);
+		if (RenderInput(inputId, "Name: ", path))
+			script->SetAttachedScript(path);
+	}
+
+	void RenderButtonComponent(Button* button)
+	{
+		bool _isActive = button->IsActive();
+		float activeWidth = button->GetActiveWidth();
+		float activeHeight = button->GetActiveHeight();
+		Vector2 activeOffset = button->GetActiveOffset();
+		int activeLayer = button->GetActiveLayer();	
+		long id = button->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			button->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##ButtonProperties" + std::to_string(id), 2))
+		{
+			RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000);
+			RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000);
+			button->SetActiveDimensions(activeWidth, activeHeight);
+			RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
+			RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
+			button->SetActiveOffset(activeOffset);
+			PopTable();
+		}
+	}
+
+	void RenderCanvasComponent(Canvas* canvas)
+	{
+		// Retrieve Canvas values
+		float canvasWidth = canvas->GetWidth();
+		float canvasHeight = canvas->GetHeight();
+		int layerNumber = canvas->GetLayerNumber();
+		bool _blocksLayers = canvas->GetBlocksLayers();
+		std::vector<std::shared_ptr<Button>> canvasButtons = canvas->GetButtons();
+		bool _isActive = canvas->IsActive();
+		long id = canvas->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			canvas->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##CanvasProperties" + std::to_string(id), 2))
+		{
+			RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20);
+			canvas->SetLayerNumber(layerNumber);
+			RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX);
+			RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX);
+			canvas->SetDimensions(canvasWidth, canvasHeight);
+			PopTable();
+		}
+
+		// _BlocksLayers Checkbox
+		if (RenderCheckbox("Blocks Layers:", _blocksLayers))
+			canvas->SetBlocksLayers(_blocksLayers);							
+	}
+
+	void RenderAnimationComponent(Animation* animation)
+	{
+		std::string path = animation->GetAnimationPath();
+		bool _isActive = animation->IsActive();
+		long id = animation->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			animation->SetActive(_isActive);
+
+		bool _canOpenFiles = true;
+		RenderInput("##animationPath" + std::to_string(id), "Path: ", path, _canOpenFiles);
+		animation->SetAnimationPath(path);
+
+		if (FlatEngine::GameLoopStarted() && !FlatEngine::GameLoopPaused())
+		{
+			if (RenderButton("Play Animation"))
+				animation->Play(FlatEngine::GetEllapsedGameTimeInMs());
+
+			if (animation->GetAnimationPath() != "")
+				ImGui::SameLine(0, 5);
+		}
+		
+		if (animation->GetAnimationPath() != "")
+		{									
+			if (RenderButton("Edit Animation"))
+			{
+				_showAnimator = true;
+				_showAnimationPreview = true;
+
+				SetFocusedAnimation(FlatEngine::LoadAnimationFile(animation->GetAnimationPath()));
+				loadedProject->SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
+			}
+		}
+	}
+
+	void RenderAudioComponent(Audio* audio)
+	{
+		// Retrieve Audio values
+		std::string path = audio->GetPath();
+		bool _isMusic = audio->IsMusic();
+		bool _isActive = audio->IsActive();
+		long id = audio->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			audio->SetActive(_isActive);
+
+		// Path Input
+		bool _canOpenFiles = true;
+		std::string inputId = "##audioPath_" + std::to_string(id);
+		bool _pathChanged = RenderInput(inputId, "Path: ", path, _canOpenFiles);
+		audio->SetPath(path);						
+		bool _soundTypeChanged = RenderCheckbox("Is Music", _isMusic);
+
+		// Reload the effect as music or chunk if changed	
+		if (_pathChanged || _soundTypeChanged)
+		{
+			if (_isMusic)
+				audio->LoadMusic(path);
+			else
+				audio->LoadEffect(path);
+
+			audio->SetIsMusic(_isMusic);
+		}
+
+		// Play Audio
+		if (RenderButton("Play"))
+			audio->Play();
+		ImGui::SameLine(0, 5);
+		// Pause Audio
+		if (RenderButton("Pause"))
+			audio->Pause();
+		ImGui::SameLine(0, 5);
+		// Stop Audio
+		if (RenderButton("Stop"))
+			audio->Stop();
+	}
+
+	void RenderTextComponent(Text* text)
+	{
+		bool _isActive = text->IsActive();
+		Texture texture = text->GetTexture();
+		float textureWidth = (float)texture.GetWidth();
+		float textureHeight = (float)texture.GetHeight();
+		int renderOrder = text->GetRenderOrder();
+		SDL_Color color = text->GetColor();
+		Vector2 offset = text->GetOffset();
+		float xOffset = offset.x;
+		float yOffset = offset.y;
+		long id = text->GetID();
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			text->SetActive(_isActive);
+
+		std::string textText = text->GetText();
+		if (RenderInput("##TextContent" + std::to_string(id), "Text: ", textText))
+		{
+			text->SetText(textText);
+			text->LoadText();
+		}
+		bool _canOpenFiles = true;
+		std::string fontPath = text->GetFontPath();
+		if (RenderInput("##FontPath" + std::to_string(id), "Font path: ", fontPath, _canOpenFiles))
+			text->SetFontPath(fontPath);
+
+		// Render Table
+		if (PushTable("##TextProperties" + std::to_string(id), 2))
+		{
+			RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
+			RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
+			RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
+			RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));
+			RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
+			text->SetRenderOrder(renderOrder);
+			PopTable();
+		}
+	}
+
+	void RenderCharacterControllerComponent(CharacterController* characterController)
+	{
+		bool _isActive = characterController->IsActive();
+		float maxAcceleration = characterController->GetMaxAcceleration();								
+		float maxSpeed = characterController->GetMaxSpeed();
+		float airControl = characterController->GetAirControl();
+		bool _isMoving = characterController->IsMoving();	
+		long id = characterController->GetID();
+		std::string isMoving = "false";
+		if (characterController->IsMoving())
+			isMoving = "true";
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			characterController->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##CharacterControllerProps" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##MaxAccelerationDrag" + std::to_string(id), "Max Acceleration", maxAcceleration, 0.01f, 0.0f, 20.0f))
+				characterController->SetMaxAcceleration(maxAcceleration);
+			if (RenderFloatDragTableRow("##MaxSpeedDrag" + std::to_string(id), "Max Speed", maxSpeed, 0.01f, 0.0f, 1000.0f))
+				characterController->SetMaxSpeed(maxSpeed);
+			if (RenderFloatDragTableRow("##AirControlDrag" + std::to_string(id), "Air Control", airControl, 0.01f, 0.0f, 1000.0f))
+				characterController->SetAirControl(airControl);
+			RenderTextTableRow("##IsMoving" + std::to_string(id), "Is Moving", isMoving);
+			PopTable();
+		}
+	}
+
+	void RenderBoxColliderComponent(BoxCollider* boxCollider)
+	{
+		bool _isActive = boxCollider->IsActive();
+		bool _isColliding = boxCollider->IsColliding();
+		float activeWidth = boxCollider->GetActiveWidth();
+		float activeHeight = boxCollider->GetActiveHeight();
+		ImVec4 activeEdges = boxCollider->GetActiveEdges();
+		Vector2 activeOffset = boxCollider->GetActiveOffset();
+		bool _isContinuous = boxCollider->IsContinuous();
+		bool _isStatic = boxCollider->IsStatic();
+		bool _isSolid = boxCollider->IsSolid();
+		bool _showActiveRadius = boxCollider->GetShowActiveRadius();
+		int activeLayer = boxCollider->GetActiveLayer();	
+		bool _isComposite = boxCollider->IsComposite();
+		long id = boxCollider->GetID();
+		std::string isCollidingString = "false";
+		if (_isColliding)
+			isCollidingString = "true";
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			boxCollider->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##BoxColliderProps" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f))
+				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+			if (RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f))
+				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+			if (RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+				boxCollider->SetActiveOffset(activeOffset);
+			if (RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+				boxCollider->SetActiveOffset(activeOffset);
+			if (RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+				boxCollider->SetActiveLayer(activeLayer);
+			RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+			PopTable();
+		}
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);							
+		if (RenderCheckbox(" Is Continuous", _isContinuous))
+			boxCollider->SetIsContinuous(_isContinuous);
+		if (RenderCheckbox(" Is Static", _isStatic))
+			boxCollider->SetIsStatic(_isStatic);
+		if (RenderCheckbox(" Is Solid", _isSolid))
+			boxCollider->SetIsSolid(_isSolid);
+		if (RenderCheckbox(" Show Active Radius", _showActiveRadius))
+			boxCollider->SetShowActiveRadius(_showActiveRadius);
+		if (RenderCheckbox(" Is Composite", _isComposite))
+			boxCollider->SetIsComposite(_isComposite);
+	}
+
+	void RenderCircleColliderComponent(CircleCollider* circleCollider)
+	{
+		bool _isActive = circleCollider->IsActive();
+		bool _isColliding = circleCollider->IsColliding();
+		float activeRadius = circleCollider->GetActiveRadiusGrid();
+		Vector2 activeOffset = circleCollider->GetActiveOffset();
+		bool _isContinuous = circleCollider->IsContinuous();
+		bool _isStatic = circleCollider->IsStatic();
+		bool _isSolid = circleCollider->IsSolid();								
+		int activeLayer = circleCollider->GetActiveLayer();
+		bool _isComposite = circleCollider->IsComposite();
+		long id = circleCollider->GetID();
+		std::string isCollidingString = "false";
+		if (_isColliding)
+			isCollidingString = "true";
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			circleCollider->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##CircleColliderProps" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f))
+				circleCollider->SetActiveRadiusGrid(activeRadius);
+			if (RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+				circleCollider->SetActiveOffset(activeOffset);
+			if (RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+				circleCollider->SetActiveOffset(activeOffset);
+			if (RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+				circleCollider->SetActiveLayer(activeLayer);
+			RenderTextTableRow("##CircleColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+			PopTable();
+		}
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		if (RenderCheckbox(" Is Continuous", _isContinuous))
+			circleCollider->SetIsContinuous(_isContinuous);
+		if (RenderCheckbox(" Is Static", _isStatic))
+			circleCollider->SetIsStatic(_isStatic);
+		if (RenderCheckbox(" Is Solid", _isSolid))
+			circleCollider->SetIsSolid(_isSolid);
+		if (RenderCheckbox(" Is Composite", _isComposite))
+			circleCollider->SetIsComposite(_isComposite);
+	}
+
+	void RenderRigidBodyComponent(RigidBody* rigidBody)
+	{
+		long id = rigidBody->GetID();
+		bool _isActive = rigidBody->IsActive();
+		float mass = rigidBody->GetMass();
+		float gravity = rigidBody->GetGravity();
+		float angularDrag = rigidBody->GetAngularDrag();
+		float fallingGravity = rigidBody->GetFallingGravity();
+		float terminalVelocity = rigidBody->GetTerminalVelocity();
+		float windResistance = rigidBody->GetWindResistance();
+		float friction = rigidBody->GetFriction();
+		float equilibriumForce = rigidBody->GetEquilibriumForce();
+		bool _isKinematic = rigidBody->IsKinematic();
+		bool _isStatic = rigidBody->IsStatic();
+		bool _isGrounded = rigidBody->IsGrounded();
+
+		// Read only
+		Vector2 velocity = rigidBody->GetVelocity();
+		Vector2 pendingForces = rigidBody->GetPendingForces();
+		Vector2 acceleration = rigidBody->GetAcceleration();
+
+		std::string isGroundedString = "false";
+		if (_isGrounded)
+			isGroundedString = "true";
+
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			rigidBody->SetActive(_isActive);
+
+		// Render Table
+		if (PushTable("##RigidBodyProps" + std::to_string(id), 2))
+		{
+			if (RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
+				rigidBody->SetMass(mass);
+			if (RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
+				rigidBody->SetGravity(gravity);
+			if (RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(id), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
+				rigidBody->SetFallingGravity(fallingGravity);
+			if (RenderFloatDragTableRow("##TerminalVelocity" + std::to_string(id), "Terminal Velocity", terminalVelocity, 0.01f, 0.001f, 1000))
+				rigidBody->SetTerminalVelocity(terminalVelocity);
+			if (RenderFloatDragTableRow("##WindResistance" + std::to_string(id), "Wind Resistance", windResistance, 0.01f, 0, 1))
+				rigidBody->SetWindResistance(windResistance);
+			if (RenderFloatDragTableRow("##Friction" + std::to_string(id), "Friction", friction, 0.01f, 0, 1))
+				rigidBody->SetFriction(friction);
+			if (RenderFloatDragTableRow("##EquilibriumForce" + std::to_string(id), "Equilibrium Force", equilibriumForce, 0.01f, 0, 1000))
+				rigidBody->SetEquilibriumForce(equilibriumForce);
+			RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
+			RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
+			RenderTextTableRow("##AccelerationX" + std::to_string(id), "X Acceleration", std::to_string(acceleration.x));
+			RenderTextTableRow("##AccelerationY" + std::to_string(id), "Y Acceleration", std::to_string(acceleration.y));
+			RenderTextTableRow("##PendingForcesX" + std::to_string(id), "X Pending Forces", std::to_string(pendingForces.x));
+			RenderTextTableRow("##PendingForcesY" + std::to_string(id), "Y Pending Forces", std::to_string(pendingForces.y));									
+			RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
+			PopTable();
+		}								
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		// Kinematic Checkbox
+		RenderCheckbox(" Is Kinematic", _isKinematic);
+		rigidBody->SetIsKinematic(_isKinematic);
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		// Static Checkbox
+		RenderCheckbox(" Is Static", _isStatic);
+		rigidBody->SetIsStatic(_isStatic);
 	}
 }

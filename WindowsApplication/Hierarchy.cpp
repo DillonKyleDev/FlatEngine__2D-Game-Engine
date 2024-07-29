@@ -355,7 +355,7 @@ namespace FlatEngine { namespace FlatGui {
 			PushMenuStyles();
 			if (ImGui::MenuItem("Create Child"))
 			{
-				std::shared_ptr<GameObject> childObject = CreateGameObject(currentObject->GetID());
+				GameObject* childObject = CreateGameObject(currentObject->GetID());
 				currentObject->AddChild(childObject->GetID());
 				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
