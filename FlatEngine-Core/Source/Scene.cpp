@@ -45,8 +45,9 @@ namespace FlatEngine
 
 	GameObject* Scene::AddSceneObject(GameObject sceneObject)
 	{
+		int index = sceneObjects.size();
 		sceneObjects.push_back(sceneObject);
-		return &sceneObject;
+		return &sceneObjects[index];
 	}
 
 	std::vector<GameObject> &Scene::GetSceneObjects()
@@ -109,7 +110,7 @@ namespace FlatEngine
 	GameObject* Scene::CreateGameObject(long parentID)
 	{
 		GameObject newObject = GameObject(parentID);
-		return AddSceneObject(&newObject);
+		return AddSceneObject(newObject);
 	}
 
 	void Scene::DeleteGameObject(long sceneObjectID)

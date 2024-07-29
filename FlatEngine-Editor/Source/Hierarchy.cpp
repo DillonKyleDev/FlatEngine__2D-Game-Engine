@@ -457,13 +457,17 @@ namespace FlatGui {
 			for (long childID : childrenIDs)
 			{
 				GameObject* child = FlatEngine::GetObjectById(childID);
-				std::string name = child->GetName();
-				const char* childName = name.c_str();
 
-				if (child->HasChildren())
-					AddObjectWithChild(*child, childName, node_clicked, queuedForDelete, indent);
-				else
-					AddObjectWithoutChild(*child, childName, node_clicked, queuedForDelete, indent);
+				if (child != nullptr)
+				{
+					std::string name = child->GetName();
+					const char* childName = name.c_str();
+
+					if (child->HasChildren())
+						AddObjectWithChild(*child, childName, node_clicked, queuedForDelete, indent);
+					else
+						AddObjectWithoutChild(*child, childName, node_clicked, queuedForDelete, indent);
+				}
 			}
 			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");*/
 

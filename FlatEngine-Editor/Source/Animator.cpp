@@ -378,7 +378,10 @@ namespace FlatGui {
 			Animation* animation = objectForFocusedAnimation.GetAnimationComponent();
 			std::string playID = "##playAnimationPreview";
 			std::string stopID = "##StopGameloopIcon";
-			bool _isPreviewing = animation->IsPlaying();
+			bool _isPreviewing = false;
+			
+			if (animation != nullptr)
+				_isPreviewing = animation->IsPlaying();
 
 			// Play Button
 			if (_isPreviewing)

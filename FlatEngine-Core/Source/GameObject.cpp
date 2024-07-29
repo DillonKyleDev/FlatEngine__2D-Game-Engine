@@ -335,11 +335,10 @@ namespace FlatEngine
 		Sprite sprite = Sprite(nextID, ID);
 		sprite.SetActive(_active);
 		sprite.SetCollapsed(_collapsed);
-		components.push_back(&sprite);
-
-		components.push_back(&sprite);
+		
 		F_ECSManager.m_Sprites.push_back(sprite);
 		F_ECSManager.m_spriteMap.emplace(this->ID, (long)F_ECSManager.m_Sprites.size() - 1);
+		components.push_back(&F_ECSManager.m_Sprites.at(F_ECSManager.m_spriteMap.at(this->ID)));
 		return &F_ECSManager.m_Sprites.at(F_ECSManager.m_spriteMap.at(this->ID));
 	}
 
@@ -351,10 +350,10 @@ namespace FlatEngine
 		Camera camera = Camera(nextID, ID);
 		camera.SetActive(_active);
 		camera.SetCollapsed(_collapsed);
-		components.push_back(&camera);
 		
 		F_ECSManager.m_Cameras.push_back(camera);
 		F_ECSManager.m_cameraMap.emplace(this->ID, (long)F_ECSManager.m_Cameras.size() - 1);
+		components.push_back(&F_ECSManager.m_Cameras.at(F_ECSManager.m_cameraMap.at(this->ID)));
 		return &F_ECSManager.m_Cameras.at(F_ECSManager.m_cameraMap.at(this->ID));
 	}
 
@@ -366,7 +365,6 @@ namespace FlatEngine
 		ScriptComponent script = ScriptComponent(nextID, ID);
 		script.SetActive(_active);
 		script.SetCollapsed(_collapsed);
-		components.push_back(&script);
 		
 		// if object doesn't already have a mapped location in the m_scriptMap, add it
 		//std::vector<long> indices = F_ECSManager.m_scriptMap.at(this->ID);
@@ -377,6 +375,7 @@ namespace FlatEngine
 		ids.push_back((long)F_ECSManager.m_Scripts.size() - 1);
 		F_ECSManager.m_scriptMap.emplace(this->ID, ids);
 		long index = F_ECSManager.m_scriptMap.at(this->ID)[0];
+		components.push_back(&F_ECSManager.m_Scripts.at(F_ECSManager.m_scriptMap.at(this->ID)[0]));
 		return &F_ECSManager.m_Scripts.at(index);
 	}
 
@@ -388,10 +387,10 @@ namespace FlatEngine
 		Button button = F_UIManager.CreateButton(nextID, ID, 0);
 		button.SetActive(_active);
 		button.SetCollapsed(_collapsed);
-		components.push_back(&button);
 		
 		F_ECSManager.m_Buttons.push_back(button);
 		F_ECSManager.m_buttonMap.emplace(this->ID, (long)F_ECSManager.m_Buttons.size() - 1);
+		components.push_back(&F_ECSManager.m_Buttons.at(F_ECSManager.m_buttonMap.at(this->ID)));
 		return &F_ECSManager.m_Buttons.at(F_ECSManager.m_buttonMap.at(this->ID));
 	}
 
@@ -403,10 +402,10 @@ namespace FlatEngine
 		Canvas canvas = F_UIManager.CreateCanvas(nextID, ID, 0);
 		canvas.SetActive(_active);
 		canvas.SetCollapsed(_collapsed);
-		components.push_back(&canvas);
 	
 		F_ECSManager.m_Canvases.push_back(canvas);
 		F_ECSManager.m_canvasMap.emplace(this->ID, (long)F_ECSManager.m_Canvases.size() - 1);
+		components.push_back(&F_ECSManager.m_Canvases.at(F_ECSManager.m_canvasMap.at(this->ID)));
 		return &F_ECSManager.m_Canvases.at(F_ECSManager.m_canvasMap.at(this->ID));
 	}
 
@@ -418,10 +417,10 @@ namespace FlatEngine
 		Animation animation = Animation(nextID, ID);
 		animation.SetActive(_active);
 		animation.SetCollapsed(_collapsed);
-		components.push_back(&animation);			
 	
 		F_ECSManager.m_Animations.push_back(animation);
 		F_ECSManager.m_animationMap.emplace(this->ID, (long)F_ECSManager.m_Animations.size() - 1);
+		components.push_back(&F_ECSManager.m_Animations.at(F_ECSManager.m_animationMap.at(this->ID)));
 		return &F_ECSManager.m_Animations.at(F_ECSManager.m_animationMap.at(this->ID));
 	}
 
@@ -433,10 +432,10 @@ namespace FlatEngine
 		Audio audio = Audio(nextID, ID);
 		audio.SetActive(_active);
 		audio.SetCollapsed(_collapsed);
-		components.push_back(&audio);		
 
 		F_ECSManager.m_Audios.push_back(audio);
 		F_ECSManager.m_audioMap.emplace(this->ID, (long)F_ECSManager.m_Audios.size() - 1);
+		components.push_back(&F_ECSManager.m_Audios.at(F_ECSManager.m_audioMap.at(this->ID)));
 		return &F_ECSManager.m_Audios.at(F_ECSManager.m_audioMap.at(this->ID));
 	}
 
@@ -448,10 +447,10 @@ namespace FlatEngine
 		Text text = Text(nextID, ID);
 		text.SetActive(_active);
 		text.SetCollapsed(_collapsed);
-		components.push_back(&text);
 
 		F_ECSManager.m_Texts.push_back(text);
 		F_ECSManager.m_textMap.emplace(this->ID, (long)F_ECSManager.m_Texts.size() - 1);
+		components.push_back(&F_ECSManager.m_Texts.at(F_ECSManager.m_textMap.at(this->ID)));
 		return &F_ECSManager.m_Texts.at(F_ECSManager.m_textMap.at(this->ID));
 	}
 
@@ -463,10 +462,10 @@ namespace FlatEngine
 		BoxCollider boxCollider = BoxCollider(nextID, ID);
 		boxCollider.SetActive(_active);
 		boxCollider.SetCollapsed(_collapsed);
-		components.push_back(&boxCollider);
 
 		F_ECSManager.m_BoxColliders.push_back(boxCollider);
 		F_ECSManager.m_boxColliderMap.emplace(this->ID, (long)F_ECSManager.m_BoxColliders.size() - 1);
+		components.push_back(&F_ECSManager.m_BoxColliders.at(F_ECSManager.m_boxColliderMap.at(this->ID)));
 		return &F_ECSManager.m_BoxColliders.at(F_ECSManager.m_boxColliderMap.at(this->ID));
 	}
 
@@ -478,10 +477,10 @@ namespace FlatEngine
 		CircleCollider circleCollider = CircleCollider(nextID, ID);
 		circleCollider.SetActive(_active);
 		circleCollider.SetCollapsed(_collapsed);
-		components.push_back(&circleCollider);
 
 		F_ECSManager.m_CircleColliders.push_back(circleCollider);
 		F_ECSManager.m_circleColliderMap.emplace(this->ID, (long)F_ECSManager.m_CircleColliders.size() - 1);
+		components.push_back(&F_ECSManager.m_CircleColliders.at(F_ECSManager.m_circleColliderMap.at(this->ID)));
 		return &F_ECSManager.m_CircleColliders.at(F_ECSManager.m_circleColliderMap.at(this->ID));
 	}
 
@@ -493,10 +492,10 @@ namespace FlatEngine
 		CompositeCollider compositeCollider = CompositeCollider(nextID, ID);
 		compositeCollider.SetActive(_active);
 		compositeCollider.SetCollapsed(_collapsed);
-		components.push_back(&compositeCollider);
 
 		F_ECSManager.m_CompositeColliders.push_back(compositeCollider);
 		F_ECSManager.m_compositeColliderMap.emplace(this->ID, (long)F_ECSManager.m_CompositeColliders.size() - 1);
+		components.push_back(&F_ECSManager.m_CompositeColliders.at(F_ECSManager.m_compositeColliderMap.at(this->ID)));
 		return &F_ECSManager.m_CompositeColliders.at(F_ECSManager.m_compositeColliderMap.at(this->ID));
 	}
 
@@ -508,10 +507,10 @@ namespace FlatEngine
 		RigidBody rigidBody = RigidBody(nextID, ID);
 		rigidBody.SetActive(_active);
 		rigidBody.SetCollapsed(_collapsed);
-		components.push_back(&rigidBody);
 
 		F_ECSManager.m_RigidBodies.push_back(rigidBody);
 		F_ECSManager.m_rigidBodyMap.emplace(this->ID, (long)F_ECSManager.m_RigidBodies.size() - 1);
+		components.push_back(&F_ECSManager.m_RigidBodies.at(F_ECSManager.m_rigidBodyMap.at(this->ID)));
 		return &F_ECSManager.m_RigidBodies.at(F_ECSManager.m_rigidBodyMap.at(this->ID));
 	}
 

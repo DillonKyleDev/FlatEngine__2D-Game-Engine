@@ -154,7 +154,7 @@ namespace FlatEngine
 					GameObject loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene);
 					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
 					if (!loadedObject.IsPrefab())
-						freshScene->AddSceneObject(&loadedObject);
+						freshScene->AddSceneObject(loadedObject);
 				}
 			}
 		}
