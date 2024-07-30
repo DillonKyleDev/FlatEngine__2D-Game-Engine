@@ -99,18 +99,19 @@ namespace FlatEngine
 
 	void ECSManager::CollectPhysicsBodies()
 	{
-		// Initialize objects for use in ECSManager::Update() with the currently loaded scene
-		UpdateActiveColliders();
+		UpdateColliderPairs();
 		UpdateActiveRigidBodies();
 	}
 
 	GameScript* ECSManager::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
 	{
+		// MUST FIX SOON
 		scriptComponent.SetScriptInstance(&scriptInstance);
 		scriptInstance.SetOwner(&owner);
 		m_GameScripts.push_back(std::pair<GameScript, long>(scriptInstance, owner.GetID()));
 		scriptInstance.Awake();
 		scriptInstance.Start();
+		return nullptr;
 	}
 
 	Canvas* ECSManager::AddCanvas(Canvas canvas, long ownerID)
@@ -347,7 +348,7 @@ namespace FlatEngine
 			if ((*iter).first.GetID() == colliderID)
 			{
 				m_Colliders.erase(iter);
-				UpdateActiveColliders();
+				UpdateColliderPairs();
 				return;
 			}
 			iter++;
@@ -358,7 +359,7 @@ namespace FlatEngine
 	{
 	}
 
-	void ECSManager::UpdateActiveColliders()
+	void ECSManager::UpdateColliderPairs()
 	{
 		// Get currently loaded scenes GameObjects
 		//std::vector<GameObject> gameObjects = FlatEngine::GetSceneObjects();

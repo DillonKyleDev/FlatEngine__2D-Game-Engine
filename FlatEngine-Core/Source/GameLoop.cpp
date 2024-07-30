@@ -101,7 +101,7 @@ namespace FlatEngine
 		LogFloat(processTime, "Update Scripts: ");
 
 
-		float processTime = (float)FlatEngine::GetEngineTime();
+		processTime = (float)FlatEngine::GetEngineTime();
 		for (std::pair<RigidBody, long> rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.first.IsActive())

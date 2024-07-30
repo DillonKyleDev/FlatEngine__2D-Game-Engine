@@ -47,16 +47,16 @@ namespace FlatEngine
 		GameObject* GetObjectByName(std::string name);
 		GameObject* CreateGameObject(long parentID = -1);
 		void DeleteGameObject(long sceneObjectID);
-		void DeleteChildrenAndSelf(GameObject *objectToDelete); // Recursive
+		void DeleteChildrenAndSelf(GameObject *objectToDelete);
 		void IncrementGameObjectID();
 		long GetNextGameObjectID();
 		void IncrementComponentID();
 		long GetNextComponentID();
 		void SetPrimaryCamera(Camera* camera);
 		void RemovePrimaryCamera();
-		Camera *GetPrimaryCamera();
-		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
+		Camera *GetPrimaryCamera();		
 		void OnPrefabInstantiated(std::vector<GameObject> children);
+		void UpdateColliderPairs(); // TODO
 
 		// ECS Wrappers
 		void InitializeScriptObjects(); // May not need

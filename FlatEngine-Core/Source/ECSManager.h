@@ -69,13 +69,8 @@ namespace FlatEngine
 		void RemoveScript(long scriptID);
 		void RemoveRigidBody(long rigidBodyID);
 		void RemoveCollider(long colliderID);
-		void UpdateActiveColliders();
-		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
+		void UpdateColliderPairs();
 		void UpdateActiveRigidBodies();
-		void CalculateRigidBodyPhysics(std::string physicsType);
-		void ApplyRigidBodyPhysics(float deltaTime, std::string physicsType);
-		void ResetColliders();
-		void CheckForCollisions();
 
 		std::vector<std::pair<Transform, long>> GetTransforms();
 		std::vector<std::pair<Sprite, long>> GetSprites();

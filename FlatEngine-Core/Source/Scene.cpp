@@ -286,9 +286,19 @@ namespace FlatEngine
 
 	void Scene::OnPrefabInstantiated(std::vector<GameObject> children)
 	{
-		m_ECSManager.UpdateActiveColliders();
+		m_ECSManager.UpdateColliderPairs();
 		m_ECSManager.UpdateActiveRigidBodies();
 		m_ECSManager.InitializeScriptObjects(children);
+	}
+
+	void Scene::UpdateColliderPairs()
+	{
+		m_ECSManager.UpdateColliderPairs();
+	}
+
+	void Scene::InitializeScriptObjects()
+	{
+		//m_ECSManager.InitializeScriptObjects
 	}
 
 	Transform* Scene::AddTransform(Transform transform, long ownerID)
