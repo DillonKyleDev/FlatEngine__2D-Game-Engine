@@ -5,9 +5,11 @@
 #include "Collider.h"
 #include "implot.h"
 #include "Application.h"
+#include "Scene.h"
 
 using Process = FlatEngine::Process;
 using Collider = FlatEngine::Collider;
+using Scene = FlatEngine::Scene;
 
 namespace FlatGui 
 { 
@@ -91,7 +93,7 @@ namespace FlatGui
 			{
 				RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
 
-				for (std::pair<Collider*, Collider*> pair : FlatEngine::F_Application->GetGameLoop()->GetColliderPairs())
+				for (std::pair<Collider*, Collider*> pair : FlatEngine::GetLoadedScene()->GetColliderPairs())
 				{
 					std::string col1String = pair.first->GetParent()->GetName();
 					std::string col2String = pair.second->GetParent()->GetName();

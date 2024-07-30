@@ -58,7 +58,6 @@ namespace FlatEngine
 
 	std::string Component::GetTypeString()
 	{
-		type = type;
 		switch (type)
 		{
 		case ComponentTypes::Transform:

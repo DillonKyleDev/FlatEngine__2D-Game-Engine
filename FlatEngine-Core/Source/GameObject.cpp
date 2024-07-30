@@ -20,6 +20,7 @@
 #include "CircleCollider.h"
 #include "CompositeCollider.h"
 #include "ECSManager.h"
+#include "Scene.h"
 
 
 namespace FlatEngine
@@ -27,7 +28,10 @@ namespace FlatEngine
 	GameObject::GameObject(long newParentID, long myID)
 	{
 		_isValid = true;
-		ID = myID;
+		if (myID == -1)
+			ID = GetNextGameObjectID();
+		else
+			ID = myID;
 		_isPrefab = false;
 		prefabName = "";
 		prefabSpawnLocation = Vector2(0, 0);
@@ -91,10 +95,7 @@ namespace FlatEngine
 			if (component->GetTypeString() == "Transform")
 			{
 				Transform newComponent = Transform(static_cast<Transform*>(component), GetID());
-
-				F_ECSManager.m_Transforms.push_back(newComponent);
-				F_ECSManager.m_transformMap.emplace(this->ID, (long)F_ECSManager.m_Transforms.size() - 1);
-
+				GetLoadedScene()->AddTransform(newComponent, ID);
 
 				if (parentID != -1 && GetObjectById(parentID)->IsValid())
 				{
@@ -308,8 +309,6 @@ namespace FlatEngine
 		Transform transform = Transform(nextID, ID);
 		transform.SetActive(_active);
 		transform.SetCollapsed(_collapsed);
-		F_ECSManager.m_Transforms.push_back(transform);
-		F_ECSManager.m_transformMap.emplace(this->ID, (long)F_ECSManager.m_Transforms.size() - 1);
 
 		// Set transforms origin to parents true position
 		if (parentID != -1)
@@ -323,8 +322,9 @@ namespace FlatEngine
 			}
 		}
 
-		components.push_back(&F_ECSManager.m_Transforms.at(F_ECSManager.m_transformMap.at(this->ID)));
-		return &F_ECSManager.m_Transforms.at(F_ECSManager.m_transformMap.at(this->ID));
+		Transform* transformPtr = GetLoadedScene()->AddTransform(transform, ID);
+		components.push_back(transformPtr);
+		return transformPtr;
 	}
 
 	Sprite* GameObject::AddSpriteComponent(long id, bool _active, bool _collapsed)
@@ -336,10 +336,9 @@ namespace FlatEngine
 		sprite.SetActive(_active);
 		sprite.SetCollapsed(_collapsed);
 		
-		F_ECSManager.m_Sprites.push_back(sprite);
-		F_ECSManager.m_spriteMap.emplace(this->ID, (long)F_ECSManager.m_Sprites.size() - 1);
-		components.push_back(&F_ECSManager.m_Sprites.at(F_ECSManager.m_spriteMap.at(this->ID)));
-		return &F_ECSManager.m_Sprites.at(F_ECSManager.m_spriteMap.at(this->ID));
+		Sprite* spritePtr = GetLoadedScene()->AddSprite(sprite, ID);
+		components.push_back(spritePtr);
+		return spritePtr;
 	}
 
 	Camera* GameObject::AddCameraComponent(long id, bool _active, bool _collapsed)
@@ -351,10 +350,9 @@ namespace FlatEngine
 		camera.SetActive(_active);
 		camera.SetCollapsed(_collapsed);
 		
-		F_ECSManager.m_Cameras.push_back(camera);
-		F_ECSManager.m_cameraMap.emplace(this->ID, (long)F_ECSManager.m_Cameras.size() - 1);
-		components.push_back(&F_ECSManager.m_Cameras.at(F_ECSManager.m_cameraMap.at(this->ID)));
-		return &F_ECSManager.m_Cameras.at(F_ECSManager.m_cameraMap.at(this->ID));
+		Camera* cameraPtr = GetLoadedScene()->AddCamera(camera, ID);
+		components.push_back(cameraPtr);
+		return cameraPtr;
 	}
 
 	ScriptComponent* GameObject::AddScriptComponent(long id, bool _active, bool _collapsed)
@@ -365,18 +363,10 @@ namespace FlatEngine
 		ScriptComponent script = ScriptComponent(nextID, ID);
 		script.SetActive(_active);
 		script.SetCollapsed(_collapsed);
-		
-		// if object doesn't already have a mapped location in the m_scriptMap, add it
-		//std::vector<long> indices = F_ECSManager.m_scriptMap.at(this->ID);
-		//indices.push_back()
 
-		F_ECSManager.m_Scripts.push_back(script);
-		std::vector<long> ids;
-		ids.push_back((long)F_ECSManager.m_Scripts.size() - 1);
-		F_ECSManager.m_scriptMap.emplace(this->ID, ids);
-		long index = F_ECSManager.m_scriptMap.at(this->ID)[0];
-		components.push_back(&F_ECSManager.m_Scripts.at(F_ECSManager.m_scriptMap.at(this->ID)[0]));
-		return &F_ECSManager.m_Scripts.at(index);
+		ScriptComponent* scriptPtr = GetLoadedScene()->AddScriptComponent(script, ID);
+		components.push_back(scriptPtr);
+		return scriptPtr;
 	}
 
 	Button* GameObject::AddButtonComponent(long id, bool _active, bool _collapsed)
@@ -388,10 +378,9 @@ namespace FlatEngine
 		button.SetActive(_active);
 		button.SetCollapsed(_collapsed);
 		
-		F_ECSManager.m_Buttons.push_back(button);
-		F_ECSManager.m_buttonMap.emplace(this->ID, (long)F_ECSManager.m_Buttons.size() - 1);
-		components.push_back(&F_ECSManager.m_Buttons.at(F_ECSManager.m_buttonMap.at(this->ID)));
-		return &F_ECSManager.m_Buttons.at(F_ECSManager.m_buttonMap.at(this->ID));
+		Button* buttonPtr = GetLoadedScene()->AddButton(button, ID);
+		components.push_back(buttonPtr);
+		return buttonPtr;
 	}
 
 	Canvas* GameObject::AddCanvasComponent(long id, bool _active, bool _collapsed)
@@ -402,11 +391,10 @@ namespace FlatEngine
 		Canvas canvas = F_UIManager.CreateCanvas(nextID, ID, 0);
 		canvas.SetActive(_active);
 		canvas.SetCollapsed(_collapsed);
-	
-		F_ECSManager.m_Canvases.push_back(canvas);
-		F_ECSManager.m_canvasMap.emplace(this->ID, (long)F_ECSManager.m_Canvases.size() - 1);
-		components.push_back(&F_ECSManager.m_Canvases.at(F_ECSManager.m_canvasMap.at(this->ID)));
-		return &F_ECSManager.m_Canvases.at(F_ECSManager.m_canvasMap.at(this->ID));
+
+		Canvas* canvasPtr = GetLoadedScene()->AddCanvas(canvas, ID);
+		components.push_back(canvasPtr);
+		return canvasPtr;
 	}
 
 	Animation* GameObject::AddAnimationComponent(long id, bool _active, bool _collapsed)
@@ -418,10 +406,9 @@ namespace FlatEngine
 		animation.SetActive(_active);
 		animation.SetCollapsed(_collapsed);
 	
-		F_ECSManager.m_Animations.push_back(animation);
-		F_ECSManager.m_animationMap.emplace(this->ID, (long)F_ECSManager.m_Animations.size() - 1);
-		components.push_back(&F_ECSManager.m_Animations.at(F_ECSManager.m_animationMap.at(this->ID)));
-		return &F_ECSManager.m_Animations.at(F_ECSManager.m_animationMap.at(this->ID));
+		Animation* animationPtr = GetLoadedScene()->AddAnimation(animation, ID);
+		components.push_back(animationPtr);
+		return animationPtr;
 	}
 
 	Audio* GameObject::AddAudioComponent(long id, bool _active, bool _collapsed)
@@ -433,10 +420,9 @@ namespace FlatEngine
 		audio.SetActive(_active);
 		audio.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_Audios.push_back(audio);
-		F_ECSManager.m_audioMap.emplace(this->ID, (long)F_ECSManager.m_Audios.size() - 1);
-		components.push_back(&F_ECSManager.m_Audios.at(F_ECSManager.m_audioMap.at(this->ID)));
-		return &F_ECSManager.m_Audios.at(F_ECSManager.m_audioMap.at(this->ID));
+		Audio* audioPtr = GetLoadedScene()->AddAudio(audio, ID);
+		components.push_back(audioPtr);
+		return audioPtr;
 	}
 
 	Text* GameObject::AddTextComponent(long id, bool _active, bool _collapsed)
@@ -447,11 +433,10 @@ namespace FlatEngine
 		Text text = Text(nextID, ID);
 		text.SetActive(_active);
 		text.SetCollapsed(_collapsed);
-
-		F_ECSManager.m_Texts.push_back(text);
-		F_ECSManager.m_textMap.emplace(this->ID, (long)F_ECSManager.m_Texts.size() - 1);
-		components.push_back(&F_ECSManager.m_Texts.at(F_ECSManager.m_textMap.at(this->ID)));
-		return &F_ECSManager.m_Texts.at(F_ECSManager.m_textMap.at(this->ID));
+		
+		Text* textPtr = GetLoadedScene()->AddText(text, ID);
+		components.push_back(textPtr);
+		return textPtr;
 	}
 
 	BoxCollider* GameObject::AddBoxColliderComponent(long id, bool _active, bool _collapsed)
@@ -463,10 +448,9 @@ namespace FlatEngine
 		boxCollider.SetActive(_active);
 		boxCollider.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_BoxColliders.push_back(boxCollider);
-		F_ECSManager.m_boxColliderMap.emplace(this->ID, (long)F_ECSManager.m_BoxColliders.size() - 1);
-		components.push_back(&F_ECSManager.m_BoxColliders.at(F_ECSManager.m_boxColliderMap.at(this->ID)));
-		return &F_ECSManager.m_BoxColliders.at(F_ECSManager.m_boxColliderMap.at(this->ID));
+		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
+		components.push_back(colliderPtr);
+		return colliderPtr;
 	}
 
 	CircleCollider* GameObject::AddCircleColliderComponent(long id, bool _active, bool _collapsed)
@@ -478,10 +462,9 @@ namespace FlatEngine
 		circleCollider.SetActive(_active);
 		circleCollider.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_CircleColliders.push_back(circleCollider);
-		F_ECSManager.m_circleColliderMap.emplace(this->ID, (long)F_ECSManager.m_CircleColliders.size() - 1);
-		components.push_back(&F_ECSManager.m_CircleColliders.at(F_ECSManager.m_circleColliderMap.at(this->ID)));
-		return &F_ECSManager.m_CircleColliders.at(F_ECSManager.m_circleColliderMap.at(this->ID));
+		CircleCollider* colliderPtr = GetLoadedScene()->AddCircleCollider(circleCollider, ID);
+		components.push_back(colliderPtr);
+		return colliderPtr;
 	}
 
 	CompositeCollider* GameObject::AddCompositeColliderComponent(long id, bool _active, bool _collapsed)
@@ -493,10 +476,9 @@ namespace FlatEngine
 		compositeCollider.SetActive(_active);
 		compositeCollider.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_CompositeColliders.push_back(compositeCollider);
-		F_ECSManager.m_compositeColliderMap.emplace(this->ID, (long)F_ECSManager.m_CompositeColliders.size() - 1);
-		components.push_back(&F_ECSManager.m_CompositeColliders.at(F_ECSManager.m_compositeColliderMap.at(this->ID)));
-		return &F_ECSManager.m_CompositeColliders.at(F_ECSManager.m_compositeColliderMap.at(this->ID));
+		CompositeCollider* colliderPtr = GetLoadedScene()->AddCompositeCollider(compositeCollider, ID);
+		components.push_back(colliderPtr);
+		return colliderPtr;
 	}
 
 	RigidBody* GameObject::AddRigidBodyComponent(long id, bool _active, bool _collapsed)
@@ -508,10 +490,9 @@ namespace FlatEngine
 		rigidBody.SetActive(_active);
 		rigidBody.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_RigidBodies.push_back(rigidBody);
-		F_ECSManager.m_rigidBodyMap.emplace(this->ID, (long)F_ECSManager.m_RigidBodies.size() - 1);
-		components.push_back(&F_ECSManager.m_RigidBodies.at(F_ECSManager.m_rigidBodyMap.at(this->ID)));
-		return &F_ECSManager.m_RigidBodies.at(F_ECSManager.m_rigidBodyMap.at(this->ID));
+		RigidBody* rigidBodyPtr = GetLoadedScene()->AddRigidBody(rigidBody, ID);
+		components.push_back(rigidBodyPtr);
+		return rigidBodyPtr;
 	}
 
 	CharacterController* GameObject::AddCharacterControllerComponent(long id, bool _active, bool _collapsed)
@@ -523,10 +504,9 @@ namespace FlatEngine
 		characterController.SetActive(_active);
 		characterController.SetCollapsed(_collapsed);
 
-		F_ECSManager.m_CharacterControllers.push_back(characterController);
-		F_ECSManager.m_characterControllerMap.emplace(this->ID, (long)F_ECSManager.m_CharacterControllers.size() - 1);
-		components.push_back(&F_ECSManager.m_CharacterControllers.at(F_ECSManager.m_characterControllerMap.at(this->ID)));
-		return &F_ECSManager.m_CharacterControllers.at(F_ECSManager.m_characterControllerMap.at(this->ID));
+		CharacterController* characterControllerPtr = GetLoadedScene()->AddCharacterController(characterController, ID);
+		components.push_back(characterControllerPtr);
+		return characterControllerPtr;
 	}
 
 
@@ -560,147 +540,76 @@ namespace FlatEngine
 
 	Transform* GameObject::GetTransformComponent()
 	{
-		//Transform> transformComponent = static_cast<Transform>(GetComponent(ComponentTypes::Transform));
-		//return transformComponent;
-		//return &FlatEngine::F_ECSManager.m_Transforms.at(FlatEngine::F_ECSManager.m_transformMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_transformMap.count(ID) && FlatEngine::F_ECSManager.m_Transforms.size() >= FlatEngine::F_ECSManager.m_transformMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Transforms.at(FlatEngine::F_ECSManager.m_transformMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetTransform(ID);
 	}
 
 	Sprite* GameObject::GetSpriteComponent()
 	{
-		//Sprite spriteComponent = static_cast<Sprite>(GetComponent(ComponentTypes::Sprite));
-		//return spriteComponent;
-		//return &FlatEngine::F_ECSManager.m_Sprites.at(FlatEngine::F_ECSManager.m_spriteMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_spriteMap.count(ID) && FlatEngine::F_ECSManager.m_Sprites.size() >= FlatEngine::F_ECSManager.m_spriteMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Sprites.at(FlatEngine::F_ECSManager.m_spriteMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetSprite(ID);
 	}
 
 	Camera* GameObject::GetCameraComponent()
 	{
-		//Camera cameraComponent = static_cast<Camera>(GetComponent(ComponentTypes::Camera));
-		//return cameraComponent;
-		//return &FlatEngine::F_ECSManager.m_Cameras.at(FlatEngine::F_ECSManager.m_cameraMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_cameraMap.count(ID) && FlatEngine::F_ECSManager.m_Cameras.size() >= FlatEngine::F_ECSManager.m_cameraMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Cameras.at(FlatEngine::F_ECSManager.m_cameraMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetCamera(ID);
 	}
 
 	Animation* GameObject::GetAnimationComponent()
 	{
-		//Animation animationComponent = static_cast<Animation>(GetComponent(ComponentTypes::Animation));
-		//return animationComponent;
-
-		if (FlatEngine::F_ECSManager.m_animationMap.count(ID) && FlatEngine::F_ECSManager.m_Animations.size() >= FlatEngine::F_ECSManager.m_animationMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Animations.at(FlatEngine::F_ECSManager.m_animationMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetAnimation(ID);
 	}
 
 	Audio* GameObject::GetAudioComponent()
 	{
-		//Audio audioComponent = static_cast<Audio>(GetComponent(ComponentTypes::Audio));
-		//return audioComponent;
-		//return &FlatEngine::F_ECSManager.m_Audios.at(FlatEngine::F_ECSManager.m_audioMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_audioMap.count(ID) && FlatEngine::F_ECSManager.m_Audios.size() >= FlatEngine::F_ECSManager.m_audioMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Audios.at(FlatEngine::F_ECSManager.m_audioMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetAudio(ID);
 	}
 
 	Button* GameObject::GetButtonComponent()
 	{
-		//Button buttonComponent = static_cast<Button>(GetComponent(ComponentTypes::Button));
-		//return buttonComponent;
-		//return &FlatEngine::F_ECSManager.m_Buttons.at(FlatEngine::F_ECSManager.m_buttonMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_buttonMap.count(ID) && FlatEngine::F_ECSManager.m_Buttons.size() >= FlatEngine::F_ECSManager.m_buttonMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Buttons.at(FlatEngine::F_ECSManager.m_buttonMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetButton(ID);
 	}
 
 	Canvas* GameObject::GetCanvasComponent()
 	{
-		//Canvas canvasComponent = static_cast<Canvas>(GetComponent(ComponentTypes::Canvas));
-		//return canvasComponent;
-		//return &FlatEngine::F_ECSManager.m_Canvases.at(FlatEngine::F_ECSManager.m_canvasMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_canvasMap.count(ID) && FlatEngine::F_ECSManager.m_Canvases.size() >= FlatEngine::F_ECSManager.m_canvasMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Canvases.at(FlatEngine::F_ECSManager.m_canvasMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetCanvas(ID);
 	}
 
 	ScriptComponent* GameObject::GetScriptComponent()
 	{
-		//ScriptComponent scriptComponent = static_cast<ScriptComponent>(GetComponent(ComponentTypes::Script));
-		//return scriptComponent;
-		//return &FlatEngine::F_ECSManager.m_Scripts.at(FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0]);
-
-		if (FlatEngine::F_ECSManager.m_scriptMap.count(ID) && FlatEngine::F_ECSManager.m_Scripts.size() >= FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0])
-			return &FlatEngine::F_ECSManager.m_Scripts.at(FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0]);
-		else return nullptr;
+		return GetLoadedScene()->GetScriptComponent(ID);
 	}
 
 	std::vector<ScriptComponent*> GameObject::GetScriptComponents()
 	{
 		std::vector<ScriptComponent*> scripts = std::vector<ScriptComponent*>();
 
-		if (FlatEngine::F_ECSManager.m_scriptMap.count(ID) && FlatEngine::F_ECSManager.m_Scripts.size() >= FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0])
-		{
-			for (int i = 0; i < FlatEngine::F_ECSManager.m_scriptMap.at(ID).size(); i++)
-			{
-				scripts.push_back(&FlatEngine::F_ECSManager.m_Scripts.at(FlatEngine::F_ECSManager.m_scriptMap.at(ID)[i]));
-			}
-		}
+		//if (FlatEngine::F_ECSManager.m_scriptMap.count(ID) && FlatEngine::F_ECSManager.m_Scripts.size() >= FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0])
+		//{
+		//	for (int i = 0; i < FlatEngine::F_ECSManager.m_scriptMap.at(ID).size(); i++)
+		//	{
+		//		scripts.push_back(&FlatEngine::F_ECSManager.m_Scripts.at(FlatEngine::F_ECSManager.m_scriptMap.at(ID)[i]));
+		//	}
+		//}
 		return scripts;
 	}
 
 	Text* GameObject::GetTextComponent()
 	{
-		//Text textComponent = static_cast<Text>(GetComponent(ComponentTypes::Text));
-		//return textComponent;
-		//return &FlatEngine::F_ECSManager.m_Texts.at(FlatEngine::F_ECSManager.m_textMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_textMap.count(ID) && FlatEngine::F_ECSManager.m_Texts.size() >= FlatEngine::F_ECSManager.m_textMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_Texts.at(FlatEngine::F_ECSManager.m_textMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetText(ID);
 	}
 
 	CharacterController* GameObject::GetCharacterController()
 	{
-		//CharacterController characterController = static_cast<CharacterController>(GetComponent(ComponentTypes::CharacterController));
-		//return characterController;
-		//return &FlatEngine::F_ECSManager.m_CharacterControllers.at(FlatEngine::F_ECSManager.m_characterControllerMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_characterControllerMap.count(ID) && FlatEngine::F_ECSManager.m_CharacterControllers.size() >= FlatEngine::F_ECSManager.m_characterControllerMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_CharacterControllers.at(FlatEngine::F_ECSManager.m_characterControllerMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetCharacterController(ID);
 	}
 
 	RigidBody* GameObject::GetRigidBody()
 	{
-		//RigidBody rigidBody = static_cast<RigidBody>(GetComponent(ComponentTypes::RigidBody));
-		//return rigidBody;
-		//return &FlatEngine::F_ECSManager.m_RigidBodies.at(FlatEngine::F_ECSManager.m_rigidBodyMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_rigidBodyMap.count(ID) && FlatEngine::F_ECSManager.m_RigidBodies.size() >= FlatEngine::F_ECSManager.m_rigidBodyMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_RigidBodies.at(FlatEngine::F_ECSManager.m_rigidBodyMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetRigidBody(ID);
 	}
 
 	BoxCollider* GameObject::GetBoxCollider()
 	{
-		//BoxCollider boxCollider = static_cast<BoxCollider>(GetComponent(ComponentTypes::BoxCollider));
-		//return boxCollider;
-		//return &FlatEngine::F_ECSManager.m_BoxColliders.at(FlatEngine::F_ECSManager.m_boxColliderMap.at(ID));
-
-		if (FlatEngine::F_ECSManager.m_boxColliderMap.count(ID) && FlatEngine::F_ECSManager.m_BoxColliders.size() >= FlatEngine::F_ECSManager.m_boxColliderMap.at(ID))
-			return &FlatEngine::F_ECSManager.m_BoxColliders.at(FlatEngine::F_ECSManager.m_boxColliderMap.at(ID));
-		else return nullptr;
+		return GetLoadedScene()->GetBoxCollider(ID);
 	}
 
 	std::vector<BoxCollider*> GameObject::GetBoxColliders()
@@ -715,9 +624,7 @@ namespace FlatEngine
 
 	CircleCollider* GameObject::GetCircleCollider()
 	{
-		//CircleCollider circleCollider = static_cast<CircleCollider>(GetComponent(ComponentTypes::CircleCollider));
-		//return circleCollider;
-		return nullptr;
+		return GetLoadedScene()->GetCircleCollider(ID);
 	}
 
 	std::vector<CircleCollider*> GameObject::GetCircleColliders()
@@ -732,9 +639,7 @@ namespace FlatEngine
 
 	CompositeCollider* GameObject::GetCompositeCollider()
 	{
-		//CompositeCollider> compositeCollider = static_cast<CompositeCollider>(GetComponent(ComponentTypes::CompositeCollider));
-		//return compositeCollider;
-		return nullptr;
+		return GetLoadedScene()->GetCompositeCollider(ID);
 	}
 
 	GameScript* GameObject::GetGameScriptByName(std::string scriptName)
@@ -752,7 +657,7 @@ namespace FlatEngine
 		return nullptr;
 	}
 
-	std::vector<Component*> &GameObject::GetComponents()
+	std::vector<Component*> GameObject::GetComponents()
 	{
 		return components;
 	}

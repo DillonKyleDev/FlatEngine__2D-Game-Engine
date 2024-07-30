@@ -91,7 +91,7 @@ namespace FlatEngine
 		std::vector<CircleCollider*> GetCircleColliders();
 		CompositeCollider* GetCompositeCollider();
 		GameScript* GetGameScriptByName(std::string scriptName);
-		std::vector<Component*> &GetComponents();
+		std::vector<Component*> GetComponents();
 		std::vector<GameScript*> GetScriptInstances();
 
 

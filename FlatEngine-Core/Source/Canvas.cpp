@@ -2,13 +2,14 @@
 #include "FlatEngine.h"
 
 
-namespace FlatEngine {
-	Canvas::Canvas(long myID, long parentID, long canvasID)
+namespace FlatEngine 
+{
+	Canvas::Canvas(long myID, long parentID, long newCanvasID)
 	{
 		SetType(ComponentTypes::Canvas);
 		SetID(myID);
 		SetParentID(parentID);
-		canvasID = canvasID;
+		canvasID = newCanvasID;
 		buttons = std::vector<std::shared_ptr<FlatEngine::Button>>();
 		layerNumber = canvasID;
 		_blocksLayers = true;

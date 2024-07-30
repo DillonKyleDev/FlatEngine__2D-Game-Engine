@@ -127,15 +127,13 @@ namespace FlatEngine
 						}
 
 						// A little janky but there you go
-						children.push_back(&instantiatedObject);
+						children.push_back(instantiatedObject);
 
 						// Track instantiated object and children in the scene
 						for (GameObject newObject : children)
 							FlatEngine::GetLoadedScene()->AddSceneObject(newObject);
 
-						FlatEngine::F_Application->GetGameLoop()->UpdateActiveColliders();
-						FlatEngine::F_Application->GetGameLoop()->UpdateActiveRigidBodies();
-						FlatEngine::F_Application->GetGameLoop()->InitializeScriptObjects(children);
+						FlatEngine::GetLoadedScene()->OnPrefabInstantiated(children);
 
 						// Figure this out later so Prefabs stay up-to-date with their json files on reloading
 						instantiatedObject.SetIsPrefab(true);

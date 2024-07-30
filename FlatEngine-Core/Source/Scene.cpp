@@ -1,10 +1,25 @@
 #include "Scene.h"
 #include "FlatEngine.h"
 #include "Application.h"
-#include "Camera.h"
 #include "GameObject.h"
+#include "Transform.h"
+#include "Sprite.h"
+#include "Camera.h"
 #include "ScriptComponent.h"
+#include "GameScript.h"
+#include "Button.h"
+#include "Canvas.h"
+#include "Animation.h"
+#include "Audio.h"
+#include "Text.h"
+#include "Collider.h"
+#include "CompositeCollider.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
 #include "GameLoop.h"
+#include "ECSManager.h"
 
 namespace FlatEngine
 {
@@ -14,6 +29,7 @@ namespace FlatEngine
 		path = "";
 		sceneObjects = std::vector<GameObject>();		
 		animatorPreviewObjects = std::vector<GameObject*>();
+		m_ECSManager = ECSManager();
 		primaryCamera = nullptr;
 		nextGameObjectID = 0;
 		nextComponentID = 0;
@@ -110,6 +126,7 @@ namespace FlatEngine
 	GameObject* Scene::CreateGameObject(long parentID)
 	{
 		GameObject newObject = GameObject(parentID);
+		newObject.AddTransformComponent();
 		return AddSceneObject(newObject);
 	}
 
@@ -148,7 +165,7 @@ namespace FlatEngine
 				if (scriptComponent->GetScriptInstance())
 				{
 					long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
-					FlatEngine::F_Application->GetGameLoop()->RemoveScript(scriptID);
+					//FlatEngine::F_Application->GetGameLoop()->RemoveScript(scriptID); // TODO
 				}
 			}
 			if (component->GetTypeString() == "RigidBody")
@@ -166,10 +183,12 @@ namespace FlatEngine
 		// Check for children and delete those as well
 		Scene::DeleteChildrenAndSelf(objectToDelete);
 
-		if (_hadRigidBody)
-			F_Application->GetGameLoop()->UpdateActiveRigidBodies();
-		if (_hadCollider)
-			F_Application->GetGameLoop()->UpdateActiveColliders();
+		// TODO
+		// 
+		//if (_hadRigidBody)
+		//	F_Application->GetGameLoop()->UpdateActiveRigidBodies();
+		//if (_hadCollider)
+		//	F_Application->GetGameLoop()->UpdateActiveColliders();
 	}
 
 	// Recursive
@@ -258,5 +277,242 @@ namespace FlatEngine
 	Camera *Scene::GetPrimaryCamera()
 	{
 		return primaryCamera;
+	}
+
+	std::vector<std::pair<Collider*, Collider*>> Scene::GetColliderPairs()
+	{
+		return m_ECSManager.GetColliderPairs();
+	}
+
+	void Scene::OnPrefabInstantiated(std::vector<GameObject> children)
+	{
+		m_ECSManager.UpdateActiveColliders();
+		m_ECSManager.UpdateActiveRigidBodies();
+		m_ECSManager.InitializeScriptObjects(children);
+	}
+
+	Transform* Scene::AddTransform(Transform transform, long ownerID)
+	{
+		return m_ECSManager.AddTransform(transform, ownerID);
+	}
+
+	Sprite* Scene::AddSprite(Sprite sprite, long ownerID)
+	{
+		return m_ECSManager.AddSprite(sprite, ownerID);
+	}
+
+	Camera* Scene::AddCamera(Camera camera, long ownerID)
+	{
+		return m_ECSManager.AddCamera(camera, ownerID);
+	}
+
+	ScriptComponent* Scene::AddScriptComponent(ScriptComponent script, long ownerID)
+	{
+		return m_ECSManager.AddScriptComponent(script, ownerID);
+	}
+
+	GameScript* Scene::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
+	{
+		return m_ECSManager.AddScript(owner, scriptComponent, scriptInstance);
+	}
+
+	Canvas* Scene::AddCanvas(Canvas canvas, long ownerID)
+	{
+		return m_ECSManager.AddCanvas(canvas, ownerID);
+	}
+
+	Audio* Scene::AddAudio(Audio audio, long ownerID)
+	{
+		return m_ECSManager.AddAudio(audio, ownerID);
+	}
+
+	Text* Scene::AddText(Text text, long ownerID)
+	{
+		return m_ECSManager.AddText(text, ownerID);
+	}
+
+	Collider* Scene::AddCollider(Collider collider, long ownerID)
+	{
+		return m_ECSManager.AddCollider(collider, ownerID);
+	}
+
+	CompositeCollider* Scene::AddCompositeCollider(CompositeCollider collider, long ownerID)
+	{
+		return m_ECSManager.AddCompositeCollider(collider, ownerID);
+	}
+
+	BoxCollider* Scene::AddBoxCollider(BoxCollider collider, long ownerID)
+	{
+		return m_ECSManager.AddBoxCollider(collider, ownerID);
+	}
+
+	CircleCollider* Scene::AddCircleCollider(CircleCollider collider, long ownerID)
+	{
+		return m_ECSManager.AddCircleCollider(collider, ownerID);
+	}
+
+	Animation* Scene::AddAnimation(Animation animation, long ownerID)
+	{
+		return m_ECSManager.AddAnimation(animation, ownerID);
+	}
+
+	Button* Scene::AddButton(Button button, long ownerID)
+	{
+		return m_ECSManager.AddButton(button, ownerID);
+	}
+
+	RigidBody* Scene::AddRigidBody(RigidBody rigidBody, long ownerID)
+	{
+		return m_ECSManager.AddRigidBody(rigidBody, ownerID);
+	}
+
+	CharacterController* Scene::AddCharacterController(CharacterController characterController, long ownerID)
+	{
+		return m_ECSManager.AddCharacterController(characterController, ownerID);
+	}
+
+	Transform* Scene::GetTransform(long ownerID)
+	{
+		return m_ECSManager.GetTransform(ownerID);
+	}
+
+	Sprite* Scene::GetSprite(long ownerID)
+	{
+		return m_ECSManager.GetSprite(ownerID);
+	}
+
+	Camera* Scene::GetCamera(long ownerID)
+	{
+		return m_ECSManager.GetCamera(ownerID);
+	}
+
+	ScriptComponent* Scene::GetScriptComponent(long ownerID)
+	{
+		return m_ECSManager.GetScriptComponent(ownerID);
+	}
+
+	GameScript* Scene::GetScript(long ownerID, std::string name)
+	{
+		return m_ECSManager.GetScript(ownerID, name);
+	}
+
+	Canvas* Scene::GetCanvas(long ownerID)
+	{
+		return m_ECSManager.GetCanvas(ownerID);
+	}
+
+	Audio* Scene::GetAudio(long ownerID)
+	{
+		return m_ECSManager.GetAudio(ownerID);
+	}
+
+	Text* Scene::GetText(long ownerID)
+	{
+		return m_ECSManager.GetText(ownerID);
+	}
+
+	Collider* Scene::GetCollider(long ownerID)
+	{
+		return m_ECSManager.GetCollider(ownerID);
+	}
+
+	CompositeCollider* Scene::GetCompositeCollider(long ownerID)
+	{
+		return m_ECSManager.GetCompositeCollider(ownerID);
+	}
+
+	BoxCollider* Scene::GetBoxCollider(long ownerID)
+	{
+		return m_ECSManager.GetBoxCollider(ownerID);
+	}
+
+	CircleCollider* Scene::GetCircleCollider(long ownerID)
+	{
+		return m_ECSManager.GetCircleCollider(ownerID);
+	}
+
+	Animation* Scene::GetAnimation(long ownerID)
+	{
+		return m_ECSManager.GetAnimation(ownerID);
+	}
+
+	Button* Scene::GetButton(long ownerID)
+	{
+		return m_ECSManager.GetButton(ownerID);
+	}
+
+	RigidBody* Scene::GetRigidBody(long ownerID)
+	{
+		return m_ECSManager.GetRigidBody(ownerID);
+	}
+
+	CharacterController* Scene::GetCharacterController(long ownerID)
+	{
+		return m_ECSManager.GetCharacterController(ownerID);
+	}
+
+	std::vector<std::pair<Transform, long>> Scene::GetTransforms()
+	{
+		return m_ECSManager.GetTransforms();
+	}
+	std::vector<std::pair<Sprite, long>> Scene::GetSprites()
+	{
+		return m_ECSManager.GetSprites();
+	}
+	std::vector<std::pair<Camera, long>> Scene::GetCameras()
+	{
+		return m_ECSManager.GetCameras();
+	}
+	std::vector<std::pair<ScriptComponent, long>> Scene::GetScriptComponents()
+	{
+		return m_ECSManager.GetScriptComponents();
+	}
+	std::vector<std::pair<GameScript, long>> Scene::GetScripts()
+	{
+		return m_ECSManager.GetScripts();
+	}
+	std::vector<std::pair<Button, long>> Scene::GetButtons()
+	{
+		return m_ECSManager.GetButtons();
+	}
+	std::vector<std::pair<Canvas, long>> Scene::GetCanvases()
+	{
+		return m_ECSManager.GetCanvases();
+	}
+	std::vector<std::pair<Animation, long>> Scene::GetAnimations()
+	{
+		return m_ECSManager.GetAnimations();
+	}
+	std::vector<std::pair<Audio, long>> Scene::GetAudios()
+	{
+		return m_ECSManager.GetAudios();
+	}
+	std::vector<std::pair<Text, long>> Scene::GetTexts()
+	{
+		return m_ECSManager.GetTexts();
+	}
+	std::vector<std::pair<Collider, long>> Scene::GetColliders()
+	{
+		return m_ECSManager.GetColliders();
+	}
+	std::vector<std::pair<CompositeCollider, long>> Scene::GetCompositeColliders()
+	{
+		return m_ECSManager.GetCompositeColliders();
+	}
+	std::vector<std::pair<BoxCollider, long>> Scene::GetBoxColliders()
+	{
+		return m_ECSManager.GetBoxColliders();
+	}
+	std::vector<std::pair<CircleCollider, long>> Scene::GetCircleColliders()
+	{
+		return m_ECSManager.GetCircleColliders();
+	}
+	std::vector<std::pair<RigidBody, long>> Scene::GetRigidBodies()
+	{
+		return m_ECSManager.GetRigidBodies();
+	}
+	std::vector<std::pair<CharacterController, long>> Scene::GetCharacterControllers()
+	{
+		return m_ECSManager.GetCharacterControllers();
 	}
 }

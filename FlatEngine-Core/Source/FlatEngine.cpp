@@ -251,7 +251,7 @@ namespace FlatEngine
 
 		// If the GameLoop is running, reinitialize the new scene's GameObjects
 		if (FlatEngine::GameLoopStarted())
-			FlatEngine::F_Application->GetGameLoop()->InitializeScriptObjects(GetSceneObjects());
+			GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
 
 		if (GetObjectByName("Player") != nullptr)
 			playerObject = GetObjectByName("Player");

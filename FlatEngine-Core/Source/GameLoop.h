@@ -20,15 +20,6 @@ namespace FlatEngine
 		~GameLoop();
 
 		void Start();
-		void CollectPhysicsBodies();
-		void InitializeScriptObjects(std::vector<GameObject> gameObjects);
-		void AddScript(GameObject& owner, ScriptComponent& scriptComponent, GameScript& scriptInstance);
-		void RemoveScript(long scriptID);
-		void RemoveRigidBody(long rigidBodyID);
-		void RemoveCollider(long colliderID);
-		void UpdateActiveColliders();
-		std::vector<std::pair<FlatEngine::Collider*, FlatEngine::Collider*>> GetColliderPairs();
-		void UpdateActiveRigidBodies();
 		void Update(std::shared_ptr<Project> loadedProject);
 		void UpdateScripts();
 		void Stop();
@@ -62,14 +53,6 @@ namespace FlatEngine
 		double pausedTime;
 		double activeTime;
 		bool _gamePaused;
-
-		//FlatEngine::GameManager gameManager;
 		std::string startedScene;
-		std::vector<FlatEngine::GameObject> gameObjects;
-		std::vector<FlatEngine::GameScript*> scripts;
-		std::vector<FlatEngine::GameScript*> activeScripts;
-		std::vector<FlatEngine::RigidBody*> rigidBodies;
-		std::vector<FlatEngine::Collider*> colliders;
-		std::vector<std::pair<FlatEngine::Collider*, FlatEngine::Collider*>> colliderPairs;
 	};
 }
