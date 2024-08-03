@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "Project.h"
 #include "imgui_internal.h"
+#include "Scene.h"
 #include <cmath>
 
 
@@ -29,6 +30,8 @@ namespace FlatEngine
 		nextActiveBottom = 0;
 		nextActiveTop = 0;
 		nextCorners;
+
+		GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	BoxCollider::BoxCollider(BoxCollider* toCopy, long newParentID, long myID) : Collider(toCopy, newParentID, myID)

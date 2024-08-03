@@ -3,7 +3,6 @@
 #include "FlatEngine.h"
 #include "GameLoop.h"
 #include "UIManager.h"
-#include "TextureManager.h"
 #include "WidgetsManager.h"
 #include "SceneManager.h"
 #include "PrefabManager.h"

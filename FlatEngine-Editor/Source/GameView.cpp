@@ -138,7 +138,10 @@ namespace FlatGui {
 			frustrumColor = primaryCamera->GetFrustrumColor();
 
 			// Get the cameras position including all of its parents transforms offsets using the recusive Game_GetTotalCameraOffset();
-			cameraPosition = cameraTransform->GetTruePosition();
+			if (cameraTransform != nullptr)
+				cameraPosition = cameraTransform->GetTruePosition();
+			else
+				cameraPosition = Vector2(0, 0);
 		}
 
 		// For Profiler
@@ -225,7 +228,7 @@ namespace FlatGui {
 		{
 			// If animation component is playing, play the animation
 			if (animation != nullptr && animation->IsPlaying())
-				animation->PlayAnimation(FlatEngine::GetEllapsedGameTimeInMs());
+				animation->PlayAnimation((int)FlatEngine::GetEllapsedGameTimeInMs());
 		}
 
 

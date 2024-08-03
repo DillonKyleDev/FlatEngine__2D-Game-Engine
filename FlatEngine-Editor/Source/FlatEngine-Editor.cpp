@@ -7,7 +7,6 @@
 #include "FlatGui.h"
 #include "Window.h"
 #include "Project.h"
-#include "TextureManager.h"
 #include "Process.h"
 #include "GameObject.h"
 #include "GameScript.h"
@@ -79,7 +78,11 @@ public:
 	};
 	void Update()
 	{
+		// Call base class GameLoop Update function
 		FlatEngine::GameLoop::Update(FlatGui::loadedProject);
+		
+		// Other, application specific updates here if needed
+		//
 	};
 	void InitializeScriptObjects(std::vector<std::shared_ptr<GameObject>> gameObjects)
 	{
@@ -277,7 +280,6 @@ public:
 
 				double frameTime = (FlatEngine::GetEngineTime() - frameStart) / 1000; // actual deltaTime (in seconds)
 
-				// Physics Update Version 1
 				if (!A_GameLoop->IsGamePaused())
 					A_GameLoop->accumulator += frameTime;
 

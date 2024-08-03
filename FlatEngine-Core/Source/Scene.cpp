@@ -517,7 +517,7 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetCircleColliders();
 	}
-	std::vector<std::pair<RigidBody, long>> Scene::GetRigidBodies()
+	std::vector<std::pair<RigidBody, long>> &Scene::GetRigidBodies()
 	{
 		return m_ECSManager.GetRigidBodies();
 	}

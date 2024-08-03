@@ -102,7 +102,7 @@ namespace FlatEngine
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<RigidBody, long> rigidBody : GetLoadedScene()->GetRigidBodies())
+		for (std::pair<RigidBody, long> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.first.IsActive())
 				rigidBody.first.CalculatePhysics(loadedProject->GetPhysicsSystem());
@@ -112,7 +112,7 @@ namespace FlatEngine
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<Collider, long> collider : GetLoadedScene()->GetColliders())
+		for (std::pair<Collider, long> &collider : GetLoadedScene()->GetColliders())
 		{
 			collider.first.ResetCollisions();
 			collider.first.RecalculateBounds();
@@ -124,7 +124,7 @@ namespace FlatEngine
 		processTime = (float)FlatEngine::GetEngineTime();
 		// Handle Collision updates here
 		static int continuousCounter = 0;
-		for (std::pair<Collider*, Collider*> colliderPair : GetLoadedScene()->GetColliderPairs())
+		for (std::pair<Collider*, Collider*> &colliderPair : GetLoadedScene()->GetColliderPairs())
 		{
 			Collider* collider1 = colliderPair.first;
 			Collider* collider2 = colliderPair.second;
@@ -147,7 +147,7 @@ namespace FlatEngine
 
 		processTime = (float)FlatEngine::GetEngineTime();
 		// Apply RigidBody physics calculations
-		for (std::pair<RigidBody, long> rigidBody : GetLoadedScene()->GetRigidBodies())
+		for (std::pair<RigidBody, long> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.first.IsActive())
 			{

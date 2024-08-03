@@ -407,8 +407,7 @@ namespace FlatGui
 	// SceneView
 	extern void RenderSceneViewTooltip();
 	// Hierarchy
-	extern void AddObjectWithChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
-	extern void AddObjectWithoutChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
+	extern void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
 	extern void ResetHierarchyExpanderTracker();
 	// Profiler
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);

@@ -37,7 +37,6 @@ namespace FlatEngine
 	class SceneManager;
 	class PrefabManager;
 	class MappingContext;
-	class TextureManager;
 	class Texture;
 	class GameObject;
 	class TagList;
@@ -66,13 +65,14 @@ namespace FlatEngine
 	// Managers
 	extern SceneManager F_SceneManager;
 	extern UIManager F_UIManager;
-	extern TextureManager F_TextureManager;
-	//extern GameManager F_GameManager;
 	extern Logger F_Logger;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern Sound F_SoundController;
-	extern ECSManager F_ECSManager;
-	
+	extern TTF_Font* F_fontCinzel;
+
+	extern bool LoadFonts();
+	extern void FreeFonts();
+
 	// Scene Management
 	extern std::shared_ptr<Scene> GetLoadedScene();
 	extern std::shared_ptr<Scene> CreateNewScene();

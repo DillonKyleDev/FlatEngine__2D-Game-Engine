@@ -69,7 +69,7 @@ namespace FlatEngine
 		std::pair<Transform, long> newPair = { transform, ownerID };
 		m_Transforms.push_back(newPair);
 		m_transformMap.emplace(ownerID, (long)m_Transforms.size() - 1);
-		return &m_Transforms.end()->first;
+		return &m_Transforms[m_Transforms.size() - 1].first;
 	}
 
 	Sprite* ECSManager::AddSprite(Sprite sprite, long ownerID)
@@ -77,7 +77,7 @@ namespace FlatEngine
 		std::pair<Sprite, long> newPair = { sprite, ownerID };
 		m_Sprites.push_back(newPair);
 		m_spriteMap.emplace(ownerID, (long)m_Sprites.size() - 1);
-		return &m_Sprites.end()->first;
+		return &m_Sprites[m_Sprites.size() - 1].first;
 	}
 
 	Camera* ECSManager::AddCamera(Camera camera, long ownerID)
@@ -85,7 +85,7 @@ namespace FlatEngine
 		std::pair<Camera, long> newPair = { camera, ownerID };
 		m_Cameras.push_back(newPair);
 		m_cameraMap.emplace(ownerID, (long)m_Cameras.size() - 1);
-		return &m_Cameras.end()->first;
+		return &m_Cameras[m_Cameras.size() - 1].first;
 	}
 
 	ScriptComponent* ECSManager::AddScriptComponent(ScriptComponent script, long ownerID)
@@ -93,7 +93,7 @@ namespace FlatEngine
 		std::pair<ScriptComponent, long> newPair = { script, ownerID };
 		m_Scripts.push_back(newPair);
 		m_scriptMap.emplace(ownerID, (long)m_Scripts.size() - 1);
-		return &m_Scripts.end()->first;
+		return &m_Scripts[m_Scripts.size() - 1].first;
 	}
 
 
@@ -119,7 +119,7 @@ namespace FlatEngine
 		std::pair<Canvas, long> newPair = { canvas, ownerID };
 		m_Canvases.push_back(newPair);
 		m_transformMap.emplace(ownerID, (long)m_Canvases.size() - 1);
-		return &m_Canvases.end()->first;
+		return &m_Canvases[m_Canvases.size() - 1].first;
 	}
 
 	Audio* ECSManager::AddAudio(Audio audio, long ownerID)
@@ -127,7 +127,7 @@ namespace FlatEngine
 		std::pair<Audio, long> newPair = { audio, ownerID };
 		m_Audios.push_back(newPair);
 		m_audioMap.emplace(ownerID, (long)m_Audios.size() - 1);
-		return &m_Audios.end()->first;
+		return &m_Audios[m_Audios.size() - 1].first;
 	}
 
 	Text* ECSManager::AddText(Text text, long ownerID)
@@ -135,7 +135,7 @@ namespace FlatEngine
 		std::pair<Text, long> newPair = { text, ownerID };
 		m_Texts.push_back(newPair);
 		m_textMap.emplace(ownerID, (long)m_Texts.size() - 1);
-		return &m_Texts.end()->first;
+		return &m_Texts[m_Texts.size() - 1].first;
 	}
 
 	Collider* ECSManager::AddCollider(Collider collider, long ownerID)
@@ -143,7 +143,7 @@ namespace FlatEngine
 		std::pair<Collider, long> newPair = { collider, ownerID };
 		m_Colliders.push_back(newPair);
 		m_colliderMap.emplace(ownerID, (long)m_Colliders.size() - 1);
-		return &m_Colliders.end()->first;
+		return &m_Colliders[m_Colliders.size() - 1].first;
 	}
 
 	CompositeCollider* ECSManager::AddCompositeCollider(CompositeCollider collider, long ownerID)
@@ -151,7 +151,7 @@ namespace FlatEngine
 		std::pair<CompositeCollider, long> newPair = { collider, ownerID };
 		m_CompositeColliders.push_back(newPair);
 		m_compositeColliderMap.emplace(ownerID, (long)m_CompositeColliders.size() - 1);
-		return &m_CompositeColliders.end()->first;
+		return &m_CompositeColliders[m_CompositeColliders.size() - 1].first;
 	}
 
 	BoxCollider* ECSManager::AddBoxCollider(BoxCollider collider, long ownerID)
@@ -159,7 +159,7 @@ namespace FlatEngine
 		std::pair<BoxCollider, long> newPair = { collider, ownerID };
 		m_BoxColliders.push_back(newPair);
 		m_boxColliderMap.emplace(ownerID, (long)m_BoxColliders.size() - 1);
-		return &m_BoxColliders.end()->first;
+		return &m_BoxColliders[m_BoxColliders.size() - 1].first;
 	}
 
 	CircleCollider* ECSManager::AddCircleCollider(CircleCollider collider, long ownerID)
@@ -167,7 +167,7 @@ namespace FlatEngine
 		std::pair<CircleCollider, long> newPair = { collider, ownerID };
 		m_CircleColliders.push_back(newPair);
 		m_circleColliderMap.emplace(ownerID, (long)m_CircleColliders.size() - 1);
-		return &m_CircleColliders.end()->first;
+		return &m_CircleColliders[m_CircleColliders.size() - 1].first;
 	}
 
 	Animation* ECSManager::AddAnimation(Animation animation, long ownerID)
@@ -175,7 +175,7 @@ namespace FlatEngine
 		std::pair<Animation, long> newPair = { animation, ownerID };
 		m_Animations.push_back(newPair);
 		m_animationMap.emplace(ownerID, (long)m_Animations.size() - 1);
-		return &m_Animations.end()->first;
+		return &m_Animations[m_Animations.size() - 1].first;
 	}
 
 	Button* ECSManager::AddButton(Button button, long ownerID)
@@ -183,7 +183,7 @@ namespace FlatEngine
 		std::pair<Button, long> newPair = { button, ownerID };
 		m_Buttons.push_back(newPair);
 		m_buttonMap.emplace(ownerID, (long)m_Buttons.size() - 1);
-		return &m_Buttons.end()->first;
+		return &m_Buttons[m_Buttons.size() - 1].first;
 	}
 
 	RigidBody* ECSManager::AddRigidBody(RigidBody rigidBody, long ownerID)
@@ -191,7 +191,7 @@ namespace FlatEngine
 		std::pair<RigidBody, long> newPair = { rigidBody, ownerID };
 		m_RigidBodies.push_back(newPair);
 		m_rigidBodyMap.emplace(ownerID, (long)m_RigidBodies.size() - 1);
-		return &m_RigidBodies.end()->first;
+		return &m_RigidBodies[m_RigidBodies.size() - 1].first;
 	}
 
 	CharacterController* ECSManager::AddCharacterController(CharacterController characterController, long ownerID)
@@ -199,7 +199,7 @@ namespace FlatEngine
 		std::pair<CharacterController, long> newPair = { characterController, ownerID };
 		m_CharacterControllers.push_back(newPair);
 		m_characterControllerMap.emplace(ownerID, (long)m_CharacterControllers.size() - 1);
-		return &m_CharacterControllers.end()->first;
+		return &m_CharacterControllers[m_CharacterControllers.size() - 1].first;
 	}
 
 	Transform* ECSManager::GetTransform(long ownerID)
@@ -524,7 +524,7 @@ namespace FlatEngine
 	{
 		return m_CircleColliders;
 	}
-	std::vector<std::pair<RigidBody, long>> ECSManager::GetRigidBodies()
+	std::vector<std::pair<RigidBody, long>> &ECSManager::GetRigidBodies()
 	{
 		return m_RigidBodies;
 	}

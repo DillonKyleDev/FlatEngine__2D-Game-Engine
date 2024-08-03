@@ -108,7 +108,7 @@ namespace FlatEngine
 		std::vector<std::pair<CompositeCollider, long>> GetCompositeColliders();
 		std::vector<std::pair<BoxCollider, long>> GetBoxColliders();
 		std::vector<std::pair<CircleCollider, long>> GetCircleColliders();
-		std::vector<std::pair<RigidBody, long>> GetRigidBodies();
+		std::vector<std::pair<RigidBody, long>> &GetRigidBodies();
 		std::vector<std::pair<CharacterController, long>> GetCharacterControllers();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 

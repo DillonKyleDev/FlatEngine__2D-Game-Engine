@@ -1,6 +1,6 @@
 #include "FlatEngine.h"
 #include "UIManager.h"
-//#include "../GameManager.h"
+#include <SDL_ttf.h>
 #include "Animation.h"
 #include "GameLoop.h"
 #include "Scene.h"
@@ -11,7 +11,6 @@
 #include "Project.h"
 #include "Sound.h"
 #include "MappingContext.h"
-#include "TextureManager.h"
 #include "PrefabManager.h"
 #include "Logger.h"
 #include "SceneManager.h"
@@ -48,13 +47,12 @@ namespace FlatEngine
 	int JOYSTICK_DEAD_ZONE = 4000;
 
 	// Managers
-	TextureManager F_TextureManager = TextureManager();
 	Logger F_Logger = Logger();
 	UIManager F_UIManager = UIManager();
-	SceneManager F_SceneManager = SceneManager();
-	//GameManager F_GameManager = GameManager();
+	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
-	ECSManager F_ECSManager = ECSManager();
+
+	TTF_Font* F_fontCinzel;
 
 	std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>> colliderPairs = std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>>();
 	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
@@ -71,6 +69,25 @@ namespace FlatEngine
 	int previewAnimationTime = 0;
 	bool _playPreviewAnimation = true;
 
+	bool LoadFonts()
+	{
+		bool b_success = true;
+		F_fontCinzel = TTF_OpenFont("C:/Users/Dillon Kyle/source/repos/FlatEngine3D/FlatEngine-Core/Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
+		if (F_fontCinzel == NULL)
+		{
+			printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+			b_success = false;
+		}
+
+		return b_success;
+	}
+
+	void FreeFonts()
+	{
+		//Free global fonts
+		TTF_CloseFont(F_fontCinzel);
+		F_fontCinzel = NULL;
+	}
 
 	bool Init()
 	{
@@ -180,8 +197,7 @@ namespace FlatEngine
 			gamepad = NULL;
 		}
 
-		//Quit TextureManager
-		FlatEngine::F_TextureManager.Cleanup();
+		FreeFonts();
 
 		//Quit SDL subsystems
 		Mix_Quit();

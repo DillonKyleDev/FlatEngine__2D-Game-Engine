@@ -1,7 +1,6 @@
 #pragma once
 #include "Application.h"
 #include "FlatEngine.h"
-#include "TextureManager.h"
 
 namespace FlatEngine
 {
@@ -23,9 +22,9 @@ namespace FlatEngine
 			else
 			{
 				//Load media
-				if (!F_TextureManager.LoadTextures())
+				if (!LoadFonts())
 				{
-					printf("Failed to load media.\n");
+					printf("Failed to load fonts.\n");
 				}
 				else
 				{

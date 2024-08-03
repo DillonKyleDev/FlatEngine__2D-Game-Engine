@@ -61,7 +61,7 @@ namespace FlatGui {
 			float isPrefabIconColumnWidth = 20;
 			static float currentIndent = 10;
 			static bool _allAreVisible = false;
-			std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+			std::vector<GameObject> &sceneObjects = FlatEngine::GetSceneObjects();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
@@ -80,7 +80,7 @@ namespace FlatGui {
 			{
 				if (RenderImageButton("##SetAllInvisible", showIcon.GetTexture(), Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
-					for (GameObject currentObject : sceneObjects)
+					for (GameObject &currentObject : sceneObjects)
 						currentObject.SetActive(false);
 					_allAreVisible = false;
 				}
@@ -89,7 +89,7 @@ namespace FlatGui {
 			{
 				if (RenderImageButton("##SetAllVisible", hideIcon.GetTexture(), Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
-					for (GameObject currentObject : sceneObjects)
+					for (GameObject &currentObject : sceneObjects)
 						currentObject.SetActive(true);
 					_allAreVisible = true;
 				}
@@ -128,16 +128,12 @@ namespace FlatGui {
 				if ((*object).GetParentID() == -1)
 				{
 					// Get Object name
-					GameObject currentObject = (*object);
+					GameObject &currentObject = (*object);
 					std::string name = currentObject.GetName();
 					const char* charName = name.c_str();
 					float indent = 0;
 
-					// If the object has children call the recursive AddObjectWithChild();
-					if (currentObject.HasChildren())
-						AddObjectWithChild(currentObject, charName, node_clicked, queuedForDelete, indent);
-					else
-						AddObjectWithoutChild(currentObject, charName, node_clicked, queuedForDelete, 0);
+					AddObjectToHierarchy(currentObject, charName, node_clicked, queuedForDelete, indent);
 				}
 			}
 			//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");
@@ -193,17 +189,35 @@ namespace FlatGui {
 		EndWindow();
 	}
 
-	// Helper function for Hierarchy child rendering (Recursive)
-	void AddObjectWithChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
+	// Add GameObject to Hierarchy viewport
+	void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = GetFocusedGameObjectID();
 
 		// If this node is selected, use the nodeFlag_selected to highlight it
 		if (focusedObjectID == currentObject.GetID())
-			node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected;
+		{
+			if (currentObject.HasChildren())
+			{
+				node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected;
+			}
+			else
+			{
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			}
+		}
 		else
-			node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen;
+		{
+			if (currentObject.HasChildren())
+			{
+				node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen;
+			}
+			else
+			{
+				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			}
+		}
 
 		// Go to next row and column
 		ImGui::TableNextRow();
@@ -216,6 +230,7 @@ namespace FlatGui {
 		if (indent > 0)
 			extraIndent = 6;
 		float indentMultiplier = indent / 15;
+		// Moves the cursor to account for the visible icon
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - indent - (extraIndent * indentMultiplier) - 1);
 		indent += 15;
 		// Show Visible/Invisible Icons
@@ -232,20 +247,17 @@ namespace FlatGui {
 
 		// Render actual gameObject
 		ImGui::TableSetColumnIndex(1);
-		if (currentObject.GetParentID() != -1)
-		{
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
-			// Set table cell bg color for child object						
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
-		}
-		
-		// Swap Drag and Drop 
-		//std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		//auto it = std::find(sceneObjects.begin(), sceneObjects.end(), currentObject);
+
+		// Not sure what this is for exactly.. Indent for the invisible button on GameObject ?? Need to confirm
+		// 
+		//if (currentObject.GetParentID() != -1)
+		//{
+		//	ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorPos().x + indent, ImGui::GetCursorScreenPos().y));
+		//	// Set table cell bg color for child object						
+		//	ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
+		//}
+
 		int index = -1;
-		// If element was found 
-		//if (it != sceneObjects.end())
-		//	index = (int)(it - sceneObjects.begin());
 
 		Vector2 cursorPos = ImGui::GetCursorPos();
 		Vector2 availSpace = ImGui::GetContentRegionAvail();
@@ -254,316 +266,6 @@ namespace FlatGui {
 			size.x = 30;
 		std::string id = "##SwapDropSource" + std::to_string(index);
 
-		ImGui::InvisibleButton(id.c_str(), size);		
-		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, buttonHoveredColor);	
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_HIERARCHY_OBJECT"))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(int));
-				int ID = *(const int*)payload->Data;
-
-				// Save Dropped Object
-				GameObject dropped = FlatEngine::GetObjectById(ID);
-				// Remove dropped object from its previous parents children
-				if (dropped.GetParentID() != -1)
-				{
-					GameObject parent = FlatEngine::GetObjectById(dropped.GetParentID());
-					parent.RemoveChild(dropped.GetID());
-				}
-				// Set parent ID of dropped object to -1
-				dropped.SetParentID(-1);
-				dropped.GetTransformComponent()->SetOrigin(Vector2(0, 0));
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		//if (it == sceneObjects.begin())
-		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
-		//else
-		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
-
-		ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject.GetID()));
-
-		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
-		// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
-		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-
-		leafExpandedTracker.at(currentObject.GetID()) = node_open;
-			
-		// Get Scene View Dimensions from its window
-		Vector2 sceneViewDimensions;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
-		PushWindowStyles();
-		ImGui::Begin("Scene View", 0, 16 | 8);
-		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-		ImGui::End();
-		PopWindowStyles();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
-
-		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
-		{
-			sceneViewLockedObject = nullptr;
-			_sceneViewLockedOnObject = false;
-			FlatEngine::Transform* transform = currentObject.GetTransformComponent();
-			Vector2 position = transform->GetPosition();
-			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * sceneViewGridStep.y + (sceneViewDimensions.y / 2));
-		}
-
-		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
-		{
-			// Mouse Hover Tooltip - Mouse Over Tooltip			
-			ImGui::BeginTooltip();
-			ImGui::Text("GameObject Data");
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// ID
-			ImGui::Text("Object ID    | ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(currentObject.GetID()).c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Parent ID
-			ImGui::Text("Parent ID    | ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(currentObject.GetParentID()).c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Children
-			ImGui::Text("Children IDs | ");
-			for (long child : currentObject.GetChildren())
-			{
-				std::string idString = std::to_string(child) + "-";
-				ImGui::SameLine();
-				ImGui::Text(idString.c_str());
-			}
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::EndTooltip();
-		}
-
-
-		// Right click context menu for GameObject
-		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
-		{
-			PushMenuStyles();
-			if (ImGui::MenuItem("Create Child"))
-			{
-				GameObject childObject = FlatEngine::CreateGameObject(currentObject.GetID());
-				currentObject.AddChild(childObject.GetID());
-				SetFocusedGameObjectID(childObject.GetID());
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Create Prefab"))
-			{
-				std::string prefabPath = FlatEngine::OpenSaveFileExplorer();
-				if (prefabPath != "")
-				{
-					std::string prefabName = FlatEngine::GetFilenameFromPath(prefabPath);
-					CreatePrefab(prefabPath, currentObject);
-					currentObject.SetIsPrefab(true);
-					currentObject.SetPrefabName(prefabName);
-					currentObject.SetPrefabSpawnLocation(currentObject.GetTransformComponent()->GetPosition());
-				}
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Delete GameObject"))
-			{
-				queuedForDelete = currentObject.GetID();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Lock in view"))
-			{
-				if (_sceneViewLockedOnObject && sceneViewLockedObject->GetID() == currentObject.GetID())
-				{
-					_sceneViewLockedOnObject = false;
-					sceneViewLockedObject = &currentObject;
-				}
-				else if (!_sceneViewLockedOnObject)
-				{
-					sceneViewLockedObject = &currentObject;
-					_sceneViewLockedOnObject = true;
-				}
-
-				ImGui::CloseCurrentPopup();
-			}
-			PopMenuStyles();
-			ImGui::EndPopup();
-		}
-		// For whether the object is the currentlySelected GameObject
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-		{
-			node_clicked = currentObject.GetID();
-			SetFocusedGameObjectID(currentObject.GetID());
-		}
-		
-		// Add As Child Drag and Drop
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoHoldToOpenOthers))
-		{
-			int ID = currentObject.GetID();
-			leafExpandedTracker.at(currentObject.GetID()) = false;
-			ImGui::SetDragDropPayload("DND_HIERARCHY_OBJECT", &ID, sizeof(int));
-			ImGui::Text("Set Parent");
-			ImGui::EndDragDropSource();
-		}
-		else
-			leafExpandedTracker.at(currentObject.GetID()) = node_open;
-
-		// Separator Button for swapping
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_HIERARCHY_OBJECT"))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(int));
-				int ID = *(const int*)payload->Data;
-
-				// Save Dropped Object
-				GameObject dropped = FlatEngine::GetObjectById(ID);
-				// Remove dropped object from its previous parents children
-				if (dropped.GetParentID() != -1)
-				{
-					GameObject parent = FlatEngine::GetObjectById(dropped.GetParentID());
-					parent.RemoveChild(dropped.GetID());
-				}
-				// Add dropped object to this object as a child
-				currentObject.AddChild(dropped.GetID());
-				dropped.SetParentID(currentObject.GetID());
-				dropped.GetTransformComponent()->SetOrigin(currentObject.GetTransformComponent()->GetTruePosition());
-			}
-			ImGui::EndDragDropTarget();
-		}
-		ImGui::PopStyleColor();
-
-		// If the node is open, render it's children
-		if (node_open)
-		{
-			std::vector<long> childrenIDs = currentObject.GetChildren();
-			
-			// Render SceneObject children
-			for (long childID : childrenIDs)
-			{
-				GameObject* child = FlatEngine::GetObjectById(childID);
-
-				if (child != nullptr)
-				{
-					std::string name = child->GetName();
-					const char* childName = name.c_str();
-
-					if (child->HasChildren())
-						AddObjectWithChild(*child, childName, node_clicked, queuedForDelete, indent);
-					else
-						AddObjectWithoutChild(*child, childName, node_clicked, queuedForDelete, indent);
-				}
-			}
-			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");*/
-
-			ImGui::TreePop(); // TreeNode Closer
-		}
-
-		// Render Prefab Cube if it is a prefab object		
-		if (currentObject.IsPrefab())
-		{
-			ImGui::TableSetColumnIndex(2);
-			std::string prefabIDImageButton = "PrefabID" + std::to_string(currentObject.GetID());
-			std::string prefabIDContextMenu = "PrefabID" + std::to_string(currentObject.GetID());
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
-			RenderImageButton(prefabIDImageButton.c_str(), prefabCubeIcon.GetTexture(), Vector2(16, 16), 0, transparentColor, whiteColor, buttonHoveredColor, buttonActiveColor);
-			PushMenuStyles();
-
-			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
-			{
-				if (ImGui::MenuItem("Disassemble prefab"))
-				{
-					currentObject.SetIsPrefab(false);
-					currentObject.SetPrefabName("");
-					currentObject.SetPrefabSpawnLocation(Vector2(0, 0));
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-			PopMenuStyles();
-		}
-	}
-
-	// Helper function for Hierarchy child rendering
-	void AddObjectWithoutChild(GameObject currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
-	{
-		
-		ImGuiTreeNodeFlags node_flags;
-		long focusedObjectID = GetFocusedGameObjectID();
-
-		// If this node is selected, use the nodeFlag_selected to highlight it
-		if (focusedObjectID == currentObject.GetID())
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-		else
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-		// Go to next row and column
-		ImGui::TableNextRow();
-
-		// Draw visibility eye icon
-		ImGui::TableSetColumnIndex(0);
-		std::string visibleID = "VisibleID" + std::to_string(currentObject.GetID());
-		
-		float extraIndent = 0;
-		if (indent > 0)
-			extraIndent = 6;
-		float indentMultiplier = indent / 15;
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - indent - (extraIndent * indentMultiplier) - 1);
-		indent += 15;
-		// Show Visible/Invisible Icons
-		if (currentObject.IsActive())
-		{
-			if (RenderImageButton(visibleID.c_str(), showIcon.GetTexture(), Vector2(16, 16), 0, transparentColor))
-				currentObject.SetActive(false);
-		}
-		else
-		{
-			if (RenderImageButton(visibleID.c_str(), hideIcon.GetTexture(), Vector2(16, 16), 0, transparentColor))
-				currentObject.SetActive(true);
-		}
-
-		// Render actual gameObject
-		ImGui::TableSetColumnIndex(1);
-		if (currentObject.GetParentID() != -1)
-		{
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
-			// Set table cell bg color for child object						
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
-		}
-
-		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "No Child Start: ");
-		// Swap Drag and Drop 
-		//std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		//auto it = std::find(sceneObjects.begin(), sceneObjects.end(), &currentObject);
-		int index = -1;
-		// If element was found 
-		//if (it != sceneObjects.end())
-		//	index = (int)(it - sceneObjects.begin());
-
-		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "No Child End: ");
-
-		Vector2 cursorPos = ImGui::GetCursorPos();
-		Vector2 availSpace = ImGui::GetContentRegionAvail();
-		Vector2 size = Vector2(availSpace.x + 30 - cursorPos.x, 2);
-		if (size.x < 30)
-			size.x = 30;
-		std::string id = "##SwapDropSource" + std::to_string(index);
-		
 		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, buttonHoveredColor);
 		ImGui::InvisibleButton(id.c_str(), size);
 		if (ImGui::BeginDragDropTarget())
@@ -587,20 +289,38 @@ namespace FlatGui {
 			}
 			ImGui::EndDragDropTarget();
 		}
-		//if (it == sceneObjects.begin())
-		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y + 1));
-		//else
-		//	ImGui::SetCursorPos(Vector2(cursorPos.x, cursorPos.y));
+
+
+		bool node_open = false;
 
 		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
-		// TreeNode Opener - No TreePop because it's a leaf
-		ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
+		if (currentObject.HasChildren())
+		{
+			// Indent for the GameObject name
+			if (currentObject.GetParentID() != -1)
+			{
+				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorPos().x + indent, ImGui::GetCursorScreenPos().y));
+				// Set table cell bg color for child object						
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
+			}
+
+			ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject.GetID()));
+			// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
+			node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
+			leafExpandedTracker.at(currentObject.GetID()) = node_open;
+		}
+		else 
+		{
+			// TreeNode Opener - No TreePop because it's a leaf
+			ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
+		}
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		
+
+
 		// Get Scene View Dimensions from its window
 		Vector2 sceneViewDimensions;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
@@ -703,7 +423,7 @@ namespace FlatGui {
 				ImGui::CloseCurrentPopup();
 			}
 			PopMenuStyles();
-			
+
 			ImGui::EndPopup();
 		}
 
@@ -722,7 +442,6 @@ namespace FlatGui {
 			ImGui::Text("Set Parent");
 			ImGui::EndDragDropSource();
 		}
-
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_HIERARCHY_OBJECT"))
@@ -747,6 +466,31 @@ namespace FlatGui {
 		}
 		ImGui::PopStyleColor();
 
+		// If the node is open, render it's children if it has any
+		if (currentObject.HasChildren() && node_open)
+		{
+			std::vector<long> childrenIDs = currentObject.GetChildren();
+
+			// Render SceneObject children
+			for (long childID : childrenIDs)
+			{
+				GameObject* child = FlatEngine::GetObjectById(childID);
+
+				if (child != nullptr)
+				{
+					std::string name = child->GetName();
+					const char* childName = name.c_str();
+
+					AddObjectToHierarchy(*child, childName, node_clicked, queuedForDelete, indent);
+				}
+			}
+
+			ImGui::TreePop(); // TreeNode Closer
+		}
+
+		//if (currentObject.HasChildren())
+		//	ImGui::TreePop(); // TreeNode Closer
+
 		// Render Prefab Cube if it is a prefab object
 		if (currentObject.IsPrefab())
 		{
@@ -769,7 +513,7 @@ namespace FlatGui {
 			}
 			PopMenuStyles();
 		}
-		
+
 	}
 
 	void ResetHierarchyExpanderTracker()
