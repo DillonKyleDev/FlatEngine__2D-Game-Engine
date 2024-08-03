@@ -174,14 +174,7 @@ namespace FlatEngine
 
 	GameObject::~GameObject()
 	{
-		// Reset all pointers
-		for (int i = 0; i < components.size(); i++)
-		{
-			if (components[i] != nullptr)
-			{
-				components[i] = nullptr;
-			}
-		}
+		DeleteComponents();
 	}
 
 	bool GameObject::operator==(const GameObject toCompare)

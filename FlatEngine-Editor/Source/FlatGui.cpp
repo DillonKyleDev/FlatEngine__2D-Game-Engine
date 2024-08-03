@@ -1320,7 +1320,7 @@ namespace FlatGui
 			{
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
-				objectForFocusedAnimation = GameObject(FlatEngine::GetObjectById(ID), animatorObjects, FlatEngine::GetLoadedScene()->GetSceneObjects(), -1);
+				//objectForFocusedAnimation = GameObject(FlatEngine::GetObjectById(ID), animatorObjects, FlatEngine::GetLoadedScene()->GetSceneObjects(), -1);
 				FlatEngine::Transform* transform = objectForFocusedAnimation.GetTransformComponent();
 				transform->SetPosition(Vector2(0, 0));
 				animatorObjects.push_back(&objectForFocusedAnimation);

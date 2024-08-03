@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "ECSManager.h"
 #include <vector>
+#include <map>
 #include <string>
 #include <memory>
 #include <list>
@@ -40,7 +41,7 @@ namespace FlatEngine
 		void SetPath(std::string path);
 		std::string GetPath();
 		GameObject* AddSceneObject(GameObject sceneObject);
-		std::vector<GameObject> &GetSceneObjects();
+		std::map<long, GameObject> &GetSceneObjects();
 		void SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects);
 		std::vector<GameObject*> GetAnimatorPreviewObjects();
 		GameObject* GetObjectById(long ID);
@@ -115,7 +116,7 @@ namespace FlatEngine
 	private:
 		std::string name;
 		std::string path;
-		std::vector<GameObject> sceneObjects;
+		std::map<long, GameObject> m_sceneObjects;
 		std::vector<GameObject*> animatorPreviewObjects;
 		ECSManager m_ECSManager;
 		Camera *primaryCamera;

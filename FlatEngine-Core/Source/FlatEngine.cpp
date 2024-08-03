@@ -313,7 +313,7 @@ namespace FlatEngine
 		return F_SceneManager.GetLoadedScenePath();
 	}
 
-	std::vector<GameObject> &GetSceneObjects()
+	std::map<long, GameObject> &GetSceneObjects()
 	{
 		//if (GetLoadedScene() != nullptr)
 			return GetLoadedScene()->GetSceneObjects();

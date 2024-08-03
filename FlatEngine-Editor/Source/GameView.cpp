@@ -94,7 +94,7 @@ namespace FlatGui {
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
 		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
-		std::vector<GameObject> sceneObjects;
+		std::map<long, GameObject> sceneObjects;
 		FlatEngine::Camera* primaryCamera;
 		Transform* cameraTransform;
 
@@ -106,7 +106,7 @@ namespace FlatGui {
 		}
 		else
 		{
-			sceneObjects = std::vector<GameObject>();
+			sceneObjects = std::map<long, GameObject>();
 			primaryCamera = nullptr;
 		}
 
@@ -162,10 +162,12 @@ namespace FlatGui {
 			renderStartTime = (float)FlatEngine::GetEngineTime();
 
 		// Render Game Objects
-		for (GameObject sceneObject : sceneObjects)
+		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
 		{
-			if (sceneObject.IsActive())
-				Game_RenderObject(sceneObject, canvas_p0, canvas_sz, draw_list, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
+			if (iter->second.IsActive())
+				Game_RenderObject(iter->second, canvas_p0, canvas_sz, draw_list, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
+
+			iter++;
 		}
 
 		// For Profiler

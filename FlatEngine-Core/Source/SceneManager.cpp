@@ -69,13 +69,13 @@ namespace FlatEngine
 		// Array that will hold our gameObject json objects
 		json sceneObjectsJsonArray;
 
-		std::vector<GameObject> sceneObjects = scene->GetSceneObjects();
+		std::map<long, GameObject> sceneObjects = scene->GetSceneObjects();
 		if (sceneObjects.size() > 0)
 		{
-			for (int i = 0; i < sceneObjects.size(); i++)
+			for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
 			{
 				// Finally, add the gameObject json to the sceneObjectsJsonArray
-				sceneObjectsJsonArray.push_back(CreateJsonFromObject(sceneObjects[i]));
+				sceneObjectsJsonArray.push_back(CreateJsonFromObject(iter->second));
 			}
 		}
 		else

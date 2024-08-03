@@ -399,6 +399,12 @@ namespace FlatGui
 	extern void RenderBoxColliderComponent(BoxCollider* boxCollider);
 	extern void RenderCircleColliderComponent(CircleCollider* circleCollider);
 	extern void RenderRigidBodyComponent(RigidBody* rigidBody);
+	extern void BeginToolTip(std::string title);
+	extern void EndToolTip();
+	extern void RenderToolTipText(std::string label, std::string text);
+	extern void RenderToolTipFloat(std::string label, float data);
+	extern void RenderToolTipLong(std::string label, long data);
+	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
 
 	// SDL
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));

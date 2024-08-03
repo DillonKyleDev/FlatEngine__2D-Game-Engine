@@ -80,20 +80,28 @@ namespace FlatGui
 
 		// Get currently loaded scene objects
 		std::shared_ptr<Scene> loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
-		std::vector<GameObject> sceneObjects;
+		std::map<long, GameObject> sceneObjects;
 
 		if (loadedScene != nullptr)
 			sceneObjects = loadedScene->GetSceneObjects();
 		else
-			sceneObjects = std::vector<GameObject>();
+			sceneObjects = std::map<long, GameObject>();
+
+		// Temporary fix.. Add support for map of long,GameObject instead of vector of GameObject
+		std::vector<GameObject> viewObjects;
+		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
+		{
+			viewObjects.push_back(iter->second);
+			iter++;
+		}
 
 
 		//// For Profiler
-		FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start View Objects: ");
+		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start View Objects: ");
 		float sceneViewObjectsStartTime = (float)FlatEngine::GetEngineTime();
-		RenderViewObjects(sceneObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
+		RenderViewObjects(viewObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
 		AddProcessData("##Scene_RenderView_Objects", (float)FlatEngine::GetEngineTime() - sceneViewObjectsStartTime);
-		FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End View Objects: ");
+		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End View Objects: ");
 
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;

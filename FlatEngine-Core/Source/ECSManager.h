@@ -110,6 +110,7 @@ namespace FlatEngine
 
 		std::vector<std::pair<Collider*, Collider*>> m_ColliderPairs;
 
+		// <ID of owner, index of component in vector>
 		std::map<long, long> m_transformMap;
 		std::map<long, long> m_spriteMap;
 		std::map<long, long> m_cameraMap;

@@ -36,8 +36,16 @@ namespace FlatEngine
 		// Array that will hold our gameObject json objects
 		json prefabObjectJsonArray;
 
+		// Temporary fix.. Add support for map of long,GameObject instead of vector of GameObject
+		std::vector<GameObject> viewObjects;
+		for (std::map<long, GameObject>::iterator iter = GetSceneObjects().begin(); iter != GetSceneObjects().end();)
+		{
+			viewObjects.push_back(iter->second);
+			iter++;
+		}
+
 		std::vector<GameObject> childrenVector = std::vector<GameObject>();
-		GameObject copy = GameObject(&gameObject, childrenVector, GetSceneObjects(), -1);
+		GameObject copy = GameObject(&gameObject, childrenVector, viewObjects, -1);
 		copy.SetName(prefabName);
 		copy.SetIsPrefab(false);
 		copy.SetPrefabName("");

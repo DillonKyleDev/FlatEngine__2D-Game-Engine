@@ -2,6 +2,7 @@
 #include "Application.h"
 #include <stdio.h>
 #include <string>
+#include <map>
 #include <sstream>
 #include <vector>
 #include "SDL.h"
@@ -79,7 +80,7 @@ namespace FlatEngine
 	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filePath);
 	extern void LoadScene(std::string name);
 	std::string GetLoadedScenePath();
-	extern std::vector<GameObject> &GetSceneObjects();
+	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1);
 	extern void DeleteGameObject(int sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);

@@ -61,7 +61,7 @@ namespace FlatGui {
 			float isPrefabIconColumnWidth = 20;
 			static float currentIndent = 10;
 			static bool _allAreVisible = false;
-			std::vector<GameObject> &sceneObjects = FlatEngine::GetSceneObjects();
+			std::map<long, GameObject> &sceneObjects = FlatEngine::GetSceneObjects();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, innerWindowColor);
@@ -80,8 +80,8 @@ namespace FlatGui {
 			{
 				if (RenderImageButton("##SetAllInvisible", showIcon.GetTexture(), Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
-					for (GameObject &currentObject : sceneObjects)
-						currentObject.SetActive(false);
+					for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
+						iter->second.SetActive(false);
 					_allAreVisible = false;
 				}
 			}
@@ -89,8 +89,8 @@ namespace FlatGui {
 			{
 				if (RenderImageButton("##SetAllVisible", hideIcon.GetTexture(), Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 				{
-					for (GameObject &currentObject : sceneObjects)
-						currentObject.SetActive(true);
+					for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
+						iter->second.SetActive(true);
 					_allAreVisible = true;
 				}
 			}
@@ -107,7 +107,7 @@ namespace FlatGui {
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 1));
 			if (RenderImageButton("##PrefabCubes", prefabCubeIcon.GetTexture(), Vector2(16, 16), 0, buttonColor, whiteColor, buttonHoveredColor, buttonActiveColor))
 			{
-				//
+				// Doesn't do anything, should just be an icon
 			}
 
 			ImGui::TableNextRow();
@@ -118,17 +118,17 @@ namespace FlatGui {
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
 			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start: ");*/
-			for (std::vector<GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+			for (std::map<long, GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 			{
 				// Add new scene Objects to the tracker as they appear
-				if (leafExpandedTracker.count((*object).GetID()) == 0)
-					leafExpandedTracker.emplace((*object).GetID(), true);
+				if (leafExpandedTracker.count(object->second.GetID()) == 0)
+					leafExpandedTracker.emplace(object->second.GetID(), true);
 
 				// If this object does not have a parent we render it and all of its children.
-				if ((*object).GetParentID() == -1)
+				if (object->second.GetParentID() == -1)
 				{
 					// Get Object name
-					GameObject &currentObject = (*object);
+					GameObject &currentObject = object->second;
 					std::string name = currentObject.GetName();
 					const char* charName = name.c_str();
 					float indent = 0;
@@ -207,6 +207,7 @@ namespace FlatGui {
 				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 			}
 		}
+		// Not focused
 		else
 		{
 			if (currentObject.HasChildren())
@@ -230,7 +231,7 @@ namespace FlatGui {
 		if (indent > 0)
 			extraIndent = 6;
 		float indentMultiplier = indent / 15;
-		// Moves the cursor to account for the visible icon
+		// Moves the cursor to account for the visible icon maybe?
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - indent - (extraIndent * indentMultiplier) - 1);
 		indent += 15;
 		// Show Visible/Invisible Icons
@@ -296,16 +297,15 @@ namespace FlatGui {
 		ImGui::PushStyleColor(ImGuiCol_Header, treeSelectableSelectedColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, treeSelectableHoveredColor);
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, treeSelectableActiveColor);
+		// Indent for the GameObject name
+		if (currentObject.GetParentID() != -1)
+		{
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorPos().x + indent, ImGui::GetCursorScreenPos().y));
+			// Set table cell bg color for child object						
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
+		}
 		if (currentObject.HasChildren())
 		{
-			// Indent for the GameObject name
-			if (currentObject.GetParentID() != -1)
-			{
-				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorPos().x + indent, ImGui::GetCursorScreenPos().y));
-				// Set table cell bg color for child object						
-				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(hierarchyChildObjectColor.x, hierarchyChildObjectColor.y, hierarchyChildObjectColor.z, hierarchyChildObjectColor.w * .03f * indent)));
-			}
-
 			ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject.GetID()));
 			// TreeNode Opener. This tag renders the name of the node already so all we have to put in content-wise is it's children and interaction
 			node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
@@ -321,7 +321,7 @@ namespace FlatGui {
 		ImGui::PopStyleColor();
 
 
-		// Get Scene View Dimensions from its window
+		// Get Scene View Dimensions from its ImGui window
 		Vector2 sceneViewDimensions;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
@@ -333,6 +333,7 @@ namespace FlatGui {
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 
+		// Control click a Hierarchy item to focus on it in the Scene View
 		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
 		{
 			FlatEngine::Transform* transform = currentObject.GetTransformComponent();
@@ -340,49 +341,25 @@ namespace FlatGui {
 			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * sceneViewGridStep.y + (sceneViewDimensions.y / 2));
 		}
 
+		// Hold Alt key and hover object in Hierarchy for ToolTip with information about that GameObject
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
-		{
-			// Mouse Hover Tooltip - GameObject Data Tooltip		
-			ImGui::BeginTooltip();
-			ImGui::Text("GameObject Data");
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// ID
-			ImGui::Text("Object ID    | ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(currentObject.GetID()).c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Parent ID
-			ImGui::Text("Parent ID    | ");
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(currentObject.GetParentID()).c_str());
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			// Children
-			ImGui::Text("Children IDs | ");
-			for (long child : currentObject.GetChildren())
-			{
-				std::string idString = std::to_string(child) + "-";
-				ImGui::SameLine();
-				ImGui::Text(idString.c_str());
-			}
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::EndTooltip();
+		{	
+			BeginToolTip("GameObject Data");
+			RenderToolTipLong("Object ID", currentObject.GetID());
+			RenderToolTipLong("Parent ID", currentObject.GetParentID());
+			RenderToolTipLongVector("Children IDs", currentObject.GetChildren());
+			EndToolTip();
 		}
 
 		Vector2 savedCursorPos = ImGui::GetCursorPos();
 
+		// Right click menu
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
 			PushMenuStyles();
 			if (ImGui::MenuItem("Create Child"))
 			{
 				GameObject childObject = FlatEngine::CreateGameObject(currentObject.GetID());
-				currentObject.AddChild(childObject.GetID());
 				SetFocusedGameObjectID(childObject.GetID());
 				ImGui::CloseCurrentPopup();
 			}
@@ -488,9 +465,6 @@ namespace FlatGui {
 			ImGui::TreePop(); // TreeNode Closer
 		}
 
-		//if (currentObject.HasChildren())
-		//	ImGui::TreePop(); // TreeNode Closer
-
 		// Render Prefab Cube if it is a prefab object
 		if (currentObject.IsPrefab())
 		{
@@ -520,12 +494,12 @@ namespace FlatGui {
 	{
 		// Initialize Hierarchy scene object expanded tracker
 		leafExpandedTracker.clear();
-		std::vector<GameObject> sceneObjects = FlatEngine::GetSceneObjects();
-		for (std::vector<GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
+		std::map<long, GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+		for (std::map<long, GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 		{
-			if (leafExpandedTracker.count((*object).GetID()) == 0)
+			if (leafExpandedTracker.count(object->second.GetID()) == 0)
 			{
-				leafExpandedTracker.emplace((*object).GetID(), true);
+				leafExpandedTracker.emplace(object->second.GetID(), true);
 			}
 		}
 	}

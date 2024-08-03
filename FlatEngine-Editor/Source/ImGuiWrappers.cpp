@@ -1284,4 +1284,69 @@ namespace FlatGui
 		RenderCheckbox(" Is Static", _isStatic);
 		rigidBody->SetIsStatic(_isStatic);
 	}
+
+	void BeginToolTip(std::string title)
+	{
+		// Add ImGui styling pushes here
+		//
+		ImGui::BeginTooltip();
+		ImGui::Text(title.c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
+
+	void EndToolTip()
+	{
+		// Add ImGui styling pops here
+		ImGui::EndTooltip();
+	}
+
+	void RenderToolTipText(std::string label, std::string text)
+	{
+		std::string newLabel = label + "  |  ";
+		ImGui::Text(newLabel.c_str());
+		ImGui::SameLine();
+		ImGui::Text(text.c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
+
+	void RenderToolTipFloat(std::string label, float data)
+	{
+		std::string newLabel = label + "  |  ";
+		ImGui::Text(newLabel.c_str());
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(data).c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
+
+	void RenderToolTipLong(std::string label, long data)
+	{
+		std::string newLabel = label + "  |  ";
+		ImGui::Text(newLabel.c_str());
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(data).c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
+
+	void RenderToolTipLongVector(std::string label, std::vector<long> data)
+	{
+		std::string newLabel = label + "  |  ";
+		ImGui::Text(newLabel.c_str());
+		for (int i = 0; i < data.size(); i++)
+		{
+			std::string dataString = std::to_string(data[i]);
+			if (i < data.size() - 1)
+				dataString += ",";
+			ImGui::SameLine();
+			ImGui::Text(dataString.c_str());
+		}
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
 }
