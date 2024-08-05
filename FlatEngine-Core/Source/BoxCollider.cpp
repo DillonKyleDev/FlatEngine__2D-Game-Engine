@@ -114,7 +114,7 @@ namespace FlatEngine
 		Vector2 scale = Vector2(1, 1);
 
 		if (parent.IsValid())
-			transform = parent.GetTransformComponent();
+			transform = parent.GetTransform();
 		if (transform != nullptr)
 			scale = transform->GetScale();
 
@@ -136,7 +136,7 @@ namespace FlatEngine
 		if (_shouldUpdate)
 		{
 			FlatEngine::RigidBody* rigidBody = parent.GetRigidBody();
-			FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+			FlatEngine::Transform* transform = GetParent()->GetTransform();
 			Vector2 scale = transform->GetScale();
 			Vector2 activeOffset = GetActiveOffset();
 
@@ -171,7 +171,7 @@ namespace FlatEngine
 	{
 		float cos_a = cosf(GetRotation() * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(GetRotation() * 2.0f * (float)M_PI / 360.0f);
-		Vector2 scale = GetParent()->GetTransformComponent()->GetScale();
+		Vector2 scale = GetParent()->GetTransform()->GetScale();
 		Vector2 center = GetCenterCoord();
 
 		// Normal vectors without rotation
@@ -204,7 +204,7 @@ namespace FlatEngine
 	{
 		float cos_a = cosf(GetRotation() * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(GetRotation() * 2.0f * (float)M_PI / 360.0f);
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 		Vector2 center = GetCenterCoord();
 
@@ -237,7 +237,7 @@ namespace FlatEngine
 	// Corners without rotation
 	void BoxCollider::SharedAxisUpdateCorners(float step, Vector2 centerPoint)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 
 		// For visual representation
@@ -284,7 +284,7 @@ namespace FlatEngine
 
 	void BoxCollider::UpdateCenter(float step, Vector2 centerPoint)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 		Vector2 position = transform->GetTruePosition();
 		Vector2 activeOffset = GetActiveOffset();

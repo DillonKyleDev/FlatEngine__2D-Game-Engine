@@ -5,21 +5,25 @@
 
 namespace Window
 {
-	bool Init(char* title, int width, int height);
+	bool CreateWindow(std::string title, int width, int height);
+	bool RecreateWindow();
+	bool Init(std::string title, int width, int height);
 	void Close();
-	void SetScreenDimensions(int width, int height);
+	bool SetScreenDimensions(int width, int height);
+	void SetTitle(std::string title);
 	SDL_Renderer* GetRenderer();
 	void Render();
-	void SetFullscreen(bool _isFullscreen);
+	void SetFullscreen(bool b_isFullscreen);
 
 	//Variables
-	extern SDL_Window* window;
-	extern SDL_Renderer* renderer;
-	extern SDL_Surface* screenSurface;
+	extern SDL_Window* W_Window;
+	extern SDL_Renderer* W_Renderer;
+	extern SDL_Surface* W_ScreenSurface;
 
 	//Window dimensions
-	extern int WINDOW_WIDTH;
-	extern int WINDOW_HEIGHT;
-	extern bool _isFullscreen;
+	extern std::string W_title;
+	extern int W_windowWidth;
+	extern int W_windowHeight;
+	extern bool W_isFullscreen;
 };
 

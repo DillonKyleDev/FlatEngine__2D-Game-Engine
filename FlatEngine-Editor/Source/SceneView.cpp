@@ -32,9 +32,9 @@ namespace FlatGui
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 
-		PushWindowStyles();
+		FlatEngine::PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8);
-		PopWindowStyles();
+		FlatEngine::PopWindowStyles();
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -79,7 +79,7 @@ namespace FlatGui
 
 
 		// Get currently loaded scene objects
-		std::shared_ptr<Scene> loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
+		Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
 
 		if (loadedScene != nullptr)
@@ -117,7 +117,7 @@ namespace FlatGui
 
 		if (_sceneViewLockedOnObject && sceneViewLockedObject != nullptr)
 		{
-			FlatEngine::Transform* transform = sceneViewLockedObject->GetTransformComponent();
+			Transform* transform = sceneViewLockedObject->GetTransform();
 			Vector2 position = transform->GetTruePosition();
 			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 		}

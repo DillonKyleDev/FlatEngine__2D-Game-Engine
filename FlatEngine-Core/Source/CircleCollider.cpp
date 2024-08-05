@@ -59,7 +59,7 @@ namespace FlatEngine {
 
 	void CircleCollider::UpdateCenter(float step, Vector2 centerPoint)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetTruePosition();
 		float activeRadius = GetActiveRadiusGrid();
 		Vector2 activeOffset = GetActiveOffset();
@@ -96,7 +96,7 @@ namespace FlatEngine {
 		float activeRadius = GetActiveRadiusGrid();
 
 		if (parent.IsValid())
-			transform = parent.GetTransformComponent();
+			transform = parent.GetTransform();
 		if (transform != nullptr)
 			scale = transform->GetScale();
 
@@ -118,7 +118,7 @@ namespace FlatEngine {
 		if (_shouldUpdate)
 		{
 			FlatEngine::RigidBody* rigidBody = parent.GetRigidBody();
-			FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+			FlatEngine::Transform* transform = GetParent()->GetTransform();
 			Vector2 scale = transform->GetScale();
 			Vector2 activeOffset = GetActiveOffset();
 

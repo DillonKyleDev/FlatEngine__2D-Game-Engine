@@ -112,10 +112,10 @@ namespace FlatEngine
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<Collider, long> &collider : GetLoadedScene()->GetColliders())
+		for (std::pair<Collider*, long> collider : GetLoadedScene()->GetColliders())
 		{
-			collider.first.ResetCollisions();
-			collider.first.RecalculateBounds();
+			collider.first->ResetCollisions();
+			collider.first->RecalculateBounds();
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		LogFloat(processTime, "ResetCollisions & Bounds: ");

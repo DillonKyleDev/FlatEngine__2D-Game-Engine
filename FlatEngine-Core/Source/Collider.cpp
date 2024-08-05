@@ -289,8 +289,8 @@ namespace FlatEngine
 		bool _colliding = false;
 		Vector2 circleCenterGrid = circleCol->GetNextCenterGrid(); // Get next center so no overlap happens this frame
 		Vector2 boxCenterGrid = boxCol->GetNextCenterGrid();       // -- ^^^
-		Vector2 circlePos = circleCol->GetParent()->GetTransformComponent()->GetTruePosition();
-		Vector2 boxPos = boxCol->GetParent()->GetTransformComponent()->GetTruePosition();
+		Vector2 circlePos = circleCol->GetParent()->GetTransform()->GetTruePosition();
+		Vector2 boxPos = boxCol->GetParent()->GetTransform()->GetTruePosition();
 		float boxHalfWidth = boxCol->GetActiveWidth() / 2;
 		float boxHalfHeight = boxCol->GetActiveHeight() / 2;
 		float circleActiveRadius = circleCol->GetActiveRadiusGrid();
@@ -694,14 +694,14 @@ namespace FlatEngine
 	bool Collider::CheckForCollisionBoxBox(FlatEngine::BoxCollider* boxCol1, FlatEngine::BoxCollider* boxCol2)
 	{
 		bool _colliding = false;
-		FlatEngine::Transform* box1Transform = boxCol1->GetParent()->GetTransformComponent();
-		FlatEngine::Transform* box2Transform = boxCol2->GetParent()->GetTransformComponent();
+		FlatEngine::Transform* box1Transform = boxCol1->GetParent()->GetTransform();
+		FlatEngine::Transform* box2Transform = boxCol2->GetParent()->GetTransform();
 		Vector2 box1Scale = box1Transform->GetScale();
 		Vector2 box2Scale = box2Transform->GetScale();
 		Vector2 collider1CenterGrid = boxCol1->GetCenterGrid();
 		Vector2 collider2CenterGrid = boxCol2->GetCenterGrid();
-		Vector2 col1Pos = boxCol1->GetParent()->GetTransformComponent()->GetPosition();
-		Vector2 col2Pos = boxCol2->GetParent()->GetTransformComponent()->GetPosition();
+		Vector2 col1Pos = boxCol1->GetParent()->GetTransform()->GetPosition();
+		Vector2 col2Pos = boxCol2->GetParent()->GetTransform()->GetPosition();
 		Vector2 col1Offset = boxCol1->GetActiveOffset();
 		Vector2 col2Offset = boxCol2->GetActiveOffset();
 		float box1HalfHeight = boxCol1->GetActiveHeight() / 2 * box1Scale.y;
@@ -1006,7 +1006,7 @@ namespace FlatEngine
 
 	void Collider::UpdatePreviousPosition()
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		previousPosition = transform->GetTruePosition();
 	}
 
@@ -1022,7 +1022,7 @@ namespace FlatEngine
 
 	bool Collider::HasMoved()
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
 		return (previousPosition.x != position.x || previousPosition.y != position.y);
@@ -1308,7 +1308,7 @@ namespace FlatEngine
 
 	void Collider::UpdateRotation()
 	{
-		rotation = GetParent()->GetTransformComponent()->GetRotation();
+		rotation = GetParent()->GetTransform()->GetRotation();
 	}
 
 	float Collider::GetRotation()

@@ -120,7 +120,7 @@ namespace FlatEngine
 	{
 		// Get variables
 		GameObject thisObject = FlatEngine::GetObjectById(GetParentID());
-		FlatEngine::Transform* transform = thisObject.GetTransformComponent();
+		FlatEngine::Transform* transform = thisObject.GetTransform();
 
 		// Save original position
 		static Vector2 startingPoint = transform->GetPosition();
@@ -199,7 +199,7 @@ namespace FlatEngine
 					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
 					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
-					FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+					FlatEngine::Transform* transform = GetParent()->GetTransform();
 					LogFloat(percentDone, "Percent Done: ");
 					LogVector2(lastFrameScale, "lastFrameScale: ");
 					//LogFloat(lastFrameScale, "lastFrameScale: ");
@@ -247,7 +247,7 @@ namespace FlatEngine
 			{
 				if (ellapsedTime < animationStartTime + (*spriteFrame)->time)
 				{
-					FlatEngine::Sprite* sprite = GetParent()->GetSpriteComponent();
+					FlatEngine::Sprite* sprite = GetParent()->GetSprite();
 					std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = spriteFrame;
 					if (lastFrame != props->spriteProperties.begin() && lastFrame -1 >= props->spriteProperties.begin())
 						lastFrame = lastFrame - 1;

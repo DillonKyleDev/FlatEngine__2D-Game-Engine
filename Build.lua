@@ -2,7 +2,7 @@
 workspace "FlatEngine"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "FlatEngine-Editor"
+   startproject "FlatEngine-Hub"
 
    -- Workspace-wide build options for MSVC
    filter "system:windows"
@@ -16,3 +16,4 @@ group ""
 
 include "FlatEngine-Editor/Build-Editor.lua"
 include "FlatEngine-Runtime/Build-Runtime.lua"
+include "FlatEngine-Hub/Build-Hub.lua"

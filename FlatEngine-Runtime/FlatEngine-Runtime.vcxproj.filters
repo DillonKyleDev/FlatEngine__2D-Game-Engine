@@ -108,9 +108,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\BlasterRound.h">
-      <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\BlobParticle.h">
       <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
     </ClInclude>
@@ -123,16 +120,10 @@
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\GameManager.h">
       <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
     </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\GroundedCheck.h">
-      <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\Health.h">
       <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
     </ClInclude>
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\JumpPad.h">
-      <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\MovingPlatform.h">
       <Filter>..\FlatEngine-Editor\Source\scripts</Filter>
     </ClInclude>
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\PauseMenu.h">

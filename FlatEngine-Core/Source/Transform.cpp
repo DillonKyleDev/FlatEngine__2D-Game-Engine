@@ -97,7 +97,7 @@ namespace FlatEngine
 			{
 				GameObject child = GetObjectById(id);
 				if (child.HasComponent("Transform"))
-					child.GetTransformComponent()->UpdateOrigin(GetTruePosition());
+					child.GetTransform()->UpdateOrigin(GetTruePosition());
 			}
 		}
 	}
@@ -117,7 +117,7 @@ namespace FlatEngine
 				GameObject child = GetObjectById(id);
 				if (child.HasComponent("Transform"))
 				{
-					FlatEngine::Transform* childTransform = child.GetTransformComponent();
+					FlatEngine::Transform* childTransform = child.GetTransform();
 					childTransform->SetOrigin(newOrigin);
 					childTransform->UpdateChildOrigins(childTransform->GetTruePosition());
 				}

@@ -17,7 +17,7 @@
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",
             "focusedGameObjectID": 25,
-            "loadedAnimationPath": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\animations\\A_BlobParticle.json",
+            "loadedAnimationPath": "",
             "loadedScenePath": "Source\\scenes\\Chains.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json",
             "physicsSystem": "Euler",

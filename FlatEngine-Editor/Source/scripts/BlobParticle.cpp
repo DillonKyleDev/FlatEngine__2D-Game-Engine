@@ -24,29 +24,29 @@ void BlobParticle::Start()
 
 void BlobParticle::Update(float deltaTime)
 {
-	FlatEngine::GameObject grabObject = FlatEngine::GetObjectByName("Grab");
-	FlatEngine::Transform* grabTransform = grabObject.GetTransformComponent();
-	FlatEngine::Transform* myTransform = GetOwner()->GetTransformComponent();
-	float rotation = grabTransform->GetRotation();
+	//FlatEngine::GameObject grabObject = FlatEngine::GetObjectByName("Grab");
+	//Transform* grabTransform = grabObject.GetTransform();
+	//Transform* myTransform = GetOwner()->GetTransform();
+	//float rotation = grabTransform->GetRotation();
 	//GetOwner()->GetRigidBody()->_isCircular = true;
-	Vector2 attachedPos = grabTransform->GetTruePosition();
-	Vector2 myPos = GetOwner()->GetTransformComponent()->GetTruePosition();
-	float radius = 5;
+	//Vector2 attachedPos = grabTransform->GetTruePosition();
+	//Vector2 myPos = GetOwner()->GetTransform()->GetTruePosition();
+	//float radius = 5;
 
-	float cos_a = radius * cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
-	float sin_a = radius * sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+	//float cos_a = radius * cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+	//float sin_a = radius * sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
-	FlatEngine::LogFloat(cos_a, "Cos a: ");
-	FlatEngine::LogFloat(sin_a, "Sin a: ");
+	//FlatEngine::LogFloat(cos_a, "Cos a: ");
+	//FlatEngine::LogFloat(sin_a, "Sin a: ");
 
 
 
-	myTransform->SetPosition(Vector2(cos_a, sin_a));
+	//myTransform->SetPosition(Vector2(cos_a, sin_a));
 
 	//// Calculate center distance with pythag
-	float rise = attachedPos.y - myPos.y;
-	float run = attachedPos.x - myPos.x;
-	float distance = std::sqrt((rise * rise) + (run * run));
+	//float rise = attachedPos.y - myPos.y;
+	//float run = attachedPos.x - myPos.x;
+	//float distance = std::sqrt((rise * rise) + (run * run));
 	//float damp = 0.1f;
 	//float dir = rise * 0.1f * (distance - spring.radius) * damp;
 

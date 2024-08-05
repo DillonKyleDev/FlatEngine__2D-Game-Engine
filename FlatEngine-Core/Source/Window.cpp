@@ -1,103 +1,127 @@
 #include "Window.h"
 
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
 
 
 
 namespace Window
 {
-	SDL_Window* Window::window;
-	SDL_Renderer* Window::renderer;
-	SDL_Surface* Window::screenSurface;
+	SDL_Window* W_Window = nullptr;
+	SDL_Renderer* W_Renderer = nullptr;
+	SDL_Surface* W_ScreenSurface = nullptr;
 
 	//Window dimensions
-	int Window::WINDOW_WIDTH;
-	int Window::WINDOW_HEIGHT;
-	bool _isFullscreen = false;
+	std::string W_title = "";
+	int W_windowWidth = 900;
+	int W_windowHeight = 600;
+	bool W_isFullscreen = false;
 
 
 	void SetFullscreen(bool _isFullscreen)
 	{
-		Window::_isFullscreen = _isFullscreen;
+		W_isFullscreen = _isFullscreen;
 
-		SDL_SetWindowFullscreen(window, _isFullscreen);
+		SDL_SetWindowFullscreen(W_Window, _isFullscreen);
 		//SDL_ShowCursor(true);
 	}
 
-
-	bool Init(char* title, int width, int height)
+	void SetTitle(std::string title)
 	{
-		bool success = true;
+		W_title = title;
+		RecreateWindow();
+	}
 
-		Window::SetScreenDimensions(width, height);
+	bool CreateWindow(std::string title, int width, int height)
+	{
+		W_title = title;
+		W_windowWidth = width;
+		W_windowHeight = height;
+		return RecreateWindow();
+	}
 
-		//Create window
-		//Window::window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Window::WINDOW_WIDTH, Window::WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	bool RecreateWindow()
+	{
+		bool b_success = true;
+
+		if (W_Renderer != NULL)
+			SDL_DestroyRenderer(W_Renderer);
+		if (W_Window != NULL)
+			SDL_DestroyWindow(W_Window);
 
 		// Create window with SDL_Renderer graphics context
 		SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-		Window::window = SDL_CreateWindow("FlatEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, window_flags);
+		W_Window = SDL_CreateWindow("FlatEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W_windowWidth, W_windowHeight, window_flags);
 		// Vsync on
-		//Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		//W_Renderer = SDL_CreateRenderer(W_Window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		// Vsync off
-		Window::renderer = SDL_CreateRenderer(Window::window, -1, 0);
-		SDL_RenderSetLogicalSize(Window::renderer, width, height);
-		SDL_RenderSetIntegerScale(Window::renderer, SDL_bool(true));
-		if (Window::window == NULL)
+		W_Renderer = SDL_CreateRenderer(W_Window, -1, 0);
+		SDL_RenderSetLogicalSize(W_Renderer, W_windowWidth, W_windowHeight);
+		SDL_RenderSetIntegerScale(W_Renderer, SDL_bool(true));
+		if (W_Window == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			success = false;
+			b_success = false;
 		}
 		else
 		{
 			//Create vsynced renderer for window
-			//Window::renderer = SDL_CreateRenderer(Window::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-			if (Window::renderer == NULL)
+			//W_Renderer = SDL_CreateRenderer(W_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			if (W_Renderer == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-				success = false;
+				b_success = false;
 			}
 		}
 
-		if (success)
+		if (b_success)
 		{
 			//Get window surface down here so we don't have to delete it if the SDL_image init fails anyway
-			Window::screenSurface = SDL_GetWindowSurface(Window::window);
+			W_ScreenSurface = SDL_GetWindowSurface(W_Window);
 		}
 
-		return success;
+		return b_success;
+	}
+
+
+	bool Init(std::string title, int width, int height)
+	{
+		return CreateWindow(title, width, height);
 	}
 
 
 	void Close()
 	{
 		//Destroy window
-		SDL_DestroyRenderer(Window::renderer);
-		SDL_DestroyWindow(Window::window);
-		Window::renderer = NULL;
-		Window::window = NULL;
+		SDL_DestroyRenderer(W_Renderer);
+		SDL_DestroyWindow(W_Window);
+		W_Renderer = NULL;
+		W_Window = NULL;
 	}
 
 
-	void SetScreenDimensions(int width, int height)
+	bool SetScreenDimensions(int width, int height)
 	{
-		Window::WINDOW_WIDTH = width;
-		Window::WINDOW_HEIGHT = height;
+		W_windowWidth = width;
+		W_windowHeight = height;
+		return RecreateWindow();
 	}
 
 
 	SDL_Renderer* Window::GetRenderer()
 	{
-		return Window::renderer;
+		return W_Renderer;
 	}
 
 
 	void Render()
 	{
 		//Clear the screen
-		SDL_SetRenderDrawColor(Window::renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(Window::renderer);
+		SDL_SetRenderDrawColor(W_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(W_Renderer);
 
 		//Update the screen
-		SDL_RenderPresent(Window::renderer);
+		SDL_RenderPresent(W_Renderer);
 	}
 }

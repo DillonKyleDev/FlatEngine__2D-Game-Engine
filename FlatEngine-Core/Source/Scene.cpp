@@ -30,9 +30,11 @@ namespace FlatEngine
 		m_sceneObjects = std::map<long, GameObject>();		
 		animatorPreviewObjects = std::vector<GameObject*>();
 		m_ECSManager = ECSManager();
-		primaryCamera = nullptr;
-		nextGameObjectID = 0;
-		nextComponentID = 0;
+		m_primaryCamera = nullptr;
+		m_nextGameObjectID = 0;
+		m_nextComponentID = 0;
+		m_freedComponentIDs = std::vector<long>();
+		m_freedGameObjectIDs = std::vector<long>();
 	}
 
 	Scene::~Scene()
@@ -63,7 +65,14 @@ namespace FlatEngine
 	{
 		long id = sceneObject.GetID();
 		m_sceneObjects.emplace(id, sceneObject);
+		KeepNextGameObjectIDUpToDate(id);
 		return &m_sceneObjects.at(id);
+	}
+
+	void Scene::KeepNextGameObjectIDUpToDate(long id)
+	{
+		if (id >= m_nextGameObjectID)
+			m_nextGameObjectID = id + 1;
 	}
 
 	std::map<long, GameObject> &Scene::GetSceneObjects()
@@ -112,7 +121,8 @@ namespace FlatEngine
 	{
 		GameObject newObject = GameObject(parentID);
 		newObject.AddTransformComponent();
-		m_sceneObjects.at(parentID).AddChild(newObject.GetID());
+		if (parentID != -1)
+			m_sceneObjects.at(parentID).AddChild(newObject.GetID());
 		return AddSceneObject(newObject);
 	}
 
@@ -120,14 +130,11 @@ namespace FlatEngine
 	{
 		GameObject *objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
 
-		//if (GetFocusedGameObjectID() == sceneObjectID)
-		//	SetFocusedGameObjectID(-1);
-
-		// If this GameObject was the primary camera, unset it as the primaryCamera and set primaryCamera to nullptr
-		if (primaryCamera != nullptr && primaryCamera->GetParentID() == objectToDelete->GetID())
+		// If this GameObject was the primary camera, unset it as the m_primaryCamera and set m_primaryCamera to nullptr
+		if (m_primaryCamera != nullptr && m_primaryCamera->GetParentID() == objectToDelete->GetID())
 		{
-			primaryCamera->SetPrimaryCamera(false);
-			primaryCamera = nullptr;
+			m_primaryCamera->SetPrimaryCamera(false);
+			m_primaryCamera = nullptr;
 		}
 
 		// Check for a parent and remove the child object reference
@@ -169,6 +176,9 @@ namespace FlatEngine
 		// Check for children and delete those as well
 		Scene::DeleteChildrenAndSelf(objectToDelete);
 
+		// Save the ID for use on the next created GameObject
+		m_freedGameObjectIDs.push_back(sceneObjectID);
+
 		// TODO
 		// 
 		//if (_hadRigidBody)
@@ -182,10 +192,10 @@ namespace FlatEngine
 	{
 		long id = objectToDelete->GetID();
 
-		// Must remove the primaryCamera pointer from the loaded scene before deleting the GameObject.
+		// Must remove the m_primaryCamera pointer from the loaded scene before deleting the GameObject.
 		long cameraObjectID = -1;
-		if (primaryCamera != nullptr)
-			cameraObjectID = primaryCamera->GetParentID();
+		if (m_primaryCamera != nullptr)
+			cameraObjectID = m_primaryCamera->GetParentID();
 
 		// Check for children
 		if (objectToDelete->HasChildren())
@@ -200,7 +210,7 @@ namespace FlatEngine
 			}
 		}
 		
-		// Remove the primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
+		// Remove the m_primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
 		if (objectToDelete->GetID() == cameraObjectID)
 			RemovePrimaryCamera();
 
@@ -210,53 +220,73 @@ namespace FlatEngine
 
 	void Scene::IncrementGameObjectID()
 	{
-		nextGameObjectID += 1;
+		m_nextGameObjectID += 1;
 	}
 
 	long Scene::GetNextGameObjectID()
 	{
-		IncrementGameObjectID();
-		return nextGameObjectID;
+		long id;
+		if (m_freedGameObjectIDs.size() > 0)
+		{
+			id = m_freedGameObjectIDs.back();
+			m_freedGameObjectIDs.pop_back();
+		}
+		else
+		{
+			id = m_nextGameObjectID;
+			IncrementGameObjectID();
+		}
+		return id;
 	}
 
 	void  Scene::IncrementComponentID()
 	{
-		nextComponentID += 1;
+		m_nextComponentID += 1;
 	}
 
 	long  Scene::GetNextComponentID()
 	{
-		return nextComponentID;
-		IncrementComponentID();
+		long id;
+		if (m_freedComponentIDs.size() > 0)
+		{
+			id = m_freedComponentIDs.back();
+			m_freedComponentIDs.pop_back();
+		}
+		else
+		{
+			id = m_nextComponentID;
+			IncrementComponentID();
+		}
+		return id;
 	}
 
 	void Scene::SetPrimaryCamera(Camera* camera)
 	{
 		if (camera != nullptr)
 		{
-			// Remove the old primaryCamera
-			if (primaryCamera != nullptr)
+			// Remove the old m_primaryCamera
+			if (m_primaryCamera != nullptr)
 			{
-				primaryCamera->SetPrimaryCamera(false);
+				m_primaryCamera->SetPrimaryCamera(false);
 			}
 
-			primaryCamera = camera;
-			primaryCamera->SetPrimaryCamera(true);
+			m_primaryCamera = camera;
+			m_primaryCamera->SetPrimaryCamera(true);
 		}
 		else
 		{
-			FlatEngine::LogString("Scene::SetPrimaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
+			FlatEngine::LogString("Scene::Setm_primaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
 		}
 	}
 
 	void Scene::RemovePrimaryCamera()
 	{
-		primaryCamera = nullptr;
+		m_primaryCamera = nullptr;
 	}
 
 	Camera *Scene::GetPrimaryCamera()
 	{
-		return primaryCamera;
+		return m_primaryCamera;
 	}
 
 	std::vector<std::pair<Collider*, Collider*>> Scene::GetColliderPairs()
@@ -281,164 +311,182 @@ namespace FlatEngine
 		//m_ECSManager.InitializeScriptObjects
 	}
 
+	void Scene::KeepNextComponentIDUpToDate(long id)
+	{
+		if (id >= m_nextComponentID)
+			m_nextComponentID = id + 1;
+	}
+
 	Transform* Scene::AddTransform(Transform transform, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(transform.GetID());
 		return m_ECSManager.AddTransform(transform, ownerID);
 	}
 
 	Sprite* Scene::AddSprite(Sprite sprite, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(sprite.GetID());
 		return m_ECSManager.AddSprite(sprite, ownerID);
 	}
 
 	Camera* Scene::AddCamera(Camera camera, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(camera.GetID());
 		return m_ECSManager.AddCamera(camera, ownerID);
 	}
 
 	ScriptComponent* Scene::AddScriptComponent(ScriptComponent script, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(script.GetID());
 		return m_ECSManager.AddScriptComponent(script, ownerID);
 	}
 
 	GameScript* Scene::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
 	{
+		KeepNextComponentIDUpToDate(owner.GetID());
 		return m_ECSManager.AddScript(owner, scriptComponent, scriptInstance);
 	}
 
 	Canvas* Scene::AddCanvas(Canvas canvas, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(canvas.GetID());
 		return m_ECSManager.AddCanvas(canvas, ownerID);
 	}
 
 	Audio* Scene::AddAudio(Audio audio, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(audio.GetID());
 		return m_ECSManager.AddAudio(audio, ownerID);
 	}
 
 	Text* Scene::AddText(Text text, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(text.GetID());
 		return m_ECSManager.AddText(text, ownerID);
-	}
-
-	Collider* Scene::AddCollider(Collider collider, long ownerID)
-	{
-		return m_ECSManager.AddCollider(collider, ownerID);
 	}
 
 	CompositeCollider* Scene::AddCompositeCollider(CompositeCollider collider, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(collider.GetID());
 		return m_ECSManager.AddCompositeCollider(collider, ownerID);
 	}
 
 	BoxCollider* Scene::AddBoxCollider(BoxCollider collider, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(collider.GetID());
 		return m_ECSManager.AddBoxCollider(collider, ownerID);
 	}
 
 	CircleCollider* Scene::AddCircleCollider(CircleCollider collider, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(collider.GetID());
 		return m_ECSManager.AddCircleCollider(collider, ownerID);
 	}
 
 	Animation* Scene::AddAnimation(Animation animation, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(animation.GetID());
 		return m_ECSManager.AddAnimation(animation, ownerID);
 	}
 
 	Button* Scene::AddButton(Button button, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(button.GetID());
 		return m_ECSManager.AddButton(button, ownerID);
 	}
 
 	RigidBody* Scene::AddRigidBody(RigidBody rigidBody, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(rigidBody.GetID());
 		return m_ECSManager.AddRigidBody(rigidBody, ownerID);
 	}
 
 	CharacterController* Scene::AddCharacterController(CharacterController characterController, long ownerID)
 	{
+		KeepNextComponentIDUpToDate(characterController.GetID());
 		return m_ECSManager.AddCharacterController(characterController, ownerID);
 	}
 
-	Transform* Scene::GetTransform(long ownerID)
+	void Scene::RemoveComponent(Component* component, long ownerID)
 	{
-		return m_ECSManager.GetTransform(ownerID);
+		long id = component->GetID();
+		if (m_ECSManager.RemoveComponent(component, ownerID))
+			m_freedComponentIDs.push_back(id);
 	}
 
-	Sprite* Scene::GetSprite(long ownerID)
+	Transform* Scene::GetTransformByOwner(long ownerID)
 	{
-		return m_ECSManager.GetSprite(ownerID);
+		return m_ECSManager.GetTransformByOwner(ownerID);
 	}
 
-	Camera* Scene::GetCamera(long ownerID)
+	Sprite* Scene::GetSpriteByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCamera(ownerID);
+		return m_ECSManager.GetSpriteByOwner(ownerID);
 	}
 
-	ScriptComponent* Scene::GetScriptComponent(long ownerID)
+	Camera* Scene::GetCameraByOwner(long ownerID)
 	{
-		return m_ECSManager.GetScriptComponent(ownerID);
+		return m_ECSManager.GetCameraByOwner(ownerID);
 	}
 
-	GameScript* Scene::GetScript(long ownerID, std::string name)
+	std::vector<ScriptComponent*> Scene::GetScriptsByOwner(long ownerID)
 	{
-		return m_ECSManager.GetScript(ownerID, name);
+		return m_ECSManager.GetScriptsByOwner(ownerID);
 	}
 
-	Canvas* Scene::GetCanvas(long ownerID)
+	GameScript* Scene::GetGameScriptByOwner(long ownerID, std::string name)
 	{
-		return m_ECSManager.GetCanvas(ownerID);
+		return m_ECSManager.GetGameScriptByOwner(ownerID, name);
 	}
 
-	Audio* Scene::GetAudio(long ownerID)
+	Canvas* Scene::GetCanvasByOwner(long ownerID)
 	{
-		return m_ECSManager.GetAudio(ownerID);
+		return m_ECSManager.GetCanvasByOwner(ownerID);
 	}
 
-	Text* Scene::GetText(long ownerID)
+	Audio* Scene::GetAudioByOwner(long ownerID)
 	{
-		return m_ECSManager.GetText(ownerID);
+		return m_ECSManager.GetAudioByOwner(ownerID);
 	}
 
-	Collider* Scene::GetCollider(long ownerID)
+	Text* Scene::GetTextByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCollider(ownerID);
+		return m_ECSManager.GetTextByOwner(ownerID);
 	}
 
-	CompositeCollider* Scene::GetCompositeCollider(long ownerID)
+	CompositeCollider* Scene::GetCompositeColliderByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCompositeCollider(ownerID);
+		return m_ECSManager.GetCompositeColliderByOwner(ownerID);
 	}
 
-	BoxCollider* Scene::GetBoxCollider(long ownerID)
+	BoxCollider* Scene::GetBoxColliderByOwner(long ownerID)
 	{
-		return m_ECSManager.GetBoxCollider(ownerID);
+		return m_ECSManager.GetBoxColliderByOwner(ownerID);
 	}
 
-	CircleCollider* Scene::GetCircleCollider(long ownerID)
+	CircleCollider* Scene::GetCircleColliderByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCircleCollider(ownerID);
+		return m_ECSManager.GetCircleColliderByOwner(ownerID);
 	}
 
-	Animation* Scene::GetAnimation(long ownerID)
+	Animation* Scene::GetAnimationByOwner(long ownerID)
 	{
-		return m_ECSManager.GetAnimation(ownerID);
+		return m_ECSManager.GetAnimationByOwner(ownerID);
 	}
 
-	Button* Scene::GetButton(long ownerID)
+	std::vector<Button*> Scene::GetButtonsByOwner(long ownerID)
 	{
-		return m_ECSManager.GetButton(ownerID);
+		return m_ECSManager.GetButtonsByOwner(ownerID);
 	}
 
-	RigidBody* Scene::GetRigidBody(long ownerID)
+	RigidBody* Scene::GetRigidBodyByOwner(long ownerID)
 	{
-		return m_ECSManager.GetRigidBody(ownerID);
+		return m_ECSManager.GetRigidBodyByOwner(ownerID);
 	}
 
-	CharacterController* Scene::GetCharacterController(long ownerID)
+	CharacterController* Scene::GetCharacterControllerByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCharacterController(ownerID);
+		return m_ECSManager.GetCharacterControllerByOwner(ownerID);
 	}
 
 	std::vector<std::pair<Transform, long>> Scene::GetTransforms()
@@ -481,7 +529,7 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetTexts();
 	}
-	std::vector<std::pair<Collider, long>> Scene::GetColliders()
+	std::vector<std::pair<Collider*, long>> Scene::GetColliders()
 	{
 		return m_ECSManager.GetColliders();
 	}

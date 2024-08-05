@@ -23,37 +23,30 @@
 #include <array>
 #include <SDL.h>
 
-using json = nlohmann::json;
-using namespace nlohmann::literals;
-
 
 namespace FlatEngine
 {
 	SceneManager::SceneManager()
 	{
-		this->loadedScene;
-		animatorPreviewObjects = std::vector<GameObject*>();
+		m_loadedScene = Scene();
+		m_loadedScenePath = "";
+		m_animatorPreviewObjects = std::vector<GameObject*>();
 	}
 
 	SceneManager::~SceneManager()
 	{
 	}
 
-	std::shared_ptr<Scene> SceneManager::CreateNewScene()
+	Scene *SceneManager::CreateNewScene()
 	{
 		// Remove loaded scene from memory
-		loadedScene = nullptr;
-
-		// Start up a new scene
-		std::shared_ptr<Scene> freshScene = std::make_shared<Scene>();
-		loadedScene = freshScene;
-
-		return loadedScene;
+		m_loadedScene = Scene();
+		return &m_loadedScene;
 	}
 
-	void SceneManager::SaveScene(std::shared_ptr<Scene> scene, std::string filePath)
+	void SceneManager::SaveScene(Scene *scene, std::string filePath)
 	{
-		loadedScenePath = filePath;
+		m_loadedScenePath = filePath;
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -76,6 +69,7 @@ namespace FlatEngine
 			{
 				// Finally, add the gameObject json to the sceneObjectsJsonArray
 				sceneObjectsJsonArray.push_back(CreateJsonFromObject(iter->second));
+				iter++;
 			}
 		}
 		else
@@ -95,22 +89,18 @@ namespace FlatEngine
 
 	void SceneManager::SaveCurrentScene()
 	{
-		SaveScene(loadedScene, loadedScenePath);
+		SaveScene(&m_loadedScene, m_loadedScenePath);
 	}
 
 	void SceneManager::LoadScene(std::string filePath)
 	{
-		loadedScenePath = filePath;
-
-		// Remove loaded scene from memory
-		loadedScene = nullptr;
+		m_loadedScenePath = filePath;
 
 		// Start up a new scene
-		std::shared_ptr<Scene> freshScene = std::make_shared<Scene>();
-		loadedScene = freshScene;
+		m_loadedScene = Scene();
 		std::string fileName = GetFilenameFromPath(filePath, false);
-		freshScene->SetName(fileName);
-		freshScene->SetPath(filePath);
+		m_loadedScene.SetName(fileName);
+		m_loadedScene.SetPath(filePath);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -151,20 +141,22 @@ namespace FlatEngine
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{
 					// Add created GameObject to our freshScene
-					GameObject loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], freshScene);
+					GameObject loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i]);
+					// Check for primary camera
+					if (loadedObject.HasComponent("Camera") && loadedObject.GetCamera()->IsPrimary())
+						m_loadedScene.SetPrimaryCamera(loadedObject.GetCamera());
 					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
 					if (!loadedObject.IsPrefab())
-						freshScene->AddSceneObject(loadedObject);
+						m_loadedScene.AddSceneObject(loadedObject);
 				}
 			}
 		}
 
-		// Assign our freshScene to the SceneManagers currently loadedScene member variable
-		this->loadedScene = freshScene;
-
 		F_Application->OnLoadScene(fileName);
 	}
 
+
+	// Static functions
 	json SceneManager::CreateJsonFromObject(GameObject currentObject)
 	{
 		// Declare components array json object for components
@@ -182,8 +174,6 @@ namespace FlatEngine
 				componentsArray.push_back(json::parse(data));
 			}
 		}
-
-
 
 		// Declare children array json object for children
 		json childrenArray = json::array();
@@ -239,7 +229,7 @@ namespace FlatEngine
 		std::string objectName = currentObject.GetName();
 		Vector2 spawnLocation = currentObject.GetPrefabSpawnLocation();
 		if (currentObject.HasComponent("Transform"))
-			spawnLocation = currentObject.GetTransformComponent()->GetPosition();
+			spawnLocation = currentObject.GetTransform()->GetPosition();
 
 		// Create Game Object Json data object
 		json gameObjectJson = json::object({
@@ -259,8 +249,7 @@ namespace FlatEngine
 
 		return gameObjectJson;
 	}
-
-	bool JsonContains(json obj, std::string checkFor, std::string loadedName)
+	bool SceneManager::JsonContains(json obj, std::string checkFor, std::string loadedName)
 	{
 		bool contains = false;
 		if (obj.contains(checkFor))
@@ -269,7 +258,7 @@ namespace FlatEngine
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return contains;
 	}
-	float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName)
+	float SceneManager::CheckJsonFloat(json obj, std::string checkFor, std::string loadedName)
 	{
 		float value = 0;
 		if (obj.contains(checkFor))
@@ -278,7 +267,7 @@ namespace FlatEngine
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return value;
 	}
-	int CheckJsonInt(json obj, std::string checkFor, std::string loadedName)
+	int SceneManager::CheckJsonInt(json obj, std::string checkFor, std::string loadedName)
 	{
 		int value = 0;
 		if (obj.contains(checkFor))
@@ -287,7 +276,7 @@ namespace FlatEngine
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return value;
 	}
-	long CheckJsonLong(json obj, std::string checkFor, std::string loadedName)
+	long SceneManager::CheckJsonLong(json obj, std::string checkFor, std::string loadedName)
 	{
 		long value = -1;
 		if (obj.contains(checkFor))
@@ -296,7 +285,7 @@ namespace FlatEngine
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return value;
 	}
-	bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName)
+	bool SceneManager::CheckJsonBool(json obj, std::string checkFor, std::string loadedName)
 	{
 		bool value = false;
 		if (obj.contains(checkFor))
@@ -314,8 +303,7 @@ namespace FlatEngine
 			FlatEngine::LogString("SceneManager::Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return value;
 	}
-
-	GameObject SceneManager::CreateObjectFromJson(json objectJson, std::shared_ptr<Scene> loadedScene)
+	GameObject SceneManager::CreateObjectFromJson(json objectJson)
 	{
 		GameObject loadedObject;
 		std::string objectName = CheckJsonString(objectJson, "name", "Name");
@@ -329,10 +317,6 @@ namespace FlatEngine
 		long loadedParentID = CheckJsonLong(objectJson, "parent", objectName);
 		std::vector<long> loadedChildrenIDs = std::vector<long>();
 		TagList tags = TagList();
-
-		// Keep loadedScene->nextGameObjectID updated to the highest GameObject ID loaded + 1
-		if (loadedScene != nullptr && loadedID > loadedScene->nextGameObjectID)
-			loadedScene->nextGameObjectID = loadedID + 1;
 
 		if (JsonContains(objectJson, "children", objectName))
 		{
@@ -452,10 +436,6 @@ namespace FlatEngine
 					newCamera->SetShouldFollow(CheckJsonBool(componentJson, "_follow", objectName));
 					newCamera->SetFollowSmoothing(CheckJsonFloat(componentJson, "followSmoothing", objectName));
 					newCamera->SetFollowing(CheckJsonLong(componentJson, "following", objectName));
-
-					// If this camera is the primary camera, set it in the Scene as the primaryCamera
-					if (_isPrimaryCamera && loadedScene != nullptr)
-						loadedScene->SetPrimaryCamera(newCamera);
 				}
 				else if (type == "Script")
 				{
@@ -547,9 +527,6 @@ namespace FlatEngine
 					newRigidBody->SetIsKinematic(CheckJsonBool(componentJson, "_isKinematic", objectName));
 					newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
 				}
-
-				if (loadedScene != nullptr && id > loadedScene->nextComponentID)
-					loadedScene->nextComponentID = id + 1;
 			}
 		}
 
@@ -565,24 +542,24 @@ namespace FlatEngine
 		return loadedObject;
 	}
 
-	std::shared_ptr<Scene> SceneManager::GetLoadedScene()
+	Scene *SceneManager::GetLoadedScene()
 	{
-		return this->loadedScene;
+		return &m_loadedScene;
 	}
 	
 	std::string SceneManager::GetLoadedScenePath()
 	{
-		return loadedScenePath;
+		return m_loadedScenePath;
 	}
 	
 	void SceneManager::SaveAnimationPreviewObjects()
 	{
-		if (loadedScene->GetAnimatorPreviewObjects().size() > 0)
-			animatorPreviewObjects = loadedScene->GetAnimatorPreviewObjects();
+		if (m_loadedScene.GetAnimatorPreviewObjects().size() > 0)
+			m_animatorPreviewObjects = m_loadedScene.GetAnimatorPreviewObjects();
 	}
 	
 	void SceneManager::LoadAnimationPreviewObjects()
 	{
-		loadedScene->SetAnimatorPreviewObjects(animatorPreviewObjects);
+		m_loadedScene.SetAnimatorPreviewObjects(m_animatorPreviewObjects);
 	}
 }

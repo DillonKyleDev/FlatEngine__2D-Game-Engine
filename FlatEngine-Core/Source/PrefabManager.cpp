@@ -130,8 +130,8 @@ namespace FlatEngine
 						if (instantiatedObject.HasComponent("Transform"))
 						{
 							if (parentID == -1)
-								instantiatedObject.GetTransformComponent()->SetOrigin(Vector2(0, 0));
-							instantiatedObject.GetTransformComponent()->SetPosition(position);
+								instantiatedObject.GetTransform()->SetOrigin(Vector2(0, 0));
+							instantiatedObject.GetTransform()->SetPosition(position);
 						}
 
 						// A little janky but there you go

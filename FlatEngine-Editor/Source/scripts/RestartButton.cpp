@@ -27,7 +27,7 @@ void RestartButtonOnMouseEnter(std::shared_ptr<FlatEngine::GameObject> thisObjec
 
 void RestartButtonOnMouseLeave(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {
-	thisObject->GetSpriteComponent()->SetTexture("assets/images/SingleButton.png");
+	thisObject->GetSprite()->SetTexture("assets/images/SingleButton.png");
 }
 
 void RestartButtonOnLeftClick(std::shared_ptr<FlatEngine::GameObject> thisObject)

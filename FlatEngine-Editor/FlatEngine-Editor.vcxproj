@@ -277,8 +277,7 @@
     <ClCompile Include="Source\FlatGui.cpp" />
     <ClCompile Include="Source\GameView.cpp" />
     <ClCompile Include="Source\Hierarchy.cpp" />
-    <ClCompile Include="Source\Icons.cpp" />
-    <ClCompile Include="Source\ImGuiWrappers.cpp" />
+    <ClCompile Include="Source\ImGuiWrappersEditor.cpp" />
     <ClCompile Include="Source\Inspector.cpp" />
     <ClCompile Include="Source\Log.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />

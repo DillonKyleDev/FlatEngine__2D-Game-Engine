@@ -1,4 +1,3 @@
-#include "Vector4.h"
 #include "FlatGui.h"
 #include "FlatEngine.h"
 #include "GameLoop.h"
@@ -35,9 +34,10 @@
 #include "implot_internal.h"
 #include "imgui_internal.h"
 #include <fstream>
+#include <vector>
 #include "ImSequencer.h"
-// For getting directory name
-#include <windows.h>
+#include <filesystem>
+#include <windows.h> // For getting directory name
 
 
 /*
@@ -65,7 +65,6 @@ using ComponentTypes = Component::ComponentTypes;
 namespace FlatGui 
 {
 	// For window styles
-	float childPadding = 8;
 	ImDrawList* drawList = nullptr;
 
 	// Managers
@@ -82,131 +81,6 @@ namespace FlatGui
 	long FocusedGameObjectID = -1;
 	std::shared_ptr<GameObject> playerObject = nullptr;
 
-
-	//////////////////////
-	//Global      Colors//
-	//  //////VV///////  /
-	//     UUUUUUUU     //
-	///\-------------/////
-	//////////////////////
-	Vector4 transparentColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	Vector4 whiteColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	//////////////////////
-	// Components ////////
-	//////////////////////
-	Vector4 componentBorderColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	// Colliders
-	Vector4 colliderActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
-	Vector4 colliderInactiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
-	Vector4 colliderCollidingColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
-	// Button Components
-	Vector4 buttonComponentActiveColor = Vector4(0.19f, 0.9f, 0.2f, 0.5f);
-	Vector4 buttonComponentInctiveColor = Vector4(0.9f, 0.2f, 0.2f, 0.5f);
-	// Canvas Orange
-	Vector4 canvasBorderColor = Vector4(0.76f, 0.42f, 0.0f, 0.5f);
-	// Camera
-	Vector4 cameraBoxColor = Vector4(1.0f, 0.11f, 0.11f, 0.27f);
-	//////////////////////
-	// Windows ///////////
-	//////////////////////
-	Vector4 windowBgColor = Vector4(0.08f, 0.08f, 0.10f, 1.0f);
-	Vector4 outerWindowColor = Vector4(0.13f, 0.13f, 0.15f, 1.0f);
-	Vector4 innerWindowColor = Vector4(0.1f, 0.1f, 0.12f, 1.0f);
-	Vector4 singleItemColor = Vector4(0.16f, 0.16f, 0.17f, 1.0f);
-	Vector4 singleItemDark = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
-	Vector4 windowTitleBg = Vector4(0.25f, 0.25f, 0.25f, 1.0f);
-	// Log
-	Vector4 logTextColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);
-	Vector4 logBgColor = Vector4(0.2f, 0.2f, 0.22f, 1.0f);
-	Vector4 logOutlineColor = Vector4(0.25f, 0.25f, 0.27f, 1.0f);
-	// Docking
-	Vector4 dockingPreviewColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
-	Vector4 dockingPreviewEmptyColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
-	// ImGui Key colors
-	Vector4 frameBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 frameBgActiveColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 frameBgHoveredColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	// tabs
-	Vector4 tabColor = Vector4(0.15f, 0.15f, 0.2f, 1.0f);
-	Vector4 tabActiveColor = Vector4(0.4f, 0.4f, 0.42f, 1.0f);
-	Vector4 tabHoveredColor = Vector4(0.4f, 0.4f, 0.42f, 1.0f);
-	Vector4 tabUnfocusedColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
-	Vector4 tabUnfocusedActiveColor = Vector4(0.3f, 0.3f, 0.31f, 1.0f);
-	// titles
-	Vector4 titleBgColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4 titleBgActiveColor = Vector4(0.2f, 0.2f, 0.25f, 1.0f);
-	Vector4 titleBgCollapsedColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	// Text
-	Vector4 textSelectedBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	// Resizers
-	Vector4 resizeGripColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
-	Vector4 resizeGripHoveredColor = Vector4(0.35f, 0.35f, 0.75f, 1.0f);
-	Vector4 resizeGripActiveColor = Vector4(0.2f, 0.2f, 0.5f, 0.8f);
-	// Misc (not sure what they're for)
-	Vector4 popupBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 navWindowHighlightColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 navHighlightColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 navWindowDimBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	Vector4 modalWindowDimBgColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-	////////////////////
-	// Custom Colors ///
-	//////////////////// 
-	// Inputs
-	Vector4 inputColor = Vector4(0.3f, 0.3f, 0.32f, 1.0f);
-	// Tables
-	Vector4 noEditTableTextColor = Vector4(0.75f, 0.75f, 0.81f, 1.0f);
-	Vector4 noEditTableRowFieldBgColor = Vector4(0.1f, 0.1f, 0.5f, 0.2f);// Vector4(0.3f, 0.35f, 0.55f, 1.0f);// Vector4(0.2f, 0.25f, 0.45f, 1.0f);
-	Vector4 noEditTableRowValueBgColor = Vector4(0.1f, 0.1f, 0.5f, 0.2f);// Vector4(0.3f, 0.3f, 0.7f, 0.2f);
-	Vector4 tableCellLightColor = Vector4(0.19f, 0.19f, 0.21f, 1.0f);
-	Vector4 tableCellDarkColor = Vector4(0.24f, 0.24f, 0.27f, 1.0f);
-	// Trees
-	Vector4 treeSelectableColor = Vector4(0.15f, 0.15f, 0.15f, 1.0f);
-	Vector4 treeSelectableHoveredColor = Vector4(0.3f, 0.35f, 0.65f, 1.0f);
-	Vector4 treeSelectableActiveColor = Vector4(0.2f, 0.25f, 0.45f, 1.0f);
-	Vector4 treeSelectableSelectedColor = Vector4(0.5f, 0.5f, 0.8f, 1.0f);
-	Vector4 hierarchyChildObjectColor = Vector4(0.3f, 0.3f, 0.7f, 0.2f);
-	// Combos
-	Vector4 comboBgColor = Vector4(0.19f, 0.19f, 0.21f, 1.0f);
-	Vector4 comboHoveredColor = Vector4(0.25f, 0.25f, 0.26f, 1.0f);
-	Vector4 comboSelectableColor = Vector4(0.34f, .34f, .4f, 1.0f);
-	Vector4 comboSelectedColor = Vector4(0.45f, 0.45f, 0.50f, 1.0f);
-	Vector4 comboHighlightedColor = Vector4(0.25f, 0.25f, 0.28f, 1.0f);
-	Vector4 comboArrowColor = Vector4(0.11f, 0.11f, 0.13f, 1.0f);
-	Vector4 comboArrowHoveredColor = Vector4(0.15f, 0.15f, 0.16f, 1.0f);
-	// Buttons
-	Vector4 buttonColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
-	Vector4 buttonHoveredColor = Vector4(0.35f, 0.35f, 0.75f, 1.0f);
-	Vector4 buttonActiveColor = Vector4(0.2f, 0.2f, 0.5f, 0.8f);
-	Vector4 imageButtonColor = Vector4(0.18f, 0.18f, 0.18f, 1.0f);
-	Vector4 imageButtonDarkColor = Vector4(0.15f, 0.15f, 0.15f, 1.0f);
-	Vector4 imageButtonHoveredColor = Vector4(0.3f, 0.3f, 0.3f, 1.0f);
-	Vector4 imageButtonActiveColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
-	Vector4 imageButtonTintColor = whiteColor;
-	// Sliders/Drags
-	Vector4 sliderColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
-	Vector4 sliderHoveredColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
-	Vector4 sliderActiveColor = Vector4(0.09f, 0.09f, 0.13f, 1.0f);
-	Vector4 dragColor = Vector4(0.2f, 0.2f, 0.2f, 0.0f);
-	Vector4 dragHoveredColor = Vector4(0.45f, 0.45f, 0.45f, 1.0f);
-	Vector4 dragActiveColor = Vector4(0.10f, 0.10f, 0.10f, 1.0f);
-	// Checkboxes
-	Vector4 checkboxBgColor = Vector4(0.28f, 0.28f, 0.29f, 1.0f);
-	Vector4 checkboxCheckColor = Vector4(0.45f, 0.45f, 0.9f, 1.0f);
-	Vector4 checkboxHoveredColor = Vector4(0.31f, 0.31f, 0.32f, 1.0f);
-	Vector4 checkboxActiveColor = Vector4(0.15f, 0.15f, 0.23f, 1.0f);
-	////////////////////
-	//// End Colors ////
-	////////////////////
-
-	// Flags
-	ImGuiChildFlags autoResizeChildFlags = ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AlwaysUseWindowPadding;
-	ImGuiChildFlags resizeChildFlags = ImGuiChildFlags_ResizeX | ImGuiChildFlags_AlwaysUseWindowPadding;
-	ImGuiChildFlags childFlags = ImGuiChildFlags_AlwaysUseWindowPadding;
-	ImGuiChildFlags headerFlags = ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize;
-	//ImGuiTableFlags_Resizable
-	ImGuiTableFlags tableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame;
-	ImGuiTableFlags resizeableTableFlags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable;
-	ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 	// For rendering sprites
 	int maxSpriteLayers = 55;
@@ -237,43 +111,14 @@ namespace FlatGui
 
 	Vector2 worldCenterPoint = Vector2(0, 0);
 
-
-	void SetupImGui()
+	void Init()
 	{
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImPlot::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls for imgui ui nav
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsLight();
-
-		ImGuiStyle& style = ImGui::GetStyle();
-
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-		style.WindowPadding = { 5.0f, 5.0f };
-		style.DockingSeparatorSize = 1;
-		style.SeparatorTextAlign = Vector2(0.5f, 0.0f);
-		style.SeparatorTextBorderSize = 1;
-
-		ImGui_ImplSDL2_InitForSDLRenderer(Window::window, Window::renderer);
-		ImGui_ImplSDLRenderer2_Init(Window::renderer);
-
-
 		// If Release
 		if (FlatEngine::_isDebugMode == false)
 		{
-			// Load in what is currently in SavedScenes.json
-			//FlatEngine::LoadScene("Level1.json");
-
 			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
 			// we don't want to have to include it in the final release build anyway.
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			io.IniFilename = NULL;
 
 			// Set fullscreen here for now
@@ -281,48 +126,6 @@ namespace FlatGui
 		}
 		else
 			FlatEngine::CreateNewScene();
-
-		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
-		for (int i = 0; i < ImGuiCol_COUNT; i++)
-		{
-			const char* name = ImGui::GetStyleColorName(i);
-			//LogString(name);
-			if (name == "TitleBgActive")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = titleBgActiveColor;
-			}
-			if (name == "TabUnfocusedActive")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = tabUnfocusedActiveColor;
-			}
-			if (name == "TabActive")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = tabActiveColor;
-			}
-			if (name == "ResizeGripHovered")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = resizeGripHoveredColor;
-			}
-			if (name == "ResizeGripActive")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = resizeGripActiveColor;
-			}
-			if (name == "DockingPreview")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = dockingPreviewColor;
-			}
-			if (name == "DockingEmptyBg")
-			{
-				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = dockingPreviewEmptyColor;
-			}
-		}
 	}
 
 	void SetupProfilerProcesses()
@@ -420,7 +223,7 @@ namespace FlatGui
 			FlatEngine::prefabManager->InitializePrefabs();
 
 			// Open Project by default
-			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\projects\\Sandbox.json");
+			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json");
 
 			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
 			//FlatEngine::F_Application->GetGameLoop()->CollectPhysicsBodies();
@@ -437,49 +240,6 @@ namespace FlatGui
 		_initialized = true;
 	}
 
-	void Render(bool& quit)
-	{
-		// Start the Dear ImGui frame
-		ImGui_ImplSDLRenderer2_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-
-		//Create dockable background space for all viewports
-		ImGui::DockSpaceOverViewport();
-
-		//Add viewport(s)
-		// 
-		// If Release
-		if (!FlatEngine::_isDebugMode)
-		{
-			// Just Add GameView		
-			Game_RenderView();
-		}
-		// Else add FlatEngine viewports
-		else
-			AddViewports();
-	}
-
-	void RenderClear()
-	{
-		// Rendering
-		Vector4 clear_color = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
-		ImGui::Render();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		SDL_RenderSetScale(Window::renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-		SDL_SetRenderDrawColor(Window::renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
-		SDL_RenderClear(Window::renderer);
-		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-		
-		// TO DO 
-		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
-		Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
-		SDL_RenderPresent(Window::renderer);
-		AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
-
-		// For things we only want to execute once after complete initialization
-		RunOnceAfterInitialization();
-	}
 
 	void Cleanup()
 	{
@@ -489,817 +249,6 @@ namespace FlatGui
 			RemoveProfilerProcess("Render");
 			RemoveProfilerProcess("Render Present");
 		}
-
-		ImGui_ImplSDLRenderer2_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImPlot::DestroyContext();
-		ImGui::DestroyContext();
-	}
-
-	void HandleEvents(bool &quit)
-	{
-		std::vector<std::shared_ptr<FlatEngine::MappingContext>> mappingContexts = FlatEngine::mappingContexts;
-		using XInputAxis = FlatEngine::XInputAxis;
-		using XInputButtons = FlatEngine::XInputButtons;
-		using XInputHats = FlatEngine::XInputHats;
-		int JOYSTICK_DEAD_ZONE = FlatEngine::JOYSTICK_DEAD_ZONE;
-
-		// Unfire all keybinds that were fired in the last frame then clear the saved keys
-		static std::vector<std::string> firedKeys = std::vector<std::string>();
-		for (std::string keybind : firedKeys)
-			for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-				mappingContext->UnFireEvent(keybind);
-		firedKeys.clear();
-
-
-		SDL_Event event;
-		//if (SDL_PollEvent(&event))
-		while (SDL_PollEvent(&event))
-		{
-			ImGui_ImplSDL2_ProcessEvent(&event);
-			if (event.type == SDL_QUIT)
-				quit = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::window))
-				quit = true;
-			// Keyboard Keys Down
-			if (event.type == SDL_KEYDOWN)
-			{
-				// Send event to context inputAction
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_SPACE:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_SPACE") != "" && mappingContext->GetKeyBoundEvent("SDLK_SPACE").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_SPACE", event);
-							firedKeys.push_back("SDLK_SPACE");
-						}
-					break;
-
-				case SDLK_UP:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_UP") != "" && mappingContext->GetKeyBoundEvent("SDLK_UP").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_UP", event);
-							firedKeys.push_back("SDLK_UP");
-						}
-					break;
-
-				case SDLK_DOWN:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_DOWN") != "" && mappingContext->GetKeyBoundEvent("SDLK_DOWN").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_DOWN", event);
-							firedKeys.push_back("SDLK_DOWN");
-						}
-					break;
-
-				case SDLK_LEFT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_LEFT") != "" && mappingContext->GetKeyBoundEvent("SDLK_LEFT").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_LEFT", event);
-							firedKeys.push_back("SDLK_LEFT");
-						}
-					break;
-
-				case SDLK_RIGHT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_RIGHT") != "" && mappingContext->GetKeyBoundEvent("SDLK_RIGHT").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_RIGHT", event);
-							firedKeys.push_back("SDLK_RIGHT");
-						}
-					break;
-
-				case SDLK_a:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_a") != "" && mappingContext->GetKeyBoundEvent("SDLK_a").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_a", event);
-							firedKeys.push_back("SDLK_a");
-						}
-					break;
-
-				case SDLK_b:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_b") != "" && mappingContext->GetKeyBoundEvent("SDLK_b").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_b", event);
-							firedKeys.push_back("SDLK_b");
-						}
-					break;
-
-				case SDLK_c:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_c") != "" && mappingContext->GetKeyBoundEvent("SDLK_c").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_c", event);
-							firedKeys.push_back("SDLK_c");
-						}
-					break;
-
-				case SDLK_d:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_d") != "" && mappingContext->GetKeyBoundEvent("SDLK_d").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_d", event);
-							firedKeys.push_back("SDLK_d");
-						}
-					break;
-
-				case SDLK_e:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_e") != "" && mappingContext->GetKeyBoundEvent("SDLK_e").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_e", event);
-							firedKeys.push_back("SDLK_e");
-						}
-					break;
-
-				case SDLK_f:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_f") != "" && mappingContext->GetKeyBoundEvent("SDLK_f").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_f", event);
-							firedKeys.push_back("SDLK_f");
-						}
-					break;
-
-				case SDLK_g:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_g") != "" && mappingContext->GetKeyBoundEvent("SDLK_g").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_g", event);
-							firedKeys.push_back("SDLK_g");
-						}
-					break;
-
-				case SDLK_h:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_h") != "" && mappingContext->GetKeyBoundEvent("SDLK_h").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_h", event);
-							firedKeys.push_back("SDLK_h");
-						}
-					break;
-
-				case SDLK_i:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_i") != "" && mappingContext->GetKeyBoundEvent("SDLK_i").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_i", event);
-							firedKeys.push_back("SDLK_i");
-						}
-					break;
-
-				case SDLK_j:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_j") != "" && mappingContext->GetKeyBoundEvent("SDLK_j").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_j", event);
-							firedKeys.push_back("SDLK_j");
-						}
-					break;
-
-				case SDLK_k:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_k") != "" && mappingContext->GetKeyBoundEvent("SDLK_k").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_k", event);
-							firedKeys.push_back("SDLK_k");
-						}
-					break;
-
-				case SDLK_l:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_l") != "" && mappingContext->GetKeyBoundEvent("SDLK_l").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_l", event);
-							firedKeys.push_back("SDLK_l");
-						}
-					break;
-
-				case SDLK_m:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_m") != "" && mappingContext->GetKeyBoundEvent("SDLK_m").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_m", event);
-							firedKeys.push_back("SDLK_m");
-						}
-					break;
-
-				case SDLK_n:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_n") != "" && mappingContext->GetKeyBoundEvent("SDLK_n").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_n", event);
-							firedKeys.push_back("SDLK_n");
-						}
-					break;
-
-				case SDLK_o:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_o") != "" && mappingContext->GetKeyBoundEvent("SDLK_o").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_o", event);
-							firedKeys.push_back("SDLK_o");
-						}
-					break;
-
-				case SDLK_p:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_p") != "" && mappingContext->GetKeyBoundEvent("SDLK_p").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_p", event);
-							firedKeys.push_back("SDLK_p");
-						}
-					break;
-
-				case SDLK_q:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_q") != "" && mappingContext->GetKeyBoundEvent("SDLK_q").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_q", event);
-							firedKeys.push_back("SDLK_q");
-						}
-					break;
-
-				case SDLK_r:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_r") != "" && mappingContext->GetKeyBoundEvent("SDLK_r").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_r", event);
-							firedKeys.push_back("SDLK_r");
-						}
-					break;
-
-				case SDLK_s:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_s") != "" && mappingContext->GetKeyBoundEvent("SDLK_s").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_s", event);
-							firedKeys.push_back("SDLK_s");
-						}
-					break;
-
-				case SDLK_t:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_t") != "" && mappingContext->GetKeyBoundEvent("SDLK_t").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_t", event);
-							firedKeys.push_back("SDLK_t");
-						}
-					break;
-
-				case SDLK_u:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_u") != "" && mappingContext->GetKeyBoundEvent("SDLK_u").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_u", event);
-							firedKeys.push_back("SDLK_u");
-						}
-					break;
-
-				case SDLK_v:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_v") != "" && mappingContext->GetKeyBoundEvent("SDLK_v").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_v", event);
-							firedKeys.push_back("SDLK_v");
-						}
-					break;
-
-				case SDLK_w:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_w") != "" && mappingContext->GetKeyBoundEvent("SDLK_w").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_w", event);
-							firedKeys.push_back("SDLK_w");
-						}
-					break;
-
-				case SDLK_x:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_x") != "" && mappingContext->GetKeyBoundEvent("SDLK_x").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_x", event);
-							firedKeys.push_back("SDLK_x");
-						}
-					break;
-
-				case SDLK_y:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_y") != "" && mappingContext->GetKeyBoundEvent("SDLK_y").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_y", event);
-							firedKeys.push_back("SDLK_y");
-						}
-					break;
-
-				case SDLK_z:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_z") != "" && mappingContext->GetKeyBoundEvent("SDLK_z").type == 0)
-						{
-							mappingContext->OnInputEvent("SDLK_z", event);
-							firedKeys.push_back("SDLK_z");
-						}
-					break;
-
-				default:
-
-					break;
-				}
-			}
-			// Keyboard Keys Up
-			else if (event.type == SDL_KEYUP)
-			{
-				// Clear Mapping Context Events of buttons that are released
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_SPACE:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_SPACE") != "")
-							mappingContext->ClearInputActionEvent("SDLK_SPACE");
-					break;
-
-				case SDLK_UP:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_UP") != "")
-							mappingContext->ClearInputActionEvent("SDLK_UP");
-					break;
-
-				case SDLK_DOWN:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_DOWN") != "")
-							mappingContext->ClearInputActionEvent("SDLK_DOWN");
-					break;
-
-				case SDLK_LEFT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_LEFT") != "")
-						{
-							mappingContext->ClearInputActionEvent("SDLK_LEFT");
-							mappingContext->UnFireEvent("SDLK_LEFT");
-						}
-							
-					break;
-
-				case SDLK_RIGHT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_RIGHT") != "")
-							mappingContext->ClearInputActionEvent("SDLK_RIGHT");
-					break;
-
-				case SDLK_a:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_a") != "")
-							mappingContext->ClearInputActionEvent("SDLK_a");
-					break;
-
-				case SDLK_b:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_b") != "")
-							mappingContext->ClearInputActionEvent("SDLK_b");
-					break;
-
-				case SDLK_c:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_c") != "")
-							mappingContext->ClearInputActionEvent("SDLK_c");
-					break;
-
-				case SDLK_d:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_d") != "")
-							mappingContext->ClearInputActionEvent("SDLK_d");
-					break;
-
-				case SDLK_e:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_e") != "")
-							mappingContext->ClearInputActionEvent("SDLK_e");
-					break;
-
-				case SDLK_f:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_f") != "")
-							mappingContext->ClearInputActionEvent("SDLK_f");
-					break;
-
-				case SDLK_g:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_g") != "")
-							mappingContext->ClearInputActionEvent("SDLK_g");
-					break;
-
-				case SDLK_h:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_h") != "")
-							mappingContext->ClearInputActionEvent("SDLK_h");
-					break;
-
-				case SDLK_i:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_i") != "")
-							mappingContext->ClearInputActionEvent("SDLK_i");
-					break;
-
-				case SDLK_j:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_j") != "")
-							mappingContext->ClearInputActionEvent("SDLK_j");
-					break;
-
-				case SDLK_k:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_k") != "")
-							mappingContext->ClearInputActionEvent("SDLK_k");
-					break;
-
-				case SDLK_l:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_l") != "")
-							mappingContext->ClearInputActionEvent("SDLK_l");
-					break;
-
-				case SDLK_m:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_m") != "")
-							mappingContext->ClearInputActionEvent("SDLK_m");
-					break;
-
-				case SDLK_n:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_n") != "")
-							mappingContext->ClearInputActionEvent("SDLK_n");
-					break;
-
-				case SDLK_o:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_o") != "")
-							mappingContext->ClearInputActionEvent("SDLK_o");
-					break;
-
-				case SDLK_p:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_p") != "")
-							mappingContext->ClearInputActionEvent("SDLK_p");
-					break;
-
-				case SDLK_q:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_q") != "")
-							mappingContext->ClearInputActionEvent("SDLK_q");
-					break;
-
-				case SDLK_r:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_r") != "")
-							mappingContext->ClearInputActionEvent("SDLK_r");
-					break;
-
-				case SDLK_s:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_s") != "")
-							mappingContext->ClearInputActionEvent("SDLK_s");
-					break;
-
-				case SDLK_t:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_t") != "")
-							mappingContext->ClearInputActionEvent("SDLK_t");
-					break;
-
-				case SDLK_u:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_u") != "")
-							mappingContext->ClearInputActionEvent("SDLK_u");
-					break;
-
-				case SDLK_v:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_v") != "")
-							mappingContext->ClearInputActionEvent("SDLK_v");
-					break;
-
-				case SDLK_w:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_w") != "")
-							mappingContext->ClearInputActionEvent("SDLK_w");
-					break;
-
-				case SDLK_x:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_x") != "")
-							mappingContext->ClearInputActionEvent("SDLK_x");
-					break;
-
-				case SDLK_y:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_y") != "")
-							mappingContext->ClearInputActionEvent("SDLK_y");
-					break;
-
-				case SDLK_z:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("SDLK_z") != "")
-							mappingContext->ClearInputActionEvent("SDLK_z");
-					break;
-
-				default:
-
-					break;
-				}
-			}
-			// Axis (analog inputs)
-			else if (event.type == SDL_JOYAXISMOTION)
-			{
-				// Axis (analogs)
-				//if (event.jaxis.which == 0)
-				//{
-				switch (event.jaxis.axis)
-				{
-				case XInputAxis::LeftXAxis:
-					// Left of dead zone or right of dead zone
-					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
-						event.jaxis.value = 0;
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LeftJoystickX") != "")
-							mappingContext->OnInputEvent("XInput_LeftJoystickX", event);
-					break;
-				case XInputAxis::LeftYAxis:
-					// Below dead zone or Above dead zone
-					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
-						event.jaxis.value = 0;
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LeftJoystickY") != "")
-							mappingContext->OnInputEvent("XInput_LeftJoystickY", event);
-					break;
-				case XInputAxis::RightXAxis:
-					// Left of dead zone or Right of dead zone
-					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
-						event.jaxis.value = 0;
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
-							mappingContext->OnInputEvent("XInput_RightJoystick", event);
-					break;
-				case XInputAxis::RightYAxis:
-					// Below dead zone or Above dead zone
-					if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
-						event.jaxis.value = 0;
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RightJoystick") != "")
-							mappingContext->OnInputEvent("XInput_RightJoystick", event);
-					break;
-				case XInputAxis::LT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LT") != "")
-							mappingContext->OnInputEvent("XInput_LT", event);
-					break;
-				case XInputAxis::RT:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RT") != "")
-							mappingContext->OnInputEvent("XInput_RT", event);
-					break;
-				}
-			}
-			// Buttons Down
-			else if (event.type == SDL_JOYBUTTONDOWN)
-			{
-				switch (event.jbutton.button)
-				{
-				case XInputButtons::A:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_A") != "")
-						{
-							mappingContext->OnInputEvent("XInput_A", event);
-							firedKeys.push_back("XInput_A");
-						}
-							
-					break;
-				case XInputButtons::B:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_B") != "")
-						{
-							mappingContext->OnInputEvent("XInput_B", event);
-							firedKeys.push_back("XInput_B");
-						}
-					break;
-				case XInputButtons::X:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_X") != "")
-						{
-							mappingContext->OnInputEvent("XInput_X", event);
-							firedKeys.push_back("XInput_X");
-						}
-					break;
-				case XInputButtons::Y:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Y") != "")
-						{
-							mappingContext->OnInputEvent("XInput_Y", event);
-							firedKeys.push_back("XInput_Y");
-						}
-					break;
-				case XInputButtons::LB:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LB") != "")
-						{
-							mappingContext->OnInputEvent("XInput_LB", event);
-							firedKeys.push_back("XInput_LB");
-						}
-					break;
-				case XInputButtons::RB:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RB") != "")
-						{
-							mappingContext->OnInputEvent("XInput_RB", event);
-							firedKeys.push_back("XInput_RB");
-						}
-					break;
-				case XInputButtons::ScreenShot:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
-						{
-							mappingContext->OnInputEvent("XInput_ScreenShot", event);
-							firedKeys.push_back("XInput_ScreenShot");
-						}
-					break;
-				case XInputButtons::Start:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Start") != "")
-						{
-							mappingContext->OnInputEvent("XInput_Start", event);
-							firedKeys.push_back("XInput_Start");
-						}
-					break;
-				case XInputButtons::LS:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LS") != "")
-						{
-							mappingContext->OnInputEvent("XInput_LS", event);
-							firedKeys.push_back("XInput_LS");
-						}
-					break;
-				case XInputButtons::RS:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RS") != "")
-						{
-							mappingContext->OnInputEvent("XInput_RS", event);
-							firedKeys.push_back("XInput_RS");
-						}
-					break;
-				case XInputButtons::Home:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Home") != "")
-						{
-							mappingContext->OnInputEvent("XInput_Home", event);
-							firedKeys.push_back("XInput_Home");
-						}
-					break;
-				case XInputButtons::Tray:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
-						{
-							mappingContext->OnInputEvent("XInput_Tray", event);
-							firedKeys.push_back("XInput_Tray");
-						}
-					break;
-				default:
-					break;
-				}
-			}
-			// Buttons Up
-			else if (event.type == SDL_JOYBUTTONUP)
-			{
-				switch (event.jbutton.button)
-				{
-				case XInputButtons::A:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_A") != "")
-							mappingContext->ClearInputActionEvent("XInput_A");
-					break;
-				case XInputButtons::B:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_B") != "")
-							mappingContext->ClearInputActionEvent("XInput_B");
-					break;
-				case XInputButtons::X:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_X") != "")
-							mappingContext->ClearInputActionEvent("XInput_X");
-					break;
-				case XInputButtons::Y:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Y") != "")
-							mappingContext->ClearInputActionEvent("XInput_Y");
-					break;
-				case XInputButtons::LB:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LB") != "")
-							mappingContext->ClearInputActionEvent("XInput_LB");
-					break;
-				case XInputButtons::RB:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RB") != "")
-							mappingContext->ClearInputActionEvent("XInput_RB");
-					break;
-				case XInputButtons::ScreenShot:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_ScreenShot") != "")
-							mappingContext->ClearInputActionEvent("XInput_ScreenShot");
-					break;
-				case XInputButtons::Start:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)						
-						if (mappingContext->GetKeyBinding("XInput_Start") != "")
-							mappingContext->ClearInputActionEvent("XInput_Start");
-					break;
-				case XInputButtons::LS:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_LS") != "")
-							mappingContext->ClearInputActionEvent("XInput_LS");
-					break;
-				case XInputButtons::RS:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_RS") != "")
-							mappingContext->ClearInputActionEvent("XInput_RS");
-					break;
-				case XInputButtons::Home:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Home") != "")
-							mappingContext->ClearInputActionEvent("XInput_Home");
-					break;
-				case XInputButtons::Tray:
-					for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-						if (mappingContext->GetKeyBinding("XInput_Tray") != "")
-							mappingContext->ClearInputActionEvent("XInput_Tray");
-					break;
-				default:
-					break;
-				}
-			}
-			// Hats
-			else if (event.type == SDL_JOYHATMOTION)
-			{
-				switch (event.jhat.value)
-				{
-				case XInputHats::Up:
-					//LogFloat(event.jhat.type, "Hat Type: ");
-					//LogFloat(event.jhat.value, "Hat Value: ");
-					//LogFloat(event.jhat.hat, "Hat hat: ");
-					break;
-				case XInputHats::Down:
-					FlatEngine::LogString("Down");
-					break;
-				case XInputHats::Left:
-					FlatEngine::LogString("Left");
-					break;
-				case XInputHats::Right:
-					FlatEngine::LogString("Right");
-					break;
-				default:
-					break;
-				}
-			}
-		}
-
-
-		// BUTTON COMPONENT EVENTS - GameView
-		// 
-		// TODO: Check here if the Game viewport is focused before getting the mouse data //
-		// Check for mouse over on all of our Game Buttons
-		static bool _hasLeftClicked = false;
-		static bool _hasRightClicked = false;
-		if (FlatEngine::F_UIManager.CheckForMouseOver())
-		{
-			std::vector<FlatEngine::Button*> hoveredButtons = FlatEngine::F_UIManager.GetHoveredButtons();
-			ImGuiIO inputOutput = ImGui::GetIO();
-			FlatEngine::Button* topLevelButton = FlatEngine::F_UIManager.GetTopLevelButton();
-
-			// Call the OnMouseOverFunction() in the top level button that is hovered
-			GameObject thisObject = FlatEngine::GetObjectById(FlatEngine::F_UIManager.GetTopLevelButton()->GetParentID());
-
-			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
-			{
-				_hasLeftClicked = true;
-				topLevelButton->OnLeftClickFunction(&thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[0])
-				_hasLeftClicked = false;
-
-			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
-			{
-				_hasRightClicked = true;
-				topLevelButton->OnRightClickFunction(&thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[1])
-				_hasRightClicked = false;
-		}
 	}
 
 	void SetFocusedGameObjectID(long ID)
@@ -1308,7 +257,7 @@ namespace FlatGui
 		if (ID != -1)
 		{
 			GameObject focusedObject = FlatEngine::GetObjectById(ID);
-			Animation* animationComponent = focusedObject.GetAnimationComponent();
+			Animation* animationComponent = focusedObject.GetAnimation();
 			std::string animationPath = "";
 
 			if (animationComponent != nullptr)
@@ -1321,7 +270,7 @@ namespace FlatGui
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
 				//objectForFocusedAnimation = GameObject(FlatEngine::GetObjectById(ID), animatorObjects, FlatEngine::GetLoadedScene()->GetSceneObjects(), -1);
-				FlatEngine::Transform* transform = objectForFocusedAnimation.GetTransformComponent();
+				FlatEngine::Transform* transform = objectForFocusedAnimation.GetTransform();
 				transform->SetPosition(Vector2(0, 0));
 				animatorObjects.push_back(&objectForFocusedAnimation);
 				//FlatEngine::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
@@ -1536,6 +485,42 @@ namespace FlatGui
 	}
 
 
+	void RenderProjectHub(bool& b_projectSelected)
+	{
+		// Convert this to use the projects folder and get project names and data to be loaded when selected
+		std::string path = "Source\\mappingContext";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			// Create a new context to save the loaded keybindings to
+			MappingContext newContext = MappingContext();
+
+			json contextData = FlatEngine::LoadFileData(entry.path().string());
+			if (contextData != NULL)
+			{
+				//Getting data from the json 
+				//std::string name = firstObjectName[0]["name"];
+
+				auto mappings = contextData["Mapping Context"][0];
+
+				newContext.SetName(mappings["name"]);
+				newContext.SetPath(entry.path().string());
+
+			}
+		}
+
+
+		FlatEngine::BeginWindow("Project Hub");
+		FlatEngine::BeginWindowChild("Projects");
+
+		if (FlatEngine::RenderButton("Choose Project", Vector2(130, 20)))
+		{
+			b_projectSelected = true;
+		}
+
+		FlatEngine::EndWindowChild();
+		FlatEngine::EndWindow();
+	}
+
 	void AddViewports()
 	{
 		// ImGui Demo Window
@@ -1709,7 +694,7 @@ namespace FlatGui
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
-		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
+		// 4 channels for now in this scene view. 0 = scene objects, 1 &2 = other UI (camera icon, etc), 4 = transform arrow
 		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
 
 		// Loop through scene objects
@@ -1726,12 +711,12 @@ namespace FlatGui
 
 	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
 	{
-		Transform* transform = self.GetTransformComponent();
-		Sprite* sprite = self.GetSpriteComponent();
-		Camera* camera = self.GetCameraComponent();
-		Button* button = self.GetButtonComponent();
-		Canvas* canvas = self.GetCanvasComponent();
-		Text* text = self.GetTextComponent();
+		Transform* transform = self.GetTransform();
+		Sprite* sprite = self.GetSprite();
+		Camera* camera = self.GetCamera();
+		std::vector<Button*> buttons = self.GetButtons();
+		Canvas* canvas = self.GetCanvas();
+		Text* text = self.GetText();
 		std::vector<BoxCollider*> boxColliders = self.GetBoxColliders();
 		std::vector<CircleCollider*> circleColliders = self.GetCircleColliders();
 
@@ -1876,8 +861,8 @@ namespace FlatGui
 				Vector2 topRightCorner = Vector2(cameraRightEdge, cameraTopEdge);
 				Vector2 bottomLeftCorner = Vector2(cameraLeftEdge, cameraBottomEdge);
 
-				float cameraTextureWidth = (float)cameraIcon.GetWidth() / 4;
-				float cameraTextureHeight = (float)cameraIcon.GetHeight() / 4;
+				float cameraTextureWidth = (float)FlatEngine::F_cameraIcon.GetWidth() / 4;
+				float cameraTextureHeight = (float)FlatEngine::F_cameraIcon.GetHeight() / 4;
 				bool _scalesWithZoom = false;
 				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
 				Vector2 cameraTextureScale = { 1, 1 };
@@ -1887,12 +872,12 @@ namespace FlatGui
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, cameraBoxColor, 2.0f, draw_list);
-				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, cameraBoxColor, 2.0f, draw_list);
-				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, cameraBoxColor, 2.0f, draw_list);
+				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
+				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
+				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
 
 				// Draw actual camera icon
-				AddImageToDrawList(cameraIcon.GetTexture(), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
+				AddImageToDrawList(FlatEngine::F_cameraIcon.GetTexture(), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -1910,11 +895,11 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, canvasBorderColor, 3.0f, draw_list);
+				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FlatEngine::F_canvasBorderColor, 3.0f, draw_list);
 			}
 
 			// Renders Button Component
-			if (button != nullptr)
+			for (Button* button : buttons)
 			{
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
@@ -1955,20 +940,20 @@ namespace FlatGui
 
 					if (_isActive)
 					{
-						FlatEngine::DrawLine(pos[0], pos[1], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[1], pos[2], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[2], pos[3], buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[3], pos[0], buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[0], pos[1], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[1], pos[2], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[2], pos[3], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(pos[3], pos[0], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
 					}
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentInctiveColor, 1.0f, draw_list);
 				}
 				else
 				{
 					if (_isActive)
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentActiveColor, 1.0f, draw_list);
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentActiveColor, 1.0f, draw_list);
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonComponentInctiveColor, 1.0f, draw_list);
+						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentInctiveColor, 1.0f, draw_list);
 				}
 			}
 
@@ -2001,11 +986,11 @@ namespace FlatGui
 					if (loadedProject->GetCollisionDetection() == "Shared Axis")
 					{
 						if (_isActive && !_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, colliderActiveColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
 						else if (!_isActive)
-							FlatEngine::DrawRectangleFromLines(corners, colliderInactiveColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
 						else if (_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, colliderCollidingColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
 					}
 					else if (loadedProject->GetCollisionDetection() == "Separating Axis")
 					{
@@ -2024,22 +1009,22 @@ namespace FlatGui
 						};
 
 						// Draw Normals
-						FlatEngine::DrawLine(center, normals[0], colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[1], colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[2], colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[3], colliderInactiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(center, normals[0], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(center, normals[1], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(center, normals[2], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+						FlatEngine::DrawLine(center, normals[3], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
 
 						if (_isActive && !_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, colliderActiveColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
 						else if (!_isActive)
-							FlatEngine::DrawRectangleFromLines(corners, colliderInactiveColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
 						else if (_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, colliderCollidingColor, 1.0f, draw_list);
+							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
 					}
 
 					// Draw activeRadius circle
 					if (_showActiveRadius)
-						FlatEngine::DrawCircle(center, activeRadius, colliderActiveColor, draw_list);
+						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
 				}
 			}
 
@@ -2062,11 +1047,11 @@ namespace FlatGui
 					circleCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
 
 					if (_isActive && !_isColliding)
-						FlatEngine::DrawCircle(center, activeRadius, colliderActiveColor, draw_list);
+						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
 					else if (!_isActive)
-						FlatEngine::DrawCircle(center, activeRadius, colliderInactiveColor, draw_list);
+						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderInactiveColor, draw_list);
 					else if (_isColliding)
-						FlatEngine::DrawCircle(center, activeRadius, colliderCollidingColor, draw_list);
+						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderCollidingColor, draw_list);
 				}
 			}
 
@@ -2076,10 +1061,10 @@ namespace FlatGui
 			if (focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
 				GameObject focusedObject = FlatEngine::GetObjectById(focusedObjectID);
-				SDL_Texture* arrowToRender = transformArrow.GetTexture();
+				SDL_Texture* arrowToRender = FlatEngine::F_transformArrow.GetTexture();
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting position. We only want to change the render ending position so we adjust dimensions only
-				float arrowWidth = (float)transformArrow.GetWidth() * 3;
-				float arrowHeight = (float)transformArrow.GetHeight() * 3;
+				float arrowWidth = (float)FlatEngine::F_transformArrow.GetWidth() * 3;
+				float arrowHeight = (float)FlatEngine::F_transformArrow.GetHeight() * 3;
 				Vector2 arrowScale = { 1, 1 };
 				Vector2 arrowOffset = { 3, arrowHeight - 3 };
 				bool _scalesWithZoom = false;
@@ -2089,38 +1074,38 @@ namespace FlatGui
 
 				// Invisible button for Transform Arrow Move X and Y
 				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
-				RenderInvisibleButton("TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
+				FlatEngine::RenderInvisibleButton("TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
 				const bool _baseHovered = ImGui::IsItemHovered();
 				const bool _baseActive = ImGui::IsItemActive();
 				const bool _baseClicked = ImGui::IsItemClicked();
 
 				if (_baseHovered || _baseActive)
 				{
-					arrowToRender = transformArrowAllWhite.GetTexture();
+					arrowToRender = FlatEngine::F_transformArrowAllWhite.GetTexture();
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
 				// Invisible button for X arrow
 				Vector2 moveXStartPos = Vector2(positionOnScreen.x + 24, positionOnScreen.y - 30);
-				RenderInvisibleButton("TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
+				FlatEngine::RenderInvisibleButton("TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
 				const bool _xHovered = ImGui::IsItemHovered();
 				const bool _xActive = ImGui::IsItemActive();
 				const bool _xClicked = ImGui::IsItemClicked();
 				if (_xHovered || _xActive)
 				{
-					arrowToRender = transformArrowXWhite.GetTexture();
+					arrowToRender = FlatEngine::F_transformArrowXWhite.GetTexture();
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
 				// Invisible button for Y arrow
 				Vector2 moveYStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 86);
-				RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
+				FlatEngine::RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
 				const bool _yHovered = ImGui::IsItemHovered();
 				const bool _yActive = ImGui::IsItemActive();
 				const bool _yClicked = ImGui::IsItemClicked();
 				if (_yHovered || _yActive)
 				{
-					arrowToRender = transformArrowYWhite.GetTexture();
+					arrowToRender = FlatEngine::F_transformArrowYWhite.GetTexture();
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
@@ -2220,15 +1205,6 @@ namespace FlatGui
 		}
 
 		return renderStart;
-	}
-
-	ImU32 Vector4ToImU32(Vector4 color)
-	{
-		float redValue = color.x;
-		float greenValue = color.y;
-		float blueValue = color.z;
-		float alphaValue = color.w;
-		return (((ImU32)(alphaValue) << 24) | ((ImU32)(blueValue) << 16) | ((ImU32)(greenValue) << 8) | ((ImU32)(redValue)));
 	}
 
 	std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance)

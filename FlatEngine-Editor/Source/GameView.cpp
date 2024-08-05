@@ -52,9 +52,9 @@ namespace FlatGui {
 			flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize;
 		}
 
-		PushWindowStyles();
+		FlatEngine::PushWindowStyles();
 		ImGui::Begin("Game View", 0, flags);
-		PopWindowStyles();
+		FlatEngine::PopWindowStyles();
 
 		//if (ImGui::IsWindowFocused())
 		//	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
@@ -93,7 +93,7 @@ namespace FlatGui {
 	void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz)
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
-		std::shared_ptr<Scene> loadedScene = FlatEngine::GetLoadedScene();
+		Scene* loadedScene = FlatEngine::GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
 		FlatEngine::Camera* primaryCamera;
 		Transform* cameraTransform;
@@ -130,7 +130,7 @@ namespace FlatGui {
 		// If the primaryCamera is found and not nullptr, set the cameraPosition accordingly, else it remains at {0,0} above
 		if (primaryCamera != nullptr)
 		{
-			cameraTransform = primaryCamera->GetParent()->GetTransformComponent();
+			cameraTransform = primaryCamera->GetParent()->GetTransform();
 			cameraWidth = primaryCamera->GetWidth();
 			cameraHeight = primaryCamera->GetHeight();
 			gameViewGridStep.x = primaryCamera->GetZoom();
@@ -218,11 +218,11 @@ namespace FlatGui {
 	void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
 	{
 		// Get Components
-		FlatEngine::Transform* transform = self.GetTransformComponent();
-		Sprite* sprite = self.GetSpriteComponent();
-		Animation* animation = self.GetAnimationComponent();
-		Text* text = self.GetTextComponent();
-		Button* button = self.GetButtonComponent();
+		FlatEngine::Transform* transform = self.GetTransform();
+		Sprite* sprite = self.GetSprite();
+		Animation* animation = self.GetAnimation();
+		Text* text = self.GetText();
+		std::vector<Button*> buttons = self.GetButtons();
 
 
 		// Animation component handling
@@ -311,7 +311,7 @@ namespace FlatGui {
 			}
 
 			// Renders Button Component
-			if (button != nullptr)
+			for (Button* button : buttons)
 			{
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
@@ -334,9 +334,9 @@ namespace FlatGui {
 				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
 				if (_isActive)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonActiveColor, 3.0f, draw_list);
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonActiveColor, 3.0f, draw_list);
 				else
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, buttonColor, 3.0f, draw_list);
+					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonColor, 3.0f, draw_list);
 			}
 		}
 	}

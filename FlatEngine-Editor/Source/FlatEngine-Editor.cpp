@@ -4,7 +4,6 @@
 #include "EntryPoint.h"
 #include "Application.h"
 #include "GameLoop.h"
-#include "FlatGui.h"
 #include "Window.h"
 #include "Project.h"
 #include "Process.h"
@@ -32,6 +31,8 @@
 #include <string>
 #include <memory>
 
+#include "implot.h"
+
 using GameObject = FlatEngine::GameObject;
 using GameScript = FlatEngine::GameScript;
 using Component = FlatEngine::Component;
@@ -41,6 +42,7 @@ using ScriptComponent = FlatEngine::ScriptComponent;
 
 int main(int argc, char* args[])
 {
+	// Initializes FlatEngine
 	return FlatEngine::Main(argc, args);
 }
 
@@ -230,6 +232,7 @@ public:
 	EditorApplication()
 	{
 		A_GameLoop = new EditorGameLoop();
+		m_recreateWindow = false;
 	}
 	~EditorApplication()
 	{
@@ -237,10 +240,8 @@ public:
 		A_GameLoop = nullptr;
 	}
 
-	void OnInit()
+	void Init()
 	{
-		FlatGui::SetupImGui();
-		FlatGui::CreateIcons();
 	}
 	void Run()
 	{
@@ -253,7 +254,11 @@ public:
 			if (FlatEngine::_isDebugMode)
 				renderStartTime = (float)FlatEngine::GetEngineTime(); // Profiler
 			_hasQuit = FlatEngine::_closeProgram;
-			FlatGui::Render(_hasQuit);
+
+
+			BeginRender();
+
+
 			if (FlatEngine::_isDebugMode)
 				FlatGui::AddProcessData("Render", (float)FlatEngine::GetEngineTime() - renderStartTime); // Profiler
 
@@ -287,15 +292,12 @@ public:
 				{
 					while (A_GameLoop->accumulator >= A_GameLoop->deltaTime)
 					{
-						//float t0 = GetEngineTime();
-						FlatGui::HandleEvents(_hasQuit);
+						FlatEngine::HandleEvents(_hasQuit);
 						A_GameLoop->Update();
 						A_GameLoop->SetFrameSkipped(false);
 
 						A_GameLoop->time += A_GameLoop->deltaTime;
 						A_GameLoop->accumulator -= A_GameLoop->deltaTime;
-						//float t1 = GetEngineTime() - t0;
-						//LogFloat(t1, "T1: ");
 					}
 				}
 
@@ -317,19 +319,68 @@ public:
 				}
 			}
 			else
-				FlatGui::HandleEvents(_hasQuit);
+				FlatEngine::HandleEvents(_hasQuit);
 
-			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a stutter on first starting gameloop
+			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
 			if (!A_GameLoop->IsStarted())
 				frameStart = FlatEngine::GetEngineTime();
 
-			FlatGui::RenderClear();
+			
+
+			EndRender();
+
+			// For things we only want to execute once after complete initialization
+			FlatGui::RunOnceAfterInitialization();
+		}
+	}
+	void BeginRender()
+	{
+		Application::BeginRender();
+
+
+		// Application specific rendering
+
+		// Render the project selection screen
+		static bool b_projectSelected = false;
+		if (!b_projectSelected)
+		{
+			FlatGui::RenderProjectHub(b_projectSelected);
+			if (b_projectSelected)
+				m_recreateWindow = true;
+		}
+		else
+		{
+			// Start the engine and Add viewport(s)
+			if (!FlatEngine::_isDebugMode)
+			{
+				FlatGui::Game_RenderView();
+			}
+			else
+				FlatGui::AddViewports();
+		}
+	}
+	void EndRender()
+	{
+		Application::EndRender();
+
+		Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
+		SDL_RenderPresent(Window::W_Renderer);
+		FlatGui::AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
+
+		// If window was recreated this frame
+		if (m_recreateWindow)
+		{
+			Window::SetScreenDimensions(1900, 900);
+			ImPlot::DestroyContext();
+			ImGui::DestroyContext();
+			FlatEngine::SetupImGui();
+			FlatEngine::CreateIcons();
+			m_recreateWindow = false;
 		}
 	}
 	void Quit()
 	{
 		FlatEngine::Application::Quit();
-		//Quit ImGui
 		FlatGui::Cleanup();
 	}
 	void OnLoadScene(std::string sceneName)
@@ -377,6 +428,8 @@ public:
 		else
 			A_GameLoop->PauseGame();
 	}
+
+	bool m_recreateWindow;
 };
 
 
@@ -384,5 +437,6 @@ public:
 std::shared_ptr<FlatEngine::Application> FlatEngine::CreateApplication(int argc, char** argv)
 {
 	std::shared_ptr<EditorApplication> EditorApp = std::make_shared<EditorApplication>();
+	EditorApp->SetWindowDimensions(800, 500);
 	return EditorApp;
 }

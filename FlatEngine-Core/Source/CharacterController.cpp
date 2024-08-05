@@ -63,7 +63,7 @@ namespace FlatEngine {
 		{
 			Vector2 pendingForces = Vector2(0, 0);
 			FlatEngine::RigidBody* rigidBody = GetParent()->GetRigidBody();
-			FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+			FlatEngine::Transform* transform = GetParent()->GetTransform();
 			float gravity = 0;
 
 			if (rigidBody != nullptr)

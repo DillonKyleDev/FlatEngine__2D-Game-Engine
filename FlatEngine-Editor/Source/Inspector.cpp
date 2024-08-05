@@ -27,11 +27,11 @@ using RigidBody = FlatEngine::RigidBody;
 using Button = FlatEngine::Button;
 
 
-namespace FlatGui {
-
+namespace FlatGui 
+{
 	void RenderInspector()
 	{
-		BeginWindow("Inspector");
+		FlatEngine::BeginWindow("Inspector");
 
 		long focusedObjectID = GetFocusedGameObjectID();
 
@@ -43,7 +43,7 @@ namespace FlatGui {
 			// Lambda
 			auto L_ShowAddComponentsWindow = [&]()
 			{
-				PushMenuStyles();
+					FlatEngine::PushMenuStyles();
 
 				// Add all the component types you can add to this GameObject
 				//
@@ -146,7 +146,7 @@ namespace FlatGui {
 					ImGui::CloseCurrentPopup();
 				}
 
-				PopMenuStyles();
+				FlatEngine::PopMenuStyles();
 			};
 
 			// Name editing
@@ -160,8 +160,8 @@ namespace FlatGui {
 			ImGui::SameLine(0, 5);
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, inputColor);
-			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), inputFlags))
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
+			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), FlatEngine::F_inputFlags))
 				focusedObject->SetName(newName);
 			ImGui::PopStyleColor();
 
@@ -170,20 +170,20 @@ namespace FlatGui {
 			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 2));
 
 			// GameObject Active Checkbox
-			if (RenderCheckbox("Active", _objectActive))
+			if (FlatEngine::RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 62, 5);
 
 			// GameObject TagList Dropdown
 			TagList tagList = focusedObject->GetTagList();			
-			RenderButton("Tags");
-			PushMenuStyles();
+			FlatEngine::RenderButton("Tags");
+			FlatEngine::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				std::string labels[2] = { "Tag", "Ignore" };
-				if (PushTable("TagsTable", 3, resizeableTableFlags))
+				if (FlatEngine::PushTable("TagsTable", 3, FlatEngine::F_resizeableTableFlags))
 				{
-					RenderTextTableRow("TagsTableHeaders", "Tag", "Has", "Ignore");
+					FlatEngine::RenderTextTableRow("TagsTableHeaders", "Tag", "Has", "Ignore");
 
 					for (std::pair<std::string, bool> tag : tagList.GetTagsMap())
 					{
@@ -191,19 +191,19 @@ namespace FlatGui {
 						RenderTagListTableRow(tableRowId.c_str(), tag.first, tagList);
 					}
 				
-					PopTable();
+					FlatEngine::PopTable();
 				}
 				ImGui::EndPopup();
 			}
-			PopMenuStyles();
+			FlatEngine::PopMenuStyles();
 
 
 			// Three Dots More Options Button
 			ImGui::SameLine(0, 5);
-			RenderImageButton("##InspectorMoreButton", threeDotsIcon.GetTexture(), Vector2(16, 16), 1, transparentColor);
+			FlatEngine::RenderImageButton("##InspectorMoreButton", FlatEngine::F_threeDotsIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 			// Render the actual menu on click
-			PushMenuStyles();
+			FlatEngine::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				if (ImGui::BeginMenu("Add Component"))
@@ -221,16 +221,16 @@ namespace FlatGui {
 	
 				ImGui::EndPopup();
 			}
-			PopMenuStyles();
+			FlatEngine::PopMenuStyles();
 		
 
 			// Components Section
-			RenderSectionHeader("Components");
+			FlatEngine::RenderSectionHeader("Components");
 
 
 			// For scrolling components section with background
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, logBgColor);
-			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), childFlags);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_logBgColor);
+			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), FlatEngine::F_childFlags);
 			ImGui::PopStyleColor();
 
 			if (focusedObject != nullptr)
@@ -238,135 +238,134 @@ namespace FlatGui {
 				long queuedForDelete = -1;
 
 				// Transform
-				FlatEngine::Transform* transform = focusedObject->GetTransformComponent();
+				FlatEngine::Transform* transform = focusedObject->GetTransform();
 
 				if (transform != nullptr)
 				{
-				
 					BeginComponent(transform, queuedForDelete);
 					if (!transform->IsCollapsed())
 						RenderTransformComponent(transform);
 					EndComponent(transform);
+				}
 
-					// Sprite
-					Sprite* sprite = focusedObject->GetSpriteComponent();
-					if (sprite != nullptr)
-					{
-						BeginComponent(sprite, queuedForDelete);
-						if (!sprite->IsCollapsed())
-							RenderSpriteComponent(sprite);
-						EndComponent(sprite);
-					}
+				// Sprite
+				Sprite* sprite = focusedObject->GetSprite();
+				if (sprite != nullptr)
+				{
+					BeginComponent(sprite, queuedForDelete);
+					if (!sprite->IsCollapsed())
+						RenderSpriteComponent(sprite);
+					EndComponent(sprite);
+				}
 
-					// Camera
-					Camera* camera = focusedObject->GetCameraComponent();
-					if (camera != nullptr)
-					{
-						BeginComponent(camera, queuedForDelete);
-						if (!camera->IsCollapsed())
-							RenderCameraComponent(camera);
-						EndComponent(camera);
-					}
+				// Camera
+				Camera* camera = focusedObject->GetCamera();
+				if (camera != nullptr)
+				{
+					BeginComponent(camera, queuedForDelete);
+					if (!camera->IsCollapsed())
+						RenderCameraComponent(camera);
+					EndComponent(camera);
+				}
 
-					// ScriptComponent
-					ScriptComponent* script = focusedObject->GetScriptComponent();
-					if (script != nullptr)
-					{
-						BeginComponent(script, queuedForDelete);
-						if (!script->IsCollapsed())
-							RenderScriptComponent(script);
-						EndComponent(script);
-					}
+				// ScriptComponent
+				std::vector<ScriptComponent*> scripts = focusedObject->GetScripts();
+				for (ScriptComponent* script : scripts)
+				{
+					BeginComponent(script, queuedForDelete);
+					if (!script->IsCollapsed())
+						RenderScriptComponent(script);
+					EndComponent(script);
+				}
 
-					// Button
-					Button* button = focusedObject->GetButtonComponent();
-					if (button != nullptr)
-					{
-						BeginComponent(button, queuedForDelete);
-						if (!button->IsCollapsed())
-							RenderButtonComponent(button);
-						EndComponent(button);
-					}
+				// Button
+				std::vector<Button*> buttons = focusedObject->GetButtons();
+				for (Button* button : buttons)
+				{
+					BeginComponent(button, queuedForDelete);
+					if (!button->IsCollapsed())
+						RenderButtonComponent(button);
+					EndComponent(button);
+				}
 
-					// Canvas
-					Canvas* canvas = focusedObject->GetCanvasComponent();
-					if (canvas != nullptr)
-					{
-						BeginComponent(canvas, queuedForDelete);
-						if (!canvas->IsCollapsed())
-							RenderCanvasComponent(canvas);
-						EndComponent(canvas);
-					}
+				// Canvas
+				Canvas* canvas = focusedObject->GetCanvas();
+				if (canvas != nullptr)
+				{
+					BeginComponent(canvas, queuedForDelete);
+					if (!canvas->IsCollapsed())
+						RenderCanvasComponent(canvas);
+					EndComponent(canvas);
+				}
 
-					// Animation
-					Animation* animation = focusedObject->GetAnimationComponent();
-					if (animation != nullptr)
-					{
-						BeginComponent(animation, queuedForDelete);
-						if (!animation->IsCollapsed())
-							RenderAnimationComponent(animation);
-						EndComponent(animation);
-					}
+				// Animation
+				Animation* animation = focusedObject->GetAnimation();
+				if (animation != nullptr)
+				{
+					BeginComponent(animation, queuedForDelete);
+					if (!animation->IsCollapsed())
+						RenderAnimationComponent(animation);
+					EndComponent(animation);
+				}
 
-					// Audio
-					Audio* audio = focusedObject->GetAudioComponent();
-					if (audio != nullptr)
-					{
-						BeginComponent(audio, queuedForDelete);
-						if (!audio->IsCollapsed())
-							RenderAudioComponent(audio);
-						EndComponent(audio);
-					}
+				// Audio
+				Audio* audio = focusedObject->GetAudio();
+				if (audio != nullptr)
+				{
+					BeginComponent(audio, queuedForDelete);
+					if (!audio->IsCollapsed())
+						RenderAudioComponent(audio);
+					EndComponent(audio);
+				}
 
-					// Text
-					Text* text = focusedObject->GetTextComponent();
-					if (text != nullptr)
-					{
-						BeginComponent(text, queuedForDelete);
-						if (!text->IsCollapsed())
-							RenderTextComponent(text);
-						EndComponent(text);
-					}
+				// Text
+				Text* text = focusedObject->GetText();
+				if (text != nullptr)
+				{
+					BeginComponent(text, queuedForDelete);
+					if (!text->IsCollapsed())
+						RenderTextComponent(text);
+					EndComponent(text);
+				}
 
-					// CharacterController
-					CharacterController* characterController = focusedObject->GetCharacterController();
-					if (characterController != nullptr)
-					{
-						BeginComponent(characterController, queuedForDelete);
-						if (!characterController->IsCollapsed())
-							RenderCharacterControllerComponent(characterController);
-						EndComponent(characterController);
-					}
+				// CharacterController
+				CharacterController* characterController = focusedObject->GetCharacterController();
+				if (characterController != nullptr)
+				{
+					BeginComponent(characterController, queuedForDelete);
+					if (!characterController->IsCollapsed())
+						RenderCharacterControllerComponent(characterController);
+					EndComponent(characterController);
+				}
 
-					// BoxCollider
-					BoxCollider* boxCollider = focusedObject->GetBoxCollider();
-					if (boxCollider != nullptr)
-					{
-						BeginComponent(boxCollider, queuedForDelete);
-						if (!boxCollider->IsCollapsed())
-							RenderBoxColliderComponent(boxCollider);
-						EndComponent(boxCollider);
-					}
+				// BoxCollider
+				BoxCollider* boxCollider = focusedObject->GetBoxCollider();
+				if (boxCollider != nullptr)
+				{
+					BeginComponent(boxCollider, queuedForDelete);
+					if (!boxCollider->IsCollapsed())
+						RenderBoxColliderComponent(boxCollider);
+					EndComponent(boxCollider);
+				}
 
-					// CircleCollider
-					CircleCollider* circleCollider = focusedObject->GetCircleCollider();
-					if (circleCollider != nullptr)
-					{
-						BeginComponent(circleCollider, queuedForDelete);
-						if (!circleCollider->IsCollapsed())
-							RenderCircleColliderComponent(circleCollider);
-						EndComponent(circleCollider);
-					}
+				// CircleCollider
+				CircleCollider* circleCollider = focusedObject->GetCircleCollider();
+				if (circleCollider != nullptr)
+				{
+					BeginComponent(circleCollider, queuedForDelete);
+					if (!circleCollider->IsCollapsed())
+						RenderCircleColliderComponent(circleCollider);
+					EndComponent(circleCollider);
+				}
 
-					// RigidBody
-					RigidBody* rigidBody = focusedObject->GetRigidBody();
-					if (rigidBody != nullptr)
-					{
-						BeginComponent(rigidBody, queuedForDelete);
-						if (!rigidBody->IsCollapsed())
-							RenderRigidBodyComponent(rigidBody);
-						EndComponent(rigidBody);
-					}
+				// RigidBody
+				RigidBody* rigidBody = focusedObject->GetRigidBody();
+				if (rigidBody != nullptr)
+				{
+					BeginComponent(rigidBody, queuedForDelete);
+					if (!rigidBody->IsCollapsed())
+						RenderRigidBodyComponent(rigidBody);
+					EndComponent(rigidBody);
 				}
 
 				if (queuedForDelete != -1)
@@ -379,7 +378,7 @@ namespace FlatGui {
 			ImGui::EndChild(); // ComponentsSectionBg
 
 			// Render the Adding Components button
-			RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
+			FlatEngine::RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				L_ShowAddComponentsWindow();
@@ -387,6 +386,6 @@ namespace FlatGui {
 			}
 		}
 
-		EndWindow();
+		FlatEngine::EndWindow();
 	}
 }

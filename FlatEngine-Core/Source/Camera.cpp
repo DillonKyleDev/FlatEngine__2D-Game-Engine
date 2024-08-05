@@ -71,8 +71,8 @@ namespace FlatEngine
 		GameObject followTarget = GetObjectById(following);
 		if (_follow && GetParent()->HasComponent("Transform") && followTarget.IsValid() && followTarget.HasComponent("Transform"))
 		{
-			FlatEngine::Transform* cameraTransform = GetParent()->GetTransformComponent();
-			Vector2 followPos = followTarget.GetTransformComponent()->GetTruePosition();
+			FlatEngine::Transform* cameraTransform = GetParent()->GetTransform();
+			Vector2 followPos = followTarget.GetTransform()->GetTruePosition();
 			Vector2 currentPos = cameraTransform->GetPosition(); // Shouldn't have a parent if following so don't need GetTruePosition()
 
 			cameraTransform->SetPosition(Lerp(currentPos, followPos, followSmoothing));

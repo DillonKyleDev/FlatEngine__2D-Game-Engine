@@ -77,7 +77,7 @@ namespace FlatEngine
 				GameObject thisObject = FlatEngine::GetObjectById(gameButtons[i]->GetParentID());
 				Transform* transform = nullptr;
 				if (thisObject.IsValid())
-					transform = thisObject.GetTransformComponent();
+					transform = thisObject.GetTransform();
 
 				// Get the buttons active edges
 				Button* button = gameButtons[i];

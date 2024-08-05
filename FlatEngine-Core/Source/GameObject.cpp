@@ -99,7 +99,7 @@ namespace FlatEngine
 
 				if (parentID != -1 && GetObjectById(parentID)->IsValid())
 				{
-					newComponent.SetOrigin(GetObjectById(parentID)->GetTransformComponent()->GetTruePosition());
+					newComponent.SetOrigin(GetObjectById(parentID)->GetTransform()->GetTruePosition());
 				}
 				newComponent.SetOrigin(Vector2(0,0));
 				//components.push_back(&newComponent);
@@ -259,28 +259,21 @@ namespace FlatEngine
 
 	void GameObject::RemoveComponent(long componentID)
 	{
-		for (int i = 0; i < components.size(); i++)
+		for (std::vector<Component*>::iterator iter = components.begin(); iter != components.end();)
 		{
-			if (components[i]->GetID() == componentID)
+			if ((*iter)->GetID() == componentID)
 			{
-				if (components.size() > 1)
-				{
-					for (int j = i; j < components.size(); j++)
-					{
-						if (j == components.size() - 1)
-							components[j] = components[static_cast<std::vector<Component*, std::allocator<Component*>>::size_type>(j)];
-						else
-							components[j] = components[static_cast<std::vector<Component*, std::allocator<Component*>>::size_type>(j) + 1];
-					}
-					components.erase(components.begin() + components.size() - 1);
-				}
-				else
-				{
-					components.erase(components.begin());
-				}				
+				// Remove from ECSManager
+				GetLoadedScene()->RemoveComponent(*iter, ID);
+
+				// Remove GameObject ptr to it
+				components.erase(iter);		
 				break;
 			}
+			iter++;
 		}
+
+
 	}
 
 	void GameObject::DeleteComponents()
@@ -296,7 +289,7 @@ namespace FlatEngine
 	Transform* GameObject::AddTransformComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 
 		Transform transform = Transform(nextID, ID);
@@ -309,7 +302,7 @@ namespace FlatEngine
 			GameObject *parent = GetObjectById(parentID);
 			if (parent != nullptr && parent->HasComponent("Transform"))
 			{
-				Transform* parentTransform = parent->GetTransformComponent();
+				Transform* parentTransform = parent->GetTransform();
 				Vector2 parentTruePosition = parentTransform->GetTruePosition();
 				transform.SetOrigin(parentTruePosition);
 			}
@@ -323,7 +316,7 @@ namespace FlatEngine
 	Sprite* GameObject::AddSpriteComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Sprite sprite = Sprite(nextID, ID);
 		sprite.SetActive(_active);
@@ -337,7 +330,7 @@ namespace FlatEngine
 	Camera* GameObject::AddCameraComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Camera camera = Camera(nextID, ID);
 		camera.SetActive(_active);
@@ -351,7 +344,7 @@ namespace FlatEngine
 	ScriptComponent* GameObject::AddScriptComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		ScriptComponent script = ScriptComponent(nextID, ID);
 		script.SetActive(_active);
@@ -365,7 +358,7 @@ namespace FlatEngine
 	Button* GameObject::AddButtonComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Button button = F_UIManager.CreateButton(nextID, ID, 0);
 		button.SetActive(_active);
@@ -379,7 +372,7 @@ namespace FlatEngine
 	Canvas* GameObject::AddCanvasComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Canvas canvas = F_UIManager.CreateCanvas(nextID, ID, 0);
 		canvas.SetActive(_active);
@@ -393,7 +386,7 @@ namespace FlatEngine
 	Animation* GameObject::AddAnimationComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Animation animation = Animation(nextID, ID);
 		animation.SetActive(_active);
@@ -407,7 +400,7 @@ namespace FlatEngine
 	Audio* GameObject::AddAudioComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Audio audio = Audio(nextID, ID);
 		audio.SetActive(_active);
@@ -421,7 +414,7 @@ namespace FlatEngine
 	Text* GameObject::AddTextComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Text text = Text(nextID, ID);
 		text.SetActive(_active);
@@ -435,7 +428,7 @@ namespace FlatEngine
 	BoxCollider* GameObject::AddBoxColliderComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		BoxCollider boxCollider = BoxCollider(nextID, ID);
 		boxCollider.SetActive(_active);
@@ -449,7 +442,7 @@ namespace FlatEngine
 	CircleCollider* GameObject::AddCircleColliderComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CircleCollider circleCollider = CircleCollider(nextID, ID);
 		circleCollider.SetActive(_active);
@@ -463,7 +456,7 @@ namespace FlatEngine
 	CompositeCollider* GameObject::AddCompositeColliderComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CompositeCollider compositeCollider = CompositeCollider(nextID, ID);
 		compositeCollider.SetActive(_active);
@@ -477,7 +470,7 @@ namespace FlatEngine
 	RigidBody* GameObject::AddRigidBodyComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		RigidBody rigidBody = RigidBody(nextID, ID);
 		rigidBody.SetActive(_active);
@@ -491,7 +484,7 @@ namespace FlatEngine
 	CharacterController* GameObject::AddCharacterControllerComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
-		if (nextID != -1)
+		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CharacterController characterController = CharacterController(nextID, ID);
 		characterController.SetActive(_active);
@@ -531,80 +524,54 @@ namespace FlatEngine
 		return false;
 	}
 
-	Transform* GameObject::GetTransformComponent()
+	Transform* GameObject::GetTransform()
 	{
-		return GetLoadedScene()->GetTransform(ID);
+		return GetLoadedScene()->GetTransformByOwner(ID);
 	}
-
-	Sprite* GameObject::GetSpriteComponent()
+	Sprite* GameObject::GetSprite()
 	{
-		return GetLoadedScene()->GetSprite(ID);
+		return GetLoadedScene()->GetSpriteByOwner(ID);
 	}
-
-	Camera* GameObject::GetCameraComponent()
+	Camera* GameObject::GetCamera()
 	{
-		return GetLoadedScene()->GetCamera(ID);
+		return GetLoadedScene()->GetCameraByOwner(ID);
 	}
-
-	Animation* GameObject::GetAnimationComponent()
+	Animation* GameObject::GetAnimation()
 	{
-		return GetLoadedScene()->GetAnimation(ID);
+		return GetLoadedScene()->GetAnimationByOwner(ID);
 	}
-
-	Audio* GameObject::GetAudioComponent()
+	Audio* GameObject::GetAudio()
 	{
-		return GetLoadedScene()->GetAudio(ID);
+		return GetLoadedScene()->GetAudioByOwner(ID);
 	}
-
-	Button* GameObject::GetButtonComponent()
+	std::vector<Button*> GameObject::GetButtons()
 	{
-		return GetLoadedScene()->GetButton(ID);
+		return GetLoadedScene()->GetButtonsByOwner(ID);
 	}
-
-	Canvas* GameObject::GetCanvasComponent()
+	Canvas* GameObject::GetCanvas()
 	{
-		return GetLoadedScene()->GetCanvas(ID);
+		return GetLoadedScene()->GetCanvasByOwner(ID);
 	}
-
-	ScriptComponent* GameObject::GetScriptComponent()
+	std::vector<ScriptComponent*> GameObject::GetScripts()
 	{
-		return GetLoadedScene()->GetScriptComponent(ID);
+		return GetLoadedScene()->GetScriptsByOwner(ID);
 	}
-
-	std::vector<ScriptComponent*> GameObject::GetScriptComponents()
+	Text* GameObject::GetText()
 	{
-		std::vector<ScriptComponent*> scripts = std::vector<ScriptComponent*>();
-
-		//if (FlatEngine::F_ECSManager.m_scriptMap.count(ID) && FlatEngine::F_ECSManager.m_Scripts.size() >= FlatEngine::F_ECSManager.m_scriptMap.at(ID)[0])
-		//{
-		//	for (int i = 0; i < FlatEngine::F_ECSManager.m_scriptMap.at(ID).size(); i++)
-		//	{
-		//		scripts.push_back(&FlatEngine::F_ECSManager.m_Scripts.at(FlatEngine::F_ECSManager.m_scriptMap.at(ID)[i]));
-		//	}
-		//}
-		return scripts;
+		return GetLoadedScene()->GetTextByOwner(ID);
 	}
-
-	Text* GameObject::GetTextComponent()
-	{
-		return GetLoadedScene()->GetText(ID);
-	}
-
 	CharacterController* GameObject::GetCharacterController()
 	{
-		return GetLoadedScene()->GetCharacterController(ID);
+		return GetLoadedScene()->GetCharacterControllerByOwner(ID);
 	}
-
 	RigidBody* GameObject::GetRigidBody()
 	{
-		return GetLoadedScene()->GetRigidBody(ID);
+		return GetLoadedScene()->GetRigidBodyByOwner(ID);
 	}
-
 	BoxCollider* GameObject::GetBoxCollider()
 	{
-		return GetLoadedScene()->GetBoxCollider(ID);
+		return GetLoadedScene()->GetBoxColliderByOwner(ID);
 	}
-
 	std::vector<BoxCollider*> GameObject::GetBoxColliders()
 	{
 		std::vector<BoxCollider*> boxColliders;
@@ -614,12 +581,10 @@ namespace FlatEngine
 
 		return boxColliders;
 	}
-
 	CircleCollider* GameObject::GetCircleCollider()
 	{
-		return GetLoadedScene()->GetCircleCollider(ID);
+		return GetLoadedScene()->GetCircleColliderByOwner(ID);
 	}
-
 	std::vector<CircleCollider*> GameObject::GetCircleColliders()
 	{
 		std::vector<CircleCollider*> circleColliders;
@@ -629,12 +594,10 @@ namespace FlatEngine
 
 		return circleColliders;
 	}
-
 	CompositeCollider* GameObject::GetCompositeCollider()
 	{
-		return GetLoadedScene()->GetCompositeCollider(ID);
+		return GetLoadedScene()->GetCompositeColliderByOwner(ID);
 	}
-
 	GameScript* GameObject::GetGameScriptByName(std::string scriptName)
 	{
 		for (int i = 0; i < components.size(); i++)
@@ -657,7 +620,7 @@ namespace FlatEngine
 
 	std::vector<GameScript*> GameObject::GetScriptInstances()
 	{
-		std::vector<ScriptComponent*> scriptComponents = GetScriptComponents();
+		std::vector<ScriptComponent*> scriptComponents = GetScripts();
 		std::vector<GameScript*> gameScripts;
 
 		for (ScriptComponent *script : scriptComponents)

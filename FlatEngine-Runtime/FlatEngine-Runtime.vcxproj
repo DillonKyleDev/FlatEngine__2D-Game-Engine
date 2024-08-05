@@ -147,15 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\BlasterRound.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\BlobParticle.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\ButtonScriptTemplate.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\EnemyController.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\GameManager.h" />
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\GroundedCheck.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\Health.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\JumpPad.h" />
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\MovingPlatform.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\PauseMenu.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\PlayerController.h" />
     <ClInclude Include="..\FlatEngine-Editor\Source\scripts\QuitButton.h" />

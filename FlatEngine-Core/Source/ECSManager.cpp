@@ -31,8 +31,7 @@ namespace FlatEngine
 		m_Canvases = std::vector<std::pair<Canvas, long>>();
 		m_Animations = std::vector<std::pair<Animation, long>>();
 		m_Audios = std::vector<std::pair<Audio, long>>();
-		m_Texts = std::vector<std::pair<Text, long>>();
-		m_Colliders = std::vector<std::pair<Collider, long>>();
+		m_Texts = std::vector<std::pair<Text, long>>();		
 		m_CompositeColliders = std::vector<std::pair<CompositeCollider, long>>();
 		m_BoxColliders = std::vector<std::pair<BoxCollider, long>>();
 		m_CircleColliders = std::vector<std::pair<CircleCollider, long>>();
@@ -46,12 +45,11 @@ namespace FlatEngine
 		m_cameraMap = std::map<long, long>();
 		m_scriptMap = std::map<long, std::vector<long>>();
 		m_gameScriptMap = std::map<long, long>();
-		m_buttonMap = std::map<long, long>();
+		m_buttonMap = std::map<long, std::vector<long>>();
 		m_canvasMap = std::map<long, long>();
 		m_animationMap = std::map<long, long>();
 		m_audioMap = std::map<long, long>();
-		m_textMap = std::map<long, long>();
-		m_colliderMap = std::map<long, long>();
+		m_textMap = std::map<long, long>();		
 		m_compositeColliderMap = std::map<long, long>();
 		m_boxColliderMap = std::map<long, long>();
 		m_circleColliderMap = std::map<long, long>();
@@ -138,14 +136,6 @@ namespace FlatEngine
 		return &m_Texts[m_Texts.size() - 1].first;
 	}
 
-	Collider* ECSManager::AddCollider(Collider collider, long ownerID)
-	{
-		std::pair<Collider, long> newPair = { collider, ownerID };
-		m_Colliders.push_back(newPair);
-		m_colliderMap.emplace(ownerID, (long)m_Colliders.size() - 1);
-		return &m_Colliders[m_Colliders.size() - 1].first;
-	}
-
 	CompositeCollider* ECSManager::AddCompositeCollider(CompositeCollider collider, long ownerID)
 	{
 		std::pair<CompositeCollider, long> newPair = { collider, ownerID };
@@ -202,119 +192,227 @@ namespace FlatEngine
 		return &m_CharacterControllers[m_CharacterControllers.size() - 1].first;
 	}
 
-	Transform* ECSManager::GetTransform(long ownerID)
+	// Get Components
+	Transform* ECSManager::GetTransformByOwner(long ownerID)
 	{
 		if (m_transformMap.count(ownerID) && m_Transforms.size() >= m_transformMap.at(ownerID))
 			return &m_Transforms[m_transformMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Sprite* ECSManager::GetSprite(long ownerID)
+	Sprite* ECSManager::GetSpriteByOwner(long ownerID)
 	{
 		if (m_spriteMap.count(ownerID) && m_Sprites.size() >= m_spriteMap.at(ownerID))
 			return &m_Sprites[m_spriteMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Camera* ECSManager::GetCamera(long ownerID)
+	Camera* ECSManager::GetCameraByOwner(long ownerID)
 	{
 		if (m_cameraMap.count(ownerID) && m_Cameras.size() >= m_cameraMap.at(ownerID))
 			return &m_Cameras[m_cameraMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	ScriptComponent* ECSManager::GetScriptComponent(long ownerID)
+	std::vector<ScriptComponent*> ECSManager::GetScriptsByOwner(long ownerID)
 	{
-		if (m_scriptMap.count(ownerID) && m_Scripts.size() >= m_scriptMap.at(ownerID)[0])
-			return &m_Scripts[m_scriptMap.at(ownerID)[0]].first;
-		else return nullptr;
+		std::vector<ScriptComponent*> scripts = std::vector<ScriptComponent*>();
+		if (m_scriptMap.count(ownerID))
+		{
+			for (long index : m_scriptMap.at(ownerID))
+			{
+				if (m_Scripts.size() >= index)
+					scripts.push_back(&m_Scripts.at(index).first);
+			}
+		}
+		return scripts;
 	}
 
-	GameScript* ECSManager::GetScript(long ownerID, std::string name)
+	GameScript* ECSManager::GetGameScriptByOwner(long ownerID, std::string name)
 	{
 		if (m_gameScriptMap.count(ownerID) && m_GameScripts.size() >= m_gameScriptMap.at(ownerID))
 			return &m_GameScripts[m_gameScriptMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Canvas* ECSManager::GetCanvas(long ownerID)
+	Canvas* ECSManager::GetCanvasByOwner(long ownerID)
 	{
 		if (m_canvasMap.count(ownerID) && m_Canvases.size() >= m_canvasMap.at(ownerID))
 			return &m_Canvases[m_canvasMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Audio* ECSManager::GetAudio(long ownerID)
+	Audio* ECSManager::GetAudioByOwner(long ownerID)
 	{
 		if (m_audioMap.count(ownerID) && m_Audios.size() >= m_audioMap.at(ownerID))
 			return &m_Audios[m_audioMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Text* ECSManager::GetText(long ownerID)
+	Text* ECSManager::GetTextByOwner(long ownerID)
 	{
 		if (m_textMap.count(ownerID) && m_Texts.size() >= m_textMap.at(ownerID))
 			return &m_Texts[m_textMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Collider* ECSManager::GetCollider(long ownerID)
-	{
-		if (m_colliderMap.count(ownerID) && m_Colliders.size() >= m_colliderMap.at(ownerID))
-			return &m_Colliders[m_colliderMap.at(ownerID)].first;
-		else return nullptr;
-	}
-
-	CompositeCollider* ECSManager::GetCompositeCollider(long ownerID)
+	CompositeCollider* ECSManager::GetCompositeColliderByOwner(long ownerID)
 	{
 		if (m_compositeColliderMap.count(ownerID) && m_CompositeColliders.size() >= m_compositeColliderMap.at(ownerID))
 			return &m_CompositeColliders[m_compositeColliderMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	BoxCollider* ECSManager::GetBoxCollider(long ownerID)
+	BoxCollider* ECSManager::GetBoxColliderByOwner(long ownerID)
 	{
 		if (m_boxColliderMap.count(ownerID) && m_BoxColliders.size() >= m_boxColliderMap.at(ownerID))
 			return &m_BoxColliders[m_boxColliderMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	CircleCollider* ECSManager::GetCircleCollider(long ownerID)
+	CircleCollider* ECSManager::GetCircleColliderByOwner(long ownerID)
 	{
 		if (m_circleColliderMap.count(ownerID) && m_CircleColliders.size() >= m_circleColliderMap.at(ownerID))
 			return &m_CircleColliders[m_circleColliderMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Animation* ECSManager::GetAnimation(long ownerID)
+	Animation* ECSManager::GetAnimationByOwner(long ownerID)
 	{
 		if (m_animationMap.count(ownerID) && m_Animations.size() >= m_animationMap.at(ownerID))
 			return &m_Animations[m_animationMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	Button* ECSManager::GetButton(long ownerID)
+	std::vector<Button*> ECSManager::GetButtonsByOwner(long ownerID)
 	{
-		if (m_buttonMap.count(ownerID) && m_Buttons.size() >= m_buttonMap.at(ownerID))
-			return &m_Buttons[m_buttonMap.at(ownerID)].first;
-		else return nullptr;
+		std::vector<Button*> buttons = std::vector<Button*>();
+		if (m_buttonMap.count(ownerID))
+		{
+			for (long index : m_buttonMap.at(ownerID))
+			{
+				if (m_Buttons.size() >= index)
+					buttons.push_back(&m_Buttons.at(index).first);
+			}
+		}
+		return buttons;
 	}
 
-	RigidBody* ECSManager::GetRigidBody(long ownerID)
+	RigidBody* ECSManager::GetRigidBodyByOwner(long ownerID)
 	{
 		if (m_rigidBodyMap.count(ownerID) && m_RigidBodies.size() >= m_rigidBodyMap.at(ownerID))
 			return &m_RigidBodies[m_rigidBodyMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	CharacterController* ECSManager::GetCharacterController(long ownerID)
+	CharacterController* ECSManager::GetCharacterControllerByOwner(long ownerID)
 	{
 		if (m_characterControllerMap.count(ownerID) && m_CharacterControllers.size() >= m_characterControllerMap.at(ownerID))
 			return &m_CharacterControllers[m_characterControllerMap.at(ownerID)].first;
 		else return nullptr;
 	}
 
-	void ECSManager::RemoveScript(long scriptID)
+	// Remove Components
+	bool ECSManager::RemoveComponent(Component *component, long ownerID)
+	{
+		if (component->GetTypeString() == "Transform")
+		{
+			return RemoveTransform(ownerID);
+		}
+		else if (component->GetTypeString() == "Sprite")
+		{
+			return RemoveSprite(ownerID);
+		}
+		else if (component->GetTypeString() == "Camera")
+		{
+			return RemoveCamera(ownerID);
+		}
+		else if (component->GetTypeString() == "ScriptComponent")
+		{
+			return RemoveScript(ownerID);
+		}
+		else if (component->GetTypeString() == "Canvas")
+		{
+			return RemoveCanvas(ownerID);
+		}
+		else if (component->GetTypeString() == "Audio")
+		{
+			return RemoveAudio(ownerID);
+		}
+		else if (component->GetTypeString() == "Text")
+		{
+			return RemoveText(ownerID);
+		}
+		else if (component->GetTypeString() == "CompositeCollider")
+		{
+			return RemoveCompositeCollider(ownerID);
+		}
+		else if (component->GetTypeString() == "BoxCollider")
+		{
+			return RemoveBoxCollider(ownerID);
+		}
+		else if (component->GetTypeString() == "CircleCollider")
+		{
+			return RemoveCircleCollider(ownerID);
+		}
+		else if (component->GetTypeString() == "RigidBody")
+		{
+			return RemoveRigidBody(ownerID);
+		}
+		else if (component->GetTypeString() == "CharacterController")
+		{
+			return RemoveCharacterController(ownerID);
+		}
+		else
+			return false;
+	}
+
+	bool ECSManager::RemoveTransform(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_Transforms.erase(m_Transforms.begin() + m_transformMap.at(ownerID));
+			m_transformMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveSprite(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_Sprites.erase(m_Sprites.begin() + m_spriteMap.at(ownerID));
+			m_spriteMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveCamera(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_Cameras.erase(m_Cameras.begin() + m_cameraMap.at(ownerID));
+			m_cameraMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveScript(long scriptID)
+	{
+		// Might need a map of maps std::map<long ownerID, std::map<long scriptID, long index>> m_scriptMap
+		// Accessed by m_Scripts component index = m_scriptMap.at(ownerID).at(scriptID)
+		//m_Scripts.erase(m_Scripts.begin() + m_scriptMap.at(ownerID));
+		//m_scriptMap.erase(ownerID);
+		return false;
+	}
+
+	bool ECSManager::RemoveGameScript(long scriptID)
 	{
 		for (std::vector<std::pair<GameScript, long>>::iterator iter = m_GameScripts.begin(); iter != m_GameScripts.end();)
 		{
@@ -326,34 +424,131 @@ namespace FlatEngine
 			//}
 			//iter++;
 		}
+		return false;
 	}
 
-	void ECSManager::RemoveRigidBody(long rigidBodyID)
+	bool ECSManager::RemoveCanvas(long ownerID)
 	{
-		for (std::vector<std::pair<RigidBody, long>>::iterator iter = m_RigidBodies.begin(); iter != m_RigidBodies.end();)
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
 		{
-			if ((*iter).first.GetID() == rigidBodyID)
-			{
-				m_RigidBodies.erase(iter);
-				return;
-			}
-			iter++;
+			m_Canvases.erase(m_Canvases.begin() + m_canvasMap.at(ownerID));
+			m_canvasMap.erase(ownerID);
+			b_success = true;
 		}
+		return b_success;
 	}
 
-	void ECSManager::RemoveCollider(long colliderID)
+	bool ECSManager::RemoveAudio(long ownerID)
 	{
-		for (std::vector<std::pair<Collider, long>>::iterator iter = m_Colliders.begin(); iter != m_Colliders.end();)
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
 		{
-			if ((*iter).first.GetID() == colliderID)
-			{
-				m_Colliders.erase(iter);
-				UpdateColliderPairs();
-				return;
-			}
-			iter++;
+			m_Audios.erase(m_Audios.begin() + m_audioMap.at(ownerID));
+			m_audioMap.erase(ownerID);
+			b_success = true;
 		}
+		return b_success;
 	}
+
+	bool ECSManager::RemoveText(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_Texts.erase(m_Texts.begin() + m_textMap.at(ownerID));
+			m_textMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveCompositeCollider(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_CompositeColliders.erase(m_CompositeColliders.begin() + m_compositeColliderMap.at(ownerID));
+			m_compositeColliderMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveBoxCollider(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_BoxColliders.erase(m_BoxColliders.begin() + m_boxColliderMap.at(ownerID));
+			m_boxColliderMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveCircleCollider(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_CircleColliders.erase(m_CircleColliders.begin() + m_circleColliderMap.at(ownerID));
+			m_circleColliderMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveAnimation(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_Animations.erase(m_Animations.begin() + m_animationMap.at(ownerID));
+			m_animationMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveButton(long ownerID)
+	{
+		// Might need to do the same thing here as in RemoveScriptComponent function
+		//bool b_success = false;
+		//if (m_transformMap.count(ownerID) > 0)
+		//{
+		//	m_Buttons.erase(m_Buttons.begin() + m_buttonMap.at(ownerID));
+		//	m_buttonMap.erase(ownerID);
+		//	b_success = true;
+		//}
+		//return b_success;
+		return false;
+	}
+
+	bool ECSManager::RemoveRigidBody(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_RigidBodies.erase(m_RigidBodies.begin() + m_rigidBodyMap.at(ownerID));
+			m_rigidBodyMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveCharacterController(long ownerID)
+	{
+		bool b_success = false;
+		if (m_transformMap.count(ownerID) > 0)
+		{
+			m_CharacterControllers.erase(m_CharacterControllers.begin() + m_characterControllerMap.at(ownerID));
+			m_characterControllerMap.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
 
 	void ECSManager::InitializeScriptObjects(std::vector<GameObject> gameObjects)
 	{
@@ -361,83 +556,53 @@ namespace FlatEngine
 
 	void ECSManager::UpdateColliderPairs()
 	{
-		// Get currently loaded scenes GameObjects
-		//std::vector<GameObject> gameObjects = FlatEngine::GetSceneObjects();
-		//m_Colliders.clear();
-
-		// Find all script components on Scene GameObjects and add those GameObjects
-		// to their corresponding script class entity vector members
-		//for (int i = 0; i < gameObjects.size(); i++)
-		//{
-		//	std::vector<Component*> components = gameObjects[i].GetComponents();
-
-		//	for (int j = 0; j < components.size(); j++)
-		//	{
-		//		if (components[j]->GetTypeString() == "BoxCollider")
-		//		{
-		//			// Collect all BoxCollider components for collision detection in Update()
-		//			m_Colliders.push_back(static_cast<BoxCollider>(components[j]));
-		//		}
-		//		if (components[j]->GetTypeString() == "CircleCollider")
-		//		{
-		//			// Collect all BoxCollider components for collision detection in Update()
-		//			m_Colliders.push_back(static_cast<CircleCollider>(components[j]));
-		//		}
-		//		if (components[j]->GetTypeString() == "CompositeCollider")
-		//		{
-		//			// Collect all CompositeCollider components for collision detection in Update()
-		//			m_Colliders.push_back(static_cast<CompositeCollider>(components[j]));
-		//		}
-		//	}
-		//}
-
 		// Remake colliderPairs
 		m_ColliderPairs.clear();
 
-		for (std::vector<std::pair<Collider, long>>::iterator iterOuter = m_Colliders.begin(); iterOuter != m_Colliders.end();)
-		{
-			for (std::vector<std::pair<Collider, long>>::iterator iterInner = m_Colliders.begin(); iterInner != m_Colliders.end();)
-			{
-				// If colliders don't belong to the same GameObject
-				if (iterOuter->first.GetParentID() != (*iterInner).first.GetParentID() && (*iterOuter).first.GetTypeString() != "CompositeCollider" && (*iterInner).first.GetTypeString() != "CompositeCollider")
-				{
-					TagList coll1TagList = (*iterOuter).first.GetParent()->GetTagList();
-					TagList coll2TagList = (*iterInner).first.GetParent()->GetTagList();
+		//for (std::vector<std::pair<Collider, long>>::iterator iterOuter = m_Colliders.begin(); iterOuter != m_Colliders.end();)
+		//{
+		//	for (std::vector<std::pair<Collider, long>>::iterator iterInner = m_Colliders.begin(); iterInner != m_Colliders.end();)
+		//	{
+		//		// If colliders don't belong to the same GameObject
+		//		if (iterOuter->first.GetParentID() != (*iterInner).first.GetParentID() && (*iterOuter).first.GetTypeString() != "CompositeCollider" && (*iterInner).first.GetTypeString() != "CompositeCollider")
+		//		{
+		//			TagList coll1TagList = (*iterOuter).first.GetParent()->GetTagList();
+		//			TagList coll2TagList = (*iterInner).first.GetParent()->GetTagList();
 
-					std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
-					std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
+		//			std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
+		//			std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
 
-					bool _ignorePair = false;
+		//			bool _ignorePair = false;
 
-					for (std::string ignoredTag : coll1Ignored)
-					{
-						if (coll2TagList.HasTag(ignoredTag))
-						{
-							_ignorePair = true;
-							break;
-						}
-					}
-					if (!_ignorePair)
-					{
-						for (std::string ignoredTag : coll2Ignored)
-						{
-							if (coll1TagList.HasTag(ignoredTag))
-							{
-								_ignorePair = true;
-								break;
-							}
-						}
-					}
-					if (!_ignorePair)
-					{
-						std::pair<Collider*, Collider*> newPair = { &(*iterOuter).first, &(*iterInner).first };
-						m_ColliderPairs.push_back(newPair);
-					}
-				}
-				iterInner++;
-			}
-			iterOuter++;
-		}
+		//			for (std::string ignoredTag : coll1Ignored)
+		//			{
+		//				if (coll2TagList.HasTag(ignoredTag))
+		//				{
+		//					_ignorePair = true;
+		//					break;
+		//				}
+		//			}
+		//			if (!_ignorePair)
+		//			{
+		//				for (std::string ignoredTag : coll2Ignored)
+		//				{
+		//					if (coll1TagList.HasTag(ignoredTag))
+		//					{
+		//						_ignorePair = true;
+		//						break;
+		//					}
+		//				}
+		//			}
+		//			if (!_ignorePair)
+		//			{
+		//				std::pair<Collider*, Collider*> newPair = { &(*iterOuter).first, &(*iterInner).first };
+		//				m_ColliderPairs.push_back(newPair);
+		//			}
+		//		}
+		//		iterInner++;
+		//	}
+		//	iterOuter++;
+		//}
 	}
 
 	std::vector<std::pair<Collider*, Collider*>> ECSManager::GetColliderPairs()
@@ -508,9 +673,23 @@ namespace FlatEngine
 	{
 		return m_Texts;
 	}
-	std::vector<std::pair<Collider, long>> ECSManager::GetColliders()
+	std::vector<std::pair<Collider*, long>> ECSManager::GetColliders()
 	{
-		return m_Colliders;
+		// Collect all colliders when needed so we don't have to keep an member variable updated
+		std::vector<std::pair<Collider*, long>> colliders;
+		for (std::pair<CompositeCollider, long> collider : m_CompositeColliders)
+		{
+			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+		}
+		for (std::pair<BoxCollider, long> collider : m_BoxColliders)
+		{
+			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+		}
+		for (std::pair<CircleCollider, long> collider : m_CircleColliders)
+		{
+			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+		}
+		return colliders;
 	}
 	std::vector<std::pair<CompositeCollider, long>> ECSManager::GetCompositeColliders()
 	{

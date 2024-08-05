@@ -28,7 +28,7 @@ namespace FlatGui {
 
 	void MainMenuBar()
 	{
-		PushMenuStyles();
+		FlatEngine::PushMenuStyles();
 
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -109,7 +109,7 @@ namespace FlatGui {
 					std::string scenePath = FlatEngine::OpenSaveFileExplorer();
 					if (scenePath != "")
 					{
-						std::shared_ptr<Scene> currentScene = FlatEngine::F_SceneManager.GetLoadedScene();
+						Scene* currentScene = FlatEngine::GetLoadedScene();
 						FlatEngine::F_SceneManager.SaveScene(currentScene, scenePath);
 					}
 				}
@@ -167,8 +167,8 @@ namespace FlatGui {
 				{
 					if (ImGui::MenuItem("New GameObject"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Ball"))
 					{
@@ -184,108 +184,92 @@ namespace FlatGui {
 				}
 				if (ImGui::BeginMenu("Components"))
 				{
-					if (ImGui::MenuItem("Transform"))
-					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.SetName("Transform(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
-					}
 					if (ImGui::MenuItem("Sprite"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddSpriteComponent();
-						newObject.SetName("Sprite(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						newObject->AddSpriteComponent();
+						newObject->SetName("Sprite(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Button"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddButtonComponent();
-						newObject.SetName("Button(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						newObject->AddButtonComponent();
+						newObject->SetName("Button(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddCameraComponent();
-						newObject.SetName("Camera(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						newObject->AddCameraComponent();
+						newObject->SetName("Camera(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Canvas"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddCanvasComponent();
-						newObject.SetName("Canvas(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);					
+						newObject->AddCanvasComponent();
+						newObject->SetName("Canvas(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Animation"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddAnimationComponent();
-						Sprite* sprite = newObject.AddSpriteComponent();
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						newObject->AddAnimationComponent();
+						Sprite* sprite = newObject->AddSpriteComponent();
 						sprite->SetTexture("assets/images/resources/block.png");
-						newObject.SetName("Animation(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						newObject->SetName("Animation(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Audio"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddAudioComponent();
-						newObject.SetName("Audio(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						newObject->AddAudioComponent();
+						newObject->SetName("Audio(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Text"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddTextComponent();
-						newObject.SetName("Text(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						newObject->AddTextComponent();
+						newObject->SetName("Text(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Script"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddScriptComponent();
-						newObject.SetName("Script(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						newObject->AddScriptComponent();
+						newObject->SetName("Script(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("CharacterController"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddCharacterControllerComponent();
-						newObject.SetName("CharacterController(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						
+						newObject->AddCharacterControllerComponent();
+						newObject->SetName("CharacterController(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("RigidBody"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddRigidBodyComponent();
-						newObject.SetName("RigidBody(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						newObject->AddRigidBodyComponent();
+						newObject->SetName("RigidBody(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("BoxCollider"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddBoxColliderComponent();
-						newObject.SetName("BoxCollider(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						newObject->AddBoxColliderComponent();
+						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("CircleCollider"))
 					{
-						GameObject newObject = FlatEngine::CreateGameObject(-1);
-						newObject.AddTransformComponent();
-						newObject.AddCircleColliderComponent();
-						newObject.SetName("CircleCollider(" + std::to_string(newObject.GetID()) + ")");
-						SetFocusedGameObjectID(newObject.GetID());
+						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						newObject->AddCircleColliderComponent();
+						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
 					}
 					ImGui::EndMenu();
 				}
@@ -316,9 +300,9 @@ namespace FlatGui {
 						if (path != "")
 						{
 							std::string name = path.substr(path.find_last_of("/\\") + 1);
-							std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
-							newContext->SetPath(path);
-							newContext->SetName(name);
+							MappingContext newContext = MappingContext();
+							newContext.SetPath(path);
+							newContext.SetName(name);
 							FlatEngine::SaveMappingContext(path, newContext);
 							FlatEngine::InitializeMappingContexts();
 							_showMappingContextEditor = true;
@@ -365,6 +349,6 @@ namespace FlatGui {
 			ImGui::EndMainMenuBar();
 		}
 
-		PopMenuStyles();
+		FlatEngine::PopMenuStyles();
 	}
 }

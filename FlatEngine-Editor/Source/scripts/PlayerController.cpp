@@ -13,7 +13,6 @@
 #include "Animation.h"
 
 #include "Health.h"
-#include "BlobParticle.h"
 
 #include "imgui.h"
 
@@ -50,8 +49,8 @@ void OnWhipAttackConnect(std::shared_ptr<FlatEngine::GameObject> thisObject, std
 {
 	if (collidedWith->HasComponent("RigidBody") && collidedWith->HasComponent("Transform"))
 	{
-		Vector2 collidedPosition = collidedWith->GetTransformComponent()->GetTruePosition();
-		Vector2 thisPosition = thisObject->GetTransformComponent()->GetTruePosition();
+		Vector2 collidedPosition = collidedWith->GetTransform()->GetTruePosition();
+		Vector2 thisPosition = thisObject->GetTransform()->GetTruePosition();
 		float awayFromMeX = collidedPosition.x - thisPosition.x;
 		Vector2 normalizedAway = Vector2(0, 1);
 		if (awayFromMeX > 0)
@@ -61,8 +60,8 @@ void OnWhipAttackConnect(std::shared_ptr<FlatEngine::GameObject> thisObject, std
 
 		collidedWith->GetRigidBody()->AddForce(normalizedAway, 500);
 
-		thisObject->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Spark13.wav");
-		thisObject->GetAudioComponent()->Play();
+		thisObject->GetAudio()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Spark13.wav");
+		thisObject->GetAudio()->Play();
 	}
 
 	if (collidedWith->HasComponent("Script"))
@@ -82,16 +81,16 @@ void PlayerController::Start()
 	//characterController = GetOwner()->GetCharacterController();
 	//boxCollider = GetOwner()->GetBoxCollider();
 	//rigidBody = GetOwner()->GetRigidBody();
-	//transform = GetOwner()->GetTransformComponent();
+	//transform = GetOwner()->GetTransform();
 	//sprite = GetOwner()->GetSpriteComponent();
-	//audio = GetOwner()->GetAudioComponent();
+	//audio = GetOwner()->GetAudio();
 	//audio->SetPath("assets/audio/lazerFire.wav");
 	//audio->SetIsMusic(false);
 
 	// Whip arm
 	//if (GetOwner()->GetFirstChild()->GetName() == "WhipArm")
 	//	whipArm = GetOwner()->GetFirstChild();
-	//animator = whipArm->GetAnimationComponent();
+	//animator = whipArm->GetAnimation();
 	//animator->AddEventFunction("WhipAttackStart", WhipAttackStart);
 	//animator->AddEventFunction("WhipAttackEnd", WhipAttackEnd);
 	//whipArm->GetBoxCollider()->SetOnCollisionEnter(OnWhipAttackConnect);
@@ -105,8 +104,8 @@ void PlayerController::Update(float deltaTime)
 {
 	HandleInput();
 
-	//Vector2 attachedPos = spring.attachedTo->GetTransformComponent()->GetTruePosition();
-	//Vector2 myPos = GetOwner()->GetTransformComponent()->GetTruePosition();
+	//Vector2 attachedPos = spring.attachedTo->GetTransform()->GetTruePosition();
+	//Vector2 myPos = GetOwner()->GetTransform()->GetTruePosition();
 
 	//// Calculate center distance with pythag
 	//float rise = attachedPos.y - myPos.y;
@@ -134,7 +133,7 @@ void PlayerController::HandleInput()
 	int xDir = 0;
 	int yDir = 0;
 	Vector2 velocity = Vector2(0, 0);
-	FlatEngine::Animation* animator = GetOwner()->GetAnimationComponent();
+	FlatEngine::Animation* animator = GetOwner()->GetAnimation();
 
 	if (rigidBody != nullptr)
 	{
@@ -163,11 +162,11 @@ void PlayerController::HandleInput()
 		{			
 			//animator->SetAnimationPath("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/animations/A_PlayerStab.json");
 			//animator->Play();
-			//whipArm->GetAudioComponent()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Swoosh.wav");
-			//whipArm->GetAudioComponent()->Play();
+			//whipArm->GetAudio()->LoadEffect("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/audio/Swoosh.wav");
+			//whipArm->GetAudio()->Play();
 			FlatEngine::GameObject instantiatedObject = FlatEngine::Instantiate("P_IceSpike", transform->GetTruePosition(), -1);
 			instantiatedObject.GetRigidBody()->AddForce(Vector2(1, 0), 4000);
-			//instantiatedObject->GetTransformComponent()->LookAt(Vector2(0, 0));
+			//instantiatedObject->GetTransform()->LookAt(Vector2(0, 0));
 		}
 		if (mappingContext->Fired("IA_Slash"))
 		{

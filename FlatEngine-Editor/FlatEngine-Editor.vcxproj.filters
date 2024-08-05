@@ -485,10 +485,7 @@
     <ClCompile Include="Source\Hierarchy.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Icons.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ImGuiWrappers.cpp">
+    <ClCompile Include="Source\ImGuiWrappersEditor.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Inspector.cpp">

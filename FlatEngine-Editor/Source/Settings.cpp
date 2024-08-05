@@ -9,20 +9,20 @@ namespace FlatGui {
 
 	void RenderSettings()
 	{
-		BeginWindow("Settings", _showSettings);
+		FlatEngine::BeginWindow("Settings", _showSettings);
 
 
 		// LEFT SIDE
-		BeginResizeWindowChild("EngineSettings");
-		RenderSectionHeader("Engine Setting");
+		FlatEngine::BeginResizeWindowChild("EngineSettings");
+		FlatEngine::RenderSectionHeader("Engine Setting");
 		// List settings grouping
 		static std::string settingSelected = "Collision Detection";
-		PushTreeList("EngineSettingSelect");
-		RenderTreeLeaf("Collision Detection", settingSelected);
-		RenderTreeLeaf("Physics", settingSelected);
-		RenderTreeLeaf("State", settingSelected);
-		RenderTreeLeaf("Game", settingSelected);
-		PopTreeList();
+		FlatEngine::PushTreeList("EngineSettingSelect");
+		FlatEngine::RenderTreeLeaf("Collision Detection", settingSelected);
+		FlatEngine::RenderTreeLeaf("Physics", settingSelected);
+		FlatEngine::RenderTreeLeaf("State", settingSelected);
+		FlatEngine::RenderTreeLeaf("Game", settingSelected);
+		FlatEngine::PopTreeList();
 		ImGui::EndChild();
 
 
@@ -30,8 +30,8 @@ namespace FlatGui {
 
 
 		// RIGHT SIDE
-		BeginWindowChild("Edit Settings");
-		if (PushTable("SettingsTable", 2))
+		FlatEngine::BeginWindowChild("Edit Settings");
+		if (FlatEngine::PushTable("SettingsTable", 2))
 		{
 			// List settings per grouping
 			if (settingSelected == "Collision Detection")
@@ -43,7 +43,7 @@ namespace FlatGui {
 					if (collisionTypes[c] == loadedProject->GetCollisionDetection())
 						currentCollisionIndex = c;
 				}
-				RenderSelectableTableRow("##CollisionDetectionSelect", "Collision Detection", collisionTypes, currentCollisionIndex);
+				FlatEngine::RenderSelectableTableRow("##CollisionDetectionSelect", "Collision Detection", collisionTypes, currentCollisionIndex);
 				loadedProject->SetCollisionDetection(collisionTypes.at(currentCollisionIndex));
 			}
 			else if (settingSelected == "Physics")
@@ -55,13 +55,13 @@ namespace FlatGui {
 					if (physicsTypes[p] == loadedProject->GetPhysicsSystem())
 						currentPhysicsIndex = p;
 				}
-				RenderSelectableTableRow("##PhysicsSystemSelect", "Physics System", physicsTypes, currentPhysicsIndex);
+				FlatEngine::RenderSelectableTableRow("##PhysicsSystemSelect", "Physics System", physicsTypes, currentPhysicsIndex);
 				loadedProject->SetPhysicsSystem(physicsTypes.at(currentPhysicsIndex));
 			}
 			else if (settingSelected == "State")
 			{
 				bool _autoSave = loadedProject->AutoSaveOn();
-				if (RenderCheckboxTableRow("##AutoSaveCheckbox", "Auto Save", _autoSave))
+				if (FlatEngine::RenderCheckboxTableRow("##AutoSaveCheckbox", "Auto Save", _autoSave))
 					loadedProject->SetAutoSave(_autoSave);
 			}
 			else if (settingSelected == "Game")
@@ -80,7 +80,7 @@ namespace FlatGui {
 					if (resolutions[r] == currentResString)
 						currentResolutionIndex = r;
 				}
-				RenderSelectableTableRow("##ResolutionSelect", "Resolution", resolutions, currentResolutionIndex);
+				FlatEngine::RenderSelectableTableRow("##ResolutionSelect", "Resolution", resolutions, currentResolutionIndex);
 
 				if (resolutions.at(currentResolutionIndex) == "800 x 600")
 					loadedProject->SetResolution(Vector2(800, 600));
@@ -92,23 +92,23 @@ namespace FlatGui {
 
 				// Fullscreen
 				bool _fullscreen = loadedProject->IsFullscreen();
-				if (RenderCheckboxTableRow("##FullscreenCheckbox", "Fullscreen", _fullscreen))
+				if (FlatEngine::RenderCheckboxTableRow("##FullscreenCheckbox", "Fullscreen", _fullscreen))
 					loadedProject->SetFullscreen(_fullscreen);
 
 
 
 				// Vsync
 				bool _vsyncEnabled = loadedProject->IsVsyncEnabled();
-				if (RenderCheckboxTableRow("##VsyncCheckbox", "Vsync", _vsyncEnabled))
+				if (FlatEngine::RenderCheckboxTableRow("##VsyncCheckbox", "Vsync", _vsyncEnabled))
 					loadedProject->SetVsyncEnabled(_vsyncEnabled);
 			}
 
-			PopTable();
+			FlatEngine::PopTable();
 		}
 	
 		ImGui::EndChild();
 
 
-		EndWindow();
+		FlatEngine::EndWindow();
 	}
 }

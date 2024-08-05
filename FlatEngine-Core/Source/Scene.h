@@ -1,5 +1,4 @@
 #pragma once
-#include "FlatEngine.h"
 #include "ECSManager.h"
 #include <vector>
 #include <map>
@@ -41,6 +40,7 @@ namespace FlatEngine
 		void SetPath(std::string path);
 		std::string GetPath();
 		GameObject* AddSceneObject(GameObject sceneObject);
+		void KeepNextGameObjectIDUpToDate(long id);
 		std::map<long, GameObject> &GetSceneObjects();
 		void SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects);
 		std::vector<GameObject*> GetAnimatorPreviewObjects();
@@ -61,6 +61,7 @@ namespace FlatEngine
 
 		// ECS Wrappers
 		void InitializeScriptObjects(); // May not need
+		void KeepNextComponentIDUpToDate(long id);
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
@@ -69,7 +70,6 @@ namespace FlatEngine
 		Canvas* AddCanvas(Canvas canvas, long ownerID);
 		Audio* AddAudio(Audio audio, long ownerID);
 		Text* AddText(Text text, long ownerID);
-		Collider* AddCollider(Collider collider, long ownerID);
 		CompositeCollider* AddCompositeCollider(CompositeCollider collider, long ownerID);
 		BoxCollider* AddBoxCollider(BoxCollider collider, long ownerID);
 		CircleCollider* AddCircleCollider(CircleCollider collider, long ownerID);
@@ -78,22 +78,23 @@ namespace FlatEngine
 		RigidBody* AddRigidBody(RigidBody rigidBody, long ownerID);
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);
 
-		Transform* GetTransform(long ownerID);
-		Sprite* GetSprite(long ownerID);
-		Camera* GetCamera(long ownerID);
-		ScriptComponent* GetScriptComponent(long ownerID);
-		GameScript* GetScript(long ownerID, std::string name);
-		Canvas* GetCanvas(long ownerID);
-		Audio* GetAudio(long ownerID);
-		Text* GetText(long ownerID);
-		Collider* GetCollider(long ownerID);
-		CompositeCollider* GetCompositeCollider(long ownerID);
-		BoxCollider* GetBoxCollider(long ownerID);
-		CircleCollider* GetCircleCollider(long ownerID);
-		Animation* GetAnimation(long ownerID);
-		Button* GetButton(long ownerID);
-		RigidBody* GetRigidBody(long ownerID);
-		CharacterController* GetCharacterController(long ownerID);
+		void RemoveComponent(Component* component, long ownerID);
+
+		Transform* GetTransformByOwner(long ownerID);
+		Sprite* GetSpriteByOwner(long ownerID);
+		Camera* GetCameraByOwner(long ownerID);
+		std::vector<ScriptComponent*> GetScriptsByOwner(long ownerID);
+		GameScript* GetGameScriptByOwner(long ownerID, std::string name);
+		Canvas* GetCanvasByOwner(long ownerID);
+		Audio* GetAudioByOwner(long ownerID);
+		Text* GetTextByOwner(long ownerID);
+		CompositeCollider* GetCompositeColliderByOwner(long ownerID);
+		BoxCollider* GetBoxColliderByOwner(long ownerID);
+		CircleCollider* GetCircleColliderByOwner(long ownerID);
+		Animation* GetAnimationByOwner(long ownerID);
+		std::vector<Button*> GetButtonsByOwner(long ownerID);
+		RigidBody* GetRigidBodyByOwner(long ownerID);
+		CharacterController* GetCharacterControllerByOwner(long ownerID);
 
 		std::vector<std::pair<Transform, long>> GetTransforms();
 		std::vector<std::pair<Sprite, long>> GetSprites();
@@ -105,7 +106,7 @@ namespace FlatEngine
 		std::vector<std::pair<Animation, long>> GetAnimations();
 		std::vector<std::pair<Audio, long>> GetAudios();
 		std::vector<std::pair<Text, long>> GetTexts();
-		std::vector<std::pair<Collider, long>> GetColliders();
+		std::vector<std::pair<Collider*, long>> GetColliders();
 		std::vector<std::pair<CompositeCollider, long>> GetCompositeColliders();
 		std::vector<std::pair<BoxCollider, long>> GetBoxColliders();
 		std::vector<std::pair<CircleCollider, long>> GetCircleColliders();
@@ -119,8 +120,10 @@ namespace FlatEngine
 		std::map<long, GameObject> m_sceneObjects;
 		std::vector<GameObject*> animatorPreviewObjects;
 		ECSManager m_ECSManager;
-		Camera *primaryCamera;
-		long nextGameObjectID;
-		long nextComponentID;
+		Camera *m_primaryCamera;
+		long m_nextGameObjectID;
+		long m_nextComponentID;
+		std::vector<long> m_freedComponentIDs;
+		std::vector<long> m_freedGameObjectIDs;
 	};
 }

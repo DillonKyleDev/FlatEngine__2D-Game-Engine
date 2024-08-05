@@ -3,9 +3,11 @@
 #include <map>
 #include <utility>
 #include <string>
+#include "CompositeCollider.h"
 
 namespace FlatEngine
 {
+	class Component;
 	class GameObject;
 	class Transform;
 	class Sprite;
@@ -38,7 +40,6 @@ namespace FlatEngine
 		Canvas* AddCanvas(Canvas canvas, long ownerID);
 		Audio* AddAudio(Audio audio, long ownerID);
 		Text* AddText(Text text, long ownerID);
-		Collider* AddCollider(Collider collider, long ownerID);
 		CompositeCollider* AddCompositeCollider(CompositeCollider collider, long ownerID);
 		BoxCollider* AddBoxCollider(BoxCollider collider, long ownerID);
 		CircleCollider* AddCircleCollider(CircleCollider collider, long ownerID);
@@ -47,28 +48,41 @@ namespace FlatEngine
 		RigidBody* AddRigidBody(RigidBody rigidBody, long ownerID);
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);	
 
-		Transform* GetTransform(long ownerID);
-		Sprite* GetSprite(long ownerID);
-		Camera* GetCamera(long ownerID);
-		ScriptComponent* GetScriptComponent(long ownerID);
-		GameScript* GetScript(long ownerID, std::string name);
-		Canvas* GetCanvas(long ownerID);
-		Audio* GetAudio(long ownerID);
-		Text* GetText(long ownerID);
-		Collider* GetCollider(long ownerID);
-		CompositeCollider* GetCompositeCollider(long ownerID);
-		BoxCollider* GetBoxCollider(long ownerID);
-		CircleCollider* GetCircleCollider(long ownerID);
-		Animation* GetAnimation(long ownerID);
-		Button* GetButton(long ownerID);
-		RigidBody* GetRigidBody(long ownerID);
-		CharacterController* GetCharacterController(long ownerID);
+		bool RemoveComponent(Component* component, long ownerID);
+		bool RemoveTransform(long ownerID);
+		bool RemoveSprite(long ownerID);
+		bool RemoveCamera(long ownerID);
+		bool RemoveScript(long ownerID);
+		bool RemoveGameScript(long ownerID);
+		bool RemoveCanvas(long ownerID);
+		bool RemoveAudio(long ownerID);
+		bool RemoveText(long ownerID);
+		bool RemoveCompositeCollider(long ownerID);
+		bool RemoveBoxCollider(long ownerID);
+		bool RemoveCircleCollider(long ownerID);
+		bool RemoveAnimation(long ownerID);
+		bool RemoveButton(long ownerID);
+		bool RemoveRigidBody(long ownerID);
+		bool RemoveCharacterController(long ownerID);
+
+		Transform* GetTransformByOwner(long ownerID);
+		Sprite* GetSpriteByOwner(long ownerID);
+		Camera* GetCameraByOwner(long ownerID);
+		std::vector<ScriptComponent*> GetScriptsByOwner(long ownerID);
+		GameScript* GetGameScriptByOwner(long ownerID, std::string name);
+		Canvas* GetCanvasByOwner(long ownerID);
+		Audio* GetAudioByOwner(long ownerID);
+		Text* GetTextByOwner(long ownerID);
+		CompositeCollider* GetCompositeColliderByOwner(long ownerID);
+		BoxCollider* GetBoxColliderByOwner(long ownerID);
+		CircleCollider* GetCircleColliderByOwner(long ownerID);
+		Animation* GetAnimationByOwner(long ownerID);
+		std::vector<Button*> GetButtonsByOwner(long ownerID);
+		RigidBody* GetRigidBodyByOwner(long ownerID);
+		CharacterController* GetCharacterControllerByOwner(long ownerID);
 
 		void CollectPhysicsBodies();
 		void InitializeScriptObjects(std::vector<GameObject> gameObjects);
-		void RemoveScript(long scriptID);
-		void RemoveRigidBody(long rigidBodyID);
-		void RemoveCollider(long colliderID);
 		void UpdateColliderPairs();
 		void UpdateActiveRigidBodies();
 
@@ -82,7 +96,7 @@ namespace FlatEngine
 		std::vector<std::pair<Animation, long>> GetAnimations();
 		std::vector<std::pair<Audio, long>> GetAudios();
 		std::vector<std::pair<Text, long>> GetTexts();
-		std::vector<std::pair<Collider, long>> GetColliders();
+		std::vector<std::pair<Collider*, long>> GetColliders();
 		std::vector<std::pair<CompositeCollider, long>> GetCompositeColliders();
 		std::vector<std::pair<BoxCollider, long>> GetBoxColliders();
 		std::vector<std::pair<CircleCollider, long>> GetCircleColliders();
@@ -100,8 +114,7 @@ namespace FlatEngine
 		std::vector<std::pair<Canvas, long>> m_Canvases;
 		std::vector<std::pair<Animation, long>> m_Animations;
 		std::vector<std::pair<Audio, long>> m_Audios;
-		std::vector<std::pair<Text, long>> m_Texts;
-		std::vector<std::pair<Collider, long>> m_Colliders;
+		std::vector<std::pair<Text, long>> m_Texts;		
 		std::vector<std::pair<CompositeCollider, long>> m_CompositeColliders;
 		std::vector<std::pair<BoxCollider, long>> m_BoxColliders;
 		std::vector<std::pair<CircleCollider, long>> m_CircleColliders;
@@ -116,12 +129,11 @@ namespace FlatEngine
 		std::map<long, long> m_cameraMap;
 		std::map<long, std::vector<long>> m_scriptMap;
 		std::map<long, long> m_gameScriptMap; // To be determined later
-		std::map<long, long> m_buttonMap;
+		std::map<long, std::vector<long>> m_buttonMap;
 		std::map<long, long> m_canvasMap;
 		std::map<long, long> m_animationMap;
 		std::map<long, long> m_audioMap;
-		std::map<long, long> m_textMap;
-		std::map<long, long> m_colliderMap;
+		std::map<long, long> m_textMap;		
 		std::map<long, long> m_compositeColliderMap;
 		std::map<long, long> m_boxColliderMap;
 		std::map<long, long> m_circleColliderMap;

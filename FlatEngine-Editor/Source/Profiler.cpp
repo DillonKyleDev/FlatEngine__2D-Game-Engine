@@ -47,7 +47,7 @@ namespace FlatGui
 
 	void RenderProfiler()
 	{
-		BeginWindow("Profiler", _showProfiler);
+		FlatEngine::BeginWindow("Profiler", _showProfiler);
 
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
@@ -72,26 +72,26 @@ namespace FlatGui
 		}
 
 		// Render runtime data
-		if (PushTable("##RunTimeData", 2))
+		if (FlatEngine::PushTable("##RunTimeData", 2))
 		{
-			RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
-			RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
-			RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
-			RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
-			RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-			RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
-			RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
-			PopTable();
+			FlatEngine::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
+			FlatEngine::RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
+			FlatEngine::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
+			FlatEngine::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
+			FlatEngine::RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
+			FlatEngine::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+			FlatEngine::RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
+			FlatEngine::PopTable();
 		}
 
 		static bool _showColliderPairs = true;
-		RenderCheckbox("Show Collider Pairs", _showColliderPairs);
+		FlatEngine::RenderCheckbox("Show Collider Pairs", _showColliderPairs);
 		if (_showColliderPairs)
 		{
 			// Render runtime data
-			if (PushTable("##RunTimeData", 2))
+			if (FlatEngine::PushTable("##RunTimeData", 2))
 			{
-				RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
+				FlatEngine::RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
 
 				for (std::pair<Collider*, Collider*> pair : FlatEngine::GetLoadedScene()->GetColliderPairs())
 				{
@@ -99,13 +99,13 @@ namespace FlatGui
 					std::string col2String = pair.second->GetParent()->GetName();
 					std::string TableRowID = "##ColliderPairID-" + std::to_string(pair.first->GetParent()->GetID()) + std::to_string(pair.second->GetParent()->GetID());					
 
-					RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
+					FlatEngine::RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
 				}
-				PopTable();
+				FlatEngine::PopTable();
 			}
 		}
 
-		RenderCheckbox("Animate", anim);
+		FlatEngine::RenderCheckbox("Animate", anim);
 		if (anim)
 			offset = (offset + 1) % 100;
 
@@ -154,7 +154,7 @@ namespace FlatGui
 			ImGui::EndTable();
 		}
 
-		EndWindow();
+		FlatEngine::EndWindow();
 	}
 
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) {

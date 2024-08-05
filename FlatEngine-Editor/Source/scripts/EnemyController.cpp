@@ -17,7 +17,7 @@ void OnTakeDamage(std::shared_ptr<FlatEngine::GameObject> thisObject, std::share
 {
 	if (thisObject->HasComponent("Animation"))
 	{
-		thisObject->GetAnimationComponent()->Play();
+		thisObject->GetAnimation()->Play();
 	}
 }
 void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> killedBy)
@@ -47,9 +47,9 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 
 		float power = pow(rng);
 
-		FlatEngine::GameObject blobParticle = FlatEngine::Instantiate("P_BlobParticle", thisObject->GetTransformComponent()->GetTruePosition());
+		FlatEngine::GameObject blobParticle = FlatEngine::Instantiate("P_BlobParticle", thisObject->GetTransform()->GetTruePosition());
 		FlatEngine::RigidBody* blobRigidBody = blobParticle.GetRigidBody();
-		blobParticle.GetFirstChild().GetAnimationComponent()->Play();
+		blobParticle.GetFirstChild().GetAnimation()->Play();
 
 		blobRigidBody->AddForce(direction, power);
 	}
@@ -109,7 +109,7 @@ void EnemyController::Start()
 	//boxCollider = GetOwner()->GetBoxCollider();
 	//circleColliders = GetOwner()->GetCircleColliders();
 	//rigidBody = GetOwner()->GetRigidBody();
-	//transform = GetOwner()->GetTransformComponent();
+	//transform = GetOwner()->GetTransform();
 	//sprite = GetOwner()->GetSpriteComponent();
 	//audio = GetOwner()->GetAudioComponent();
 	//animator = GetOwner()->GetAnimationComponent();
@@ -138,8 +138,8 @@ void EnemyController::Update(float deltaTime)
 
 		}
 	}
-	else if (GetOwner()->GetSpriteComponent()->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png")
-		GetOwner()->GetSpriteComponent()->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png");
+	else if (GetOwner()->GetSprite()->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png")
+		GetOwner()->GetSprite()->SetTexture("C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/idle.png");
 }
 
 void EnemyController::MoveToObject(std::shared_ptr<FlatEngine::GameObject> object)
@@ -147,7 +147,7 @@ void EnemyController::MoveToObject(std::shared_ptr<FlatEngine::GameObject> objec
 	//if (object->HasComponent("Transform") && GetOwner()->HasComponent("CharacterController"))
 	//{
 	//	std::shared_ptr<FlatEngine::Sprite> sprite = GetOwner()->GetSpriteComponent();
-	//	Vector2 moveTo = object->GetTransformComponent()->GetTruePosition() - GetOwner()->GetTransformComponent()->GetTruePosition();
+	//	Vector2 moveTo = object->GetTransform()->GetTruePosition() - GetOwner()->GetTransform()->GetTruePosition();
 	//	GetOwner()->GetCharacterController()->MoveToward(moveTo.NormalizeCardinal());
 	//	//FlatEngine::LogVector2(moveTo.NormalizeCardinal());
 	//	if (moveTo.x < 0 && sprite->GetPath() != "C:/Users/Dillon Kyle/source/repos/FlatEngine/WindowsApplication/assets/images/Sprites/owl/walkLeft.png")

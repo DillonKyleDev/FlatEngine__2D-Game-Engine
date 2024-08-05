@@ -129,7 +129,7 @@ namespace FlatEngine {
 	{
 		// Then apply to transform
 		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
 		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
@@ -242,7 +242,7 @@ namespace FlatEngine {
 		for (FlatEngine::BoxCollider* boxCollider : boxColliders)
 		{
 			Vector2 scale = Vector2(1, 1);
-			FlatEngine::Transform* transform = boxCollider->GetParent()->GetTransformComponent();
+			FlatEngine::Transform* transform = boxCollider->GetParent()->GetTransform();
 			if (transform != nullptr)
 				scale = transform->GetScale();
 
@@ -262,8 +262,8 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyCollisionForce(FlatEngine::Collider* collider, float halfWidth, float halfHeight)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
-		Vector2 position = GetParent()->GetTransformComponent()->GetPosition();				
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Vector2 position = GetParent()->GetTransform()->GetPosition();				
 		float newYPos;
 		float newXPos;
 		float cornerFriction = .01f;
@@ -497,7 +497,7 @@ namespace FlatEngine {
 	Vector2 RigidBody::GetNextPosition()
 	{
 		Vector2 nextVelocity = Vector2(acceleration.x * GetDeltaTime(), acceleration.y * GetDeltaTime());
-		FlatEngine::Transform* transform = GetParent()->GetTransformComponent();
+		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetTruePosition();
 		return Vector2(position.x + nextVelocity.x * 2, position.y + nextVelocity.y * 2);
 	}

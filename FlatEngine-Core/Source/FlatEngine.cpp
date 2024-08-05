@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <cmath>
 #include <shobjidl.h> 
+#include "implot.h"
 
 
 /*
@@ -46,20 +47,16 @@ namespace FlatEngine
 	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
 	int JOYSTICK_DEAD_ZONE = 4000;
 
+	GameObject* playerObject = nullptr;
+
 	// Managers
 	Logger F_Logger = Logger();
 	UIManager F_UIManager = UIManager();
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
-
+	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
 	TTF_Font* F_fontCinzel;
-
-	std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>> colliderPairs = std::vector<std::pair<std::shared_ptr<Collider>, std::shared_ptr<Collider>>>();
 	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
-	GameObject* playerObject = nullptr;
-
-	// Mapping Context
-	std::vector<std::shared_ptr<MappingContext>> mappingContexts;
 
 	// Animator
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
@@ -68,6 +65,8 @@ namespace FlatEngine
 	int previewAnimationStartTime = 0;
 	int previewAnimationTime = 0;
 	bool _playPreviewAnimation = true;
+
+
 
 	bool LoadFonts()
 	{
@@ -89,7 +88,7 @@ namespace FlatEngine
 		F_fontCinzel = NULL;
 	}
 
-	bool Init()
+	bool Init(int windowWidth, int windowHeight)
 	{
 		//Initialization flag
 		bool success = true;
@@ -115,7 +114,7 @@ namespace FlatEngine
 			char* title = &(t[0]);
 
 			//Initialize Window::window
-			if (Window::Init(title, 1920, 1000))
+			if (Window::Init(title, windowWidth, windowHeight))
 			{
 				FlatEngine::LogString("Window initialized...");
 
@@ -146,7 +145,10 @@ namespace FlatEngine
 						}
 						else
 						{
-							Mix_AllocateChannels(100);
+							SetupImGui(); // Set up ImGui Context and global styles
+							CreateIcons(); // Create texture icons
+							Mix_AllocateChannels(100); // Sets number of individual audios that can play at once
+
 							FlatEngine::LogString("SDL_mixer initialized...");
 							FlatEngine::LogString("Ready...");
 							FlatEngine::LogSeparator();
@@ -159,6 +161,75 @@ namespace FlatEngine
 		}
 
 		return success;
+	}
+
+	void SetupImGui()
+	{
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImPlot::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls for imgui ui nav
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		style.WindowPadding = { 5.0f, 5.0f };
+		style.DockingSeparatorSize = 1;
+		style.SeparatorTextAlign = Vector2(0.5f, 0.0f);
+		style.SeparatorTextBorderSize = 1;
+
+		ImGui_ImplSDL2_InitForSDLRenderer(Window::W_Window, Window::W_Renderer);
+		ImGui_ImplSDLRenderer2_Init(Window::W_Renderer);
+
+		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			const char* name = ImGui::GetStyleColorName(i);
+			//LogString(name);
+			if (name == "TitleBgActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_titleBgActiveColor;
+			}
+			if (name == "TabUnfocusedActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_tabUnfocusedActiveColor;
+			}
+			if (name == "TabActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_tabActiveColor;
+			}
+			if (name == "ResizeGripHovered")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_resizeGripHoveredColor;
+			}
+			if (name == "ResizeGripActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_resizeGripActiveColor;
+			}
+			if (name == "DockingPreview")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_dockingPreviewColor;
+			}
+			if (name == "DockingEmptyBg")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = F_dockingPreviewEmptyColor;
+			}
+		}
 	}
 
 	void ManageControllers()
@@ -188,8 +259,19 @@ namespace FlatEngine
 		}
 	}
 
+
+	void QuitImGui()
+	{
+		ImGui_ImplSDLRenderer2_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImPlot::DestroyContext();
+		ImGui::DestroyContext();
+	}
+
 	void CloseProgram()
 	{
+		QuitImGui();
+
 		// Clean up old gamepads
 		for (SDL_Joystick* gamepad : gamepads)
 		{
@@ -249,9 +331,14 @@ namespace FlatEngine
 
 
 	// GameObject / Scene management
-	void SaveScene(std::shared_ptr<Scene> scene, std::string filename)
+	void SaveScene(Scene* scene, std::string filename)
 	{
 		F_SceneManager.SaveScene(scene, filename);
+	}
+
+	void SaveCurrentScene()
+	{
+		F_SceneManager.SaveCurrentScene();
 	}
 
 	void LoadScene(std::string name)
@@ -276,7 +363,7 @@ namespace FlatEngine
 	long GetNextComponentID()
 	{
 		long nextID = -1;
-		std::shared_ptr<Scene> loadedScene = GetLoadedScene();
+		Scene* loadedScene = GetLoadedScene();
 		if (loadedScene != nullptr)
 		{
 			nextID = loadedScene->GetNextComponentID();
@@ -289,7 +376,7 @@ namespace FlatEngine
 	long GetNextGameObjectID()
 	{
 		long nextID = -1;
-		std::shared_ptr<Scene> loadedScene = GetLoadedScene();
+		Scene* loadedScene = GetLoadedScene();
 		if (loadedScene != nullptr)
 		{
 			nextID = loadedScene->GetNextGameObjectID();
@@ -298,12 +385,12 @@ namespace FlatEngine
 		return nextID;
 	}
 
-	std::shared_ptr<Scene> GetLoadedScene()
+	Scene *GetLoadedScene()
 	{
 		return F_SceneManager.GetLoadedScene();
 	}
 
-	std::shared_ptr<Scene> CreateNewScene()
+	Scene *CreateNewScene()
 	{
 		return F_SceneManager.CreateNewScene();
 	}
@@ -315,10 +402,7 @@ namespace FlatEngine
 
 	std::map<long, GameObject> &GetSceneObjects()
 	{
-		//if (GetLoadedScene() != nullptr)
-			return GetLoadedScene()->GetSceneObjects();
-		//else
-		//	return std::vector<GameObject>();
+		return GetLoadedScene()->GetSceneObjects();
 	}
 
 	GameObject* CreateGameObject(long parentID)
@@ -348,7 +432,7 @@ namespace FlatEngine
 
 
 	// Mapping Context Management
-	void SaveMappingContext(std::string path, std::shared_ptr<MappingContext> context)
+	void SaveMappingContext(std::string path, MappingContext context)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -364,9 +448,9 @@ namespace FlatEngine
 		// Array that will hold our mappings json objects
 		json mappings = json::array();
 
-		if (context->GetKeyBindings().size() > 0)
+		if (context.GetKeyBindings().size() > 0)
 		{
-			std::string data = context->GetData();
+			std::string data = context.GetData();
 			mappings.push_back(json::parse(data));
 		}
 		else
@@ -384,13 +468,13 @@ namespace FlatEngine
 
 	void InitializeMappingContexts()
 	{
-		mappingContexts.clear();
+		F_MappingContexts.clear();
 
-		std::string path = "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\mappingContext";
+		std::string path = "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\mappingContext";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			// Create a new context to save the loaded keybindings to
-			std::shared_ptr<MappingContext> newContext = std::make_shared<MappingContext>();
+			MappingContext newContext = MappingContext();
 
 			json contextData = LoadFileData(entry.path().string());
 			if (contextData != NULL)
@@ -400,82 +484,930 @@ namespace FlatEngine
 
 				auto mappings = contextData["Mapping Context"][0];
 				
-				newContext->SetName(mappings["name"]);
-				newContext->SetPath(entry.path().string());
+				newContext.SetName(mappings["name"]);
+				newContext.SetPath(entry.path().string());
 				
 				// XInput
-				newContext->AddKeyBinding("XInput_A", mappings["XInput_A"]);
-				newContext->AddKeyBinding("XInput_B", mappings["XInput_B"]);
-				newContext->AddKeyBinding("XInput_X", mappings["XInput_X"]);
-				newContext->AddKeyBinding("XInput_Y", mappings["XInput_Y"]);
-				newContext->AddKeyBinding("XInput_LB", mappings["XInput_LB"]);
-				newContext->AddKeyBinding("XInput_RB", mappings["XInput_RB"]);
-				newContext->AddKeyBinding("XInput_ScreenShot", mappings["XInput_ScreenShot"]);
-				newContext->AddKeyBinding("XInput_Start", mappings["XInput_Start"]);
-				newContext->AddKeyBinding("XInput_LS", mappings["XInput_LS"]);
-				newContext->AddKeyBinding("XInput_RS", mappings["XInput_RS"]);
-				newContext->AddKeyBinding("XInput_Home", mappings["XInput_Home"]);
-				newContext->AddKeyBinding("XInput_Tray", mappings["XInput_Tray"]);
-				newContext->AddKeyBinding("XInput_DPadUp", mappings["XInput_DPadUp"]);
-				newContext->AddKeyBinding("XInput_DPadDown", mappings["XInput_DPadDown"]);
-				newContext->AddKeyBinding("XInput_DPadLeft", mappings["XInput_DPadLeft"]);
-				newContext->AddKeyBinding("XInput_DPadRight", mappings["XInput_DPadRight"]);
-				newContext->AddKeyBinding("XInput_LeftJoystickX", mappings["XInput_LeftJoystickX"]);
-				newContext->AddKeyBinding("XInput_LeftJoystickY", mappings["XInput_LeftJoystickY"]);
-				newContext->AddKeyBinding("XInput_RightJoystick", mappings["XInput_RightJoystick"]);
-				newContext->AddKeyBinding("XInput_LT", mappings["XInput_LT"]);
-				newContext->AddKeyBinding("XInput_RT", mappings["XInput_RT"]);
+				newContext.AddKeyBinding("XInput_A", mappings["XInput_A"]);
+				newContext.AddKeyBinding("XInput_B", mappings["XInput_B"]);
+				newContext.AddKeyBinding("XInput_X", mappings["XInput_X"]);
+				newContext.AddKeyBinding("XInput_Y", mappings["XInput_Y"]);
+				newContext.AddKeyBinding("XInput_LB", mappings["XInput_LB"]);
+				newContext.AddKeyBinding("XInput_RB", mappings["XInput_RB"]);
+				newContext.AddKeyBinding("XInput_ScreenShot", mappings["XInput_ScreenShot"]);
+				newContext.AddKeyBinding("XInput_Start", mappings["XInput_Start"]);
+				newContext.AddKeyBinding("XInput_LS", mappings["XInput_LS"]);
+				newContext.AddKeyBinding("XInput_RS", mappings["XInput_RS"]);
+				newContext.AddKeyBinding("XInput_Home", mappings["XInput_Home"]);
+				newContext.AddKeyBinding("XInput_Tray", mappings["XInput_Tray"]);
+				newContext.AddKeyBinding("XInput_DPadUp", mappings["XInput_DPadUp"]);
+				newContext.AddKeyBinding("XInput_DPadDown", mappings["XInput_DPadDown"]);
+				newContext.AddKeyBinding("XInput_DPadLeft", mappings["XInput_DPadLeft"]);
+				newContext.AddKeyBinding("XInput_DPadRight", mappings["XInput_DPadRight"]);
+				newContext.AddKeyBinding("XInput_LeftJoystickX", mappings["XInput_LeftJoystickX"]);
+				newContext.AddKeyBinding("XInput_LeftJoystickY", mappings["XInput_LeftJoystickY"]);
+				newContext.AddKeyBinding("XInput_RightJoystick", mappings["XInput_RightJoystick"]);
+				newContext.AddKeyBinding("XInput_LT", mappings["XInput_LT"]);
+				newContext.AddKeyBinding("XInput_RT", mappings["XInput_RT"]);
 
 				//// Keyboard + Mouse
 				// Directional
-				newContext->AddKeyBinding("SDLK_UP", mappings["SDLK_UP"]);
-				newContext->AddKeyBinding("SDLK_DOWN", mappings["SDLK_DOWN"]);
-				newContext->AddKeyBinding("SDLK_LEFT", mappings["SDLK_LEFT"]);
-				newContext->AddKeyBinding("SDLK_RIGHT", mappings["SDLK_RIGHT"]);
+				newContext.AddKeyBinding("SDLK_UP", mappings["SDLK_UP"]);
+				newContext.AddKeyBinding("SDLK_DOWN", mappings["SDLK_DOWN"]);
+				newContext.AddKeyBinding("SDLK_LEFT", mappings["SDLK_LEFT"]);
+				newContext.AddKeyBinding("SDLK_RIGHT", mappings["SDLK_RIGHT"]);
 				// Letters
-				newContext->AddKeyBinding("SDLK_a", mappings["SDLK_a"]);
-				newContext->AddKeyBinding("SDLK_b", mappings["SDLK_b"]);
-				newContext->AddKeyBinding("SDLK_c", mappings["SDLK_c"]);
-				newContext->AddKeyBinding("SDLK_d", mappings["SDLK_d"]);
-				newContext->AddKeyBinding("SDLK_e", mappings["SDLK_e"]);
-				newContext->AddKeyBinding("SDLK_f", mappings["SDLK_f"]);
-				newContext->AddKeyBinding("SDLK_g", mappings["SDLK_g"]);
-				newContext->AddKeyBinding("SDLK_h", mappings["SDLK_h"]);
-				newContext->AddKeyBinding("SDLK_i", mappings["SDLK_i"]);
-				newContext->AddKeyBinding("SDLK_j", mappings["SDLK_j"]);
-				newContext->AddKeyBinding("SDLK_k", mappings["SDLK_k"]);
-				newContext->AddKeyBinding("SDLK_l", mappings["SDLK_l"]);
-				newContext->AddKeyBinding("SDLK_m", mappings["SDLK_m"]);
-				newContext->AddKeyBinding("SDLK_n", mappings["SDLK_n"]);
-				newContext->AddKeyBinding("SDLK_o", mappings["SDLK_o"]);
-				newContext->AddKeyBinding("SDLK_p", mappings["SDLK_p"]);
-				newContext->AddKeyBinding("SDLK_q", mappings["SDLK_q"]);
-				newContext->AddKeyBinding("SDLK_r", mappings["SDLK_r"]);
-				newContext->AddKeyBinding("SDLK_s", mappings["SDLK_s"]);
-				newContext->AddKeyBinding("SDLK_t", mappings["SDLK_t"]);
-				newContext->AddKeyBinding("SDLK_u", mappings["SDLK_u"]);
-				newContext->AddKeyBinding("SDLK_v", mappings["SDLK_v"]);
-				newContext->AddKeyBinding("SDLK_w", mappings["SDLK_w"]);
-				newContext->AddKeyBinding("SDLK_x", mappings["SDLK_x"]);
-				newContext->AddKeyBinding("SDLK_y", mappings["SDLK_y"]);
-				newContext->AddKeyBinding("SDLK_z", mappings["SDLK_z"]);
+				newContext.AddKeyBinding("SDLK_a", mappings["SDLK_a"]);
+				newContext.AddKeyBinding("SDLK_b", mappings["SDLK_b"]);
+				newContext.AddKeyBinding("SDLK_c", mappings["SDLK_c"]);
+				newContext.AddKeyBinding("SDLK_d", mappings["SDLK_d"]);
+				newContext.AddKeyBinding("SDLK_e", mappings["SDLK_e"]);
+				newContext.AddKeyBinding("SDLK_f", mappings["SDLK_f"]);
+				newContext.AddKeyBinding("SDLK_g", mappings["SDLK_g"]);
+				newContext.AddKeyBinding("SDLK_h", mappings["SDLK_h"]);
+				newContext.AddKeyBinding("SDLK_i", mappings["SDLK_i"]);
+				newContext.AddKeyBinding("SDLK_j", mappings["SDLK_j"]);
+				newContext.AddKeyBinding("SDLK_k", mappings["SDLK_k"]);
+				newContext.AddKeyBinding("SDLK_l", mappings["SDLK_l"]);
+				newContext.AddKeyBinding("SDLK_m", mappings["SDLK_m"]);
+				newContext.AddKeyBinding("SDLK_n", mappings["SDLK_n"]);
+				newContext.AddKeyBinding("SDLK_o", mappings["SDLK_o"]);
+				newContext.AddKeyBinding("SDLK_p", mappings["SDLK_p"]);
+				newContext.AddKeyBinding("SDLK_q", mappings["SDLK_q"]);
+				newContext.AddKeyBinding("SDLK_r", mappings["SDLK_r"]);
+				newContext.AddKeyBinding("SDLK_s", mappings["SDLK_s"]);
+				newContext.AddKeyBinding("SDLK_t", mappings["SDLK_t"]);
+				newContext.AddKeyBinding("SDLK_u", mappings["SDLK_u"]);
+				newContext.AddKeyBinding("SDLK_v", mappings["SDLK_v"]);
+				newContext.AddKeyBinding("SDLK_w", mappings["SDLK_w"]);
+				newContext.AddKeyBinding("SDLK_x", mappings["SDLK_x"]);
+				newContext.AddKeyBinding("SDLK_y", mappings["SDLK_y"]);
+				newContext.AddKeyBinding("SDLK_z", mappings["SDLK_z"]);
 
 				// After all keys are set, create their Input Action bindings
-				newContext->CreateInputActionBindings();
+				newContext.CreateInputActionBindings();
 
 				// Add context to context managing vector
-				mappingContexts.push_back(newContext);
+				F_MappingContexts.push_back(newContext);
 			}
 		}
 	}
 
-	std::shared_ptr<MappingContext> GetMappingContext(std::string contextName)
+	MappingContext* GetMappingContext(std::string contextName)
 	{
-		for (std::shared_ptr<MappingContext> mappingContext : mappingContexts)
-			if (mappingContext->GetName() == contextName)
-				return mappingContext;
+		for (std::vector<MappingContext>::iterator iter = F_MappingContexts.begin(); iter != F_MappingContexts.end();)
+		{
+			if (iter->GetName() == contextName)
+				return &(*iter);
+
+			iter++;
+		}
 
 		return nullptr;
+	}
+
+	void HandleEvents(bool& quit)
+	{
+		//std::vector<FlatEngine::MappingContext> *FlatEngine::F_MappingContexts = &FlatEngine::F_FlatEngine::F_MappingContexts;
+		using XInputAxis = FlatEngine::XInputAxis;
+		using XInputButtons = FlatEngine::XInputButtons;
+		using XInputHats = FlatEngine::XInputHats;
+		int JOYSTICK_DEAD_ZONE = FlatEngine::JOYSTICK_DEAD_ZONE;
+
+		// Unfire all keybinds that were fired in the last frame then clear the saved keys
+		static std::vector<std::string> firedKeys = std::vector<std::string>();
+		for (std::string keybind : firedKeys)
+			for (FlatEngine::MappingContext mappingContext : FlatEngine::F_MappingContexts)
+				mappingContext.UnFireEvent(keybind);
+		firedKeys.clear();
+
+
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+		{
+			ImGui_ImplSDL2_ProcessEvent(&event);
+			if (event.type == SDL_QUIT)
+				quit = true;
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::W_Window))
+				quit = true;
+
+			for (MappingContext context : F_MappingContexts)
+			{
+				HandleContextEvents(context, event, firedKeys);
+			}
+		}
+
+
+		// BUTTON COMPONENT EVENTS - GameView
+		// 
+		// TODO: Check here if the Game viewport is focused before getting the mouse data //
+		// Check for mouse over on all of our Game Buttons
+		static bool _hasLeftClicked = false;
+		static bool _hasRightClicked = false;
+		if (FlatEngine::F_UIManager.CheckForMouseOver())
+		{
+			std::vector<FlatEngine::Button*> hoveredButtons = FlatEngine::F_UIManager.GetHoveredButtons();
+			ImGuiIO inputOutput = ImGui::GetIO();
+			FlatEngine::Button* topLevelButton = FlatEngine::F_UIManager.GetTopLevelButton();
+
+			// Call the OnMouseOverFunction() in the top level button that is hovered
+			GameObject thisObject = FlatEngine::GetObjectById(FlatEngine::F_UIManager.GetTopLevelButton()->GetParentID());
+
+			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
+			{
+				_hasLeftClicked = true;
+				topLevelButton->OnLeftClickFunction(&thisObject);
+			}
+			// Unclick check
+			if (!inputOutput.MouseDown[0])
+				_hasLeftClicked = false;
+
+			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
+			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
+			{
+				_hasRightClicked = true;
+				topLevelButton->OnRightClickFunction(&thisObject);
+			}
+			// Unclick check
+			if (!inputOutput.MouseDown[1])
+				_hasRightClicked = false;
+		}
+	}
+
+	void HandleContextEvents(MappingContext& context, SDL_Event event, std::vector<std::string> &firedKeys)
+	{
+		// Keyboard Keys Down
+		if (event.type == SDL_KEYDOWN)
+		{
+			// Send event to context inputAction
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_SPACE:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_SPACE") != "" && mappingContext.GetKeyBoundEvent("SDLK_SPACE").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_SPACE", event);
+						firedKeys.push_back("SDLK_SPACE");
+					}
+				break;
+
+			case SDLK_UP:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_UP") != "" && mappingContext.GetKeyBoundEvent("SDLK_UP").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_UP", event);
+						firedKeys.push_back("SDLK_UP");
+					}
+				break;
+
+			case SDLK_DOWN:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_DOWN") != "" && mappingContext.GetKeyBoundEvent("SDLK_DOWN").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_DOWN", event);
+						firedKeys.push_back("SDLK_DOWN");
+					}
+				break;
+
+			case SDLK_LEFT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_LEFT") != "" && mappingContext.GetKeyBoundEvent("SDLK_LEFT").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_LEFT", event);
+						firedKeys.push_back("SDLK_LEFT");
+					}
+				break;
+
+			case SDLK_RIGHT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_RIGHT") != "" && mappingContext.GetKeyBoundEvent("SDLK_RIGHT").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_RIGHT", event);
+						firedKeys.push_back("SDLK_RIGHT");
+					}
+				break;
+
+			case SDLK_a:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_a") != "" && mappingContext.GetKeyBoundEvent("SDLK_a").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_a", event);
+						firedKeys.push_back("SDLK_a");
+					}
+				break;
+
+			case SDLK_b:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_b") != "" && mappingContext.GetKeyBoundEvent("SDLK_b").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_b", event);
+						firedKeys.push_back("SDLK_b");
+					}
+				break;
+
+			case SDLK_c:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_c") != "" && mappingContext.GetKeyBoundEvent("SDLK_c").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_c", event);
+						firedKeys.push_back("SDLK_c");
+					}
+				break;
+
+			case SDLK_d:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_d") != "" && mappingContext.GetKeyBoundEvent("SDLK_d").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_d", event);
+						firedKeys.push_back("SDLK_d");
+					}
+				break;
+
+			case SDLK_e:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_e") != "" && mappingContext.GetKeyBoundEvent("SDLK_e").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_e", event);
+						firedKeys.push_back("SDLK_e");
+					}
+				break;
+
+			case SDLK_f:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_f") != "" && mappingContext.GetKeyBoundEvent("SDLK_f").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_f", event);
+						firedKeys.push_back("SDLK_f");
+					}
+				break;
+
+			case SDLK_g:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_g") != "" && mappingContext.GetKeyBoundEvent("SDLK_g").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_g", event);
+						firedKeys.push_back("SDLK_g");
+					}
+				break;
+
+			case SDLK_h:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_h") != "" && mappingContext.GetKeyBoundEvent("SDLK_h").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_h", event);
+						firedKeys.push_back("SDLK_h");
+					}
+				break;
+
+			case SDLK_i:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_i") != "" && mappingContext.GetKeyBoundEvent("SDLK_i").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_i", event);
+						firedKeys.push_back("SDLK_i");
+					}
+				break;
+
+			case SDLK_j:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_j") != "" && mappingContext.GetKeyBoundEvent("SDLK_j").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_j", event);
+						firedKeys.push_back("SDLK_j");
+					}
+				break;
+
+			case SDLK_k:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_k") != "" && mappingContext.GetKeyBoundEvent("SDLK_k").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_k", event);
+						firedKeys.push_back("SDLK_k");
+					}
+				break;
+
+			case SDLK_l:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_l") != "" && mappingContext.GetKeyBoundEvent("SDLK_l").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_l", event);
+						firedKeys.push_back("SDLK_l");
+					}
+				break;
+
+			case SDLK_m:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_m") != "" && mappingContext.GetKeyBoundEvent("SDLK_m").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_m", event);
+						firedKeys.push_back("SDLK_m");
+					}
+				break;
+
+			case SDLK_n:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_n") != "" && mappingContext.GetKeyBoundEvent("SDLK_n").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_n", event);
+						firedKeys.push_back("SDLK_n");
+					}
+				break;
+
+			case SDLK_o:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_o") != "" && mappingContext.GetKeyBoundEvent("SDLK_o").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_o", event);
+						firedKeys.push_back("SDLK_o");
+					}
+				break;
+
+			case SDLK_p:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_p") != "" && mappingContext.GetKeyBoundEvent("SDLK_p").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_p", event);
+						firedKeys.push_back("SDLK_p");
+					}
+				break;
+
+			case SDLK_q:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_q") != "" && mappingContext.GetKeyBoundEvent("SDLK_q").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_q", event);
+						firedKeys.push_back("SDLK_q");
+					}
+				break;
+
+			case SDLK_r:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_r") != "" && mappingContext.GetKeyBoundEvent("SDLK_r").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_r", event);
+						firedKeys.push_back("SDLK_r");
+					}
+				break;
+
+			case SDLK_s:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_s") != "" && mappingContext.GetKeyBoundEvent("SDLK_s").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_s", event);
+						firedKeys.push_back("SDLK_s");
+					}
+				break;
+
+			case SDLK_t:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_t") != "" && mappingContext.GetKeyBoundEvent("SDLK_t").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_t", event);
+						firedKeys.push_back("SDLK_t");
+					}
+				break;
+
+			case SDLK_u:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_u") != "" && mappingContext.GetKeyBoundEvent("SDLK_u").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_u", event);
+						firedKeys.push_back("SDLK_u");
+					}
+				break;
+
+			case SDLK_v:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_v") != "" && mappingContext.GetKeyBoundEvent("SDLK_v").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_v", event);
+						firedKeys.push_back("SDLK_v");
+					}
+				break;
+
+			case SDLK_w:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_w") != "" && mappingContext.GetKeyBoundEvent("SDLK_w").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_w", event);
+						firedKeys.push_back("SDLK_w");
+					}
+				break;
+
+			case SDLK_x:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_x") != "" && mappingContext.GetKeyBoundEvent("SDLK_x").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_x", event);
+						firedKeys.push_back("SDLK_x");
+					}
+				break;
+
+			case SDLK_y:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_y") != "" && mappingContext.GetKeyBoundEvent("SDLK_y").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_y", event);
+						firedKeys.push_back("SDLK_y");
+					}
+				break;
+
+			case SDLK_z:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_z") != "" && mappingContext.GetKeyBoundEvent("SDLK_z").type == 0)
+					{
+						mappingContext.OnInputEvent("SDLK_z", event);
+						firedKeys.push_back("SDLK_z");
+					}
+				break;
+
+			default:
+
+				break;
+			}
+		}
+		// Keyboard Keys Up
+		else if (event.type == SDL_KEYUP)
+		{
+			// Clear Mapping Context Events of buttons that are released
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_SPACE:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_SPACE") != "")
+						mappingContext.ClearInputActionEvent("SDLK_SPACE");
+				break;
+
+			case SDLK_UP:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_UP") != "")
+						mappingContext.ClearInputActionEvent("SDLK_UP");
+				break;
+
+			case SDLK_DOWN:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_DOWN") != "")
+						mappingContext.ClearInputActionEvent("SDLK_DOWN");
+				break;
+
+			case SDLK_LEFT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_LEFT") != "")
+					{
+						mappingContext.ClearInputActionEvent("SDLK_LEFT");
+						mappingContext.UnFireEvent("SDLK_LEFT");
+					}
+
+				break;
+
+			case SDLK_RIGHT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_RIGHT") != "")
+						mappingContext.ClearInputActionEvent("SDLK_RIGHT");
+				break;
+
+			case SDLK_a:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_a") != "")
+						mappingContext.ClearInputActionEvent("SDLK_a");
+				break;
+
+			case SDLK_b:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_b") != "")
+						mappingContext.ClearInputActionEvent("SDLK_b");
+				break;
+
+			case SDLK_c:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_c") != "")
+						mappingContext.ClearInputActionEvent("SDLK_c");
+				break;
+
+			case SDLK_d:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_d") != "")
+						mappingContext.ClearInputActionEvent("SDLK_d");
+				break;
+
+			case SDLK_e:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_e") != "")
+						mappingContext.ClearInputActionEvent("SDLK_e");
+				break;
+
+			case SDLK_f:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_f") != "")
+						mappingContext.ClearInputActionEvent("SDLK_f");
+				break;
+
+			case SDLK_g:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_g") != "")
+						mappingContext.ClearInputActionEvent("SDLK_g");
+				break;
+
+			case SDLK_h:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_h") != "")
+						mappingContext.ClearInputActionEvent("SDLK_h");
+				break;
+
+			case SDLK_i:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_i") != "")
+						mappingContext.ClearInputActionEvent("SDLK_i");
+				break;
+
+			case SDLK_j:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_j") != "")
+						mappingContext.ClearInputActionEvent("SDLK_j");
+				break;
+
+			case SDLK_k:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_k") != "")
+						mappingContext.ClearInputActionEvent("SDLK_k");
+				break;
+
+			case SDLK_l:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_l") != "")
+						mappingContext.ClearInputActionEvent("SDLK_l");
+				break;
+
+			case SDLK_m:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_m") != "")
+						mappingContext.ClearInputActionEvent("SDLK_m");
+				break;
+
+			case SDLK_n:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_n") != "")
+						mappingContext.ClearInputActionEvent("SDLK_n");
+				break;
+
+			case SDLK_o:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_o") != "")
+						mappingContext.ClearInputActionEvent("SDLK_o");
+				break;
+
+			case SDLK_p:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_p") != "")
+						mappingContext.ClearInputActionEvent("SDLK_p");
+				break;
+
+			case SDLK_q:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_q") != "")
+						mappingContext.ClearInputActionEvent("SDLK_q");
+				break;
+
+			case SDLK_r:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_r") != "")
+						mappingContext.ClearInputActionEvent("SDLK_r");
+				break;
+
+			case SDLK_s:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_s") != "")
+						mappingContext.ClearInputActionEvent("SDLK_s");
+				break;
+
+			case SDLK_t:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_t") != "")
+						mappingContext.ClearInputActionEvent("SDLK_t");
+				break;
+
+			case SDLK_u:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_u") != "")
+						mappingContext.ClearInputActionEvent("SDLK_u");
+				break;
+
+			case SDLK_v:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_v") != "")
+						mappingContext.ClearInputActionEvent("SDLK_v");
+				break;
+
+			case SDLK_w:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_w") != "")
+						mappingContext.ClearInputActionEvent("SDLK_w");
+				break;
+
+			case SDLK_x:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_x") != "")
+						mappingContext.ClearInputActionEvent("SDLK_x");
+				break;
+
+			case SDLK_y:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_y") != "")
+						mappingContext.ClearInputActionEvent("SDLK_y");
+				break;
+
+			case SDLK_z:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("SDLK_z") != "")
+						mappingContext.ClearInputActionEvent("SDLK_z");
+				break;
+
+			default:
+
+				break;
+			}
+		}
+		// Axis (analog inputs)
+		else if (event.type == SDL_JOYAXISMOTION)
+		{
+			// Axis (analogs)
+			//if (event.jaxis.which == 0)
+			//{
+			switch (event.jaxis.axis)
+			{
+			case XInputAxis::LeftXAxis:
+				// Left of dead zone or right of dead zone
+				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+					event.jaxis.value = 0;
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LeftJoystickX") != "")
+						mappingContext.OnInputEvent("XInput_LeftJoystickX", event);
+				break;
+			case XInputAxis::LeftYAxis:
+				// Below dead zone or Above dead zone
+				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+					event.jaxis.value = 0;
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LeftJoystickY") != "")
+						mappingContext.OnInputEvent("XInput_LeftJoystickY", event);
+				break;
+			case XInputAxis::RightXAxis:
+				// Left of dead zone or Right of dead zone
+				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+					event.jaxis.value = 0;
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RightJoystick") != "")
+						mappingContext.OnInputEvent("XInput_RightJoystick", event);
+				break;
+			case XInputAxis::RightYAxis:
+				// Below dead zone or Above dead zone
+				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+					event.jaxis.value = 0;
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RightJoystick") != "")
+						mappingContext.OnInputEvent("XInput_RightJoystick", event);
+				break;
+			case XInputAxis::LT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LT") != "")
+						mappingContext.OnInputEvent("XInput_LT", event);
+				break;
+			case XInputAxis::RT:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RT") != "")
+						mappingContext.OnInputEvent("XInput_RT", event);
+				break;
+			}
+		}
+		// Buttons Down
+		else if (event.type == SDL_JOYBUTTONDOWN)
+		{
+			switch (event.jbutton.button)
+			{
+			case XInputButtons::A:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_A") != "")
+					{
+						mappingContext.OnInputEvent("XInput_A", event);
+						firedKeys.push_back("XInput_A");
+					}
+
+				break;
+			case XInputButtons::B:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_B") != "")
+					{
+						mappingContext.OnInputEvent("XInput_B", event);
+						firedKeys.push_back("XInput_B");
+					}
+				break;
+			case XInputButtons::X:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_X") != "")
+					{
+						mappingContext.OnInputEvent("XInput_X", event);
+						firedKeys.push_back("XInput_X");
+					}
+				break;
+			case XInputButtons::Y:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Y") != "")
+					{
+						mappingContext.OnInputEvent("XInput_Y", event);
+						firedKeys.push_back("XInput_Y");
+					}
+				break;
+			case XInputButtons::LB:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LB") != "")
+					{
+						mappingContext.OnInputEvent("XInput_LB", event);
+						firedKeys.push_back("XInput_LB");
+					}
+				break;
+			case XInputButtons::RB:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RB") != "")
+					{
+						mappingContext.OnInputEvent("XInput_RB", event);
+						firedKeys.push_back("XInput_RB");
+					}
+				break;
+			case XInputButtons::ScreenShot:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_ScreenShot") != "")
+					{
+						mappingContext.OnInputEvent("XInput_ScreenShot", event);
+						firedKeys.push_back("XInput_ScreenShot");
+					}
+				break;
+			case XInputButtons::Start:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Start") != "")
+					{
+						mappingContext.OnInputEvent("XInput_Start", event);
+						firedKeys.push_back("XInput_Start");
+					}
+				break;
+			case XInputButtons::LS:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LS") != "")
+					{
+						mappingContext.OnInputEvent("XInput_LS", event);
+						firedKeys.push_back("XInput_LS");
+					}
+				break;
+			case XInputButtons::RS:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RS") != "")
+					{
+						mappingContext.OnInputEvent("XInput_RS", event);
+						firedKeys.push_back("XInput_RS");
+					}
+				break;
+			case XInputButtons::Home:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Home") != "")
+					{
+						mappingContext.OnInputEvent("XInput_Home", event);
+						firedKeys.push_back("XInput_Home");
+					}
+				break;
+			case XInputButtons::Tray:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Tray") != "")
+					{
+						mappingContext.OnInputEvent("XInput_Tray", event);
+						firedKeys.push_back("XInput_Tray");
+					}
+				break;
+			default:
+				break;
+			}
+		}
+		// Buttons Up
+		else if (event.type == SDL_JOYBUTTONUP)
+		{
+			switch (event.jbutton.button)
+			{
+			case XInputButtons::A:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_A") != "")
+						mappingContext.ClearInputActionEvent("XInput_A");
+				break;
+			case XInputButtons::B:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_B") != "")
+						mappingContext.ClearInputActionEvent("XInput_B");
+				break;
+			case XInputButtons::X:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_X") != "")
+						mappingContext.ClearInputActionEvent("XInput_X");
+				break;
+			case XInputButtons::Y:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Y") != "")
+						mappingContext.ClearInputActionEvent("XInput_Y");
+				break;
+			case XInputButtons::LB:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LB") != "")
+						mappingContext.ClearInputActionEvent("XInput_LB");
+				break;
+			case XInputButtons::RB:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RB") != "")
+						mappingContext.ClearInputActionEvent("XInput_RB");
+				break;
+			case XInputButtons::ScreenShot:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_ScreenShot") != "")
+						mappingContext.ClearInputActionEvent("XInput_ScreenShot");
+				break;
+			case XInputButtons::Start:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Start") != "")
+						mappingContext.ClearInputActionEvent("XInput_Start");
+				break;
+			case XInputButtons::LS:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_LS") != "")
+						mappingContext.ClearInputActionEvent("XInput_LS");
+				break;
+			case XInputButtons::RS:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_RS") != "")
+						mappingContext.ClearInputActionEvent("XInput_RS");
+				break;
+			case XInputButtons::Home:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Home") != "")
+						mappingContext.ClearInputActionEvent("XInput_Home");
+				break;
+			case XInputButtons::Tray:
+				for (MappingContext mappingContext : FlatEngine::F_MappingContexts)
+					if (mappingContext.GetKeyBinding("XInput_Tray") != "")
+						mappingContext.ClearInputActionEvent("XInput_Tray");
+				break;
+			default:
+				break;
+			}
+		}
+		// Hats
+		else if (event.type == SDL_JOYHATMOTION)
+		{
+			switch (event.jhat.value)
+			{
+			case XInputHats::Up:
+				//LogFloat(event.jhat.type, "Hat Type: ");
+				//LogFloat(event.jhat.value, "Hat Value: ");
+				//LogFloat(event.jhat.hat, "Hat hat: ");
+				break;
+			case XInputHats::Down:
+				FlatEngine::LogString("Down");
+				break;
+			case XInputHats::Left:
+				FlatEngine::LogString("Left");
+				break;
+			case XInputHats::Right:
+				FlatEngine::LogString("Right");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+
+	// Rendering
+	void BeginImGuiRender()
+	{
+		// Start the Dear ImGui frame
+		ImGui_ImplSDLRenderer2_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+
+		//Create dockable background space for all viewports
+		ImGui::DockSpaceOverViewport();
+	}
+	
+	void EndImGuiRender()
+	{
+		// Rendering
+		Vector4 clear_color = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
+		ImGui::Render();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		SDL_RenderSetScale(Window::W_Renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+		SDL_SetRenderDrawColor(Window::W_Renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+		SDL_RenderClear(Window::W_Renderer);
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+
+		// TO DO 
+		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
+		Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
+		SDL_RenderPresent(Window::W_Renderer);
 	}
 
 
@@ -1212,6 +2144,7 @@ namespace FlatEngine
 
 		return animationProperties;
 	}
+
 
 	// Prefabs
 	void CreatePrefab(std::string path, GameObject &gameObject)

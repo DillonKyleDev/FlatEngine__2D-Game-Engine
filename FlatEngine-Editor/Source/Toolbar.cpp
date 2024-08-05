@@ -8,9 +8,9 @@ namespace FlatGui
 	void RenderToolbar()
 	{
 		bool _controlPanelWindow = false;
-		PushWindowStyles();
+		FlatEngine::PushWindowStyles();
 		ImGui::Begin("Gameloop Control Panel", &_controlPanelWindow, ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoUndocking);
-		PopWindowStyles();
+		FlatEngine::PopWindowStyles();
 
 		std::string playID = "##PlayGameloopIcon";
 		std::string pauseID = "##PauseGameloopIcon";
@@ -29,10 +29,10 @@ namespace FlatGui
 		if (FlatEngine::GameLoopStarted())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(playID.c_str(), playIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor);
+			FlatEngine::RenderImageButton(playID.c_str(), FlatEngine::F_playIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(playID.c_str(), playIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor))
+		else if (FlatEngine::RenderImageButton(playID.c_str(), FlatEngine::F_playIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor))
 			FlatEngine::StartGameLoop();
 
 		ImGui::SameLine(0, 5);
@@ -41,10 +41,10 @@ namespace FlatGui
 		if (!FlatEngine::GameLoopStarted())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(pauseID.c_str(), pauseIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor);
+			FlatEngine::RenderImageButton(pauseID.c_str(), FlatEngine::F_pauseIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(pauseID.c_str(), pauseIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor))
+		else if (FlatEngine::RenderImageButton(pauseID.c_str(), FlatEngine::F_pauseIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor))
 			FlatEngine::PauseGameLoop();
 
 
@@ -54,10 +54,10 @@ namespace FlatGui
 		if (!FlatEngine::GameLoopStarted())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(stopID.c_str(), stopIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor);
+			FlatEngine::RenderImageButton(stopID.c_str(), FlatEngine::F_stopIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(stopID.c_str(), stopIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor))
+		else if (FlatEngine::RenderImageButton(stopID.c_str(), FlatEngine::F_stopIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor))
 			FlatEngine::StopGameLoop();
 
 		ImGui::SameLine(0, 5);
@@ -66,10 +66,10 @@ namespace FlatGui
 		if (!FlatEngine::GameLoopPaused())
 		{
 			ImGui::BeginDisabled();
-			RenderImageButton(nextFrameID.c_str(), nextFrameIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor);
+			FlatEngine::RenderImageButton(nextFrameID.c_str(), FlatEngine::F_nextFrameIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor);
 			ImGui::EndDisabled();
 		}
-		else if (RenderImageButton(nextFrameID.c_str(), nextFrameIcon.GetTexture(), ImVec2(16, 16), 0, imageButtonColor, whiteColor))
+		else if (FlatEngine::RenderImageButton(nextFrameID.c_str(), FlatEngine::F_nextFrameIcon.GetTexture(), ImVec2(16, 16), 0, FlatEngine::F_imageButtonColor, FlatEngine::F_whiteColor))
 			FlatEngine::F_Application->GetGameLoop()->SetFrameSkipped(true);
 
 		ImGui::PopStyleVar();

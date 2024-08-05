@@ -5,7 +5,7 @@ project "FlatEngine-Core"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
-   files { "Source/**.h", "Source/**.cpp" }
+   files { "../Vendor/includes/**", "Source/**.h", "Source/**.cpp" }
 
    includedirs
    {

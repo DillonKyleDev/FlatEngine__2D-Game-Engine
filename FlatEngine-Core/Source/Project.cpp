@@ -149,7 +149,7 @@ namespace FlatEngine
 		if (_vsyncEnabled)
 			interval = 1;
 
-		SDL_RenderSetVSync(Window::renderer, interval); // vsync disabled -- 1 to activate
+		SDL_RenderSetVSync(Window::W_Renderer, interval); // vsync disabled -- 1 to activate
 	}
 
 	bool Project::IsVsyncEnabled()

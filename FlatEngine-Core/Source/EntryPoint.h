@@ -5,17 +5,19 @@
 namespace FlatEngine
 {
 	extern std::shared_ptr<Application> CreateApplication(int argc, char** argv);
-	bool g_ApplicationRunning = true;
-	bool g_HasStarted = false;
+	bool b_ApplicationRunning = true;
+	bool b_HasStarted = false;
 
 	int Main(int argc, char** argv)
 	{
 		// This loop allows us to restart our application instead of just closing it
-		while (g_ApplicationRunning && !g_HasStarted)
+		while (b_ApplicationRunning && !b_HasStarted)
 		{
-			g_HasStarted = true;
+			b_HasStarted = true;
+			FlatEngine::F_Application = CreateApplication(argc, argv);
+
 			// Initialize FlatEngine. Start up SDL and create window
-			if (!FlatEngine::Init())
+			if (!FlatEngine::Init(F_Application->WindowWidth(), F_Application->WindowHeight()))
 			{
 				printf("Failed to initialize.\n");
 			}
@@ -28,8 +30,7 @@ namespace FlatEngine
 				}
 				else
 				{
-					FlatEngine::F_Application = CreateApplication(argc, argv);
-					F_Application->OnInit();
+					F_Application->Init();
 					F_Application->Run();
 				}
 			}
