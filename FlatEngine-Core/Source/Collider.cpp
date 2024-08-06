@@ -305,8 +305,8 @@ namespace FlatEngine
 		float B_BottomEdge = boxCol->nextActiveBottom;
 		float B_LeftEdge = boxCol->nextActiveLeft;
 
-		double yFromCol;
-		double xFromCol;
+		float yFromCol;
+		float xFromCol;
 
 		// Check how colliders are oriented in relation to each other //
 

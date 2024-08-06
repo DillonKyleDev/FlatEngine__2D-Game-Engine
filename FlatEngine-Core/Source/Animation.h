@@ -99,7 +99,7 @@ namespace FlatEngine
 		struct S_AnimationProperties {
 			std::string animationName = "";
 			std::string animationPath = "";
-			float animationLength = 0;
+			float animationLength = 0.0f;
 			bool _isSorted = false;
 			bool _loop = false;
 			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
@@ -118,7 +118,7 @@ namespace FlatEngine
 
 			void SortKeyFrames() 
 			{
-				float lastKeyFrameEndTime = 0;
+				float lastKeyFrameEndTime = 0.0f;
 
 				bool _didntSwapTransform = false;
 				while (!_didntSwapTransform)
@@ -190,10 +190,10 @@ namespace FlatEngine
 		~Animation();
 
 		void AddFrame();
-		void Play(int startTime = -1);
+		void Play(long startTime = -1);
 		void Stop();
 		
-		void PlayAnimation(int ellapsedTime);
+		void PlayAnimation(long ellapsedTime);
 		bool IsPlaying();
 		std::string GetData();
 		void SetAnimationName(std::string animationName);
@@ -211,7 +211,7 @@ namespace FlatEngine
 		std::string animationName;
 		std::string animationPath;
 		bool _playing;
-		int animationStartTime;
+		long animationStartTime;
 		std::map<std::string, std::function<void(GameObject)>> eventFunctions;
 	};
 }

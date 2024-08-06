@@ -9,6 +9,8 @@ using Texture = FlatEngine::Texture;
 namespace FlatEngine 
 {
 	// Icons / Images
+	std::string F_ResourceFailedToLoadImagePath = "Source/assets/images/icons/resourceFailedToLoad.png";
+	Texture F_resourceFailedToLoad = Texture();
 	Texture F_transformArrow = Texture();
 	Texture F_transformArrowAllWhite = Texture();
 	Texture F_transformArrowXWhite = Texture();
@@ -47,6 +49,7 @@ namespace FlatEngine
 
 	void CreateIcons()
 	{
+		F_resourceFailedToLoad.LoadFromFile("Source/assets/images/icons/resourceFailedToLoad.png");
 		F_transformArrow.LoadFromFile("Source/assets/images/icons/transformArrow.png");
 		F_transformArrowAllWhite.LoadFromFile("Source/assets/images/icons/transformArrowAllWhite.png");
 		F_transformArrowXWhite.LoadFromFile("Source/assets/images/icons/transformArrowXWhite.png");

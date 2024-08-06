@@ -212,7 +212,7 @@ void PlayerController::HandleInput()
 
 			if (xDir != 0 || yDir != 0)
 			{
-				Vector2 normalizedDir = Vector2(xDir, yDir).NormalizeCardinal();				
+				Vector2 normalizedDir = Vector2((float)xDir, (float)yDir).NormalizeCardinal();				
 				characterController->MoveToward(normalizedDir);
 			}
 		}

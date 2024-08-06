@@ -248,11 +248,11 @@ public:
 		bool& _hasQuit = HasQuit();
 		while (!_hasQuit)
 		{
-			float renderStartTime = 0;
-			static double frameStart = FlatEngine::GetEngineTime();
+			Uint32 renderStartTime = 0;
+			static Uint32 frameStart = FlatEngine::GetEngineTime();
 
 			if (FlatEngine::_isDebugMode)
-				renderStartTime = (float)FlatEngine::GetEngineTime(); // Profiler
+				renderStartTime = FlatEngine::GetEngineTime(); // Profiler
 			_hasQuit = FlatEngine::_closeProgram;
 
 
@@ -260,7 +260,7 @@ public:
 
 
 			if (FlatEngine::_isDebugMode)
-				FlatGui::AddProcessData("Render", (float)FlatEngine::GetEngineTime() - renderStartTime); // Profiler
+				FlatGui::AddProcessData("Render", (float)(FlatEngine::GetEngineTime() - renderStartTime)); // Profiler
 
 
 			//// If Release - Start the Game Loop
@@ -271,19 +271,19 @@ public:
 			if (A_GameLoop->IsStarted() && !A_GameLoop->IsGamePaused() || A_GameLoop->IsGamePaused() && A_GameLoop->IsFrameSkipped())
 			{
 				// Profiler
-				float updateLoopStart = 0;
-				static float updateLoopEnd = 0;
+				Uint32 updateLoopStart = 0;
+				static Uint32 updateLoopEnd = 0;
 				if (FlatEngine::_isDebugMode)
 				{
 					// Save time before Update starts
-					updateLoopStart = (float)FlatEngine::GetEngineTime();
+					updateLoopStart = FlatEngine::GetEngineTime();
 					// Get hang time of everything after Update Loop for profiler
-					float everythingElseHangTime = updateLoopStart - updateLoopEnd;
-					FlatGui::AddProcessData("Not GameLoop", everythingElseHangTime);
+					Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
+					FlatGui::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
 					updateLoopEnd = updateLoopStart;
 				}
 
-				double frameTime = (FlatEngine::GetEngineTime() - frameStart) / 1000; // actual deltaTime (in seconds)
+				float frameTime = (float)(FlatEngine::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
 				if (!A_GameLoop->IsGamePaused())
 					A_GameLoop->accumulator += frameTime;
@@ -302,20 +302,20 @@ public:
 				}
 
 				// Get time it took to get back to GameLoopUpdate()
-				frameStart = (double)FlatEngine::GetEngineTime();
+				frameStart = FlatEngine::GetEngineTime();
 
 				// Artificially slow GameLoop if frameTime is less than 
 				if (!FlatGui::loadedProject->IsVsyncEnabled() && frameTime < A_GameLoop->deltaTime)
-					SDL_Delay(A_GameLoop->deltaTime - frameTime);
+					SDL_Delay((Uint32)(A_GameLoop->deltaTime - frameTime) * 1000);
 
 				// Profiler
 				if (FlatEngine::_isDebugMode)
 				{
 					// Get hang time of Update Loop for profiler
-					float hangTime = (float)FlatEngine::GetEngineTime() - updateLoopStart;
-					FlatGui::AddProcessData("GameLoop (variable executions)", hangTime);
+					Uint32 hangTime = FlatEngine::GetEngineTime() - updateLoopStart;
+					FlatGui::AddProcessData("GameLoop (variable executions)", (float)hangTime);
 					// Save time after update finishes
-					updateLoopEnd = (float)FlatEngine::GetEngineTime();
+					updateLoopEnd = FlatEngine::GetEngineTime();
 				}
 			}
 			else
@@ -344,7 +344,7 @@ public:
 		static bool b_projectSelected = false;
 		if (!b_projectSelected)
 		{
-			FlatGui::RenderProjectHub(b_projectSelected);
+			FlatGui::RenderProjectHub(b_projectSelected, m_startupProject);
 			if (b_projectSelected)
 				m_recreateWindow = true;
 		}
@@ -363,10 +363,8 @@ public:
 	{
 		Application::EndRender();
 
-		Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
-		SDL_RenderPresent(Window::W_Renderer);
-		FlatGui::AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
-
+		// Application specific rendering tasks
+		// 
 		// If window was recreated this frame
 		if (m_recreateWindow)
 		{
@@ -376,6 +374,7 @@ public:
 			FlatEngine::SetupImGui();
 			FlatEngine::CreateIcons();
 			m_recreateWindow = false;
+			FlatGui::OpenProject(m_startupProject);
 		}
 	}
 	void Quit()
@@ -430,6 +429,7 @@ public:
 	}
 
 	bool m_recreateWindow;
+	std::string m_startupProject;
 };
 
 

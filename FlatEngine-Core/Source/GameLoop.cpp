@@ -23,12 +23,12 @@ namespace FlatEngine
 		_gamePaused = false;
 		_paused = false;
 		_frameSkipped = false;
-		time = 0;
-		activeTime = 0;
+		time = 0.0f;
+		activeTime = 0.0f;
 		currentTime = 0;
 		pausedTime = 0;
 		framesCounted = 0;
-		deltaTime = 0.005;
+		deltaTime = 0.005f;
 		accumulator = deltaTime;
 		startedScene = "";
 	}
@@ -40,10 +40,10 @@ namespace FlatEngine
 	void GameLoop::Start()
 	{
 		// Handle Game Time
-		time = 0;
+		time = 0.0f;
 		activeTime = time - pausedTime;
 		_paused = false;
-		accumulator = 0.0;
+		accumulator = 0.0f;
 
 		// Save the name of the scene we started with so we can load it back up when we stop
 		startedScene = FlatEngine::GetLoadedScenePath();
@@ -57,7 +57,7 @@ namespace FlatEngine
 
 		//CollectPhysicsBodies();
 
-		currentTime = (double)FlatEngine::GetEngineTime();
+		currentTime = FlatEngine::GetEngineTime();
 	}
 
 	void GameLoop::UpdateScripts()
@@ -215,7 +215,7 @@ namespace FlatEngine
 	}
 
 	// In seconds
-	long GameLoop::TimeEllapsedInSec()
+	float GameLoop::TimeEllapsedInSec()
 	{
 		if (_started)
 		{
@@ -225,11 +225,11 @@ namespace FlatEngine
 	}
 
 	// In ms
-	double GameLoop::TimeEllapsedInMs()
+	long GameLoop::TimeEllapsedInMs()
 	{
 		if (_started)
 		{
-			return time * 1000;
+			return (long)(time * 1000.0f);
 		}
 		return 0;
 	}
@@ -252,7 +252,7 @@ namespace FlatEngine
 			return 200;
 	}
 
-	int GameLoop::GetFramesCounted()
+	long GameLoop::GetFramesCounted()
 	{
 		return framesCounted;
 	}

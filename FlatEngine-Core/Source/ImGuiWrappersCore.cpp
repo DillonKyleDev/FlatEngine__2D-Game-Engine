@@ -45,10 +45,19 @@ namespace FlatEngine
 		BeginWindowChild(name);
 	}
 
-	void BeginWindow(std::string name, bool& _isOpen)
+	void BeginWindow(std::string name, bool& b_isOpen)
 	{
 		PushWindowStyles();
-		ImGui::Begin(name.c_str(), &_isOpen);
+		ImGui::Begin(name.c_str(), &b_isOpen);
+		PopWindowStyles();
+
+		BeginWindowChild(name);
+	}
+
+	void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags)
+	{
+		PushWindowStyles();
+		ImGui::Begin(name.c_str(), &b_isOpen, flags);
 		PopWindowStyles();
 
 		BeginWindowChild(name);
@@ -360,7 +369,7 @@ namespace FlatEngine
 		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
 		ImGui::PopStyleColor();
 
-		if (newPath != " ")
+		if (newPath != nullptr)
 			value = newPath;
 		return _editedButton || _editedInput;
 	}

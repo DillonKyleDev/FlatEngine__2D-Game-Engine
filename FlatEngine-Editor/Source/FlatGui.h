@@ -93,8 +93,8 @@ namespace FlatGui
 	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
 	extern GameObject objectForFocusedAnimation;
 	extern std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit;
-	extern int previewAnimationStartTime;
-	extern int previewAnimationTime;
+	extern long previewAnimationStartTime;
+	extern long previewAnimationTime;
 	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
@@ -157,7 +157,7 @@ namespace FlatGui
 	extern void RunOnceAfterInitialization();
 
 	// Viewports
-	extern void RenderProjectHub(bool & b_projectSelected);
+	extern void RenderProjectHub(bool & b_projectSelected, std::string &projectPath);
 	extern void MainMenuBar();
 	extern void AddViewports();
 	extern void RenderToolbar();

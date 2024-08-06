@@ -13,6 +13,7 @@ namespace FlatEngine
 	{
 	public:
 		Texture(std::string path = "");
+		Texture(const Texture* toCopy);
 		~Texture();
 		bool LoadFromFile(std::string path);
 		bool LoadSurface(std::string path, SDL_Surface* screenSurface);
@@ -33,13 +34,13 @@ namespace FlatEngine
 
 	private:
 		//The actual hardware texture
-		SDL_Texture* texture;
+		SDL_Texture* m_texture;
 		//Loaded from file surface
-		SDL_Surface* surface;
-		TTF_Font* font;
+		SDL_Surface* m_surface;
+		TTF_Font* m_font;
 
 		//Image dimensions
-		int textureWidth;
-		int textureHeight;
+		int m_textureWidth;
+		int m_textureHeight;
 	};
 }

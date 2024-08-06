@@ -43,7 +43,7 @@ namespace FlatGui
 			// Lambda
 			auto L_ShowAddComponentsWindow = [&]()
 			{
-					FlatEngine::PushMenuStyles();
+				FlatEngine::PushMenuStyles();
 
 				// Add all the component types you can add to this GameObject
 				//
@@ -98,16 +98,22 @@ namespace FlatGui
 					}
 				}
 
-				if (ImGui::MenuItem("Audio"))
+				if (!focusedObject->HasComponent("Audio"))
 				{
-					focusedObject->AddAudioComponent();
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Audio"))
+					{
+						focusedObject->AddAudioComponent();
+						ImGui::CloseCurrentPopup();
+					}
 				}
 
-				if (ImGui::MenuItem("Text"))
+				if (!focusedObject->HasComponent("Text"))
 				{
-					focusedObject->AddTextComponent();
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Text"))
+					{
+						focusedObject->AddTextComponent();
+						ImGui::CloseCurrentPopup();
+					}
 				}
 
 				if (ImGui::MenuItem("Script"))

@@ -71,6 +71,8 @@ namespace FlatEngine
 
 	void Sprite::SetTexture(std::string newPath)
 	{
+		RemoveTexture();
+
 		if (newPath != "")
 		{
 			// Save path for referencing later if needed
@@ -83,6 +85,16 @@ namespace FlatEngine
 				// Set pivot point to the center of the texture by default
 				offset = { textureWidth / 2, textureHeight / 2 };
 				pivotOffset = offset;
+			}
+			else
+			{
+				// Set broken texture Texture
+				texture.LoadFromFile(F_ResourceFailedToLoadImagePath);
+				if (textureWidth == 0 || textureHeight == 0)
+				{
+					textureWidth = 50;
+					textureHeight = 50;
+				}
 			}
 		}
 		else

@@ -16,17 +16,17 @@
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "collisionDetection": "Shared Axis",
-            "focusedGameObjectID": 25,
+            "focusedGameObjectID": 0,
             "loadedAnimationPath": "",
-            "loadedScenePath": "Source\\scenes\\Chains.json",
+            "loadedScenePath": "Source\\scenes\\Sandbox.json",
             "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1200.0,
             "resolutionWidth": 1920.0,
             "sceneViewGridStepX": 8.29978084564209,
             "sceneViewGridStepY": 8.29978084564209,
-            "sceneViewScrollingX": 672.403076171875,
-            "sceneViewScrollingY": 158.73046875
+            "sceneViewScrollingX": 603.403076171875,
+            "sceneViewScrollingY": 171.73046875
         }
     ]
 }

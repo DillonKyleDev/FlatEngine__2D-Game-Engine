@@ -6,13 +6,22 @@ namespace FlatEngine
 	Texture::Texture(std::string path)
 	{
 		//Initialize
-		texture = NULL;
-		surface = NULL;
-		textureWidth = 0;
-		textureHeight = 0;
+		m_texture = NULL;
+		m_surface = NULL;
+		m_textureWidth = 0;
+		m_textureHeight = 0;
 		if (path != "")
 			LoadFromFile(path);
-		font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
+		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
+	}
+
+	Texture::Texture(const Texture* toCopy)
+	{
+		m_texture = toCopy->m_texture;
+		m_surface = toCopy->m_surface;
+		m_textureWidth = toCopy->m_textureWidth;
+		m_textureHeight = toCopy->m_textureHeight;
+		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 	}
 
 
@@ -52,8 +61,8 @@ namespace FlatEngine
 			else
 			{
 				//Set image dimensions
-				textureWidth = loadedSurface->w;
-				textureHeight = loadedSurface->h;
+				m_textureWidth = loadedSurface->w;
+				m_textureHeight = loadedSurface->h;
 			}
 
 			//Get rid of old loaded surface
@@ -61,8 +70,8 @@ namespace FlatEngine
 		}
 
 		//Return success
-		texture = newTexture;
-		return texture != NULL;
+		m_texture = newTexture;
+		return m_texture != NULL;
 	}
 
 	bool Texture::LoadSurface(std::string path, SDL_Surface* screenSurface)
@@ -83,7 +92,7 @@ namespace FlatEngine
 		{
 			//Convert surface to screen format
 			optimizedSurface = SDL_ConvertSurface(loadedSurface, screenSurface->format, 0);
-			if (surface == NULL)
+			if (m_surface == NULL)
 			{
 				printf("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
 			}
@@ -93,8 +102,8 @@ namespace FlatEngine
 		}
 
 		//Return success
-		surface = optimizedSurface;
-		return surface != NULL;
+		m_surface = optimizedSurface;
+		return m_surface != NULL;
 	}
 
 	//Creates image from font string
@@ -118,15 +127,15 @@ namespace FlatEngine
 			//Create texture from surface pixels
 			newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), textSurface);
 
-			if (texture == NULL)
+			if (m_texture == NULL)
 			{
 				printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
 			}
 			else
 			{
 				//Get image dimensions
-				textureWidth = textSurface->w;
-				textureHeight = textSurface->h;
+				m_textureWidth = textSurface->w;
+				m_textureHeight = textSurface->h;
 			}
 
 			//Get rid of old surface
@@ -134,57 +143,57 @@ namespace FlatEngine
 		}
 
 		//Return success
-		texture = newTexture;
-		return texture != NULL;
+		m_texture = newTexture;
+		return m_texture != NULL;
 	}
 
 	//Deallocates texture
 	void Texture::FreeTexture()
 	{
 		//Free texture if it exists
-		if (texture != NULL)
+		if (m_texture != NULL)
 		{
-			SDL_DestroyTexture(texture);
-			texture = NULL;
-			textureWidth = 0;
-			textureHeight = 0;
+			SDL_DestroyTexture(m_texture);
+			m_texture = NULL;
+			m_textureWidth = 0;
+			m_textureHeight = 0;
 		}
 	}
 
 	SDL_Texture* Texture::GetTexture()
 	{
-		return texture;
+		return m_texture;
 	}
 
 	//Deallocates texture
 	void Texture::FreeSurface()
 	{
 		//Free texture if it exists
-		if (surface != NULL)
+		if (m_surface != NULL)
 		{
-			SDL_FreeSurface(surface);
-			surface = NULL;
+			SDL_FreeSurface(m_surface);
+			m_surface = NULL;
 		}
 	}
 
 	//Gets image dimensions
 	int Texture::GetWidth()
 	{
-		return textureWidth;
+		return m_textureWidth;
 	}
 	int Texture::GetHeight()
 	{
-		return textureHeight;
+		return m_textureHeight;
 	}
 
 	void Texture::SetDimensions(int width, int height)
 	{
-		textureWidth = width;
-		textureHeight = height;
+		m_textureWidth = width;
+		m_textureHeight = height;
 	}
 
 	void Texture::SetFont(std::string path)
 	{
-		font = TTF_OpenFont(path.c_str(), 46);
+		m_font = TTF_OpenFont(path.c_str(), 46);
 	}
 }

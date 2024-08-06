@@ -35,17 +35,17 @@ void OnDeath(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr
 		std::uniform_int_distribution<std::mt19937::result_type> dir(0, 200); // distribution in range [-1, 1]
 
 		std::uniform_int_distribution<std::mt19937::result_type> pow(500, 3000); // distribution in range [-1, 1]
-		Vector2 direction = Vector2(dir(rng), dir(rng));
-		if (direction.x >= 100)
-			direction.x *= -.01;
+		Vector2 direction = Vector2((float)dir(rng), (float)dir(rng));
+		if (direction.x >= 100.0f)
+			direction.x *= -.01f;
 		else
-			direction.x *= .01;
-		if (direction.y >= 100)
-			direction.y *= -.01;
+			direction.x *= .01f;
+		if (direction.y >= 100.0f)
+			direction.y *= -.01f;
 		else
-			direction.y *= .01;
+			direction.y *= .01f;
 
-		float power = pow(rng);
+		float power = (float)pow(rng);
 
 		FlatEngine::GameObject blobParticle = FlatEngine::Instantiate("P_BlobParticle", thisObject->GetTransform()->GetTruePosition());
 		FlatEngine::RigidBody* blobRigidBody = blobParticle.GetRigidBody();

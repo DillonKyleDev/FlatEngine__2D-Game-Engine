@@ -174,6 +174,8 @@ namespace FlatEngine
 	////////////////////
 
 	// Icons
+	extern std::string F_ResourceFailedToLoadImagePath;
+	extern Texture F_resourceFailedToLoad;
 	extern Texture F_transformArrow;
 	extern Texture F_transformArrowAllWhite;
 	extern Texture F_transformArrowXWhite;
@@ -250,9 +252,9 @@ namespace FlatEngine
 	// Scene Management
 	extern Scene* GetLoadedScene();
 	extern Scene* CreateNewScene();
-	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filePath);
+	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filepath);
 	extern void SaveCurrentScene();
-	extern void LoadScene(std::string name);
+	extern void LoadScene(std::string filepath);
 	std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1);
@@ -301,8 +303,8 @@ namespace FlatEngine
 	extern void PauseGameLoop();
 	extern void PauseGame();
 	extern void StopGameLoop();
-	extern long GetEllapsedGameTimeInSec();
-	extern double GetEllapsedGameTimeInMs();
+	extern float GetEllapsedGameTimeInSec();
+	extern long GetEllapsedGameTimeInMs();
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
@@ -312,12 +314,24 @@ namespace FlatEngine
 	// Helper Functions //
 	//////////////////////
 
+	// Json parsing
+	extern json CreateJsonFromObject(GameObject gameObject);
+	extern GameObject CreateObjectFromJson(json objectJson);
+	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName);
+	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName);
+	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName);
+	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName);
+	extern bool JsonContains(json obj, std::string checkFor, std::string loadedName);
+	extern std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName);
+
 	// ImGui Wrappers
 	extern void BeginImGuiRender();
 	extern void EndImGuiRender();
+	extern void SetNextViewportToFillWindow();
 
 	extern void BeginWindow(std::string name);
 	extern void BeginWindow(std::string name, bool& _isOpen);
+	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags);
 	extern void EndWindow();
 	extern void BeginWindowChild(std::string title);
 	extern void BeginResizeWindowChild(std::string title);

@@ -75,8 +75,8 @@ namespace FlatGui
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = nullptr;
 	GameObject objectForFocusedAnimation = GameObject(nullptr);
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
-	int previewAnimationStartTime = 0;
-	int previewAnimationTime = 0;
+	long previewAnimationStartTime = 0;
+	long previewAnimationTime = 0;
 	bool _playPreviewAnimation = false;
 	long FocusedGameObjectID = -1;
 	std::shared_ptr<GameObject> playerObject = nullptr;
@@ -407,10 +407,6 @@ namespace FlatGui
 
 		loadedProject = newProject;
 
-		if (loadedProject->GetLoadedScenePath() != "")
-			FlatEngine::LoadScene(loadedProject->GetLoadedScenePath());
-		else
-			FlatEngine::CreateNewScene();
 		if (loadedProject->GetLoadedPreviewAnimationPath() != "")
 			SetFocusedAnimation(FlatEngine::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
@@ -420,6 +416,11 @@ namespace FlatGui
 
 		if (loadedProject->GetFocusedGameObjectID() != -1 && FlatEngine::GetObjectById(loadedProject->GetFocusedGameObjectID()) != nullptr)
 			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
+
+		if (loadedProject->GetLoadedScenePath() != "")
+			FlatEngine::LoadScene(loadedProject->GetLoadedScenePath());
+		else
+			FlatEngine::CreateNewScene();
 	}
 
 	void SaveProject(std::shared_ptr<Project> project, std::string path)
@@ -485,37 +486,43 @@ namespace FlatGui
 	}
 
 
-	void RenderProjectHub(bool& b_projectSelected)
+	void RenderProjectHub(bool& b_projectSelected, std::string &projectPath)
 	{
-		// Convert this to use the projects folder and get project names and data to be loaded when selected
-		std::string path = "Source\\mappingContext";
-		for (const auto& entry : std::filesystem::directory_iterator(path))
-		{
-			// Create a new context to save the loaded keybindings to
-			MappingContext newContext = MappingContext();
+		// Get all project files in the projects folder to present in the project selection screen
+		std::vector<Project> projects = std::vector<Project>();
 
+		std::string path = "Source\\projects";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{			
 			json contextData = FlatEngine::LoadFileData(entry.path().string());
 			if (contextData != NULL)
 			{
-				//Getting data from the json 
-				//std::string name = firstObjectName[0]["name"];
-
-				auto mappings = contextData["Mapping Context"][0];
-
-				newContext.SetName(mappings["name"]);
-				newContext.SetPath(entry.path().string());
-
+				auto projectProperties = contextData["Project Properties"][0];
+				Project project = Project();
+				project.SetPath(FlatEngine::CheckJsonString(contextData["Project Properties"][0], "path", "Project Hub project property check."));
+				projects.push_back(project);
 			}
 		}
 
-
-		FlatEngine::BeginWindow("Project Hub");
+		bool b_isOpen = true;
+		FlatEngine::SetNextViewportToFillWindow();  // Maximize viewport
+		FlatEngine::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		FlatEngine::BeginWindowChild("Projects");
 
-		if (FlatEngine::RenderButton("Choose Project", Vector2(130, 20)))
+		FlatEngine::RenderSectionHeader("Select a project to open");
+
+		for (Project project : projects)
 		{
-			b_projectSelected = true;
+			std::string path = project.GetPath();
+			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 50)))
+			{
+				b_projectSelected = true;
+				projectPath = path;
+			}
 		}
+
+		FlatEngine::RenderButton("New Project");
+
 
 		FlatEngine::EndWindowChild();
 		FlatEngine::EndWindow();
@@ -1161,7 +1168,9 @@ namespace FlatGui
 		{
 			renderStart = Vector2(scalingXStart, scalingYStart);
 			renderEnd = Vector2(scalingXEnd, scalingYEnd);
-			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), whiteColor, 2, draw_list);
+
+			// FOR DEBUGGING - draw white box around where the texture should be
+			//FlatEngine::DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), FlatEngine::F_whiteColor, 2, draw_list);
 		}
 		else
 		{

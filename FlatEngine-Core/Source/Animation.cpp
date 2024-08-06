@@ -45,7 +45,7 @@ namespace FlatEngine
 	{
 	}
 
-	void Animation::Play(int startTime)
+	void Animation::Play(long startTime)
 	{
 		animationProperties = LoadAnimationFile(animationPath);
 		_playing = true;
@@ -154,16 +154,16 @@ namespace FlatEngine
 			Stop();
 	}
 
-	void Animation::PlayAnimation(int ellapsedTime)
+	void Animation::PlayAnimation(long ellapsedTime)
 	{
 		std::shared_ptr<S_AnimationProperties> props = animationProperties;
 
 		if (!props->_isSorted)
 			props->SortKeyFrames();
 
-		static float lastTransformAnimationFrameEnd = 0;
-		static float lastSpriteAnimationFrameEnd = 0;
-		static float currentKeyFrame = (float)animationStartTime;
+		static long lastTransformAnimationFrameEnd = 0;
+		static long lastSpriteAnimationFrameEnd = 0;
+		static long currentKeyFrame = animationStartTime;
 		static Vector2 lastFramePosition = Vector2(0, 0);
 		static Vector2 lastFrameScale = Vector2(0, 0);
 		static Vector4 lastFrameSpriteTint = Vector4(1,1,1,1);
@@ -195,8 +195,8 @@ namespace FlatEngine
 					if (transformFrame - 1 >= props->transformProperties.begin())
 						lastFrame = transformFrame - 1;
 
-					int timeLeft = (int)(*transformFrame)->time - ellapsedTime - animationStartTime;
-					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*transformFrame)->time - (*lastFrame)->time);
+					float timeLeft = (*transformFrame)->time - ellapsedTime - animationStartTime;
+					float percentDone = (float)(ellapsedTime - animationStartTime - (*lastFrame)->time) / (float)((*transformFrame)->time - (*lastFrame)->time);
 					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
 					FlatEngine::Transform* transform = GetParent()->GetTransform();
@@ -252,7 +252,7 @@ namespace FlatEngine
 					if (lastFrame != props->spriteProperties.begin() && lastFrame -1 >= props->spriteProperties.begin())
 						lastFrame = lastFrame - 1;
 
-					int timeLeft = (int)(*spriteFrame)->time - ellapsedTime - animationStartTime;
+					float timeLeft = (*spriteFrame)->time - ellapsedTime - animationStartTime;
 					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*spriteFrame)->time - (*lastFrame)->time);
 					
 					Vector4 correctedTintColor = (*spriteFrame)->tintColor;

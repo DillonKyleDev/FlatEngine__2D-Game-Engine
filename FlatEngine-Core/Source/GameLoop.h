@@ -28,8 +28,8 @@ namespace FlatEngine
 		bool IsGamePaused();
 		void PauseGame();
 		void UnpauseGame();
-		long TimeEllapsedInSec();
-		double TimeEllapsedInMs();
+		float TimeEllapsedInSec();
+		long TimeEllapsedInMs();
 		bool IsStarted();
 		bool IsPaused();
 		float GetAverageFps();
@@ -37,21 +37,21 @@ namespace FlatEngine
 		float GetDeltaTime();
 		void SetFrameSkipped(bool _skipped);
 		bool IsFrameSkipped();
-		int GetFramesCounted();
+		long GetFramesCounted();
 		void ResetCurrentTime();
 
-		double time;
-		double deltaTime;
-		double currentTime;
-		double accumulator;
+		float time; // Total time in deltaTime increments
+		float pausedTime;
+		float activeTime;
+		float deltaTime;
+		float accumulator;
+		Uint32 currentTime;
 		
 	private:
 		bool _started;
 		bool _paused;
 		bool _frameSkipped;
-		int framesCounted;
-		double pausedTime;
-		double activeTime;
+		long framesCounted;
 		bool _gamePaused;
 		std::string startedScene;
 	};

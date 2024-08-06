@@ -52,7 +52,7 @@ namespace FlatEngine
 		copy.SetPrefabSpawnLocation(Vector2(0, 0));
 
 		// Push the parent
-		prefabObjectJsonArray.push_back(SceneManager::CreateJsonFromObject(copy));
+		prefabObjectJsonArray.push_back(CreateJsonFromObject(copy));
 
 		// Push the children
 		if (childrenVector.size() > 0)
@@ -60,7 +60,7 @@ namespace FlatEngine
 			for (int i = 0; i < childrenVector.size(); i++)
 			{
 				// Add the gameObject json to the prefabObjectJsonArray
-				prefabObjectJsonArray.push_back(SceneManager::CreateJsonFromObject(childrenVector[i]));
+				prefabObjectJsonArray.push_back(CreateJsonFromObject(childrenVector[i]));
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace FlatEngine
 					for (int i = 0; i < prefabObjects.size(); i++)
 					{
 						// Add created GameObject to our freshScene
-						GameObject prefab = SceneManager::CreateObjectFromJson(prefabObjects[i]);
+						GameObject prefab = CreateObjectFromJson(prefabObjects[i]);
 						prefabContainer.push_back(&prefab);
 					}
 				}

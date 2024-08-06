@@ -156,7 +156,7 @@ namespace FlatEngine
 	void Transform::LookAt(Vector2 lookAt)
 	{
 		Vector2 slope = Vector2(lookAt.x - GetTruePosition().x, lookAt.y - GetTruePosition().y);
-		float angle = atan(slope.y / slope.x) * 180 / M_PI;
+		float angle = atan(slope.y / slope.x) * 180.0f / (float)M_PI;
 		LogFloat(angle, "Angle: ");
 		rotation = angle;
 	}

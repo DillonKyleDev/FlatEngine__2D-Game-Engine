@@ -484,7 +484,7 @@ namespace FlatGui {
 		// Get all keyFramePip positions
 		float propertyYPos = -0.5f; // Value in grid space
 		int propertyCounter = 0;    // For values in screenspace below
-		float animationLength = 0;
+		float animationLength = 0.0f;
 		if (animProps != nullptr)
 			animationLength = animProps->animationLength;
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();

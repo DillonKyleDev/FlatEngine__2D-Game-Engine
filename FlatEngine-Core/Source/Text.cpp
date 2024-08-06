@@ -90,10 +90,10 @@ namespace FlatEngine
 
 	void Text::SetColor(Vector4 newColor)
 	{
-		color.r = newColor.x;
-		color.g = newColor.y;
-		color.b = newColor.z;
-		color.a = newColor.w;
+		color.r = (Uint8)newColor.x;
+		color.g = (Uint8)newColor.y;
+		color.b = (Uint8)newColor.z;
+		color.a = (Uint8)newColor.w;
 	}
 
 	SDL_Color Text::GetColor()
