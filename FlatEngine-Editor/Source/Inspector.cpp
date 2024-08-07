@@ -245,7 +245,6 @@ namespace FlatGui
 
 				// Transform
 				FlatEngine::Transform* transform = focusedObject->GetTransform();
-
 				if (transform != nullptr)
 				{
 					BeginComponent(transform, queuedForDelete);
@@ -255,7 +254,7 @@ namespace FlatGui
 				}
 
 				// Sprite
-				Sprite* sprite = focusedObject->GetSprite();
+				Sprite* sprite = FlatEngine::GetLoadedScene()->GetSpriteByOwner(focusedObjectID);
 				if (sprite != nullptr)
 				{
 					BeginComponent(sprite, queuedForDelete);
@@ -285,8 +284,8 @@ namespace FlatGui
 				}
 
 				// Button
-				std::vector<Button*> buttons = focusedObject->GetButtons();
-				for (Button* button : buttons)
+				Button* button = focusedObject->GetButton();
+				if (button != nullptr)
 				{
 					BeginComponent(button, queuedForDelete);
 					if (!button->IsCollapsed())
@@ -345,8 +344,8 @@ namespace FlatGui
 				}
 
 				// BoxCollider
-				BoxCollider* boxCollider = focusedObject->GetBoxCollider();
-				if (boxCollider != nullptr)
+				std::vector<BoxCollider*> boxColliders = focusedObject->GetBoxColliders();
+				for (BoxCollider* boxCollider : boxColliders)
 				{
 					BeginComponent(boxCollider, queuedForDelete);
 					if (!boxCollider->IsCollapsed())

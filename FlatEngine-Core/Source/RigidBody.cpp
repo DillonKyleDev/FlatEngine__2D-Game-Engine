@@ -143,9 +143,12 @@ namespace FlatEngine {
 	Vector2 RigidBody::AddVelocity(Vector2 vel)
 	{
 		// Make sure not colliding in that direction before adding the velocity
-		FlatEngine::BoxCollider* boxCollider = GetParent()->GetBoxCollider();
-		if (boxCollider == nullptr || (vel.x > 0 && (!boxCollider->_isCollidingRight || !boxCollider->_rightCollisionStatic) || vel.x < 0 && (!boxCollider->_isCollidingLeft || !boxCollider->_leftCollisionStatic)))
-			pendingForces.x += vel.x;
+		std::vector<FlatEngine::BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
+		for (FlatEngine::BoxCollider* boxCollider : boxColliders)
+		{
+			if ((vel.x > 0 && (!boxCollider->_isCollidingRight || !boxCollider->_rightCollisionStatic) || vel.x < 0 && (!boxCollider->_isCollidingLeft || !boxCollider->_leftCollisionStatic)))
+				pendingForces.x += vel.x;
+		}
 
 		pendingForces.y += vel.y;		
 		return pendingForces;

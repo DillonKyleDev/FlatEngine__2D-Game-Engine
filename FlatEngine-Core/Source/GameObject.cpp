@@ -544,9 +544,9 @@ namespace FlatEngine
 	{
 		return GetLoadedScene()->GetAudioByOwner(ID);
 	}
-	std::vector<Button*> GameObject::GetButtons()
+	Button* GameObject::GetButton()
 	{
-		return GetLoadedScene()->GetButtonsByOwner(ID);
+		return GetLoadedScene()->GetButtonByOwner(ID);
 	}
 	Canvas* GameObject::GetCanvas()
 	{
@@ -568,9 +568,9 @@ namespace FlatEngine
 	{
 		return GetLoadedScene()->GetRigidBodyByOwner(ID);
 	}
-	BoxCollider* GameObject::GetBoxCollider()
+	std::vector<BoxCollider*> GameObject::GetBoxCollider()
 	{
-		return GetLoadedScene()->GetBoxColliderByOwner(ID);
+		return GetLoadedScene()->GetBoxCollidersByOwner(ID);
 	}
 	std::vector<BoxCollider*> GameObject::GetBoxColliders()
 	{

@@ -222,7 +222,7 @@ namespace FlatGui {
 		Sprite* sprite = self.GetSprite();
 		Animation* animation = self.GetAnimation();
 		Text* text = self.GetText();
-		std::vector<Button*> buttons = self.GetButtons();
+		Button* button = self.GetButton();
 
 
 		// Animation component handling
@@ -311,7 +311,7 @@ namespace FlatGui {
 			}
 
 			// Renders Button Component
-			for (Button* button : buttons)
+			if (button != nullptr)
 			{
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();

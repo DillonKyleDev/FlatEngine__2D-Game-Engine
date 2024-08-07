@@ -132,8 +132,8 @@ namespace FlatEngine
 
 	void Transform::SetRotation(float newRotation)
 	{
-		if (GetParent() != nullptr && GetParent()->HasComponent("BoxCollider"))
-			GetParent()->GetBoxCollider()->SetRotation(newRotation);
+		//if (GetParent() != nullptr && GetParent()->HasComponent("BoxCollider"))
+		//	GetParent()->GetBoxCollider()->SetRotation(newRotation);
 		rotation = newRotation;
 	}
 

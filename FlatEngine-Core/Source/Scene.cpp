@@ -459,9 +459,9 @@ namespace FlatEngine
 		return m_ECSManager.GetCompositeColliderByOwner(ownerID);
 	}
 
-	BoxCollider* Scene::GetBoxColliderByOwner(long ownerID)
+	std::vector<BoxCollider*> Scene::GetBoxCollidersByOwner(long ownerID)
 	{
-		return m_ECSManager.GetBoxColliderByOwner(ownerID);
+		return m_ECSManager.GetBoxCollidersByOwner(ownerID);
 	}
 
 	CircleCollider* Scene::GetCircleColliderByOwner(long ownerID)
@@ -474,9 +474,9 @@ namespace FlatEngine
 		return m_ECSManager.GetAnimationByOwner(ownerID);
 	}
 
-	std::vector<Button*> Scene::GetButtonsByOwner(long ownerID)
+	Button* Scene::GetButtonByOwner(long ownerID)
 	{
-		return m_ECSManager.GetButtonsByOwner(ownerID);
+		return m_ECSManager.GetButtonByOwner(ownerID);
 	}
 
 	RigidBody* Scene::GetRigidBodyByOwner(long ownerID)
@@ -489,67 +489,67 @@ namespace FlatEngine
 		return m_ECSManager.GetCharacterControllerByOwner(ownerID);
 	}
 
-	std::vector<std::pair<Transform, long>> Scene::GetTransforms()
+	std::map<long, Transform> &Scene::GetTransforms()
 	{
 		return m_ECSManager.GetTransforms();
 	}
-	std::vector<std::pair<Sprite, long>> Scene::GetSprites()
+	std::map<long, Sprite>& Scene::GetSprites()
 	{
 		return m_ECSManager.GetSprites();
 	}
-	std::vector<std::pair<Camera, long>> Scene::GetCameras()
+	std::map<long, Camera>& Scene::GetCameras()
 	{
 		return m_ECSManager.GetCameras();
 	}
-	std::vector<std::pair<ScriptComponent, long>> Scene::GetScriptComponents()
+	std::map<long, std::map<long, ScriptComponent>>& Scene::GetScriptComponents()
 	{
 		return m_ECSManager.GetScriptComponents();
 	}
-	std::vector<std::pair<GameScript, long>> Scene::GetScripts()
+	std::map<long, GameScript>& Scene::GetScripts()
 	{
 		return m_ECSManager.GetScripts();
 	}
-	std::vector<std::pair<Button, long>> Scene::GetButtons()
+	std::map<long, Button>& Scene::GetButtons()
 	{
 		return m_ECSManager.GetButtons();
 	}
-	std::vector<std::pair<Canvas, long>> Scene::GetCanvases()
+	std::map<long, Canvas>& Scene::GetCanvases()
 	{
 		return m_ECSManager.GetCanvases();
 	}
-	std::vector<std::pair<Animation, long>> Scene::GetAnimations()
+	std::map<long, Animation>& Scene::GetAnimations()
 	{
 		return m_ECSManager.GetAnimations();
 	}
-	std::vector<std::pair<Audio, long>> Scene::GetAudios()
+	std::map<long, Audio>& Scene::GetAudios()
 	{
 		return m_ECSManager.GetAudios();
 	}
-	std::vector<std::pair<Text, long>> Scene::GetTexts()
+	std::map<long, Text>& Scene::GetTexts()
 	{
 		return m_ECSManager.GetTexts();
 	}
-	std::vector<std::pair<Collider*, long>> Scene::GetColliders()
+	std::vector<Collider*> Scene::GetColliders()
 	{
 		return m_ECSManager.GetColliders();
 	}
-	std::vector<std::pair<CompositeCollider, long>> Scene::GetCompositeColliders()
+	std::map<long, CompositeCollider>& Scene::GetCompositeColliders()
 	{
 		return m_ECSManager.GetCompositeColliders();
 	}
-	std::vector<std::pair<BoxCollider, long>> Scene::GetBoxColliders()
+	std::map<long, std::map<long, BoxCollider>>& Scene::GetBoxColliders()
 	{
 		return m_ECSManager.GetBoxColliders();
 	}
-	std::vector<std::pair<CircleCollider, long>> Scene::GetCircleColliders()
+	std::map<long, CircleCollider>& Scene::GetCircleColliders()
 	{
 		return m_ECSManager.GetCircleColliders();
 	}
-	std::vector<std::pair<RigidBody, long>> &Scene::GetRigidBodies()
+	std::map<long, RigidBody>& Scene::GetRigidBodies()
 	{
 		return m_ECSManager.GetRigidBodies();
 	}
-	std::vector<std::pair<CharacterController, long>> Scene::GetCharacterControllers()
+	std::map<long, CharacterController>& Scene::GetCharacterControllers()
 	{
 		return m_ECSManager.GetCharacterControllers();
 	}

@@ -51,15 +51,15 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		Texture texture;
-		int renderOrder;
-		float textureWidth;
-		float textureHeight;
-		Vector2 scale;
-		PivotPoint pivotPoint;
-		Vector2 pivotOffset;
-		Vector2 offset;
-		std::string path;
-		Vector4 tintColor;
+		Texture m_texture;
+		int m_renderOrder;
+		float m_textureWidth;
+		float m_textureHeight;
+		Vector2 m_scale;
+		PivotPoint m_pivotPoint;
+		Vector2 m_pivotOffset;
+		Vector2 m_offset;
+		std::string m_path;
+		Vector4 m_tintColor;
 	};
 }

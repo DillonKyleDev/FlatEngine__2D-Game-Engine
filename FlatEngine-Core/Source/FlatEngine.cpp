@@ -354,19 +354,20 @@ namespace FlatEngine
 		// Reset buttons in UIManager
 		F_UIManager.ResetButtons();
 
-		F_SceneManager.LoadScene(filepath);
+		if (F_SceneManager.LoadScene(filepath))
+		{
+			if (F_SceneManager.GetLoadedScene() != nullptr)
+				F_SceneManager.SaveAnimationPreviewObjects();
 
-		if (F_SceneManager.GetLoadedScene() != nullptr)
-			F_SceneManager.SaveAnimationPreviewObjects();
+			F_SceneManager.LoadAnimationPreviewObjects();
 
-		F_SceneManager.LoadAnimationPreviewObjects();
+			// If the GameLoop is running, reinitialize the new scene's GameObjects
+			if (FlatEngine::GameLoopStarted())
+				GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
 
-		// If the GameLoop is running, reinitialize the new scene's GameObjects
-		if (FlatEngine::GameLoopStarted())
-			GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
-
-		if (GetObjectByName("Player") != nullptr)
-			playerObject = GetObjectByName("Player");
+			if (GetObjectByName("Player") != nullptr)
+				playerObject = GetObjectByName("Player");
+		}
 	}
 
 	long GetNextComponentID()

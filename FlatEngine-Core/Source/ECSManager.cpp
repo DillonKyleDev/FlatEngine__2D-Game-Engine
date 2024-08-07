@@ -22,76 +22,63 @@ namespace FlatEngine
 {
 	ECSManager::ECSManager()
 	{
-		m_Transforms = std::vector<std::pair<Transform, long>>();
-		m_Sprites = std::vector<std::pair<Sprite, long>>();
-		m_Cameras = std::vector<std::pair<Camera, long>>();
-		m_Scripts = std::vector<std::pair<ScriptComponent, long>>();
-		m_GameScripts = std::vector<std::pair<GameScript, long>>();
-		m_Buttons = std::vector<std::pair<Button, long>>();
-		m_Canvases = std::vector<std::pair<Canvas, long>>();
-		m_Animations = std::vector<std::pair<Animation, long>>();
-		m_Audios = std::vector<std::pair<Audio, long>>();
-		m_Texts = std::vector<std::pair<Text, long>>();		
-		m_CompositeColliders = std::vector<std::pair<CompositeCollider, long>>();
-		m_BoxColliders = std::vector<std::pair<BoxCollider, long>>();
-		m_CircleColliders = std::vector<std::pair<CircleCollider, long>>();
-		m_RigidBodies = std::vector<std::pair<RigidBody, long>>();
-		m_CharacterControllers = std::vector<std::pair<CharacterController, long>>();
+		m_Transforms = std::map<long, Transform>();
+		m_Sprites = std::map<long, Sprite>();
+		m_Cameras = std::map<long, Camera>();
+		m_Scripts = std::map<long, std::map<long, ScriptComponent>>();
+		m_GameScripts = std::map<long, GameScript>();
+		m_Buttons = std::map<long, Button>();
+		m_Canvases = std::map<long, Canvas>();
+		m_Animations = std::map<long, Animation>();
+		m_Audios = std::map<long, Audio>();
+		m_Texts = std::map<long, Text>();
+		m_CompositeColliders = std::map<long, CompositeCollider>();
+		m_BoxColliders = std::map<long, std::map<long, BoxCollider>>();
+		m_CircleColliders = std::map<long, CircleCollider>();
+		m_RigidBodies = std::map<long, RigidBody>();
+		m_CharacterControllers = std::map<long, CharacterController>();
 
 		m_ColliderPairs = std::vector<std::pair<Collider*, Collider*>>();
-
-		m_transformMap = std::map<long, long>();
-		m_spriteMap = std::map<long, long>();
-		m_cameraMap = std::map<long, long>();
-		m_scriptMap = std::map<long, std::vector<long>>();
-		m_gameScriptMap = std::map<long, long>();
-		m_buttonMap = std::map<long, std::vector<long>>();
-		m_canvasMap = std::map<long, long>();
-		m_animationMap = std::map<long, long>();
-		m_audioMap = std::map<long, long>();
-		m_textMap = std::map<long, long>();		
-		m_compositeColliderMap = std::map<long, long>();
-		m_boxColliderMap = std::map<long, long>();
-		m_circleColliderMap = std::map<long, long>();
-		m_rigidBodyMap = std::map<long, long>();
-		m_characterControllerMap = std::map<long, long>();
 	}
 
 	ECSManager::~ECSManager()
 	{
-
 	}
 
 	Transform* ECSManager::AddTransform(Transform transform, long ownerID)
 	{
-		std::pair<Transform, long> newPair = { transform, ownerID };
-		m_Transforms.push_back(newPair);
-		m_transformMap.emplace(ownerID, (long)m_Transforms.size() - 1);
-		return &m_Transforms[m_Transforms.size() - 1].first;
+		m_Transforms.emplace(ownerID, transform);
+		return &m_Transforms.at(ownerID);
 	}
 
 	Sprite* ECSManager::AddSprite(Sprite sprite, long ownerID)
 	{
-		std::pair<Sprite, long> newPair = { sprite, ownerID };
-		m_Sprites.push_back(newPair);
-		m_spriteMap.emplace(ownerID, (long)m_Sprites.size() - 1);
-		return &m_Sprites[m_Sprites.size() - 1].first;
+		m_Sprites.emplace(ownerID, sprite);
+		return &m_Sprites.at(ownerID);
 	}
 
 	Camera* ECSManager::AddCamera(Camera camera, long ownerID)
-	{
-		std::pair<Camera, long> newPair = { camera, ownerID };
-		m_Cameras.push_back(newPair);
-		m_cameraMap.emplace(ownerID, (long)m_Cameras.size() - 1);
-		return &m_Cameras[m_Cameras.size() - 1].first;
+	{		
+		m_Cameras.emplace(ownerID, camera);
+		return &m_Cameras.at(ownerID);
 	}
 
 	ScriptComponent* ECSManager::AddScriptComponent(ScriptComponent script, long ownerID)
 	{
-		std::pair<ScriptComponent, long> newPair = { script, ownerID };
-		m_Scripts.push_back(newPair);
-		m_scriptMap.emplace(ownerID, (long)m_Scripts.size() - 1);
-		return &m_Scripts[m_Scripts.size() - 1].first;
+		std::map<long, ScriptComponent> newMap;
+		std::pair<long, ScriptComponent> newPair = { script.GetID(), script };
+
+		if (m_Scripts.count(ownerID))
+		{
+			m_Scripts.at(ownerID).emplace(newPair);
+		}
+		else
+		{
+			newMap.emplace(newPair);
+			m_Scripts.emplace(ownerID, newMap);
+		}
+
+		return &m_Scripts.at(ownerID).at(script.GetID());
 	}
 
 
@@ -103,126 +90,119 @@ namespace FlatEngine
 
 	GameScript* ECSManager::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
 	{
-		// MUST FIX SOON
+		// MUST FIX SOON 
+		// Instead of having it just be a map<long, GameScript>, make it like the m_Scripts with map<long, map<long, GameScript>>
+		// WILL NEED TO ADD ID member variable to GameScripts.
 		scriptComponent.SetScriptInstance(&scriptInstance);
 		scriptInstance.SetOwner(&owner);
-		m_GameScripts.push_back(std::pair<GameScript, long>(scriptInstance, owner.GetID()));
+		m_GameScripts.emplace(owner.GetID(), scriptInstance);
 		scriptInstance.Awake();
 		scriptInstance.Start();
-		return nullptr;
+		return &m_GameScripts.at(owner.GetID());
 	}
 
 	Canvas* ECSManager::AddCanvas(Canvas canvas, long ownerID)
 	{
-		std::pair<Canvas, long> newPair = { canvas, ownerID };
-		m_Canvases.push_back(newPair);
-		m_transformMap.emplace(ownerID, (long)m_Canvases.size() - 1);
-		return &m_Canvases[m_Canvases.size() - 1].first;
+		m_Canvases.emplace(ownerID, canvas);
+		return &m_Canvases.at(ownerID);
 	}
 
 	Audio* ECSManager::AddAudio(Audio audio, long ownerID)
 	{
-		std::pair<Audio, long> newPair = { audio, ownerID };
-		m_Audios.push_back(newPair);
-		m_audioMap.emplace(ownerID, (long)m_Audios.size() - 1);
-		return &m_Audios[m_Audios.size() - 1].first;
+		m_Audios.emplace(ownerID, audio);
+		return &m_Audios.at(ownerID);
 	}
 
 	Text* ECSManager::AddText(Text text, long ownerID)
 	{
-		std::pair<Text, long> newPair = { text, ownerID };
-		m_Texts.push_back(newPair);
-		m_textMap.emplace(ownerID, (long)m_Texts.size() - 1);
-		return &m_Texts[m_Texts.size() - 1].first;
+		m_Texts.emplace(ownerID, text);
+		return &m_Texts.at(ownerID);
 	}
 
 	CompositeCollider* ECSManager::AddCompositeCollider(CompositeCollider collider, long ownerID)
 	{
-		std::pair<CompositeCollider, long> newPair = { collider, ownerID };
-		m_CompositeColliders.push_back(newPair);
-		m_compositeColliderMap.emplace(ownerID, (long)m_CompositeColliders.size() - 1);
-		return &m_CompositeColliders[m_CompositeColliders.size() - 1].first;
+		m_CompositeColliders.emplace(ownerID, collider);
+		return &m_CompositeColliders.at(ownerID);
 	}
 
 	BoxCollider* ECSManager::AddBoxCollider(BoxCollider collider, long ownerID)
 	{
-		std::pair<BoxCollider, long> newPair = { collider, ownerID };
-		m_BoxColliders.push_back(newPair);
-		m_boxColliderMap.emplace(ownerID, (long)m_BoxColliders.size() - 1);
-		return &m_BoxColliders[m_BoxColliders.size() - 1].first;
+		std::map<long, BoxCollider> newMap;
+		std::pair<long, BoxCollider> newPair = { collider.GetID(), collider };
+
+		if (m_BoxColliders.count(ownerID))
+		{
+			m_BoxColliders.at(ownerID).emplace(newPair);
+		}
+		else
+		{
+			newMap.emplace(newPair);
+			m_BoxColliders.emplace(ownerID, newMap);
+		}
+
+		return &m_BoxColliders.at(ownerID).at(collider.GetID());
 	}
 
 	CircleCollider* ECSManager::AddCircleCollider(CircleCollider collider, long ownerID)
 	{
-		std::pair<CircleCollider, long> newPair = { collider, ownerID };
-		m_CircleColliders.push_back(newPair);
-		m_circleColliderMap.emplace(ownerID, (long)m_CircleColliders.size() - 1);
-		return &m_CircleColliders[m_CircleColliders.size() - 1].first;
+		m_CircleColliders.emplace(ownerID, collider);
+		return &m_CircleColliders.at(ownerID);
 	}
 
 	Animation* ECSManager::AddAnimation(Animation animation, long ownerID)
 	{
-		std::pair<Animation, long> newPair = { animation, ownerID };
-		m_Animations.push_back(newPair);
-		m_animationMap.emplace(ownerID, (long)m_Animations.size() - 1);
-		return &m_Animations[m_Animations.size() - 1].first;
+		m_Animations.emplace(ownerID, animation);
+		return &m_Animations.at(ownerID);
 	}
 
 	Button* ECSManager::AddButton(Button button, long ownerID)
 	{
-		std::pair<Button, long> newPair = { button, ownerID };
-		m_Buttons.push_back(newPair);
-		m_buttonMap.emplace(ownerID, (long)m_Buttons.size() - 1);
-		return &m_Buttons[m_Buttons.size() - 1].first;
+		m_Buttons.emplace(ownerID, button);
+		return &m_Buttons.at(ownerID);
 	}
 
 	RigidBody* ECSManager::AddRigidBody(RigidBody rigidBody, long ownerID)
 	{
-		std::pair<RigidBody, long> newPair = { rigidBody, ownerID };
-		m_RigidBodies.push_back(newPair);
-		m_rigidBodyMap.emplace(ownerID, (long)m_RigidBodies.size() - 1);
-		return &m_RigidBodies[m_RigidBodies.size() - 1].first;
+		m_RigidBodies.emplace(ownerID, rigidBody);
+		return &m_RigidBodies.at(ownerID);
 	}
 
 	CharacterController* ECSManager::AddCharacterController(CharacterController characterController, long ownerID)
 	{
-		std::pair<CharacterController, long> newPair = { characterController, ownerID };
-		m_CharacterControllers.push_back(newPair);
-		m_characterControllerMap.emplace(ownerID, (long)m_CharacterControllers.size() - 1);
-		return &m_CharacterControllers[m_CharacterControllers.size() - 1].first;
+		m_CharacterControllers.emplace(ownerID, characterController);
+		return &m_CharacterControllers.at(ownerID);
 	}
 
 	// Get Components
 	Transform* ECSManager::GetTransformByOwner(long ownerID)
 	{
-		if (m_transformMap.count(ownerID) && m_Transforms.size() >= m_transformMap.at(ownerID))
-			return &m_Transforms[m_transformMap.at(ownerID)].first;
+		if (m_Transforms.count(ownerID))
+			return &m_Transforms.at(ownerID);
 		else return nullptr;
 	}
 
 	Sprite* ECSManager::GetSpriteByOwner(long ownerID)
 	{
-		if (m_spriteMap.count(ownerID) && m_Sprites.size() >= m_spriteMap.at(ownerID))
-			return &m_Sprites[m_spriteMap.at(ownerID)].first;
+		if (m_Sprites.count(ownerID))
+			return &m_Sprites.at(ownerID);
 		else return nullptr;
 	}
 
 	Camera* ECSManager::GetCameraByOwner(long ownerID)
 	{
-		if (m_cameraMap.count(ownerID) && m_Cameras.size() >= m_cameraMap.at(ownerID))
-			return &m_Cameras[m_cameraMap.at(ownerID)].first;
+		if (m_Cameras.count(ownerID))
+			return &m_Cameras.at(ownerID);
 		else return nullptr;
 	}
 
 	std::vector<ScriptComponent*> ECSManager::GetScriptsByOwner(long ownerID)
 	{
 		std::vector<ScriptComponent*> scripts = std::vector<ScriptComponent*>();
-		if (m_scriptMap.count(ownerID))
-		{
-			for (long index : m_scriptMap.at(ownerID))
+		if (m_Scripts.count(ownerID))
+		{			 
+			for (std::map<long, ScriptComponent>::iterator iter = m_Scripts.at(ownerID).begin(); iter != m_Scripts.at(ownerID).end();)
 			{
-				if (m_Scripts.size() >= index)
-					scripts.push_back(&m_Scripts.at(index).first);
+				scripts.push_back(&(*iter).second);
 			}
 		}
 		return scripts;
@@ -230,85 +210,85 @@ namespace FlatEngine
 
 	GameScript* ECSManager::GetGameScriptByOwner(long ownerID, std::string name)
 	{
-		if (m_gameScriptMap.count(ownerID) && m_GameScripts.size() >= m_gameScriptMap.at(ownerID))
-			return &m_GameScripts[m_gameScriptMap.at(ownerID)].first;
-		else return nullptr;
+		// FIX THIS LATER AS WELL
+		//if (m_gameScriptMap.count(ownerID) && m_GameScripts.size() >= m_gameScriptMap.at(ownerID))
+		//	return &m_GameScripts[m_gameScriptMap.at(ownerID)].first;
+		return nullptr;
 	}
 
 	Canvas* ECSManager::GetCanvasByOwner(long ownerID)
 	{
-		if (m_canvasMap.count(ownerID) && m_Canvases.size() >= m_canvasMap.at(ownerID))
-			return &m_Canvases[m_canvasMap.at(ownerID)].first;
+		if (m_Canvases.count(ownerID))
+			return &m_Canvases.at(ownerID);
 		else return nullptr;
 	}
 
 	Audio* ECSManager::GetAudioByOwner(long ownerID)
 	{
-		if (m_audioMap.count(ownerID) && m_Audios.size() >= m_audioMap.at(ownerID))
-			return &m_Audios[m_audioMap.at(ownerID)].first;
+		if (m_Audios.count(ownerID))
+			return &m_Audios.at(ownerID);
 		else return nullptr;
 	}
 
 	Text* ECSManager::GetTextByOwner(long ownerID)
 	{
-		if (m_textMap.count(ownerID) && m_Texts.size() >= m_textMap.at(ownerID))
-			return &m_Texts[m_textMap.at(ownerID)].first;
+		if (m_Texts.count(ownerID))
+			return &m_Texts.at(ownerID);
 		else return nullptr;
 	}
 
 	CompositeCollider* ECSManager::GetCompositeColliderByOwner(long ownerID)
 	{
-		if (m_compositeColliderMap.count(ownerID) && m_CompositeColliders.size() >= m_compositeColliderMap.at(ownerID))
-			return &m_CompositeColliders[m_compositeColliderMap.at(ownerID)].first;
+		if (m_CompositeColliders.count(ownerID))
+			return &m_CompositeColliders.at(ownerID);
 		else return nullptr;
 	}
 
-	BoxCollider* ECSManager::GetBoxColliderByOwner(long ownerID)
+	std::vector<BoxCollider*> ECSManager::GetBoxCollidersByOwner(long ownerID)
 	{
-		if (m_boxColliderMap.count(ownerID) && m_BoxColliders.size() >= m_boxColliderMap.at(ownerID))
-			return &m_BoxColliders[m_boxColliderMap.at(ownerID)].first;
-		else return nullptr;
+		std::vector<BoxCollider*> colliders = std::vector<BoxCollider*>();
+		if (m_BoxColliders.count(ownerID))
+		{
+			for (std::map<long, BoxCollider>::iterator iter = m_BoxColliders.at(ownerID).begin(); iter != m_BoxColliders.at(ownerID).end();)
+			{
+				colliders.push_back(&(*iter).second);
+			}
+		}
+		return colliders;
 	}
 
 	CircleCollider* ECSManager::GetCircleColliderByOwner(long ownerID)
 	{
-		if (m_circleColliderMap.count(ownerID) && m_CircleColliders.size() >= m_circleColliderMap.at(ownerID))
-			return &m_CircleColliders[m_circleColliderMap.at(ownerID)].first;
+		if (m_CircleColliders.count(ownerID))
+			return &m_CircleColliders.at(ownerID);
 		else return nullptr;
 	}
 
 	Animation* ECSManager::GetAnimationByOwner(long ownerID)
 	{
-		if (m_animationMap.count(ownerID) && m_Animations.size() >= m_animationMap.at(ownerID))
-			return &m_Animations[m_animationMap.at(ownerID)].first;
+		if (m_Animations.count(ownerID))
+			return &m_Animations.at(ownerID);
 		else return nullptr;
 	}
 
-	std::vector<Button*> ECSManager::GetButtonsByOwner(long ownerID)
+	Button* ECSManager::GetButtonByOwner(long ownerID)
 	{
-		std::vector<Button*> buttons = std::vector<Button*>();
-		if (m_buttonMap.count(ownerID))
-		{
-			for (long index : m_buttonMap.at(ownerID))
-			{
-				if (m_Buttons.size() >= index)
-					buttons.push_back(&m_Buttons.at(index).first);
-			}
-		}
-		return buttons;
+		if (m_Buttons.count(ownerID))
+			return &m_Buttons.at(ownerID);
+		else return nullptr;
 	}
 
 	RigidBody* ECSManager::GetRigidBodyByOwner(long ownerID)
 	{
-		if (m_rigidBodyMap.count(ownerID) && m_RigidBodies.size() >= m_rigidBodyMap.at(ownerID))
-			return &m_RigidBodies[m_rigidBodyMap.at(ownerID)].first;
+		if (m_RigidBodies.count(ownerID))
+			return &m_RigidBodies.at(ownerID);
 		else return nullptr;
 	}
 
 	CharacterController* ECSManager::GetCharacterControllerByOwner(long ownerID)
 	{
-		if (m_characterControllerMap.count(ownerID) && m_CharacterControllers.size() >= m_characterControllerMap.at(ownerID))
-			return &m_CharacterControllers[m_characterControllerMap.at(ownerID)].first;
+		if (m_CharacterControllers.count(ownerID))
+			return &m_CharacterControllers.at(ownerID);
 		else return nullptr;
 	}
 
@@ -370,10 +350,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveTransform(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Transforms.count(ownerID))
 		{
-			m_Transforms.erase(m_Transforms.begin() + m_transformMap.at(ownerID));
-			m_transformMap.erase(ownerID);
+			m_Transforms.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -382,10 +361,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveSprite(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Sprites.count(ownerID))
 		{
-			m_Sprites.erase(m_Sprites.begin() + m_spriteMap.at(ownerID));
-			m_spriteMap.erase(ownerID);
+			m_Sprites.erase(ownerID);			
 			b_success = true;
 		}
 		return b_success;
@@ -394,10 +372,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveCamera(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Cameras.count(ownerID))
 		{
-			m_Cameras.erase(m_Cameras.begin() + m_cameraMap.at(ownerID));
-			m_cameraMap.erase(ownerID);
+			m_Cameras.erase(ownerID);			
 			b_success = true;
 		}
 		return b_success;
@@ -405,35 +382,22 @@ namespace FlatEngine
 
 	bool ECSManager::RemoveScript(long scriptID)
 	{
-		// Might need a map of maps std::map<long ownerID, std::map<long scriptID, long index>> m_scriptMap
-		// Accessed by m_Scripts component index = m_scriptMap.at(ownerID).at(scriptID)
-		//m_Scripts.erase(m_Scripts.begin() + m_scriptMap.at(ownerID));
-		//m_scriptMap.erase(ownerID);
+		// TODO
 		return false;
 	}
 
 	bool ECSManager::RemoveGameScript(long scriptID)
 	{
-		for (std::vector<std::pair<GameScript, long>>::iterator iter = m_GameScripts.begin(); iter != m_GameScripts.end();)
-		{
-			//if ((*iter).first.GetOwnerID() == scriptID)
-			//{
-			//	//RemoveProfilerProcess((*iter)->GetName() + "-on-" + (*iter)->GetOwner()->GetName());
-			//	m_GameScripts.erase(iter);
-			//	return;
-			//}
-			//iter++;
-		}
+		// TODO
 		return false;
 	}
 
 	bool ECSManager::RemoveCanvas(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Canvases.count(ownerID))
 		{
-			m_Canvases.erase(m_Canvases.begin() + m_canvasMap.at(ownerID));
-			m_canvasMap.erase(ownerID);
+			m_Canvases.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -442,10 +406,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveAudio(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Audios.count(ownerID))
 		{
-			m_Audios.erase(m_Audios.begin() + m_audioMap.at(ownerID));
-			m_audioMap.erase(ownerID);
+			m_Audios.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -454,10 +417,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveText(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Texts.count(ownerID))
 		{
-			m_Texts.erase(m_Texts.begin() + m_textMap.at(ownerID));
-			m_textMap.erase(ownerID);
+			m_Texts.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -466,10 +428,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveCompositeCollider(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_CompositeColliders.count(ownerID))
 		{
-			m_CompositeColliders.erase(m_CompositeColliders.begin() + m_compositeColliderMap.at(ownerID));
-			m_compositeColliderMap.erase(ownerID);
+			m_CompositeColliders.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -478,10 +439,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveBoxCollider(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_BoxColliders.count(ownerID))
 		{
-			m_BoxColliders.erase(m_BoxColliders.begin() + m_boxColliderMap.at(ownerID));
-			m_boxColliderMap.erase(ownerID);
+			m_BoxColliders.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -490,10 +450,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveCircleCollider(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_CircleColliders.count(ownerID))
 		{
-			m_CircleColliders.erase(m_CircleColliders.begin() + m_circleColliderMap.at(ownerID));
-			m_circleColliderMap.erase(ownerID);
+			m_CircleColliders.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -502,10 +461,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveAnimation(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_Animations.count(ownerID))
 		{
-			m_Animations.erase(m_Animations.begin() + m_animationMap.at(ownerID));
-			m_animationMap.erase(ownerID);
+			m_Animations.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -513,25 +471,16 @@ namespace FlatEngine
 
 	bool ECSManager::RemoveButton(long ownerID)
 	{
-		// Might need to do the same thing here as in RemoveScriptComponent function
-		//bool b_success = false;
-		//if (m_transformMap.count(ownerID) > 0)
-		//{
-		//	m_Buttons.erase(m_Buttons.begin() + m_buttonMap.at(ownerID));
-		//	m_buttonMap.erase(ownerID);
-		//	b_success = true;
-		//}
-		//return b_success;
+		// TODO
 		return false;
 	}
 
 	bool ECSManager::RemoveRigidBody(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_RigidBodies.count(ownerID))
 		{
-			m_RigidBodies.erase(m_RigidBodies.begin() + m_rigidBodyMap.at(ownerID));
-			m_rigidBodyMap.erase(ownerID);
+			m_RigidBodies.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -540,10 +489,9 @@ namespace FlatEngine
 	bool ECSManager::RemoveCharacterController(long ownerID)
 	{
 		bool b_success = false;
-		if (m_transformMap.count(ownerID) > 0)
+		if (m_CharacterControllers.count(ownerID))
 		{
-			m_CharacterControllers.erase(m_CharacterControllers.begin() + m_characterControllerMap.at(ownerID));
-			m_characterControllerMap.erase(ownerID);
+			m_CharacterControllers.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -552,6 +500,7 @@ namespace FlatEngine
 
 	void ECSManager::InitializeScriptObjects(std::vector<GameObject> gameObjects)
 	{
+		// TODO if needed
 	}
 
 	void ECSManager::UpdateColliderPairs()
@@ -633,81 +582,84 @@ namespace FlatEngine
 		//}
 	}
 
-	std::vector<std::pair<Transform, long>> ECSManager::GetTransforms()
+	std::map<long, Transform> &ECSManager::GetTransforms()
 	{
 		return m_Transforms;
 	}
-	std::vector<std::pair<Sprite, long>> ECSManager::GetSprites()
+	std::map<long, Sprite> &ECSManager::GetSprites()
 	{
 		return m_Sprites;
 	}
-	std::vector<std::pair<Camera, long>> ECSManager::GetCameras()
+	std::map<long, Camera> &ECSManager::GetCameras()
 	{
 		return m_Cameras;
 	}
-	std::vector<std::pair<ScriptComponent, long>> ECSManager::GetScriptComponents()
+	std::map<long, std::map<long, ScriptComponent>> &ECSManager::GetScriptComponents()
 	{
 		return m_Scripts;
 	}
-	std::vector<std::pair<GameScript, long>> ECSManager::GetScripts()
+	std::map<long, GameScript> &ECSManager::GetScripts()
 	{
 		return m_GameScripts;
 	}
-	std::vector<std::pair<Button, long>> ECSManager::GetButtons()
+	std::map<long, Button> &ECSManager::GetButtons()
 	{
 		return m_Buttons;
 	}
-	std::vector<std::pair<Canvas, long>> ECSManager::GetCanvases()
+	std::map<long, Canvas> &ECSManager::GetCanvases()
 	{
 		return m_Canvases;
 	}
-	std::vector<std::pair<Animation, long>> ECSManager::GetAnimations()
+	std::map<long, Animation> &ECSManager::GetAnimations()
 	{
 		return m_Animations;
 	}
-	std::vector<std::pair<Audio, long>> ECSManager::GetAudios()
+	std::map<long, Audio> &ECSManager::GetAudios()
 	{
 		return m_Audios;
 	}
-	std::vector<std::pair<Text, long>> ECSManager::GetTexts()
+	std::map<long, Text> &ECSManager::GetTexts()
 	{
 		return m_Texts;
 	}
-	std::vector<std::pair<Collider*, long>> ECSManager::GetColliders()
+	std::vector<Collider*> ECSManager::GetColliders()
 	{
 		// Collect all colliders when needed so we don't have to keep an member variable updated
-		std::vector<std::pair<Collider*, long>> colliders;
-		for (std::pair<CompositeCollider, long> collider : m_CompositeColliders)
+		std::vector<Collider*> colliders;
+		for (std::pair<long, CompositeCollider> collider : m_CompositeColliders)
 		{
-			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+			colliders.push_back(&collider.second);
 		}
-		for (std::pair<BoxCollider, long> collider : m_BoxColliders)
+		for (std::pair<long, std::map<long, BoxCollider>> colliderMap : m_BoxColliders)
 		{
-			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+			for (std::pair<long, BoxCollider> collider : colliderMap.second)
+			{
+				colliders.push_back(&collider.second);
+			}
 		}
-		for (std::pair<CircleCollider, long> collider : m_CircleColliders)
+		for (std::pair<long, CircleCollider> collider : m_CircleColliders)
 		{
-			colliders.push_back(std::pair<Collider*, long>(&collider.first, collider.second));
+			colliders.push_back(&collider.second);
 		}
 		return colliders;
 	}
-	std::vector<std::pair<CompositeCollider, long>> ECSManager::GetCompositeColliders()
+	std::map<long, CompositeCollider> &ECSManager::GetCompositeColliders()
 	{
 		return m_CompositeColliders;
 	}
-	std::vector<std::pair<BoxCollider, long>> ECSManager::GetBoxColliders()
+	std::map<long, std::map<long, BoxCollider>> &ECSManager::GetBoxColliders()
 	{
 		return m_BoxColliders;
 	}
-	std::vector<std::pair<CircleCollider, long>> ECSManager::GetCircleColliders()
+	std::map<long, CircleCollider> &ECSManager::GetCircleColliders()
 	{
 		return m_CircleColliders;
 	}
-	std::vector<std::pair<RigidBody, long>> &ECSManager::GetRigidBodies()
+	std::map<long, RigidBody> &ECSManager::GetRigidBodies()
 	{
 		return m_RigidBodies;
 	}
-	std::vector<std::pair<CharacterController, long>> ECSManager::GetCharacterControllers()
+	std::map<long, CharacterController> &ECSManager::GetCharacterControllers()
 	{
 		return m_CharacterControllers;
 	}

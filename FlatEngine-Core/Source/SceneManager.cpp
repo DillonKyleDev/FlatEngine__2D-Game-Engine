@@ -62,7 +62,7 @@ namespace FlatEngine
 		// Array that will hold our gameObject json objects
 		json sceneObjectsJsonArray;
 
-		std::map<long, GameObject> sceneObjects = scene->GetSceneObjects();
+		std::map<long, GameObject> &sceneObjects = scene->GetSceneObjects();
 		if (sceneObjects.size() > 0)
 		{
 			for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
@@ -92,15 +92,10 @@ namespace FlatEngine
 		SaveScene(&m_loadedScene, m_loadedScenePath);
 	}
 
-	void SceneManager::LoadScene(std::string filepath)
+	bool SceneManager::LoadScene(std::string filepath)
 	{
-		m_loadedScenePath = filepath;
-
-		// Start up a new scene
-		m_loadedScene = Scene();
 		std::string fileName = GetFilenameFromPath(filepath, false);
-		m_loadedScene.SetName(fileName);
-		m_loadedScene.SetPath(filepath);
+		bool b_success = true;
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -118,19 +113,26 @@ namespace FlatEngine
 			std::string line;
 			while (!ifstream.eof()) {
 				std::getline(ifstream, line);
-				fileContent.append(line + "\n");
+				if (line != "")
+					fileContent.append(line + "\n");
 			}
 		}
 
 		// Close the file after reading
 		file_obj.close();
 
-		if (file_obj.good())
+		if (file_obj.good() && fileContent != "")
 		{
+			// Start up a new scene
+			m_loadedScene = Scene();
+			m_loadedScenePath = filepath;
+			m_loadedScene.SetName(fileName);
+			m_loadedScene.SetPath(filepath);
+
 			// Go from string to json object
 			json fileContentJson = json::parse(fileContent);
 
-			if (fileContentJson["Scene GameObjects"][0] != "NULL")
+			if (fileContentJson.contains("Scene GameObjects") && fileContentJson["Scene GameObjects"][0] != "NULL")
 			{
 				auto firstObjectName = fileContentJson["Scene GameObjects"];
 
@@ -149,10 +151,17 @@ namespace FlatEngine
 					if (!loadedObject.IsPrefab())
 						m_loadedScene.AddSceneObject(loadedObject);
 				}
+
+				F_Application->OnLoadScene(fileName);
 			}
 		}
+		else
+		{
+			FlatEngine::LogString("Failed to load scene: " + fileName);
+			b_success = false;
+		}
 
-		F_Application->OnLoadScene(fileName);
+		return b_success;
 	}
 
 	Scene *SceneManager::GetLoadedScene()

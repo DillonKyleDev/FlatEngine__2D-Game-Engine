@@ -222,9 +222,6 @@ namespace FlatGui
 			// Initialize prefab objects
 			FlatEngine::prefabManager->InitializePrefabs();
 
-			// Open Project by default
-			OpenProject("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json");
-
 			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
 			//FlatEngine::F_Application->GetGameLoop()->CollectPhysicsBodies();
 
@@ -721,7 +718,7 @@ namespace FlatGui
 		Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
 		Camera* camera = self.GetCamera();
-		std::vector<Button*> buttons = self.GetButtons();
+		Button* button = self.GetButton();
 		Canvas* canvas = self.GetCanvas();
 		Text* text = self.GetText();
 		std::vector<BoxCollider*> boxColliders = self.GetBoxColliders();
@@ -906,7 +903,7 @@ namespace FlatGui
 			}
 
 			// Renders Button Component
-			for (Button* button : buttons)
+			if (button != nullptr)
 			{
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
@@ -965,101 +962,95 @@ namespace FlatGui
 			}
 
 			// Renders BoxCollider Component
-			if (boxColliders.size() > 0)
+			for (BoxCollider *boxCollider : boxColliders)
 			{
-				for (BoxCollider *boxCollider : boxColliders)
+				float activeWidth = boxCollider->GetActiveWidth();
+				float activeHeight = boxCollider->GetActiveHeight();
+				Vector2 activeOffset = boxCollider->GetActiveOffset();
+				int activeLayer = boxCollider->GetActiveLayer();
+				bool _isActive = boxCollider->IsActive();
+				bool _isColliding = boxCollider->IsColliding();
+				float activeRadius = boxCollider->GetActiveRadiusScreen();
+				bool _showActiveRadius = boxCollider->GetShowActiveRadius();
+				Vector2 center = boxCollider->GetCenterCoord();
+
+				boxCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
+
+				Vector2 corners[4] = {
+					boxCollider->GetCorners()[0],
+					boxCollider->GetCorners()[1],
+					boxCollider->GetCorners()[2],
+					boxCollider->GetCorners()[3],
+				};
+
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+
+				if (loadedProject->GetCollisionDetection() == "Shared Axis")
 				{
-					float activeWidth = boxCollider->GetActiveWidth();
-					float activeHeight = boxCollider->GetActiveHeight();
-					Vector2 activeOffset = boxCollider->GetActiveOffset();
-					int activeLayer = boxCollider->GetActiveLayer();
-					bool _isActive = boxCollider->IsActive();
-					bool _isColliding = boxCollider->IsColliding();
-					float activeRadius = boxCollider->GetActiveRadiusScreen();
-					bool _showActiveRadius = boxCollider->GetShowActiveRadius();
-					Vector2 center = boxCollider->GetCenterCoord();
-
-					boxCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
-
+					if (_isActive && !_isColliding)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
+					else if (!_isActive)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
+					else if (_isColliding)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
+				}
+				else if (loadedProject->GetCollisionDetection() == "Separating Axis")
+				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
 						boxCollider->GetCorners()[1],
 						boxCollider->GetCorners()[2],
 						boxCollider->GetCorners()[3],
 					};
-
-					drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
-
-					if (loadedProject->GetCollisionDetection() == "Shared Axis")
+					Vector2 normals[4] =
 					{
-						if (_isActive && !_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
-						else if (!_isActive)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
-						else if (_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
-					}
-					else if (loadedProject->GetCollisionDetection() == "Separating Axis")
-					{
-						Vector2 corners[4] = {
-							boxCollider->GetCorners()[0],
-							boxCollider->GetCorners()[1],
-							boxCollider->GetCorners()[2],
-							boxCollider->GetCorners()[3],
-						};
-						Vector2 normals[4] =
-						{
-							boxCollider->GetNormals()[0],
-							boxCollider->GetNormals()[1],
-							boxCollider->GetNormals()[2],
-							boxCollider->GetNormals()[3],
-						};
+						boxCollider->GetNormals()[0],
+						boxCollider->GetNormals()[1],
+						boxCollider->GetNormals()[2],
+						boxCollider->GetNormals()[3],
+					};
 
-						// Draw Normals
-						FlatEngine::DrawLine(center, normals[0], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[1], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[2], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(center, normals[3], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+					// Draw Normals
+					FlatEngine::DrawLine(center, normals[0], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+					FlatEngine::DrawLine(center, normals[1], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+					FlatEngine::DrawLine(center, normals[2], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+					FlatEngine::DrawLine(center, normals[3], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
 
-						if (_isActive && !_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
-						else if (!_isActive)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
-						else if (_isColliding)
-							FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
-					}
-
-					// Draw activeRadius circle
-					if (_showActiveRadius)
-						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
+					if (_isActive && !_isColliding)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
+					else if (!_isActive)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
+					else if (_isColliding)
+						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
 				}
+
+				// Draw activeRadius circle
+				if (_showActiveRadius)
+					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
 			}
 
 			// Renders CircleCollider Component
-			if (circleColliders.size() > 0)
+			for (CircleCollider* circleCollider : circleColliders)
 			{
-				for (CircleCollider* circleCollider : circleColliders)
-				{
-					Vector2 activeOffset = circleCollider->GetActiveOffset();
-					int activeLayer = circleCollider->GetActiveLayer();
-					bool _isActive = circleCollider->IsActive();
-					bool _isColliding = circleCollider->IsColliding();
-					float activeRadius = circleCollider->GetActiveRadiusGrid() * sceneViewGridStep.x;
-					circleCollider->SetActiveRadiusScreen(activeRadius);
-					bool _showActiveRadius = circleCollider->GetShowActiveRadius();
-					Vector2 center = circleCollider->GetCenterCoord();
+				Vector2 activeOffset = circleCollider->GetActiveOffset();
+				int activeLayer = circleCollider->GetActiveLayer();
+				bool _isActive = circleCollider->IsActive();
+				bool _isColliding = circleCollider->IsColliding();
+				float activeRadius = circleCollider->GetActiveRadiusGrid() * sceneViewGridStep.x;
+				circleCollider->SetActiveRadiusScreen(activeRadius);
+				bool _showActiveRadius = circleCollider->GetShowActiveRadius();
+				Vector2 center = circleCollider->GetCenterCoord();
 
-					drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
 
-					circleCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
+				circleCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
 
-					if (_isActive && !_isColliding)
-						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
-					else if (!_isActive)
-						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderInactiveColor, draw_list);
-					else if (_isColliding)
-						FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderCollidingColor, draw_list);
-				}
+				if (_isActive && !_isColliding)
+					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
+				else if (!_isActive)
+					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderInactiveColor, draw_list);
+				else if (_isColliding)
+					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderCollidingColor, draw_list);
 			}
 
 			// Renders Transform Arrow // 

@@ -74,10 +74,10 @@ namespace FlatEngine
 		Audio* GetAudioByOwner(long ownerID);
 		Text* GetTextByOwner(long ownerID);
 		CompositeCollider* GetCompositeColliderByOwner(long ownerID);
-		BoxCollider* GetBoxColliderByOwner(long ownerID);
+		std::vector<BoxCollider*> GetBoxCollidersByOwner(long ownerID);
 		CircleCollider* GetCircleColliderByOwner(long ownerID);
 		Animation* GetAnimationByOwner(long ownerID);
-		std::vector<Button*> GetButtonsByOwner(long ownerID);
+		Button* GetButtonByOwner(long ownerID);
 		RigidBody* GetRigidBodyByOwner(long ownerID);
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
 
@@ -86,58 +86,41 @@ namespace FlatEngine
 		void UpdateColliderPairs();
 		void UpdateActiveRigidBodies();
 
-		std::vector<std::pair<Transform, long>> GetTransforms();
-		std::vector<std::pair<Sprite, long>> GetSprites();
-		std::vector<std::pair<Camera, long>> GetCameras();
-		std::vector<std::pair<ScriptComponent, long>> GetScriptComponents();
-		std::vector<std::pair<GameScript, long>> GetScripts();
-		std::vector<std::pair<Button, long>> GetButtons();
-		std::vector<std::pair<Canvas, long>> GetCanvases();
-		std::vector<std::pair<Animation, long>> GetAnimations();
-		std::vector<std::pair<Audio, long>> GetAudios();
-		std::vector<std::pair<Text, long>> GetTexts();
-		std::vector<std::pair<Collider*, long>> GetColliders();
-		std::vector<std::pair<CompositeCollider, long>> GetCompositeColliders();
-		std::vector<std::pair<BoxCollider, long>> GetBoxColliders();
-		std::vector<std::pair<CircleCollider, long>> GetCircleColliders();
-		std::vector<std::pair<RigidBody, long>> &GetRigidBodies();
-		std::vector<std::pair<CharacterController, long>> GetCharacterControllers();
+		std::map<long, Transform> &GetTransforms();
+		std::map<long, Sprite>& GetSprites();
+		std::map<long, Camera>& GetCameras();
+		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
+		std::map<long, GameScript>& GetScripts();
+		std::map<long, Button>& GetButtons();
+		std::map<long, Canvas>& GetCanvases();
+		std::map<long, Animation>& GetAnimations();
+		std::map<long, Audio>& GetAudios();
+		std::map<long, Text>& GetTexts();
+		std::vector<Collider*> GetColliders();
+		std::map<long, CompositeCollider>& GetCompositeColliders();
+		std::map<long, std::map<long, BoxCollider>> &GetBoxColliders();
+		std::map<long, CircleCollider>& GetCircleColliders();
+		std::map<long, RigidBody>& GetRigidBodies();
+		std::map<long, CharacterController>& GetCharacterControllers();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 
 	private:
-		std::vector<std::pair<Transform, long>> m_Transforms;
-		std::vector<std::pair<Sprite, long>> m_Sprites;
-		std::vector<std::pair<Camera, long>> m_Cameras;
-		std::vector<std::pair<ScriptComponent, long>> m_Scripts;
-		std::vector<std::pair<GameScript, long>> m_GameScripts;
-		std::vector<std::pair<Button, long>> m_Buttons;
-		std::vector<std::pair<Canvas, long>> m_Canvases;
-		std::vector<std::pair<Animation, long>> m_Animations;
-		std::vector<std::pair<Audio, long>> m_Audios;
-		std::vector<std::pair<Text, long>> m_Texts;		
-		std::vector<std::pair<CompositeCollider, long>> m_CompositeColliders;
-		std::vector<std::pair<BoxCollider, long>> m_BoxColliders;
-		std::vector<std::pair<CircleCollider, long>> m_CircleColliders;
-		std::vector<std::pair<RigidBody, long>> m_RigidBodies;
-		std::vector<std::pair<CharacterController, long>> m_CharacterControllers;
+		std::map<long, Transform> m_Transforms;
+		std::map<long, Sprite> m_Sprites;
+		std::map<long, Camera> m_Cameras;
+		std::map<long, std::map<long, ScriptComponent>> m_Scripts;
+		std::map<long, GameScript> m_GameScripts;
+		std::map<long, Button> m_Buttons;
+		std::map<long, Canvas> m_Canvases;
+		std::map<long, Animation> m_Animations;
+		std::map<long, Audio> m_Audios;
+		std::map<long, Text> m_Texts;		
+		std::map<long, CompositeCollider> m_CompositeColliders;
+		std::map<long, std::map<long, BoxCollider>> m_BoxColliders;
+		std::map<long, CircleCollider> m_CircleColliders;
+		std::map<long, RigidBody> m_RigidBodies;
+		std::map<long, CharacterController> m_CharacterControllers;
 
 		std::vector<std::pair<Collider*, Collider*>> m_ColliderPairs;
-
-		// <ID of owner, index of component in vector>
-		std::map<long, long> m_transformMap;
-		std::map<long, long> m_spriteMap;
-		std::map<long, long> m_cameraMap;
-		std::map<long, std::vector<long>> m_scriptMap;
-		std::map<long, long> m_gameScriptMap; // To be determined later
-		std::map<long, std::vector<long>> m_buttonMap;
-		std::map<long, long> m_canvasMap;
-		std::map<long, long> m_animationMap;
-		std::map<long, long> m_audioMap;
-		std::map<long, long> m_textMap;		
-		std::map<long, long> m_compositeColliderMap;
-		std::map<long, long> m_boxColliderMap;
-		std::map<long, long> m_circleColliderMap;
-		std::map<long, long> m_rigidBodyMap;
-		std::map<long, long> m_characterControllerMap;
 	};
 }

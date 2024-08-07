@@ -102,20 +102,31 @@ namespace FlatEngine
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<RigidBody, long> &rigidBody : GetLoadedScene()->GetRigidBodies())
+		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
-			if (rigidBody.first.IsActive())
-				rigidBody.first.CalculatePhysics(loadedProject->GetPhysicsSystem());
+			if (rigidBody.second.IsActive())
+				rigidBody.second.CalculatePhysics(loadedProject->GetPhysicsSystem());
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		LogFloat(processTime, "CalculatePhysics: ");
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<Collider*, long> collider : GetLoadedScene()->GetColliders())
+		std::vector<Collider*> colliders = GetLoadedScene()->GetColliders();
+		for (Collider* collider : colliders)
 		{
-			collider.first->ResetCollisions();
-			collider.first->RecalculateBounds();
+			// TODO - Fix
+			// Probably broken because of casting.
+			if (collider->GetTypeString() == "BoxCollider")
+			{
+				//
+				//static_cast<BoxCollider*>(collider)->ResetCollisions(); // Not working
+				static_cast<BoxCollider*>(collider)->RecalculateBounds("Simple Box", 1.0f, Vector2(0,0));
+			}
+			LogString("Hello " + collider->GetParent()->GetName());
+			
+			collider->ResetCollisions();   // Not working
+			collider->RecalculateBounds(); // Not working
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		LogFloat(processTime, "ResetCollisions & Bounds: ");
@@ -147,11 +158,11 @@ namespace FlatEngine
 
 		processTime = (float)FlatEngine::GetEngineTime();
 		// Apply RigidBody physics calculations
-		for (std::pair<RigidBody, long> &rigidBody : GetLoadedScene()->GetRigidBodies())
+		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
-			if (rigidBody.first.IsActive())
+			if (rigidBody.second.IsActive())
 			{
-				rigidBody.first.ApplyPhysics((float)deltaTime, loadedProject->GetPhysicsSystem());
+				rigidBody.second.ApplyPhysics((float)deltaTime, loadedProject->GetPhysicsSystem());
 			}
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;

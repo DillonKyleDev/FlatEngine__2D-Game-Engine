@@ -89,29 +89,29 @@ namespace FlatEngine
 		Audio* GetAudioByOwner(long ownerID);
 		Text* GetTextByOwner(long ownerID);
 		CompositeCollider* GetCompositeColliderByOwner(long ownerID);
-		BoxCollider* GetBoxColliderByOwner(long ownerID);
+		std::vector<BoxCollider*> GetBoxCollidersByOwner(long ownerID);
 		CircleCollider* GetCircleColliderByOwner(long ownerID);
 		Animation* GetAnimationByOwner(long ownerID);
-		std::vector<Button*> GetButtonsByOwner(long ownerID);
+		Button* GetButtonByOwner(long ownerID);
 		RigidBody* GetRigidBodyByOwner(long ownerID);
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
 
-		std::vector<std::pair<Transform, long>> GetTransforms();
-		std::vector<std::pair<Sprite, long>> GetSprites();
-		std::vector<std::pair<Camera, long>> GetCameras();
-		std::vector<std::pair<ScriptComponent, long>> GetScriptComponents();
-		std::vector<std::pair<GameScript, long>> GetScripts();
-		std::vector<std::pair<Button, long>> GetButtons();
-		std::vector<std::pair<Canvas, long>> GetCanvases();
-		std::vector<std::pair<Animation, long>> GetAnimations();
-		std::vector<std::pair<Audio, long>> GetAudios();
-		std::vector<std::pair<Text, long>> GetTexts();
-		std::vector<std::pair<Collider*, long>> GetColliders();
-		std::vector<std::pair<CompositeCollider, long>> GetCompositeColliders();
-		std::vector<std::pair<BoxCollider, long>> GetBoxColliders();
-		std::vector<std::pair<CircleCollider, long>> GetCircleColliders();
-		std::vector<std::pair<RigidBody, long>> &GetRigidBodies();
-		std::vector<std::pair<CharacterController, long>> GetCharacterControllers();
+		std::map<long, Transform> &GetTransforms();
+		std::map<long, Sprite>& GetSprites();
+		std::map<long, Camera>& GetCameras();
+		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
+		std::map<long, GameScript>& GetScripts();
+		std::map<long, Button>& GetButtons();
+		std::map<long, Canvas>& GetCanvases();
+		std::map<long, Animation>& GetAnimations();
+		std::map<long, Audio>& GetAudios();
+		std::map<long, Text>& GetTexts();
+		std::vector<Collider*> GetColliders();
+		std::map<long, CompositeCollider>& GetCompositeColliders();
+		std::map<long, std::map<long, BoxCollider>>& GetBoxColliders();
+		std::map<long, CircleCollider>& GetCircleColliders();
+		std::map<long, RigidBody>& GetRigidBodies();
+		std::map<long, CharacterController>& GetCharacterControllers();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 
 	private:

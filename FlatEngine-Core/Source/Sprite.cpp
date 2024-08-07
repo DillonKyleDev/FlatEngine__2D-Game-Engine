@@ -8,16 +8,16 @@ namespace FlatEngine
 		SetType(Component::ComponentTypes::Sprite);
 		SetID(myID);
 		SetParentID(parentID);
-		texture = Texture();
-		textureWidth = 0;
-		textureHeight = 0;
-		scale = Vector2(1, 1);
-		pivotPoint = Center;
-		pivotOffset = Vector2(0, 0);
-		offset = Vector2(0, 0);
-		path = "";
-		tintColor = Vector4(1, 1, 1, 1);
-		renderOrder = 0;
+		m_texture = Texture();
+		m_textureWidth = 0;
+		m_textureHeight = 0;
+		m_scale = Vector2(1, 1);
+		m_pivotPoint = Center;
+		m_pivotOffset = Vector2(0, 0);
+		m_offset = Vector2(0, 0);
+		m_path = "";
+		m_tintColor = Vector4(1, 1, 1, 1);
+		m_renderOrder = 0;
 	}
 
 	Sprite::Sprite(Sprite* toCopy, long newParentID, long myID)
@@ -29,16 +29,16 @@ namespace FlatEngine
 			SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		texture = toCopy->texture;
-		textureWidth = toCopy->textureHeight;
-		textureHeight = toCopy->textureWidth;
-		scale = toCopy->scale;
-		pivotPoint = toCopy->pivotPoint;
-		pivotOffset = toCopy->pivotOffset;
-		offset = toCopy->offset;
-		path = toCopy->path;
-		tintColor = toCopy->tintColor;
-		renderOrder = toCopy->renderOrder;
+		m_texture = toCopy->m_texture;
+		m_textureWidth = toCopy->m_textureHeight;
+		m_textureHeight = toCopy->m_textureWidth;
+		m_scale = toCopy->m_scale;
+		m_pivotPoint = toCopy->m_pivotPoint;
+		m_pivotOffset = toCopy->m_pivotOffset;
+		m_offset = toCopy->m_offset;
+		m_path = toCopy->m_path;
+		m_tintColor = toCopy->m_tintColor;
+		m_renderOrder = toCopy->m_renderOrder;
 	}
 
 	Sprite::~Sprite()
@@ -52,22 +52,21 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "path", path },
-			{ "xScale", scale.x },
-			{ "yScale", scale.y },
+			{ "path", m_path },
+			{ "xScale", m_scale.x },
+			{ "yScale", m_scale.y },
 			{ "pivotPoint", GetPivotPointString() },
-			{ "xOffset", offset.x },
-			{ "yOffset", offset.y },
-			{ "tintColorX", tintColor.x },
-			{ "tintColorY", tintColor.y },
-			{ "tintColorZ", tintColor.z },
-			{ "tintColorW", tintColor.w },
-			{ "renderOrder", renderOrder }
+			{ "xOffset", m_offset.x },
+			{ "yOffset", m_offset.y },
+			{ "tintColorX", m_tintColor.x },
+			{ "tintColorY", m_tintColor.y },
+			{ "tintColorZ", m_tintColor.z },
+			{ "tintColorW", m_tintColor.w },
+			{ "renderOrder", m_renderOrder }
 ,		};
 		std::string data = jsonData.dump();
 		return data;
 	}
-
 
 	void Sprite::SetTexture(std::string newPath)
 	{
@@ -76,24 +75,24 @@ namespace FlatEngine
 		if (newPath != "")
 		{
 			// Save path for referencing later if needed
-			path = newPath;
-			if (texture.LoadFromFile(newPath))
+			m_path = newPath;
+			if (m_texture.LoadFromFile(newPath))
 			{
-				textureWidth = (float)texture.GetWidth();
-				textureHeight = (float)texture.GetHeight();
+				m_textureWidth = (float)m_texture.GetWidth();
+				m_textureHeight = (float)m_texture.GetHeight();
 
 				// Set pivot point to the center of the texture by default
-				offset = { textureWidth / 2, textureHeight / 2 };
-				pivotOffset = offset;
+				m_offset = { m_textureWidth / 2, m_textureHeight / 2 };
+				m_pivotOffset = m_offset;
 			}
 			else
 			{
 				// Set broken texture Texture
-				texture.LoadFromFile(F_ResourceFailedToLoadImagePath);
-				if (textureWidth == 0 || textureHeight == 0)
+				m_texture.LoadFromFile(F_ResourceFailedToLoadImagePath);
+				if (m_textureWidth == 0 || m_textureHeight == 0)
 				{
-					textureWidth = 50;
-					textureHeight = 50;
+					m_textureWidth = 50;
+					m_textureHeight = 50;
 				}
 			}
 		}
@@ -104,80 +103,77 @@ namespace FlatEngine
 		}
 	}
 
-
 	void Sprite::SetOffset(Vector2 newOffset)
 	{
-		offset = newOffset;
-		SetScale(scale);
+		m_offset = newOffset;
+		SetScale(m_scale);
 	}
-
 
 	Vector2 Sprite::GetOffset()
 	{
-		return offset;
+		return m_offset;
 	}
-
 
 	SDL_Texture* Sprite::GetTexture()
 	{
-		return texture.GetTexture();
+		return m_texture.GetTexture();
 	}
 
 	void Sprite::SetScale(Vector2 newScale)
 	{
-		scale = newScale;
-		switch (pivotPoint) 
+		m_scale = newScale;
+		switch (m_pivotPoint)
 		{
 			case PivotPoint::Center:
 			{
 				// Reset pivotOffset
-				pivotOffset = offset;
+				m_pivotOffset = m_offset;
 				break;
 			}
 			case PivotPoint::Left:
 			{
-				pivotOffset = Vector2(0 + (offset.x * (1 / scale.x)), offset.y);
+				m_pivotOffset = Vector2(0 + (m_offset.x * (1 / m_scale.x)), m_offset.y);
 				break;
 			}
 			case PivotPoint::Right:
 			{
-				pivotOffset = Vector2((2 * offset.x) - offset.x * (1 / scale.x), offset.y);
+				m_pivotOffset = Vector2((2 * m_offset.x) - m_offset.x * (1 / m_scale.x), m_offset.y);
 				break;
 			}
 			case PivotPoint::Top:
 			{
-				pivotOffset = Vector2(offset.x, 0 + (offset.y * (1 / scale.y)));
+				m_pivotOffset = Vector2(m_offset.x, 0 + (m_offset.y * (1 / m_scale.y)));
 				break;
 			}
 			case PivotPoint::Bottom:
 			{
-				pivotOffset = Vector2(offset.x, (2 * offset.y) - offset.y * (1 / scale.y));
+				m_pivotOffset = Vector2(m_offset.x, (2 * m_offset.y) - m_offset.y * (1 / m_scale.y));
 				break;
 			}
 
 			case PivotPoint::TopLeft:
 			{
-				pivotOffset = Vector2(0 + (offset.x * (1 / scale.x)), 0 + (offset.y * (1 / scale.y)));
+				m_pivotOffset = Vector2(0 + (m_offset.x * (1 / m_scale.x)), 0 + (m_offset.y * (1 / m_scale.y)));
 				break;
 			}
 			case PivotPoint::TopRight:
 			{
-				pivotOffset = Vector2((2 * offset.x) - offset.x * (1 / scale.x), 0 + (offset.y * (1 / scale.y)));
+				m_pivotOffset = Vector2((2 * m_offset.x) - m_offset.x * (1 / m_scale.x), 0 + (m_offset.y * (1 / m_scale.y)));
 				break;
 			}
 			case PivotPoint::BottomLeft:
 			{
-				pivotOffset = Vector2(0 + (offset.x * (1 / scale.x)), (2 * offset.y) - offset.y * (1 / scale.y));
+				m_pivotOffset = Vector2(0 + (m_offset.x * (1 / m_scale.x)), (2 * m_offset.y) - m_offset.y * (1 / m_scale.y));
 				break;
 			}
 			case PivotPoint::BottomRight:
 			{
-				pivotOffset = Vector2((2 * offset.x) - offset.x * (1 / scale.x), (2 * offset.y) - offset.y * (1 / scale.y));
+				m_pivotOffset = Vector2((2 * m_offset.x) - m_offset.x * (1 / m_scale.x), (2 * m_offset.y) - m_offset.y * (1 / m_scale.y));
 				break;
 			}
 			default:
 			{
-				pivotOffset = offset;
+				m_pivotOffset = m_offset;
 				break;
 			}
 		}
@@ -185,83 +181,80 @@ namespace FlatEngine
 
 	Vector2 Sprite::GetScale()
 	{
-		return scale;
+		return m_scale;
 	}
-
 
 	float Sprite::GetTextureWidth()
 	{
-		return textureWidth;
+		return m_textureWidth;
 	}
-
 
 	float Sprite::GetTextureHeight()
 	{
-		return textureHeight;
+		return m_textureHeight;
 	}
 
-	
 	std::string Sprite::GetPath()
 	{
-		return path;
+		return m_path;
 	}
 
 	void Sprite::SetRenderOrder(int order)
 	{
-		renderOrder = order;
+		m_renderOrder = order;
 	}
 
 	int Sprite::GetRenderOrder()
 	{
-		return renderOrder;
+		return m_renderOrder;
 	}
 
 	void Sprite::RemoveTexture()
 	{
-		texture.FreeTexture();
+		m_texture.FreeTexture();
 	}
 
 	void Sprite::SetPivotPoint(PivotPoint newPivot)
 	{
-		pivotPoint = newPivot;
-		SetScale(scale);
+		m_pivotPoint = newPivot;
+		SetScale(m_scale);
 	}
 
 	void Sprite::SetPivotPoint(std::string newPivot)
 	{
 		if (newPivot == "Center")
-			pivotPoint = Sprite::PivotPoint::Center;
+			m_pivotPoint = Sprite::PivotPoint::Center;
 		else if (newPivot == "Left")
-			pivotPoint = Sprite::PivotPoint::Left;
+			m_pivotPoint = Sprite::PivotPoint::Left;
 		else if (newPivot == "Right")
-			pivotPoint = Sprite::PivotPoint::Right;
+			m_pivotPoint = Sprite::PivotPoint::Right;
 		else if (newPivot == "Top")
-			pivotPoint = Sprite::PivotPoint::Top;
+			m_pivotPoint = Sprite::PivotPoint::Top;
 		else if (newPivot == "Bottom")
-			pivotPoint = Sprite::PivotPoint::Bottom;
+			m_pivotPoint = Sprite::PivotPoint::Bottom;
 		else if (newPivot == "TopLeft")
-			pivotPoint = Sprite::PivotPoint::TopLeft;
+			m_pivotPoint = Sprite::PivotPoint::TopLeft;
 		else if (newPivot == "TopRight")
-			pivotPoint = Sprite::PivotPoint::TopRight;
+			m_pivotPoint = Sprite::PivotPoint::TopRight;
 		else if (newPivot == "BottomLeft")
-			pivotPoint = Sprite::PivotPoint::BottomLeft;
+			m_pivotPoint = Sprite::PivotPoint::BottomLeft;
 		else if (newPivot == "BottomRight")
-			pivotPoint = Sprite::PivotPoint::BottomRight;
+			m_pivotPoint = Sprite::PivotPoint::BottomRight;
 		else
-			pivotPoint = Sprite::PivotPoint::Center;
+			m_pivotPoint = Sprite::PivotPoint::Center;
 
-		SetScale(scale);
+		SetScale(m_scale);
 	}
 
 	Sprite::PivotPoint Sprite::GetPivotPoint()
 	{
-		return pivotPoint;
+		return m_pivotPoint;
 	}
 
 	std::string Sprite::GetPivotPointString()
 	{
 		std::string pivotString;
-		switch (pivotPoint)
+		switch (m_pivotPoint)
 		{
 		case Sprite::PivotPoint::Left:
 			pivotString = "Left";
@@ -297,21 +290,21 @@ namespace FlatEngine
 
 	void Sprite::SetPivotOffset(Vector2 newPivotOffset)
 	{
-		pivotOffset = newPivotOffset;
+		m_pivotOffset = newPivotOffset;
 	}
 
 	Vector2 Sprite::GetPivotOffset()
 	{
-		return pivotOffset;
+		return m_pivotOffset;
 	}
 
 	void Sprite::SetTintColor(Vector4 newTintColor)
 	{
-		tintColor = newTintColor;
+		m_tintColor = newTintColor;
 	}
 
 	Vector4 Sprite::GetTintColor()
 	{
-		return tintColor;
+		return m_tintColor;
 	}
 }

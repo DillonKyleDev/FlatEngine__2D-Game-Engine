@@ -79,13 +79,13 @@ namespace FlatEngine
 		Camera* GetCamera();
 		Animation* GetAnimation();
 		Audio* GetAudio();
-		std::vector<Button*> GetButtons();
+		Button* GetButton();
 		Canvas* GetCanvas();
 		std::vector<ScriptComponent*> GetScripts();
 		Text* GetText();
 		CharacterController* GetCharacterController();
 		RigidBody* GetRigidBody();
-		BoxCollider* GetBoxCollider();
+		std::vector<BoxCollider*> GetBoxCollider();
 		std::vector<BoxCollider*> GetBoxColliders();
 		CircleCollider* GetCircleCollider();
 		std::vector<CircleCollider*> GetCircleColliders();

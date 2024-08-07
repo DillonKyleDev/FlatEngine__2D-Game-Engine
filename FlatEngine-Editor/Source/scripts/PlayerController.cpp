@@ -37,12 +37,12 @@ PlayerController::~PlayerController()
 
 void WhipAttackStart(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {	
-	thisObject->GetBoxCollider()->SetActive(true);
+	//thisObject->GetBoxColliders()->SetActive(true);
 }
 
 void WhipAttackEnd(std::shared_ptr<FlatEngine::GameObject> thisObject)
 {	
-	thisObject->GetBoxCollider()->SetActive(false);
+	//thisObject->GetBoxCollider()->SetActive(false);
 }
 
 void OnWhipAttackConnect(std::shared_ptr<FlatEngine::GameObject> thisObject, std::shared_ptr<FlatEngine::GameObject> collidedWith)
