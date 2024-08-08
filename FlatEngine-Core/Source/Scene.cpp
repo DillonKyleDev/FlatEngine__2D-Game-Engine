@@ -66,6 +66,10 @@ namespace FlatEngine
 		long id = sceneObject.GetID();
 		m_sceneObjects.emplace(id, sceneObject);
 		KeepNextGameObjectIDUpToDate(id);
+
+		if (sceneObject.HasComponent("BoxCollider"))
+			UpdateColliderPairs();
+
 		return &m_sceneObjects.at(id);
 	}
 
@@ -113,6 +117,19 @@ namespace FlatEngine
 			{
 				return animPreviewObject;
 			}
+		}
+		return nullptr;
+	}
+
+	GameObject* Scene::GetObjectByTag(std::string tag)
+	{
+		for (std::map<long, GameObject>::iterator iter = m_sceneObjects.begin(); iter != m_sceneObjects.end();)
+		{
+			if (iter->second.GetTagList().HasTag(tag))
+			{
+				return &iter->second;
+			}
+			iter++;
 		}
 		return nullptr;
 	}

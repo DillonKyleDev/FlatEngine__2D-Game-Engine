@@ -80,7 +80,7 @@ namespace FlatEngine {
 		return data;
 	}
 
-	void RigidBody::CalculatePhysics(std::string physicsSystemType)
+	void RigidBody::CalculatePhysics()
 	{
 		// Add up forces
 		ApplyCollisionForces();
@@ -88,6 +88,7 @@ namespace FlatEngine {
 		ApplyFriction();
 		ApplyEquilibriumForce();
 	
+		std::string physicsSystemType = FlatEngine::F_LoadedProject.GetPhysicsSystem();
 
 		// Apply them to RigidBody
 		if (physicsSystemType == "Euler")
@@ -113,8 +114,10 @@ namespace FlatEngine {
 		// TODO
 	}
 
-	void RigidBody::ApplyPhysics(float deltaTime, std::string physicsSystemType)
+	void RigidBody::ApplyPhysics(float deltaTime)
 	{
+		std::string physicsSystemType = FlatEngine::F_LoadedProject.GetPhysicsSystem();
+
 		if (physicsSystemType == "Euler")
 		{
 			ApplyEulerPhysics(deltaTime);			

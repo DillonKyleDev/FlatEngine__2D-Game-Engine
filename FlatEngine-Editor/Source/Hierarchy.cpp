@@ -334,7 +334,7 @@ namespace FlatGui
 		{
 			FlatEngine::Transform* transform = currentObject.GetTransform();
 			Vector2 position = transform->GetTruePosition();
-			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * sceneViewGridStep.y + (sceneViewDimensions.y / 2));
+			FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * FG_sceneViewGridStep.y + (sceneViewDimensions.y / 2));
 		}
 
 		// Hold Alt key and hover object in Hierarchy for ToolTip with information about that GameObject
@@ -382,15 +382,15 @@ namespace FlatGui
 			ImGui::Separator();
 			if (ImGui::MenuItem("Lock in view"))
 			{
-				if (_sceneViewLockedOnObject && sceneViewLockedObject->GetID() == currentObject.GetID())
+				if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObject->GetID() == currentObject.GetID())
 				{
-					_sceneViewLockedOnObject = false;
-					sceneViewLockedObject = &currentObject;
+					FG_b_sceneViewLockedOnObject = false;
+					FG_sceneViewLockedObject = &currentObject;
 				}
-				else if (!_sceneViewLockedOnObject)
+				else if (!FG_b_sceneViewLockedOnObject)
 				{
-					sceneViewLockedObject = &currentObject;
-					_sceneViewLockedOnObject = true;
+					FG_sceneViewLockedObject = &currentObject;
+					FG_b_sceneViewLockedOnObject = true;
 				}
 
 				ImGui::CloseCurrentPopup();

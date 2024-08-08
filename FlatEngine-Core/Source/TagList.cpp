@@ -58,11 +58,13 @@ namespace FlatEngine
 	{
 	}
 
-	void TagList::SetTag(std::string tag, bool _value)
+	void TagList::SetTag(std::string tag, bool _value, bool _updateColliderPairs)
 	{
 		if (tags.count(tag) > 0)
 			tags.at(tag) = _value;
-		GetLoadedScene()->UpdateColliderPairs();
+
+		if (_updateColliderPairs)
+			GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	void TagList::ToggleTag(std::string tag)
@@ -79,11 +81,13 @@ namespace FlatEngine
 		else return false;
 	}
 
-	void TagList::SetIgnore(std::string tag, bool _value)
+	void TagList::SetIgnore(std::string tag, bool _value, bool _updateColliderPairs)
 	{
 		if (ignoreTags.count(tag) > 0)
 			ignoreTags.at(tag) = _value;
-		GetLoadedScene()->UpdateColliderPairs();
+
+		if (_updateColliderPairs)
+			GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	void TagList::ToggleIgnore(std::string tag)

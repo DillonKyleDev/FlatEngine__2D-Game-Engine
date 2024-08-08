@@ -479,9 +479,6 @@
     <ClCompile Include="Source\FlatGui.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameView.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Hierarchy.cpp">
       <Filter>Source</Filter>
     </ClCompile>

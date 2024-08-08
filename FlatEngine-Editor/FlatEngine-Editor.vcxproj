@@ -275,7 +275,6 @@
     <ClCompile Include="Source\Animator.cpp" />
     <ClCompile Include="Source\FlatEngine-Editor.cpp" />
     <ClCompile Include="Source\FlatGui.cpp" />
-    <ClCompile Include="Source\GameView.cpp" />
     <ClCompile Include="Source\Hierarchy.cpp" />
     <ClCompile Include="Source\ImGuiWrappersEditor.cpp" />
     <ClCompile Include="Source\Inspector.cpp" />

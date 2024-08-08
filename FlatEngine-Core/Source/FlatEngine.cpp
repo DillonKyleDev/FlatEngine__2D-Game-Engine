@@ -32,6 +32,7 @@
 #include <cmath>
 #include <shobjidl.h> 
 #include "implot.h"
+#include "imgui_internal.h"
 
 
 /*
@@ -53,7 +54,12 @@ namespace FlatEngine
 	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
 	int JOYSTICK_DEAD_ZONE = 4000;
 
-	GameObject* playerObject = nullptr;
+	// For rendering sprites
+	int F_maxSpriteLayers = 55;
+	float F_spriteScaleMultiplier = 0.2f;
+
+	GameObject* F_PlayerObject = nullptr;
+	Project F_LoadedProject = Project();
 
 	// Managers
 	Logger F_Logger = Logger();
@@ -93,6 +99,78 @@ namespace FlatEngine
 		TTF_CloseFont(F_fontCinzel);
 		F_fontCinzel = NULL;
 	}
+
+
+	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
+	{
+		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
+		Vector2 newScale = Vector2(scale.x * F_spriteScaleMultiplier, scale.y * F_spriteScaleMultiplier);
+
+		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
+		float scalingYStart = relativeCenterPoint.y - (positionInGrid.y * zoomMultiplier) - (offsetPx.y * newScale.y * zoomMultiplier);
+		float scalingXEnd = scalingXStart + (textureWidthPx * newScale.x * zoomMultiplier);
+		float scalingYEnd = scalingYStart + (textureHeightPx * newScale.y * zoomMultiplier);
+
+		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
+		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
+
+		Vector2 renderStart;
+		Vector2 renderEnd;
+		Vector2 UvStart = { 0, 0 };
+		Vector2 UvEnd = { 1, 1 };
+
+		if (_scalesWithZoom)
+		{
+			renderStart = Vector2(scalingXStart, scalingYStart);
+			renderEnd = Vector2(scalingXEnd, scalingYEnd);
+
+			// FOR DEBUGGING - draw white box around where the texture should be
+			//FlatEngine::DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), FlatEngine::F_whiteColor, 2, draw_list);
+		}
+		else
+		{
+			renderStart = Vector2(unscaledXStart, unscaledYStart);
+			renderEnd = Vector2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
+		}
+
+		if (rotation != 0)
+		{
+			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+
+			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+
+			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
+			Vector2 pos[4] =
+			{
+				Vector2(center.x + topLeft.x, center.y + topLeft.y),
+				Vector2(center.x + topRight.x, center.y + topRight.y),
+				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+			};
+			Vector2 uvs[4] =
+			{
+				Vector2(0.0f, 0.0f),
+				Vector2(1.0f, 0.0f),
+				Vector2(1.0f, 1.0f),
+				Vector2(0.0f, 1.0f)
+			};
+
+			// Render sprite to viewport
+			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+		}
+		else
+		{
+			// Render sprite to viewport
+			draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
+		}
+
+		return renderStart;
+	}
+
 
 	bool Init(int windowWidth, int windowHeight)
 	{
@@ -336,6 +414,22 @@ namespace FlatEngine
 	}
 
 
+	GameObject* GetPlayerObject()
+	{
+		return F_PlayerObject;
+	}
+
+	// Project Management
+	void SetLoadedProject(Project loadedProject)
+	{
+		F_LoadedProject = loadedProject;
+	}
+
+	Project& GetLoadedProject()
+	{
+		return F_LoadedProject;
+	}
+
 	// GameObject / Scene management
 	void SaveScene(Scene* scene, std::string filepath)
 	{
@@ -365,8 +459,7 @@ namespace FlatEngine
 			if (FlatEngine::GameLoopStarted())
 				GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
 
-			if (GetObjectByName("Player") != nullptr)
-				playerObject = GetObjectByName("Player");
+			F_PlayerObject = GetObjectByTag("Player");
 		}
 	}
 
@@ -440,6 +533,10 @@ namespace FlatEngine
 		return GetLoadedScene()->GetObjectByName(name);
 	}
 
+	GameObject* GetObjectByTag(std::string tag)
+	{
+		return GetLoadedScene()->GetObjectByTag(tag);
+	}
 
 	// Mapping Context Management
 	void SaveMappingContext(std::string path, MappingContext context)
@@ -1571,47 +1668,48 @@ namespace FlatEngine
 			loadedObject = GameObject(loadedParentID, loadedID);
 
 			// TagList
+			bool b_updateColliderPairs = false;
 			if (JsonContains(objectJson, "tags", objectName))
 			{
 				json tagsObj = objectJson["tags"];
-				tags.SetTag("Player", CheckJsonBool(tagsObj, "Player", objectName));
-				tags.SetTag("Enemy", CheckJsonBool(tagsObj, "Enemy", objectName));
-				tags.SetTag("Npc", CheckJsonBool(tagsObj, "Npc", objectName));
-				tags.SetTag("Terrain", CheckJsonBool(tagsObj, "Terrain", objectName));
-				tags.SetTag("PlayerTrigger", CheckJsonBool(tagsObj, "PlayerTrigger", objectName));
-				tags.SetTag("EnemyTrigger", CheckJsonBool(tagsObj, "EnemyTrigger", objectName));
-				tags.SetTag("NpcTrigger", CheckJsonBool(tagsObj, "NpcTrigger", objectName));
-				tags.SetTag("EnvironmentalTrigger", CheckJsonBool(tagsObj, "EnvironmentalTrigger", objectName));
-				tags.SetTag("TerrainTrigger", CheckJsonBool(tagsObj, "TerrainTrigger", objectName));
-				tags.SetTag("Projectile", CheckJsonBool(tagsObj, "Projectile", objectName));
-				tags.SetTag("PlayerDamage", CheckJsonBool(tagsObj, "PlayerDamage", objectName));
-				tags.SetTag("EnemyDamage", CheckJsonBool(tagsObj, "EnemyDamage", objectName));
-				tags.SetTag("EnvironmentalDamage", CheckJsonBool(tagsObj, "EnvironmentalDamage", objectName));
-				tags.SetTag("Projectile", CheckJsonBool(tagsObj, "Projectile", objectName));
-				tags.SetTag("InteractableItem", CheckJsonBool(tagsObj, "InteractableItem", objectName));
-				tags.SetTag("InteractableObject", CheckJsonBool(tagsObj, "InteractableObject", objectName));
-				tags.SetTag("Item", CheckJsonBool(tagsObj, "Item", objectName));
+				tags.SetTag("Player", CheckJsonBool(tagsObj, "Player", objectName), b_updateColliderPairs);
+				tags.SetTag("Enemy", CheckJsonBool(tagsObj, "Enemy", objectName), b_updateColliderPairs);
+				tags.SetTag("Npc", CheckJsonBool(tagsObj, "Npc", objectName), b_updateColliderPairs);
+				tags.SetTag("Terrain", CheckJsonBool(tagsObj, "Terrain", objectName), b_updateColliderPairs);
+				tags.SetTag("PlayerTrigger", CheckJsonBool(tagsObj, "PlayerTrigger", objectName), b_updateColliderPairs);
+				tags.SetTag("EnemyTrigger", CheckJsonBool(tagsObj, "EnemyTrigger", objectName), b_updateColliderPairs);
+				tags.SetTag("NpcTrigger", CheckJsonBool(tagsObj, "NpcTrigger", objectName), b_updateColliderPairs);
+				tags.SetTag("EnvironmentalTrigger", CheckJsonBool(tagsObj, "EnvironmentalTrigger", objectName), b_updateColliderPairs);
+				tags.SetTag("TerrainTrigger", CheckJsonBool(tagsObj, "TerrainTrigger", objectName), b_updateColliderPairs);
+				tags.SetTag("Projectile", CheckJsonBool(tagsObj, "Projectile", objectName), b_updateColliderPairs);
+				tags.SetTag("PlayerDamage", CheckJsonBool(tagsObj, "PlayerDamage", objectName), b_updateColliderPairs);
+				tags.SetTag("EnemyDamage", CheckJsonBool(tagsObj, "EnemyDamage", objectName), b_updateColliderPairs);
+				tags.SetTag("EnvironmentalDamage", CheckJsonBool(tagsObj, "EnvironmentalDamage", objectName), b_updateColliderPairs);
+				tags.SetTag("Projectile", CheckJsonBool(tagsObj, "Projectile", objectName), b_updateColliderPairs);
+				tags.SetTag("InteractableItem", CheckJsonBool(tagsObj, "InteractableItem", objectName), b_updateColliderPairs);
+				tags.SetTag("InteractableObject", CheckJsonBool(tagsObj, "InteractableObject", objectName), b_updateColliderPairs);
+				tags.SetTag("Item", CheckJsonBool(tagsObj, "Item", objectName), b_updateColliderPairs);
 			}
 			if (JsonContains(objectJson, "ignoreTags", objectName))
 			{
 				json ignoreTags = objectJson["ignoreTags"];
-				tags.SetIgnore("Player", CheckJsonBool(ignoreTags, "Player", objectName));
-				tags.SetIgnore("Enemy", CheckJsonBool(ignoreTags, "Enemy", objectName));
-				tags.SetIgnore("Npc", CheckJsonBool(ignoreTags, "Npc", objectName));
-				tags.SetIgnore("Terrain", CheckJsonBool(ignoreTags, "Terrain", objectName));
-				tags.SetIgnore("PlayerTrigger", CheckJsonBool(ignoreTags, "PlayerTrigger", objectName));
-				tags.SetIgnore("EnemyTrigger", CheckJsonBool(ignoreTags, "EnemyTrigger", objectName));
-				tags.SetIgnore("NpcTrigger", CheckJsonBool(ignoreTags, "NpcTrigger", objectName));
-				tags.SetIgnore("EnvironmentalTrigger", CheckJsonBool(ignoreTags, "EnvironmentalTrigger", objectName));
-				tags.SetIgnore("TerrainTrigger", CheckJsonBool(ignoreTags, "TerrainTrigger", objectName));
-				tags.SetIgnore("Projectile", CheckJsonBool(ignoreTags, "Projectile", objectName));
-				tags.SetIgnore("PlayerDamage", CheckJsonBool(ignoreTags, "PlayerDamage", objectName));
-				tags.SetIgnore("EnemyDamage", CheckJsonBool(ignoreTags, "EnemyDamage", objectName));
-				tags.SetIgnore("EnvironmentalDamage", CheckJsonBool(ignoreTags, "EnvironmentalDamage", objectName));
-				tags.SetIgnore("Projectile", CheckJsonBool(ignoreTags, "Projectile", objectName));
-				tags.SetIgnore("InteractableItem", CheckJsonBool(ignoreTags, "InteractableItem", objectName));
-				tags.SetIgnore("InteractableObject", CheckJsonBool(ignoreTags, "InteractableObject", objectName));
-				tags.SetIgnore("Item", CheckJsonBool(ignoreTags, "Item", objectName));
+				tags.SetIgnore("Player", CheckJsonBool(ignoreTags, "Player", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Enemy", CheckJsonBool(ignoreTags, "Enemy", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Npc", CheckJsonBool(ignoreTags, "Npc", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Terrain", CheckJsonBool(ignoreTags, "Terrain", objectName), b_updateColliderPairs);
+				tags.SetIgnore("PlayerTrigger", CheckJsonBool(ignoreTags, "PlayerTrigger", objectName), b_updateColliderPairs);
+				tags.SetIgnore("EnemyTrigger", CheckJsonBool(ignoreTags, "EnemyTrigger", objectName), b_updateColliderPairs);
+				tags.SetIgnore("NpcTrigger", CheckJsonBool(ignoreTags, "NpcTrigger", objectName), b_updateColliderPairs);
+				tags.SetIgnore("EnvironmentalTrigger", CheckJsonBool(ignoreTags, "EnvironmentalTrigger", objectName), b_updateColliderPairs);
+				tags.SetIgnore("TerrainTrigger", CheckJsonBool(ignoreTags, "TerrainTrigger", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Projectile", CheckJsonBool(ignoreTags, "Projectile", objectName), b_updateColliderPairs);
+				tags.SetIgnore("PlayerDamage", CheckJsonBool(ignoreTags, "PlayerDamage", objectName), b_updateColliderPairs);
+				tags.SetIgnore("EnemyDamage", CheckJsonBool(ignoreTags, "EnemyDamage", objectName), b_updateColliderPairs);
+				tags.SetIgnore("EnvironmentalDamage", CheckJsonBool(ignoreTags, "EnvironmentalDamage", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Projectile", CheckJsonBool(ignoreTags, "Projectile", objectName), b_updateColliderPairs);
+				tags.SetIgnore("InteractableItem", CheckJsonBool(ignoreTags, "InteractableItem", objectName), b_updateColliderPairs);
+				tags.SetIgnore("InteractableObject", CheckJsonBool(ignoreTags, "InteractableObject", objectName), b_updateColliderPairs);
+				tags.SetIgnore("Item", CheckJsonBool(ignoreTags, "Item", objectName), b_updateColliderPairs);
 			}
 			loadedObject.SetTagList(tags);
 

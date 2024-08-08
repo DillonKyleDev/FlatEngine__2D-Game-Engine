@@ -71,7 +71,6 @@ namespace FlatGui
 	WidgetsManager widgetsManager = WidgetsManager();
 
 	// FlatGui Variables
-	std::shared_ptr<Project> loadedProject = nullptr;
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = nullptr;
 	GameObject objectForFocusedAnimation = GameObject(nullptr);
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
@@ -81,10 +80,6 @@ namespace FlatGui
 	long FocusedGameObjectID = -1;
 	std::shared_ptr<GameObject> playerObject = nullptr;
 
-
-	// For rendering sprites
-	int maxSpriteLayers = 55;
-	float spriteScaleMultiplier = 0.2f;
 
 	// Frame Counter
 	int framesDrawn = 0;
@@ -122,7 +117,7 @@ namespace FlatGui
 			io.IniFilename = NULL;
 
 			// Set fullscreen here for now
-			Window::SetFullscreen(loadedProject->IsFullscreen());
+			Window::SetFullscreen(FlatEngine::F_LoadedProject.IsFullscreen());
 		}
 		else
 			FlatEngine::CreateNewScene();
@@ -261,7 +256,7 @@ namespace FlatGui
 				animationPath = animationComponent->GetAnimationPath();
 
 			// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
-			if (FlatGui::_showAnimator && FocusedAnimation != nullptr &&
+			if (_showAnimator && FocusedAnimation != nullptr &&
 				animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
 			{
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
@@ -288,8 +283,8 @@ namespace FlatGui
 	// Project Management
 	void OpenProject(std::string path)
 	{
-		std::shared_ptr<Project> newProject = std::make_shared<Project>();
-		newProject->SetPath(path);
+		Project newProject = Project();
+		newProject.SetPath(path);
 
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -333,13 +328,13 @@ namespace FlatGui
 
 					// Open items
 					if (currentObjectJson.contains("path"))
-						newProject->SetPath(currentObjectJson["path"]);
+						newProject.SetPath(currentObjectJson["path"]);
 					if (currentObjectJson.contains("loadedScenePath"))
-						newProject->SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
+						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
 					if (currentObjectJson.contains("loadedAnimationPath"))
-						newProject->SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
+						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
 					if (currentObjectJson.contains("focusedGameObjectID"))
-						newProject->SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
+						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
 
 					// Scene Scrolling + Grid Step
 					Vector2 sceneViewScroll = Vector2(0, 0);
@@ -347,80 +342,82 @@ namespace FlatGui
 						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
 					if (currentObjectJson.contains("sceneViewScrollingY"))
 						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
-					newProject->SetSceneViewScrolling(sceneViewScroll);
+					newProject.SetSceneViewScrolling(sceneViewScroll);
 					Vector2 sceneViewGridStep = Vector2(0, 0);
 					if (currentObjectJson.contains("sceneViewGridStepX"))
 						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
 					if (currentObjectJson.contains("sceneViewGridStepY"))
 						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
-					newProject->SetSceneViewGridStep(sceneViewGridStep);
+					newProject.SetSceneViewGridStep(sceneViewGridStep);
 
 					// Show/hide windows
 					if (currentObjectJson.contains("_showSceneView"))
-						FlatGui::_showSceneView = currentObjectJson["_showSceneView"];
+						_showSceneView = currentObjectJson["_showSceneView"];
 					if (currentObjectJson.contains("_showGameView"))
-						FlatGui::_showGameView = currentObjectJson["_showGameView"];
+						_showGameView = currentObjectJson["_showGameView"];
 					if (currentObjectJson.contains("_showHierarchy"))
-						FlatGui::_showHierarchy = currentObjectJson["_showHierarchy"];
+						_showHierarchy = currentObjectJson["_showHierarchy"];
 					if (currentObjectJson.contains("_showInspector"))
-						FlatGui::_showInspector = currentObjectJson["_showInspector"];
+						_showInspector = currentObjectJson["_showInspector"];
 					if (currentObjectJson.contains("_showAnimator"))
-						FlatGui::_showAnimator = currentObjectJson["_showAnimator"];
+						_showAnimator = currentObjectJson["_showAnimator"];
 					if (currentObjectJson.contains("_showAnimationPreview"))
-						FlatGui::_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+						_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
 					if (currentObjectJson.contains("_showKeyFrameEditor"))
-						FlatGui::_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+						_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
 					if (currentObjectJson.contains("_showLogger"))
-						FlatGui::_showLogger = currentObjectJson["_showLogger"];
+						_showLogger = currentObjectJson["_showLogger"];
 					if (currentObjectJson.contains("_showProfiler"))
-						FlatGui::_showProfiler = currentObjectJson["_showProfiler"];
+						_showProfiler = currentObjectJson["_showProfiler"];
 					if (currentObjectJson.contains("_showMappingContextEditor"))
-						FlatGui::_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
+						_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
 
 					// Settings
 					if (currentObjectJson.contains("_clearLogBuffer"))
 					{
-						FlatGui::_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
-						if (FlatGui::_clearBufferEveryFrame)
+						_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
+						if (_clearBufferEveryFrame)
 						{
 							FlatEngine::F_Logger.ClearBuffer();
 						}
 					}
 					if (currentObjectJson.contains("_autoSave"))
-						newProject->SetAutoSave(currentObjectJson["_autoSave"]);
+						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
 					if (currentObjectJson.contains("physicsSystem"))
-						newProject->SetPhysicsSystem(currentObjectJson["physicsSystem"]);
+						newProject.SetPhysicsSystem(currentObjectJson["physicsSystem"]);
 					if (currentObjectJson.contains("collisionDetection"))
-						newProject->SetCollisionDetection(currentObjectJson["collisionDetection"]);
+						newProject.SetCollisionDetection(currentObjectJson["collisionDetection"]);
 					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
-						newProject->SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
+						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
 					if (currentObjectJson.contains("_fullscreen"))
-						newProject->SetFullscreen(currentObjectJson["_fullscreen"]);
+						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
 					if (currentObjectJson.contains("_vsyncEnabled"))
-						newProject->SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
+						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
 				}
 			}
 		}
 
-		loadedProject = newProject;
 
-		if (loadedProject->GetLoadedPreviewAnimationPath() != "")
-			SetFocusedAnimation(FlatEngine::LoadAnimationFile(loadedProject->GetLoadedPreviewAnimationPath()));
-		Vector2 scrolling = loadedProject->GetSceneViewScrolling();
-		FlatGui::sceneViewScrolling = scrolling;
-		Vector2 gridStep = loadedProject->GetSceneViewGridStep();
-		FlatGui::sceneViewGridStep = gridStep;
+		if (newProject.GetLoadedPreviewAnimationPath() != "")
+			SetFocusedAnimation(FlatEngine::LoadAnimationFile(newProject.GetLoadedPreviewAnimationPath()));
+		Vector2 scrolling = newProject.GetSceneViewScrolling();
+		FG_sceneViewScrolling = scrolling;
+		Vector2 gridStep = newProject.GetSceneViewGridStep();
+		FG_sceneViewGridStep = gridStep;
 
-		if (loadedProject->GetFocusedGameObjectID() != -1 && FlatEngine::GetObjectById(loadedProject->GetFocusedGameObjectID()) != nullptr)
-			SetFocusedGameObjectID(loadedProject->GetFocusedGameObjectID());
+		if (newProject.GetFocusedGameObjectID() != -1 && FlatEngine::GetObjectById(newProject.GetFocusedGameObjectID()) != nullptr)
+			SetFocusedGameObjectID(newProject.GetFocusedGameObjectID());
 
-		if (loadedProject->GetLoadedScenePath() != "")
-			FlatEngine::LoadScene(loadedProject->GetLoadedScenePath());
+		if (newProject.GetLoadedScenePath() != "")
+			FlatEngine::LoadScene(newProject.GetLoadedScenePath());
 		else
 			FlatEngine::CreateNewScene();
+
+		// Set loaded project
+		FlatEngine::SetLoadedProject(newProject);
 	}
 
-	void SaveProject(std::shared_ptr<Project> project, std::string path)
+	void SaveProject(Project project, std::string path)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -439,31 +436,31 @@ namespace FlatGui
 		// Create Animation Property Json data object
 		json animationName = json::object({
 			{ "path", path },
-			{ "loadedScenePath", project->GetLoadedScenePath()},
-			{ "loadedAnimationPath", project->GetLoadedPreviewAnimationPath()},
+			{ "loadedScenePath", project.GetLoadedScenePath()},
+			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath()},
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
-			{ "sceneViewScrollingX", FlatGui::sceneViewScrolling.x },
-			{ "sceneViewScrollingY", FlatGui::sceneViewScrolling.y },
-			{ "sceneViewGridStepX", FlatGui::sceneViewGridStep.x },
-			{ "sceneViewGridStepY", FlatGui::sceneViewGridStep.y },
-			{ "_showSceneView", FlatGui::_showSceneView },
-			{ "_showGameView", FlatGui::_showGameView },
-			{ "_showHierarchy", FlatGui::_showHierarchy },
-			{ "_showInspector", FlatGui::_showInspector },
-			{ "_showAnimator", FlatGui::_showAnimator },
-			{ "_showAnimationPreview", FlatGui::_showAnimationPreview },
-			{ "_showKeyFrameEditor", FlatGui::_showKeyFrameEditor },
-			{ "_showLogger", FlatGui::_showLogger },
-			{ "_showProfiler", FlatGui::_showProfiler },
-			{ "_showMappingContextEditor", FlatGui::_showMappingContextEditor },
-			{ "_clearLogBuffer", FlatGui::_clearBufferEveryFrame },
-			{ "_autoSave", loadedProject->AutoSaveOn() },
-			{ "physicsSystem", loadedProject->GetPhysicsSystem() },
-			{ "collisionDetection", loadedProject->GetCollisionDetection() },
-			{ "resolutionWidth", loadedProject->GetResolution().x },
-			{ "resolutionHeight", loadedProject->GetResolution().y },
-			{ "_fullscreen", loadedProject->IsFullscreen() },
-			{ "_vsyncEnabled", loadedProject->IsVsyncEnabled() },
+			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
+			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
+			{ "sceneViewGridStepX", FG_sceneViewGridStep.x },
+			{ "sceneViewGridStepY", FG_sceneViewGridStep.y },
+			{ "_showSceneView", _showSceneView },
+			{ "_showGameView", _showGameView },
+			{ "_showHierarchy", _showHierarchy },
+			{ "_showInspector", _showInspector },
+			{ "_showAnimator", _showAnimator },
+			{ "_showAnimationPreview", _showAnimationPreview },
+			{ "_showKeyFrameEditor", _showKeyFrameEditor },
+			{ "_showLogger", _showLogger },
+			{ "_showProfiler", _showProfiler },
+			{ "_showMappingContextEditor", _showMappingContextEditor },
+			{ "_clearLogBuffer", _clearBufferEveryFrame },
+			{ "_autoSave", FlatEngine::F_LoadedProject.AutoSaveOn() },
+			{ "physicsSystem", FlatEngine::F_LoadedProject.GetPhysicsSystem() },
+			{ "collisionDetection", FlatEngine::F_LoadedProject.GetCollisionDetection() },
+			{ "resolutionWidth", FlatEngine::F_LoadedProject.GetResolution().x },
+			{ "resolutionHeight", FlatEngine::F_LoadedProject.GetResolution().y },
+			{ "_fullscreen", FlatEngine::F_LoadedProject.IsFullscreen() },
+			{ "_vsyncEnabled", FlatEngine::F_LoadedProject.IsVsyncEnabled() },
 			});
 		projectProperties.push_back(animationName);
 
@@ -475,11 +472,6 @@ namespace FlatGui
 
 		// Close the file
 		file_obj.close();
-	}
-
-	std::shared_ptr<GameObject> GetPlayerObject()
-	{
-		return playerObject;
 	}
 
 
@@ -556,7 +548,7 @@ namespace FlatGui
 		if (_showGameView)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
-			Game_RenderView();
+			FlatEngine::Game_RenderView();
 			AddProcessData("Render Game View", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
@@ -699,7 +691,7 @@ namespace FlatGui
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
 		// 4 channels for now in this scene view. 0 = scene objects, 1 &2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
+		drawSplitter->Split(draw_list, FlatEngine::F_maxSpriteLayers + 5);
 
 		// Loop through scene objects
 		for (GameObject object : objects)
@@ -751,11 +743,11 @@ namespace FlatGui
 				// Get Input and Output
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
-				Vector2 positionOnScreen = Vector2(sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * spriteScaleMultiplier * step) * scale.x * spriteScale.x), sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * spriteScaleMultiplier * step) * scale.y * spriteScale.y));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * FlatEngine::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * FlatEngine::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
 				ImGui::SetCursorPos(positionOnScreen);
 				//// This will catch our interactions  - 4096 for overlap or keyword if it works
 				ImGui::SetNextItemAllowOverlap();
-				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FlatEngine::F_spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * FlatEngine::F_spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 				const bool is_active = ImGui::IsItemActive();   // Held
 				const bool is_clicked = ImGui::IsItemClicked();
@@ -771,8 +763,8 @@ namespace FlatGui
 				////////////////////////
 				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
 				{
-					sceneViewScrolling.x += inputOutput.MouseDelta.x;
-					sceneViewScrolling.y += inputOutput.MouseDelta.y;						
+					FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
+					FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
 				}
 				// Get scroll amount for changing zoom level of scene view
 				Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
@@ -795,33 +787,33 @@ namespace FlatGui
 					{
 						if (_weightedScroll)
 						{
-							sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-							sceneViewScrolling.y -= trunc(signedMousePosY * weight);
+							FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+							FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
 						}
-						sceneViewGridStep.x += finalZoomSpeed;
-						sceneViewGridStep.y += finalZoomSpeed;
+						FG_sceneViewGridStep.x += finalZoomSpeed;
+						FG_sceneViewGridStep.y += finalZoomSpeed;
 					}
-					else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
+					else if (scrollInput < 0 && FG_sceneViewGridStep.x > 2 && FG_sceneViewGridStep.y > 2)
 					{
 						if (_weightedScroll)
 						{
-							sceneViewScrolling.x += trunc(signedMousePosX * weight);
-							sceneViewScrolling.y += trunc(signedMousePosY * weight);
+							FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
+							FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
 						}
-						sceneViewGridStep.x -= finalZoomSpeed;
-						sceneViewGridStep.y -= finalZoomSpeed;
+						FG_sceneViewGridStep.x -= finalZoomSpeed;
+						FG_sceneViewGridStep.y -= finalZoomSpeed;
 					}
 				}
 				//////////////////
 
 				// Change the draw channel for the scene object
-				if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+				if (renderOrder <= FlatEngine::F_maxSpriteLayers && renderOrder >= 0)
 					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 				else
 					drawSplitter->SetCurrentChannel(draw_list, 0);
 
 				// Draw the texture
-				AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				FlatEngine::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			// If it has a text component, render that text texture at the objects transform position
@@ -839,13 +831,13 @@ namespace FlatGui
 				if (textTexture.GetTexture() != nullptr)
 				{
 					// Change the draw channel for the scene object
-					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+					if (renderOrder <= FlatEngine::F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture.GetTexture(), position, sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, sceneViewGridStep.x, draw_list, rotation);
+					FlatEngine::AddImageToDrawList(textTexture.GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation);
 				}
 			}
 
@@ -855,10 +847,10 @@ namespace FlatGui
 				float cameraWidth = camera->GetWidth();
 				float cameraHeight = camera->GetHeight();
 
-				float cameraLeftEdge = scrolling.x + (position.x * sceneViewGridStep.x) - (cameraWidth * sceneViewGridStep.x / 2 * scale.x);
-				float cameraTopEdge = scrolling.y + (-position.y * sceneViewGridStep.y) - (cameraHeight * sceneViewGridStep.y / 2 * scale.y);
-				float cameraRightEdge = scrolling.x + (position.x * sceneViewGridStep.x) + (cameraWidth * sceneViewGridStep.x / 2 * scale.x);
-				float cameraBottomEdge = scrolling.y + (-position.y * sceneViewGridStep.y) + (cameraHeight * sceneViewGridStep.y / 2 * scale.y);
+				float cameraLeftEdge = scrolling.x + (position.x * FG_sceneViewGridStep.x) - (cameraWidth * FG_sceneViewGridStep.x / 2 * scale.x);
+				float cameraTopEdge = scrolling.y + (-position.y * FG_sceneViewGridStep.y) - (cameraHeight * FG_sceneViewGridStep.y / 2 * scale.y);
+				float cameraRightEdge = scrolling.x + (position.x * FG_sceneViewGridStep.x) + (cameraWidth * FG_sceneViewGridStep.x / 2 * scale.x);
+				float cameraBottomEdge = scrolling.y + (-position.y * FG_sceneViewGridStep.y) + (cameraHeight * FG_sceneViewGridStep.y / 2 * scale.y);
 
 				Vector2 topLeftCorner = Vector2(cameraLeftEdge, cameraTopEdge);
 				Vector2 bottomRightCorner = Vector2(cameraRightEdge, cameraBottomEdge);
@@ -873,7 +865,7 @@ namespace FlatGui
 				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
 
 				// Draw channel 2 for Lower UI
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
 				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
@@ -881,7 +873,7 @@ namespace FlatGui
 				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
 
 				// Draw actual camera icon
-				AddImageToDrawList(FlatEngine::F_cameraIcon.GetTexture(), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
+				FlatEngine::AddImageToDrawList(FlatEngine::F_cameraIcon.GetTexture(), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -892,12 +884,12 @@ namespace FlatGui
 				int layerNumber = canvas->GetLayerNumber();
 				bool _blocksLayers = canvas->GetBlocksLayers();
 
-				float renderXStart = sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2)) * sceneViewGridStep.x);										
-				float renderYStart = sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2)) * sceneViewGridStep.x);
+				float renderXStart = FG_sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
+				float renderYStart = FG_sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
 				Vector2 renderStart = Vector2(renderXStart, renderYStart);
-				Vector2 renderEnd = Vector2(renderXStart + ((activeWidth * transformScale.x) * sceneViewGridStep.x), renderYStart + ((activeHeight * transformScale.y) * sceneViewGridStep.x));
+				Vector2 renderEnd = Vector2(renderXStart + ((activeWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((activeHeight * transformScale.y) * FG_sceneViewGridStep.x));
 
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
 
 				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FlatEngine::F_canvasBorderColor, 3.0f, draw_list);
 			}
@@ -910,10 +902,10 @@ namespace FlatGui
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
 
-				float activeLeft = sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * sceneViewGridStep.x);
-				float activeRight = sceneViewCenter.x + ((position.x + (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * sceneViewGridStep.x);
-				float activeTop = sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * sceneViewGridStep.y);
-				float activeBottom = sceneViewCenter.y - ((position.y - (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * sceneViewGridStep.y);
+				float activeLeft = FG_sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * FG_sceneViewGridStep.x);
+				float activeRight = FG_sceneViewCenter.x + ((position.x + (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * FG_sceneViewGridStep.x);
+				float activeTop = FG_sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * FG_sceneViewGridStep.y);
+				float activeBottom = FG_sceneViewCenter.y - ((position.y - (activeHeight * transformScale.y / 2) + activeOffset.y * transformScale.y) * FG_sceneViewGridStep.y);
 
 				Vector2 center = Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2);
 
@@ -922,17 +914,17 @@ namespace FlatGui
 				Vector2 topRight = { activeRight, activeTop };
 				Vector2 bottomLeft = { activeLeft, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
 
 				if (rotation != 0)
 				{
 					float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 					float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
-					topLeft = ImRotate(Vector2(-activeWidth * sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					topRight = ImRotate(Vector2(+activeWidth * sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					bottomRight = ImRotate(Vector2(+activeWidth * sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					bottomLeft = ImRotate(Vector2(-activeWidth * sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					topLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					topRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					bottomRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					bottomLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
 
 					Vector2 pos[4] =
 					{
@@ -974,7 +966,7 @@ namespace FlatGui
 				bool _showActiveRadius = boxCollider->GetShowActiveRadius();
 				Vector2 center = boxCollider->GetCenterCoord();
 
-				boxCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
+				boxCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				Vector2 corners[4] = {
 					boxCollider->GetCorners()[0],
@@ -983,9 +975,9 @@ namespace FlatGui
 					boxCollider->GetCorners()[3],
 				};
 
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
 
-				if (loadedProject->GetCollisionDetection() == "Shared Axis")
+				if (FlatEngine::F_LoadedProject.GetCollisionDetection() == "Shared Axis")
 				{
 					if (_isActive && !_isColliding)
 						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
@@ -994,7 +986,7 @@ namespace FlatGui
 					else if (_isColliding)
 						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
 				}
-				else if (loadedProject->GetCollisionDetection() == "Separating Axis")
+				else if (FlatEngine::F_LoadedProject.GetCollisionDetection() == "Separating Axis")
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -1036,14 +1028,14 @@ namespace FlatGui
 				int activeLayer = circleCollider->GetActiveLayer();
 				bool _isActive = circleCollider->IsActive();
 				bool _isColliding = circleCollider->IsColliding();
-				float activeRadius = circleCollider->GetActiveRadiusGrid() * sceneViewGridStep.x;
+				float activeRadius = circleCollider->GetActiveRadiusGrid() * FG_sceneViewGridStep.x;
 				circleCollider->SetActiveRadiusScreen(activeRadius);
 				bool _showActiveRadius = circleCollider->GetShowActiveRadius();
 				Vector2 center = circleCollider->GetCenterCoord();
 
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
 
-				circleCollider->UpdateActiveEdges(loadedProject->GetCollisionDetection(), sceneViewGridStep.x, sceneViewCenter);
+				circleCollider->UpdateActiveEdges(FlatEngine::F_LoadedProject.GetCollisionDetection(), FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				if (_isActive && !_isColliding)
 					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
@@ -1068,7 +1060,7 @@ namespace FlatGui
 				bool _scalesWithZoom = false;
 				float transformMoveModifier = 0.02f;
 				ImGuiIO& inputOutput = ImGui::GetIO();
-				Vector2 positionOnScreen = Vector2(sceneViewCenter.x + (position.x * step), sceneViewCenter.y - (position.y * step));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step), FG_sceneViewCenter.y - (position.y * step));
 
 				// Invisible button for Transform Arrow Move X and Y
 				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
@@ -1130,93 +1122,23 @@ namespace FlatGui
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 3);
-				AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
+				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 3);
+				FlatEngine::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
 			}
 		}
 	}
 
 
-	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
-	{
-		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
-		Vector2 newScale = Vector2(scale.x * spriteScaleMultiplier, scale.y * spriteScaleMultiplier);
-
-		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
-		float scalingYStart = relativeCenterPoint.y - (positionInGrid.y * zoomMultiplier) - (offsetPx.y * newScale.y * zoomMultiplier);
-		float scalingXEnd = scalingXStart + (textureWidthPx * newScale.x * zoomMultiplier);
-		float scalingYEnd = scalingYStart + (textureHeightPx * newScale.y * zoomMultiplier);
-
-		float unscaledXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - offsetPx.x * scale.x;
-		float unscaledYStart = relativeCenterPoint.y + (-positionInGrid.y * zoomMultiplier) - offsetPx.y * scale.y;
-
-		Vector2 renderStart;
-		Vector2 renderEnd;
-		Vector2 UvStart = { 0, 0 };
-		Vector2 UvEnd = { 1, 1 };
-
-		if (_scalesWithZoom)
-		{
-			renderStart = Vector2(scalingXStart, scalingYStart);
-			renderEnd = Vector2(scalingXEnd, scalingYEnd);
-
-			// FOR DEBUGGING - draw white box around where the texture should be
-			//FlatEngine::DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), FlatEngine::F_whiteColor, 2, draw_list);
-		}
-		else
-		{
-			renderStart = Vector2(unscaledXStart, unscaledYStart);
-			renderEnd = Vector2(renderStart.x + textureWidthPx * scale.x, renderStart.y + textureHeightPx * scale.y);
-		}
-
-		if (rotation != 0)
-		{
-			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
-			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
-
-			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-
-			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
-			Vector2 pos[4] =
-			{
-				Vector2(center.x + topLeft.x, center.y + topLeft.y),
-				Vector2(center.x + topRight.x, center.y + topRight.y),
-				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
-				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
-			};
-			Vector2 uvs[4] =
-			{
-				Vector2(0.0f, 0.0f),
-				Vector2(1.0f, 0.0f),
-				Vector2(1.0f, 1.0f),
-				Vector2(0.0f, 1.0f)
-			};
-
-			// Render sprite to viewport
-			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
-		}
-		else
-		{
-			// Render sprite to viewport
-			draw_list->AddImage((void*)texture, renderStart, renderEnd, UvStart, UvEnd, addColor);
-		}
-
-		return renderStart;
-	}
-
 	std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance)
 	{
-		Vector2 correctedOrigin = Vector2(FlatGui::sceneViewCenter.x + origin.x * FlatGui::sceneViewGridStep.x, FlatGui::sceneViewCenter.y - origin.y * FlatGui::sceneViewGridStep.y);
+		Vector2 correctedOrigin = Vector2(FG_sceneViewCenter.x + origin.x * FG_sceneViewGridStep.x, FG_sceneViewCenter.y - origin.y * FG_sceneViewGridStep.y);
 		float hypotenuse = sqrt(direction.x * direction.x + direction.y * direction.y);
 		float divisor = hypotenuse / distance;
-		Vector2 endPoint = Vector2(correctedOrigin.x + direction.x / divisor * FlatGui::sceneViewGridStep.x, correctedOrigin.y - direction.y / divisor * FlatGui::sceneViewGridStep.y);
+		Vector2 endPoint = Vector2(correctedOrigin.x + direction.x / divisor * FG_sceneViewGridStep.x, correctedOrigin.y - direction.y / divisor * FG_sceneViewGridStep.y);
 
 		//ImGui::Begin("Scene View");
 		//ImDrawList* drawList = ImGui::GetWindowDrawList();
-		//DrawLine(correctedOrigin, endPoint, FlatGui::whiteColor, 3, drawList);
+		//DrawLine(correctedOrigin, endPoint, whiteColor, 3, drawList);
 		//ImGui::End();
 		return std::vector<std::shared_ptr<GameObject>>();
 	}

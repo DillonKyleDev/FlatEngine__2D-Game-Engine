@@ -12,10 +12,10 @@ namespace FlatEngine
 		TagList(TagList* toCopy);
 		~TagList();
 
-		void SetTag(std::string tag, bool _value);
+		void SetTag(std::string tag, bool _value, bool _updateColliderPairs = true);
 		void ToggleTag(std::string tag);
 		bool HasTag(std::string);
-		void SetIgnore(std::string tag, bool _value);
+		void SetIgnore(std::string tag, bool _value, bool _updateColliderPairs = true);
 		void ToggleIgnore(std::string tag);
 		bool IgnoresTag(std::string);
 		void CreateNewTag(std::string tagName, bool _value = false);

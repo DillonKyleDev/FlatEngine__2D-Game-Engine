@@ -81,7 +81,7 @@ public:
 	void Update()
 	{
 		// Call base class GameLoop Update function
-		FlatEngine::GameLoop::Update(FlatGui::loadedProject);
+		FlatEngine::GameLoop::Update(FlatGui::FG_sceneViewGridStep.x, FlatGui::FG_sceneViewCenter);
 		
 		// Other, application specific updates here if needed
 		//
@@ -305,7 +305,7 @@ public:
 				frameStart = FlatEngine::GetEngineTime();
 
 				// Artificially slow GameLoop if frameTime is less than 
-				if (!FlatGui::loadedProject->IsVsyncEnabled() && frameTime < A_GameLoop->deltaTime)
+				if (!FlatEngine::F_LoadedProject.IsVsyncEnabled() && frameTime < A_GameLoop->deltaTime)
 					SDL_Delay((Uint32)(A_GameLoop->deltaTime - frameTime) * 1000);
 
 				// Profiler
@@ -353,7 +353,7 @@ public:
 			// Start the engine and Add viewport(s)
 			if (!FlatEngine::_isDebugMode)
 			{
-				FlatGui::Game_RenderView();
+				FlatEngine::Game_RenderView();
 			}
 			else
 				FlatGui::AddViewports();

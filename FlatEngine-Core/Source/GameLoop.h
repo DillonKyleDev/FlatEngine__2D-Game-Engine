@@ -20,7 +20,7 @@ namespace FlatEngine
 		~GameLoop();
 
 		void Start();
-		void Update(std::shared_ptr<Project> loadedProject);
+		void Update(float gridstep, Vector2 viewportCenter);
 		void UpdateScripts();
 		void Stop();
 		void Pause();

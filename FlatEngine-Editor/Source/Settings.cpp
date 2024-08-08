@@ -40,11 +40,11 @@ namespace FlatGui {
 				static int currentCollisionIndex = 0;
 				for (int c = 0; c < collisionTypes.size(); c++)
 				{
-					if (collisionTypes[c] == loadedProject->GetCollisionDetection())
+					if (collisionTypes[c] == FlatEngine::F_LoadedProject.GetCollisionDetection())
 						currentCollisionIndex = c;
 				}
 				FlatEngine::RenderSelectableTableRow("##CollisionDetectionSelect", "Collision Detection", collisionTypes, currentCollisionIndex);
-				loadedProject->SetCollisionDetection(collisionTypes.at(currentCollisionIndex));
+				FlatEngine::F_LoadedProject.SetCollisionDetection(collisionTypes.at(currentCollisionIndex));
 			}
 			else if (settingSelected == "Physics")
 			{
@@ -52,17 +52,17 @@ namespace FlatGui {
 				static int currentPhysicsIndex = 0;
 				for (int p = 0; p < physicsTypes.size(); p++)
 				{
-					if (physicsTypes[p] == loadedProject->GetPhysicsSystem())
+					if (physicsTypes[p] == FlatEngine::F_LoadedProject.GetPhysicsSystem())
 						currentPhysicsIndex = p;
 				}
 				FlatEngine::RenderSelectableTableRow("##PhysicsSystemSelect", "Physics System", physicsTypes, currentPhysicsIndex);
-				loadedProject->SetPhysicsSystem(physicsTypes.at(currentPhysicsIndex));
+				FlatEngine::F_LoadedProject.SetPhysicsSystem(physicsTypes.at(currentPhysicsIndex));
 			}
 			else if (settingSelected == "State")
 			{
-				bool _autoSave = loadedProject->AutoSaveOn();
+				bool _autoSave = FlatEngine::F_LoadedProject.AutoSaveOn();
 				if (FlatEngine::RenderCheckboxTableRow("##AutoSaveCheckbox", "Auto Save", _autoSave))
-					loadedProject->SetAutoSave(_autoSave);
+					FlatEngine::F_LoadedProject.SetAutoSave(_autoSave);
 			}
 			else if (settingSelected == "Game")
 			{
@@ -71,7 +71,7 @@ namespace FlatGui {
 
 
 				// Resolution
-				Vector2 currentResolution = loadedProject->GetResolution();
+				Vector2 currentResolution = FlatEngine::F_LoadedProject.GetResolution();
 				std::string currentResString = std::to_string((int)currentResolution.x) + " x " + std::to_string((int)currentResolution.y);
 				std::vector<std::string> resolutions = { "800 x 600", "1920 x 1080", "1920 x 1200" };
 				static int currentResolutionIndex = 0;
@@ -83,24 +83,24 @@ namespace FlatGui {
 				FlatEngine::RenderSelectableTableRow("##ResolutionSelect", "Resolution", resolutions, currentResolutionIndex);
 
 				if (resolutions.at(currentResolutionIndex) == "800 x 600")
-					loadedProject->SetResolution(Vector2(800, 600));
+					FlatEngine::F_LoadedProject.SetResolution(Vector2(800, 600));
 				else if (resolutions.at(currentResolutionIndex) == "1920 x 1080")
-					loadedProject->SetResolution(Vector2(1920, 1080));
+					FlatEngine::F_LoadedProject.SetResolution(Vector2(1920, 1080));
 				else if (resolutions.at(currentResolutionIndex) == "1920 x 1200")
-					loadedProject->SetResolution(Vector2(1920, 1200));
+					FlatEngine::F_LoadedProject.SetResolution(Vector2(1920, 1200));
 
 
 				// Fullscreen
-				bool _fullscreen = loadedProject->IsFullscreen();
+				bool _fullscreen = FlatEngine::F_LoadedProject.IsFullscreen();
 				if (FlatEngine::RenderCheckboxTableRow("##FullscreenCheckbox", "Fullscreen", _fullscreen))
-					loadedProject->SetFullscreen(_fullscreen);
+					FlatEngine::F_LoadedProject.SetFullscreen(_fullscreen);
 
 
 
 				// Vsync
-				bool _vsyncEnabled = loadedProject->IsVsyncEnabled();
+				bool _vsyncEnabled = FlatEngine::F_LoadedProject.IsVsyncEnabled();
 				if (FlatEngine::RenderCheckboxTableRow("##VsyncCheckbox", "Vsync", _vsyncEnabled))
-					loadedProject->SetVsyncEnabled(_vsyncEnabled);
+					FlatEngine::F_LoadedProject.SetVsyncEnabled(_vsyncEnabled);
 			}
 
 			FlatEngine::PopTable();

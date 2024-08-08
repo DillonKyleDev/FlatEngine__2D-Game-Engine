@@ -74,7 +74,7 @@ namespace FlatGui {
 			if (animationFilePath != "")
 			{
 				SetFocusedAnimation(FlatEngine::LoadAnimationFile(animationFilePath));
-				loadedProject->SetLoadedPreviewAnimationPath(animationFilePath);
+				FlatEngine::F_LoadedProject.SetLoadedPreviewAnimationPath(animationFilePath);
 			}
 		}
 		// Tooltip
@@ -530,7 +530,7 @@ namespace FlatGui {
 			// If there is a valid Icon.GetTexture() loaded into the Sprite Component
 			if (FlatEngine::F_keyFrameIcon.GetTexture() != nullptr)
 			{
-				Vector2 pipStartingPoint = AddImageToDrawList(FlatEngine::F_keyFrameIcon.GetTexture(), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
+				Vector2 pipStartingPoint = FlatEngine::AddImageToDrawList(FlatEngine::F_keyFrameIcon.GetTexture(), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
 
 				ImGui::SetCursorScreenPos(pipStartingPoint);
 				std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";

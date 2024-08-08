@@ -234,7 +234,7 @@ namespace FlatGui
 				sprite->SetOffset(Vector2(xOffset, yOffset));
 			if (FlatEngine::RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 				sprite->SetOffset(Vector2(xOffset, yOffset));										
-			if (FlatEngine::RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers))
+			if (FlatEngine::RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FlatEngine::F_maxSpriteLayers))
 				sprite->SetRenderOrder(renderOrder);
 			FlatEngine::RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
 			FlatEngine::RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
@@ -471,7 +471,7 @@ namespace FlatGui
 				_showAnimationPreview = true;
 
 				SetFocusedAnimation(FlatEngine::LoadAnimationFile(animation->GetAnimationPath()));
-				loadedProject->SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
+				FlatEngine::F_LoadedProject.SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
 			}
 		}
 	}
@@ -554,7 +554,7 @@ namespace FlatGui
 			FlatEngine::RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
 			FlatEngine::RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
 			FlatEngine::RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));
-			FlatEngine::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)maxSpriteLayers);
+			FlatEngine::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FlatEngine::F_maxSpriteLayers);
 			text->SetRenderOrder(renderOrder);
 			FlatEngine::PopTable();
 		}

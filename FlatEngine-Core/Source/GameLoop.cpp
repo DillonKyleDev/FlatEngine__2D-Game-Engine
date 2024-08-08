@@ -84,7 +84,7 @@ namespace FlatEngine
 		//}
 	}
 
-	void GameLoop::Update(std::shared_ptr<Project> loadedProject)
+	void GameLoop::Update(float gridstep, Vector2 viewportCenter)
 	{
 		if (GetLoadedScene()->GetPrimaryCamera() != nullptr)
 		{
@@ -105,28 +105,23 @@ namespace FlatEngine
 		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
-				rigidBody.second.CalculatePhysics(loadedProject->GetPhysicsSystem());
+				rigidBody.second.CalculatePhysics();
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		LogFloat(processTime, "CalculatePhysics: ");
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
-		std::vector<Collider*> colliders = GetLoadedScene()->GetColliders();
-		for (Collider* collider : colliders)
+		std::map<long, std::map<long, BoxCollider>> &boxColliders = GetLoadedScene()->GetBoxColliders();
+		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = boxColliders.begin(); outerIter != boxColliders.end();)
 		{
-			// TODO - Fix
-			// Probably broken because of casting.
-			if (collider->GetTypeString() == "BoxCollider")
+			for (std::map<long, BoxCollider>::iterator innerIter = outerIter->second.begin(); innerIter != outerIter->second.end();)
 			{
-				//
-				//static_cast<BoxCollider*>(collider)->ResetCollisions(); // Not working
-				static_cast<BoxCollider*>(collider)->RecalculateBounds("Simple Box", 1.0f, Vector2(0,0));
+				innerIter->second.ResetCollisions();
+				innerIter->second.RecalculateBounds(gridstep, viewportCenter);
+				innerIter++;
 			}
-			LogString("Hello " + collider->GetParent()->GetName());
-			
-			collider->ResetCollisions();   // Not working
-			collider->RecalculateBounds(); // Not working
+			outerIter++;
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		LogFloat(processTime, "ResetCollisions & Bounds: ");
@@ -145,7 +140,7 @@ namespace FlatEngine
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
-						Collider::CheckForCollision(loadedProject->GetCollisionDetection(), collider1, collider2);
+						Collider::CheckForCollision(collider1, collider2);
 				}
 			}
 		}
@@ -162,7 +157,7 @@ namespace FlatEngine
 		{
 			if (rigidBody.second.IsActive())
 			{
-				rigidBody.second.ApplyPhysics((float)deltaTime, loadedProject->GetPhysicsSystem());
+				rigidBody.second.ApplyPhysics((float)deltaTime);
 			}
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;

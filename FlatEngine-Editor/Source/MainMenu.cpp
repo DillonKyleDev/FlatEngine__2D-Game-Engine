@@ -37,12 +37,12 @@ namespace FlatGui {
 				if (ImGui::MenuItem("New Project..."))
 				{
 					// First, save current project
-					SaveProject(loadedProject, loadedProject->GetPath());
+					SaveProject(FlatEngine::F_LoadedProject, FlatEngine::F_LoadedProject.GetPath());
 					std::string projectPath = FlatEngine::OpenSaveFileExplorer();
 					if (projectPath != "")
 					{
 						// Then Create New Project and open it
-						std::shared_ptr<Project> newProject = std::make_shared<Project>();
+						Project newProject = Project();
 						SaveProject(newProject, projectPath);
 						OpenProject(projectPath);
 					}
@@ -58,8 +58,8 @@ namespace FlatGui {
 				if (ImGui::MenuItem("Save Project"))
 				{
 					// Save Project
-					std::string projectPath = loadedProject->GetPath();
-					SaveProject(loadedProject, projectPath);
+					std::string projectPath = FlatEngine::F_LoadedProject.GetPath();
+					SaveProject(FlatEngine::F_LoadedProject, projectPath);
 				}
 				if (ImGui::MenuItem("Save Project As..."))
 				{
@@ -67,7 +67,7 @@ namespace FlatGui {
 					std::string projectPath = FlatEngine::OpenSaveFileExplorer();
 					if (projectPath != "")
 					{
-						SaveProject(loadedProject, projectPath);
+						SaveProject(FlatEngine::F_LoadedProject, projectPath);
 					}
 				}
 
@@ -84,7 +84,7 @@ namespace FlatGui {
 						FlatEngine::F_SceneManager.SaveScene(FlatEngine::F_SceneManager.CreateNewScene(), scenePath);
 						ResetHierarchyExpanderTracker();
 						FlatEngine::F_SceneManager.LoadScene(scenePath);
-						loadedProject->SetLoadedScenePath(scenePath);
+						FlatEngine::F_LoadedProject.SetLoadedScenePath(scenePath);
 					}
 				}
 
@@ -95,7 +95,7 @@ namespace FlatGui {
 					if (scenePath != "")
 					{
 						FlatEngine::F_SceneManager.LoadScene(scenePath);
-						loadedProject->SetLoadedScenePath(scenePath);
+						FlatEngine::F_LoadedProject.SetLoadedScenePath(scenePath);
 					}
 				}
 

@@ -140,6 +140,10 @@ namespace FlatEngine
 			m_BoxColliders.emplace(ownerID, newMap);
 		}
 
+		// Update m_ColliderPairs
+		if (FlatEngine::GetObjectById(ownerID) != nullptr) // If BoxCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+			UpdateColliderPairs();
+
 		return &m_BoxColliders.at(ownerID).at(collider.GetID());
 	}
 
@@ -507,51 +511,60 @@ namespace FlatEngine
 	{
 		// Remake colliderPairs
 		m_ColliderPairs.clear();
+		std::vector<BoxCollider*> colliders;
 
-		//for (std::vector<std::pair<Collider, long>>::iterator iterOuter = m_Colliders.begin(); iterOuter != m_Colliders.end();)
-		//{
-		//	for (std::vector<std::pair<Collider, long>>::iterator iterInner = m_Colliders.begin(); iterInner != m_Colliders.end();)
-		//	{
-		//		// If colliders don't belong to the same GameObject
-		//		if (iterOuter->first.GetParentID() != (*iterInner).first.GetParentID() && (*iterOuter).first.GetTypeString() != "CompositeCollider" && (*iterInner).first.GetTypeString() != "CompositeCollider")
-		//		{
-		//			TagList coll1TagList = (*iterOuter).first.GetParent()->GetTagList();
-		//			TagList coll2TagList = (*iterInner).first.GetParent()->GetTagList();
+		// Collect BoxColliders into a simple to navigate vector
+		for (std::map<long, std::map<long, BoxCollider>>::iterator colliderMap = m_BoxColliders.begin(); colliderMap != m_BoxColliders.end();)
+		{
+			for (std::map<long, BoxCollider>::iterator innerMap = colliderMap->second.begin(); innerMap != colliderMap->second.end();)
+			{
+				colliders.push_back(&innerMap->second);
+				innerMap++;
+			}
+			colliderMap++;
+		}
+	
+		for (BoxCollider* collider1 : colliders)
+		{
+			for (BoxCollider* collider2 : colliders)
+			{
+				if (collider1->GetParentID() != collider2->GetParentID())
+				{
+					TagList coll1TagList = collider1->GetParent()->GetTagList();
+					TagList coll2TagList = collider2->GetParent()->GetTagList();
 
-		//			std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
-		//			std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
+					std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
+					std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
 
-		//			bool _ignorePair = false;
+					bool _ignorePair = false;
 
-		//			for (std::string ignoredTag : coll1Ignored)
-		//			{
-		//				if (coll2TagList.HasTag(ignoredTag))
-		//				{
-		//					_ignorePair = true;
-		//					break;
-		//				}
-		//			}
-		//			if (!_ignorePair)
-		//			{
-		//				for (std::string ignoredTag : coll2Ignored)
-		//				{
-		//					if (coll1TagList.HasTag(ignoredTag))
-		//					{
-		//						_ignorePair = true;
-		//						break;
-		//					}
-		//				}
-		//			}
-		//			if (!_ignorePair)
-		//			{
-		//				std::pair<Collider*, Collider*> newPair = { &(*iterOuter).first, &(*iterInner).first };
-		//				m_ColliderPairs.push_back(newPair);
-		//			}
-		//		}
-		//		iterInner++;
-		//	}
-		//	iterOuter++;
-		//}
+					for (std::string ignoredTag : coll1Ignored)
+					{
+						if (coll2TagList.HasTag(ignoredTag))
+						{
+							_ignorePair = true;
+							break;
+						}
+					}
+					if (!_ignorePair)
+					{
+						for (std::string ignoredTag : coll2Ignored)
+						{
+							if (coll1TagList.HasTag(ignoredTag))
+							{
+								_ignorePair = true;
+								break;
+							}
+						}
+					}
+					if (!_ignorePair)
+					{
+						std::pair<Collider*, Collider*> newPair = { &(*collider1), &(*collider2) };
+						m_ColliderPairs.push_back(newPair);
+					}
+				}
+			}
+		}
 	}
 
 	std::vector<std::pair<Collider*, Collider*>> ECSManager::GetColliderPairs()

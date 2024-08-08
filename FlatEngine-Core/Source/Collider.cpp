@@ -179,8 +179,10 @@ namespace FlatEngine
 		_onCollisionLeaveSet = true;
 	}
 
-	bool Collider::CheckForCollision(std::string collisionDetectionType, Collider* collider1, Collider* collider2)
+	bool Collider::CheckForCollision(Collider* collider1, Collider* collider2)
 	{
+		std::string collisionDetectionType = FlatEngine::F_LoadedProject.GetCollisionDetection();
+
 		if (collisionDetectionType == "Shared Axis")
 		{
 			return SharedAxisCheckForCollision(collider1, collider2);

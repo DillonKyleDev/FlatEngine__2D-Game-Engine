@@ -240,6 +240,18 @@ namespace FlatEngine
 	extern std::vector<MappingContext> F_MappingContexts;
 	extern std::shared_ptr<PrefabManager> prefabManager;
 
+	extern int F_maxSpriteLayers;
+	extern float F_spriteScaleMultiplier;
+
+	// Game view
+	extern float F_GAME_VIEWPORT_WIDTH;
+	extern 	float F_GAME_VIEWPORT_HEIGHT;
+	extern float F_xGameCenter;
+	extern float F_yGameCenter;
+	extern Vector2 F_gameViewCenter;
+	extern Vector2 F_gameViewGridStep;
+
+
 	extern bool LoadFonts();
 	extern void FreeFonts();
 
@@ -248,6 +260,15 @@ namespace FlatEngine
 	extern void CreateIcons();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
+
+	// Project Management
+	extern Project F_LoadedProject;
+	extern void SetLoadedProject(Project loadedProject);
+	extern Project& GetLoadedProject();
+
+	// Player Management
+	extern GameObject* GetPlayerObject();
+	extern GameObject* F_PlayerObject;
 
 	// Scene Management
 	extern Scene* GetLoadedScene();
@@ -262,9 +283,13 @@ namespace FlatEngine
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectById(long objectID);
 	extern GameObject* GetObjectByName(std::string name);
+	extern GameObject* GetObjectByTag(std::string tag);
 
 	extern long GetNextComponentID();
 	extern long GetNextGameObjectID();
+
+	// SDL
+	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 
 	// Engine
 	extern bool Init(int windowWidth, int windowHeight);
@@ -296,6 +321,11 @@ namespace FlatEngine
 	extern void DrawCircle(Vector2 center, float radius, Vector4 color, ImDrawList* drawList, float thickness = 1, int segments = 0);
 	extern void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawList);
 	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
+
+	// Game View
+	extern void Game_RenderView();
+	extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
+	extern void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 
 	// Game Loop Prettification
 	extern void StartGameLoop();

@@ -73,16 +73,10 @@ namespace FlatGui
 	extern bool _editingValue;
 	extern ImDrawList* drawList;
 	extern WidgetsManager widgetsManager;
-	extern int maxSpriteLayers;
-	extern float spriteScaleMultiplier;
 
 	// Project Management
-	extern std::shared_ptr<Project> loadedProject;
 	extern void OpenProject(std::string path);
-	extern void SaveProject(std::shared_ptr<Project> project, std::string path);
-
-	extern std::shared_ptr<GameObject> GetPlayerObject();
-	extern std::shared_ptr<GameObject> playerObject;
+	extern void SaveProject(Project project, std::string path);
 
 	// Focused GameObject
 	extern long FocusedGameObjectID;
@@ -106,13 +100,13 @@ namespace FlatGui
 	extern float SCENE_VIEWPORT_HEIGHT;
 	extern float DYNAMIC_VIEWPORT_WIDTH;
 	extern float DYNAMIC_VIEWPORT_HEIGHT;
-	extern bool _firstSceneRenderPass;
-	extern bool _sceneHasBeenSet;
-	extern Vector2 sceneViewGridStep;
-	extern Vector2 sceneViewScrolling;
-	extern Vector2 sceneViewCenter;
-	extern bool _sceneViewLockedOnObject;
-	extern GameObject *sceneViewLockedObject;
+	extern bool FG_b_firstSceneRenderPass;
+	extern bool FG_b_sceneHasBeenSet;
+	extern Vector2 FG_sceneViewGridStep;
+	extern Vector2 FG_sceneViewScrolling;
+	extern Vector2 FG_sceneViewCenter;
+	extern bool FG_b_sceneViewLockedOnObject;
+	extern GameObject *FG_sceneViewLockedObject;
 
 	// Settings
 	extern int iconTransparency;
@@ -135,14 +129,6 @@ namespace FlatGui
 	extern bool _showMappingContextEditor;
 	extern bool _showSettings;
 
-	// Game view
-	extern float GAME_VIEWPORT_WIDTH;
-	extern 	float GAME_VIEWPORT_HEIGHT;
-	extern float xGameCenter;
-	extern float yGameCenter;
-	extern Vector2 gameViewCenter;
-	extern Vector2 gameViewGridStep;
-
 	extern void Init();
 
 	// Profiler
@@ -163,9 +149,6 @@ namespace FlatGui
 	extern void RenderToolbar();
 	extern void RenderHierarchy();
 	extern void RenderInspector();
-	extern void Game_RenderView();
-	extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
-	extern void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 	extern void Scene_RenderView();
 	extern void RenderAnimator();
 	extern void RenderAnimationPreview();
@@ -198,8 +181,6 @@ namespace FlatGui
 	extern void RenderCircleColliderComponent(CircleCollider* circleCollider);
 	extern void RenderRigidBodyComponent(RigidBody* rigidBody);
 
-	// SDL
-	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 	// SceneView
 	extern void RenderSceneViewTooltip();
 	// Hierarchy

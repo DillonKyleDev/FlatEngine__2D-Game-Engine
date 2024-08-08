@@ -39,7 +39,7 @@
                     "id": 9,
                     "path": "Source\\assets\\images\\sprites\\player\\jumpRight.png",
                     "pivotPoint": "Center",
-                    "renderOrder": 0,
+                    "renderOrder": 2,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,

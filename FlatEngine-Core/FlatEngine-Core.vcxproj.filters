@@ -650,6 +650,7 @@
     <ClCompile Include="Source\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GameView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Vendor\includes\ImGui\ImGui_Docking\.editorconfig">

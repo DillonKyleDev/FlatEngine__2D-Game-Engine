@@ -15,17 +15,17 @@ namespace FlatGui
 {
 	// Scene view default values
 	// The multiplier for sceneViewGridStep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
-	Vector2 sceneViewGridStep = Vector2(50,50);
+	Vector2 FG_sceneViewGridStep = Vector2(50,50);
 	float SCENE_VIEWPORT_WIDTH = 600;
 	float SCENE_VIEWPORT_HEIGHT = 400;
 	float DYNAMIC_VIEWPORT_WIDTH = 600;
 	float DYNAMIC_VIEWPORT_HEIGHT = 400;
-	bool _firstSceneRenderPass = true;
-	bool _sceneHasBeenSet = false;
-	Vector2 sceneViewScrolling = Vector2(0,0);
-	Vector2 sceneViewCenter = Vector2(0, 0);
-	bool _sceneViewLockedOnObject = false;
-	GameObject *sceneViewLockedObject = nullptr;
+	bool FG_b_firstSceneRenderPass = true;
+	bool FG_b_sceneHasBeenSet = false;
+	Vector2 FG_sceneViewScrolling = Vector2(0,0);
+	Vector2 FG_sceneViewCenter = Vector2(0, 0);
+	bool FG_b_sceneViewLockedOnObject = false;
+	GameObject * FG_sceneViewLockedObject = nullptr;
 
 	void Scene_RenderView()
 	{
@@ -43,16 +43,16 @@ namespace FlatGui
 		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		// Set initial viewport dimensions for rendering scene view grid and objects
-		if (!_firstSceneRenderPass)
+		if (!FG_b_firstSceneRenderPass)
 		{
-			if (!_sceneHasBeenSet)
+			if (!FG_b_sceneHasBeenSet)
 			{
 				SCENE_VIEWPORT_WIDTH = canvas_sz.x;
 				SCENE_VIEWPORT_HEIGHT = canvas_sz.y;
-				_sceneHasBeenSet = true;
+				FG_b_sceneHasBeenSet = true;
 			}
 		}
-		_firstSceneRenderPass = false;
+		FG_b_firstSceneRenderPass = false;
 
 		// For calculating scrolling mouse position and what vector to zoom to
 		DYNAMIC_VIEWPORT_WIDTH = trunc(canvas_p1.x - canvas_p0.x);
@@ -74,7 +74,7 @@ namespace FlatGui
 
 		//// For Profiler
 		float sceneViewGridStartTime = (float)FlatEngine::GetEngineTime();
-		RenderGridView(sceneViewCenter, sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, sceneViewGridStep, centerOffset);
+		RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
 		AddProcessData("##Scene_RenderView_Grid", (float)FlatEngine::GetEngineTime() - sceneViewGridStartTime);
 
 
@@ -99,7 +99,7 @@ namespace FlatGui
 		//// For Profiler
 		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start View Objects: ");
 		float sceneViewObjectsStartTime = (float)FlatEngine::GetEngineTime();
-		RenderViewObjects(viewObjects, sceneViewCenter, canvas_p0, canvas_sz, sceneViewGridStep.x);
+		RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);
 		AddProcessData("##Scene_RenderView_Objects", (float)FlatEngine::GetEngineTime() - sceneViewObjectsStartTime);
 		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End View Objects: ");
 
@@ -107,22 +107,22 @@ namespace FlatGui
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{
-			sceneViewScrolling.x += inputOutput.MouseDelta.x;
-			sceneViewScrolling.y += inputOutput.MouseDelta.y;
+			FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
+			FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
 
 		// Show cursor position in scene view when pressing Alt
 		if (is_hovered && inputOutput.KeyAlt)
 			RenderSceneViewTooltip();
 
-		if (_sceneViewLockedOnObject && sceneViewLockedObject != nullptr)
+		if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObject != nullptr)
 		{
-			Transform* transform = sceneViewLockedObject->GetTransform();
+			Transform* transform = FG_sceneViewLockedObject->GetTransform();
 			Vector2 position = transform->GetTruePosition();
-			sceneViewScrolling = Vector2(position.x * -sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
+			FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 		}
 
-		Vector2 adjustedScrolling = Vector2(sceneViewScrolling.x + centerOffset.x, sceneViewScrolling.y + centerOffset.y);
+		Vector2 adjustedScrolling = Vector2(FG_sceneViewScrolling.x + centerOffset.x, FG_sceneViewScrolling.y + centerOffset.y);
 
 		// Get scroll amount for changing zoom level of scene view
 		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
@@ -144,21 +144,21 @@ namespace FlatGui
 			{
 				if (_weightedScroll)
 				{
-					sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-					sceneViewScrolling.y -= trunc(signedMousePosY * weight);
+					FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+					FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x += finalZoomSpeed;
-				sceneViewGridStep.y += finalZoomSpeed;
+				FG_sceneViewGridStep.x += finalZoomSpeed;
+				FG_sceneViewGridStep.y += finalZoomSpeed;
 			}
-			else if (scrollInput < 0 && sceneViewGridStep.x > 2 && sceneViewGridStep.y > 2)
+			else if (scrollInput < 0 && FG_sceneViewGridStep.x > 2 && FG_sceneViewGridStep.y > 2)
 			{
 				if (_weightedScroll)
 				{
-					sceneViewScrolling.x += trunc(signedMousePosX * weight);
-					sceneViewScrolling.y += trunc(signedMousePosY * weight);
+					FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
+					FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
 				}
-				sceneViewGridStep.x -= finalZoomSpeed;
-				sceneViewGridStep.y -= finalZoomSpeed;
+				FG_sceneViewGridStep.x -= finalZoomSpeed;
+				FG_sceneViewGridStep.y -= finalZoomSpeed;
 			}
 		}
 
@@ -174,7 +174,7 @@ namespace FlatGui
 	void RenderSceneViewTooltip()
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
-		Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - sceneViewCenter.x) / sceneViewGridStep.x, -(inputOutput.MousePos.y - sceneViewCenter.y) / sceneViewGridStep.y);
+		Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
 		std::string cursorXPos = "x: " + std::to_string(positionInGrid.x);
 		std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);
 		// Mouse Hover Tooltip - Scene View Tooltip			

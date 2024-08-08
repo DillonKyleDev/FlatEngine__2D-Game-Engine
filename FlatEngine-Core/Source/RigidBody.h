@@ -17,11 +17,11 @@ namespace FlatEngine
 
 		std::string GetData();
 
-		void CalculatePhysics(std::string physicsSystemType);
+		void CalculatePhysics();
 		void CalculateEulerPhysics();
 		void CalculateVerletPhysics();
 
-		void ApplyPhysics(float deltaTime, std::string physicsSystemType);
+		void ApplyPhysics(float deltaTime);
 		void ApplyEulerPhysics(float deltaTime);
 		void ApplyVerletPhysics(float deltaTime);
 

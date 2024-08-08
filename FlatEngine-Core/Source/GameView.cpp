@@ -1,5 +1,4 @@
 #include "FlatEngine.h"
-#include "FlatGui.h"
 #include "GameObject.h"
 #include "Transform.h"
 #include "Camera.h"
@@ -9,7 +8,6 @@
 #include "Animation.h"
 #include "Button.h"
 #include "Texture.h"
-#include "scripts/GameManager.h"
 
 #include "imgui.h"
 
@@ -21,15 +19,15 @@ using Text = FlatEngine::Text;
 using Texture = FlatEngine::Texture;
 
 
-namespace FlatGui {
-
+namespace FlatEngine 
+{
 	// Game view default values
-	float GAME_VIEWPORT_WIDTH = 600;
-	float GAME_VIEWPORT_HEIGHT = 400;
-	float xGameCenter = 600 / 2;
-	float yGameCenter = 400 / 2;
-	Vector2 gameViewCenter = Vector2(0, 0);
-	Vector2 gameViewGridStep = Vector2(50, 50);
+	float F_GAME_VIEWPORT_WIDTH = 600;
+	float F_GAME_VIEWPORT_HEIGHT = 400;
+	float F_xGameCenter = 600 / 2;
+	float F_yGameCenter = 400 / 2;
+	Vector2 F_gameViewCenter = Vector2(0, 0);
+	Vector2 F_gameViewGridStep = Vector2(50, 50);
 
 
 	void Game_RenderView()
@@ -69,8 +67,8 @@ namespace FlatGui {
 		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
 		// Set viewport dimensions for rendering objects in game view. We want this to always be centered in game view so we can get it every frame.
-		GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
-		GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
+		F_GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
+		F_GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
 
 		// This will catch our interactions
 		ImGui::InvisibleButton("GameViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
@@ -115,7 +113,7 @@ namespace FlatGui {
 		// Create the splitter for the draw_list
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 		// 3 channels for now in this scene view. 0 = scene objects, 1 = other UI (camera icon, etc), 2 = transform arrow
-		drawSplitter->Split(draw_list, maxSpriteLayers + 5);
+		drawSplitter->Split(draw_list, F_maxSpriteLayers + 5);
 
 		Vector2 cameraPosition(0, 0);
 		float cameraWidth = 50;
@@ -133,8 +131,8 @@ namespace FlatGui {
 			cameraTransform = primaryCamera->GetParent()->GetTransform();
 			cameraWidth = primaryCamera->GetWidth();
 			cameraHeight = primaryCamera->GetHeight();
-			gameViewGridStep.x = primaryCamera->GetZoom();
-			gameViewGridStep.y = primaryCamera->GetZoom();
+			F_gameViewGridStep.x = primaryCamera->GetZoom();
+			F_gameViewGridStep.y = primaryCamera->GetZoom();
 			frustrumColor = primaryCamera->GetFrustrumColor();
 
 			// Get the cameras position including all of its parents transforms offsets using the recusive Game_GetTotalCameraOffset();
@@ -144,17 +142,10 @@ namespace FlatGui {
 				cameraPosition = Vector2(0, 0);
 		}
 
-		// For Profiler
-		if (FlatEngine::_isDebugMode)
-		{
-			float cameraHangTime = (float)FlatEngine::GetEngineTime() - cameraStartTime;
-			AddProcessData("##Game_RenderView_Camera", cameraHangTime);
-		}
-
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
-		gameViewCenter = Vector2((GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * gameViewGridStep.x) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * gameViewGridStep.x) + canvas_p0.y);
+		F_gameViewCenter = Vector2((F_GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * F_gameViewGridStep.x) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * F_gameViewGridStep.x) + canvas_p0.y);
 		// Get the center point of the viewport
-		Vector2 viewportCenterPoint = Vector2((GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
+		Vector2 viewportCenterPoint = Vector2((F_GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
 		// For Profiler
 		float renderStartTime = 0;
@@ -170,12 +161,6 @@ namespace FlatGui {
 			iter++;
 		}
 
-		// For Profiler
-		if (FlatEngine::_isDebugMode)
-		{
-			float renderHangTime = (float)FlatEngine::GetEngineTime() - renderStartTime;
-			AddProcessData("##Game_RenderView_RenderObjects", renderHangTime);
-		}
 
 		// Render Primary Camera Frustrum
 		//{
@@ -237,7 +222,6 @@ namespace FlatGui {
 		// Check if each object has a Transform component
 		if (transform != nullptr)
 		{
-			long focusedObjectID = GetFocusedGameObjectID();
 			Vector2 position = transform->GetTruePosition();
 			Vector2 scale = transform->GetScale();
 
@@ -258,13 +242,13 @@ namespace FlatGui {
 				if (textTexture.GetTexture() != nullptr)
 				{
 					// Change the draw channel for the scene object
-					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture.GetTexture(), position, gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, gameViewGridStep.x, draw_list);
+					AddImageToDrawList(textTexture.GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, F_gameViewGridStep.x, draw_list);
 				}
 			}
 
@@ -282,7 +266,7 @@ namespace FlatGui {
 				float rotation = transform->GetRotation();
 
 				// Changing the scale here because things are rendering too large and I want them to start off smaller
-				Vector2 newScale = Vector2(scale.x * spriteScale.x * spriteScaleMultiplier, scale.y * spriteScale.y * spriteScaleMultiplier);
+				Vector2 newScale = Vector2(scale.x * spriteScale.x * F_spriteScaleMultiplier, scale.y * spriteScale.y * F_spriteScaleMultiplier);
 
 				float spriteLeftEdge = position.x - offset.x * newScale.x;
 				float spriteRightEdge = position.x + offset.x * newScale.x;
@@ -302,11 +286,11 @@ namespace FlatGui {
 
 				if (_isIntersecting)
 				{
-					if (renderOrder <= maxSpriteLayers && renderOrder >= 0)
+					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					AddImageToDrawList(spriteTexture, position, gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+					AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 
@@ -319,10 +303,10 @@ namespace FlatGui {
 				bool _isActive = button->IsActive();
 
 				// Get Active Button bounds to check against later for mouse events
-				float activeLeft = gameViewCenter.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
-				float activeRight = gameViewCenter.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * gameViewGridStep.x);
-				float activeTop = gameViewCenter.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
-				float activeBottom = gameViewCenter.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * gameViewGridStep.x);
+				float activeLeft = F_gameViewCenter.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * F_gameViewGridStep.x);
+				float activeRight = F_gameViewCenter.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * F_gameViewGridStep.x);
+				float activeTop = F_gameViewCenter.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * F_gameViewGridStep.x);
+				float activeBottom = F_gameViewCenter.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * F_gameViewGridStep.x);
 
 				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
 
@@ -331,7 +315,7 @@ namespace FlatGui {
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
 
 				if (_isActive)
 					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonActiveColor, 3.0f, draw_list);

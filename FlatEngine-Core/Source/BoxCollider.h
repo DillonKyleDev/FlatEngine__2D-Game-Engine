@@ -32,17 +32,17 @@ namespace FlatEngine
 		//Vector4(activeTop, activeRight, activeBottom, activeLeft)
 		void SetActiveEdges(Vector4 edges);
 		Vector4 GetActiveEdges();
-		void UpdateActiveEdges(std::string collisionDetectionType, float step, Vector2 centerPoint);
-		void UpdateNormals(float step, Vector2 centerPoint);
-		void UpdateCorners(float step, Vector2 centerPoint);
-		void UpdateCenter(float step, Vector2 centerPoint);
+		void UpdateActiveEdges(float gridstep, Vector2 viewportCenter);
+		void UpdateNormals(float gridstep, Vector2 viewportCenter);
+		void UpdateCorners(float gridstep, Vector2 viewportCenter);
+		void UpdateCenter(float gridstep, Vector2 viewportCenter);
 		void SetCorners(Vector2 corners[4]);
 		void SetNextCorners(Vector2 corners[4]);
 		Vector2* GetCorners();
 		void SetNormals(Vector2 normals[4]);
 		Vector2* GetNormals();
 		std::string GetData();
-		void RecalculateBounds(std::string collisionDetectionType, float step, Vector2 centerPoint);
+		void RecalculateBounds(float gridstep, Vector2 viewportCenter);
 		//void ResetCollisions();
 
 		// Shared Axis

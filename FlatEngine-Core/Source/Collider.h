@@ -26,7 +26,7 @@ namespace FlatEngine
 		static bool CheckForCollisionBoxBox(FlatEngine::BoxCollider* boxCol1, FlatEngine::BoxCollider* boxCol2);
 
 		virtual void RecalculateBounds();
-		static bool CheckForCollision(std::string collisionDetectionType, Collider* collider1, Collider* collider2);
+		static bool CheckForCollision(Collider* collider1, Collider* collider2);
 		virtual void ResetCollisions();
 		virtual void UpdateCenter(); // May be useless??
 

@@ -30,8 +30,6 @@ namespace FlatEngine
 		nextActiveBottom = 0;
 		nextActiveTop = 0;
 		nextCorners;
-
-		GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	BoxCollider::BoxCollider(BoxCollider* toCopy, long newParentID, long myID) : Collider(toCopy, newParentID, myID)
@@ -92,22 +90,25 @@ namespace FlatEngine
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
-	void BoxCollider::UpdateActiveEdges(std::string collisionDetectionType, float step, Vector2 centerPoint)
+	void BoxCollider::UpdateActiveEdges(float gridstep, Vector2 viewportCenter)
 	{
-		if (collisionDetectionType == "Shared Axis")
+		std::string collisionType = FlatEngine::GetLoadedProject().GetCollisionDetection();
+
+		if (collisionType == "Shared Axis")
 		{
-			SharedAxisUpdateEdges(step, centerPoint);
+			SharedAxisUpdateEdges(gridstep, viewportCenter);
 		}
-		else if(collisionDetectionType == "Separating Axis")
+		else if(collisionType == "Separating Axis")
 		{
 
 		}		
 	}
 
-	void BoxCollider::SharedAxisUpdateEdges(float step, Vector2 centerPoint)
+	void BoxCollider::SharedAxisUpdateEdges(float gridstep, Vector2 centerPoint)
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
+
 
 		FlatEngine::GameObject parent = GetParent();
 		FlatEngine::Transform* transform = nullptr;
@@ -143,10 +144,10 @@ namespace FlatEngine
 			// For visual representation ( screen space values )
 			SetCenterGrid(Vector2(transform->GetTruePosition().x + activeOffset.x, transform->GetTruePosition().y + activeOffset.y));
 
-			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeWidth * scale.x / 2)) * step;
-			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2)) * step;
-			activeRight = centerPoint.x + (GetCenterGrid().x + (activeWidth * scale.x / 2)) * step;
-			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2)) * step;
+			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeWidth * scale.x / 2)) * gridstep;
+			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2)) * gridstep;
+			activeRight = centerPoint.x + (GetCenterGrid().x + (activeWidth * scale.x / 2)) * gridstep;
+			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2)) * gridstep;
 
 			SetCenterCoord(Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2));
 
@@ -163,11 +164,11 @@ namespace FlatEngine
 		
 			SetNextCenterCoord(Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2));
 
-			SharedAxisUpdateCorners(step, centerPoint);
+			SharedAxisUpdateCorners(gridstep, centerPoint);
 		}
 	}
 
-	void BoxCollider::UpdateNormals(float step, Vector2 centerPoint)
+	void BoxCollider::UpdateNormals(float gridstep, Vector2 centerPoint)
 	{
 		float cos_a = cosf(GetRotation() * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(GetRotation() * 2.0f * (float)M_PI / 360.0f);
@@ -175,18 +176,18 @@ namespace FlatEngine
 		Vector2 center = GetCenterCoord();
 
 		// Normal vectors without rotation
-		Vector2 topNormal = Vector2(0, -activeHeight * step * scale.y);
-		Vector2 rightNormal = Vector2(+activeWidth * step * scale.x, 0);
-		Vector2 bottomNormal = Vector2(0, +activeHeight * step * scale.y);
-		Vector2 leftNormal = Vector2(-activeWidth * step * scale.x, 0);
+		Vector2 topNormal = Vector2(0, -activeHeight * gridstep * scale.y);
+		Vector2 rightNormal = Vector2(+activeWidth * gridstep * scale.x, 0);
+		Vector2 bottomNormal = Vector2(0, +activeHeight * gridstep * scale.y);
+		Vector2 leftNormal = Vector2(-activeWidth * gridstep * scale.x, 0);
 
 		if (GetRotation() != 0)
 		{
 			// Normal vectors with rotation
-			topNormal = ImRotate(Vector2(0, -activeHeight * step * scale.y), cos_a, sin_a);
-			rightNormal = ImRotate(Vector2(+activeWidth * step * scale.x, 0), cos_a, sin_a);
-			bottomNormal = ImRotate(Vector2(0, +activeHeight * step * scale.y), cos_a, sin_a);
-			leftNormal = ImRotate(Vector2(-activeWidth * step * scale.x, 0), cos_a, sin_a);
+			topNormal = ImRotate(Vector2(0, -activeHeight * gridstep * scale.y), cos_a, sin_a);
+			rightNormal = ImRotate(Vector2(+activeWidth * gridstep * scale.x, 0), cos_a, sin_a);
+			bottomNormal = ImRotate(Vector2(0, +activeHeight * gridstep * scale.y), cos_a, sin_a);
+			leftNormal = ImRotate(Vector2(-activeWidth * gridstep * scale.x, 0), cos_a, sin_a);
 		}
 
 		Vector2 newNormals[4] =
@@ -200,7 +201,7 @@ namespace FlatEngine
 		SetNormals(newNormals);
 	}
 
-	void BoxCollider::UpdateCorners(float step, Vector2 centerPoint)
+	void BoxCollider::UpdateCorners(float gridstep, Vector2 centerPoint)
 	{
 		float cos_a = cosf(GetRotation() * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(GetRotation() * 2.0f * (float)M_PI / 360.0f);
@@ -217,10 +218,10 @@ namespace FlatEngine
 		if (GetRotation() != 0)
 		{
 			// Corners with rotation
-			topLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);			
-			topRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, -activeHeight * step / 2 * scale.y), cos_a, sin_a);
-			bottomRight = ImRotate(Vector2(+activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
-			bottomLeft = ImRotate(Vector2(-activeWidth * step / 2 * scale.x, +activeHeight * step / 2 * scale.y), cos_a, sin_a);
+			topLeft = ImRotate(Vector2(-activeWidth * gridstep / 2 * scale.x, -activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);			
+			topRight = ImRotate(Vector2(+activeWidth * gridstep / 2 * scale.x, -activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
+			bottomRight = ImRotate(Vector2(+activeWidth * gridstep / 2 * scale.x, +activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
+			bottomLeft = ImRotate(Vector2(-activeWidth * gridstep / 2 * scale.x, +activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
 		}
 
 		Vector2 newCorners[4] =
@@ -235,7 +236,7 @@ namespace FlatEngine
 	}
 
 	// Corners without rotation
-	void BoxCollider::SharedAxisUpdateCorners(float step, Vector2 centerPoint)
+	void BoxCollider::SharedAxisUpdateCorners(float gridstep, Vector2 centerPoint)
 	{
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
@@ -259,7 +260,7 @@ namespace FlatEngine
 		float rise = std::abs(topLeft.y - GetCenterCoord().y);
 		float run = std::abs(topLeft.x - GetCenterCoord().x);
 		SetActiveRadiusScreen(std::sqrt((rise * rise) + (run * run)));
-		SetActiveRadiusGrid(std::sqrt((rise * rise) + (run * run)) / step);
+		SetActiveRadiusGrid(std::sqrt((rise * rise) + (run * run)) / gridstep);
 
 		// For collision detection
 		Vector2 nextTopLeft = { nextActiveLeft, nextActiveTop };
@@ -282,17 +283,17 @@ namespace FlatEngine
 	//	
 	//}
 
-	void BoxCollider::UpdateCenter(float step, Vector2 centerPoint)
+	void BoxCollider::UpdateCenter(float gridstep, Vector2 centerPoint)
 	{
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 		Vector2 position = transform->GetTruePosition();
 		Vector2 activeOffset = GetActiveOffset();
 
-		activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * step;
-		activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * step;
-		activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * step;
-		activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * step;
+		activeLeft = centerPoint.x + (position.x - (activeWidth * scale.x / 2) + activeOffset.x) * gridstep;
+		activeTop = centerPoint.y + (-position.y - (activeHeight * scale.y / 2) + activeOffset.y) * gridstep;
+		activeRight = centerPoint.x + (position.x + (activeWidth * scale.x / 2) + activeOffset.x) * gridstep;
+		activeBottom = centerPoint.y + (-position.y + (activeHeight * scale.y / 2) + activeOffset.y) * gridstep;
 
 		SetCenterCoord(Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2));
 		SetCenterGrid(Vector2(position.x + activeOffset.x, position.y + activeOffset.y));
@@ -356,7 +357,7 @@ namespace FlatEngine
 		return data;
 	}
 
-	void BoxCollider::RecalculateBounds(std::string collisionDetectionType, float step, Vector2 centerPoint)
+	void BoxCollider::RecalculateBounds(float gridstep, Vector2 viewportCenter)
 	{
 		//UpdateRotation();
 		//UpdateActiveEdges();
@@ -364,6 +365,6 @@ namespace FlatEngine
 		//UpdateCorners();
 		//UpdateNormals();
 
-		UpdateActiveEdges(collisionDetectionType, step, centerPoint);
+		UpdateActiveEdges(gridstep, viewportCenter);
 	}
 }
