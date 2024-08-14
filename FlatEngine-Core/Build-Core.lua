@@ -5,10 +5,18 @@ project "FlatEngine-Core"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
-   files { "../Vendor/includes/**", "Source/**.h", "Source/**.cpp" }
+   files { 
+        "Source/**.h",
+        "Source/**.cpp",
+        "../Vendor/includes/ImGui/Backends/**",
+        "../Vendor/includes/ImGui/ImGui_Docking/**.h",
+        "../Vendor/includes/ImGui/ImGui_Docking/**.cpp",
+        "../Vendor/includes/ImPlot/**",
+        "../Vendor/includes/Lua/**",
+    }
 
    includedirs
-   {
+    {
       "Source"
     }
 
@@ -28,7 +36,9 @@ project "FlatEngine-Core"
         "../Vendor/includes/Json_Formatter",
         "../Vendor/includes/ImPlot",
         "../Vendor/includes/ImSequencer",
+        "../Vendor/includes/Lua",
     }
+
 
    defines
    {

@@ -129,78 +129,81 @@ namespace FlatGui
 		{
 			// Add Profiler Processes
 			// 						
-			AddProfilerProcess("Render");
-			AddProfilerProcess("Render Present");
+			FlatEngine::AddProfilerProcess("Render");
+			FlatEngine::AddProfilerProcess("Render Present");
 			// RenderMainMenuBar()						
-			//AddProfilerProcess("Render Main Menu Bar");
+			//FlatEngine::AddProfilerProcess("Render Main Menu Bar");
 			// RenderToolbar()							
-			//AddProfilerProcess("Render Toolbar");
+			//FlatEngine::AddProfilerProcess("Render Toolbar");
 
 			// RenderHierarchy()
 			if (_showHierarchy)
-				AddProfilerProcess("Render Hierarchy");
+				FlatEngine::AddProfilerProcess("Render Hierarchy");
 			else
-				RemoveProfilerProcess("Render Hierarchy");
+				FlatEngine::RemoveProfilerProcess("Render Hierarchy");
 
 			// RenderInspector()
 			if (_showInspector)
-				AddProfilerProcess("Render Inspector");
+				FlatEngine::AddProfilerProcess("Render Inspector");
 			else
-				RemoveProfilerProcess("Render Inspector");
+				FlatEngine::RemoveProfilerProcess("Render Inspector");
 
 			// Game_RenderView
 			if (_showGameView)
-				AddProfilerProcess("Render Game View");
+				FlatEngine::AddProfilerProcess("Render Game View");
 			else
-				RemoveProfilerProcess("Render Game View");
+				FlatEngine::RemoveProfilerProcess("Render Game View");
 
 			// Scene_RenderView
 			if (_showSceneView)
-				AddProfilerProcess("Render Scene View");
+				FlatEngine::AddProfilerProcess("Render Scene View");
 			else
-				RemoveProfilerProcess("Render Scene View");
+				FlatEngine::RemoveProfilerProcess("Render Scene View");
 
 			// RenderAnimator
 			if (_showAnimator)
-				AddProfilerProcess("Render Animator");
+				FlatEngine::AddProfilerProcess("Render Animator");
 			else
-				RemoveProfilerProcess("Render Animator");
+				FlatEngine::RemoveProfilerProcess("Render Animator");
 
 			// RenderAnimationPreview
 			if (_showAnimationPreview)
-				AddProfilerProcess("Render Animation Preview");
+				FlatEngine::AddProfilerProcess("Render Animation Preview");
 			else
-				RemoveProfilerProcess("Render Animation Preview");
+				FlatEngine::RemoveProfilerProcess("Render Animation Preview");
 
 			// RenderKeyFrameEditor
 			if (_showKeyFrameEditor)
-				AddProfilerProcess("Render Key Frame Editor");
+				FlatEngine::AddProfilerProcess("Render Key Frame Editor");
 			else
-				RemoveProfilerProcess("Render Key Frame Editor");
+				FlatEngine::RemoveProfilerProcess("Render Key Frame Editor");
 
 			// RenderLog
 			if (_showLogger)
-				AddProfilerProcess("Render Log");
+				FlatEngine::AddProfilerProcess("Render Log");
 			else
-				RemoveProfilerProcess("Render Log");
+				FlatEngine::RemoveProfilerProcess("Render Log");
 
 			// RenderProfiler
 			if (_showProfiler)
-				AddProfilerProcess("Render Profiler");
+				FlatEngine::AddProfilerProcess("Render Profiler");
 			else
-				RemoveProfilerProcess("Render Profiler");
+				FlatEngine::RemoveProfilerProcess("Render Profiler");
 
 			// RenderMappingContextEditor
 			if (_showMappingContextEditor)
-				AddProfilerProcess("Render Mapping Context Editor");
+				FlatEngine::AddProfilerProcess("Render Mapping Context Editor");
 			else
-				RemoveProfilerProcess("Render Mapping Context Editor");
+				FlatEngine::RemoveProfilerProcess("Render Mapping Context Editor");
 
 			// RenderSettings
 			if (_showSettings)
-				AddProfilerProcess("Render Settings");
+				FlatEngine::AddProfilerProcess("Render Settings");
 			else
-				RemoveProfilerProcess("Render Settings");
+				FlatEngine::RemoveProfilerProcess("Render Settings");
+
+			// Collision Testing
+			FlatEngine::AddProfilerProcess("Collision Testing");
 		}
 	}
 
@@ -238,8 +241,8 @@ namespace FlatGui
 		// Remove Profiler Processes
 		if (FlatEngine::_isDebugMode)
 		{
-			RemoveProfilerProcess("Render");
-			RemoveProfilerProcess("Render Present");
+			FlatEngine::RemoveProfilerProcess("Render");
+			FlatEngine::RemoveProfilerProcess("Render Present");
 		}
 	}
 
@@ -525,87 +528,87 @@ namespace FlatGui
 
 		float startTime = (float)FlatEngine::GetEngineTime();
 		MainMenuBar();
-		AddProcessData("Render Main Menu Bar", (float)FlatEngine::GetEngineTime() - startTime);
+		FlatEngine::AddProcessData("Render Main Menu Bar", (float)FlatEngine::GetEngineTime() - startTime);
 
 		startTime = (float)FlatEngine::GetEngineTime();
 		RenderToolbar();
-		AddProcessData("Render Toolbar", (float)FlatEngine::GetEngineTime() - startTime);
+		FlatEngine::AddProcessData("Render Toolbar", (float)FlatEngine::GetEngineTime() - startTime);
 		
 		if (_showHierarchy)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderHierarchy();
-			AddProcessData("Render Hierarchy", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Hierarchy", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showInspector)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderInspector();
-			AddProcessData("Render Inspector", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Inspector", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showGameView)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			FlatEngine::Game_RenderView();
-			AddProcessData("Render Game View", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Game View", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showSceneView)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			Scene_RenderView();
-			AddProcessData("Render Scene View", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Scene View", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showAnimator)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderAnimator();
-			AddProcessData("Render Animator", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Animator", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 		
 		if (_showAnimationPreview)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderAnimationPreview();
-			AddProcessData("Render Animation Preview", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Animation Preview", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 		
 		if (_showKeyFrameEditor)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderKeyFrameEditor();
-			AddProcessData("Render Key Frame Editor", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Key Frame Editor", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showLogger)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderLog();
-			AddProcessData("Render Log", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Log", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 	
 		if (_showProfiler)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderProfiler();
-			AddProcessData("Render Profiler", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Profiler", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showMappingContextEditor)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderMappingContextEditor();
-			AddProcessData("Render Mapping Context Editor", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Mapping Context Editor", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 
 		if (_showSettings)
 		{
 			startTime = (float)FlatEngine::GetEngineTime();
 			RenderSettings();
-			AddProcessData("Render Settings", (float)FlatEngine::GetEngineTime() - startTime);
+			FlatEngine::AddProcessData("Render Settings", (float)FlatEngine::GetEngineTime() - startTime);
 		}
 	}
 
@@ -1126,25 +1129,5 @@ namespace FlatGui
 				FlatEngine::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
 			}
 		}
-	}
-
-
-	std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance)
-	{
-		Vector2 correctedOrigin = Vector2(FG_sceneViewCenter.x + origin.x * FG_sceneViewGridStep.x, FG_sceneViewCenter.y - origin.y * FG_sceneViewGridStep.y);
-		float hypotenuse = sqrt(direction.x * direction.x + direction.y * direction.y);
-		float divisor = hypotenuse / distance;
-		Vector2 endPoint = Vector2(correctedOrigin.x + direction.x / divisor * FG_sceneViewGridStep.x, correctedOrigin.y - direction.y / divisor * FG_sceneViewGridStep.y);
-
-		//ImGui::Begin("Scene View");
-		//ImDrawList* drawList = ImGui::GetWindowDrawList();
-		//DrawLine(correctedOrigin, endPoint, whiteColor, 3, drawList);
-		//ImGui::End();
-		return std::vector<std::shared_ptr<GameObject>>();
-	}
-
-	std::vector<std::shared_ptr<GameObject>> SphereCast(Vector2 origin, Vector2 direction, float distance)
-	{
-		return std::vector<std::shared_ptr<GameObject>>();
 	}
 }

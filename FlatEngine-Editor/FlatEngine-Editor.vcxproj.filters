@@ -1,691 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source">
-      <UniqueIdentifier>{56EB95D1-428D-C0A7-2B48-D4FB178947F8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\scripts">
-      <UniqueIdentifier>{AD60D7D7-992E-CBDD-82C2-3B046E2FA742}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor">
-      <UniqueIdentifier>{935FDCD7-7F01-07AE-68BC-1A0254FD8DFE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes">
-      <UniqueIdentifier>{39AB7AF9-A536-E8BD-AE47-6BB21A5244BE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui">
-      <UniqueIdentifier>{23E74E6A-8F53-0A65-5847-A2C2C4722CCD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\Backends">
-      <UniqueIdentifier>{8D7CCF5D-79A2-99C4-62E8-1E904EADBE90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\ImGui_Docking">
-      <UniqueIdentifier>{CBDBC141-3795-2CEC-C0F4-46C62CADE25B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\ImGui_Docking\misc">
-      <UniqueIdentifier>{86053A39-7282-2D7C-9BFF-2D9087DBC90F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\ImGui_Docking\misc\cpp">
-      <UniqueIdentifier>{58D248AA-44E5-4803-EDCE-25F0D9C0E550}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\ImGui_Docking\misc\debuggers">
-      <UniqueIdentifier>{6DD2892C-5966-7FD4-C22A-D988AEDDB9C6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImGui\ImGui_Docking\misc\fonts">
-      <UniqueIdentifier>{5F8CFC5F-4B0A-4DF9-3402-0B91201F8F21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImPlot">
-      <UniqueIdentifier>{DD9530B4-C98F-5906-B2FC-EF169E95BF72}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\ImSequencer">
-      <UniqueIdentifier>{299AADF1-95A7-DBD7-1E8E-D7C28A9AA78E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\Json_Formatter">
-      <UniqueIdentifier>{5576637F-419C-2DE6-2AE2-B2B116A752B2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2">
-      <UniqueIdentifier>{3DC55460-2954-DE29-D272-F224BEE0EECF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2\include">
-      <UniqueIdentifier>{B0D97DF3-9C94-6D9F-454C-E6E931E6B72F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2\lib">
-      <UniqueIdentifier>{E3BA9A5B-CFDF-E9DB-F82A-CF6BE4AEE8F9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2\lib\x64">
-      <UniqueIdentifier>{D43F8FCE-C0FA-7E7A-69B2-F7C4554CC90A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Image">
-      <UniqueIdentifier>{1F7FB51A-0B8F-61EB-7448-C60960775084}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Image\include">
-      <UniqueIdentifier>{925563D1-7E91-663B-E7A3-7E32D3FE0E56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Image\lib">
-      <UniqueIdentifier>{C595A969-B1BB-73D0-9A01-F99B86C6989C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Image\lib\x64">
-      <UniqueIdentifier>{B6BB74AC-A2F7-7716-0B0A-900DF7642031}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Image\lib\x64\optional">
-      <UniqueIdentifier>{6B1E9A1D-D783-2DA4-605C-CF7CCCC02213}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Mixer">
-      <UniqueIdentifier>{4111FC1A-2D21-A8EB-96DA-0C0A82099784}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Mixer\include">
-      <UniqueIdentifier>{B4E9A228-A025-A692-0938-BE89F5924EAD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Mixer\lib">
-      <UniqueIdentifier>{E7685071-D38E-1AD8-BCD4-9FA3A8993FA4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Mixer\lib\x64">
-      <UniqueIdentifier>{D84FB403-C48B-B76D-2D9E-CF6419F95F88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Mixer\lib\x64\optional">
-      <UniqueIdentifier>{CD7807B1-39DE-9A37-C2B6-3C102E1B90A6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Text">
-      <UniqueIdentifier>{A17849D2-0D3B-7D5C-56EB-0BE9C2EC553A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Text\include">
-      <UniqueIdentifier>{14B1119D-801F-671C-C908-221C35B65CB8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Text\lib">
-      <UniqueIdentifier>{4780C255-B398-A97F-7C45-3919E81C3E19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\includes\SDL2_Text\lib\x64">
-      <UniqueIdentifier>{38172378-A485-78F7-ED6E-33F7591C6E93}</UniqueIdentifier>
+    <Filter Include="scripts">
+      <UniqueIdentifier>{6D076287-D9E6-E022-E2FE-6BF94E5D4784}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.h">
-      <Filter>Vendor\includes\ImGui\Backends</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdlrenderer2.h">
-      <Filter>Vendor\includes\ImGui\Backends</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imconfig.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_internal.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imstb_rectpack.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imstb_textedit.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\imstb_truetype.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\cpp\imgui_stdlib.h">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImPlot\implot.h">
-      <Filter>Vendor\includes\ImPlot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImPlot\implot_internal.h">
-      <Filter>Vendor\includes\ImPlot</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\ImSequencer\ImSequencer.h">
-      <Filter>Vendor\includes\ImSequencer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\Json_Formatter\json.hpp">
-      <Filter>Vendor\includes\Json_Formatter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\Json_Formatter\json_fwd.hpp">
-      <Filter>Vendor\includes\Json_Formatter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_assert.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_atomic.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_audio.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_bits.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_blendmode.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_clipboard.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_config.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_cpuinfo.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_egl.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_endian.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_error.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_events.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_filesystem.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_gamecontroller.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_gesture.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_guid.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_haptic.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_hidapi.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_hints.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_joystick.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_keyboard.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_keycode.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_loadso.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_locale.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_log.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_main.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_messagebox.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_metal.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_misc.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_mouse.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_mutex.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_name.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengl.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengl_glext.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles2.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles2_gl2.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles2_gl2ext.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles2_gl2platform.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_opengles2_khrplatform.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_pixels.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_platform.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_power.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_quit.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_rect.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_render.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_revision.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_rwops.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_scancode.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_sensor.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_shape.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_stdinc.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_surface.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_system.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_syswm.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_assert.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_common.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_compare.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_crc32.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_font.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_fuzzer.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_harness.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_images.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_log.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_md5.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_memory.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_test_random.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_thread.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_timer.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_touch.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_types.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_version.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_video.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\SDL_vulkan.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\begin_code.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2\include\close_code.h">
-      <Filter>Vendor\includes\SDL2\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2_Image\include\SDL_image.h">
-      <Filter>Vendor\includes\SDL2_Image\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2_Mixer\include\SDL_mixer.h">
-      <Filter>Vendor\includes\SDL2_Mixer\include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vendor\includes\SDL2_Text\include\SDL_ttf.h">
-      <Filter>Vendor\includes\SDL2_Text\include</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\FlatGui.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WidgetsManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
+    <ClInclude Include="Source\FlatGui.h" />
+    <ClInclude Include="Source\WidgetsManager.h" />
     <ClInclude Include="Source\scripts\BlobParticle.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\ButtonScriptTemplate.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\EnemyController.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\GameManager.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\Health.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\JumpPad.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\PauseMenu.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\PlayerController.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\QuitButton.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\RestartButton.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\ScriptTemplate.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\SettingsButton.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="Source\scripts\StartButton.h">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp">
-      <Filter>Vendor\includes\ImGui\Backends</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdlrenderer2.cpp">
-      <Filter>Vendor\includes\ImGui\Backends</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_demo.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_draw.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_tables.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\imgui_widgets.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\cpp\imgui_stdlib.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\binary_to_compressed_c.cpp">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImPlot\implot.cpp">
-      <Filter>Vendor\includes\ImPlot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImPlot\implot_demo.cpp">
-      <Filter>Vendor\includes\ImPlot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImPlot\implot_items.cpp">
-      <Filter>Vendor\includes\ImPlot</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Vendor\includes\ImSequencer\ImSequencer.cpp">
-      <Filter>Vendor\includes\ImSequencer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Animator.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FlatEngine-Editor.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FlatGui.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hierarchy.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ImGuiWrappersEditor.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Inspector.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Log.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MainMenu.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MappingContextEditor.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Profiler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneView.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Settings.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Toolbar.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WidgetsManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\Animator.cpp" />
+    <ClCompile Include="Source\FlatEngine-Editor.cpp" />
+    <ClCompile Include="Source\FlatGui.cpp" />
+    <ClCompile Include="Source\Hierarchy.cpp" />
+    <ClCompile Include="Source\ImGuiWrappersEditor.cpp" />
+    <ClCompile Include="Source\Inspector.cpp" />
+    <ClCompile Include="Source\Log.cpp" />
+    <ClCompile Include="Source\MainMenu.cpp" />
+    <ClCompile Include="Source\MappingContextEditor.cpp" />
+    <ClCompile Include="Source\RenderProfiler.cpp" />
+    <ClCompile Include="Source\SceneView.cpp" />
+    <ClCompile Include="Source\Settings.cpp" />
+    <ClCompile Include="Source\Toolbar.cpp" />
+    <ClCompile Include="Source\WidgetsManager.cpp" />
     <ClCompile Include="Source\scripts\BlobParticle.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\ButtonScriptTemplate.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\EnemyController.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\GameManager.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\Health.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\JumpPad.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\PauseMenu.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\PlayerController.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\QuitButton.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\RestartButton.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\ScriptTemplate.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\SettingsButton.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="Source\scripts\StartButton.cpp">
-      <Filter>Source\scripts</Filter>
+      <Filter>scripts</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\.editorconfig">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\LICENSE.txt">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers\imgui.gdb">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\debuggers</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers\imgui.natstepfilter">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\debuggers</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\Cousine-Regular.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\DroidSans.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\Karla-Regular.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\ProggyClean.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\ProggyTiny.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\fonts\Roboto-Medium.ttf">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\fonts</Filter>
-    </None>
-    <None Include="..\Vendor\includes\Json_Formatter\LICENSE.MIT">
-      <Filter>Vendor\includes\Json_Formatter</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2\lib\x64\SDL2.dll">
-      <Filter>Vendor\includes\SDL2\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2\lib\x64\SDL2.lib">
-      <Filter>Vendor\includes\SDL2\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2\lib\x64\SDL2main.lib">
-      <Filter>Vendor\includes\SDL2\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2\lib\x64\SDL2test.lib">
-      <Filter>Vendor\includes\SDL2\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\LICENSE.txt">
-      <Filter>Vendor\includes\SDL2_Image</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\SDL2_image.dll">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\SDL2_image.lib">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\LICENSE.avif.txt">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\LICENSE.dav1d.txt">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\LICENSE.tiff.txt">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\LICENSE.webp.txt">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\libavif-16.dll">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\libtiff-5.dll">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\libwebp-7.dll">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Image\lib\x64\optional\libwebpdemux-2.dll">
-      <Filter>Vendor\includes\SDL2_Image\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\LICENSE.txt">
-      <Filter>Vendor\includes\SDL2_Mixer</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\SDL2_mixer.dll">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\SDL2_mixer.lib">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\LICENSE.modplug.txt">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\LICENSE.ogg-vorbis.txt">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\LICENSE.opus.txt">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\LICENSE.opusfile.txt">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\libmodplug-1.dll">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\libogg-0.dll">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\libopus-0.dll">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Mixer\lib\x64\optional\libopusfile-0.dll">
-      <Filter>Vendor\includes\SDL2_Mixer\lib\x64\optional</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\LICENSE.txt">
-      <Filter>Vendor\includes\SDL2_Text</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\lib\x64\LICENSE.freetype.txt">
-      <Filter>Vendor\includes\SDL2_Text\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\lib\x64\LICENSE.harfbuzz.txt">
-      <Filter>Vendor\includes\SDL2_Text\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\lib\x64\LICENSE.zlib.txt">
-      <Filter>Vendor\includes\SDL2_Text\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\lib\x64\SDL2_ttf.dll">
-      <Filter>Vendor\includes\SDL2_Text\lib\x64</Filter>
-    </None>
-    <None Include="..\Vendor\includes\SDL2_Text\lib\x64\SDL2_ttf.lib">
-      <Filter>Vendor\includes\SDL2_Text\lib\x64</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers\imgui.natvis">
-      <Filter>Vendor\includes\ImGui\ImGui_Docking\misc\debuggers</Filter>
-    </Natvis>
   </ItemGroup>
 </Project>

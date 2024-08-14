@@ -17,6 +17,9 @@ namespace FlatEngine
 {
 	class BoxCollider : public Collider
 	{
+		using RigidBody = FlatEngine::RigidBody;
+		using GameObject = FlatEngine::GameObject;
+
 		friend class Collider;
 		friend class CircleCollider;
 		class GameObject;		

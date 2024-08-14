@@ -59,9 +59,11 @@ public:
 		if (FlatEngine::_isDebugMode)
 		{
 			// Add Update Time Process		
-			FlatGui::AddProfilerProcess("GameLoop (variable executions)");
+			FlatEngine::AddProfilerProcess("GameLoop (variable executions)");
 			// Add Update Process for all other time		
-			FlatGui::AddProfilerProcess("Not GameLoop");
+			FlatEngine::AddProfilerProcess("Not GameLoop");
+			FlatEngine::AddProfilerProcess("Collision Testing");
+			//FlatEngine::AddProfilerProcess("")
 		}
 		FlatEngine::GameLoop::Start();
 	};
@@ -73,8 +75,9 @@ public:
 			//for (int i = 0; i < GameLoop::GetActiveScripts().size(); i++)
 			//	FlatGui::RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
 
-			FlatGui::RemoveProfilerProcess("GameLoop (variable executions)");
-			FlatGui::RemoveProfilerProcess("Not GameLoop");
+			FlatEngine::RemoveProfilerProcess("GameLoop (variable executions)");
+			FlatEngine::RemoveProfilerProcess("Not GameLoop");
+			FlatEngine::RemoveProfilerProcess("Collision Testing");
 		}
 		FlatEngine::GameLoop::Stop();
 	};
@@ -211,7 +214,7 @@ public:
 		{
 			// Create a new Process for each script	
 			if (FlatEngine::_isDebugMode)
-				FlatGui::AddProfilerProcess(newScripts[i].GetName() + "-on-" + newScripts[i].GetOwner()->GetName());
+				FlatEngine::AddProfilerProcess(newScripts[i].GetName() + "-on-" + newScripts[i].GetOwner()->GetName());
 			newScripts[i].Awake();
 			newScripts[i].Start();
 		}
@@ -260,7 +263,7 @@ public:
 
 
 			if (FlatEngine::_isDebugMode)
-				FlatGui::AddProcessData("Render", (float)(FlatEngine::GetEngineTime() - renderStartTime)); // Profiler
+				FlatEngine::AddProcessData("Render", (float)(FlatEngine::GetEngineTime() - renderStartTime)); // Profiler
 
 
 			//// If Release - Start the Game Loop
@@ -279,7 +282,7 @@ public:
 					updateLoopStart = FlatEngine::GetEngineTime();
 					// Get hang time of everything after Update Loop for profiler
 					Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
-					FlatGui::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
+					FlatEngine::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
 					updateLoopEnd = updateLoopStart;
 				}
 
@@ -313,7 +316,7 @@ public:
 				{
 					// Get hang time of Update Loop for profiler
 					Uint32 hangTime = FlatEngine::GetEngineTime() - updateLoopStart;
-					FlatGui::AddProcessData("GameLoop (variable executions)", (float)hangTime);
+					FlatEngine::AddProcessData("GameLoop (variable executions)", (float)hangTime);
 					// Save time after update finishes
 					updateLoopEnd = FlatEngine::GetEngineTime();
 				}

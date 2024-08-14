@@ -1,6 +1,7 @@
-#include "Process.h"
+#include "ProfilerProcess.h"
 
-namespace FlatEngine {
+namespace FlatEngine 
+{
 	Process::Process(std::string name)
 	{
 		processName = name;

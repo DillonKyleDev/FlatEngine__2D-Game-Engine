@@ -132,11 +132,7 @@ namespace FlatGui
 	extern void Init();
 
 	// Profiler
-	extern std::vector<std::shared_ptr<Process>> profilerProcesses;
 	extern bool _logProfilerOutput;
-	extern void AddProfilerProcess(std::string name);
-	extern void AddProcessData(std::string processName, float data);
-	extern void RemoveProfilerProcess(std::string toRemove);
 
 	// Gui Rendering
 	extern void SetupProfilerProcesses();

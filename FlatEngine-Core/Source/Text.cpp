@@ -6,7 +6,7 @@ namespace FlatEngine
 {
 	Text::Text(long myID, long parentID)
 	{
-		SetType(Component::ComponentTypes::Text);
+		SetType(Component::ComponentTypes::T_Text);
 		SetID(myID);
 		SetParentID(parentID);
 		fontPath = "assets/fonts/Cinzel/Cinzel-Black.ttf";
@@ -22,7 +22,7 @@ namespace FlatEngine
 
 	Text::Text(Text* toCopy, long newParentID, long myID)
 	{
-		SetType(Component::ComponentTypes::Text);
+		SetType(Component::ComponentTypes::T_Text);
 		if (myID != -1)
 			SetID(myID);
 		else

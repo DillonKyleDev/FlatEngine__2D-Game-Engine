@@ -6,7 +6,7 @@ namespace FlatEngine
 {
 	Canvas::Canvas(long myID, long parentID, long newCanvasID)
 	{
-		SetType(ComponentTypes::Canvas);
+		SetType(ComponentTypes::T_Canvas);
 		SetID(myID);
 		SetParentID(parentID);
 		canvasID = newCanvasID;
@@ -19,7 +19,7 @@ namespace FlatEngine
 
 	Canvas::Canvas(Canvas* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Canvas);
+		SetType(ComponentTypes::T_Canvas);
 		if (myID != -1)
 			SetID(myID);
 		else

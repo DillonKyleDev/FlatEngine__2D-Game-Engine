@@ -9,7 +9,7 @@
 namespace FlatEngine {
 	CharacterController::CharacterController(long myID, long parentID)
 	{
-		SetType(ComponentTypes::CharacterController);
+		SetType(ComponentTypes::T_CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
 		maxAcceleration = 1;
@@ -22,7 +22,7 @@ namespace FlatEngine {
 	// Copy constructor
 	CharacterController::CharacterController(CharacterController* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::CharacterController);
+		SetType(ComponentTypes::T_CharacterController);
 		if (myID != -1)
 			SetID(myID);
 		else

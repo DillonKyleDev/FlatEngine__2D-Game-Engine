@@ -15,6 +15,14 @@
 
 #include "Animation.h"
 
+
+extern "C"
+{
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
+}
+
 /*
 ######################################
 ######							######
@@ -29,12 +37,14 @@ class Vector4;
 namespace FlatEngine
 {
 	extern std::shared_ptr<Application> F_Application;
+	extern lua_State* F_Lua;
 
 	class GameLoop;
 	class Project;
 	class Scene;
 	class Process;
 	class Logger;
+	class Process;
 	class SceneManager;
 	class PrefabManager;
 	class MappingContext;
@@ -234,6 +244,7 @@ namespace FlatEngine
 	extern SceneManager F_SceneManager;
 	extern UIManager F_UIManager;
 	extern Logger F_Logger;
+	extern std::vector<Process> F_ProfilerProcesses;
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern Sound F_SoundController;
 	extern TTF_Font* F_fontCinzel;
@@ -260,6 +271,15 @@ namespace FlatEngine
 	extern void CreateIcons();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
+
+	// Lua
+	extern bool CheckLua(int lua);
+	extern int lua_HostFunction(lua_State* L);
+
+	// Profiler
+	extern void AddProfilerProcess(std::string name);
+	extern void AddProcessData(std::string processName, float data);
+	extern void RemoveProfilerProcess(std::string toRemove);
 
 	// Project Management
 	extern Project F_LoadedProject;

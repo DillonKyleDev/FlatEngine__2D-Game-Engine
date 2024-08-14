@@ -10,6 +10,7 @@ workspace "FlatEngine"
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
+
 group "Core"
 	include "FlatEngine-Core/Build-Core.lua"
 group ""

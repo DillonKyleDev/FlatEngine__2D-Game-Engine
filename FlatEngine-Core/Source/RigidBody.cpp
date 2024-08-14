@@ -8,49 +8,65 @@
 namespace FlatEngine {
 	RigidBody::RigidBody(long myID, long parentID)
 	{
-		SetType(ComponentTypes::RigidBody);
+		SetType(ComponentTypes::T_RigidBody);
 		SetID(myID);
 		SetParentID(parentID);
-		mass = 1;
-		angularDrag = 1;
-		gravity = 1;
-		fallingGravity = gravity * 1.2f;		
-		velocity = Vector2(0, 0);
-		pendingForces = Vector2(0, 0);		
-		acceleration = Vector2(0, 0);
-		terminalVelocity = gravity * 0.4f;
-		windResistance = 1.0f;  // Lower value = more resistance
-		friction = 0.86f;  // 1 = no friction. 0 = velocity = 0
-		equilibriumForce = 2;				
-		_isGrounded = false;
-		_isKinematic = false;
-		_isStatic = false;
-		forceCorrection = 0.03f;
+		// Linear
+		m_mass = 1;
+		m_1overMass = 1 / m_mass;		
+		m_pendingForces = Vector2(0, 0);
+		m_velocity = Vector2(0, 0);	
+		m_acceleration = Vector2(0, 0);
+		m_friction = 0.86f;  // 1 = no m_friction. 0 = m_velocity = 0
+		// Rotational
+		m_I = 1; // I of a rectangle = mass * b*h*h*h / 12
+		m_1overI = 1;
+		m_pendingTorques = 0;
+		m_angularVelocity = 0;
+		m_angularAcceleration = 0;
+		m_angularDrag = 1;
+
+		m_equilibriumForce = 2;				
+		m_b_isGrounded = false;
+		m_b_isStatic = false;
+		m_forceCorrection = 0.01f;
+		m_gravity = 1;
+		m_fallingGravity = m_gravity * 1.2f;
+		m_terminalVelocity = m_gravity * 0.4f;
+		m_windResistance = 1.0f;  // Lower value = more resistance
 	}
 
 	RigidBody::RigidBody(RigidBody* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::RigidBody);
+		SetType(ComponentTypes::T_RigidBody);
 		if (myID != -1)
 			SetID(myID);
 		else
 			SetID(GetNextComponentID());
 		SetParentID(newParentID);
-		mass = toCopy->mass;
-		angularDrag = toCopy->angularDrag;
-		gravity = toCopy->gravity;
-		fallingGravity = toCopy->fallingGravity;
-		velocity = toCopy->velocity;
-		pendingForces = Vector2(0, 0);
-		acceleration = Vector2(0, 0);
-		terminalVelocity = toCopy->terminalVelocity;
-		windResistance = toCopy->windResistance;
-		friction = toCopy->friction;
-		equilibriumForce = toCopy->equilibriumForce;		
-		_isGrounded = toCopy->_isGrounded;
-		_isKinematic = toCopy->_isKinematic;
-		_isStatic = toCopy->_isStatic;
-		forceCorrection = toCopy->forceCorrection;
+		// Linear
+		m_mass = toCopy->m_mass;
+		m_1overMass = 1 / m_mass;
+		m_velocity = toCopy->m_velocity;
+		m_pendingForces = Vector2(0, 0);
+		m_acceleration = Vector2(0, 0);
+		m_friction = toCopy->m_friction;
+		// Rotational
+		m_I = toCopy->m_I;
+		m_1overI = toCopy->m_1overI;
+		m_pendingTorques = toCopy->m_pendingTorques;
+		m_angularVelocity = toCopy->m_angularVelocity;
+		m_angularAcceleration = toCopy->m_angularAcceleration;
+		m_angularDrag = toCopy->m_angularDrag;
+
+		m_gravity = toCopy->m_gravity;
+		m_fallingGravity = toCopy->m_fallingGravity;
+		m_terminalVelocity = toCopy->m_terminalVelocity;
+		m_windResistance = toCopy->m_windResistance;
+		m_equilibriumForce = toCopy->m_equilibriumForce;		
+		m_b_isGrounded = toCopy->m_b_isGrounded;
+		m_b_isStatic = toCopy->m_b_isStatic;
+		m_forceCorrection = toCopy->m_forceCorrection;
 	}
 
 	RigidBody::~RigidBody()
@@ -64,15 +80,14 @@ namespace FlatEngine {
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "mass", mass},
-			{ "angularDrag", angularDrag },
-			{ "gravity", gravity },
-			{ "friction", friction },
-			{ "equilibriumForce", equilibriumForce },
-			{ "terminalVelocity", terminalVelocity },
-			{ "windResistance", windResistance },
-			{ "_isKinematic", _isKinematic },
-			{ "_isStatic", _isStatic },
+			{ "mass", m_mass},
+			{ "angularDrag", m_angularDrag },
+			{ "gravity", m_gravity },
+			{ "friction", m_friction },
+			{ "equilibriumForce", m_equilibriumForce },
+			{ "terminalVelocity", m_terminalVelocity },
+			{ "windResistance", m_windResistance },
+			{ "_isStatic", m_b_isStatic },
 		};
 
 		std::string data = jsonData.dump();
@@ -97,16 +112,24 @@ namespace FlatEngine {
 		}
 		else if (physicsSystemType == "Verlet")
 		{
-			// CalculateVerletPhysics();
+			CalculateVerletPhysics();
 		}
 	}
 
 	void RigidBody::CalculateEulerPhysics()
 	{		
-		if (mass == 0)
-			acceleration = Vector2(pendingForces.x, pendingForces.y);
-		else 
-			acceleration = Vector2(pendingForces.x / mass, pendingForces.y / mass);
+		// Linear
+		if (m_mass == 0)
+			m_acceleration = Vector2(m_pendingForces.x, m_pendingForces.y);
+		else
+			m_acceleration = Vector2(m_pendingForces.x * m_1overMass * m_forceCorrection, m_pendingForces.y * m_1overMass * m_forceCorrection);
+
+		// Rotational - Torque = I * angularAcceleration
+		if (m_I == 0)
+			m_angularAcceleration = m_pendingTorques;
+		else
+			m_angularAcceleration = m_pendingTorques * m_1overI;
+		
 	}
 
 	void RigidBody::CalculateVerletPhysics()
@@ -124,18 +147,23 @@ namespace FlatEngine {
 		}
 		else if (physicsSystemType == "Verlet")
 		{
-			// ApplyVerletPhysics(deltaTime);
+			ApplyVerletPhysics(deltaTime);
 		}
 	}
 
 	void RigidBody::ApplyEulerPhysics(float deltaTime)
 	{
 		// Then apply to transform
-		velocity = Vector2(acceleration.x * deltaTime, acceleration.y * deltaTime);
+		m_velocity = Vector2(m_velocity.x + m_acceleration.x, m_acceleration.y);
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
-		transform->SetPosition(Vector2(position.x + velocity.x, position.y + velocity.y));
+		transform->SetPosition(Vector2(position.x + m_velocity.x, position.y + m_velocity.y));
+
+		m_angularVelocity += m_angularAcceleration;
+		float rotation = transform->GetRotation();
+
+		transform->SetRotation(rotation + m_angularVelocity);
 	}
 
 	void RigidBody::ApplyVerletPhysics(float deltaTime)
@@ -145,49 +173,49 @@ namespace FlatEngine {
 
 	Vector2 RigidBody::AddVelocity(Vector2 vel)
 	{
-		// Make sure not colliding in that direction before adding the velocity
+		// Make sure not colliding in that direction before adding the m_velocity
 		std::vector<FlatEngine::BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
 		for (FlatEngine::BoxCollider* boxCollider : boxColliders)
 		{
 			if ((vel.x > 0 && (!boxCollider->_isCollidingRight || !boxCollider->_rightCollisionStatic) || vel.x < 0 && (!boxCollider->_isCollidingLeft || !boxCollider->_leftCollisionStatic)))
-				pendingForces.x += vel.x;
+				m_pendingForces.x += vel.x;
 		}
 
-		pendingForces.y += vel.y;		
-		return pendingForces;
+		m_pendingForces.y += vel.y;		
+		return m_pendingForces;
 	}
 
 	void RigidBody::ApplyGravity()
 	{
-		if (gravity > 0)
+		if (m_gravity > 0)
 		{
-			if (!_isGrounded && velocity.y > -terminalVelocity)
+			if (!m_b_isGrounded && m_velocity.y > -m_terminalVelocity)
 			{
-				if (velocity.y < 0)
-					pendingForces.y -= fallingGravity;
+				if (m_velocity.y < 0)
+					m_pendingForces.y -= m_fallingGravity;
 				else
-					pendingForces.y -= gravity;
+					m_pendingForces.y -= m_gravity;
 			}
 		}
-		else if (gravity < 0)
+		else if (m_gravity < 0)
 		{
-			if (!_isGrounded && velocity.y < terminalVelocity)
+			if (!m_b_isGrounded && m_velocity.y < m_terminalVelocity)
 			{
-				if (velocity.y > 0)
-					pendingForces.y -= fallingGravity;
+				if (m_velocity.y > 0)
+					m_pendingForces.y -= m_fallingGravity;
 				else
-					pendingForces.y -= gravity;
+					m_pendingForces.y -= m_gravity;
 			}
 		}
 	}
 
 	void RigidBody::ApplyFriction()
 	{
-		// Wind Friction
-		if (gravity != 0 && !_isGrounded)
+		// Wind m_friction
+		if (m_gravity != 0 && !m_b_isGrounded)
 		{
-			Vector2 dampenedVelocity = Vector2(pendingForces.x * windResistance, pendingForces.y * windResistance);
-			pendingForces = dampenedVelocity;
+			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_windResistance, m_pendingForces.y * m_windResistance);
+			m_pendingForces = dampenedm_velocity;
 		}
 
 		// Get Character Controller for _isMoving
@@ -200,16 +228,16 @@ namespace FlatEngine {
 		if (characterController != nullptr)
 			_isMoving = characterController->IsMoving();
 
-		// Ground Friction
-		if (!_isMoving && (gravity != 0 && _isGrounded))
+		// Ground m_friction
+		if (!_isMoving && (m_gravity != 0 && m_b_isGrounded))
 		{
-			Vector2 dampenedVelocity = Vector2(pendingForces.x * friction, pendingForces.y);
-			pendingForces = dampenedVelocity;
+			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y);
+			m_pendingForces = dampenedm_velocity;
 		}	
-		else if (gravity == 0)
+		else if (m_gravity == 0)
 		{
-			Vector2 dampenedVelocity = Vector2(pendingForces.x * friction, pendingForces.y * friction);
-			pendingForces = dampenedVelocity;
+			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y * m_friction);
+			m_pendingForces = dampenedm_velocity;
 		}
 	}
 
@@ -224,18 +252,18 @@ namespace FlatEngine {
 		if (characterController != nullptr)
 			maxSpeed = characterController->GetMaxSpeed();
 
-		if (characterController != nullptr || friction != 1)
+		if (characterController != nullptr || m_friction != 1)
 		{
 			// Horizontal speed control
-			if (characterController != nullptr && velocity.x > maxSpeed || velocity.x > terminalVelocity)
-				pendingForces.x -= equilibriumForce;
-			else if (characterController != nullptr && velocity.x < -maxSpeed || velocity.x < -terminalVelocity)
-				pendingForces.x += equilibriumForce;
+			if (characterController != nullptr && m_velocity.x > maxSpeed || m_velocity.x > m_terminalVelocity)
+				m_pendingForces.x -= m_equilibriumForce;
+			else if (characterController != nullptr && m_velocity.x < -maxSpeed || m_velocity.x < -m_terminalVelocity)
+				m_pendingForces.x += m_equilibriumForce;
 			// Vertical speed control
-			//if (velocity.y > maxSpeed)
-			//	pendingForces.y -= equilibriumForce;
-			//else if (velocity.y < -maxSpeed)
-			//	pendingForces.y += equilibriumForce;		
+			//if (m_velocity.y > maxSpeed)
+			//	m_pendingForces.y -= m_equilibriumForce;
+			//else if (m_velocity.y < -maxSpeed)
+			//	m_pendingForces.y += m_equilibriumForce;		
 		}
 	}
 
@@ -272,18 +300,18 @@ namespace FlatEngine {
 		Vector2 position = GetParent()->GetTransform()->GetPosition();				
 		float newYPos;
 		float newXPos;
-		float cornerFriction = .01f;
+		float cornerm_friction = .01f;
 		float cornerLerp = 0.3f;
 
 		// Circle Colliders
 		if (collider->GetTypeString() == "CircleCollider")
 		{
 			// Moving down
-			if (pendingForces.y < 0)
+			if (m_pendingForces.y < 0)
 			{
 				if (collider->_isCollidingBottom && collider->_bottomCollisionSolid && (!collider->_isCollidingBottomLeft || (collider->_isCollidingBottomLeft && !collider->_bottomLeftCollisionSolid)) && (!collider->_isCollidingBottomRight || (collider->_isCollidingBottomRight && !collider->_bottomRightCollisionSolid)))
 				{
-					pendingForces.y = 0;
+					m_pendingForces.y = 0;
 					newYPos = collider->bottomCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
@@ -295,103 +323,103 @@ namespace FlatEngine {
 				}
 				else if (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid)
 				{
-					newXPos = position.x - cornerFriction * -pendingForces.y; // Give some slide away from the edge based on pendingForces
+					newXPos = position.x - cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
 					newYPos = collider->bottomRightCollidedPosition.y;
-					//pendingForces.y = 0;
+					//m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}	
 
-			// Normal gravity
-			if (gravity > 0 && (collider->_isCollidingBottom && collider->_bottomCollisionSolid) || (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid))
-				_isGrounded = true;
-			// Inverted gravity
-			else if (gravity < 0 && (collider->_isCollidingTop && collider->_topCollisionSolid) || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid) || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid))
-				_isGrounded = true;
+			// Normal m_gravity
+			if (m_gravity > 0 && (collider->_isCollidingBottom && collider->_bottomCollisionSolid) || (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid))
+				m_b_isGrounded = true;
+			// Inverted m_gravity
+			else if (m_gravity < 0 && (collider->_isCollidingTop && collider->_topCollisionSolid) || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid) || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid))
+				m_b_isGrounded = true;
 			else
-				_isGrounded = false;
+				m_b_isGrounded = false;
 
 			// Moving up
-			if (pendingForces.y > 0)
+			if (m_pendingForces.y > 0)
 			{
 				if (collider->_isCollidingTop && collider->_topCollisionSolid && (!collider->_isCollidingTopLeft || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid)) && (!collider->_isCollidingTopRight || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid)))
 				{
-					// Inverted Gravity
-					if (gravity < 0)
-						_isGrounded = true;
+					// Inverted m_gravity
+					if (m_gravity < 0)
+						m_b_isGrounded = true;
 
-					pendingForces.y = 0;
+					m_pendingForces.y = 0;
 					newYPos = collider->topCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
 				else if (collider->_isCollidingTopLeft && collider->_topLeftCollisionSolid)
 				{
-					if (gravity < 0)
-						_isGrounded = true;
+					if (m_gravity < 0)
+						m_b_isGrounded = true;
 
-					newXPos = position.x - cornerFriction * -pendingForces.y; // Give some slide away from the edge based on pendingForces
+					newXPos = position.x - cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
 					newYPos = collider->topLeftCollidedPosition.y;
-					pendingForces.y = 0;
+					m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 				else if (collider->_isCollidingTopRight && collider->_topRightCollisionSolid)
 				{
-					if (gravity < 0)
-						_isGrounded = true;
+					if (m_gravity < 0)
+						m_b_isGrounded = true;
 
-					newXPos = position.x + cornerFriction * -pendingForces.y; // Give some slide away from the edge based on pendingForces
+					newXPos = position.x + cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
 					newYPos = collider->topRightCollidedPosition.y;
-					pendingForces.y = 0;
+					m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
-				else if (gravity < 0)
-					_isGrounded = false;
+				else if (m_gravity < 0)
+					m_b_isGrounded = false;
 			}
 			// Moving left
-			if (pendingForces.x < 0)
+			if (m_pendingForces.x < 0)
 			{
 				if (collider->_isCollidingLeft && collider->_leftCollisionSolid && (!collider->_isCollidingBottomLeft || (collider->_isCollidingBottomLeft && !collider->_bottomLeftCollisionSolid)) && (!collider->_isCollidingTopLeft || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid)))
 				{
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					newXPos = collider->leftCollidedPosition.x;
 					transform->SetPosition(Vector2(newXPos, position.y));
 				}
 				else if (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid)
 				{
-					newYPos = position.y + cornerFriction * -pendingForces.x; // Give some slide away from the edge based on pendingForces
+					newYPos = position.y + cornerm_friction * -m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
 					newXPos = collider->bottomLeftCollidedPosition.x;
-					pendingForces.x = 0;				
+					m_pendingForces.x = 0;				
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 				else if (collider->_isCollidingTopLeft && collider->_topLeftCollisionSolid)
 				{
-					newYPos = position.y - cornerFriction * -pendingForces.x; // Give some slide away from the edge based on pendingForces
+					newYPos = position.y - cornerm_friction * -m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
 					newXPos = collider->topLeftCollidedPosition.x;
-					pendingForces.x = 0;					
+					m_pendingForces.x = 0;					
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}
 			// Moving right
-			if (pendingForces.x > 0)
+			if (m_pendingForces.x > 0)
 			{
 				if (collider->_isCollidingRight && collider->_rightCollisionSolid && (!collider->_isCollidingBottomRight || (collider->_isCollidingBottomRight && !collider->_bottomRightCollisionSolid)) && (!collider->_isCollidingTopRight || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid)))
 				{
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					newXPos = collider->rightCollidedPosition.x;
 					transform->SetPosition(Vector2(newXPos, position.y));
 				}
 				else if (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid)
 				{
-					newYPos = position.y + cornerFriction * pendingForces.x; // Give some slide away from the edge based on pendingForces
+					newYPos = position.y + cornerm_friction * m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
 					newXPos = collider->bottomRightCollidedPosition.x;
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 				else if (collider->_isCollidingTopRight && collider->_topRightCollisionSolid)
 				{
-					newYPos = position.y - cornerFriction * pendingForces.x; // Give some slide away from the edge based on pendingForces
+					newYPos = position.y - cornerm_friction * m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
 					newXPos = collider->topRightCollidedPosition.x;
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}
@@ -401,22 +429,22 @@ namespace FlatEngine {
 		{
 			// "Floor" Collision Forces
 			// 
-			// Check if grounded normal gravity
-			if (gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionSolid || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && gravity > 0))
-				//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity > 0)
-				_isGrounded = true;
-			// Check if grounded inverted gravity
-			else if (gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && gravity < 0)
-				_isGrounded = true;
+			// Check if grounded normal m_gravity
+			if (m_gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionSolid || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && m_gravity > 0))
+				//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && m_gravity > 0)
+				m_b_isGrounded = true;
+			// Check if grounded inverted m_gravity
+			else if (m_gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && m_gravity < 0)
+				m_b_isGrounded = true;
 			else
-				_isGrounded = false;
+				m_b_isGrounded = false;
 
-			if (_isGrounded)
+			if (m_b_isGrounded)
 			{
-				// If grounded and normal gravity or inverted gravity
-				if ((pendingForces.y < 0 && gravity > 0) || (pendingForces.y > 0 && gravity < 0))
+				// If grounded and normal m_gravity or inverted m_gravity
+				if ((m_pendingForces.y < 0 && m_gravity > 0) || (m_pendingForces.y > 0 && m_gravity < 0))
 				{
-					pendingForces.y = 0;
+					m_pendingForces.y = 0;
 				}
 
 				if (collider->_isCollidingBottomRight)
@@ -438,16 +466,16 @@ namespace FlatEngine {
 
 			// "Ceiling" Collision Forces
 			//
-			// Normal Gravity
-			if (gravity > 0 && pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
+			// Normal m_gravity
+			if (m_gravity > 0 && m_pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
 			{
-				pendingForces.y = 0;
+				m_pendingForces.y = 0;
 				transform->SetPosition(Vector2(position.x, collider->topCollidedPosition.y));
 			}
-			// Inverted Gravity
-			if (gravity < 0 && pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
+			// Inverted m_gravity
+			if (m_gravity < 0 && m_pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
 			{
-				pendingForces.y = 0;
+				m_pendingForces.y = 0;
 				newYPos = collider->topCollision - halfHeight + 0.001f;
 				transform->SetPosition(Vector2(position.x, newYPos));
 			}
@@ -457,189 +485,186 @@ namespace FlatEngine {
 			if (collider->GetTypeString() == "BoxCollider")
 			{
 				// Collision on right side when moving to the right
-				if (collider->_isCollidingRight && collider->_rightCollisionSolid && velocity.x > 0)
+				if (collider->_isCollidingRight && collider->_rightCollisionSolid && m_velocity.x > 0)
 				{
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					transform->SetPosition(Vector2(collider->rightCollidedPosition.x, position.y));
 				}
 				// Collision on left side when moving to the left
-				else if (collider->_isCollidingLeft && collider->_leftCollisionSolid && velocity.x < 0)
+				else if (collider->_isCollidingLeft && collider->_leftCollisionSolid && m_velocity.x < 0)
 				{
-					pendingForces.x = 0;
+					m_pendingForces.x = 0;
 					transform->SetPosition(Vector2(collider->leftCollidedPosition.x, position.y));
 				}
 			}
 			// If not BoxCollider and moving left up a corner while not colliding on bottom
-			else if (velocity.x < 0 && collider->_isCollidingBottomLeft)
+			else if (m_velocity.x < 0 && collider->_isCollidingBottomLeft)
 			{
 				//transform->SetPosition(Vector2(position.x, newYPos));
 				transform->SetPosition(collider->bottomLeftCollidedPosition);
 			}
 			// Collision on right side when moving to the right
-			else if (collider->_isCollidingRight && collider->_rightCollisionStatic && collider->_rightCollisionSolid && velocity.x > 0)
+			else if (collider->_isCollidingRight && collider->_rightCollisionStatic && collider->_rightCollisionSolid && m_velocity.x > 0)
 			{
-				pendingForces.x = 0;
+				m_pendingForces.x = 0;
 				newXPos = collider->rightCollidedPosition.x;
 				transform->SetPosition(Vector2(newXPos, position.y));
 			}
 			// Collision on left side when moving to the left
-			else if (collider->_isCollidingLeft && collider->_leftCollisionStatic && collider->_leftCollisionSolid && velocity.x < 0)
+			else if (collider->_isCollidingLeft && collider->_leftCollisionStatic && collider->_leftCollisionSolid && m_velocity.x < 0)
 			{
-				pendingForces.x = 0;
+				m_pendingForces.x = 0;
 				newXPos = collider->leftCollidedPosition.x;
 				transform->SetPosition(Vector2(newXPos, position.y));
 			}
 		}
 	}
 
-	void RigidBody::AddForce(Vector2 direction, float power)
+	void RigidBody::AddForce(Vector2 force, float multiplier)
 	{
 		// Normalize the force first, then apply the power factor to the force
-		Vector2 addedForce = Vector2(direction.x * power * forceCorrection, direction.y * power * forceCorrection);
-		pendingForces.x += addedForce.x;
-		pendingForces.y += addedForce.y;		
+		Vector2 addedForce = Vector2(force.x * multiplier, force.y * multiplier);
+		m_pendingForces.x += addedForce.x;
+		m_pendingForces.y += addedForce.y;		
+	}
+
+	void RigidBody::AddTorque(float torque, float multiplier)
+	{
+		float addedTorque = torque * multiplier;
+		m_pendingTorques += addedTorque;
 	}
 
 	Vector2 RigidBody::GetNextPosition()
 	{
-		Vector2 nextVelocity = Vector2(acceleration.x * GetDeltaTime(), acceleration.y * GetDeltaTime());
+		Vector2 nextVelocity = Vector2(m_acceleration.x, m_acceleration.y);
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetTruePosition();
 		return Vector2(position.x + nextVelocity.x * 2, position.y + nextVelocity.y * 2);
 	}
 
-	void RigidBody::SetMass(float newMass)
+	void RigidBody::SetMass(float mass)
 	{
-		mass = newMass;
+		m_mass = mass;
+		m_1overMass = 1 / m_mass;
 	}
 
 	float RigidBody::GetMass()
 	{
-		return mass;
+		return m_mass;
 	}
 
-	void RigidBody::SetAngularDrag(float newAngularDrag)
+	void RigidBody::SetAngularDrag(float angularDrag)
 	{
-		angularDrag = newAngularDrag;
+		m_angularDrag = angularDrag;
 	}
 
 	float RigidBody::GetAngularDrag()
 	{
-		return angularDrag;
+		return m_angularDrag;
 	}
 
-	void RigidBody::SetGravity(float newGravity)
+	void RigidBody::SetGravity(float gravity)
 	{
-		gravity = newGravity;
+		m_gravity = gravity;
 	}
 
 	float RigidBody::GetGravity()
 	{
-		return gravity;
+		return m_gravity;
 	}
 
-	void RigidBody::SetFallingGravity(float newFallingGravity)
+	void RigidBody::SetFallingGravity(float fallingGravity)
 	{
-		fallingGravity = newFallingGravity;
+		m_fallingGravity = fallingGravity;
 	}
 
 	float RigidBody::GetFallingGravity()
 	{
-		return fallingGravity;
+		return m_fallingGravity;
 	}
 
-	void RigidBody::SetVelocity(Vector2 newVelocity)
+	void RigidBody::SetVelocity(Vector2 velocity)
 	{
-		velocity = newVelocity;
+		m_velocity = velocity;
 	}
 
-	void RigidBody::SetTerminalVelocity(float newTerminalVelocity)
+	void RigidBody::SetTerminalVelocity(float terminalVelocity)
 	{
-		terminalVelocity = newTerminalVelocity;
+		m_terminalVelocity = terminalVelocity;
 	}
 
 	float RigidBody::GetTerminalVelocity()
 	{
-		return terminalVelocity;
+		return m_terminalVelocity;
 	}
 
-	void RigidBody::SetEquilibriumForce(float newEquilibriumForce)
+	void RigidBody::SetEquilibriumForce(float equilibriumForce)
 	{
-		equilibriumForce = newEquilibriumForce;
+		m_equilibriumForce = equilibriumForce;
 	}
 
 	Vector2 RigidBody::GetVelocity()
 	{
-		return velocity;
+		return m_velocity;
 	}
 
 	Vector2 RigidBody::GetAcceleration()
 	{
-		return acceleration;
+		return m_acceleration;
 	}
 
 	Vector2 RigidBody::GetPendingForces()
 	{
-		return pendingForces;
+		return m_pendingForces;
 	}
 
-	void RigidBody::SetIsStatic(bool _static)
+	void RigidBody::SetIsStatic(bool b_static)
 	{
-		_isStatic = _static;
+		m_b_isStatic = b_static;
 	}
 
 	bool RigidBody::IsStatic()
 	{
-		return _isStatic;
+		return m_b_isStatic;
 	}
 
-	void RigidBody::SetIsGrounded(bool _grounded)
+	void RigidBody::SetIsGrounded(bool b_grounded)
 	{
-		_isGrounded = _grounded;
+		m_b_isGrounded = b_grounded;
 	}
 
 	bool RigidBody::IsGrounded()
 	{
-		return _isGrounded;
-	}
-
-	void RigidBody::SetIsKinematic(bool _kinematic)
-	{
-		_isKinematic = _kinematic;
-	}
-
-	bool RigidBody::IsKinematic()
-	{
-		return _isKinematic;
+		return m_b_isGrounded;
 	}
 	
-	void RigidBody::SetPendingForces(Vector2 newPendingForces)
+	void RigidBody::SetPendingForces(Vector2 pendingForces)
 	{
-		pendingForces = newPendingForces;		
+		m_pendingForces = pendingForces;
 	}
 
-	void RigidBody::SetWindResistance(float newWindResistance)
+	void RigidBody::SetWindResistance(float windResistance)
 	{
-		windResistance = newWindResistance;
+		m_windResistance = windResistance;
 	}
 
 	float RigidBody::GetWindResistance()
 	{
-		return windResistance;
+		return m_windResistance;
 	}
 
 	float RigidBody::GetFriction()
 	{
-		return friction;
+		return m_friction;
 	}
 
-	void RigidBody::SetFriction(float newFriction)
+	void RigidBody::SetFriction(float friction)
 	{
-		friction = newFriction;
+		m_friction = friction;
 	}
 
 	float RigidBody::GetEquilibriumForce()
 	{
-		return equilibriumForce;
+		return m_equilibriumForce;
 	}
 }

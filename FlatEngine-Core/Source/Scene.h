@@ -101,7 +101,7 @@ namespace FlatEngine
 		std::map<long, Sprite>& GetSprites();
 		std::map<long, Camera>& GetCameras();
 		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
-		std::map<long, GameScript>& GetScripts();
+		std::map<long, std::map<std::string, GameScript>>& GetScripts();
 		std::map<long, Button>& GetButtons();
 		std::map<long, Canvas>& GetCanvases();
 		std::map<long, Animation>& GetAnimations();

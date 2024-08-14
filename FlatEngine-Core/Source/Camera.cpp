@@ -10,7 +10,7 @@ namespace FlatEngine
 
 	Camera::Camera(long myID, long parentID)
 	{
-		SetType(ComponentTypes::Camera);
+		SetType(ComponentTypes::T_Camera);
 		SetID(myID);
 		SetParentID(parentID);
 		_isPrimaryCamera = false;
@@ -25,7 +25,7 @@ namespace FlatEngine
 
 	Camera::Camera(Camera* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Camera);
+		SetType(ComponentTypes::T_Camera);
 		if (myID != -1)
 			SetID(myID);
 		else

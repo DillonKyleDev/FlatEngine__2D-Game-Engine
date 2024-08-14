@@ -180,17 +180,19 @@ void PlayerController::HandleInput()
 
 			if (mappingContext->GetInputAction("IA_MoveLeft").type != 0)
 			{
-				xDir = -30000;
-				_moving = true;
-				_movingLeft = true;
-				sprite->SetTexture("assets/images/Sprites/owl/walkLeft.png");
+				//xDir = -30000;
+				//_moving = true;
+				//_movingLeft = true;
+				//sprite->SetTexture("assets/images/Sprites/owl/walkLeft.png");
+				FlatEngine::LogString("Left");
 			}
 			if (mappingContext->GetInputAction("IA_MoveRight").type != 0)
 			{
-				xDir = 30000;
-				_moving = true;
-				_movingRight = true;
-				sprite->SetTexture("assets/images/Sprites/owl/walkRight.png");
+				//xDir = 30000;
+				//_moving = true;
+				//_movingRight = true;
+				//sprite->SetTexture("assets/images/Sprites/owl/walkRight.png");
+				FlatEngine::LogString("Left");
 			}
 
 			if (_movingRight && _movingLeft)

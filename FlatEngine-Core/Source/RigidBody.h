@@ -27,7 +27,8 @@ namespace FlatEngine
 
 		Vector2 AddVelocity(Vector2 vel);
 		void ApplyGravity();
-		void AddForce(Vector2 direction, float power);
+		void AddForce(Vector2 force, float multiplier = 1);
+		void AddTorque(float torque, float multiplier = 1);
 		void ApplyEquilibriumForce();
 		void ApplyCollisionForces();
 		void ApplyCollisionForce(FlatEngine::Collider* collider, float halfWidth, float halfHeight);
@@ -60,24 +61,30 @@ namespace FlatEngine
 		void SetIsStatic(bool _static);
 		void SetIsGrounded(bool _grounded);
 		bool IsGrounded();
-		void SetIsKinematic(bool _kinematic);
-		bool IsKinematic();
 
 	private:
-		float mass;
-		float angularDrag;
-		float gravity;
-		float fallingGravity;
-		Vector2 velocity;
-		Vector2 pendingForces;
-		Vector2 acceleration;
-		float forceCorrection;
-		bool _isGrounded;
-		bool _isKinematic;
-		bool _isStatic;
-		float terminalVelocity;
-		float windResistance;
-		float friction;
-		float equilibriumForce;
+		// Linear
+		float m_mass;
+		float m_1overMass;
+		Vector2 m_pendingForces;
+		Vector2 m_velocity;
+		Vector2 m_acceleration;
+		float m_friction;
+		// Rotational
+		float m_I;
+		float m_1overI;
+		float m_pendingTorques;
+		float m_angularVelocity;
+		float m_angularAcceleration;
+		float m_angularDrag;
+
+		float m_forceCorrection;
+		bool m_b_isGrounded;
+		bool m_b_isStatic;
+		float m_windResistance;
+		float m_equilibriumForce;
+		float m_gravity;
+		float m_fallingGravity;
+		float m_terminalVelocity;
 	};
 }

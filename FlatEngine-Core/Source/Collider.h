@@ -51,7 +51,7 @@ namespace FlatEngine
 		Vector2 GetPreviousPosition();
 		void SetPreviousPosition(Vector2 prevPos);
 		bool HasMoved();
-		std::vector<GameObject> &GetCollidingObjects();
+		std::vector<GameObject*> GetCollidingObjects();
 		void ClearCollidingObjects();
 		void SetActiveOffset(Vector2 offset);
 		Vector2 GetActiveOffset();
@@ -128,8 +128,8 @@ namespace FlatEngine
 		bool _topRightCollisionSolid;
 
 	private:
-		std::vector<GameObject> collidingObjects;
-		std::vector<GameObject> collidingLastFrame;
+		std::vector<GameObject*> m_collidingObjects;
+		std::vector<GameObject*> collidingLastFrame;
 		Vector2 activeOffset;
 		Vector2 previousPosition;
 		Vector2 centerGrid;

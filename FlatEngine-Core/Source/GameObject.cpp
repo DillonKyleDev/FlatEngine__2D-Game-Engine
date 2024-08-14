@@ -602,7 +602,7 @@ namespace FlatEngine
 	{
 		for (int i = 0; i < components.size(); i++)
 		{
-			if (components[i]->GetType() == ComponentTypes::Script)
+			if (components[i]->GetType() == ComponentTypes::T_Script)
 			{
 				ScriptComponent* scriptComponent = static_cast<ScriptComponent*>(components[i]);
 				if (scriptComponent->GetAttachedScript() == scriptName)

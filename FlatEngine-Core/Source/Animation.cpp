@@ -11,7 +11,7 @@ namespace FlatEngine
 {
 	Animation::Animation(long myID, long parentID)
 	{
-		SetType(ComponentTypes::Animation);
+		SetType(ComponentTypes::T_Animation);
 		SetID(myID);
 		SetParentID(parentID);
 		animationName = "";
@@ -23,7 +23,7 @@ namespace FlatEngine
 
 	Animation::Animation(Animation* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Animation);
+		SetType(ComponentTypes::T_Animation);
 		if (myID != -1)
 			SetID(myID);
 		else

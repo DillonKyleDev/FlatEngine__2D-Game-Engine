@@ -16,21 +16,21 @@ namespace FlatEngine
 	{
 	public:
 		enum ComponentTypes {
-			Null,
-			Transform,
-			Sprite,
-			Camera,
-			Script,
-			Button,
-			Canvas,
-			Animation,
-			Audio,
-			Text,
-			BoxCollider,
-			CircleCollider,
-			CompositeCollider,
-			RigidBody,
-			CharacterController,
+			T_Null,
+			T_Transform,
+			T_Sprite,
+			T_Camera,
+			T_Script,
+			T_Button,
+			T_Canvas,
+			T_Animation,
+			T_Audio,
+			T_Text,
+			T_BoxCollider,
+			T_CircleCollider,
+			T_CompositeCollider,
+			T_RigidBody,
+			T_CharacterController,
 		};
 
 		Component();
@@ -52,7 +52,7 @@ namespace FlatEngine
 		virtual std::string GetData();
 
 	private:
-		ComponentTypes type = Component::ComponentTypes::Null;
+		ComponentTypes type = Component::ComponentTypes::T_Null;
 		long ID;
 		long parentID;
 		bool _isCollapsed;

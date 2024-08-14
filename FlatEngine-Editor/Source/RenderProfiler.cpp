@@ -1,11 +1,12 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
 #include "GameLoop.h"
-#include "Process.h"
+#include "ProfilerProcess.h"
 #include "Collider.h"
 #include "implot.h"
 #include "Application.h"
 #include "Scene.h"
+#include <deque>
 
 using Process = FlatEngine::Process;
 using Collider = FlatEngine::Collider;
@@ -13,38 +14,6 @@ using Scene = FlatEngine::Scene;
 
 namespace FlatGui 
 { 
-	std::vector<std::shared_ptr<Process>> profilerProcesses = std::vector<std::shared_ptr<Process>>();
-
-	void AddProfilerProcess(std::string name)
-	{
-		std::shared_ptr<Process> process = std::make_shared<Process>(name);
-		profilerProcesses.push_back(process);
-	}
-
-	void AddProcessData(std::string processName, float data)
-	{
-		for (std::shared_ptr<Process> process : profilerProcesses)
-		{
-			if (process->GetProcessName() == processName)
-				process->AddHangTimeData(data);
-		}
-	}
-
-	void RemoveProfilerProcess(std::string toRemove)
-	{
-		std::vector<std::shared_ptr<Process>>::iterator iter = profilerProcesses.begin();
-
-		while (iter != profilerProcesses.end())
-		{
-			if ((*iter)->GetProcessName() == toRemove)
-			{
-				profilerProcesses.erase(iter);
-				return;
-			}
-			iter++;
-		}
-	}
-
 	void RenderProfiler()
 	{
 		FlatEngine::BeginWindow("Profiler", _showProfiler);
@@ -110,7 +79,7 @@ namespace FlatGui
 			offset = (offset + 1) % 100;
 
 
-		std::vector<std::shared_ptr<Process>>::iterator it = profilerProcesses.begin();
+		std::vector<Process>::iterator it = FlatEngine::F_ProfilerProcesses.begin();
 		int processCounter = 1;
 
 		if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
@@ -121,12 +90,12 @@ namespace FlatGui
 			ImGui::TableHeadersRow();
 			ImPlot::PushColormap(ImPlotColormap_Cool);
 
-			if (profilerProcesses.size() > 0)
-				while (it != profilerProcesses.end())
+			if (FlatEngine::F_ProfilerProcesses.size() > 0)
+				while (it != FlatEngine::F_ProfilerProcesses.end())
 				{
-					std::string processName = (*it)->GetProcessName();
-					std::vector<float> hangTimeVector = (*it)->GetHangTimeData();
-					std::deque<float> rawDataVector = (*it)->GetRawData();
+					std::string processName = (*it).GetProcessName();
+					std::vector<float> hangTimeVector = (*it).GetHangTimeData();
+					std::deque<float> rawDataVector = (*it).GetRawData();
 					++it;
 
 					float* dataArray;

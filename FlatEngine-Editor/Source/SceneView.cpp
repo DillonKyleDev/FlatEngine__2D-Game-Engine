@@ -72,10 +72,7 @@ namespace FlatGui
 		const bool is_active = ImGui::IsItemActive();   // Held
 
 
-		//// For Profiler
-		float sceneViewGridStartTime = (float)FlatEngine::GetEngineTime();
 		RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
-		AddProcessData("##Scene_RenderView_Grid", (float)FlatEngine::GetEngineTime() - sceneViewGridStartTime);
 
 
 		// Get currently loaded scene objects
@@ -96,12 +93,8 @@ namespace FlatGui
 		}
 
 
-		//// For Profiler
-		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start View Objects: ");
-		float sceneViewObjectsStartTime = (float)FlatEngine::GetEngineTime();
-		RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);
-		AddProcessData("##Scene_RenderView_Objects", (float)FlatEngine::GetEngineTime() - sceneViewObjectsStartTime);
-		//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End View Objects: ");
+		RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);		
+
 
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;

@@ -2,6 +2,7 @@
 #include "GameScript.h"
 #include "GameObject.h"
 #include "Collider.h"
+#include <thread>
 
 
 namespace FlatEngine
@@ -48,6 +49,7 @@ namespace FlatEngine
 		Uint32 currentTime;
 		
 	private:
+		std::vector<std::thread*> m_threads;
 		bool _started;
 		bool _paused;
 		bool _frameSkipped;

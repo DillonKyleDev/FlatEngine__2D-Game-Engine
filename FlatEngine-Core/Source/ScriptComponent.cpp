@@ -10,7 +10,7 @@ namespace FlatEngine
 {
 	ScriptComponent::ScriptComponent(long myID, long parentID)
 	{
-		SetType(Component::ComponentTypes::Script);
+		SetType(Component::ComponentTypes::T_Script);
 		SetID(myID);
 		SetParentID(parentID);
 		attachedScript = "";
@@ -19,7 +19,7 @@ namespace FlatEngine
 
 	ScriptComponent::ScriptComponent(ScriptComponent* toCopy, long newParentID, long myID)
 	{
-		SetType(Component::ComponentTypes::Script);
+		SetType(Component::ComponentTypes::T_Script);
 		if (myID != -1)
 			SetID(myID);
 		else

@@ -5,7 +5,7 @@ namespace FlatEngine
 {
 	Audio::Audio(long myID, long parentID)
 	{
-		SetType(ComponentTypes::Audio);
+		SetType(ComponentTypes::T_Audio);
 		SetID(myID);
 		SetParentID(parentID);
 		sound = std::make_shared<Sound>();
@@ -14,7 +14,7 @@ namespace FlatEngine
 
 	Audio::Audio(Audio* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Audio);
+		SetType(ComponentTypes::T_Audio);
 		if (myID != -1)
 			SetID(myID);
 		else

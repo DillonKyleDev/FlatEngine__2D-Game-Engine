@@ -7,7 +7,7 @@ namespace FlatEngine
 {
 	Button::Button(long myID, long parentID)
 	{
-		SetType(ComponentTypes::Button);
+		SetType(ComponentTypes::T_Button);
 		SetID(myID);
 		SetParentID(parentID);
 		_mouseIsOver = false;
@@ -32,7 +32,7 @@ namespace FlatEngine
 
 	Button::Button(Button* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Button);
+		SetType(ComponentTypes::T_Button);
 		if (myID != -1)
 			SetID(myID);
 		else

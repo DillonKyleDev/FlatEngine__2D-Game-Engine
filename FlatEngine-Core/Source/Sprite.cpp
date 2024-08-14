@@ -5,7 +5,7 @@ namespace FlatEngine
 {
 	Sprite::Sprite(long myID, long parentID)
 	{
-		SetType(Component::ComponentTypes::Sprite);
+		SetType(Component::ComponentTypes::T_Sprite);
 		SetID(myID);
 		SetParentID(parentID);
 		m_texture = Texture();
@@ -22,7 +22,7 @@ namespace FlatEngine
 
 	Sprite::Sprite(Sprite* toCopy, long newParentID, long myID)
 	{
-		SetType(Component::ComponentTypes::Sprite);
+		SetType(Component::ComponentTypes::T_Sprite);
 		if (myID != -1)
 			SetID(myID);
 		else

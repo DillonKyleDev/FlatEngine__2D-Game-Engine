@@ -346,7 +346,7 @@ namespace FlatGui
 		camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
 
 		// Before allowing this camera to be set as primary, we need to ensure it has a transform component
-		if (camera->GetParent()->HasComponent(ComponentTypes::Transform))
+		if (camera->GetParent()->HasComponent(ComponentTypes::T_Transform))
 		{									
 			if (FlatEngine::RenderCheckbox("Is Primary Camera", _isPrimary))
 			{
@@ -700,8 +700,7 @@ namespace FlatGui
 		float terminalVelocity = rigidBody->GetTerminalVelocity();
 		float windResistance = rigidBody->GetWindResistance();
 		float friction = rigidBody->GetFriction();
-		float equilibriumForce = rigidBody->GetEquilibriumForce();
-		bool _isKinematic = rigidBody->IsKinematic();
+		float equilibriumForce = rigidBody->GetEquilibriumForce();		
 		bool _isStatic = rigidBody->IsStatic();
 		bool _isGrounded = rigidBody->IsGrounded();
 
@@ -744,11 +743,6 @@ namespace FlatGui
 			FlatEngine::RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
 			FlatEngine::PopTable();
 		}								
-
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		// Kinematic Checkbox
-		FlatEngine::RenderCheckbox(" Is Kinematic", _isKinematic);
-		rigidBody->SetIsKinematic(_isKinematic);
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		// Static Checkbox

@@ -35,6 +35,7 @@
 #include "imgui_internal.h"
 
 
+
 /*
 ######################################
 ######							######
@@ -47,6 +48,8 @@
 namespace FlatEngine
 {
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
+	lua_State* F_Lua = nullptr;
+
 
 	bool _isDebugMode = true;
 	bool _closeProgram = false;
@@ -186,7 +189,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogString("SDL initialized... - Video - Audio - Joystick -");
+			LogString("SDL initialized... - Video - Audio - Joystick -");
 
 			//Set texture filtering to linear
 			if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
@@ -200,7 +203,7 @@ namespace FlatEngine
 			//Initialize Window::window
 			if (Window::Init(title, windowWidth, windowHeight))
 			{
-				FlatEngine::LogString("Window initialized...");
+				LogString("Window initialized...");
 
 				//Initialize SDL_image for png loading
 				int imgFlags = IMG_INIT_PNG;
@@ -211,7 +214,7 @@ namespace FlatEngine
 				}
 				else
 				{
-					FlatEngine::LogString("SDL_image initialized...");
+					LogString("SDL_image initialized...");
 					//Initialize SDL_ttf for text rendering
 					if (TTF_Init() == -1)
 					{
@@ -220,7 +223,7 @@ namespace FlatEngine
 					}
 					else
 					{
-						FlatEngine::LogString("TTF_Fonts initialized...");
+						LogString("TTF_Fonts initialized...");
 						//Initialize SDL_mixer
 						if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 						{
@@ -229,15 +232,94 @@ namespace FlatEngine
 						}
 						else
 						{
-							SetupImGui(); // Set up ImGui Context and global styles
-							CreateIcons(); // Create texture icons
-							Mix_AllocateChannels(100); // Sets number of individual audios that can play at once
+							SetupImGui();							// Set up ImGui Context and global styles
+							CreateIcons();							// Create texture icons
+							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
+							LogString("SDL_mixer initialized...");
 
-							FlatEngine::LogString("SDL_mixer initialized...");
-							FlatEngine::LogString("Ready...");
-							FlatEngine::LogSeparator();
-							FlatEngine::LogString("Begin Logging...");
-							FlatEngine::LogSeparator();
+							F_Lua = luaL_newstate();			// Initialize Lua state
+							luaL_openlibs(F_Lua);				// Opens the standard Lua libraries
+							LogString("Lua initialized...");
+							
+							LogString("Ready...");
+							LogSeparator();
+							LogString("Begin Logging...");
+							LogSeparator();
+
+							struct Character
+							{
+								std::string name;
+								std::string title;
+								std::string family;
+								int level;
+							};
+							Character player;
+
+							// Register functions that can be called from within Lua
+							lua_register(F_Lua, "HostFunction", lua_HostFunction);
+
+							int loadedScript = luaL_dofile(F_Lua, "../scripts/LuaScript.lua");
+
+							if (loadedScript == LUA_OK)
+							{
+								lua_getglobal(F_Lua, "player");
+								if (lua_istable(F_Lua, -1))
+								{
+									lua_pushstring(F_Lua, "Title");
+									lua_gettable(F_Lua, -2);
+									player.title = lua_tostring(F_Lua, -1);
+									lua_pop(F_Lua, 1);
+
+									lua_pushstring(F_Lua, "Name");
+									lua_gettable(F_Lua, -2);
+									player.name = lua_tostring(F_Lua, -1);
+									lua_pop(F_Lua, 1);
+
+									lua_pushstring(F_Lua, "Family");
+									lua_gettable(F_Lua, -2);
+									player.family = lua_tostring(F_Lua, -1);
+									lua_pop(F_Lua, 1);
+
+									lua_pushstring(F_Lua, "Level");
+									lua_gettable(F_Lua, -2);
+									player.level = lua_tointeger(F_Lua, -1);
+									lua_pop(F_Lua, 1);
+								}
+
+								LogString(player.title);
+								LogString(player.name);
+								LogString(player.family);
+								LogInt(player.level);
+
+								lua_getglobal(F_Lua, "AddStuff");  // Push the string "AddStuff" onto the stack
+								if (lua_isfunction(F_Lua, -1))     // Check if there is a box called "AddStuff" in lua that can be evaluated as a function
+								{
+									lua_pushinteger(F_Lua, 1);     // Push 1 onto the stack
+									lua_pushinteger(F_Lua, 5);     // Push 5 onto the stack
+
+									if (CheckLua(lua_pcall(F_Lua, 2, 1, 0))) // Call the function that is under
+									{
+										LogString("[C++] Call to AddStuff() successful.");
+									}
+								}
+
+								lua_getglobal(F_Lua, "DoAThing");
+								if (lua_isfunction(F_Lua, -1))
+								{
+									lua_pushinteger(F_Lua, 1);
+									lua_pushinteger(F_Lua, 5);
+
+									if (CheckLua(lua_pcall(F_Lua, 2, 1, 0)))
+									{
+										LogString("[C++] Call to DoAThing() successful.");
+									}
+								}
+							}
+							else
+							{
+								std::string errormsg = lua_tostring(F_Lua, -1);
+								LogString("Lua error occured: :" + errormsg);
+							}
 						}
 					}
 				}
@@ -354,6 +436,9 @@ namespace FlatEngine
 
 	void CloseProgram()
 	{
+		// Clean up lua
+		lua_close(F_Lua);
+
 		QuitImGui();
 
 		// Clean up old gamepads
@@ -1487,6 +1572,34 @@ namespace FlatEngine
 		}
 	}
 
+	
+	// Lua
+	bool CheckLua(int lua)
+	{
+		if (lua != LUA_OK)
+		{
+			std::string errorMessage = lua_tostring(F_Lua, -1);
+			LogString("Lua Error: " + errorMessage);
+			return false;
+		}
+		return true;
+	}
+
+	int lua_HostFunction(lua_State* L)
+	{
+		int numberOfItemsInStack = lua_gettop(L);  // Check how many items are in the fresh stack given to us by Lua
+		if (numberOfItemsInStack == 2)
+		{
+			LogString("[C++] HostFunction() called.");
+			int a = lua_tointeger(L, 1);
+			int b = lua_tointeger(L, 2);
+
+			lua_pushnumber(L, 35);
+		}
+
+		return 1;  // Returns the number of arguments that will be returned to Lua after being called and executed
+	}
+
 
 	// Json Parsing
 	json CreateJsonFromObject(GameObject currentObject)
@@ -1581,6 +1694,7 @@ namespace FlatEngine
 
 		return gameObjectJson;
 	}
+
 	bool JsonContains(json obj, std::string checkFor, std::string loadedName)
 	{
 		bool contains = false;
@@ -1635,6 +1749,7 @@ namespace FlatEngine
 			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
 		return value;
 	}
+
 	GameObject CreateObjectFromJson(json objectJson)
 	{
 		GameObject loadedObject;
@@ -1856,8 +1971,7 @@ namespace FlatEngine
 					newRigidBody->SetFriction(CheckJsonFloat(componentJson, "friction", objectName));
 					newRigidBody->SetWindResistance(CheckJsonFloat(componentJson, "windResistance", objectName));
 					newRigidBody->SetEquilibriumForce(CheckJsonFloat(componentJson, "equilibriumForce", objectName));
-					newRigidBody->SetTerminalVelocity(CheckJsonFloat(componentJson, "terminalVelocity", objectName));
-					newRigidBody->SetIsKinematic(CheckJsonBool(componentJson, "_isKinematic", objectName));
+					newRigidBody->SetTerminalVelocity(CheckJsonFloat(componentJson, "terminalVelocity", objectName));				
 					newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
 				}
 			}

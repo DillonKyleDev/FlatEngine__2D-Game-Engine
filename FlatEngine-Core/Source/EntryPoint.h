@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "FlatEngine.h"
 
+
 namespace FlatEngine
 {
 	extern std::shared_ptr<Application> CreateApplication(int argc, char** argv);

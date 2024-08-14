@@ -522,7 +522,7 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetScriptComponents();
 	}
-	std::map<long, GameScript>& Scene::GetScripts()
+	std::map<long, std::map<std::string, GameScript>>& Scene::GetScripts()
 	{
 		return m_ECSManager.GetScripts();
 	}

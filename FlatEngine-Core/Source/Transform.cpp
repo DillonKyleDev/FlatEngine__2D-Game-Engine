@@ -9,7 +9,7 @@ namespace FlatEngine
 {
 	Transform::Transform(long myID, long parentID)
 	{
-		SetType(ComponentTypes::Transform);
+		SetType(ComponentTypes::T_Transform);
 		SetID(myID);
 		SetParentID(parentID);
 		origin.x = 0;
@@ -23,7 +23,7 @@ namespace FlatEngine
 
 	Transform::Transform(Transform* toCopy, long newParentID, long myID)
 	{
-		SetType(ComponentTypes::Transform);
+		SetType(ComponentTypes::T_Transform);
 		if (myID != -1)
 			SetID(myID);
 		else

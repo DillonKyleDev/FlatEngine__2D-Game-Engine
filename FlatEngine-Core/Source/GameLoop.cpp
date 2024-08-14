@@ -1,6 +1,5 @@
 #include "GameLoop.h"
 #include "FlatEngine.h"
-#include "Process.h"
 #include "Scene.h"
 #include "RigidBody.h"
 #include "Collider.h"
@@ -13,6 +12,12 @@
 #include "Camera.h"
 #include "Project.h"
 #include "ECSManager.h"
+
+// Multithreading
+#include <vector>
+#include <process.h>
+//#include <thread>
+#include <crtdefs.h>
 
 
 namespace FlatEngine
@@ -50,6 +55,20 @@ namespace FlatEngine
 
 		_started = true;
 
+		std::map<long, std::map<std::string, GameScript>>& gameScripts = GetLoadedScene()->GetScripts();
+
+		for (std::pair<long, std::map<std::string, GameScript>> owner : gameScripts)
+		{
+			for (std::pair<std::string, GameScript> script : owner.second)
+			{
+				if (script.second._isActive)
+				{
+					script.second.Awake();
+					script.second.Start();
+				}
+			}
+		}
+
 		// Get currently loaded scenes GameObjects and instantiate script objects for them
 		//gameObjects = FlatEngine::GetSceneObjects();
 		//activeScripts.clear();
@@ -58,30 +77,48 @@ namespace FlatEngine
 		//CollectPhysicsBodies();
 
 		currentTime = FlatEngine::GetEngineTime();
+		
+		for (std::thread* thread : m_threads)
+		{
+			delete thread;
+			thread = nullptr;
+		}
+		m_threads.clear();
+
+		//for (int i = 0; i < GetLoadedScene()->GetColliderPairs().size(); i++)
+		//{
+		//	std::thread thread = new std::thread();
+		//	m_threads,
+		//}
 	}
 
 	void GameLoop::UpdateScripts()
 	{
-		//for (int i = 0; i < activeScripts.size(); i++)
-		//{
-		//	if (activeScripts[i]->_isActive)
-		//	{
-		//		// Profiler
-		//		float timeStart = 0;
-		//		if (_isDebugMode)
-		//			timeStart = (float)FlatEngine::GetEngineTime();
+		std::map<long, std::map<std::string, GameScript>> &gameScripts = GetLoadedScene()->GetScripts();
 
-		//		activeScripts[i]->Update(deltaTime);
+		for (std::pair<long, std::map<std::string, GameScript>> owner : gameScripts)
+		{
+			for (std::pair<std::string, GameScript> script : owner.second)
+			{
+				if (script.second._isActive)
+				{
+					// Profiler
+					//float timeStart = 0;
+					//if (_isDebugMode)
+					//	timeStart = (float)FlatEngine::GetEngineTime();
 
-		//		//// Profiler
-		//		//if (_isDebugMode)
-		//		//{
-		//		//	float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
-		//		//	if (activeScripts.size() > i && activeScripts[i])
-		//		//		AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
-		//		//}
-		//	}
-		//}
+					script.second.Update(deltaTime);
+
+					// Profiler
+					//if (_isDebugMode)
+					//{
+					//	float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
+					//	if (script.second.size() > i && activeScripts[i])
+					//		AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
+					//}
+				}
+			}
+		}
 	}
 
 	void GameLoop::Update(float gridstep, Vector2 viewportCenter)
@@ -98,7 +135,7 @@ namespace FlatEngine
 		float processTime = (float)FlatEngine::GetEngineTime();
 		UpdateScripts();
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		LogFloat(processTime, "Update Scripts: ");
+		//LogFloat(processTime, "Update Scripts: ");
 
 
 		processTime = (float)FlatEngine::GetEngineTime();
@@ -108,10 +145,10 @@ namespace FlatEngine
 				rigidBody.second.CalculatePhysics();
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		LogFloat(processTime, "CalculatePhysics: ");
+		//LogFloat(processTime, "CalculatePhysics: ");
 
 
-		processTime = (float)FlatEngine::GetEngineTime();
+		//processTime = (float)FlatEngine::GetEngineTime();
 		std::map<long, std::map<long, BoxCollider>> &boxColliders = GetLoadedScene()->GetBoxColliders();
 		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = boxColliders.begin(); outerIter != boxColliders.end();)
 		{
@@ -124,8 +161,9 @@ namespace FlatEngine
 			outerIter++;
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		LogFloat(processTime, "ResetCollisions & Bounds: ");
+		//LogFloat(processTime, "ResetCollisions & Bounds: ");
 
+		std::vector<std::thread*> threads = std::vector<std::thread*>();
 
 		processTime = (float)FlatEngine::GetEngineTime();
 		// Handle Collision updates here
@@ -140,18 +178,36 @@ namespace FlatEngine
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
+					{
+						//std::thread thread = std::thread(Collider::CheckForCollision, std::ref(collider1), std::ref(collider2));
+						//threads.push_back(&thread);
 						Collider::CheckForCollision(collider1, collider2);
+					}
 				}
 			}
 		}
 		if (continuousCounter >= 10)
 			continuousCounter = 0;
 		continuousCounter++;
+
+		for (std::thread *thread : threads)
+		{
+			thread->join();
+		}
+
+		m_threads.clear();
+		//for (std::thread* thread : threads)
+		//{
+		//	delete thread;
+		//	thread = nullptr;
+		//}
+
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		LogFloat(processTime, "Collision Detection: ");
+		FlatEngine::AddProcessData("Collision Testing", processTime);
+		//LogFloat(processTime, "Collision Detection");
 
 
-		processTime = (float)FlatEngine::GetEngineTime();
+		//processTime = (float)FlatEngine::GetEngineTime();
 		// Apply RigidBody physics calculations
 		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
@@ -161,7 +217,7 @@ namespace FlatEngine
 			}
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		LogFloat(processTime, "Apply Physics: ");
+		//LogFloat(processTime, "Apply Physics: ");
 	}
 
 	void GameLoop::Stop()

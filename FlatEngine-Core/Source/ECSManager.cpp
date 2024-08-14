@@ -26,7 +26,7 @@ namespace FlatEngine
 		m_Sprites = std::map<long, Sprite>();
 		m_Cameras = std::map<long, Camera>();
 		m_Scripts = std::map<long, std::map<long, ScriptComponent>>();
-		m_GameScripts = std::map<long, GameScript>();
+		m_GameScripts = std::map<long, std::map<std::string, GameScript>>();
 		m_Buttons = std::map<long, Button>();
 		m_Canvases = std::map<long, Canvas>();
 		m_Animations = std::map<long, Animation>();
@@ -90,15 +90,31 @@ namespace FlatEngine
 
 	GameScript* ECSManager::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
 	{
-		// MUST FIX SOON 
-		// Instead of having it just be a map<long, GameScript>, make it like the m_Scripts with map<long, map<long, GameScript>>
-		// WILL NEED TO ADD ID member variable to GameScripts.
+		std::string scriptName = scriptInstance.GetName();
+		long ownerID = owner.GetID();
+		std::pair<std::string, GameScript> newPair = { scriptInstance.GetName(), scriptInstance};
+
+		if (m_GameScripts.count(owner.GetID()))
+		{
+			m_GameScripts.at(ownerID).emplace(newPair);
+		}
+		else
+		{
+			std::map<std::string, GameScript> newMap;
+			newMap.emplace(newPair);
+			m_GameScripts.emplace(ownerID, newMap);
+		}
+
 		scriptComponent.SetScriptInstance(&scriptInstance);
 		scriptInstance.SetOwner(&owner);
-		m_GameScripts.emplace(owner.GetID(), scriptInstance);
-		scriptInstance.Awake();
-		scriptInstance.Start();
-		return &m_GameScripts.at(owner.GetID());
+
+		if (FlatEngine::F_Application->GameLoopStarted())
+		{
+			scriptInstance.Awake();
+			scriptInstance.Start();
+		}
+
+		return &m_GameScripts.at(ownerID).at(scriptName);
 	}
 
 	Canvas* ECSManager::AddCanvas(Canvas canvas, long ownerID)
@@ -127,7 +143,6 @@ namespace FlatEngine
 
 	BoxCollider* ECSManager::AddBoxCollider(BoxCollider collider, long ownerID)
 	{
-		std::map<long, BoxCollider> newMap;
 		std::pair<long, BoxCollider> newPair = { collider.GetID(), collider };
 
 		if (m_BoxColliders.count(ownerID))
@@ -136,6 +151,7 @@ namespace FlatEngine
 		}
 		else
 		{
+			std::map<long, BoxCollider> newMap;
 			newMap.emplace(newPair);
 			m_BoxColliders.emplace(ownerID, newMap);
 		}
@@ -207,6 +223,7 @@ namespace FlatEngine
 			for (std::map<long, ScriptComponent>::iterator iter = m_Scripts.at(ownerID).begin(); iter != m_Scripts.at(ownerID).end();)
 			{
 				scripts.push_back(&(*iter).second);
+				iter++;
 			}
 		}
 		return scripts;
@@ -611,7 +628,7 @@ namespace FlatEngine
 	{
 		return m_Scripts;
 	}
-	std::map<long, GameScript> &ECSManager::GetScripts()
+	std::map<long, std::map<std::string, GameScript>> &ECSManager::GetScripts()
 	{
 		return m_GameScripts;
 	}

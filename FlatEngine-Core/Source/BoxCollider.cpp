@@ -10,12 +10,11 @@
 #include "Scene.h"
 #include <cmath>
 
-
 namespace FlatEngine
 {
 	BoxCollider::BoxCollider(long myID, long parentID) : Collider(myID, parentID)
 	{		
-		SetType(ComponentTypes::BoxCollider);
+		SetType(ComponentTypes::T_BoxCollider);
 		activeWidth = 2;
 		activeHeight = 2;
 		activeEdges = Vector4(0, 0, 0, 0);
@@ -34,7 +33,7 @@ namespace FlatEngine
 
 	BoxCollider::BoxCollider(BoxCollider* toCopy, long newParentID, long myID) : Collider(toCopy, newParentID, myID)
 	{		
-		SetType(ComponentTypes::BoxCollider);
+		SetType(ComponentTypes::T_BoxCollider);
 		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
 		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());	
 		SetShowActiveRadius(toCopy->GetShowActiveRadius());
@@ -64,7 +63,7 @@ namespace FlatEngine
 			activeHeight = height;
 		}
 		else
-			FlatEngine::LogString("The active width or height you tried to set to BoxCollider component was < 0. Try again.");
+			LogString("The active width or height you tried to set to BoxCollider component was < 0. Try again.");
 	}
 
 	float BoxCollider::GetActiveWidth()
@@ -92,7 +91,7 @@ namespace FlatEngine
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	void BoxCollider::UpdateActiveEdges(float gridstep, Vector2 viewportCenter)
 	{
-		std::string collisionType = FlatEngine::GetLoadedProject().GetCollisionDetection();
+		std::string collisionType = GetLoadedProject().GetCollisionDetection();
 
 		if (collisionType == "Shared Axis")
 		{
@@ -110,16 +109,16 @@ namespace FlatEngine
 		bool _shouldUpdate = false;
 
 
-		FlatEngine::GameObject parent = GetParent();
-		FlatEngine::Transform* transform = nullptr;
+		GameObject *parent = GetParent();
+		Transform *transform = nullptr;
 		Vector2 scale = Vector2(1, 1);
 
-		if (parent.IsValid())
-			transform = parent.GetTransform();
+		if (parent->IsValid())
+			transform = parent->GetTransform();
 		if (transform != nullptr)
 			scale = transform->GetScale();
 
-		FlatEngine::RigidBody* rigidBody;
+		RigidBody* rigidBody;
 		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
 		{
 			rigidBody = GetParent()->GetRigidBody();
@@ -136,8 +135,8 @@ namespace FlatEngine
 
 		if (_shouldUpdate)
 		{
-			FlatEngine::RigidBody* rigidBody = parent.GetRigidBody();
-			FlatEngine::Transform* transform = GetParent()->GetTransform();
+			RigidBody* rigidBody = parent->GetRigidBody();
+			Transform* transform = GetParent()->GetTransform();
 			Vector2 scale = transform->GetScale();
 			Vector2 activeOffset = GetActiveOffset();
 
@@ -205,7 +204,7 @@ namespace FlatEngine
 	{
 		float cos_a = cosf(GetRotation() * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
 		float sin_a = sinf(GetRotation() * 2.0f * (float)M_PI / 360.0f);
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 		Vector2 center = GetCenterCoord();
 
@@ -238,7 +237,7 @@ namespace FlatEngine
 	// Corners without rotation
 	void BoxCollider::SharedAxisUpdateCorners(float gridstep, Vector2 centerPoint)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 
 		// For visual representation
@@ -285,7 +284,7 @@ namespace FlatEngine
 
 	void BoxCollider::UpdateCenter(float gridstep, Vector2 centerPoint)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 scale = transform->GetScale();
 		Vector2 position = transform->GetTruePosition();
 		Vector2 activeOffset = GetActiveOffset();

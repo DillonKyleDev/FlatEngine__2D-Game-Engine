@@ -5,22 +5,17 @@ project "FlatEngine-Editor"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
-   files { "../Vendor/includes/**", "Source/**.h", "Source/**.cpp" }
+   files { 
+        "Source/**.h",
+        "Source/**.cpp",
+    }
 
    includedirs
    {
       "Source",
 	  -- Include Core
 	  "../FlatEngine-Core/Source",
-      "../Scripts",
-      "../Vendor/includes/SDL2/lib/x64",
-      "../Vendor/includes/SDL2_Image/lib/x64",
-      "../Vendor/includes/SDL2_Text/lib/x64",
-      "../Vendor/includes/SDL2_Mixer/lib/x64",
-      "../Vendor/includes/SDL2/lib/x64",
-      "../Vendor/includes/SDL2_Image/lib/x64",
-      "../Vendor/includes/SDL2_Text/lib/x64",
-      "../Vendor/includes/SDL2_Mixer/lib/x64",
+      "../scripts",
       "../Vendor/includes/ImGui/Backends",
       "../Vendor/includes/ImGui/ImGui_Docking",
       "../Vendor/includes/ImGui/ImGui_Docking/misc/debuggers",
@@ -31,6 +26,7 @@ project "FlatEngine-Editor"
       "../Vendor/includes/Json_Formatter",
       "../Vendor/includes/ImPlot",
       "../Vendor/includes/ImSequencer",
+      "../Vendor/includes/Lua",
    }
 
    libdirs 
@@ -41,6 +37,7 @@ project "FlatEngine-Editor"
         "../Vendor/includes/SDL2_Mixer/lib/x64",
         "../Vendor/includes/ImPlot",
         "../Vendor/includes/ImSequencer",
+        "../Vendor/includes/Lua,",
    }
 
    links
@@ -54,6 +51,7 @@ project "FlatEngine-Editor"
         "d3dcompiler.lib",
         "dxgi.lib",
         "SDL2_mixer.lib",
+        "lua54.lib",
    }
 
    defines

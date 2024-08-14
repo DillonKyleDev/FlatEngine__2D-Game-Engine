@@ -10,6 +10,8 @@
 #include <cmath>
 #include "CompositeCollider.h"
 
+using BoxCollider = FlatEngine::BoxCollider;
+using CircleCollider = FlatEngine::CircleCollider;
 
 namespace FlatEngine
 {
@@ -181,7 +183,7 @@ namespace FlatEngine
 
 	bool Collider::CheckForCollision(Collider* collider1, Collider* collider2)
 	{
-		std::string collisionDetectionType = FlatEngine::F_LoadedProject.GetCollisionDetection();
+		std::string collisionDetectionType = F_LoadedProject.GetCollisionDetection();
 
 		if (collisionDetectionType == "Shared Axis")
 		{
@@ -197,7 +199,7 @@ namespace FlatEngine
 
 	bool Collider::SharedAxisCheckForCollision(Collider* collider1, Collider* collider2)
 	{
-		bool _colliding = false;
+		bool b_colliding = false;
 		Vector2 collider1Center = collider1->GetCenterGrid();
 		Vector2 collider2Center = collider2->GetCenterGrid();
 
@@ -214,40 +216,40 @@ namespace FlatEngine
 			// Both BoxColliders
 			if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "BoxCollider")
 			{
-				FlatEngine::BoxCollider* boxCol1 = static_cast<FlatEngine::BoxCollider*>(collider1);
-				FlatEngine::BoxCollider* boxCol2 = static_cast<FlatEngine::BoxCollider*>(collider2);
+				BoxCollider* boxCol1 = static_cast<BoxCollider*>(collider1);
+				BoxCollider* boxCol2 = static_cast<BoxCollider*>(collider2);
 
-				_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
+				b_colliding = CheckForCollisionBoxBox(boxCol1, boxCol2);
 			}
 			// First CircleCollider second BoxCollider
 			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "BoxCollider")
 			{
-				FlatEngine::CircleCollider* circleCol = static_cast<FlatEngine::CircleCollider*>(collider1);
-				FlatEngine::BoxCollider* boxCol = static_cast<FlatEngine::BoxCollider*>(collider2);
+				CircleCollider* circleCol = static_cast<CircleCollider*>(collider1);
+				BoxCollider* boxCol = static_cast<BoxCollider*>(collider2);
 
-				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+				b_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
 			}
 			// First BoxCollider second CircleCollider
 			else if (collider1->GetTypeString() == "BoxCollider" && collider2->GetTypeString() == "CircleCollider")
 			{
-				FlatEngine::BoxCollider* boxCol = static_cast<FlatEngine::BoxCollider*>(collider1);
-				FlatEngine::CircleCollider* circleCol = static_cast<FlatEngine::CircleCollider*>(collider2);
+				BoxCollider* boxCol = static_cast<BoxCollider*>(collider1);
+				CircleCollider* circleCol = static_cast<CircleCollider*>(collider2);
 
-				_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
+				b_colliding = Collider::CheckForCollisionBoxCircle(boxCol, circleCol);
 			}
 			// Both CircleColliders ( already true if made if past activeRadius check )
 			else if (collider1->GetTypeString() == "CircleCollider" && collider2->GetTypeString() == "CircleCollider")
 			{
-				FlatEngine::BoxCollider* circleCol1 = static_cast<FlatEngine::BoxCollider*>(collider1);
-				FlatEngine::BoxCollider* circleCol2 = static_cast<FlatEngine::BoxCollider*>(collider2);
+				BoxCollider* circleCol1 = static_cast<BoxCollider*>(collider1);
+				BoxCollider* circleCol2 = static_cast<BoxCollider*>(collider2);
 
-				_colliding = true;
+				b_colliding = true;
 			}
 		}
 
-		if (_colliding)
+		if (b_colliding)
 		{
-			// Set _colliding
+			// Set b_colliding
 			collider1->SetColliding(true);
 			collider2->SetColliding(true);
 
@@ -261,7 +263,7 @@ namespace FlatEngine
 			}
 			else
 			{
-				FlatEngine::CompositeCollider* compositeCollider = collider1->GetParent()->GetCompositeCollider();
+				CompositeCollider* compositeCollider = collider1->GetParent()->GetCompositeCollider();
 				compositeCollider->AddCollidingObject(collider2);
 				if (compositeCollider->OnActiveCollisionSet())
 					compositeCollider->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
@@ -276,19 +278,19 @@ namespace FlatEngine
 			}
 			else
 			{				
-				FlatEngine::CompositeCollider* compositeCollider = collider2->GetParent()->GetCompositeCollider();
+				CompositeCollider* compositeCollider = collider2->GetParent()->GetCompositeCollider();
 				compositeCollider->AddCollidingObject(collider1);
 				if (compositeCollider->OnActiveCollisionSet())
 					compositeCollider->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
 			}
 		}
 
-		return _colliding;
+		return b_colliding;
 	}
 
-	bool Collider::CheckForCollisionBoxCircle(FlatEngine::BoxCollider* boxCol, FlatEngine::CircleCollider* circleCol)
+	bool Collider::CheckForCollisionBoxCircle(BoxCollider* boxCol, CircleCollider* circleCol)
 	{
-		bool _colliding = false;
+		bool b_colliding = false;
 		Vector2 circleCenterGrid = circleCol->GetNextCenterGrid(); // Get next center so no overlap happens this frame
 		Vector2 boxCenterGrid = boxCol->GetNextCenterGrid();       // -- ^^^
 		Vector2 circlePos = circleCol->GetParent()->GetTransform()->GetTruePosition();
@@ -316,7 +318,7 @@ namespace FlatEngine
 		// Circle left - Box right
 		if (circleCenterGrid.x < boxCenterGrid.x && circleCenterGrid.y < B_TopEdge && circleCenterGrid.y > B_BottomEdge && (B_LeftEdge - circleCenterGrid.x < circleActiveRadius))
 		{
-			_colliding = true;
+			b_colliding = true;
 			if (circleCol->IsSolid() && boxCol->IsSolid())
 			{
 				circleCol->_isCollidingRight = true;
@@ -336,7 +338,7 @@ namespace FlatEngine
 		// Circle right - Box left
 		else if (circleCenterGrid.x > boxCenterGrid.x && circleCenterGrid.y < B_TopEdge && circleCenterGrid.y > B_BottomEdge && (circleCenterGrid.x - B_RightEdge < circleActiveRadius))
 		{
-			_colliding = true;
+			b_colliding = true;
 			if (circleCol->IsSolid() && boxCol->IsSolid())
 			{
 				circleCol->_isCollidingLeft = true;
@@ -356,7 +358,7 @@ namespace FlatEngine
 		// Circle Top - Box Bottom
 		else if (circleCenterGrid.y > boxCenterGrid.y && circleCenterGrid.x < B_RightEdge && circleCenterGrid.x > B_LeftEdge && (circleCenterGrid.y - B_TopEdge < circleActiveRadius))
 		{
-			_colliding = true;
+			b_colliding = true;
 			if (circleCol->IsSolid() && boxCol->IsSolid())
 			{
 				circleCol->_isCollidingBottom = true;
@@ -376,7 +378,7 @@ namespace FlatEngine
 		// Circle Bottom - Box Top
 		else if (circleCenterGrid.y < boxCenterGrid.y && circleCenterGrid.x < B_RightEdge && circleCenterGrid.x > B_LeftEdge && (B_BottomEdge - circleCenterGrid.y < circleActiveRadius))
 		{
-			_colliding = true;
+			b_colliding = true;
 			if (circleCol->IsSolid() && boxCol->IsSolid())
 			{
 				circleCol->_isCollidingTop = true;
@@ -409,7 +411,7 @@ namespace FlatEngine
 				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
-					_colliding = true;
+					b_colliding = true;
 					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
 						float leftRightOverlap = B_RightEdge - A_LeftEdge;
@@ -478,7 +480,7 @@ namespace FlatEngine
 				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
-					_colliding = true;
+					b_colliding = true;
 					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
 						float leftRightOverlap = B_RightEdge - A_LeftEdge;
@@ -568,7 +570,7 @@ namespace FlatEngine
 				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
-					_colliding = true;
+					b_colliding = true;
 					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
 						float leftRightOverlap = A_RightEdge - B_LeftEdge;
@@ -632,7 +634,7 @@ namespace FlatEngine
 				// If colliding
 				if (cornerDistance < circleActiveRadius)
 				{
-					_colliding = true;
+					b_colliding = true;
 					if (circleCol->IsSolid() && boxCol->IsSolid())
 					{
 						float leftRightOverlap = A_RightEdge - B_LeftEdge;
@@ -690,14 +692,14 @@ namespace FlatEngine
 			}
 		}
 
-		return _colliding;
+		return b_colliding;
 	}
 
-	bool Collider::CheckForCollisionBoxBox(FlatEngine::BoxCollider* boxCol1, FlatEngine::BoxCollider* boxCol2)
+	bool Collider::CheckForCollisionBoxBox(BoxCollider* boxCol1, BoxCollider* boxCol2)
 	{
-		bool _colliding = false;
-		FlatEngine::Transform* box1Transform = boxCol1->GetParent()->GetTransform();
-		FlatEngine::Transform* box2Transform = boxCol2->GetParent()->GetTransform();
+		bool b_colliding = false;
+		Transform* box1Transform = boxCol1->GetParent()->GetTransform();
+		Transform* box2Transform = boxCol2->GetParent()->GetTransform();
 		Vector2 box1Scale = box1Transform->GetScale();
 		Vector2 box2Scale = box2Transform->GetScale();
 		Vector2 collider1CenterGrid = boxCol1->GetCenterGrid();
@@ -722,10 +724,10 @@ namespace FlatEngine
 		float B_LeftEdge = boxCol2->nextActiveLeft;
 
 		// Check for collision
-		_colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));
+		b_colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));
 
 		// Get collision details
-		if (_colliding)
+		if (b_colliding)
 		{
 			// Check which direction the collision is happening from //
 			// 
@@ -993,7 +995,7 @@ namespace FlatEngine
 			}
 		}
 
-		return _colliding;
+		return b_colliding;
 	}
 
 	bool Collider::IsColliding()
@@ -1001,14 +1003,14 @@ namespace FlatEngine
 		return _isColliding;
 	}
 
-	void Collider::SetColliding(bool _colliding)
+	void Collider::SetColliding(bool b_colliding)
 	{
-		_isColliding = _colliding;
+		_isColliding = b_colliding;
 	}
 
 	void Collider::UpdatePreviousPosition()
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		previousPosition = transform->GetTruePosition();
 	}
 
@@ -1024,18 +1026,19 @@ namespace FlatEngine
 
 	bool Collider::HasMoved()
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
 		return (previousPosition.x != position.x || previousPosition.y != position.y);
 	}
 
+	// Don't use this for anything I don't think, safe to remove
 	void Collider::RemoveCollidingObject(GameObject object)
 	{
-		for (std::vector<GameObject>::iterator iterator = collidingObjects.begin(); iterator != collidingObjects.end();)
+		for (std::vector<GameObject*>::iterator iterator = m_collidingObjects.begin(); iterator != m_collidingObjects.end();)
 		{
-			if ((*iterator).GetID() == object.GetID())
-				collidingObjects.erase(iterator);
+			if ((*iterator)->GetID() == object.GetID())
+				m_collidingObjects.erase(iterator);
 
 			iterator++;
 		}
@@ -1044,31 +1047,31 @@ namespace FlatEngine
 	void Collider::AddCollidingObject(Collider* collidedWith)
 	{
 		// Make sure we haven't already tracked it for this frame
-		for (GameObject& object : collidingObjects)
+		for (GameObject* object : m_collidingObjects)
 		{
 			// Leave function if the object is already known to be in active collision
-			if (object.GetID() == collidedWith->GetParent()->GetID())
+			if (object->GetID() == collidedWith->GetParent()->GetID())
 				return;
 		}
 		// else add the collided object
-		collidingObjects.push_back(collidedWith->GetParent());
+		m_collidingObjects.push_back(collidedWith->GetParent());
 
 		// See if they were colliding in the last frame as well
-		for (GameObject& object : collidingLastFrame)
+		for (GameObject *object : collidingLastFrame)
 		{
 			// Leave function if the object has already fired OnCollisionEnter();
-			if (object.GetID() == collidedWith->GetParent()->GetID())
+			if (object->GetID() == collidedWith->GetParent()->GetID())
 				return;
 		}
 
-		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to collidingObjects for the first time)
+		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to m_collidingObjects for the first time)
 		if (OnCollisionEnterSet())
 			OnCollisionEnter(GetParent(), collidedWith->GetParent());
 	}
 
-	std::vector<GameObject> &Collider::GetCollidingObjects()
+	std::vector<GameObject*> Collider::GetCollidingObjects()
 	{
-		return collidingObjects;
+		return m_collidingObjects;
 	}
 
 	void Collider::ClearCollidingObjects()
@@ -1080,24 +1083,24 @@ namespace FlatEngine
 			float test = 1;
 		}
 		// Check which objects have left collision state since last frame
-		for (GameObject& collidedLastFrame : collidingLastFrame)
+		for (GameObject *collidedLastFrame : collidingLastFrame)
 		{		
 			bool _objectStillColliding = false;
 
-			for (GameObject& collidedThisFrame : collidingObjects)
-				if (collidedLastFrame.GetID() == collidedThisFrame.GetID())
+			for (GameObject *collidedThisFrame : m_collidingObjects)
+				if (collidedLastFrame->GetID() == collidedThisFrame->GetID())
 					_objectStillColliding = true;
 
 			// Fire OnLeave if not colliding
 			if (!_objectStillColliding)
-				for (FlatEngine::BoxCollider* boxCollider : collidedLastFrame.GetBoxColliders())
+				for (BoxCollider* boxCollider : collidedLastFrame->GetBoxColliders())
 					if (boxCollider->OnCollisionLeaveSet())
 						OnCollisionLeave(GetParent(), GetParent());
 		}
 
 		// Save colliding objects for next frame
-		collidingLastFrame = collidingObjects;
-		collidingObjects.clear();
+		collidingLastFrame = m_collidingObjects;
+		m_collidingObjects.clear();
 	}
 
 	void Collider::SetActiveOffset(Vector2 offset)
@@ -1110,7 +1113,7 @@ namespace FlatEngine
 		if (layer >= 0)
 			activeLayer = layer;
 		else
-			FlatEngine::LogString("Collider active layer must be an integer greater than 0.");
+			LogString("Collider active layer must be an integer greater than 0.");
 	}
 
 	int Collider::GetActiveLayer()
