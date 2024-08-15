@@ -27,6 +27,7 @@ namespace FlatEngine
 		m_Cameras = std::map<long, Camera>();
 		m_Scripts = std::map<long, std::map<long, ScriptComponent>>();
 		m_GameScripts = std::map<long, std::map<std::string, GameScript>>();
+		m_LuaScriptsByOwner = std::map<long, std::vector<std::string>>();
 		m_Buttons = std::map<long, Button>();
 		m_Canvases = std::map<long, Canvas>();
 		m_Animations = std::map<long, Animation>();
@@ -631,6 +632,10 @@ namespace FlatEngine
 	std::map<long, std::map<std::string, GameScript>> &ECSManager::GetScripts()
 	{
 		return m_GameScripts;
+	}
+	std::map<long, std::vector<std::string>> &ECSManager::GetLuaScriptsByOwner()
+	{
+		return m_LuaScriptsByOwner;
 	}
 	std::map<long, Button> &ECSManager::GetButtons()
 	{

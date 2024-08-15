@@ -27,6 +27,8 @@ project "FlatEngine-Editor"
       "../Vendor/includes/ImPlot",
       "../Vendor/includes/ImSequencer",
       "../Vendor/includes/Lua",
+      "../Vendor/includes/Sol2/include",
+      "../Vendor/includes/Sol2/include/sol",
    }
 
    libdirs 
@@ -37,7 +39,7 @@ project "FlatEngine-Editor"
         "../Vendor/includes/SDL2_Mixer/lib/x64",
         "../Vendor/includes/ImPlot",
         "../Vendor/includes/ImSequencer",
-        "../Vendor/includes/Lua,",
+        "../Vendor/includes/Lua",
    }
 
    links
@@ -51,7 +53,7 @@ project "FlatEngine-Editor"
         "d3dcompiler.lib",
         "dxgi.lib",
         "SDL2_mixer.lib",
-        "lua54.lib",
+        "lua54.lib",        
    }
 
    defines

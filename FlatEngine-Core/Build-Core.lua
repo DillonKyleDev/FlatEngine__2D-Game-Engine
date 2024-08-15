@@ -7,12 +7,13 @@ project "FlatEngine-Core"
 
    files { 
         "Source/**.h",
-        "Source/**.cpp",
+        "Source/**.cpp", 
         "../Vendor/includes/ImGui/Backends/**",
         "../Vendor/includes/ImGui/ImGui_Docking/**.h",
         "../Vendor/includes/ImGui/ImGui_Docking/**.cpp",
         "../Vendor/includes/ImPlot/**",
         "../Vendor/includes/Lua/**",
+        "../Vendor/includes/Sol2/**",
     }
 
    includedirs
@@ -37,6 +38,9 @@ project "FlatEngine-Core"
         "../Vendor/includes/ImPlot",
         "../Vendor/includes/ImSequencer",
         "../Vendor/includes/Lua",
+        "../Vendor/includes/Sol2",
+        "../Vendor/includes/Sol2/include",
+        "../Vendor/includes/Sol2/include/sol",
     }
 
 

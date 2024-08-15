@@ -34,6 +34,36 @@
     <Filter Include="Vendor\includes\Lua">
       <UniqueIdentifier>{4AB8FA40-B619-D84E-3F87-1E01ABE70E0E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Vendor\includes\Sol2">
+      <UniqueIdentifier>{48805560-340F-DF29-DD2D-F324C99BEFCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include">
+      <UniqueIdentifier>{BB6F62DB-A72A-5287-50E2-CAD13C7C9C17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol">
+      <UniqueIdentifier>{F89255A2-E4E3-40E4-0D48-2FA6F9F7D34D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol\compatibility">
+      <UniqueIdentifier>{A1A2E985-8D20-3A1F-7618-F8B662357C47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol\detail">
+      <UniqueIdentifier>{BA837D8E-2613-3F79-2F0F-20919B1D7A85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol\stack">
+      <UniqueIdentifier>{3DAA2A0D-29FC-01FD-121B-3F0DFE0B1BE6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol\stack\detail">
+      <UniqueIdentifier>{5F1B916F-CB8B-93E8-94AA-0D7100DACBE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\include\sol\utility">
+      <UniqueIdentifier>{5B61089D-47DE-FBDF-705B-FCF35C379873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\scripts">
+      <UniqueIdentifier>{9FC78DC4-8B82-7D70-343A-F6BA20D4C700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\includes\Sol2\subprojects">
+      <UniqueIdentifier>{2B5EFB63-17AF-E6A5-4013-D5672CC3790F}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.h">
@@ -83,6 +113,357 @@
     </ClInclude>
     <ClInclude Include="..\Vendor\includes\Lua\lualib.h">
       <Filter>Vendor\includes\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\abort.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\as_args.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\as_returns.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\assert.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\base_traits.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\bind_traits.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\bytecode.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\call.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\compatibility.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\compatibility\compat-5.3.c.h">
+      <Filter>Vendor\includes\Sol2\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\compatibility\compat-5.3.h">
+      <Filter>Vendor\includes\Sol2\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\compatibility\compat-5.4.h">
+      <Filter>Vendor\includes\Sol2\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\compatibility\lua_version.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\config.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\coroutine.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\debug.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\demangle.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\deprecate.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\detail\build_version.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\dump_handler.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\ebco.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\environment.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\epilogue.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\error.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\error_handler.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\forward.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\forward_as.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\forward_detail.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_result.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types_core.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types_overloaded.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types_stateful.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types_stateless.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\function_types_templated.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\in_place.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\inheritance.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\load_result.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\lua_table.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\lua_value.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\make_reference.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\metatable.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\object.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\object_base.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\optional.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\optional_implementation.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\overload.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\packaged_coroutine.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\pairs_iterator.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\pointer_like.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\policies.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\prologue.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\property.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\protect.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\protected_function.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\protected_function_result.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\protected_handler.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\proxy_base.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\raii.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\reference.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\resolve.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\sol.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack\detail\pairs.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol\stack\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check_get.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check_get_qualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check_get_unqualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check_qualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_check_unqualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_core.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_field.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_get.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_get_qualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_get_unqualified.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_guard.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_iterator.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_pop.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_probe.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_proxy.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_proxy_base.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_push.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\stack_reference.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\state.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\state_handling.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\state_view.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\string_view.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\table.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\table_core.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\table_iterator.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\table_proxy.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\thread.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\tie.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\traits.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\trampoline.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\tuple.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\types.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\unicode.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\unique_usertype_traits.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\unreachable.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\unsafe_function.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\unsafe_function_result.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\userdata.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_container.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_container_launch.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_core.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_proxy.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_storage.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\usertype_traits.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\utility\is_integer.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\utility\to_string.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\variadic_args.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\variadic_results.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\version.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vendor\includes\Sol2\include\sol\wrapper.hpp">
+      <Filter>Vendor\includes\Sol2\include\sol</Filter>
     </ClInclude>
     <ClInclude Include="Source\Animation.h">
       <Filter>Source</Filter>
@@ -299,6 +680,9 @@
     <ClCompile Include="Source\Logger.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LuaFunctions.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="Source\MappingContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -364,5 +748,67 @@
     <None Include="..\Vendor\includes\Lua\lua54.lib">
       <Filter>Vendor\includes\Lua</Filter>
     </None>
+    <None Include="..\Vendor\includes\Sol2\.clang-format">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\.dockerignore">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\.style.yapf">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\CMakeLists.txt">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\CONTRIBUTING.md">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\CONTRIBUTORS.md">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\Dockerfile">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\LICENSE.txt">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\list_headers.py">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\meson.build">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\meson_options.txt">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\build.linux.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\preparation.linux.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\preparation.osx.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\push.linux.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\run.linux.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\scripts\run.osx.sh">
+      <Filter>Vendor\includes\Sol2\scripts</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\sol2.pc.in">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </None>
+    <None Include="..\Vendor\includes\Sol2\subprojects\lua.wrap">
+      <Filter>Vendor\includes\Sol2\subprojects</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Vendor\includes\Sol2\sol2.natvis">
+      <Filter>Vendor\includes\Sol2</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

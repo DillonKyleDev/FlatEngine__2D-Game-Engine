@@ -48,7 +48,7 @@
 namespace FlatEngine
 {
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
-	lua_State* F_Lua = nullptr;
+	//lua_State* F_Lua = nullptr;
 
 
 	bool _isDebugMode = true;
@@ -237,89 +237,13 @@ namespace FlatEngine
 							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
 							LogString("SDL_mixer initialized...");
 
-							F_Lua = luaL_newstate();			// Initialize Lua state
-							luaL_openlibs(F_Lua);				// Opens the standard Lua libraries
+							InitLua();
 							LogString("Lua initialized...");
 							
 							LogString("Ready...");
 							LogSeparator();
 							LogString("Begin Logging...");
 							LogSeparator();
-
-							struct Character
-							{
-								std::string name;
-								std::string title;
-								std::string family;
-								int level;
-							};
-							Character player;
-
-							// Register functions that can be called from within Lua
-							lua_register(F_Lua, "HostFunction", lua_HostFunction);
-
-							int loadedScript = luaL_dofile(F_Lua, "../scripts/LuaScript.lua");
-
-							if (loadedScript == LUA_OK)
-							{
-								lua_getglobal(F_Lua, "player");
-								if (lua_istable(F_Lua, -1))
-								{
-									lua_pushstring(F_Lua, "Title");
-									lua_gettable(F_Lua, -2);
-									player.title = lua_tostring(F_Lua, -1);
-									lua_pop(F_Lua, 1);
-
-									lua_pushstring(F_Lua, "Name");
-									lua_gettable(F_Lua, -2);
-									player.name = lua_tostring(F_Lua, -1);
-									lua_pop(F_Lua, 1);
-
-									lua_pushstring(F_Lua, "Family");
-									lua_gettable(F_Lua, -2);
-									player.family = lua_tostring(F_Lua, -1);
-									lua_pop(F_Lua, 1);
-
-									lua_pushstring(F_Lua, "Level");
-									lua_gettable(F_Lua, -2);
-									player.level = lua_tointeger(F_Lua, -1);
-									lua_pop(F_Lua, 1);
-								}
-
-								LogString(player.title);
-								LogString(player.name);
-								LogString(player.family);
-								LogInt(player.level);
-
-								lua_getglobal(F_Lua, "AddStuff");  // Push the string "AddStuff" onto the stack
-								if (lua_isfunction(F_Lua, -1))     // Check if there is a box called "AddStuff" in lua that can be evaluated as a function
-								{
-									lua_pushinteger(F_Lua, 1);     // Push 1 onto the stack
-									lua_pushinteger(F_Lua, 5);     // Push 5 onto the stack
-
-									if (CheckLua(lua_pcall(F_Lua, 2, 1, 0))) // Call the function that is under
-									{
-										LogString("[C++] Call to AddStuff() successful.");
-									}
-								}
-
-								lua_getglobal(F_Lua, "DoAThing");
-								if (lua_isfunction(F_Lua, -1))
-								{
-									lua_pushinteger(F_Lua, 1);
-									lua_pushinteger(F_Lua, 5);
-
-									if (CheckLua(lua_pcall(F_Lua, 2, 1, 0)))
-									{
-										LogString("[C++] Call to DoAThing() successful.");
-									}
-								}
-							}
-							else
-							{
-								std::string errormsg = lua_tostring(F_Lua, -1);
-								LogString("Lua error occured: :" + errormsg);
-							}
 						}
 					}
 				}
@@ -436,9 +360,6 @@ namespace FlatEngine
 
 	void CloseProgram()
 	{
-		// Clean up lua
-		lua_close(F_Lua);
-
 		QuitImGui();
 
 		// Clean up old gamepads
@@ -1570,34 +1491,6 @@ namespace FlatEngine
 				break;
 			}
 		}
-	}
-
-	
-	// Lua
-	bool CheckLua(int lua)
-	{
-		if (lua != LUA_OK)
-		{
-			std::string errorMessage = lua_tostring(F_Lua, -1);
-			LogString("Lua Error: " + errorMessage);
-			return false;
-		}
-		return true;
-	}
-
-	int lua_HostFunction(lua_State* L)
-	{
-		int numberOfItemsInStack = lua_gettop(L);  // Check how many items are in the fresh stack given to us by Lua
-		if (numberOfItemsInStack == 2)
-		{
-			LogString("[C++] HostFunction() called.");
-			int a = lua_tointeger(L, 1);
-			int b = lua_tointeger(L, 2);
-
-			lua_pushnumber(L, 35);
-		}
-
-		return 1;  // Returns the number of arguments that will be returned to Lua after being called and executed
 	}
 
 
@@ -2787,29 +2680,29 @@ namespace FlatEngine
 
 
 	// Logging
-	void LogString(std::string line)
+	void LogString(std::string line, std::string from)
 	{
-		F_Logger.LogString(line);
+		F_Logger.LogString(line, from);
+	}
+
+	void LogFloat(float var, std::string line, std::string from)
+	{
+		F_Logger.LogFloat(var, line, from);
+	}
+
+	void LogInt(int var, std::string line, std::string from)
+	{
+		F_Logger.LogInt(var, line, from);
+	}
+
+	void LogVector2(Vector2 vector, std::string line, std::string from)
+	{
+		F_Logger.LogVector2(vector, line, from);
 	}
 
 	void LogSeparator()
 	{
 		F_Logger.LogSeparator();
-	}
-
-	void LogFloat(float var, std::string line)
-	{
-		F_Logger.LogFloat(var, line);
-	}
-
-	void LogInt(int var, std::string line)
-	{
-		F_Logger.LogInt(var, line);
-	}
-
-	void LogVector2(Vector2 vector, std::string line)
-	{
-		F_Logger.LogVector2(vector, line);
 	}
 
 	void DrawRectangle(Vector2 startingPoint, Vector2 endPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)

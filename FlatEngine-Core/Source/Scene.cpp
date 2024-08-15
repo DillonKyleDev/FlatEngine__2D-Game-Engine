@@ -526,6 +526,10 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetScripts();
 	}
+	std::map<long, std::vector<std::string>> &Scene::GetLuaScriptsByOwner()
+	{
+		return m_ECSManager.GetLuaScriptsByOwner();
+	}
 	std::map<long, Button>& Scene::GetButtons()
 	{
 		return m_ECSManager.GetButtons();

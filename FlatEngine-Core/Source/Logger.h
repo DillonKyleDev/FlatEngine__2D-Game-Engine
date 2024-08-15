@@ -12,11 +12,11 @@ namespace FlatEngine
 		Logger();
 		~Logger();
 
-		void LogString(std::string line);
+		void LogString(std::string line, std::string from);
+		void LogFloat(float variable, std::string line = "", std::string from = "[C++]");
+		void LogInt(int variable, std::string line = "", std::string from = "[C++]");
+		void LogVector2(Vector2 vector, std::string line = "", std::string from = "[C++]");
 		void LogSeparator();
-		void LogFloat(float variable, std::string line = "");
-		void LogInt(int variable, std::string line = "");
-		void LogVector2(Vector2 vector, std::string line = "");
 		void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 		void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 		void DrawPoint(Vector2 point, Vector4 color, ImDrawList* drawlist);

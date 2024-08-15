@@ -102,6 +102,7 @@ namespace FlatEngine
 		std::map<long, Camera>& GetCameras();
 		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
 		std::map<long, std::map<std::string, GameScript>>& GetScripts();
+		std::map<long, std::vector<std::string>> &GetLuaScriptsByOwner();
 		std::map<long, Button>& GetButtons();
 		std::map<long, Canvas>& GetCanvases();
 		std::map<long, Animation>& GetAnimations();

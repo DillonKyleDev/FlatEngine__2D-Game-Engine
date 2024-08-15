@@ -57,17 +57,7 @@ namespace FlatEngine
 
 		std::map<long, std::map<std::string, GameScript>>& gameScripts = GetLoadedScene()->GetScripts();
 
-		for (std::pair<long, std::map<std::string, GameScript>> owner : gameScripts)
-		{
-			for (std::pair<std::string, GameScript> script : owner.second)
-			{
-				if (script.second._isActive)
-				{
-					script.second.Awake();
-					script.second.Start();
-				}
-			}
-		}
+		RunAwakeAndStart();
 
 		// Get currently loaded scenes GameObjects and instantiate script objects for them
 		//gameObjects = FlatEngine::GetSceneObjects();

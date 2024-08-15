@@ -94,7 +94,6 @@ namespace FlatEngine
 		std::vector<Component*> GetComponents();
 		std::vector<GameScript*> GetScriptInstances();
 
-
 		void SetParentID(long parentID);
 		long GetParentID();
 		GameObject GetParent();
@@ -107,7 +106,9 @@ namespace FlatEngine
 		void SetActive(bool _active);
 		bool IsActive();
 
+		std::string luaName;
 	private:
+		std::string name;
 		bool _isValid;
 		bool _isPrefab;
 		std::string prefabName;
@@ -116,7 +117,6 @@ namespace FlatEngine
 		long ID;
 		long parentID;
 		bool _isActive;
-		std::string name;
 		std::vector<Component*> components;
 		std::vector<long> childrenIDs;
 	};

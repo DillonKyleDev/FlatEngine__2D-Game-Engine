@@ -1,5 +1,7 @@
 #pragma once
 #include "Application.h"
+#include "Animation.h"
+
 #include <stdio.h>
 #include <string>
 #include <map>
@@ -13,15 +15,11 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
 
-#include "Animation.h"
+#define SOL_ALL_SAFETIES_ON 1
+#include <sol.hpp>
 
 
-extern "C"
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-}
+
 
 /*
 ######################################
@@ -37,7 +35,7 @@ class Vector4;
 namespace FlatEngine
 {
 	extern std::shared_ptr<Application> F_Application;
-	extern lua_State* F_Lua;
+	extern sol::state F_Lua;
 
 	class GameLoop;
 	class Project;
@@ -272,9 +270,12 @@ namespace FlatEngine
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
-	// Lua
-	extern bool CheckLua(int lua);
-	extern int lua_HostFunction(lua_State* L);
+	// Lua / Sol
+	extern void InitLua();
+	extern void RegisterLuaFunctions();
+	extern void RegisterLuaTypes();
+	extern void RunAwakeAndStart();
+
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -330,11 +331,11 @@ namespace FlatEngine
 	extern std::map<std::string, std::vector<GameObject>> GetPrefabs();
 
 	// Logging Prettification
-	extern void LogString(std::string line = "");
+	extern void LogString(std::string line = "", std::string from = "[C++]");
+	extern void LogFloat(float var, std::string line = "", std::string from = "[C++]");
+	extern void LogInt(int var, std::string line = "", std::string from = "[C++]");
+	extern void LogVector2(Vector2 vector, std::string line = "", std::string from = "[C++]");
 	extern void LogSeparator();
-	extern void LogFloat(float var, std::string line = "");
-	extern void LogInt(int var, std::string line = "");
-	extern void LogVector2(Vector2 vector, std::string line = "");
 	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawRectangleFromLines(Vector2* corners, Vector4 color, float thickness, ImDrawList* drawList);

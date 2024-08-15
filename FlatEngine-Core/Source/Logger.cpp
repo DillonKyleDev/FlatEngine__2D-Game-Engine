@@ -13,33 +13,33 @@ namespace FlatEngine
 	{
 	}
 
-	void Logger::LogString(std::string line)
+	void Logger::LogString(std::string line, std::string from)
 	{
-		line = line + "\n";
+		line = from + " " + line + "\n";
+		log.appendf(line.c_str());
+	}
+
+	void Logger::LogFloat(float variable, std::string line, std::string from)
+	{
+		line = from + " " + line + std::to_string(variable) + "\n";
+		log.appendf(line.c_str());
+	}
+
+	void Logger::LogInt(int variable, std::string line, std::string from)
+	{
+		line = from + " " + line + std::to_string(variable) + "\n";
+		log.appendf(line.c_str());
+	}
+
+	void Logger::LogVector2(Vector2 vector, std::string line, std::string from)
+	{
+		line = from + " " + line + " x: " + std::to_string(vector.x) + " y: " + std::to_string(vector.y) + "\n";
 		log.appendf(line.c_str());
 	}
 
 	void Logger::LogSeparator()
 	{
 		std::string line = "------------------------------------------------------------------------------------\n";
-		log.appendf(line.c_str());
-	}
-
-	void Logger::LogFloat(float variable, std::string line)
-	{
-		line = line + std::to_string(variable) + "\n";
-		log.appendf(line.c_str());
-	}
-
-	void Logger::LogInt(int variable, std::string line)
-	{
-		line = line + std::to_string(variable) + "\n";
-		log.appendf(line.c_str());
-	}
-
-	void Logger::LogVector2(Vector2 vector, std::string line)
-	{
-		line = line + " x: " + std::to_string(vector.x) + " y: " + std::to_string(vector.y) + "\n";
 		log.appendf(line.c_str());
 	}
 

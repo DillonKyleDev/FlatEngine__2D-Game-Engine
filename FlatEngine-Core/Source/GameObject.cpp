@@ -27,6 +27,7 @@ namespace FlatEngine
 {
 	GameObject::GameObject(long newParentID, long myID)
 	{
+		luaName = "Lua Name";
 		_isValid = true;
 		if (myID == -1)
 			ID = GetNextGameObjectID();
