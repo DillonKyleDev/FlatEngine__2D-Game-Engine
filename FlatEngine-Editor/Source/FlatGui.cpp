@@ -252,6 +252,8 @@ namespace FlatGui
 		if (ID != -1)
 		{
 			GameObject focusedObject = FlatEngine::GetObjectById(ID);
+			/*FlatEngine::F_Lua["this_object"] = &(*FlatEngine::GetObjectById(ID));*/
+			FlatEngine::LuaTesting((*FlatEngine::GetObjectById(ID)));
 			Animation* animationComponent = focusedObject.GetAnimation();
 			std::string animationPath = "";
 

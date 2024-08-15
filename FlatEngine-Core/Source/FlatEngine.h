@@ -275,6 +275,7 @@ namespace FlatEngine
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
 	extern void RunAwakeAndStart();
+	extern void LuaTesting(GameObject& toSend);
 
 
 	// Profiler

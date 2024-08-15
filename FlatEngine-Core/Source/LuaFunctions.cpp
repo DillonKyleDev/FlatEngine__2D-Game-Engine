@@ -1,6 +1,9 @@
 #include "FlatEngine.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "Transform.h"
+#include "Sprite.h"
+#include "ScriptComponent.h"
 
 
 // Lua helpers + Functions that Lua can call
@@ -8,43 +11,28 @@ namespace FlatEngine
 {
 	sol::state F_Lua;
 
-	void InitLua()
+	void LuaTesting(GameObject& toSend)
 	{
-		F_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
-		RegisterLuaFunctions();
-		RegisterLuaTypes();
-
 		// Load in lua script
 		auto script = F_Lua.safe_script_file("../scripts/LuaScript.lua");
+	
+		F_Lua["this_object"] = toSend;
 		if (script.valid())
 		{
-			sol::protected_function createObject = F_Lua["CreateGameObject"];
-			if (createObject)
+			sol::protected_function addSpriteFunc = F_Lua["AddSprite"];
+			if (addSpriteFunc)
 			{
-				auto player1 = createObject();
-				if (player1.valid())
-				{
-					//LogString(player1.get<GameObject>().GetName());
-				}
-				else
-				{
-					sol::error err = player1;
-					LogString(err.what());
-				}
-			}
-
-			// Using std containers within Lua
-			std::vector<GameObject> objects;
-			// Create a Lua variable called allCharacters that holds a reference to characterVec in C++ side
-			F_Lua["allObjects"] = &objects;
-
-			LogInt((int)objects.size(), "Vector size before: ");
-			F_Lua["CreateAllObjects"](15); // Call a Lua function to manipulate the new allCharacters variable
-			LogInt((int)objects.size(), "Vector size after: ");
-
-			for (int i = 0; i < objects.size(); i++)
-			{
-				LogString("Name: " + objects[i].GetName());
+				//auto player1 = 
+				addSpriteFunc();
+				//if (player1.valid())
+				//{
+				//	Transform* transform = player1.get<GameObject>().GetTransform();
+				//}
+				//else
+				//{
+				//	sol::error err = player1;
+				//	LogString(err.what());
+				//}
 			}
 		}
 		else
@@ -54,97 +42,90 @@ namespace FlatEngine
 		}
 	}
 
+	void InitLua()
+	{
+		F_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
+		RegisterLuaFunctions();
+		RegisterLuaTypes();
+	}
+
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
 		F_Lua["F_LogString"] = [](std::string line)
-			{
-				LogString(line, "[LUA]");
-			};
+		{
+			LogString(line, "[LUA]");
+		};
 		F_Lua["F_LogInt"] = [](int value, std::string line)
-			{
-				LogInt(value, line, "[LUA]");
-			};
+		{
+			LogInt(value, line, "[LUA]");
+		};
 		F_Lua["F_LogFloat"] = [](float value, std::string line)
-			{
-				LogFloat(value, line, "[LUA]");
-			};
+		{
+			LogFloat(value, line, "[LUA]");
+		};
 		F_Lua["F_LogVector2"] = [](float xValue, float yValue, std::string line)
-			{
-				LogVector2(Vector2(xValue, yValue), line, "[LUA]");
-			};
-
-		F_Lua["F_GetOwner"] = []()
-			{
-
-			};
+		{
+			LogVector2(Vector2(xValue, yValue), line, "[LUA]");
+		};
 	}
 
 	// Map C++ types to Lua "Types"
 	void RegisterLuaTypes()
 	{
-		struct Character
-		{
-			std::string name = "Test";
-			std::string title;
-			std::string family;
-			int level;
-			std::string GetName() { return name; };
-		};
-		Character player;
-
-		F_Lua.new_usertype<Character>("LuaCharacter",
-			sol::constructors<Character()>(),
-			"name", sol::as_function(&Character::name),
-			"family", sol::property(&Character::family),
-			"title", sol::property(&Character::title),
-			"level", sol::property(&Character::level)
-		);
-
 		F_Lua.new_usertype<GameObject>("GameObject",
 			sol::constructors<GameObject()>(),
-			//"name", sol::as_function(&GameObject::name)
-			"name", sol::property(&GameObject::GetName, &GameObject::SetName),
-			"luaName", sol::as_function(&GameObject::luaName),
 			"GetName", &GameObject::GetName,
-			"SetName", &GameObject::SetName
-			//"{name}", &type::member_variable
+			"SetName", &GameObject::SetName,
+			"IsActive", &GameObject::IsActive,
+			"SetActive", &GameObject::SetActive,
+			"GetID", &GameObject::GetID,
+			"GetTransform", &GameObject::GetTransform,
+			"AddSprite", &GameObject::AddSpriteComponent
+			//"HasTag", &GameObject::HasTag,
+			//"GetSprite", &GameObject::GetSprite,
+			//"GetCamera", &GameObject::GetCamera,
+			//"GetAnimation", &GameObject::GetAnimation,
+			//"GetAudio", &GameObject::GetAudio,
+			//"GetButton", &GameObject::GetButton,
+			//"GetCanvas", &GameObject::GetCanvas,
+			//"GetText", &GameObject::GetText,
+			//"GetCharacterController", &GameObject::GetCharacterController,
+			//"GetRigidBody", &GameObject::GetRigidBody,
+			//"GetBoxCollider", &GameObject::GetBoxCollider,
+			//"GetFirstChild", &GameObject::GetFirstChild,
+			//"HasChildren", &GameObject::HasChildren,
+			//"GetChildren", &GameObject::GetChildren,
 		);
 	}
 
 	void RunAwakeAndStart()
 	{
-		for (std::pair<long, std::vector<std::string>> object : GetLoadedScene()->GetLuaScriptsByOwner())
+		for (std::pair<long, std::map<long, ScriptComponent>> object : GetLoadedScene()->GetScriptComponents())
 		{
-			for (std::string scriptName : object.second)
+			for (auto &script : object.second)
 			{
-				std::string filepath = "../scripts/" + scriptName + ".lua";		
-
-				auto script = F_Lua.safe_script_file(filepath);
-				if (script.valid())
+				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
-					LogString("Script file loaded.");
+					std::string filepath = "../scripts/" + script.second.GetAttachedScript() + ".lua";
 
-					// Safely call Lua functions
-					sol::protected_function addStuffFunc = F_Lua["AddStuff"];
-					if (addStuffFunc)
-					{
-						auto returnedValueSafe = addStuffFunc(3, 4);
-						if (returnedValueSafe.valid())
-						{
-							LogFloat(returnedValueSafe.get<float>(), "Returned value safe: ");
-						}
-						else
-						{
-							sol::error err = returnedValueSafe;
-							LogString(err.what());						
-						}
+					auto script = F_Lua.safe_script_file(filepath);
+					if (script.valid())
+					{						
+						F_Lua["this_object"] = &(*GetObjectById(object.first)); // Store this object inside the Lua state to be accessed by the next Lua function calls
+
+						sol::protected_function awake = F_Lua["Awake"];
+						if (awake.valid())
+							awake();
+						sol::protected_function start = F_Lua["Start"];
+						if (start.valid())
+							start();
 					}
-				}
-				else
-				{
-					sol::error err = script;
-					LogString(err.what());
+					else
+					{
+						sol::error err = script;
+						LogString(err.what());
+					}
 				}
 			}
 		}
@@ -206,3 +187,34 @@ player.level = playerTable2["Level"].get<int>();*/
 // Unsafe, something might go wrong during execution
 //float returnedValue = F_Lua["AddStuff"](3, 4);
 //LogFloat(returnedValue, "Returned value unsafe: ");	
+
+
+// Safely call Lua functions
+//sol::protected_function awake = F_Lua["Awake"];
+//if (awake)
+//{
+//	auto result = awake();
+//	if (result.valid())
+//	{
+//		//LogFloat(result.get<float>(), "Returned value safe: ");
+//	}
+//	else
+//	{
+//		//sol::error err = result;
+//		//LogString(err.what());						
+//	}
+//}
+
+// Using std containers within Lua
+//std::vector<GameObject> objects;
+//// Create a Lua variable called allCharacters that holds a reference to characterVec in C++ side
+//F_Lua["allObjects"] = &objects;
+//
+//LogInt((int)objects.size(), "Vector size before: ");
+//F_Lua["CreateAllObjects"](15); // Call a Lua function to manipulate the new allCharacters variable
+//LogInt((int)objects.size(), "Vector size after: ");
+//
+//for (int i = 0; i < objects.size(); i++)
+//{
+//	LogString("Name: " + objects[i].GetName());
+//}
