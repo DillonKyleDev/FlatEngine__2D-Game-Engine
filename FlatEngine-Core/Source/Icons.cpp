@@ -11,6 +11,7 @@ namespace FlatEngine
 	// Icons / Images
 	std::string F_ResourceFailedToLoadImagePath = "Source/assets/images/icons/resourceFailedToLoad.png";	
 	Texture F_selectProjectImage = Texture();
+	Texture F_projectHubBgImage = Texture();
 	Texture F_transformArrow = Texture();
 	Texture F_transformArrowAllWhite = Texture();
 	Texture F_transformArrowXWhite = Texture();
@@ -50,6 +51,7 @@ namespace FlatEngine
 	void CreateIcons()
 	{		
 		F_selectProjectImage.LoadFromFile("Source/assets/images/icons/selectProject.png");
+		F_projectHubBgImage.LoadFromFile("Source/assets/images/icons/projectHubBg.png");
 		F_transformArrow.LoadFromFile("Source/assets/images/icons/transformArrow.png");
 		F_transformArrowAllWhite.LoadFromFile("Source/assets/images/icons/transformArrowAllWhite.png");
 		F_transformArrowXWhite.LoadFromFile("Source/assets/images/icons/transformArrowXWhite.png");

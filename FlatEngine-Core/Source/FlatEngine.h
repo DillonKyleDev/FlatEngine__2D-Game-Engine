@@ -185,7 +185,8 @@ namespace FlatEngine
 
 	// Icons
 	extern std::string F_ResourceFailedToLoadImagePath;	
-	extern Texture F_selectProjectImage;
+	extern Texture F_selectProjectImage;	
+	extern Texture F_projectHubBgImage;
 	extern Texture F_transformArrow;
 	extern Texture F_transformArrowAllWhite;
 	extern Texture F_transformArrowXWhite;
@@ -384,14 +385,14 @@ namespace FlatEngine
 	extern void EndImGuiRender();
 	extern void SetNextViewportToFillWindow();
 
-	extern void BeginWindow(std::string name);
-	extern void BeginWindow(std::string name, bool& _isOpen);
-	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags);
+	extern void BeginWindow(std::string name, Vector4 bgColor = F_windowBgColor);
+	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = F_windowBgColor);
+	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = F_windowBgColor);
 	extern void EndWindow();
-	extern void BeginWindowChild(std::string title);
-	extern void BeginResizeWindowChild(std::string title);
+	extern void BeginWindowChild(std::string title, Vector4 bgColor = F_outerWindowColor);
+	extern void BeginResizeWindowChild(std::string title, Vector4 bgColor = F_outerWindowColor);
 	extern void EndWindowChild();
-	extern void PushWindowStyles();
+	extern void PushWindowStyles(Vector4 bgColor = F_windowBgColor);
 	extern void PopWindowStyles();
 	extern void PushComboStyles();
 	extern void PopComboStyles();

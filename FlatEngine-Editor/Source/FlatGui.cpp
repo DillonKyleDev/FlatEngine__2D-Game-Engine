@@ -501,37 +501,52 @@ namespace FlatGui
 		}
 
 		bool b_isOpen = true;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0,0));
 		FlatEngine::SetNextViewportToFillWindow();  // Maximize viewport
-		FlatEngine::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-		
+		FlatEngine::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize, FlatEngine::F_transparentColor);
+		// Set background to transparent
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, FlatEngine::F_transparentColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_frameBgColor);
+		ImGui::PopStyleVar();
+
+		// Get window dimensions for background image
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + (float)FlatEngine::F_selectProjectImage.GetHeight());
+		Vector2 canvas_title_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + (float)FlatEngine::F_selectProjectImage.GetHeight());
+		Vector2 canvas_window_o1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
-		ImGui::GetWindowDrawList()->AddRectFilled(canvas_p0, canvas_p1, ImGui::GetColorU32(FlatEngine::F_selectProjectBgColor), 5);
+		ImGui::Image(FlatEngine::F_projectHubBgImage.GetTexture(), canvas_sz);
+
+		// Reset cursor to before drawing the bg image
+		ImGui::SetCursorScreenPos(canvas_p0);
+
+		Vector4 pCol = FlatEngine::F_selectProjectBgColor;
+		ImGui::GetWindowDrawList()->AddRectFilled(canvas_p0, canvas_title_p1, ImGui::GetColorU32(Vector4(pCol.x, pCol.y, pCol.z, 0.7f)));
 		ImGui::Image(FlatEngine::F_selectProjectImage.GetTexture(), Vector2((float)FlatEngine::F_selectProjectImage.GetWidth(), (float)FlatEngine::F_selectProjectImage.GetHeight()));
 
 		ImGui::Separator();
 		ImGui::Separator();
 			
-		FlatEngine::BeginWindowChild("Projects");
-	
+		FlatEngine::BeginWindowChild("Projects", FlatEngine::F_transparentColor);
+		// Set background to transparent
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_transparentColor);
+
 		for (Project project : projects)
 		{
 			std::string path = project.GetPath();
-			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 40)))
+			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x - 20, 40)))
 			{
 				b_projectSelected = true;
 				projectPath = path;
 			}
 		}
 
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y - 57));
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y - 65));
 
 		ImGui::Text("");
 		ImGui::Separator();
 
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x - 100, ImGui::GetCursorScreenPos().y + 4));
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x - 110, ImGui::GetCursorScreenPos().y + 6));
 
 		if (FlatEngine::RenderButton("New Project", Vector2(100, 30)))
 		{
@@ -544,7 +559,11 @@ namespace FlatGui
 			}
 		}
 
+		ImGui::PopStyleColor();
 		FlatEngine::EndWindowChild();
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
 		FlatEngine::EndWindow();
 	}
 

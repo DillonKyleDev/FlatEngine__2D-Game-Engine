@@ -36,27 +36,27 @@ namespace FlatEngine
 
 
 	// ImGui Wrappers
-	void BeginWindow(std::string name)
+	void BeginWindow(std::string name, Vector4 bgColor)
 	{
-		PushWindowStyles();
+		PushWindowStyles(bgColor);
 		ImGui::Begin(name.c_str());
 		PopWindowStyles();
 
 		BeginWindowChild(name);
 	}
 
-	void BeginWindow(std::string name, bool& b_isOpen)
+	void BeginWindow(std::string name, bool& b_isOpen, Vector4 bgColor)
 	{
-		PushWindowStyles();
+		PushWindowStyles(bgColor);
 		ImGui::Begin(name.c_str(), &b_isOpen);
 		PopWindowStyles();
 
 		BeginWindowChild(name);
 	}
 
-	void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags)
+	void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor)
 	{
-		PushWindowStyles();
+		PushWindowStyles(bgColor);
 		ImGui::Begin(name.c_str(), &b_isOpen, flags);
 		PopWindowStyles();
 
@@ -69,16 +69,16 @@ namespace FlatEngine
 		ImGui::End();
 	}
 
-	void BeginWindowChild(std::string title)
+	void BeginWindowChild(std::string title, Vector4 bgColor)
 	{
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, F_outerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, bgColor);
 		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_childFlags);
 		ImGui::PopStyleColor();
 	}
 
-	void BeginResizeWindowChild(std::string title)
+	void BeginResizeWindowChild(std::string title, Vector4 bgColor)
 	{
-		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, F_outerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, bgColor);
 		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_resizeChildFlags);
 		ImGui::PopStyleColor();
 	}
@@ -88,9 +88,9 @@ namespace FlatEngine
 		ImGui::EndChild();
 	}
 
-	void PushWindowStyles()
+	void PushWindowStyles(Vector4 bgColor)
 	{
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, F_windowBgColor);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_frameBgColor);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, F_frameBgActiveColor);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_frameBgHoveredColor);
