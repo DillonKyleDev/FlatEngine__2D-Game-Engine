@@ -24,10 +24,13 @@ using Sprite = FlatEngine::Sprite;
 using Transform = FlatEngine::Transform;
 using MappingContext = FlatEngine::MappingContext;
 
-namespace FlatGui {
-
+namespace FlatGui 
+{
 	void MainMenuBar()
 	{
+		std::string newScriptModalLabel = "Create Lua Script";
+		bool b_openNewScriptModal = false;
+
 		FlatEngine::PushMenuStyles();
 
 		if (ImGui::BeginMainMenuBar())
@@ -130,57 +133,39 @@ namespace FlatGui {
 				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("View"))
+			if (ImGui::BeginMenu("Viewports"))
 			{
-				if (ImGui::BeginMenu("Windows"))
-				{
-					if (ImGui::MenuItem("ImGui Demo Window", NULL, _showDemoWindow))
-						_showDemoWindow = !_showDemoWindow;
-					if (ImGui::MenuItem("Scene View", NULL, _showSceneView))
-						_showSceneView = !_showSceneView;
-					if (ImGui::MenuItem("Game View", NULL, _showGameView))
-						_showGameView = !_showGameView;
-					if (ImGui::MenuItem("Hierarchy", NULL, _showHierarchy))
-						_showHierarchy = !_showHierarchy;
-					if (ImGui::MenuItem("Inspector", NULL, _showInspector))
-						_showInspector = !_showInspector;
-					if (ImGui::MenuItem("Animator", NULL, _showAnimator))
-						_showAnimator = !_showAnimator;
-					if (ImGui::MenuItem("Key Frame Editor", NULL, _showKeyFrameEditor))
-						_showKeyFrameEditor = !_showKeyFrameEditor;
-					if (ImGui::MenuItem("Animation Preview", NULL, _showAnimationPreview))
-						_showAnimationPreview = !_showAnimationPreview;
-					if (ImGui::MenuItem("Logger", NULL, _showLogger))
-						_showLogger = !_showLogger;
-					if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
-						_showProfiler = !_showProfiler;
-					if (ImGui::MenuItem("Mapping Context Editor", NULL, _showMappingContextEditor))
-						_showMappingContextEditor = !_showMappingContextEditor;
+				if (ImGui::MenuItem("ImGui Demo Window", NULL, _showDemoWindow))
+					_showDemoWindow = !_showDemoWindow;
+				if (ImGui::MenuItem("Scene View", NULL, _showSceneView))
+					_showSceneView = !_showSceneView;
+				if (ImGui::MenuItem("Game View", NULL, _showGameView))
+					_showGameView = !_showGameView;
+				if (ImGui::MenuItem("Hierarchy", NULL, _showHierarchy))
+					_showHierarchy = !_showHierarchy;
+				if (ImGui::MenuItem("Inspector", NULL, _showInspector))
+					_showInspector = !_showInspector;
+				if (ImGui::MenuItem("Animator", NULL, _showAnimator))
+					_showAnimator = !_showAnimator;
+				if (ImGui::MenuItem("Key Frame Editor", NULL, _showKeyFrameEditor))
+					_showKeyFrameEditor = !_showKeyFrameEditor;
+				if (ImGui::MenuItem("Animation Preview", NULL, _showAnimationPreview))
+					_showAnimationPreview = !_showAnimationPreview;
+				if (ImGui::MenuItem("Logger", NULL, _showLogger))
+					_showLogger = !_showLogger;
+				if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
+					_showProfiler = !_showProfiler;
+				if (ImGui::MenuItem("Mapping Context Editor", NULL, _showMappingContextEditor))
+					_showMappingContextEditor = !_showMappingContextEditor;
 
-					ImGui::EndMenu();
-				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Assets"))
 			{
-				if (ImGui::BeginMenu("GameObjects"))
+				if (ImGui::MenuItem("New GameObject"))
 				{
-					if (ImGui::MenuItem("New GameObject"))
-					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
-						SetFocusedGameObjectID(newObject->GetID());
-					}
-					if (ImGui::MenuItem("Ball"))
-					{
-						GameObject ball = FlatEngine::Instantiate("P_Ball", Vector2(0, 0), -1);
-						SetFocusedGameObjectID(ball.GetID());
-					}
-					if (ImGui::MenuItem("Block"))
-					{
-						GameObject block = FlatEngine::Instantiate("P_Block", Vector2(0, 0), -1);
-						SetFocusedGameObjectID(block.GetID());
-					}
-					ImGui::EndMenu();
+					GameObject* newObject = FlatEngine::CreateGameObject(-1);
+					SetFocusedGameObjectID(newObject->GetID());
 				}
 				if (ImGui::BeginMenu("Components"))
 				{
@@ -264,13 +249,13 @@ namespace FlatGui {
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
-					if (ImGui::MenuItem("CircleCollider"))
-					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
-						newObject->AddCircleColliderComponent();
-						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
-						SetFocusedGameObjectID(newObject->GetID());
-					}
+					//if (ImGui::MenuItem("CircleCollider"))
+					//{
+					//	GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+					//	newObject->AddCircleColliderComponent();
+					//	newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
+					//	SetFocusedGameObjectID(newObject->GetID());
+					//}
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Prefabs"))
@@ -299,7 +284,7 @@ namespace FlatGui {
 						std::string path = FlatEngine::OpenSaveFileExplorer();
 						if (path != "")
 						{
-							std::string name = path.substr(path.find_last_of("/\\") + 1);
+							std::string name = FlatEngine::GetFilenameFromPath(path);
 							MappingContext newContext = MappingContext();
 							newContext.SetPath(path);
 							newContext.SetName(name);
@@ -313,7 +298,7 @@ namespace FlatGui {
 						std::string path = FlatEngine::OpenSaveFileExplorer();
 						if (path != "")
 						{
-							std::string name = path.substr(path.find_last_of("/\\") + 1);
+							std::string name = FlatEngine::GetFilenameFromPath(path);
 							std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
 							animationProperties->animationName = name;
 							FlatEngine::CreateNewAnimationFile(path);
@@ -324,6 +309,10 @@ namespace FlatGui {
 							_showAnimator = true;
 							_showAnimationPreview = true;
 						}
+					}
+					if (ImGui::MenuItem("Lua Script"))
+					{						
+						b_openNewScriptModal = true;
 					}
 					ImGui::EndMenu();
 				}
@@ -347,6 +336,16 @@ namespace FlatGui {
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
+		}
+
+		if (b_openNewScriptModal) // Strange workaround to open a modal (probably because this is not inside a ImGui::Begin() tag)
+			ImGui::OpenPopup(newScriptModalLabel.c_str());
+
+		std::string newScriptName = "";
+
+		if (FlatEngine::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName))
+		{
+			FlatEngine::CreateNewLuaScript(newScriptName);
 		}
 
 		FlatEngine::PopMenuStyles();

@@ -5,8 +5,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
-#include "ScriptComponent.h"
-#include "GameScript.h"
+#include "Script.h"
 #include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
@@ -169,15 +168,6 @@ namespace FlatEngine
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
 		for (Component* component : objectToDelete->GetComponents())
 		{
-			if (component->GetTypeString() == "Script")
-			{				 
-				ScriptComponent* scriptComponent = static_cast<ScriptComponent*>(component);
-				if (scriptComponent->GetScriptInstance())
-				{
-					long scriptID = scriptComponent->GetScriptInstance()->GetOwnerID();
-					//FlatEngine::F_Application->GetGameLoop()->RemoveScript(scriptID); // TODO
-				}
-			}
 			if (component->GetTypeString() == "RigidBody")
 			{
 				//gameLoop->RemoveRigidBody(component->GetID());
@@ -315,7 +305,6 @@ namespace FlatEngine
 	{
 		m_ECSManager.UpdateColliderPairs();
 		m_ECSManager.UpdateActiveRigidBodies();
-		m_ECSManager.InitializeScriptObjects(children);
 	}
 
 	void Scene::UpdateColliderPairs()
@@ -352,16 +341,10 @@ namespace FlatEngine
 		return m_ECSManager.AddCamera(camera, ownerID);
 	}
 
-	ScriptComponent* Scene::AddScriptComponent(ScriptComponent script, long ownerID)
+	Script* Scene::AddScript(Script script, long ownerID)
 	{
 		KeepNextComponentIDUpToDate(script.GetID());
-		return m_ECSManager.AddScriptComponent(script, ownerID);
-	}
-
-	GameScript* Scene::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
-	{
-		KeepNextComponentIDUpToDate(owner.GetID());
-		return m_ECSManager.AddScript(owner, scriptComponent, scriptInstance);
+		return m_ECSManager.AddScript(script, ownerID);
 	}
 
 	Canvas* Scene::AddCanvas(Canvas canvas, long ownerID)
@@ -446,14 +429,9 @@ namespace FlatEngine
 		return m_ECSManager.GetCameraByOwner(ownerID);
 	}
 
-	std::vector<ScriptComponent*> Scene::GetScriptsByOwner(long ownerID)
+	std::vector<Script*> Scene::GetScriptsByOwner(long ownerID)
 	{
 		return m_ECSManager.GetScriptsByOwner(ownerID);
-	}
-
-	GameScript* Scene::GetGameScriptByOwner(long ownerID, std::string name)
-	{
-		return m_ECSManager.GetGameScriptByOwner(ownerID, name);
 	}
 
 	Canvas* Scene::GetCanvasByOwner(long ownerID)
@@ -518,11 +496,7 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetCameras();
 	}
-	std::map<long, std::map<long, ScriptComponent>>& Scene::GetScriptComponents()
-	{
-		return m_ECSManager.GetScriptComponents();
-	}
-	std::map<long, std::map<std::string, GameScript>>& Scene::GetScripts()
+	std::map<long, std::map<long, Script>>& Scene::GetScripts()
 	{
 		return m_ECSManager.GetScripts();
 	}

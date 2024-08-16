@@ -28,7 +28,7 @@ namespace FlatEngine {
 	class Transform;
 	class Sprite;
 	class Camera;
-	class ScriptComponent;
+	class Script;
 	class Button;
 	class Canvas;
 	class Animation;
@@ -52,7 +52,7 @@ using Component = FlatEngine::Component;
 using Transform = FlatEngine::Transform;
 using Sprite = FlatEngine::Sprite;
 using Camera = FlatEngine::Camera;
-using ScriptComponent = FlatEngine::ScriptComponent;
+using Script = FlatEngine::Script;
 using Button = FlatEngine::Button;
 using Canvas = FlatEngine::Canvas;
 using Animation = FlatEngine::Animation;
@@ -166,7 +166,7 @@ namespace FlatGui
 	extern void RenderTransformComponent(Transform* transform);
 	extern void RenderSpriteComponent(Sprite* sprite);
 	extern void RenderCameraComponent(Camera* camera);
-	extern void RenderScriptComponent(ScriptComponent* script);
+	extern void RenderScriptComponent(Script* script);
 	extern void RenderButtonComponent(Button* button);
 	extern void RenderCanvasComponent(Canvas* canvas);
 	extern void RenderAnimationComponent(Animation* animation);
@@ -184,7 +184,4 @@ namespace FlatGui
 	extern void ResetHierarchyExpanderTracker();
 	// Profiler
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);
-	// Casts
-	extern std::vector<std::shared_ptr<GameObject>> RayCast(Vector2 origin, Vector2 direction, float distance);
-	extern std::vector<std::shared_ptr<GameObject>> SphereCast(Vector2 origin, Vector2 direction, float distance);
 }

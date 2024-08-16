@@ -7,7 +7,7 @@
 #include "Button.h"
 #include "Camera.h"
 #include "Canvas.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Text.h"
 #include "Audio.h"
 #include "CharacterController.h"
@@ -47,15 +47,6 @@ namespace FlatGui
 
 				// Add all the component types you can add to this GameObject
 				//
-				if (!focusedObject->HasComponent("Transform"))
-				{
-					if (ImGui::MenuItem("Transform"))
-					{
-						focusedObject->AddTransformComponent();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
 				if (!focusedObject->HasComponent("Sprite"))
 				{
 					if (ImGui::MenuItem("Sprite"))
@@ -273,9 +264,9 @@ namespace FlatGui
 					EndComponent(camera);
 				}
 
-				// ScriptComponent
-				std::vector<ScriptComponent*> scripts = focusedObject->GetScripts();
-				for (ScriptComponent* script : scripts)
+				// Script
+				std::vector<Script*> scripts = focusedObject->GetScripts();
+				for (Script* script : scripts)
 				{
 					BeginComponent(script, queuedForDelete);
 					if (!script->IsCollapsed())

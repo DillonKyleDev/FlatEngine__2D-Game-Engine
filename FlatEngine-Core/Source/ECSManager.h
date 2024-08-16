@@ -11,8 +11,7 @@ namespace FlatEngine
 	class GameObject;
 	class Transform;
 	class Sprite;
-	class ScriptComponent;
-	class GameScript;
+	class Script;
 	class Canvas;
 	class Audio;
 	class Text;
@@ -35,8 +34,7 @@ namespace FlatEngine
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
-		ScriptComponent* AddScriptComponent(ScriptComponent script, long ownerID);
-		GameScript* AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance);
+		Script* AddScript(Script script, long ownerID);
 		Canvas* AddCanvas(Canvas canvas, long ownerID);
 		Audio* AddAudio(Audio audio, long ownerID);
 		Text* AddText(Text text, long ownerID);
@@ -52,8 +50,7 @@ namespace FlatEngine
 		bool RemoveTransform(long ownerID);
 		bool RemoveSprite(long ownerID);
 		bool RemoveCamera(long ownerID);
-		bool RemoveScript(long ownerID);
-		bool RemoveGameScript(long ownerID);
+		bool RemoveScript(long ownerID, long scriptID);
 		bool RemoveCanvas(long ownerID);
 		bool RemoveAudio(long ownerID);
 		bool RemoveText(long ownerID);
@@ -68,8 +65,7 @@ namespace FlatEngine
 		Transform* GetTransformByOwner(long ownerID);
 		Sprite* GetSpriteByOwner(long ownerID);
 		Camera* GetCameraByOwner(long ownerID);
-		std::vector<ScriptComponent*> GetScriptsByOwner(long ownerID);
-		GameScript* GetGameScriptByOwner(long ownerID, std::string name);
+		std::vector<Script*> GetScriptsByOwner(long ownerID);		
 		Canvas* GetCanvasByOwner(long ownerID);
 		Audio* GetAudioByOwner(long ownerID);
 		Text* GetTextByOwner(long ownerID);
@@ -82,16 +78,14 @@ namespace FlatEngine
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
 
 		void CollectPhysicsBodies();
-		void InitializeScriptObjects(std::vector<GameObject> gameObjects);
 		void UpdateColliderPairs();
 		void UpdateActiveRigidBodies();
 
 		std::map<long, Transform> &GetTransforms();
 		std::map<long, Sprite>& GetSprites();
 		std::map<long, Camera>& GetCameras();
-		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
-		std::map<long, std::map<std::string, GameScript>>& GetScripts();
-		std::map<long, std::vector<std::string>> &GetLuaScriptsByOwner();
+		std::map<long, std::map<long, Script>>& GetScripts();
+		std::map<long, std::vector<std::string>>& GetLuaScriptsByOwner();
 		std::map<long, Button>& GetButtons();
 		std::map<long, Canvas>& GetCanvases();
 		std::map<long, Animation>& GetAnimations();
@@ -109,8 +103,7 @@ namespace FlatEngine
 		std::map<long, Transform> m_Transforms;
 		std::map<long, Sprite> m_Sprites;
 		std::map<long, Camera> m_Cameras;
-		std::map<long, std::map<long, ScriptComponent>> m_Scripts;
-		std::map<long, std::map<std::string, GameScript>> m_GameScripts; // std::map<ownerID, std::map<scriptName, GameScript>>();
+		std::map<long, std::map<long, Script>> m_Scripts;		
 		std::map<long, std::vector<std::string>> m_LuaScriptsByOwner;
 		std::map<long, Button> m_Buttons;
 		std::map<long, Canvas> m_Canvases;

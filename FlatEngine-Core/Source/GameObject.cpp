@@ -1,14 +1,13 @@
 #include "GameObject.h"
 #include "FlatEngine.h"
 #include "UIManager.h"
-#include "GameScript.h"
 #include "TagList.h"
 #include "Transform.h"
 #include "Scene.h"
 #include "Sprite.h"
 #include "Camera.h"
 #include "Text.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Text.h"
 #include "Animation.h"
 #include "Audio.h"
@@ -142,7 +141,7 @@ namespace FlatEngine
 			}
 			else if (component->GetTypeString() == "Script")
 			{
-				ScriptComponent newComponent = ScriptComponent(static_cast<ScriptComponent*>(component), GetID());
+				Script newComponent = Script(static_cast<Script*>(component), GetID());
 				//components.push_back(&newComponent);
 			}
 			else if (component->GetTypeString() == "Text")
@@ -342,16 +341,16 @@ namespace FlatEngine
 		return cameraPtr;
 	}
 
-	ScriptComponent* GameObject::AddScriptComponent(long id, bool _active, bool _collapsed)
+	Script* GameObject::AddScriptComponent(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		ScriptComponent script = ScriptComponent(nextID, ID);
+		Script script = Script(nextID, ID);
 		script.SetActive(_active);
 		script.SetCollapsed(_collapsed);
 
-		ScriptComponent* scriptPtr = GetLoadedScene()->AddScriptComponent(script, ID);
+		Script* scriptPtr = GetLoadedScene()->AddScript(script, ID);
 		components.push_back(scriptPtr);
 		return scriptPtr;
 	}
@@ -553,7 +552,7 @@ namespace FlatEngine
 	{
 		return GetLoadedScene()->GetCanvasByOwner(ID);
 	}
-	std::vector<ScriptComponent*> GameObject::GetScripts()
+	std::vector<Script*> GameObject::GetScripts()
 	{
 		return GetLoadedScene()->GetScriptsByOwner(ID);
 	}
@@ -599,35 +598,10 @@ namespace FlatEngine
 	{
 		return GetLoadedScene()->GetCompositeColliderByOwner(ID);
 	}
-	GameScript* GameObject::GetGameScriptByName(std::string scriptName)
-	{
-		for (int i = 0; i < components.size(); i++)
-		{
-			if (components[i]->GetType() == ComponentTypes::T_Script)
-			{
-				ScriptComponent* scriptComponent = static_cast<ScriptComponent*>(components[i]);
-				if (scriptComponent->GetAttachedScript() == scriptName)
-					return scriptComponent->GetScriptInstance();
-			}
-		}
-
-		return nullptr;
-	}
 
 	std::vector<Component*> GameObject::GetComponents()
 	{
 		return components;
-	}
-
-	std::vector<GameScript*> GameObject::GetScriptInstances()
-	{
-		std::vector<ScriptComponent*> scriptComponents = GetScripts();
-		std::vector<GameScript*> gameScripts;
-
-		for (ScriptComponent *script : scriptComponents)
-			gameScripts.push_back(script->GetScriptInstance());
-		
-		return gameScripts;
 	}
 
 	void GameObject::SetParentID(long newParentID)

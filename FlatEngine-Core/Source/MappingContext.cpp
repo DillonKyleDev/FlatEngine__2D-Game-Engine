@@ -242,6 +242,11 @@ namespace FlatEngine {
 		return emptyEvent;
 	}
 
+	bool MappingContext::ActionPressed(std::string actionName)
+	{
+		return GetInputAction(actionName).type != 0;
+	}
+
 	SDL_Event MappingContext::GetKeyBoundEvent(std::string keyBinding)
 	{
 		SDL_Event emptyEvent = SDL_Event();

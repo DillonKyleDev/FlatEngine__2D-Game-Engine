@@ -58,6 +58,7 @@ namespace FlatEngine {
 		void ClearInputActionEvents();
 		void ClearInputActionEvent(std::string keyBinding);
 		SDL_Event GetInputAction(std::string actionName);
+		bool ActionPressed(std::string actionName);
 		SDL_Event GetKeyBoundEvent(std::string keyBinding);
 		std::map<std::string, std::string> GetKeyBindings();
 		std::string GetData();

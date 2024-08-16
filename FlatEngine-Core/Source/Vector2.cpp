@@ -23,6 +23,32 @@ Vector2::~Vector2()
 {
 }
 
+float Vector2::GetX()
+{
+	return x;
+}
+
+float Vector2::GetY()
+{
+	return y;
+}
+
+void Vector2::SetX(float newX)
+{
+	x = newX;
+}
+
+void Vector2::SetY(float newY)
+{
+	y = newY;
+}
+
+void Vector2::xy(float newX, float newY)
+{
+	x = newX;
+	y = newY;
+}
+
 Vector2 Vector2::operator=(ImVec2& right)
 {
 	x = right.x;

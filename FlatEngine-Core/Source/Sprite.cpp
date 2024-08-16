@@ -93,6 +93,7 @@ namespace FlatEngine
 				{
 					m_textureWidth = 50;
 					m_textureHeight = 50;
+					SetOffset(Vector2(25, 25));
 				}
 			}
 		}

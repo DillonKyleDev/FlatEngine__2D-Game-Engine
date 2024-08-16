@@ -1,4 +1,4 @@
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "FlatEngine.h"
 #include <iostream>
 #include <fstream>
@@ -8,16 +8,15 @@
 
 namespace FlatEngine
 {
-	ScriptComponent::ScriptComponent(long myID, long parentID)
+	Script::Script(long myID, long parentID)
 	{
 		SetType(Component::ComponentTypes::T_Script);
 		SetID(myID);
 		SetParentID(parentID);
 		attachedScript = "";
-		scriptInstance = nullptr;
 	}
 
-	ScriptComponent::ScriptComponent(ScriptComponent* toCopy, long newParentID, long myID)
+	Script::Script(Script* toCopy, long newParentID, long myID)
 	{
 		SetType(Component::ComponentTypes::T_Script);
 		if (myID != -1)
@@ -27,34 +26,23 @@ namespace FlatEngine
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
 		attachedScript = toCopy->GetAttachedScript();
-		scriptInstance = toCopy->GetScriptInstance();
 	}
 
-	ScriptComponent::~ScriptComponent()
+	Script::~Script()
 	{
 	}
 
-	void ScriptComponent::SetAttachedScript(std::string script)
+	void Script::SetAttachedScript(std::string script)
 	{
 		attachedScript = script;
 	}
 
-	std::string ScriptComponent::GetAttachedScript()
+	std::string Script::GetAttachedScript()
 	{
 		return attachedScript;
 	}
 
-	void ScriptComponent::SetScriptInstance(GameScript* script)
-	{
-		scriptInstance = script;
-	}
-
-	GameScript* ScriptComponent::GetScriptInstance()
-	{
-		return scriptInstance;
-	}
-
-	std::string ScriptComponent::GetData()
+	std::string Script::GetData()
 	{
 		json jsonData = {
 			{ "type", "Script" },

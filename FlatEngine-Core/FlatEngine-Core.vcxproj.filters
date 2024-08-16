@@ -516,9 +516,6 @@
     <ClInclude Include="Source\GameObject.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameScript.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Logger.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -543,7 +540,7 @@
     <ClInclude Include="Source\SceneManager.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ScriptComponent.h">
+    <ClInclude Include="Source\Script.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Sound.h">
@@ -665,9 +662,6 @@
     <ClCompile Include="Source\GameObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameScript.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GameView.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -707,7 +701,7 @@
     <ClCompile Include="Source\SceneManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ScriptComponent.cpp">
+    <ClCompile Include="Source\Script.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Sound.cpp">

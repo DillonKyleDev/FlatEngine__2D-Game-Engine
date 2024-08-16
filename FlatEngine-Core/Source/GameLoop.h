@@ -1,5 +1,4 @@
 #pragma once
-#include "GameScript.h"
 #include "GameObject.h"
 #include "Collider.h"
 #include <thread>
@@ -22,7 +21,6 @@ namespace FlatEngine
 
 		void Start();
 		void Update(float gridstep, Vector2 viewportCenter);
-		void UpdateScripts();
 		void Stop();
 		void Pause();
 		void Unpause();

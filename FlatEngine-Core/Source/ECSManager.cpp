@@ -4,8 +4,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
-#include "ScriptComponent.h"
-#include "GameScript.h"
+#include "Script.h"
 #include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
@@ -25,8 +24,7 @@ namespace FlatEngine
 		m_Transforms = std::map<long, Transform>();
 		m_Sprites = std::map<long, Sprite>();
 		m_Cameras = std::map<long, Camera>();
-		m_Scripts = std::map<long, std::map<long, ScriptComponent>>();
-		m_GameScripts = std::map<long, std::map<std::string, GameScript>>();
+		m_Scripts = std::map<long, std::map<long, Script>>();
 		m_LuaScriptsByOwner = std::map<long, std::vector<std::string>>();
 		m_Buttons = std::map<long, Button>();
 		m_Canvases = std::map<long, Canvas>();
@@ -64,10 +62,10 @@ namespace FlatEngine
 		return &m_Cameras.at(ownerID);
 	}
 
-	ScriptComponent* ECSManager::AddScriptComponent(ScriptComponent script, long ownerID)
+	Script* ECSManager::AddScript(Script script, long ownerID)
 	{
-		std::map<long, ScriptComponent> newMap;
-		std::pair<long, ScriptComponent> newPair = { script.GetID(), script };
+		std::map<long, Script> newMap;
+		std::pair<long, Script> newPair = { script.GetID(), script };
 
 		if (m_Scripts.count(ownerID))
 		{
@@ -80,42 +78,6 @@ namespace FlatEngine
 		}
 
 		return &m_Scripts.at(ownerID).at(script.GetID());
-	}
-
-
-	void ECSManager::CollectPhysicsBodies()
-	{
-		UpdateColliderPairs();
-		UpdateActiveRigidBodies();
-	}
-
-	GameScript* ECSManager::AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance)
-	{
-		std::string scriptName = scriptInstance.GetName();
-		long ownerID = owner.GetID();
-		std::pair<std::string, GameScript> newPair = { scriptInstance.GetName(), scriptInstance};
-
-		if (m_GameScripts.count(owner.GetID()))
-		{
-			m_GameScripts.at(ownerID).emplace(newPair);
-		}
-		else
-		{
-			std::map<std::string, GameScript> newMap;
-			newMap.emplace(newPair);
-			m_GameScripts.emplace(ownerID, newMap);
-		}
-
-		scriptComponent.SetScriptInstance(&scriptInstance);
-		scriptInstance.SetOwner(&owner);
-
-		if (FlatEngine::F_Application->GameLoopStarted())
-		{
-			scriptInstance.Awake();
-			scriptInstance.Start();
-		}
-
-		return &m_GameScripts.at(ownerID).at(scriptName);
 	}
 
 	Canvas* ECSManager::AddCanvas(Canvas canvas, long ownerID)
@@ -216,26 +178,18 @@ namespace FlatEngine
 		else return nullptr;
 	}
 
-	std::vector<ScriptComponent*> ECSManager::GetScriptsByOwner(long ownerID)
+	std::vector<Script*> ECSManager::GetScriptsByOwner(long ownerID)
 	{
-		std::vector<ScriptComponent*> scripts = std::vector<ScriptComponent*>();
+		std::vector<Script*> scripts = std::vector<Script*>();
 		if (m_Scripts.count(ownerID))
 		{			 
-			for (std::map<long, ScriptComponent>::iterator iter = m_Scripts.at(ownerID).begin(); iter != m_Scripts.at(ownerID).end();)
+			for (std::map<long, Script>::iterator iter = m_Scripts.at(ownerID).begin(); iter != m_Scripts.at(ownerID).end();)
 			{
 				scripts.push_back(&(*iter).second);
 				iter++;
 			}
 		}
 		return scripts;
-	}
-
-	GameScript* ECSManager::GetGameScriptByOwner(long ownerID, std::string name)
-	{
-		// FIX THIS LATER AS WELL
-		//if (m_gameScriptMap.count(ownerID) && m_GameScripts.size() >= m_gameScriptMap.at(ownerID))
-		//	return &m_GameScripts[m_gameScriptMap.at(ownerID)].first;
-		return nullptr;
 	}
 
 	Canvas* ECSManager::GetCanvasByOwner(long ownerID)
@@ -329,9 +283,9 @@ namespace FlatEngine
 		{
 			return RemoveCamera(ownerID);
 		}
-		else if (component->GetTypeString() == "ScriptComponent")
+		else if (component->GetTypeString() == "Script")
 		{
-			return RemoveScript(ownerID);
+			return RemoveScript(ownerID, component->GetID());
 		}
 		else if (component->GetTypeString() == "Canvas")
 		{
@@ -402,16 +356,16 @@ namespace FlatEngine
 		return b_success;
 	}
 
-	bool ECSManager::RemoveScript(long scriptID)
+	bool ECSManager::RemoveScript(long ownerID, long scriptID)
 	{
-		// TODO
-		return false;
-	}
+		bool b_success = false;
+		if (m_Scripts.count(ownerID))
+		{
+			if (m_Scripts.at(ownerID).count(scriptID))
+				m_Scripts.at(ownerID).erase(scriptID);
+		}
 
-	bool ECSManager::RemoveGameScript(long scriptID)
-	{
-		// TODO
-		return false;
+		return b_success;
 	}
 
 	bool ECSManager::RemoveCanvas(long ownerID)
@@ -454,6 +408,7 @@ namespace FlatEngine
 		{
 			m_CompositeColliders.erase(ownerID);
 			b_success = true;
+			UpdateColliderPairs();
 		}
 		return b_success;
 	}
@@ -465,6 +420,7 @@ namespace FlatEngine
 		{
 			m_BoxColliders.erase(ownerID);
 			b_success = true;
+			UpdateColliderPairs();
 		}
 		return b_success;
 	}
@@ -476,6 +432,7 @@ namespace FlatEngine
 		{
 			m_CircleColliders.erase(ownerID);
 			b_success = true;
+			UpdateColliderPairs();
 		}
 		return b_success;
 	}
@@ -520,9 +477,10 @@ namespace FlatEngine
 	}
 
 
-	void ECSManager::InitializeScriptObjects(std::vector<GameObject> gameObjects)
+	void ECSManager::CollectPhysicsBodies()
 	{
-		// TODO if needed
+		UpdateColliderPairs();
+		UpdateActiveRigidBodies();
 	}
 
 	void ECSManager::UpdateColliderPairs()
@@ -625,13 +583,9 @@ namespace FlatEngine
 	{
 		return m_Cameras;
 	}
-	std::map<long, std::map<long, ScriptComponent>> &ECSManager::GetScriptComponents()
+	std::map<long, std::map<long, Script>> &ECSManager::GetScripts()
 	{
 		return m_Scripts;
-	}
-	std::map<long, std::map<std::string, GameScript>> &ECSManager::GetScripts()
-	{
-		return m_GameScripts;
 	}
 	std::map<long, std::vector<std::string>> &ECSManager::GetLuaScriptsByOwner()
 	{

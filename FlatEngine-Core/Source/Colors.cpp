@@ -29,6 +29,7 @@ namespace FlatEngine
 	//////////////////////
 	// Windows ///////////
 	//////////////////////
+	Vector4 F_selectProjectBgColor = Vector4(0.08f, 0.08f, 0.10f, 1.0f);
 	Vector4 F_windowBgColor = Vector4(0.08f, 0.08f, 0.10f, 1.0f);
 	Vector4 F_outerWindowColor = Vector4(0.13f, 0.13f, 0.15f, 1.0f);
 	Vector4 F_innerWindowColor = Vector4(0.1f, 0.1f, 0.12f, 1.0f);

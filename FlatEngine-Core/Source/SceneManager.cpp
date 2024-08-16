@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Canvas.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Audio.h"
 #include "Text.h"
 #include "CharacterController.h"

@@ -7,7 +7,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Scene.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
@@ -339,7 +339,7 @@ namespace FlatEngine
 		PopTableStyles();
 	}
 
-	bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles, ImGuiInputTextFlags flags)
+	bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
 	{
 		bool _editedButton = false;
 		bool _editedInput = false;
@@ -353,8 +353,20 @@ namespace FlatEngine
 			ImGui::SameLine(0, 5);
 		}
 
+		if (_canOpenFiles && inputWidth == -1)
+			inputWidth = inputWidth = ImGui::GetContentRegionAvail().x - 30;
+		else if (_canOpenFiles)
+			inputWidth -= 30;
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_inputColor);
+		ImGui::SetNextItemWidth(inputWidth);
+		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
+		ImGui::PopStyleColor();
+
 		if (_canOpenFiles)
 		{
+			ImGui::SameLine();
+
 			std::string buttonId = id + "openFileButton";
 			if (RenderImageButton(buttonId.c_str(), F_openFileIcon.GetTexture()))
 			{
@@ -362,37 +374,65 @@ namespace FlatEngine
 				strcpy_s(newPath, assetPath.c_str());
 				_editedButton = true;
 			}
-			ImGui::SameLine();
 		}
-
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_inputColor);
-		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
-		ImGui::PopStyleColor();
 
 		if (newPath != nullptr)
 			value = newPath;
 		return _editedButton || _editedInput;
 	}
 
-	void RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
+	bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
 	{
+		bool b_selectionMade = false;
+		bool b_currentSelectionEmpty = false;
+		std::string empty = " - empty -";
+
 		PushComboStyles();
 		PushMenuStyles();
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		if (ImGui::BeginCombo(id.c_str(), options[current_option].c_str()))
+
+		std::string currentlySelected = " " + options[current_option];
+		if (options[current_option] == "")
+		{
+			currentlySelected = empty;
+			ImGui::PushStyleColor(ImGuiCol_Text, F_logTextColor);
+			b_currentSelectionEmpty = true;
+		}
+
+		if (ImGui::BeginCombo(id.c_str(), currentlySelected.c_str()))
 		{
 			for (int n = 0; n < options.size(); n++)
 			{
 				bool is_selected = (options[current_option] == options[n]); // You can store your selection however you want, outside or inside your objects
-				if (ImGui::Selectable(options[n].c_str(), is_selected))
+				
+				std::string selectableLabel = " " + options[n];
+				if (options[n] == "")
+					selectableLabel = empty;
+					
+				if (options[n] == "")
+					ImGui::PushStyleColor(ImGuiCol_Text, F_logTextColor);
+				else
+					ImGui::PushStyleColor(ImGuiCol_Text, F_whiteColor);
+
+				if (ImGui::Selectable(selectableLabel.c_str(), is_selected))
+				{
 					current_option = n;
+					b_selectionMade = true;
+				}
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
+
+				ImGui::PopStyleColor();
 			}
 			ImGui::EndCombo();
 		}
+
+		if (b_currentSelectionEmpty)
+			ImGui::PopStyleColor();
 		PopMenuStyles();
 		PopComboStyles();
+
+		return b_selectionMade;
 	}
 
 	void PushTreeList(std::string id)
@@ -647,5 +687,51 @@ namespace FlatEngine
 			ImGui::Text(dataString.c_str());
 		}
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	}
+
+	bool RenderInputModal(std::string label, std::string description, std::string &inputValue)
+	{		
+		bool b_valueObtained = false;
+
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal(label.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text(description.c_str());
+			
+			ImGui::Separator();
+
+			float inputWidth = ImGui::CalcTextSize(description.c_str()).x;
+			if (inputWidth < 250)
+				inputWidth = 250;
+
+			std::string inputLabel = "##" + label;
+			if (RenderInput(inputLabel.c_str(), "", inputValue, false, inputWidth))
+			{
+				if (ImGui::IsKeyPressed(ImGuiKey_Enter))
+				{
+					b_valueObtained = true;
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 145);
+			if (ImGui::Button("OK", ImVec2(70, 0))) 
+			{ 
+				b_valueObtained = true;
+				ImGui::CloseCurrentPopup(); 
+			}
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine(0, 5);
+			if (ImGui::Button("Cancel", ImVec2(70, 0))) 
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		return b_valueObtained;
 	}
 }

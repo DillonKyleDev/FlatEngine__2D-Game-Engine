@@ -1,44 +1,62 @@
 #include "FlatEngine.h"
+#include "Vector2.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "Transform.h"
 #include "Sprite.h"
-#include "ScriptComponent.h"
+#include "Camera.h"
+#include "Canvas.h"
+#include "Button.h"
+#include "Audio.h"
+#include "Animation.h"
+#include "Text.h"
+#include "CharacterController.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "RigidBody.h"
+#include "Script.h"
+#include "MappingContext.h"
+
+#include <fstream>
 
 
 // Lua helpers + Functions that Lua can call
 namespace FlatEngine
 {
 	sol::state F_Lua;
+	std::vector<std::string> F_luaScriptNames = std::vector<std::string>();
 
 	void LuaTesting(GameObject& toSend)
 	{
 		// Load in lua script
-		auto script = F_Lua.safe_script_file("../scripts/LuaScript.lua");
-	
-		F_Lua["this_object"] = toSend;
-		if (script.valid())
+		if (DoesFileExist("../scripts/LuaScript.lua"))
 		{
-			sol::protected_function addSpriteFunc = F_Lua["AddSprite"];
-			if (addSpriteFunc)
+			auto script = F_Lua.safe_script_file("../scripts/LuaScript.lua");
+
+			F_Lua["this_object"] = toSend;
+			if (script.valid())
 			{
-				//auto player1 = 
-				addSpriteFunc();
-				//if (player1.valid())
-				//{
-				//	Transform* transform = player1.get<GameObject>().GetTransform();
-				//}
-				//else
-				//{
-				//	sol::error err = player1;
-				//	LogString(err.what());
-				//}
+				sol::protected_function addSpriteFunc = F_Lua["AddSprite"];
+				if (addSpriteFunc)
+				{
+					//auto player1 = 
+					addSpriteFunc();
+					//if (player1.valid())
+					//{
+					//	Transform* transform = player1.get<GameObject>().GetTransform();
+					//}
+					//else
+					//{
+					//	sol::error err = player1;
+					//	LogString(err.what());
+					//}
+				}
 			}
-		}
-		else
-		{
-			sol::error err = script;
-			LogString(err.what());
+			else
+			{
+				sol::error err = script;
+				LogString(err.what());
+			}
 		}
 	}
 
@@ -47,6 +65,7 @@ namespace FlatEngine
 		F_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
 		RegisterLuaFunctions();
 		RegisterLuaTypes();
+		RetrieveLuaScriptNames();
 	}
 
 	// Inject functions that can be called from within Lua directly into the Lua state
@@ -68,70 +87,201 @@ namespace FlatEngine
 		{
 			LogVector2(Vector2(xValue, yValue), line, "[LUA]");
 		};
+		F_Lua["F_GetMappingContext"] = [](std::string contextName)
+		{
+			return GetMappingContext(contextName);
+		};
 	}
 
 	// Map C++ types to Lua "Types"
 	void RegisterLuaTypes()
 	{
+		F_Lua.new_usertype<Vector2>("Vector2",
+			sol::constructors<Vector2(), Vector2(float x,float y)>(),
+			"_x", &Vector2::SetX,
+			"x", &Vector2::GetX,
+			"_y", &Vector2::SetY,
+			"y", &Vector2::GetY,
+			"xy", &Vector2::xy
+		);
+
 		F_Lua.new_usertype<GameObject>("GameObject",
-			sol::constructors<GameObject()>(),
+			"GetID", &GameObject::GetID,
 			"GetName", &GameObject::GetName,
 			"SetName", &GameObject::SetName,
 			"IsActive", &GameObject::IsActive,
 			"SetActive", &GameObject::SetActive,
-			"GetID", &GameObject::GetID,
+			"HasTag", &GameObject::HasTag,
 			"GetTransform", &GameObject::GetTransform,
-			"AddSprite", &GameObject::AddSpriteComponent
-			//"HasTag", &GameObject::HasTag,
-			//"GetSprite", &GameObject::GetSprite,
-			//"GetCamera", &GameObject::GetCamera,
-			//"GetAnimation", &GameObject::GetAnimation,
-			//"GetAudio", &GameObject::GetAudio,
-			//"GetButton", &GameObject::GetButton,
-			//"GetCanvas", &GameObject::GetCanvas,
-			//"GetText", &GameObject::GetText,
-			//"GetCharacterController", &GameObject::GetCharacterController,
-			//"GetRigidBody", &GameObject::GetRigidBody,
-			//"GetBoxCollider", &GameObject::GetBoxCollider,
-			//"GetFirstChild", &GameObject::GetFirstChild,
-			//"HasChildren", &GameObject::HasChildren,
-			//"GetChildren", &GameObject::GetChildren,
+			"AddSprite", &GameObject::AddSpriteComponent,
+			"GetSprite", &GameObject::GetSprite,
+			"GetCamera", &GameObject::GetCamera,
+			"GetAnimation", &GameObject::GetAnimation,
+			"GetAudio", &GameObject::GetAudio,
+			"GetButton", &GameObject::GetButton,
+			"GetCanvas", &GameObject::GetCanvas,
+			"GetText", &GameObject::GetText,
+			"GetCharacterController", &GameObject::GetCharacterController,
+			"GetRigidBody", &GameObject::GetRigidBody,
+			"GetBoxCollider", &GameObject::GetBoxCollider,
+			"GetFirstChild", &GameObject::GetFirstChild,
+			"HasChildren", &GameObject::HasChildren,
+			"GetChildren", &GameObject::GetChildren
+		);
+
+		F_Lua.new_usertype<Transform>("Transform",
+			"GetID", &Transform::GetID,
+			"SetPosition", &Transform::SetPosition,
+			"GetPosition", &Transform::GetPosition,
+			"GetTruePosition", &Transform::GetTruePosition,
+			"SetRotation", &Transform::SetRotation,
+			"GetRotation", &Transform::GetRotation,
+			"SetScale", &Transform::SetScale,
+			"GetScale", &Transform::GetScale
+		);
+
+		F_Lua.new_usertype<Sprite>("Sprite",
+			"SetActive", &Sprite::SetActive,
+			"GetID", &Sprite::GetID,
+			"SetTexture", &Sprite::SetTexture,
+			"GetPath", &Sprite::GetPath,
+			"SetScale", &Sprite::SetScale,
+			"GetScale", &Sprite::GetScale,
+			"GetTextureWidth", &Sprite::GetTextureWidth,
+			"GetTextureHeight", &Sprite::GetTextureHeight,			
+			"SetTintColor", &Sprite::SetTintColor,
+			"GetTintColor", &Sprite::GetTintColor
+		);
+
+		F_Lua.new_usertype<RigidBody>("RigidBody",
+			"SetActive", &RigidBody::SetActive,
+			"GetID", &RigidBody::GetID,
+			"SetMass", &RigidBody::SetMass,
+			"GetMass", &RigidBody::GetMass,
+			"SetGravity", &RigidBody::SetGravity,
+			"GetGravity", &RigidBody::GetGravity,
+			"SetFallingGravity", &RigidBody::SetFallingGravity,
+			"GetFallingGravity", &RigidBody::GetFallingGravity,
+			"SetFriction", &RigidBody::SetFriction,
+			"GetFriction", &RigidBody::GetFriction,
+			"SetAngularDrag", &RigidBody::SetAngularDrag,
+			"GetAngularDrag", &RigidBody::GetAngularDrag,
+			"AddForce", &RigidBody::AddForce,
+			"AddTorque", &RigidBody::AddTorque,
+			"SetTerminalVelocity", &RigidBody::SetTerminalVelocity,
+			"GetTerminalVelocity", &RigidBody::GetTerminalVelocity
+		);
+
+		F_Lua.new_usertype<MappingContext>("MappingContext",
+			"Fired", &MappingContext::Fired,
+			"ActionPressed", &MappingContext::ActionPressed,
+			"GetName", &MappingContext::GetName
 		);
 	}
 
-	void RunAwakeAndStart()
+
+	void RunLuaFuncOnAllScripts(std::string functionName)
 	{
-		for (std::pair<long, std::map<long, ScriptComponent>> object : GetLoadedScene()->GetScriptComponents())
+		for (std::pair<long, std::map<long, Script>> object : GetLoadedScene()->GetScripts())
 		{
-			for (auto &script : object.second)
+			for (auto& script : object.second)
 			{
 				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
 					std::string filepath = "../scripts/" + script.second.GetAttachedScript() + ".lua";
-
-					auto script = F_Lua.safe_script_file(filepath);
-					if (script.valid())
-					{						
-						F_Lua["this_object"] = &(*GetObjectById(object.first)); // Store this object inside the Lua state to be accessed by the next Lua function calls
-
-						sol::protected_function awake = F_Lua["Awake"];
-						if (awake.valid())
-							awake();
-						sol::protected_function start = F_Lua["Start"];
-						if (start.valid())
-							start();
-					}
-					else
+					if (DoesFileExist(filepath))
 					{
-						sol::error err = script;
-						LogString(err.what());
+						auto script = F_Lua.safe_script_file(filepath);
+						if (script.valid())
+						{
+							F_Lua["this_object"] = &(*GetObjectById(object.first)); // Store this object inside the Lua state to be accessed by the next Lua function calls
+
+							sol::protected_function func = F_Lua[functionName];
+							auto calledFunction = func();
+
+							if (calledFunction.valid())
+							{				
+								// Great!
+							}
+							else
+							{
+								sol::error err = calledFunction;
+								LogString(err.what());
+							}
+						}
+						else
+						{
+							sol::error err = script;
+							LogString(err.what());
+						}
 					}
 				}
 			}
 		}
 	}
+
+	void RunAwakeAndStart()
+	{
+		RunLuaFuncOnAllScripts("Awake");
+		RunLuaFuncOnAllScripts("Start");
+	}
+
+	void RetrieveLuaScriptNames()
+	{
+		F_luaScriptNames.clear();
+		F_luaScriptNames.push_back(""); // Empty string for when Scripts don't have any selected script attached
+
+		std::string path = "../scripts";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{			
+			if (FilepathHasExtension(entry.path().string(), ".lua"))
+				F_luaScriptNames.push_back(GetFilenameFromPath(entry.path().string()));
+		}
+	}
+
+	void CreateNewLuaScript(std::string filename)
+	{
+		for (std::string scriptName : F_luaScriptNames)
+		{
+			if (filename == scriptName)
+			{
+				LogString("ERROR: Script name already taken.  Please enter a different name for your new lua script.");
+				return;
+			}
+		}
+
+		std::ofstream outfile;
+		std::string filenameWExtention = "../scripts/" + filename + ".lua";
+		outfile.open(filenameWExtention, std::ios_base::app);
+		outfile << 
+			"-- " + filename + "\n\n\n" +
+			"-- using Lua in FlatEngine: \n\n" +
+			"-- ### please visit RegisterLuaTypes() in \"FlatEngine-Core/Source/LuaFunctions.cpp\" to see the classes, class methods, and variables exposed to Lua scripts ### \n" +
+			"-- ### please visit RegisterLuaFunctions() in \"FlatEngine-Core/Source/LuaFunctions.cpp\" to see the FlatEngine functions exposed to Lua scripts              ### \n\n" +
+			"-- use \"this_object\" to reference the object that is attached to this script \n" +
+			"-- use \":\" to access member variables and functions of objects: object:member_variable ..or.. object::member_function() \n" +
+			"-- to concatinate two or more strings, use two periods: \"..\"  F_LogString(\"Just add two periods between arguments like\"..string_variable_name) \n" +
+			"-- to create new objects of type Type with construction parameters, use: Type:new(parameters,...)  \n\n\n" +
+
+			"-- called on each script before Start() runs at the start of the gameloop (or upon instantiation) \n" +
+			"function Awake() \n\n" +
+			"end \n\n" +
+
+			"-- called at the start of the gameloop after Awake() (or upon instantiation) \n" +
+			"function Start() \n" +
+			"     F_LogString(\"" + filename + " : Start() called on \"..this_object:GetName()) \n\n" +
+			"end \n" +
+			
+			"--called once per gameloop frame \n" +
+			"function Update() \n\n" +
+			"end \n\n";
+
+		RetrieveLuaScriptNames();
+	}
 }
 
+// Lua / Sol cheat sheet
+// 
 //// We can also inject variables directly into the Lua state as well
 //F_Lua["newVariable"] = 56;
 //
@@ -181,13 +331,11 @@ namespace FlatEngine
 player.name = playerTable2["Name"].get<std::string>();
 player.level = playerTable2["Level"].get<int>();*/
 
-
 // Calling Lua functions from C++
 // 
 // Unsafe, something might go wrong during execution
 //float returnedValue = F_Lua["AddStuff"](3, 4);
 //LogFloat(returnedValue, "Returned value unsafe: ");	
-
 
 // Safely call Lua functions
 //sol::protected_function awake = F_Lua["Awake"];

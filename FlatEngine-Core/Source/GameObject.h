@@ -9,7 +9,7 @@ namespace FlatEngine
 	class TagList;
 	class Button;
 	class Canvas;
-	class ScriptComponent;
+	class Script;
 	class Animation;
 	class Sprite;
 	class Camera;
@@ -59,7 +59,7 @@ namespace FlatEngine
 		Transform* AddTransformComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		Sprite* AddSpriteComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		Camera* AddCameraComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		ScriptComponent* AddScriptComponent(long id = -1, bool _active = true, bool _collapsed = false);
+		Script* AddScriptComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		Button* AddButtonComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		Canvas* AddCanvasComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		Animation* AddAnimationComponent(long id = -1, bool _active = true, bool _collapsed = false);
@@ -81,7 +81,7 @@ namespace FlatEngine
 		Audio* GetAudio();
 		Button* GetButton();
 		Canvas* GetCanvas();
-		std::vector<ScriptComponent*> GetScripts();
+		std::vector<Script*> GetScripts();
 		Text* GetText();
 		CharacterController* GetCharacterController();
 		RigidBody* GetRigidBody();

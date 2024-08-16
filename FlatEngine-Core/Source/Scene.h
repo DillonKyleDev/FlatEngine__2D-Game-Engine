@@ -13,7 +13,7 @@ namespace FlatEngine
 	class GameObject;
 	class Transform;
 	class Sprite;
-	class ScriptComponent;
+	class Script;
 	class GameScript;
 	class Canvas;
 	class Audio;
@@ -66,8 +66,8 @@ namespace FlatEngine
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
-		ScriptComponent* AddScriptComponent(ScriptComponent script, long ownerID);
-		GameScript* AddScript(GameObject owner, ScriptComponent scriptComponent, GameScript scriptInstance);
+		Script* AddScript(Script script, long ownerID);
+		GameScript* AddScript(GameObject owner, Script scriptComponent, GameScript scriptInstance);
 		Canvas* AddCanvas(Canvas canvas, long ownerID);
 		Audio* AddAudio(Audio audio, long ownerID);
 		Text* AddText(Text text, long ownerID);
@@ -84,8 +84,7 @@ namespace FlatEngine
 		Transform* GetTransformByOwner(long ownerID);
 		Sprite* GetSpriteByOwner(long ownerID);
 		Camera* GetCameraByOwner(long ownerID);
-		std::vector<ScriptComponent*> GetScriptsByOwner(long ownerID);
-		GameScript* GetGameScriptByOwner(long ownerID, std::string name);
+		std::vector<Script*> GetScriptsByOwner(long ownerID);
 		Canvas* GetCanvasByOwner(long ownerID);
 		Audio* GetAudioByOwner(long ownerID);
 		Text* GetTextByOwner(long ownerID);
@@ -100,8 +99,7 @@ namespace FlatEngine
 		std::map<long, Transform> &GetTransforms();
 		std::map<long, Sprite>& GetSprites();
 		std::map<long, Camera>& GetCameras();
-		std::map<long, std::map<long, ScriptComponent>>& GetScriptComponents();
-		std::map<long, std::map<std::string, GameScript>>& GetScripts();
+		std::map<long, std::map<long, Script>>& GetScripts();
 		std::map<long, std::vector<std::string>> &GetLuaScriptsByOwner();
 		std::map<long, Button>& GetButtons();
 		std::map<long, Canvas>& GetCanvases();

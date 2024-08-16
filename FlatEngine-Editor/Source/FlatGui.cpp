@@ -9,7 +9,7 @@
 #include "Project.h"
 #include "Logger.h"
 #include "Component.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Transform.h"
 #include "Sprite.h"
 #include "Text.h"
@@ -23,6 +23,8 @@
 #include "Process.h"
 #include <Windows.h>
 #include "ECSManager.h"
+
+#include "Texture.h"
 
 #include "imgui.h"
 #include <math.h>
@@ -501,22 +503,46 @@ namespace FlatGui
 		bool b_isOpen = true;
 		FlatEngine::SetNextViewportToFillWindow();  // Maximize viewport
 		FlatEngine::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+		
+		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
+		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + (float)FlatEngine::F_selectProjectImage.GetHeight());
+
+		ImGui::GetWindowDrawList()->AddRectFilled(canvas_p0, canvas_p1, ImGui::GetColorU32(FlatEngine::F_selectProjectBgColor), 5);
+		ImGui::Image(FlatEngine::F_selectProjectImage.GetTexture(), Vector2((float)FlatEngine::F_selectProjectImage.GetWidth(), (float)FlatEngine::F_selectProjectImage.GetHeight()));
+
+		ImGui::Separator();
+		ImGui::Separator();
+			
 		FlatEngine::BeginWindowChild("Projects");
-
-		FlatEngine::RenderSectionHeader("Select a project to open");
-
+	
 		for (Project project : projects)
 		{
 			std::string path = project.GetPath();
-			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 50)))
+			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 40)))
 			{
 				b_projectSelected = true;
 				projectPath = path;
 			}
 		}
 
-		FlatEngine::RenderButton("New Project");
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y - 57));
 
+		ImGui::Text("");
+		ImGui::Separator();
+
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x - 100, ImGui::GetCursorScreenPos().y + 4));
+
+		if (FlatEngine::RenderButton("New Project", Vector2(100, 30)))
+		{
+			std::string newProjectPath = FlatEngine::OpenSaveFileExplorer();
+			if (newProjectPath != "")
+			{
+				Project newProject = Project();
+				SaveProject(newProject, newProjectPath);
+				OpenProject(newProjectPath);
+			}
+		}
 
 		FlatEngine::EndWindowChild();
 		FlatEngine::EndWindow();

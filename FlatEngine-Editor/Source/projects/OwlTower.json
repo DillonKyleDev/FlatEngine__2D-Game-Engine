@@ -1,0 +1,32 @@
+{
+    "Project Properties": [
+        {
+            "_autoSave": true,
+            "_clearLogBuffer": false,
+            "_fullscreen": false,
+            "_showAnimationPreview": false,
+            "_showAnimator": false,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": false,
+            "_showProfiler": true,
+            "_showSceneView": true,
+            "_vsyncEnabled": true,
+            "collisionDetection": "Shared Axis",
+            "focusedGameObjectID": -1,
+            "loadedAnimationPath": "",
+            "loadedScenePath": "Source\\scenes\\OwlScene.json",
+            "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\OwlTower.json",
+            "physicsSystem": "Euler",
+            "resolutionHeight": 1080.0,
+            "resolutionWidth": 1920.0,
+            "sceneViewGridStepX": 23.00008201599121,
+            "sceneViewGridStepY": 23.00008201599121,
+            "sceneViewScrollingX": 601.0,
+            "sceneViewScrollingY": 524.0
+        }
+    ]
+}

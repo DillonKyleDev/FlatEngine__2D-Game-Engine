@@ -7,7 +7,7 @@
 #include "CircleCollider.h"
 #include "CompositeCollider.h"
 #include "Transform.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "TagList.h"
 #include "Camera.h"
 #include "Project.h"
@@ -55,8 +55,6 @@ namespace FlatEngine
 
 		_started = true;
 
-		std::map<long, std::map<std::string, GameScript>>& gameScripts = GetLoadedScene()->GetScripts();
-
 		RunAwakeAndStart();
 
 		// Get currently loaded scenes GameObjects and instantiate script objects for them
@@ -82,35 +80,6 @@ namespace FlatEngine
 		//}
 	}
 
-	void GameLoop::UpdateScripts()
-	{
-		std::map<long, std::map<std::string, GameScript>> &gameScripts = GetLoadedScene()->GetScripts();
-
-		for (std::pair<long, std::map<std::string, GameScript>> owner : gameScripts)
-		{
-			for (std::pair<std::string, GameScript> script : owner.second)
-			{
-				if (script.second._isActive)
-				{
-					// Profiler
-					//float timeStart = 0;
-					//if (_isDebugMode)
-					//	timeStart = (float)FlatEngine::GetEngineTime();
-
-					script.second.Update(deltaTime);
-
-					// Profiler
-					//if (_isDebugMode)
-					//{
-					//	float hangTime = (float)FlatEngine::GetEngineTime() - timeStart;
-					//	if (script.second.size() > i && activeScripts[i])
-					//		AddProcessData(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName(), hangTime);
-					//}
-				}
-			}
-		}
-	}
-
 	void GameLoop::Update(float gridstep, Vector2 viewportCenter)
 	{
 		if (GetLoadedScene()->GetPrimaryCamera() != nullptr)
@@ -123,7 +92,7 @@ namespace FlatEngine
 
 
 		float processTime = (float)FlatEngine::GetEngineTime();
-		UpdateScripts();
+		RunLuaFuncOnAllScripts("Update");
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "Update Scripts: ");
 

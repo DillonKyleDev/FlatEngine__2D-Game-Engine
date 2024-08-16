@@ -9,6 +9,11 @@ public:
 	Vector2(const Vector2& toCopy);
 	~Vector2();
 
+	float GetX();
+	float GetY();
+	void SetX(float newX);
+	void SetY(float newY);
+	void xy(float newX, float newY);
 	Vector2 operator=(ImVec2& toCopy);
 	Vector2 operator*(ImVec2& right);
 	Vector2 operator*(Vector2& right);

@@ -8,35 +8,18 @@
 #include "Project.h"
 #include "Process.h"
 #include "GameObject.h"
-#include "GameScript.h"
 #include "Component.h"
-#include "ScriptComponent.h"
-#include "GameScript.h"
-// GameLoop scripts
-//#include "./scripts/GameManager.h"
-//#include "./scripts/PauseMenu.h"
-//#include "./scripts/SettingsButton.h"
-//#include "./scripts/StartButton.h"
-//#include "./scripts/RestartButton.h"
-//#include "./scripts/QuitButton.h"
-//#include "./scripts/PlayerController.h"
-//#include "./scripts/EnemyController.h"
-//#include "./scripts/Health.h"
-//#include "./scripts/JumpPad.h"
-//#include "./scripts/BlasterRound.h"
-//#include "./scripts/BlobParticle.h"
+#include "Script.h"
 
 #include <vector>
 #include <SDL_mixer.h>
 #include <string>
 #include <memory>
-
 #include "implot.h"
 
 using GameObject = FlatEngine::GameObject;
-using GameScript = FlatEngine::GameScript;
 using Component = FlatEngine::Component;
-using ScriptComponent = FlatEngine::ScriptComponent;
+using Script = FlatEngine::Script;
 
 
 
@@ -57,13 +40,10 @@ public:
 	void Start()
 	{
 		if (FlatEngine::_isDebugMode)
-		{
-			// Add Update Time Process		
-			FlatEngine::AddProfilerProcess("GameLoop (variable executions)");
-			// Add Update Process for all other time		
+		{				
+			FlatEngine::AddProfilerProcess("GameLoop (variable executions)");		
 			FlatEngine::AddProfilerProcess("Not GameLoop");
 			FlatEngine::AddProfilerProcess("Collision Testing");
-			//FlatEngine::AddProfilerProcess("")
 		}
 		FlatEngine::GameLoop::Start();
 	};
@@ -71,10 +51,6 @@ public:
 	{
 		if (FlatEngine::_isDebugMode)
 		{
-			//// Delete script processes
-			//for (int i = 0; i < GameLoop::GetActiveScripts().size(); i++)
-			//	FlatGui::RemoveProfilerProcess(activeScripts[i]->GetName() + "-on-" + activeScripts[i]->GetOwner()->GetName());
-
 			FlatEngine::RemoveProfilerProcess("GameLoop (variable executions)");
 			FlatEngine::RemoveProfilerProcess("Not GameLoop");
 			FlatEngine::RemoveProfilerProcess("Collision Testing");
@@ -89,137 +65,6 @@ public:
 		// Other, application specific updates here if needed
 		//
 	};
-	void InitializeScriptObjects(std::vector<std::shared_ptr<GameObject>> gameObjects)
-	{
-		std::vector<GameScript> newScripts = std::vector<GameScript>();
-
-		// Find all script components on Scene GameObjects and add those GameObjects
-		// to their corresponding script class entity vector members
-		for (int i = 0; i < gameObjects.size(); i++)
-		{
-			std::vector<Component*> components = gameObjects[i]->GetComponents();
-
-			for (int j = 0; j < components.size(); j++)
-			{
-				// For the script components, loop through and save to a vector, assign respective owners
-				if (components[j]->GetTypeString() == "Script")
-				{
-					ScriptComponent* script = static_cast<ScriptComponent*>(components[j]);
-					std::string attachedScript = script->GetAttachedScript();
-
-					//if (attachedScript == "GameManager")
-					//{
-					//	std::shared_ptr<GameManager> gameManagerScript = std::make_shared<GameManager>(script->GetID());
-					//	gameManagerScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(gameManagerScript);
-					//	activeScripts.push_back(gameManagerScript);
-					//	newScripts.push_back(gameManagerScript);
-					//	gameManager = gameManagerScript;
-					//	FlatEngine::gameManager = gameManagerScript;
-					//}
-					//else if (attachedScript == "PauseMenu")
-					//{
-					//	std::shared_ptr<PauseMenu> pauseMenuScript = std::make_shared<PauseMenu>(script->GetID());
-					//	pauseMenuScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(pauseMenuScript);
-					//	activeScripts.push_back(pauseMenuScript);
-					//	newScripts.push_back(pauseMenuScript);
-					//}
-					//else if (attachedScript == "SettingsButton")
-					//{
-					//	std::shared_ptr<SettingsButton> settingsButtonScript = std::make_shared<SettingsButton>(script->GetID());
-					//	settingsButtonScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(settingsButtonScript);
-					//	activeScripts.push_back(settingsButtonScript);
-					//	newScripts.push_back(settingsButtonScript);
-					//}
-					//else if (attachedScript == "StartButton")
-					//{
-					//	std::shared_ptr<StartButton> startButtonScript = std::make_shared<StartButton>(script->GetID());
-					//	startButtonScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(startButtonScript);
-					//	activeScripts.push_back(startButtonScript);
-					//	newScripts.push_back(startButtonScript);
-					//}
-					//else if (attachedScript == "RestartButton")
-					//{
-					//	std::shared_ptr<RestartButton> restartButtonScript = std::make_shared<RestartButton>(script->GetID());
-					//	restartButtonScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(restartButtonScript);
-					//	activeScripts.push_back(restartButtonScript);
-					//	newScripts.push_back(restartButtonScript);
-					//}
-					//else if (attachedScript == "QuitButton")
-					//{
-					//	std::shared_ptr<QuitButton> quitButtonScript = std::make_shared<QuitButton>(script->GetID());
-					//	quitButtonScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(quitButtonScript);
-					//	activeScripts.push_back(quitButtonScript);
-					//	newScripts.push_back(quitButtonScript);
-					//}
-					//else if (attachedScript == "PlayerController")
-					//{
-					//	std::shared_ptr<PlayerController> playerControllerScript = std::make_shared<PlayerController>(script->GetID());
-					//	playerControllerScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(playerControllerScript);
-					//	activeScripts.push_back(playerControllerScript);
-					//	newScripts.push_back(playerControllerScript);
-					//}
-					//else if (attachedScript == "EnemyController")
-					//{
-					//	std::shared_ptr<EnemyController> enemyControllerScript = std::make_shared<EnemyController>(script->GetID());
-					//	enemyControllerScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(enemyControllerScript);
-					//	activeScripts.push_back(enemyControllerScript);
-					//	newScripts.push_back(enemyControllerScript);
-					//}
-					//else if (attachedScript == "Health")
-					//{
-					//	std::shared_ptr<Health> healthScript = std::make_shared<Health>(script->GetID());
-					//	healthScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(healthScript);
-					//	activeScripts.push_back(healthScript);
-					//	newScripts.push_back(healthScript);
-					//}
-					//else if (attachedScript == "JumpPad")
-					//{
-					//	std::shared_ptr<JumpPad> jumpPadScript = std::make_shared<JumpPad>(script->GetID());
-					//	jumpPadScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(jumpPadScript);
-					//	activeScripts.push_back(jumpPadScript);
-					//	newScripts.push_back(jumpPadScript);
-					//}
-					//else if (attachedScript == "BlasterRound")
-					//{
-					//	std::shared_ptr<BlasterRound> blasterRoundScript = std::make_shared<BlasterRound>(script->GetID());
-					//	blasterRoundScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(blasterRoundScript);
-					//	activeScripts.push_back(blasterRoundScript);
-					//	newScripts.push_back(blasterRoundScript);
-					//}
-					//else if (attachedScript == "BlobParticle")
-					//{
-					//	std::shared_ptr<BlobParticle> blobParticleScript = std::make_shared<BlobParticle>(script->GetID());
-					//	blobParticleScript->SetOwner(gameObjects[i]);
-					//	script->SetScriptInstance(blobParticleScript);
-					//	activeScripts.push_back(blobParticleScript);
-					//	newScripts.push_back(blobParticleScript);
-					//}
-				}
-			}
-		}
-
-		// Call Awake and Start on all newly added scripts
-		for (int i = 0; i < newScripts.size(); i++)
-		{
-			// Create a new Process for each script	
-			if (FlatEngine::_isDebugMode)
-				FlatEngine::AddProfilerProcess(newScripts[i].GetName() + "-on-" + newScripts[i].GetOwner()->GetName());
-			newScripts[i].Awake();
-			newScripts[i].Start();
-		}
-	};
-
 private:
 };
 
@@ -343,6 +188,7 @@ public:
 
 		// Application specific rendering
 
+
 		// Render the project selection screen
 		static bool b_projectSelected = false;
 		if (!b_projectSelected)
@@ -366,12 +212,14 @@ public:
 	{
 		Application::EndRender();
 
+
 		// Application specific rendering tasks
-		// 
+		
+
 		// If window was recreated this frame
 		if (m_recreateWindow)
 		{
-			Window::SetScreenDimensions(1900, 900);
+			Window::SetScreenDimensions(1900, 960);
 			ImPlot::DestroyContext();
 			ImGui::DestroyContext();
 			FlatEngine::SetupImGui();
@@ -440,6 +288,6 @@ public:
 std::shared_ptr<FlatEngine::Application> FlatEngine::CreateApplication(int argc, char** argv)
 {
 	std::shared_ptr<EditorApplication> EditorApp = std::make_shared<EditorApplication>();
-	EditorApp->SetWindowDimensions(800, 500);
+	EditorApp->SetWindowDimensions(600, 300);
 	return EditorApp;
 }

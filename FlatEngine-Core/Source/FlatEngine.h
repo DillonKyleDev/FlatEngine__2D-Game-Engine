@@ -36,6 +36,10 @@ namespace FlatEngine
 {
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
+	extern std::vector<std::string> F_luaScriptNames;
+
+	extern bool _isDebugMode;
+	extern bool _closeProgram;
 
 	class GameLoop;
 	class Project;
@@ -63,9 +67,6 @@ namespace FlatEngine
 	};
 
 	using ComponentTypes = Component::ComponentTypes;
-
-	extern bool _isDebugMode;
-	extern bool _closeProgram;
 
 
 	//////////////////////
@@ -99,6 +100,7 @@ namespace FlatEngine
 	//////////////////////
 	/// Window  Colors ///
 	//////////////////////
+	extern Vector4 F_selectProjectBgColor;
 	extern Vector4 F_outerWindowColor;
 	extern Vector4 F_innerWindowColor;
 	extern Vector4 F_singleItemColor;
@@ -182,8 +184,8 @@ namespace FlatEngine
 	////////////////////
 
 	// Icons
-	extern std::string F_ResourceFailedToLoadImagePath;
-	extern Texture F_resourceFailedToLoad;
+	extern std::string F_ResourceFailedToLoadImagePath;	
+	extern Texture F_selectProjectImage;
 	extern Texture F_transformArrow;
 	extern Texture F_transformArrowAllWhite;
 	extern Texture F_transformArrowXWhite;
@@ -274,9 +276,11 @@ namespace FlatEngine
 	extern void InitLua();
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
+	extern void RunLuaFuncOnAllScripts(std::string functionName);
 	extern void RunAwakeAndStart();
 	extern void LuaTesting(GameObject& toSend);
-
+	extern void RetrieveLuaScriptNames();
+	extern void CreateNewLuaScript(std::string filename);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -317,7 +321,6 @@ namespace FlatEngine
 	extern bool Init(int windowWidth, int windowHeight);
 	extern void CloseProgram();
 	extern Uint32 GetEngineTime();
-	extern json LoadFileData(std::string filepath);
 	extern void ManageControllers();
 
 	// Controls Context Management
@@ -404,7 +407,7 @@ namespace FlatEngine
 	extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
 	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
-	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, ImGuiInputTextFlags flags = 0);
+	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = F_buttonColor, Vector4 hoverColor = F_buttonHoveredColor, Vector4 activeColor = F_buttonActiveColor);
 	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = F_imageButtonColor, Vector4 tint = F_imageButtonTintColor, Vector4 hoverColor = F_imageButtonHoveredColor, Vector4 activeColor = F_imageButtonActiveColor);
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
@@ -412,7 +415,7 @@ namespace FlatEngine
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);
 	extern void RenderSectionHeader(std::string headerText, float height = 0);
 	extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false);
-	extern void RenderSelectable(std::string id, std::vector<std::string> options, int& current_option);
+	extern bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option);
 	extern void PushTreeList(std::string id);
 	extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
 	extern void PopTreeList();
@@ -422,6 +425,7 @@ namespace FlatEngine
 	extern void RenderToolTipFloat(std::string label, float data);
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
+	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue);
 
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
@@ -432,6 +436,9 @@ namespace FlatEngine
 	extern std::string OpenLoadFileExplorer();
 	extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
 	extern std::string GetCurrentDir();
+	extern bool DoesFileExist(std::string filepath);
+	extern bool FilepathHasExtension(std::string filepath, std::string extension);
+	extern json LoadFileData(std::string filepath);
 
 	// Animation Manager
 	extern void CreateNewAnimationFile(std::string path);

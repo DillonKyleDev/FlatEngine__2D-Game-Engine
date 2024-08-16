@@ -8,7 +8,7 @@
 #include "Sprite.h"
 #include "Camera.h"
 #include "Scene.h"
-#include "ScriptComponent.h"
+#include "Script.h"
 #include "Button.h"
 #include "Canvas.h"
 #include "Animation.h"
@@ -178,8 +178,6 @@ namespace FlatGui
 	void RenderSpriteComponent(Sprite* sprite)
 	{
 		std::string path = sprite->GetPath();
-		char newPath[1024];
-		strcpy_s(newPath, path.c_str());
 		float textureWidth = sprite->GetTextureWidth();
 		float textureHeight = sprite->GetTextureHeight();
 		Vector2 textureScale = sprite->GetScale();
@@ -202,26 +200,10 @@ namespace FlatGui
 		if (RenderIsActiveCheckbox(_isActive))
 			sprite->SetActive(_isActive);								
 
-		// Render Sprite Path
-		ImGui::Text(pathString.c_str());
-		ImGui::SameLine(0, 5);
-
 		// Load From File
 		std::string openFileID = "##OpenFileIcon" + std::to_string(sprite->GetID());
-		if (FlatEngine::RenderImageButton(openFileID.c_str(), FlatEngine::F_openFileIcon.GetTexture()))
-		{
-			std::string assetPath = FlatEngine::OpenLoadFileExplorer();
-			strcpy_s(newPath, assetPath.c_str());
-			sprite->SetTexture(newPath);
-		}
-		ImGui::SameLine(0, 5);
-								
-		// Sprite Path Edit
-		std::string spriteID = "##spritePath" + std::to_string(id);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
-		if (ImGui::InputText(spriteID.c_str(), newPath, IM_ARRAYSIZE(newPath), FlatEngine::F_inputFlags))
-			sprite->SetTexture(newPath);
-		ImGui::PopStyleColor();
+		if (FlatEngine::RenderInput("##InputSpritePath", "Path", path, true) && path != "")
+			sprite->SetTexture(path);
 
 		// Render Table
 		if (FlatEngine::PushTable("##SpriteProperties" + std::to_string(id), 2))
@@ -368,8 +350,9 @@ namespace FlatGui
 		camera->SetPrimaryCamera(_isPrimary);
 	}
 
-	void RenderScriptComponent(ScriptComponent* script)
+	void RenderScriptComponent(Script* script)
 	{		
+		static int currentLuaScript = 0;
 		std::string path = script->GetAttachedScript();
 		bool _isActive = script->IsActive();
 		long id = script->GetID();
@@ -378,9 +361,27 @@ namespace FlatGui
 		if (RenderIsActiveCheckbox(_isActive))
 			script->SetActive(_isActive);
 
-		std::string inputId = "##scriptName" + std::to_string(id);
-		if (FlatEngine::RenderInput(inputId, "Name: ", path))
-			script->SetAttachedScript(path);
+		for (int i = 0; i < FlatEngine::F_luaScriptNames.size(); i++)
+		{
+			if (path == FlatEngine::F_luaScriptNames[i])
+			{
+				currentLuaScript = i;
+				break;
+			}
+		}
+
+		std::string newScriptModalLabel = "Create Lua Script";
+		std::string newScriptName = "";
+
+		// Select which Lua script is attached to this Script
+		if (FlatEngine::RenderSelectable("##SelectLuaScript", FlatEngine::F_luaScriptNames, currentLuaScript))
+			script->SetAttachedScript(FlatEngine::F_luaScriptNames[currentLuaScript]);
+
+		// Create new Lua script modal
+		if (FlatEngine::RenderButton("New Script", Vector2(100, 20)))
+			ImGui::OpenPopup(newScriptModalLabel.c_str());
+		if (FlatEngine::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName))
+			FlatEngine::CreateNewLuaScript(newScriptName);
 	}
 
 	void RenderButtonComponent(Button* button)

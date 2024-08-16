@@ -291,7 +291,6 @@
     <ClInclude Include="Source\FlatEngine.h" />
     <ClInclude Include="Source\GameLoop.h" />
     <ClInclude Include="Source\GameObject.h" />
-    <ClInclude Include="Source\GameScript.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\MappingContext.h" />
     <ClInclude Include="Source\PrefabManager.h" />
@@ -300,7 +299,7 @@
     <ClInclude Include="Source\RigidBody.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneManager.h" />
-    <ClInclude Include="Source\ScriptComponent.h" />
+    <ClInclude Include="Source\Script.h" />
     <ClInclude Include="Source\Sound.h" />
     <ClInclude Include="Source\Sprite.h" />
     <ClInclude Include="Source\TagList.h" />
@@ -342,7 +341,6 @@
     <ClCompile Include="Source\FlatEngine.cpp" />
     <ClCompile Include="Source\GameLoop.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
-    <ClCompile Include="Source\GameScript.cpp" />
     <ClCompile Include="Source\GameView.cpp" />
     <ClCompile Include="Source\Icons.cpp" />
     <ClCompile Include="Source\ImGuiWrappersCore.cpp" />
@@ -356,7 +354,7 @@
     <ClCompile Include="Source\RigidBody.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
-    <ClCompile Include="Source\ScriptComponent.cpp" />
+    <ClCompile Include="Source\Script.cpp" />
     <ClCompile Include="Source\Sound.cpp" />
     <ClCompile Include="Source\Sprite.cpp" />
     <ClCompile Include="Source\TagList.cpp" />
