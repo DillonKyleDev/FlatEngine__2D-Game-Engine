@@ -89,7 +89,7 @@ namespace FlatEngine
 			else
 			{
 				// Set broken texture Texture
-				m_texture.LoadFromFile(F_ResourceFailedToLoadImagePath);
+				//m_texture.LoadFromFile(F_ResourceFailedToLoadImagePath);
 				if (m_textureWidth == 0 || m_textureHeight == 0)
 				{
 					m_textureWidth = 50;

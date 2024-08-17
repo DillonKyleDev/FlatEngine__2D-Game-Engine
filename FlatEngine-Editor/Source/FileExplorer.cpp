@@ -1,5 +1,6 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
+#include "AssetManager.h"
 
 #include <process.h>
 #include <Windows.h>
@@ -14,7 +15,7 @@ namespace FlatGui
 	{		
 		std::string rootDirPath = "../";
 		std::filesystem::path rootPath(rootDirPath);
-		static std::string filepath_clicked = "";
+		static std::string filepath_clicked = rootDirPath;
 		std::error_code err;
 		bool b_isDirectory = std::filesystem::is_directory(rootPath, err);
 
@@ -32,8 +33,6 @@ namespace FlatGui
 
 					if (b_isDirectory)
 						RenderDirNodes(rootDirPath, filepath_clicked);
-					else
-						RenderDirNode(rootDirPath, filepath_clicked);
 
 					ImGui::EndTable();
 				}
@@ -55,8 +54,7 @@ namespace FlatGui
 			FlatEngine::BeginWindowChild("Files Panel", FlatEngine::F_explorerFilesBg);
 			ImGui::PopStyleVar();
 			// {				
-				//RenderDirItems(filepath_clicked);
-				RenderDirItems("../FlatEngine-Editor\\Source");
+				RenderDirItems(filepath_clicked);				
 			// }
 			FlatEngine::EndWindowChild();
 
@@ -68,7 +66,9 @@ namespace FlatGui
 	{
 		for (const auto& entry : std::filesystem::directory_iterator(dir))
 		{
-			RenderDirNode(entry.path(), filepath_clicked);
+			bool b_isDirectory = std::filesystem::is_directory(entry.path().string());
+			if (b_isDirectory)
+				RenderDirNode(entry.path(), filepath_clicked);
 		}
 	}
 
@@ -135,91 +135,142 @@ namespace FlatGui
 
 	void RenderDirItems(std::filesystem::path fs_filepath)
 	{
+		static std::shared_ptr<Texture> cppFileIcon = std::make_shared<Texture>();
+		cppFileIcon->LoadFromFile(FlatEngine::F_AssetManager->GetPath("cppFileIcon"));
+		static std::shared_ptr<Texture> hFileIcon = std::make_shared<Texture>();
+		hFileIcon->LoadFromFile(FlatEngine::F_AssetManager->GetPath("hFileIcon"));
+		static std::shared_ptr<Texture> luaFileIcon = std::make_shared<Texture>();
+		luaFileIcon->LoadFromFile(FlatEngine::F_AssetManager->GetPath("luaFileIcon"));
+		static std::shared_ptr<Texture> pngFileIcon = std::make_shared<Texture>();
+		pngFileIcon->LoadFromFile(FlatEngine::F_AssetManager->GetPath("pngFileIcon"));
+		static std::shared_ptr<Texture> folderFileIcon = std::make_shared<Texture>();
+		folderFileIcon->LoadFromFile(FlatEngine::F_AssetManager->GetPath("folderFileIcon"));
+
+		//FlatEngine::F_AssetManager->GetPath("cppFileIcon")
 		float availableWidth = ImGui::GetContentRegionMax().x;
 		float iconWidth = (float)FlatEngine::F_cppFileIcon.GetWidth();
 		float iconHeight = (float)FlatEngine::F_cppFileIcon.GetHeight();
-		int maxIconsPerRow = (int)(availableWidth / (iconWidth + 40));
+		float horizontalSpacing = 30;
+		float verticalSpacing = 15;
+		Vector2 filenamePadding = Vector2(5, 15);
+		int maxIconsPerRow = (int)(availableWidth / (iconWidth + horizontalSpacing) - 1);
 		int iconsThisRow = 0;
+
 		//FlatEngine::LogString(fs_filepath.string());
 		if (std::filesystem::is_directory(fs_filepath))
 		{
 			for (const auto& entry : std::filesystem::directory_iterator(fs_filepath.string()))
-			{
-				std::string extension = entry.path().extension().string();				
-				if (entry.path().extension() == ".cpp")
+			{				
+				//FlatEngine::LogInt(FlatEngine::F_AssetManager->GetTexture("folderFileIcon").GetWidth());
+				std::string extension = entry.path().extension().string();	
+
+				if (extension == ".cpp")
 				{
+					if (iconsThisRow == 0)
+						ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
 					Vector2 currentPos = ImGui::GetCursorScreenPos();
-					if (FlatEngine::RenderImageButton("##cppFileIcon-" + fs_filepath.string(), FlatEngine::F_cppFileIcon.GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
+					Texture failedText = Texture();
+					failedText.LoadFromFile("Source/assets/images/icons/cpp.png");
+					//FlatEngine::F_AssetManager->m_errorTexture = &failedText;
+					//FlatEngine::F_AssetManager->GetTexture("cppFileIcon")->LoadFromFile("Source/assets/images/icons/cpp.png");
+					if (FlatEngine::RenderImageButton("##cppFileIcon-" + entry.path().string(), cppFileIcon->GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
 					{
 						FlatEngine::LogString(entry.path().filename().string());
 					}
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + 15));
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + filenamePadding.y));
 					ImGui::SetNextItemWidth(iconWidth * 0.8f);
 					ImGui::TextWrapped(entry.path().filename().string().c_str());
 
 					if (iconsThisRow != maxIconsPerRow)
 					{
-						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + 30, currentPos.y));
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
 						iconsThisRow++;
 					}
 					else
 						iconsThisRow = 0;
 				}
-				else if (entry.path().extension() == ".h")
+				else if (extension == ".h")
 				{
-					Vector2 currentPos = ImGui::GetCursorScreenPos();
-					ImGui::SameLine(0, 5);
-					if (FlatEngine::RenderImageButton("##hFileIcon-" + fs_filepath.string(), FlatEngine::F_hFileIcon.GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
+					if (iconsThisRow == 0)
+						ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+					Vector2 currentPos = ImGui::GetCursorScreenPos();					
+					if (FlatEngine::RenderImageButton("##hFileIcon-" + entry.path().string(), hFileIcon->GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
 					{
 						FlatEngine::LogString(entry.path().filename().string());
 					}
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + 15));
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + filenamePadding.y));
 					ImGui::SetNextItemWidth(iconWidth * 0.8f);
 					ImGui::TextWrapped(entry.path().filename().string().c_str());
 
 					if (iconsThisRow != maxIconsPerRow)
 					{
-						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + 30, currentPos.y));
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
 						iconsThisRow++;
 					}
 					else
 						iconsThisRow = 0;
 				}
-				else if (entry.path().extension() == ".lua")
+				else if (extension == ".lua")
 				{
-					Vector2 currentPos = ImGui::GetCursorScreenPos();
-					ImGui::SameLine(0, 5);
-					if (FlatEngine::RenderImageButton("##LuaFileIcon-" + fs_filepath.string(), FlatEngine::F_luaFileIcon.GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
+					if (iconsThisRow == 0)
+						ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+					Vector2 currentPos = ImGui::GetCursorScreenPos();					
+					if (FlatEngine::RenderImageButton("##LuaFileIcon-" + entry.path().string(), luaFileIcon->GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
 					{
 						FlatEngine::LogString(entry.path().filename().string());
 					}
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + 15));
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + filenamePadding.y));
 					ImGui::SetNextItemWidth(iconWidth * 0.8f);
 					ImGui::TextWrapped(entry.path().filename().string().c_str());
 
 					if (iconsThisRow != maxIconsPerRow)
 					{
-						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + 30, currentPos.y));
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
 						iconsThisRow++;
 					}
 					else
 						iconsThisRow = 0;
 				}
-				else if (entry.path().extension() == ".png")
+				else if (extension == ".png")
 				{
-					Vector2 currentPos = ImGui::GetCursorScreenPos();
-					ImGui::SameLine(0, 5);
-					if (FlatEngine::RenderImageButton("##pngFileIcon-" + fs_filepath.string(), FlatEngine::F_pngFileIcon.GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
+				/*	static std::shared_ptr<Texture> pngThumbnail = std::make_shared<Texture>();
+					pngThumbnail->LoadFromFile(entry.path().filename().string());*/
+
+					if (iconsThisRow == 0)
+						ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+					Vector2 currentPos = ImGui::GetCursorScreenPos();					
+					if (FlatEngine::RenderImageButton("##pngFileIcon-" + entry.path().string(), pngFileIcon->GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
 					{
 						FlatEngine::LogString(entry.path().filename().string());
 					}
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + 15));
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + filenamePadding.y));
 					ImGui::SetNextItemWidth(iconWidth * 0.8f);
 					ImGui::TextWrapped(entry.path().filename().string().c_str());
 
 					if (iconsThisRow != maxIconsPerRow)
 					{
-						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + 30, currentPos.y));
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
+						iconsThisRow++;
+					}
+					else
+						iconsThisRow = 0;
+				}
+				else if (std::filesystem::is_directory(entry.path().string()))
+				{
+					if (iconsThisRow == 0)
+						ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+					Vector2 currentPos = ImGui::GetCursorScreenPos();
+					if (FlatEngine::RenderImageButton("##folderFileIcon-" + entry.path().string(), folderFileIcon->GetTexture(), Vector2(iconWidth, iconHeight), 0, FlatEngine::F_transparentColor))
+					{
+						FlatEngine::LogString(entry.path().filename().string());
+					}
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + iconHeight + filenamePadding.y));
+					ImGui::SetNextItemWidth(iconWidth * 0.8f);
+					ImGui::TextWrapped(entry.path().filename().string().c_str());
+
+					if (iconsThisRow != maxIconsPerRow)
+					{
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
 						iconsThisRow++;
 					}
 					else

@@ -5,9 +5,11 @@
 #include "Logger.h"
 #include "SceneManager.h"
 #include "Vector2.h"
+#include "Vector4.h"
 #include "Window.h"
 #include "ECSManager.h"
 #include "Project.h"
+#include "AssetManager.h"
 
 #include "GameLoop.h"
 #include "Scene.h"
@@ -18,6 +20,7 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "Text.h"
+#include "Texture.h"
 #include "Camera.h"
 #include "Audio.h"
 #include "Sound.h"
@@ -48,7 +51,8 @@
 namespace FlatEngine
 {
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
-	//lua_State* F_Lua = nullptr;
+	std::shared_ptr<AssetManager> F_AssetManager = std::make_shared<AssetManager>();
+	std::vector<std::shared_ptr<Texture>> F_Textures = std::vector<std::shared_ptr<Texture>>();
 
 
 	bool _isDebugMode = true;
@@ -238,12 +242,16 @@ namespace FlatEngine
 						else
 						{
 							SetupImGui();							// Set up ImGui Context and global styles
-							CreateIcons();							// Create texture icons
 							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
 							LogString("SDL_mixer initialized...");
 
 							InitLua();
 							LogString("Lua initialized...");
+
+							F_AssetManager->CollectColors();         // Collect global colors
+							F_AssetManager->CollectTextures();       // Collect and create Texture icons
+							//CollectColors();						// Collect global colors
+							//CollectTextures();					// Collect and create Texture icons
 							
 							LogString("Ready...");
 							LogSeparator();
@@ -555,7 +563,7 @@ namespace FlatEngine
 	{
 		F_MappingContexts.clear();
 
-		std::string path = "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\mappingContext";
+		std::string path = "../runtime-assets/mappingContexts";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			// Create a new context to save the loaded keybindings to

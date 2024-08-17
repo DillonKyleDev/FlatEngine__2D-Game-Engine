@@ -20,6 +20,54 @@ Vector4::~Vector4()
 {
 }
 
+void Vector4::_xyzw(float newX, float newY, float newZ, float newW)
+{
+	x = newX;
+	y = newY;
+	z = newZ;
+	w = newW;
+}
+
+float Vector4::GetX()
+{
+	return x;
+}
+
+float Vector4::GetY()
+{
+	return y;
+}
+
+float Vector4::GetZ()
+{
+	return z;
+}
+
+float Vector4::GetW()
+{
+	return w;
+}
+
+void Vector4::SetX(float newX)
+{
+	x = newX;
+}
+
+void Vector4::SetY(float newY)
+{
+	y = newY;
+}
+
+void Vector4::SetZ(float newZ)
+{
+	z = newZ;
+}
+
+void Vector4::SetW(float newW)
+{
+	w = newW;
+}
+
 Vector4 Vector4::operator=(ImVec4& toCopy)
 {
 	x *= toCopy.x;

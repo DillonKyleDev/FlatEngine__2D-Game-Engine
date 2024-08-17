@@ -43,7 +43,7 @@ void Vector2::SetY(float newY)
 	y = newY;
 }
 
-void Vector2::xy(float newX, float newY)
+void Vector2::_xy(float newX, float newY)
 {
 	x = newX;
 	y = newY;

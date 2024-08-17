@@ -484,7 +484,7 @@ namespace FlatGui
 		// Get all project files in the projects folder to present in the project selection screen
 		std::vector<Project> projects = std::vector<Project>();
 
-		std::string path = "Source\\projects";
+		std::string path = "../engine-assets/projects";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{			
 			json contextData = FlatEngine::LoadFileData(entry.path().string());
@@ -773,6 +773,7 @@ namespace FlatGui
 		Text* text = self.GetText();
 		std::vector<BoxCollider*> boxColliders = self.GetBoxColliders();
 		std::vector<CircleCollider*> circleColliders = self.GetCircleColliders();
+
 
 		// Check if each object has a Transform component
 		if (transform != nullptr)

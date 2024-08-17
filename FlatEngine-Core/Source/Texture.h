@@ -38,6 +38,7 @@ namespace FlatEngine
 		//Loaded from file surface
 		SDL_Surface* m_surface;
 		TTF_Font* m_font;
+		std::string m_path;
 
 		//Image dimensions
 		int m_textureWidth;

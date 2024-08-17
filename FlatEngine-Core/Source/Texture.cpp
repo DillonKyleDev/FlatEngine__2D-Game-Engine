@@ -6,22 +6,26 @@ namespace FlatEngine
 	Texture::Texture(std::string path)
 	{
 		//Initialize
+		m_path = path;
 		m_texture = NULL;
 		m_surface = NULL;
 		m_textureWidth = 0;
 		m_textureHeight = 0;
+		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 		if (path != "")
 			LoadFromFile(path);
-		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 	}
 
 	Texture::Texture(const Texture* toCopy)
 	{
-		m_texture = toCopy->m_texture;
-		m_surface = toCopy->m_surface;
+		m_path = toCopy->m_path;	
+		m_texture = NULL;
+		m_surface = NULL;
 		m_textureWidth = toCopy->m_textureWidth;
 		m_textureHeight = toCopy->m_textureHeight;
 		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
+		if (m_path != "")
+		LoadFromFile(m_path);
 	}
 
 
@@ -35,6 +39,8 @@ namespace FlatEngine
 
 	bool Texture::LoadFromFile(std::string path)
 	{
+		m_path = path;
+
 		//Remove existing texture
 		FreeTexture();
 
@@ -110,10 +116,7 @@ namespace FlatEngine
 	bool Texture::LoadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* font)
 	{
 		//Get rid of preexisting texture
-		FreeSurface();
-
-		//The final texture
-		SDL_Texture* newTexture = NULL;
+		FreeSurface();		
 
 		//Render text surface
 		SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
@@ -125,7 +128,7 @@ namespace FlatEngine
 		else
 		{
 			//Create texture from surface pixels
-			newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), textSurface);
+			m_texture = SDL_CreateTextureFromSurface(Window::GetRenderer(), textSurface);
 
 			if (m_texture == NULL)
 			{
@@ -143,13 +146,12 @@ namespace FlatEngine
 		}
 
 		//Return success
-		m_texture = newTexture;
 		return m_texture != NULL;
 	}
 
 	//Deallocates texture
 	void Texture::FreeTexture()
-	{
+	{			
 		//Free texture if it exists
 		if (m_texture != NULL)
 		{

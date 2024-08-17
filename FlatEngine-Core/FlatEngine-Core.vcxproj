@@ -276,6 +276,7 @@
     <ClInclude Include="..\Vendor\includes\Sol2\include\sol\wrapper.hpp" />
     <ClInclude Include="Source\Animation.h" />
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\AssetManager.h" />
     <ClInclude Include="Source\Audio.h" />
     <ClInclude Include="Source\BoxCollider.h" />
     <ClInclude Include="Source\Button.h" />
@@ -334,7 +335,7 @@
     <ClCompile Include="Source\CharacterController.cpp" />
     <ClCompile Include="Source\CircleCollider.cpp" />
     <ClCompile Include="Source\Collider.cpp" />
-    <ClCompile Include="Source\Colors.cpp" />
+    <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\CompositeCollider.cpp" />
     <ClCompile Include="Source\ECSManager.cpp" />

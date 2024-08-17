@@ -37,9 +37,14 @@ namespace FlatEngine
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
 	extern std::vector<std::string> F_luaScriptNames;
+	class AssetManager;
+	extern std::shared_ptr<AssetManager> F_AssetManager;
+	class Texture;
+	extern std::vector<std::shared_ptr<Texture>> F_Textures;
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
+
 
 	class GameLoop;
 	class Project;
@@ -186,7 +191,7 @@ namespace FlatEngine
 	////////////////////
 
 	// Icons
-	extern std::string F_ResourceFailedToLoadImagePath;	
+	//extern std::string F_ResourceFailedToLoadImagePath;	
 	// Project Hub
 	extern Texture F_flatEngineLogo;
 	extern Texture F_flatEngineLogoGradient;

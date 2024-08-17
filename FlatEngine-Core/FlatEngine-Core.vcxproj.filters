@@ -573,6 +573,7 @@
     <ClInclude Include="Source\Window.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp">
@@ -641,7 +642,7 @@
     <ClCompile Include="Source\Collider.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Colors.cpp">
+    <ClCompile Include="Source\AssetManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component.cpp">

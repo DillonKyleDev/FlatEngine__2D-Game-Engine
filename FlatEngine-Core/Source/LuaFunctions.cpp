@@ -102,7 +102,19 @@ namespace FlatEngine
 			"x", &Vector2::GetX,
 			"_y", &Vector2::SetY,
 			"y", &Vector2::GetY,
-			"xy", &Vector2::xy
+			"_xy", &Vector2::_xy
+		);
+		F_Lua.new_usertype<Vector4>("Vector4",
+			sol::constructors<Vector4(), Vector4(float x, float y, float z, float w)>(),
+			"_x", &Vector4::SetX,
+			"x", &Vector4::GetX,
+			"_y", &Vector4::SetY,
+			"y", &Vector4::GetY,
+			"_z", &Vector4::SetZ,
+			"z", &Vector4::GetZ,
+			"_w", &Vector4::SetW,
+			"w", &Vector4::GetW,
+			"_xyzw", &Vector4::_xyzw
 		);
 
 		F_Lua.new_usertype<GameObject>("GameObject",
@@ -235,7 +247,7 @@ namespace FlatEngine
 		F_luaScriptNames.clear();
 		F_luaScriptNames.push_back(""); // Empty string for when Scripts don't have any selected script attached
 
-		std::string path = "../scripts";
+		std::string path = "../runtime-assets/scripts";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{			
 			if (FilepathHasExtension(entry.path().string(), ".lua"))
