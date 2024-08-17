@@ -15,7 +15,7 @@
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 13.084016799926758,
+                    "yPos": 8.608665466308594,
                     "yScale": 1.0
                 },
                 {
@@ -36,15 +36,16 @@
                     "yScale": 1.0
                 },
                 {
+                    "_allowTorques": true,
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_isStatic": false,
-                    "angularDrag": 1.0,
+                    "angularDrag": 0.9990000128746033,
                     "equilibriumForce": 2.0,
                     "friction": 0.8600000143051147,
-                    "gravity": 1.0,
+                    "gravity": 0.0,
                     "id": 5,
-                    "mass": 1.0,
+                    "mass": 2.0,
                     "terminalVelocity": 0.4000000059604645,
                     "type": "RigidBody",
                     "windResistance": 1.0
@@ -80,7 +81,7 @@
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": 13.084016799926758,
+            "spawnLocationY": 8.608665466308594,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

@@ -71,7 +71,7 @@ namespace FlatEngine
 		Text* GetTextByOwner(long ownerID);
 		CompositeCollider* GetCompositeColliderByOwner(long ownerID);
 		std::vector<BoxCollider*> GetBoxCollidersByOwner(long ownerID);
-		CircleCollider* GetCircleColliderByOwner(long ownerID);
+		std::vector<CircleCollider*> GetCircleCollidersByOwner(long ownerID);
 		Animation* GetAnimationByOwner(long ownerID);
 		Button* GetButtonByOwner(long ownerID);
 		RigidBody* GetRigidBodyByOwner(long ownerID);
@@ -94,7 +94,7 @@ namespace FlatEngine
 		std::vector<Collider*> GetColliders();
 		std::map<long, CompositeCollider>& GetCompositeColliders();
 		std::map<long, std::map<long, BoxCollider>> &GetBoxColliders();
-		std::map<long, CircleCollider>& GetCircleColliders();
+		std::map<long, std::map<long, CircleCollider>>& GetCircleColliders();
 		std::map<long, RigidBody>& GetRigidBodies();
 		std::map<long, CharacterController>& GetCharacterControllers();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
@@ -112,7 +112,7 @@ namespace FlatEngine
 		std::map<long, Text> m_Texts;		
 		std::map<long, CompositeCollider> m_CompositeColliders;
 		std::map<long, std::map<long, BoxCollider>> m_BoxColliders;
-		std::map<long, CircleCollider> m_CircleColliders;
+		std::map<long, std::map<long, CircleCollider>> m_CircleColliders;
 		std::map<long, RigidBody> m_RigidBodies;
 		std::map<long, CharacterController> m_CharacterControllers;
 

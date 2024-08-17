@@ -568,31 +568,13 @@ namespace FlatEngine
 	{
 		return GetLoadedScene()->GetRigidBodyByOwner(ID);
 	}
-	std::vector<BoxCollider*> GameObject::GetBoxCollider()
+	std::vector<BoxCollider*> GameObject::GetBoxColliders()
 	{
 		return GetLoadedScene()->GetBoxCollidersByOwner(ID);
 	}
-	std::vector<BoxCollider*> GameObject::GetBoxColliders()
-	{
-		std::vector<BoxCollider*> boxColliders;
-		for (Component* component : components)
-			if (component->GetTypeString() == "BoxCollider")
-				boxColliders.push_back(static_cast<BoxCollider*>(component));
-
-		return boxColliders;
-	}
-	CircleCollider* GameObject::GetCircleCollider()
-	{
-		return GetLoadedScene()->GetCircleColliderByOwner(ID);
-	}
 	std::vector<CircleCollider*> GameObject::GetCircleColliders()
 	{
-		std::vector<CircleCollider*> circleColliders;
-		for (Component* component : components)
-			if (component->GetTypeString() == "CircleCollider")
-				circleColliders.push_back(static_cast<CircleCollider*>(component));
-
-		return circleColliders;
+		return GetLoadedScene()->GetCircleCollidersByOwner(ID);
 	}
 	CompositeCollider* GameObject::GetCompositeCollider()
 	{

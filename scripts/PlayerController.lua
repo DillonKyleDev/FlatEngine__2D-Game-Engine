@@ -27,8 +27,11 @@ end
 --called once per gameloop frame 
 function Update() 
     if mappingContext:Fired("IA_Jump") then
-        rigidBody:AddForce(Vector2(100, 1))
-        rigidBody:AddTorque(1, 1)
+        --rigidBody:SetAngularVelocity(1)
+        F_LogString("Jumped")
+        --rigidBody:SetTorquesAllowed(false)
+        rigidBody:AddTorque(-10, 1)
+
     end
 end 
 

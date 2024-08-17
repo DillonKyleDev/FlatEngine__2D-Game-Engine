@@ -459,9 +459,9 @@ namespace FlatEngine
 		return m_ECSManager.GetBoxCollidersByOwner(ownerID);
 	}
 
-	CircleCollider* Scene::GetCircleColliderByOwner(long ownerID)
+	std::vector<CircleCollider*> Scene::GetCircleCollidersByOwner(long ownerID)
 	{
-		return m_ECSManager.GetCircleColliderByOwner(ownerID);
+		return m_ECSManager.GetCircleCollidersByOwner(ownerID);
 	}
 
 	Animation* Scene::GetAnimationByOwner(long ownerID)
@@ -536,7 +536,7 @@ namespace FlatEngine
 	{
 		return m_ECSManager.GetBoxColliders();
 	}
-	std::map<long, CircleCollider>& Scene::GetCircleColliders()
+	std::map<long, std::map<long, CircleCollider>>& Scene::GetCircleColliders()
 	{
 		return m_ECSManager.GetCircleColliders();
 	}

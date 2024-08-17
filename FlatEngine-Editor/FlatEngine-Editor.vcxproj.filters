@@ -8,45 +8,6 @@
   <ItemGroup>
     <ClInclude Include="Source\FlatGui.h" />
     <ClInclude Include="Source\WidgetsManager.h" />
-    <ClInclude Include="Source\scripts\BlobParticle.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\ButtonScriptTemplate.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\EnemyController.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\GameManager.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\Health.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\JumpPad.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\PauseMenu.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\PlayerController.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\QuitButton.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\RestartButton.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\ScriptTemplate.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\SettingsButton.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\scripts\StartButton.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animator.cpp" />
@@ -63,44 +24,6 @@
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />
     <ClCompile Include="Source\WidgetsManager.cpp" />
-    <ClCompile Include="Source\scripts\BlobParticle.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\ButtonScriptTemplate.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\EnemyController.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\GameManager.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\Health.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\JumpPad.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\PauseMenu.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\PlayerController.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\QuitButton.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\RestartButton.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\ScriptTemplate.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\SettingsButton.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scripts\StartButton.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\FileExplorer.cpp" />
   </ItemGroup>
 </Project>

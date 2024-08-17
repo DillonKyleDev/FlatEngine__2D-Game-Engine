@@ -37,17 +37,25 @@ namespace FlatEngine
 
 		void SetMass(float newMass);
 		float GetMass();
+		float GetI();
+		void UpdateI();
+		void SetTorquesAllowed(bool b_allowed);
+		bool TorquesAllowed();
 		void SetAngularDrag(float newAngularDrag);
 		float GetAngularDrag();
 		void SetGravity(float newGravity);
 		float GetGravity();
 		void SetFallingGravity(float newFallingGravity);
 		float GetFallingGravity();
-		void SetVelocity(Vector2 newVelocity);
 		Vector2 GetVelocity();
 		Vector2 GetAcceleration();
 		Vector2 GetPendingForces();
+		void SetVelocity(Vector2 newVelocity);
 		void SetPendingForces(Vector2 newPendingForces);
+		void SetAngularVelocity(float angularVelocity);
+		float GetAngularVelocity();
+		float GetAngularAcceleration();
+		float GetPendingTorques();
 		void SetWindResistance(float newWindResistance);
 		float GetWindResistance();
 		float GetFriction();
@@ -77,6 +85,7 @@ namespace FlatEngine
 		float m_angularVelocity;
 		float m_angularAcceleration;
 		float m_angularDrag;
+		bool m_b_allowTorques;
 
 		float m_forceCorrection;
 		bool m_b_isGrounded;

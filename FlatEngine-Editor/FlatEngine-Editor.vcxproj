@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animator.cpp" />
+    <ClCompile Include="Source\FileExplorer.cpp" />
     <ClCompile Include="Source\FlatEngine-Editor.cpp" />
     <ClCompile Include="Source\FlatGui.cpp" />
     <ClCompile Include="Source\Hierarchy.cpp" />

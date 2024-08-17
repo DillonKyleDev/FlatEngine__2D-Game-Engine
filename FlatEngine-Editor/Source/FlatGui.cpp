@@ -24,8 +24,6 @@
 #include <Windows.h>
 #include "ECSManager.h"
 
-#include "Texture.h"
-
 #include "imgui.h"
 #include <math.h>
 #include <cmath>
@@ -106,7 +104,6 @@ namespace FlatGui
 	bool _showMappingContextEditor = false;
 	bool _showSettings = false;
 
-	Vector2 worldCenterPoint = Vector2(0, 0);
 
 	void Init()
 	{
@@ -511,21 +508,29 @@ namespace FlatGui
 
 		// Get window dimensions for background image
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
-		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-		Vector2 canvas_title_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + (float)FlatEngine::F_selectProjectImage.GetHeight());
-		Vector2 canvas_window_o1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+		Vector2 canvas_sz = ImGui::GetContentRegionAvail();		
+		float headerHeight = 50;
 
+		// Draw window background gradient
 		ImGui::Image(FlatEngine::F_projectHubBgImage.GetTexture(), canvas_sz);
 
 		// Reset cursor to before drawing the bg image
 		ImGui::SetCursorScreenPos(canvas_p0);
 
-		Vector4 pCol = FlatEngine::F_selectProjectBgColor;
-		ImGui::GetWindowDrawList()->AddRectFilled(canvas_p0, canvas_title_p1, ImGui::GetColorU32(Vector4(pCol.x, pCol.y, pCol.z, 0.7f)));
-		ImGui::Image(FlatEngine::F_selectProjectImage.GetTexture(), Vector2((float)FlatEngine::F_selectProjectImage.GetWidth(), (float)FlatEngine::F_selectProjectImage.GetHeight()));
+		// Draw header background gradient
+		ImGui::Image(FlatEngine::F_flatEngineLogoGradient.GetTexture(), Vector2(canvas_sz.x, headerHeight + 10));
+		// Reset cursor to before the header bg image
+		ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 10, canvas_p0.y + 5));
+
+		// Draw the FlatEngine logo and header text image
+		ImGui::Image(FlatEngine::F_flatEngineLogo.GetTexture(), Vector2(headerHeight, headerHeight));
+		ImGui::SameLine();
+		ImGui::Image(FlatEngine::F_selectProjectImage.GetTexture(), Vector2((float)FlatEngine::F_selectProjectImage.GetWidth(), headerHeight));
 
 		ImGui::Separator();
 		ImGui::Separator();
+
+		ImGui::Text("");
 			
 		FlatEngine::BeginWindowChild("Projects", FlatEngine::F_transparentColor);
 		// Set background to transparent
@@ -533,6 +538,7 @@ namespace FlatGui
 
 		for (Project project : projects)
 		{
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 20, ImGui::GetCursorScreenPos().y));
 			std::string path = project.GetPath();
 			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x - 20, 40)))
 			{
@@ -572,6 +578,8 @@ namespace FlatGui
 		// ImGui Demo Window
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
+
+		RenderFileExplorer();
 
 		float startTime = (float)FlatEngine::GetEngineTime();
 		MainMenuBar();

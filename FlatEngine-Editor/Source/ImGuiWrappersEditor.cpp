@@ -696,19 +696,24 @@ namespace FlatGui
 		bool _isActive = rigidBody->IsActive();
 		float mass = rigidBody->GetMass();
 		float gravity = rigidBody->GetGravity();
-		float angularDrag = rigidBody->GetAngularDrag();
 		float fallingGravity = rigidBody->GetFallingGravity();
 		float terminalVelocity = rigidBody->GetTerminalVelocity();
+		float angularDrag = rigidBody->GetAngularDrag();
 		float windResistance = rigidBody->GetWindResistance();
 		float friction = rigidBody->GetFriction();
-		float equilibriumForce = rigidBody->GetEquilibriumForce();		
+		float equilibriumForce = rigidBody->GetEquilibriumForce();	
+		bool _allowTorques = rigidBody->TorquesAllowed();
 		bool _isStatic = rigidBody->IsStatic();
 		bool _isGrounded = rigidBody->IsGrounded();
 
 		// Read only
+		float inertialMass = rigidBody->GetI();
 		Vector2 velocity = rigidBody->GetVelocity();
-		Vector2 pendingForces = rigidBody->GetPendingForces();
 		Vector2 acceleration = rigidBody->GetAcceleration();
+		Vector2 pendingForces = rigidBody->GetPendingForces();
+		float angularVelocity = rigidBody->GetAngularVelocity();
+		float angularAcceleration = rigidBody->GetAngularAcceleration();
+		float pendingTorques = rigidBody->GetPendingTorques();
 
 		std::string isGroundedString = "false";
 		if (_isGrounded)
@@ -723,6 +728,7 @@ namespace FlatGui
 		{
 			if (FlatEngine::RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
 				rigidBody->SetMass(mass);
+			FlatEngine::RenderTextTableRow("##InertialMass" + std::to_string(id), "Inertial Mass", std::to_string(inertialMass));
 			if (FlatEngine::RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
 				rigidBody->SetGravity(gravity);
 			if (FlatEngine::RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(id), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
@@ -733,14 +739,21 @@ namespace FlatGui
 				rigidBody->SetWindResistance(windResistance);
 			if (FlatEngine::RenderFloatDragTableRow("##Friction" + std::to_string(id), "Friction", friction, 0.01f, 0, 1))
 				rigidBody->SetFriction(friction);
+			if (FlatEngine::RenderFloatDragTableRow("##AngularDrag" + std::to_string(id), "Angular Drag", angularDrag, 0.01f, 0, 1))
+				rigidBody->SetAngularDrag(angularDrag);
 			if (FlatEngine::RenderFloatDragTableRow("##EquilibriumForce" + std::to_string(id), "Equilibrium Force", equilibriumForce, 0.01f, 0, 1000))
 				rigidBody->SetEquilibriumForce(equilibriumForce);
+			// Linear
 			FlatEngine::RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
 			FlatEngine::RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
 			FlatEngine::RenderTextTableRow("##AccelerationX" + std::to_string(id), "X Acceleration", std::to_string(acceleration.x));
 			FlatEngine::RenderTextTableRow("##AccelerationY" + std::to_string(id), "Y Acceleration", std::to_string(acceleration.y));
 			FlatEngine::RenderTextTableRow("##PendingForcesX" + std::to_string(id), "X Pending Forces", std::to_string(pendingForces.x));
 			FlatEngine::RenderTextTableRow("##PendingForcesY" + std::to_string(id), "Y Pending Forces", std::to_string(pendingForces.y));
+			// Rotational
+			FlatEngine::RenderTextTableRow("##AngularVelocity" + std::to_string(id), "Angular Velocity (deg)", std::to_string(angularVelocity));
+			FlatEngine::RenderTextTableRow("##AngularAcceleration" + std::to_string(id), "Angular Acceleration (deg)", std::to_string(angularAcceleration));
+			FlatEngine::RenderTextTableRow("##PendingTorques" + std::to_string(id), "Pending Torques", std::to_string(pendingTorques));
 			FlatEngine::RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
 			FlatEngine::PopTable();
 		}								
@@ -749,6 +762,8 @@ namespace FlatGui
 		// Static Checkbox
 		FlatEngine::RenderCheckbox(" Is Static", _isStatic);
 		rigidBody->SetIsStatic(_isStatic);
+		FlatEngine::RenderCheckbox(" Allow Torques", _allowTorques);
+		rigidBody->SetTorquesAllowed(_allowTorques);
 	}
 
 	void BeginToolTip(std::string title)

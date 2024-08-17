@@ -33,7 +33,7 @@ namespace FlatEngine
 		m_Texts = std::map<long, Text>();
 		m_CompositeColliders = std::map<long, CompositeCollider>();
 		m_BoxColliders = std::map<long, std::map<long, BoxCollider>>();
-		m_CircleColliders = std::map<long, CircleCollider>();
+		m_CircleColliders = std::map<long, std::map<long, CircleCollider>>();
 		m_RigidBodies = std::map<long, RigidBody>();
 		m_CharacterControllers = std::map<long, CharacterController>();
 
@@ -128,8 +128,24 @@ namespace FlatEngine
 
 	CircleCollider* ECSManager::AddCircleCollider(CircleCollider collider, long ownerID)
 	{
-		m_CircleColliders.emplace(ownerID, collider);
-		return &m_CircleColliders.at(ownerID);
+		std::pair<long, CircleCollider> newPair = { collider.GetID(), collider };
+
+		if (m_CircleColliders.count(ownerID))
+		{
+			m_CircleColliders.at(ownerID).emplace(newPair);
+		}
+		else
+		{
+			std::map<long, CircleCollider> newMap;
+			newMap.emplace(newPair);
+			m_CircleColliders.emplace(ownerID, newMap);
+		}
+
+		// Update m_ColliderPairs
+		if (FlatEngine::GetObjectById(ownerID) != nullptr) // If CircleCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+			UpdateColliderPairs();
+
+		return &m_CircleColliders.at(ownerID).at(collider.GetID());
 	}
 
 	Animation* ECSManager::AddAnimation(Animation animation, long ownerID)
@@ -233,11 +249,17 @@ namespace FlatEngine
 		return colliders;
 	}
 
-	CircleCollider* ECSManager::GetCircleColliderByOwner(long ownerID)
+	std::vector<CircleCollider*> ECSManager::GetCircleCollidersByOwner(long ownerID)
 	{
+		std::vector<CircleCollider*> colliders = std::vector<CircleCollider*>();
 		if (m_CircleColliders.count(ownerID))
-			return &m_CircleColliders.at(ownerID);
-		else return nullptr;
+		{
+			for (std::map<long, CircleCollider>::iterator iter = m_CircleColliders.at(ownerID).begin(); iter != m_CircleColliders.at(ownerID).end();)
+			{
+				colliders.push_back(&(*iter).second);
+			}
+		}
+		return colliders;
 	}
 
 	Animation* ECSManager::GetAnimationByOwner(long ownerID)
@@ -626,9 +648,12 @@ namespace FlatEngine
 				colliders.push_back(&collider.second);
 			}
 		}
-		for (std::pair<long, CircleCollider> collider : m_CircleColliders)
+		for (std::pair<long, std::map<long, CircleCollider>> colliderMap : m_CircleColliders)
 		{
-			colliders.push_back(&collider.second);
+			for (std::pair<long, CircleCollider> collider : colliderMap.second)
+			{
+				colliders.push_back(&collider.second);
+			}
 		}
 		return colliders;
 	}
@@ -640,7 +665,7 @@ namespace FlatEngine
 	{
 		return m_BoxColliders;
 	}
-	std::map<long, CircleCollider> &ECSManager::GetCircleColliders()
+	std::map<long, std::map<long, CircleCollider>> &ECSManager::GetCircleColliders()
 	{
 		return m_CircleColliders;
 	}

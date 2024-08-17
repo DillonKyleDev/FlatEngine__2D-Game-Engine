@@ -334,7 +334,7 @@ namespace FlatGui
 					EndComponent(characterController);
 				}
 
-				// BoxCollider
+				// BoxColliders
 				std::vector<BoxCollider*> boxColliders = focusedObject->GetBoxColliders();
 				for (BoxCollider* boxCollider : boxColliders)
 				{
@@ -344,9 +344,9 @@ namespace FlatGui
 					EndComponent(boxCollider);
 				}
 
-				// CircleCollider
-				CircleCollider* circleCollider = focusedObject->GetCircleCollider();
-				if (circleCollider != nullptr)
+				// CircleColliders
+				std::vector<CircleCollider*> circleColliders = focusedObject->GetCircleColliders();
+				for (CircleCollider* circleCollider : circleColliders)
 				{
 					BeginComponent(circleCollider, queuedForDelete);
 					if (!circleCollider->IsCollapsed())

@@ -97,6 +97,8 @@ namespace FlatEngine
 	extern Vector4 F_logTextColor;
 	extern Vector4 F_logBgColor;
 	extern Vector4 F_logOutlineColor;
+	// Window Explorer
+	extern Vector4 F_explorerFilesBg;
 	//////////////////////
 	/// Window  Colors ///
 	//////////////////////
@@ -185,12 +187,22 @@ namespace FlatEngine
 
 	// Icons
 	extern std::string F_ResourceFailedToLoadImagePath;	
+	// Project Hub
+	extern Texture F_flatEngineLogo;
+	extern Texture F_flatEngineLogoGradient;
 	extern Texture F_selectProjectImage;	
 	extern Texture F_projectHubBgImage;
+	// File Explorer
+	extern Texture F_cppFileIcon;
+	extern Texture F_hFileIcon;
+	extern Texture F_luaFileIcon;
+	extern Texture F_pngFileIcon;
+	// Scene View
 	extern Texture F_transformArrow;
 	extern Texture F_transformArrowAllWhite;
 	extern Texture F_transformArrowXWhite;
 	extern Texture F_transformArrowYWhite;
+
 	extern Texture F_cameraIcon;
 	extern Texture F_playIcon;
 	extern Texture F_pauseIcon;

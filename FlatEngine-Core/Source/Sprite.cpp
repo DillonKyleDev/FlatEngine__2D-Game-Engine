@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "FlatEngine.h"
+#include "RigidBody.h"
 
 namespace FlatEngine
 {
@@ -94,6 +95,16 @@ namespace FlatEngine
 					m_textureWidth = 50;
 					m_textureHeight = 50;
 					SetOffset(Vector2(25, 25));
+				}
+			}
+
+			// Recalculate the moment of inertia of the RigidBody based on sprite dimensions
+			if (GetParent() != nullptr)
+			{
+				RigidBody* rigidBody = GetParent()->GetRigidBody();
+				if (rigidBody != nullptr)
+				{
+					rigidBody->SetMass(rigidBody->GetMass());
 				}
 			}
 		}

@@ -15,8 +15,7 @@ namespace FlatEngine
 	class Camera;
 	class Audio;
 	class Transform;
-	class Text;
-	class GameScript;
+	class Text;	
 	class CharacterController;
 	class RigidBody;
 	class BoxCollider;
@@ -85,14 +84,10 @@ namespace FlatEngine
 		Text* GetText();
 		CharacterController* GetCharacterController();
 		RigidBody* GetRigidBody();
-		std::vector<BoxCollider*> GetBoxCollider();
-		std::vector<BoxCollider*> GetBoxColliders();
-		CircleCollider* GetCircleCollider();
+		std::vector<BoxCollider*> GetBoxColliders();		
 		std::vector<CircleCollider*> GetCircleColliders();
-		CompositeCollider* GetCompositeCollider();
-		GameScript* GetGameScriptByName(std::string scriptName);
-		std::vector<Component*> GetComponents();
-		std::vector<GameScript*> GetScriptInstances();
+		CompositeCollider* GetCompositeCollider();		
+		std::vector<Component*> GetComponents();		
 
 		void SetParentID(long parentID);
 		long GetParentID();

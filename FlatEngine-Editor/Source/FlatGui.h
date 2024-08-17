@@ -114,6 +114,7 @@ namespace FlatGui
 
 	// Hierarchy
 	extern std::map<long, bool> leafExpandedTracker;
+	extern std::map<std::string, bool> FG_fileExplorerLeafTracker;
 
 	// Window Visibility
 	extern bool _showDemoWindow;
@@ -158,6 +159,10 @@ namespace FlatGui
 	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset);
 	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
 	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+	extern void RenderFileExplorer();
+	extern void RenderDirNodes(std::string dir, std::string& filepath_clicked);
+	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
+	extern void RenderDirItems(std::filesystem::path fs_filepath);
 
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);

@@ -40,6 +40,8 @@ namespace FlatEngine
 	Vector4 F_logTextColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);
 	Vector4 F_logBgColor = Vector4(0.2f, 0.2f, 0.22f, 1.0f);
 	Vector4 F_logOutlineColor = Vector4(0.25f, 0.25f, 0.27f, 1.0f);
+	// File Explorer
+	Vector4 F_explorerFilesBg = Vector4(0.2f, 0.2f, 0.22f, 1.0f);
 	// Docking
 	Vector4 F_dockingPreviewColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);
 	Vector4 F_dockingPreviewEmptyColor = Vector4(0.3f, 0.3f, 0.65f, 1.0f);

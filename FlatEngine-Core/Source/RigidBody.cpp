@@ -3,6 +3,7 @@
 #include "CharacterController.h"
 #include "BoxCollider.h"
 #include "Project.h"
+#include "Sprite.h"
 
 
 namespace FlatEngine {
@@ -19,12 +20,13 @@ namespace FlatEngine {
 		m_acceleration = Vector2(0, 0);
 		m_friction = 0.86f;  // 1 = no m_friction. 0 = m_velocity = 0
 		// Rotational
-		m_I = 1; // I of a rectangle = mass * b*h*h*h / 12
+		m_I = 1; // Moment of inertia = 2mass / 5 * (r^2) (based on sprite dimensions)
 		m_1overI = 1;
 		m_pendingTorques = 0;
 		m_angularVelocity = 0;
 		m_angularAcceleration = 0;
 		m_angularDrag = 1;
+		m_b_allowTorques = true;
 
 		m_equilibriumForce = 2;				
 		m_b_isGrounded = false;
@@ -58,6 +60,7 @@ namespace FlatEngine {
 		m_angularVelocity = toCopy->m_angularVelocity;
 		m_angularAcceleration = toCopy->m_angularAcceleration;
 		m_angularDrag = toCopy->m_angularDrag;
+		m_b_allowTorques = toCopy->m_b_allowTorques;
 
 		m_gravity = toCopy->m_gravity;
 		m_fallingGravity = toCopy->m_fallingGravity;
@@ -88,6 +91,7 @@ namespace FlatEngine {
 			{ "terminalVelocity", m_terminalVelocity },
 			{ "windResistance", m_windResistance },
 			{ "_isStatic", m_b_isStatic },
+			{ "_allowTorques", m_b_allowTorques },
 		};
 
 		std::string data = jsonData.dump();
@@ -129,7 +133,6 @@ namespace FlatEngine {
 			m_angularAcceleration = m_pendingTorques;
 		else
 			m_angularAcceleration = m_pendingTorques * m_1overI;
-		
 	}
 
 	void RigidBody::CalculateVerletPhysics()
@@ -153,17 +156,18 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyEulerPhysics(float deltaTime)
 	{
-		// Then apply to transform
-		m_velocity = Vector2(m_velocity.x + m_acceleration.x, m_acceleration.y);
+		// In reality, we should be adding acceleration to velocity, but it is difficult to simulate opposing forces that would actually cause objects to slow down (ie. give them negative values in the opposing direction at all times)
+		m_velocity = Vector2(m_acceleration.x, m_acceleration.y);
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
 		transform->SetPosition(Vector2(position.x + m_velocity.x, position.y + m_velocity.y));
 
-		m_angularVelocity += m_angularAcceleration;
-		float rotation = transform->GetRotation();
+		if (m_b_allowTorques)
+			m_angularVelocity = m_angularAcceleration;
 
-		transform->SetRotation(rotation + m_angularVelocity);
+		float rotation = transform->GetRotation();
+		transform->SetRotation((float)fmod(rotation + m_angularVelocity, 360));
 	}
 
 	void RigidBody::ApplyVerletPhysics(float deltaTime)
@@ -211,12 +215,16 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyFriction()
 	{
-		// Wind m_friction
+		// Wind resistance
 		if (m_gravity != 0 && !m_b_isGrounded)
 		{
-			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_windResistance, m_pendingForces.y * m_windResistance);
-			m_pendingForces = dampenedm_velocity;
+			Vector2 dampenedVelocity = Vector2(m_pendingForces.x * m_windResistance, m_pendingForces.y * m_windResistance);
+			m_pendingForces = dampenedVelocity;
 		}
+
+		// Rotational drag
+		if (m_b_allowTorques)
+			m_pendingTorques *= m_angularDrag;
 
 		// Get Character Controller for _isMoving
 		FlatEngine::CharacterController* characterController = nullptr;
@@ -231,13 +239,13 @@ namespace FlatEngine {
 		// Ground m_friction
 		if (!_isMoving && (m_gravity != 0 && m_b_isGrounded))
 		{
-			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y);
-			m_pendingForces = dampenedm_velocity;
+			Vector2 dampenedVelocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y);
+			m_pendingForces = dampenedVelocity;
 		}	
 		else if (m_gravity == 0)
 		{
-			Vector2 dampenedm_velocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y * m_friction);
-			m_pendingForces = dampenedm_velocity;
+			Vector2 dampenedVelocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y * m_friction);
+			m_pendingForces = dampenedVelocity;
 		}
 	}
 
@@ -530,8 +538,11 @@ namespace FlatEngine {
 
 	void RigidBody::AddTorque(float torque, float multiplier)
 	{
-		float addedTorque = torque * multiplier;
-		m_pendingTorques += addedTorque;
+		if (m_b_allowTorques)
+		{
+			float addedTorque = torque * multiplier;
+			m_pendingTorques += addedTorque;
+		}
 	}
 
 	Vector2 RigidBody::GetNextPosition()
@@ -546,11 +557,62 @@ namespace FlatEngine {
 	{
 		m_mass = mass;
 		m_1overMass = 1 / m_mass;
+		m_I = 2* m_mass / 5 * 9;
+
+		// Get new moment of inertia
+		if (GetParent() != nullptr)
+		{
+			Sprite* sprite = GetParent()->GetSprite();
+			if (sprite != nullptr)
+			{
+				float width = sprite->GetTextureWidth() / 10;
+				float height = sprite->GetTextureHeight() / 10;
+				float radius = (width + height) / 2; // rough estimate
+				if (width != 0 && height != 0)
+					m_I = 2 * m_mass / 5 * radius * radius;
+			}
+		}
+
+		m_1overI = 1 / m_I;
 	}
 
 	float RigidBody::GetMass()
 	{
 		return m_mass;
+	}
+
+	float RigidBody::GetI()
+	{
+		return m_I;
+	}
+
+	void RigidBody::UpdateI()
+	{
+		// Get new moment of inertia
+		if (GetParent() != nullptr)
+		{
+			Sprite* sprite = GetParent()->GetSprite();
+			if (sprite != nullptr)
+			{
+				float width = sprite->GetTextureWidth() / 10;
+				float height = sprite->GetTextureHeight() / 10;
+				float radius = (width + height) / 2; // rough estimate
+				if (width != 0 && height != 0)
+					m_I = 2 * m_mass / 5 * radius * radius;
+			}
+		}
+
+		m_1overI = 1 / m_I;
+	}
+
+	void RigidBody::SetTorquesAllowed(bool b_allowed)
+	{
+		m_b_allowTorques = b_allowed;
+	}
+
+	bool RigidBody::TorquesAllowed()
+	{
+		return m_b_allowTorques;
 	}
 
 	void RigidBody::SetAngularDrag(float angularDrag)
@@ -618,6 +680,21 @@ namespace FlatEngine {
 		return m_pendingForces;
 	}
 
+	float RigidBody::GetAngularVelocity()
+	{
+		return m_angularVelocity;
+	}
+
+	float RigidBody::GetAngularAcceleration()
+	{
+		return m_angularAcceleration;
+	}
+
+	float RigidBody::GetPendingTorques()
+	{
+		return m_pendingTorques;
+	}
+
 	void RigidBody::SetIsStatic(bool b_static)
 	{
 		m_b_isStatic = b_static;
@@ -641,6 +718,11 @@ namespace FlatEngine {
 	void RigidBody::SetPendingForces(Vector2 pendingForces)
 	{
 		m_pendingForces = pendingForces;
+	}
+
+	void RigidBody::SetAngularVelocity(float angularVelocity)
+	{
+		m_angularVelocity = angularVelocity;
 	}
 
 	void RigidBody::SetWindResistance(float windResistance)

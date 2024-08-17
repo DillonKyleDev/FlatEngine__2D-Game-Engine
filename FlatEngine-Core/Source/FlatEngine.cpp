@@ -59,7 +59,12 @@ namespace FlatEngine
 
 	// For rendering sprites
 	int F_maxSpriteLayers = 55;
-	float F_spriteScaleMultiplier = 0.2f;
+
+	// sprite size * 0.1f brings sprite down from 1 sprite pixel per 1 grid block to 10 sprite pixels per 1 grid block
+	// then to make an 8x8 sprite fit properly into a 10px by 10px grid block
+	// take the ratio of 10px / 8px and multiply it by our now scaled down sprite size to get:  0.1 * (10 / 8) = 0.125 = the scale multiplier
+	// Now our 8x8, 16x16, 32x32, etc, pixel art fits nicely inside the grid space blocks
+	float F_spriteScaleMultiplier = 0.125f;  
 
 	GameObject* F_PlayerObject = nullptr;
 	Project F_LoadedProject = Project();
@@ -1735,10 +1740,15 @@ namespace FlatEngine
 					newRigidBody->SetWindResistance(CheckJsonFloat(componentJson, "windResistance", objectName));
 					newRigidBody->SetEquilibriumForce(CheckJsonFloat(componentJson, "equilibriumForce", objectName));
 					newRigidBody->SetTerminalVelocity(CheckJsonFloat(componentJson, "terminalVelocity", objectName));				
-					newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
+					newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));	
+					newRigidBody->SetTorquesAllowed(CheckJsonBool(componentJson, "_allowTorques", objectName));
 				}
 			}
 		}
+	
+		// Update the moment of inertia if applicable
+		if (loadedObject.GetRigidBody() != nullptr)
+			loadedObject.GetRigidBody()->UpdateI();
 
 		loadedObject.SetName(objectName);
 		loadedObject.SetActive(_isActive);

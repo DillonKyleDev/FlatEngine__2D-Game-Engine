@@ -10,13 +10,23 @@ namespace FlatEngine
 {
 	// Icons / Images
 	std::string F_ResourceFailedToLoadImagePath = "Source/assets/images/icons/resourceFailedToLoad.png";	
+	// Project Hub
+	Texture F_flatEngineLogo = Texture();
+	Texture F_flatEngineLogoGradient = Texture();
 	Texture F_selectProjectImage = Texture();
 	Texture F_projectHubBgImage = Texture();
+	// File Explorer
+	Texture F_cppFileIcon = Texture();
+	Texture F_hFileIcon = Texture();
+	Texture F_luaFileIcon = Texture();
+	Texture F_pngFileIcon = Texture();
+	// Scene View
 	Texture F_transformArrow = Texture();
 	Texture F_transformArrowAllWhite = Texture();
 	Texture F_transformArrowXWhite = Texture();
 	Texture F_transformArrowYWhite = Texture();
 	Texture F_cameraIcon = Texture();
+
 	Texture F_playIcon = Texture();
 	Texture F_pauseIcon = Texture();
 	Texture F_stopIcon = Texture();
@@ -50,8 +60,17 @@ namespace FlatEngine
 
 	void CreateIcons()
 	{		
+		// Project Hub
+		F_flatEngineLogo.LoadFromFile("Source/assets/images/icons/FlatEngineLogo.png");
+		F_flatEngineLogoGradient.LoadFromFile("Source/assets/images/icons/FlatEngineLogoGradient.png");
 		F_selectProjectImage.LoadFromFile("Source/assets/images/icons/selectProject.png");
 		F_projectHubBgImage.LoadFromFile("Source/assets/images/icons/projectHubBg.png");
+		// File Explorer
+		F_cppFileIcon.LoadFromFile("Source/assets/images/icons/cpp.png");
+		F_hFileIcon.LoadFromFile("Source/assets/images/icons/h.png");
+		F_luaFileIcon.LoadFromFile("Source/assets/images/icons/lua.png");
+		F_pngFileIcon.LoadFromFile("Source/assets/images/icons/png.png");
+		// Scene View
 		F_transformArrow.LoadFromFile("Source/assets/images/icons/transformArrow.png");
 		F_transformArrowAllWhite.LoadFromFile("Source/assets/images/icons/transformArrowAllWhite.png");
 		F_transformArrowXWhite.LoadFromFile("Source/assets/images/icons/transformArrowXWhite.png");
