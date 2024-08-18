@@ -22,14 +22,12 @@ namespace FlatEngine
 		void CollectColors();
 		void CollectTextures();
 		Vector4 GetColor(std::string colorName);
-		std::shared_ptr<Texture> GetTexture(std::string textureName);
-		std::string GetPath(std::string textureName);
-		Texture *m_errorTexture;
+		std::shared_ptr<Texture>GetTextureObject(std::string textureName);
+		SDL_Texture* GetTexture(std::string textureName);		
 	private:
 		std::map<std::string, Vector4> m_colors;
-		std::map<std::string, std::shared_ptr<Texture>> m_textures;
-		std::map<std::string, std::string> m_paths;
+		std::map<std::string, std::shared_ptr<Texture>> m_textures;		
 		std::string m_resourceFailedToLoadImagePath;
-
+		Texture m_errorTexture;
 	};
 }

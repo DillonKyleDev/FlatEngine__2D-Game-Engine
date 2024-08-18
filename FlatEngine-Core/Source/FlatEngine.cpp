@@ -51,8 +51,7 @@
 namespace FlatEngine
 {
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
-	std::shared_ptr<AssetManager> F_AssetManager = std::make_shared<AssetManager>();
-	std::vector<std::shared_ptr<Texture>> F_Textures = std::vector<std::shared_ptr<Texture>>();
+	AssetManager F_AssetManager = AssetManager();
 
 
 	bool _isDebugMode = true;
@@ -112,6 +111,15 @@ namespace FlatEngine
 		F_fontCinzel = NULL;
 	}
 
+	std::shared_ptr<Texture> GetTextureObject(std::string textureName)
+	{
+		return F_AssetManager.GetTextureObject(textureName);
+	}
+
+	SDL_Texture* GetTexture(std::string textureName)
+	{
+		return F_AssetManager.GetTexture(textureName);
+	}
 
 	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
 	{
@@ -248,10 +256,8 @@ namespace FlatEngine
 							InitLua();
 							LogString("Lua initialized...");
 
-							F_AssetManager->CollectColors();         // Collect global colors
-							F_AssetManager->CollectTextures();       // Collect and create Texture icons
-							//CollectColors();						// Collect global colors
-							//CollectTextures();					// Collect and create Texture icons
+							F_AssetManager.CollectColors();         // Collect global colors
+							F_AssetManager.CollectTextures();       // Collect and create Texture icons
 							
 							LogString("Ready...");
 							LogSeparator();

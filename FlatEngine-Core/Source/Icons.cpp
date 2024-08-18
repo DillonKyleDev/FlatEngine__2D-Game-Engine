@@ -171,48 +171,48 @@ namespace FlatEngine
 
 	void CreateIcons()
 	{		
-		// Project Hub
-		F_flatEngineLogo.LoadFromFile("Source/assets/images/icons/FlatEngineLogo.png");
-		F_flatEngineLogoGradient.LoadFromFile("Source/assets/images/icons/FlatEngineLogoGradient.png");
-		F_selectProjectImage.LoadFromFile("Source/assets/images/icons/selectProject.png");
-		F_projectHubBgImage.LoadFromFile("Source/assets/images/icons/projectHubBg.png");
-		// File Explorer
-		F_cppFileIcon.LoadFromFile("Source/assets/images/icons/cpp.png");
-		F_hFileIcon.LoadFromFile("Source/assets/images/icons/h.png");
-		F_luaFileIcon.LoadFromFile("Source/assets/images/icons/lua.png");
-		F_pngFileIcon.LoadFromFile("Source/assets/images/icons/png.png");
-		// Scene View
-		F_transformArrow.LoadFromFile("Source/assets/images/icons/transformArrow.png");
-		F_transformArrowAllWhite.LoadFromFile("Source/assets/images/icons/transformArrowAllWhite.png");
-		F_transformArrowXWhite.LoadFromFile("Source/assets/images/icons/transformArrowXWhite.png");
-		F_transformArrowYWhite.LoadFromFile("Source/assets/images/icons/transformArrowYWhite.png");
-		F_cameraIcon.LoadFromFile("Source/assets/images/icons/camera.png");
-		// Attribution for Camera icon
-		/*<a href = "https://www.flaticon.com/free-icons/movie-camera" title = "movie camera icons">Movie camera icons created by Freepik - Flaticon< / a>*/
-		F_playIcon.LoadFromFile("Source/assets/images/icons/play.png");
-		F_pauseIcon.LoadFromFile("Source/assets/images/icons/pause.png");
-		F_stopIcon.LoadFromFile("Source/assets/images/icons/stop.png");
-		F_nextFrameIcon.LoadFromFile("Source/assets/images/icons/next.png");
-		F_expandIcon.LoadFromFile("Source/assets/images/icons/expand.png");
-		F_expandFlippedIcon.LoadFromFile("Source/assets/images/icons/collapse.png");
-		F_trashIcon.LoadFromFile("Source/assets/images/icons/delete.png");
-		F_openFileIcon.LoadFromFile("Source/assets/images/icons/open.png");
-		F_newFileIcon.LoadFromFile("Source/assets/images/icons/new.png");
-		F_saveFileIcon.LoadFromFile("Source/assets/images/icons/save.png");
-		F_saveAsFileIcon.LoadFromFile("Source/assets/images/icons/saveAs.png");
-		F_keyFrameIcon.LoadFromFile("Source/assets/images/icons/keyFrame.png");
-		F_threeDotsIcon.LoadFromFile("Source/assets/images/icons/threeDots.png");
-		F_showIcon.LoadFromFile("Source/assets/images/icons/show.png");
-		F_hideIcon.LoadFromFile("Source/assets/images/icons/hide.png");
-		F_prefabCubeIcon.LoadFromFile("Source/assets/images/icons/prefabCube.png");
-		F_leftIcon.LoadFromFile("Source/assets/images/icons/left.png");
-		F_rightIcon.LoadFromFile("Source/assets/images/icons/right.png");
-		F_downIcon.LoadFromFile("Source/assets/images/icons/down.png");
-		F_upIcon.LoadFromFile("Source/assets/images/icons/up.png");
-		F_upLeftIcon.LoadFromFile("Source/assets/images/icons/upLeft.png");
-		F_upRightIcon.LoadFromFile("Source/assets/images/icons/upRight.png");
-		F_downLeftIcon.LoadFromFile("Source/assets/images/icons/downLeft.png");
-		F_downRightIcon.LoadFromFile("Source/assets/images/icons/downRight.png");
-		F_centerIcon.LoadFromFile("Source/assets/images/icons/center.png");
+		//// Project Hub
+		//F_flatEngineLogo.LoadFromFile("Source/assets/images/icons/FlatEngineLogo.png");
+		//F_flatEngineLogoGradient.LoadFromFile("Source/assets/images/icons/FlatEngineLogoGradient.png");
+		//F_selectProjectImage.LoadFromFile("Source/assets/images/icons/selectProject.png");
+		//F_projectHubBgImage.LoadFromFile("Source/assets/images/icons/projectHubBg.png");
+		//// File Explorer
+		//F_cppFileIcon.LoadFromFile("Source/assets/images/icons/cpp.png");
+		//F_hFileIcon.LoadFromFile("Source/assets/images/icons/h.png");
+		//F_luaFileIcon.LoadFromFile("Source/assets/images/icons/lua.png");
+		//F_pngFileIcon.LoadFromFile("Source/assets/images/icons/png.png");
+		//// Scene View
+		//F_transformArrow.LoadFromFile("Source/assets/images/icons/transformArrow.png");
+		//F_transformArrowAllWhite.LoadFromFile("Source/assets/images/icons/transformArrowAllWhite.png");
+		//F_transformArrowXWhite.LoadFromFile("Source/assets/images/icons/transformArrowXWhite.png");
+		//F_transformArrowYWhite.LoadFromFile("Source/assets/images/icons/transformArrowYWhite.png");
+		//F_cameraIcon.LoadFromFile("Source/assets/images/icons/camera.png");
+		//// Attribution for Camera icon
+		///*<a href = "https://www.flaticon.com/free-icons/movie-camera" title = "movie camera icons">Movie camera icons created by Freepik - Flaticon< / a>*/
+		//F_playIcon.LoadFromFile("Source/assets/images/icons/play.png");
+		//F_pauseIcon.LoadFromFile("Source/assets/images/icons/pause.png");
+		//F_stopIcon.LoadFromFile("Source/assets/images/icons/stop.png");
+		//F_nextFrameIcon.LoadFromFile("Source/assets/images/icons/next.png");
+		//F_expandIcon.LoadFromFile("Source/assets/images/icons/expand.png");
+		//F_expandFlippedIcon.LoadFromFile("Source/assets/images/icons/collapse.png");
+		//F_trashIcon.LoadFromFile("Source/assets/images/icons/delete.png");
+		//F_openFileIcon.LoadFromFile("Source/assets/images/icons/open.png");
+		//F_newFileIcon.LoadFromFile("Source/assets/images/icons/new.png");
+		//F_saveFileIcon.LoadFromFile("Source/assets/images/icons/save.png");
+		//F_saveAsFileIcon.LoadFromFile("Source/assets/images/icons/saveAs.png");
+		//F_keyFrameIcon.LoadFromFile("Source/assets/images/icons/keyFrame.png");
+		//F_threeDotsIcon.LoadFromFile("Source/assets/images/icons/threeDots.png");
+		//F_showIcon.LoadFromFile("Source/assets/images/icons/show.png");
+		//F_hideIcon.LoadFromFile("Source/assets/images/icons/hide.png");
+		//F_prefabCubeIcon.LoadFromFile("Source/assets/images/icons/prefabCube.png");
+		//F_leftIcon.LoadFromFile("Source/assets/images/icons/left.png");
+		//F_rightIcon.LoadFromFile("Source/assets/images/icons/right.png");
+		//F_downIcon.LoadFromFile("Source/assets/images/icons/down.png");
+		//F_upIcon.LoadFromFile("Source/assets/images/icons/up.png");
+		//F_upLeftIcon.LoadFromFile("Source/assets/images/icons/upLeft.png");
+		//F_upRightIcon.LoadFromFile("Source/assets/images/icons/upRight.png");
+		//F_downLeftIcon.LoadFromFile("Source/assets/images/icons/downLeft.png");
+		//F_downRightIcon.LoadFromFile("Source/assets/images/icons/downRight.png");
+		//F_centerIcon.LoadFromFile("Source/assets/images/icons/center.png");
 	}
 }

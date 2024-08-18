@@ -4,6 +4,7 @@
 #include "EntryPoint.h"
 #include "Application.h"
 #include "GameLoop.h"
+#include "AssetManager.h"
 #include "Window.h"
 #include "Project.h"
 #include "Process.h"
@@ -215,7 +216,12 @@ public:
 
 		// Application specific rendering tasks
 		
-
+		//////////////////////////////
+		////////  WARNING!  //////////
+		//////////////////////////////
+		//  After recreating the window, you need to recreate any assets that were created using that window!!!    // 
+		//  This can lead to assets not appearing even though everything seems like it should be working and fine  //
+		
 		// If window was recreated this frame
 		if (m_recreateWindow)
 		{
@@ -223,6 +229,8 @@ public:
 			ImPlot::DestroyContext();
 			ImGui::DestroyContext();
 			FlatEngine::SetupImGui();
+			FlatEngine::F_AssetManager.CollectColors();
+			FlatEngine::F_AssetManager.CollectTextures();
 			FlatEngine::CreateIcons();
 			m_recreateWindow = false;
 			FlatGui::OpenProject(m_startupProject);

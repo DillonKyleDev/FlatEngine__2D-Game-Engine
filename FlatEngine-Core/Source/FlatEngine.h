@@ -38,9 +38,7 @@ namespace FlatEngine
 	extern sol::state F_Lua;
 	extern std::vector<std::string> F_luaScriptNames;
 	class AssetManager;
-	extern std::shared_ptr<AssetManager> F_AssetManager;
-	class Texture;
-	extern std::vector<std::shared_ptr<Texture>> F_Textures;
+	extern AssetManager F_AssetManager;
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
@@ -283,6 +281,8 @@ namespace FlatEngine
 
 	extern bool LoadFonts();
 	extern void FreeFonts();
+	extern std::shared_ptr<Texture> GetTextureObject(std::string textureName);
+	extern SDL_Texture* GetTexture(std::string textureName);
 
 	extern void SetupImGui();
 	extern void QuitImGui();

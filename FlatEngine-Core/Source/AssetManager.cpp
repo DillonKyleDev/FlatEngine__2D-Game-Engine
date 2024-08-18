@@ -10,9 +10,8 @@ namespace FlatEngine
 	{
 		m_colors = std::map<std::string, Vector4>();		
 		m_textures = std::map<std::string, std::shared_ptr<Texture>>();
-		m_resourceFailedToLoadImagePath = "Source/assets/images/icons/resourceFailedToLoad.png";
-		m_errorTexture = new Texture();
-		m_paths = std::map<std::string, std::string>();
+		m_errorTexture = Texture();
+		m_resourceFailedToLoadImagePath = "";	
 	}
 
 	AssetManager::~AssetManager()
@@ -25,7 +24,7 @@ namespace FlatEngine
 		if (DoesFileExist("../engine-assets/scripts/Colors.lua"))
 		{
 			auto script = F_Lua.safe_script_file("../engine-assets/scripts/Colors.lua");
-			std::optional<sol::table> colorTable = F_Lua["m_colors"];
+			std::optional<sol::table> colorTable = F_Lua["F_Colors"];
 
 			if (colorTable)
 			{
@@ -40,19 +39,18 @@ namespace FlatEngine
 				}
 			}
 		}
-	}
+	}	
 
 	void AssetManager::CollectTextures()
 	{
+		m_textures.clear();
+
 		// Load in lua script
 		if (DoesFileExist("../engine-assets/scripts/Textures.lua"))
 		{
 			auto script = F_Lua.safe_script_file("../engine-assets/scripts/Textures.lua");
-			m_resourceFailedToLoadImagePath = F_Lua["F_ResourceFailedToLoadImagePath"];
-
-			std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-			newTexture->LoadFromFile("Source/assets/images/icons/cpp.png");
-			FlatEngine::F_Textures.push_back(newTexture);			
+			sol::object errPath = F_Lua["F_ResourceFailedToLoadImagePath"];
+			m_resourceFailedToLoadImagePath = errPath.as<std::string>();
 
 			std::optional<sol::table> textureTable = F_Lua["F_Textures"];
 			if (textureTable)
@@ -64,19 +62,16 @@ namespace FlatEngine
 					std::string sKey = key.as<std::string>();     // cast key as a string
 					std::string sValue = value.as<std::string>(); // cast key as a string
 
-					std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();
-					std::pair<std::string, std::shared_ptr<Texture>> newPair = { sKey, newTexture };
+					std::shared_ptr<Texture> newTexture = std::make_shared<Texture>();					
 					m_textures.emplace(sKey, newTexture);
 					m_textures.at(sKey)->LoadFromFile(sValue);
-
-					m_paths.emplace(sKey, sValue);
 				}
 			}
 		}
 
 		// Load error texture
 		if (m_resourceFailedToLoadImagePath != "")
-			m_errorTexture->LoadFromFile("Source/assets/images/icons/cpp.png");
+			m_errorTexture.LoadFromFile(m_resourceFailedToLoadImagePath);
 	}
 
 	Vector4 AssetManager::GetColor(std::string colorName)
@@ -87,18 +82,19 @@ namespace FlatEngine
 			return Vector4(0.0f, 0.0f, 1.0f, 1.0f); // Return red
 	}
 
-	std::shared_ptr<Texture> AssetManager::GetTexture(std::string textureName)
+	std::shared_ptr<Texture> AssetManager::GetTextureObject(std::string textureName)
 	{
 		if (m_textures.count(textureName))
 			return m_textures.at(textureName);
 		else
 			return nullptr; // Return "failed to load texture" texture
 	}
-	std::string AssetManager::GetPath(std::string textureName)
+
+	SDL_Texture* AssetManager::GetTexture(std::string textureName)
 	{
-		if (m_paths.count(textureName))
-			return m_paths.at(textureName);
+		if (m_textures.count(textureName))
+			return m_textures.at(textureName)->GetTexture();
 		else
-			return m_resourceFailedToLoadImagePath; // Return "failed to load texture" texture
+			return nullptr; // Return "failed to load texture" texture
 	}
 }

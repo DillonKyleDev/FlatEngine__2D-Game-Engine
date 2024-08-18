@@ -12,6 +12,7 @@ F_Textures = {
 	luaFileIcon = "../engine-assets/images/icons/lua.png",
 	pngFileIcon = "../engine-assets/images/icons/png.png",
 	folderFileIcon = "../engine-assets/images/icons/folder.png",
+	fileFileIcon = "../engine-assets/images/icons/file.png",
 	-- Scene View
 	transformArrow = "../engine-assets/images/icons/transformArrow.png",
 	transformArrowAllWhite = "../engine-assets/images/icons/transformArrowAllWhite.png",

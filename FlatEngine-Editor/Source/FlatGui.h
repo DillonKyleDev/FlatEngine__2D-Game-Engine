@@ -78,6 +78,8 @@ namespace FlatGui
 	extern void OpenProject(std::string path);
 	extern void SaveProject(Project project, std::string path);
 
+	extern std::vector<std::string> FG_clickedExplorerFiles;
+
 	// Focused GameObject
 	extern long FocusedGameObjectID;
 	extern void SetFocusedGameObjectID(long ID);
@@ -163,6 +165,7 @@ namespace FlatGui
 	extern void RenderDirNodes(std::string dir, std::string& filepath_clicked);
 	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
 	extern void RenderDirItems(std::filesystem::path fs_filepath);
+	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 dimensions, Vector2 currentPos);
 
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
