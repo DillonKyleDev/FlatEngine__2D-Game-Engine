@@ -121,6 +121,16 @@ namespace FlatEngine
 		return F_AssetManager.GetTexture(textureName);
 	}
 
+	Vector4 GetColor(std::string colorName)
+	{
+		return F_AssetManager.GetColor(colorName);
+	}
+
+	Uint32 GetColor32(std::string colorName)
+	{
+		return F_AssetManager.GetColor32(colorName);
+	}
+
 	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor)
 	{
 		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f

@@ -283,6 +283,8 @@ namespace FlatEngine
 	extern void FreeFonts();
 	extern std::shared_ptr<Texture> GetTextureObject(std::string textureName);
 	extern SDL_Texture* GetTexture(std::string textureName);
+	extern Vector4 GetColor(std::string colorName);
+	extern Uint32 GetColor32(std::string colorName);
 
 	extern void SetupImGui();
 	extern void QuitImGui();

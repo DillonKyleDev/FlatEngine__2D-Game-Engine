@@ -82,6 +82,14 @@ namespace FlatEngine
 			return Vector4(0.0f, 0.0f, 1.0f, 1.0f); // Return red
 	}
 
+	Uint32 AssetManager::GetColor32(std::string colorName)
+	{
+		if (m_colors.count(colorName))
+			return ImGui::GetColorU32(m_colors.at(colorName));
+		else
+			return ImGui::GetColorU32(Vector4(0.0f, 0.0f, 1.0f, 1.0f)); // Return red
+	}
+
 	std::shared_ptr<Texture> AssetManager::GetTextureObject(std::string textureName)
 	{
 		if (m_textures.count(textureName))

@@ -11,6 +11,8 @@ namespace FlatGui
 {
 	std::map<std::string, bool> FG_fileExplorerLeafTracker = std::map<std::string, bool>();
 	std::vector<std::string> FG_clickedExplorerFiles = std::vector<std::string>();
+	std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails = std::map<std::string, std::shared_ptr<Texture>>();
+	Vector2 maxThumbnailSize = Vector2(100, 75);
 
 	void RenderFileExplorer()
 	{		
@@ -153,7 +155,7 @@ namespace FlatGui
 					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
 				Vector2 currentPos = ImGui::GetCursorScreenPos();
 
-				RenderFileIcon(entry, Vector2(iconWidth, iconHeight), currentPos);
+				RenderFileIcon(entry, currentPos);
 
 				if (iconsThisRow != maxIconsPerRow)
 				{
@@ -166,11 +168,14 @@ namespace FlatGui
 		}
 	}
 
-	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 dimensions, Vector2 currentPos)
+	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos)
 	{
 		std::string extension = fs_filepath.extension().string();
 		std::string icon;
 		Vector2 filenamePadding = Vector2(5, 15);
+		std::shared_ptr<Texture> thumbnail;
+		SDL_Texture* texture = nullptr;		
+		Vector2 dimensions;
 
 		if (std::filesystem::is_directory(fs_filepath.string()))
 			icon = "folderFileIcon";
@@ -181,15 +186,42 @@ namespace FlatGui
 		else if (extension == ".lua")
 			icon = "luaFileIcon";
 		else if (extension == ".png")
+		{
 			icon = "pngFileIcon";
+			if (FG_visibleThumbnails.count(fs_filepath.string()) < 1)
+			{
+				thumbnail = std::make_shared<Texture>(fs_filepath.string());
+				FG_visibleThumbnails.emplace(fs_filepath.string(), thumbnail);
+			}
+		}
 		else
 			icon = "fileFileIcon";
+	
+		if  (FG_visibleThumbnails.count(fs_filepath.string()))
+			thumbnail = FG_visibleThumbnails.at(fs_filepath.string());
+		else
+			thumbnail = FlatEngine::GetTextureObject(icon);
 
-		SDL_Texture* texture = FlatEngine::GetTexture(icon);
+		texture = thumbnail->GetTexture();
+		dimensions = Vector2(thumbnail->GetWidth(), thumbnail->GetHeight());
 
-		
+		float xAspect = dimensions.x / dimensions.y;
+		float yAspect = dimensions.y / dimensions.x;
 
-		if (FlatEngine::RenderImageButton("##" + icon + fs_filepath.string(), texture, dimensions, 5, FlatEngine::F_transparentColor))
+		if (dimensions.x > maxThumbnailSize.x && dimensions.y < maxThumbnailSize.y)
+		{
+			dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
+		}
+		if (dimensions.y > maxThumbnailSize.y && dimensions.x < maxThumbnailSize.x)
+			dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
+		else if (dimensions.x - maxThumbnailSize.x > dimensions.y - maxThumbnailSize.y)
+		{
+			dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
+		}
+		else
+			dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
+
+		if (FlatEngine::RenderImageButton("##" + icon + fs_filepath.string(), texture, dimensions, 5, FlatEngine::F_transparentColor, FlatEngine::F_whiteColor, FlatEngine::F_transparentColor))
 		{
 
 		}
