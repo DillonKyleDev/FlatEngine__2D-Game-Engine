@@ -19,8 +19,6 @@
 #include <sol.hpp>
 
 
-
-
 /*
 ######################################
 ######							######
@@ -30,20 +28,12 @@
 */
 
 class GameManager;
-class Vector4;
 
 namespace FlatEngine
 {
-	extern std::shared_ptr<Application> F_Application;
-	extern sol::state F_Lua;
-	extern std::vector<std::string> F_luaScriptNames;
+	class Vector2;
+	class Vector4;
 	class AssetManager;
-	extern AssetManager F_AssetManager;
-
-	extern bool _isDebugMode;
-	extern bool _closeProgram;
-
-
 	class GameLoop;
 	class Project;
 	class Scene;
@@ -71,174 +61,15 @@ namespace FlatEngine
 
 	using ComponentTypes = Component::ComponentTypes;
 
+	extern std::string F_DirectoriesLuaFilepath; // If you change the location of Directories.lua, be sure to update this value in FlatEngine.cpp
+	extern std::shared_ptr<Application> F_Application;
+	extern sol::state F_Lua;
+	extern std::vector<std::string> F_luaScriptNames;
+	extern AssetManager F_AssetManager;
+	extern std::vector<std::string> F_selectedFiles;
 
-	//////////////////////
-	//Global      Colors//
-	//  //////VV///////  /
-	//     UUUUUUUU     //
-	///\-------------/////
-	//////////////////////
-	extern Vector4 F_transparentColor;
-	extern Vector4 F_whiteColor;
-	//////////////////////
-	// Components ////////
-	//////////////////////
-	extern Vector4 F_componentBorderColor;
-	// Collider borders
-	extern Vector4 F_colliderActiveColor;
-	extern Vector4 F_colliderInactiveColor;
-	extern Vector4 F_colliderCollidingColor;
-	// Button Components
-	extern Vector4 F_buttonComponentActiveColor;
-	extern Vector4 F_buttonComponentInctiveColor;
-	extern Vector4 F_buttonComponentInctiveColor;
-	// Canvas
-	extern Vector4 F_canvasBorderColor;
-	// Camera
-	extern Vector4 F_cameraBoxColor;
-	// Log
-	extern Vector4 F_logTextColor;
-	extern Vector4 F_logBgColor;
-	extern Vector4 F_logOutlineColor;
-	// Window Explorer
-	extern Vector4 F_explorerFilesBg;
-	//////////////////////
-	/// Window  Colors ///
-	//////////////////////
-	extern Vector4 F_selectProjectBgColor;
-	extern Vector4 F_outerWindowColor;
-	extern Vector4 F_innerWindowColor;
-	extern Vector4 F_singleItemColor;
-	extern Vector4 F_windowTitleBg;
-	extern Vector4 F_windowBgColor;
-	extern Vector4 F_frameBgColor;
-	extern Vector4 F_frameBgActiveColor;
-	extern Vector4 F_frameBgHoveredColor;
-	extern Vector4 F_dockingPreviewColor;
-	extern Vector4 F_dockingPreviewEmptyColor;
-	// tabs
-	extern Vector4 F_tabColor;
-	extern Vector4 F_tabHoveredColor;
-	extern Vector4 F_tabUnfocusedColor;
-	extern Vector4 F_tabUnfocusedActiveColor;
-	extern Vector4 F_tabActiveColor;
-	// title
-	extern Vector4 F_titleBgColor;
-	extern Vector4 F_titleBgActiveColor;
-	extern Vector4 F_titleBgCollapsedColor;
-	// Text
-	extern Vector4 F_textSelectedBgColor;
-	// Resizers
-	extern Vector4 F_resizeGripColor;
-	extern Vector4 F_resizeGripActiveColor;
-	extern Vector4 F_resizeGripHoveredColor;
-	// Misc (not sure what they're for)
-	extern Vector4 F_popupBgColor;
-	extern Vector4 F_navWindowHighlightColor;
-	extern Vector4 F_navHighlightColor;
-	extern Vector4 F_navWindowDimBgColor;
-	extern Vector4 F_modalWindowDimBgColor;
-	////////////////////
-	// Custom Colors ///
-	//////////////////// 
-	// Input
-	extern Vector4 F_inputColor;
-	// Tables
-	extern Vector4 F_noEditTableTextColor;
-	extern Vector4 F_noEditTableRowFieldBgColor;
-	extern Vector4 F_noEditTableRowValueBgColor;
-	extern Vector4 F_tableCellLightColor;
-	extern Vector4 F_tableCellDarkColor;
-	// Trees
-	extern Vector4 F_treeSelectableColor;
-	extern Vector4 F_treeSelectableHoveredColor;
-	extern Vector4 F_treeSelectableActiveColor;
-	extern Vector4 F_treeSelectableSelectedColor;
-	extern Vector4 F_hierarchyChildObjectColor;
-	// Combos
-	extern Vector4 F_comboBgColor;
-	extern Vector4 F_comboHoveredColor;
-	extern Vector4 F_comboSelectableColor;
-	extern Vector4 F_comboArrowColor;
-	extern Vector4 F_comboArrowHoveredColor;
-	extern Vector4 F_comboSelectedColor;
-	extern Vector4 F_comboHighlightedColor;
-	// Buttons
-	extern Vector4 F_buttonColor;
-	extern Vector4 F_buttonHoveredColor;
-	extern Vector4 F_buttonActiveColor;
-	extern Vector4 F_imageButtonColor;
-	extern Vector4 F_imageButtonDarkColor;
-	extern Vector4 F_imageButtonHoveredColor;
-	extern Vector4 F_imageButtonActiveColor;
-	extern Vector4 F_imageButtonTintColor;
-	// Sliders/Drags
-	extern Vector4 F_sliderColor;
-	extern Vector4 F_sliderHoveredColor;
-	extern Vector4 F_sliderActiveColor;
-	extern Vector4 F_dragColor;
-	extern Vector4 F_dragHoveredColor;
-	extern Vector4 F_dragActiveColor;
-	// Checkboxes
-	extern Vector4 F_checkboxBgColor;
-	extern Vector4 F_checkboxCheckColor;
-	extern Vector4 F_checkboxHoveredColor;
-	extern Vector4 F_checkboxActiveColor;
-	////////////////////
-	//// End Colors ////
-	////////////////////
-
-	// Icons
-	//extern std::string F_ResourceFailedToLoadImagePath;	
-	// Project Hub
-	extern Texture F_flatEngineLogo;
-	extern Texture F_flatEngineLogoGradient;
-	extern Texture F_selectProjectImage;	
-	extern Texture F_projectHubBgImage;
-	// File Explorer
-	extern Texture F_cppFileIcon;
-	extern Texture F_hFileIcon;
-	extern Texture F_luaFileIcon;
-	extern Texture F_pngFileIcon;
-	// Scene View
-	extern Texture F_transformArrow;
-	extern Texture F_transformArrowAllWhite;
-	extern Texture F_transformArrowXWhite;
-	extern Texture F_transformArrowYWhite;
-
-	extern Texture F_cameraIcon;
-	extern Texture F_playIcon;
-	extern Texture F_pauseIcon;
-	extern Texture F_stopIcon;
-	extern Texture F_nextFrameIcon;
-	extern Texture F_expandIcon;
-	extern Texture F_expandFlippedIcon;
-	extern Texture F_trashIcon;
-	extern Texture F_openFileIcon;
-	extern Texture F_newFileIcon;
-	extern Texture F_saveFileIcon;
-	extern Texture F_saveAsFileIcon;
-	extern Texture F_keyFrameIcon;
-	extern Texture F_timelineScrubberIcon;
-	extern Texture F_threeDotsIcon;
-	extern Texture F_showIcon;
-	extern Texture F_hideIcon;
-	extern Texture F_prefabCubeIcon;
-	extern Texture F_leftIcon;
-	extern Texture F_rightIcon;
-	extern Texture F_downIcon;
-	extern Texture F_upIcon;
-	extern Texture F_upLeftIcon;
-	extern Texture F_upRightIcon;
-	extern Texture F_downLeftIcon;
-	extern Texture F_downRightIcon;
-	extern Texture F_centerIcon;
-
-	// Texture Colors
-	extern Vector2 F_uv0;
-	extern Vector2 F_uv1;
-	extern Vector4 F_tint_col;
-	extern Vector4 F_bg_col;
+	extern bool _isDebugMode;
+	extern bool _closeProgram;
 
 	// Flags
 	extern ImGuiChildFlags F_childFlags;
@@ -281,6 +112,8 @@ namespace FlatEngine
 
 	extern bool LoadFonts();
 	extern void FreeFonts();
+	extern std::string GetDir(std::string dirName);
+	extern std::string GetFilePath(std::string fileName);
 	extern std::shared_ptr<Texture> GetTextureObject(std::string textureName);
 	extern SDL_Texture* GetTexture(std::string textureName);
 	extern Vector4 GetColor(std::string colorName);
@@ -288,7 +121,6 @@ namespace FlatEngine
 
 	extern void SetupImGui();
 	extern void QuitImGui();
-	extern void CreateIcons();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
@@ -404,14 +236,14 @@ namespace FlatEngine
 	extern void EndImGuiRender();
 	extern void SetNextViewportToFillWindow();
 
-	extern void BeginWindow(std::string name, Vector4 bgColor = F_windowBgColor);
-	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = F_windowBgColor);
-	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = F_windowBgColor);
+	extern void BeginWindow(std::string name, Vector4 bgColor = GetColor("windowBg"));
+	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = GetColor("windowBg"));
+	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = GetColor("windowBg"));
 	extern void EndWindow();
-	extern void BeginWindowChild(std::string title, Vector4 bgColor = F_outerWindowColor);
-	extern void BeginResizeWindowChild(std::string title, Vector4 bgColor = F_outerWindowColor);
+	extern void BeginWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"));
+	extern void BeginResizeWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"));
 	extern void EndWindowChild();
-	extern void PushWindowStyles(Vector4 bgColor = F_windowBgColor);
+	extern void PushWindowStyles(Vector4 bgColor = GetColor("windowBg"));
 	extern void PopWindowStyles();
 	extern void PushComboStyles();
 	extern void PopComboStyles();
@@ -428,8 +260,8 @@ namespace FlatEngine
 	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
 	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
-	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = F_buttonColor, Vector4 hoverColor = F_buttonHoveredColor, Vector4 activeColor = F_buttonActiveColor);
-	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = F_imageButtonColor, Vector4 tint = F_imageButtonTintColor, Vector4 hoverColor = F_imageButtonHoveredColor, Vector4 activeColor = F_imageButtonActiveColor);
+	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
+	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);
@@ -455,6 +287,7 @@ namespace FlatEngine
 	extern std::string OpenSaveFileExplorer();
 	extern std::string OpenLoadFileExplorer();
 	extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
+	extern std::string MakePathRelative(std::string filepath);
 	extern std::string GetCurrentDir();
 	extern bool DoesFileExist(std::string filepath);
 	extern bool FilepathHasExtension(std::string filepath, std::string extension);

@@ -6,7 +6,8 @@
 #include "Vector2.h"
 
 
-namespace FlatEngine {
+namespace FlatEngine 
+{
 	CharacterController::CharacterController(long myID, long parentID)
 	{
 		SetType(ComponentTypes::T_CharacterController);

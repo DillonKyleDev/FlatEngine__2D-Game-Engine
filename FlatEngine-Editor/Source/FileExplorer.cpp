@@ -6,31 +6,48 @@
 #include <Windows.h>
 #include <iostream>
 
+namespace FL = FlatEngine;
 
 namespace FlatGui
 {
-	std::map<std::string, bool> FG_fileExplorerLeafTracker = std::map<std::string, bool>();
-	std::vector<std::string> FG_clickedExplorerFiles = std::vector<std::string>();
+	std::map<std::string, bool> FG_fileExplorerLeafTracker = std::map<std::string, bool>();	
 	std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails = std::map<std::string, std::shared_ptr<Texture>>();
-	Vector2 maxThumbnailSize = Vector2(100, 75);
+	
+	// "Local" values
+	float topThumbnailPadding = 5;
+	float horizontalThumbnailPadding = 4;
+	Vector2 maxThumbnailSize = Vector2(100, 100);
+	Vector2 iconButtonTextBoxSize = Vector2(110, 50);
+	float thumbnailTextSpacing = 5;
+	Vector2 iconButtonSize = Vector2(maxThumbnailSize.x + (horizontalThumbnailPadding * 2), maxThumbnailSize.y + thumbnailTextSpacing + iconButtonTextBoxSize.y + topThumbnailPadding);
+	int maxCharactersPerFile = 10;
+	int maxStoredLocations = 50;
+	static std::vector<std::string> lastExplorerLocations = std::vector<std::string>();
+	
 
 	void RenderFileExplorer()
 	{		
-		std::string rootDirPath = "../";
+		std::string rootDirPath = FL::GetDir("projectDir");  // Relative to the solution
 		std::filesystem::path rootPath(rootDirPath);
 		static std::string filepath_clicked = rootDirPath;
 		std::error_code err;
 		bool b_isDirectory = std::filesystem::is_directory(rootPath, err);
 
-		FlatEngine::BeginWindow("File Explorer");
+		FL::BeginWindow("File Explorer");
 		// {
-			FlatEngine::BeginResizeWindowChild("Directories Panel", FlatEngine::F_logBgColor);
+			FL::BeginResizeWindowChild("Directories Panel", FL::GetColor("logBg"));
 			// {
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_innerWindowColor);
+				Vector2 dirStartPos = ImGui::GetCursorScreenPos();
+				Vector2 dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
+				ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
+				ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
+				ImGui::Text("Directories");
+				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 				ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-				FlatEngine::PushMenuStyles();
+				FL::PushMenuStyles();
 
-				if (ImGui::BeginTable("##AnimationProperties", 1, FlatEngine::F_tableFlags))
+				if (ImGui::BeginTable("##AnimationProperties", 1, FL::F_tableFlags))
 				{
 					ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x);
 
@@ -39,11 +56,11 @@ namespace FlatGui
 
 					ImGui::EndTable();
 				}
-				FlatEngine::PopMenuStyles();
+				FL::PopMenuStyles();
 				ImGui::PopStyleVar();
 				ImGui::PopStyleColor();
 			// }
-			FlatEngine::EndWindowChild();
+			FL::EndWindowChild();
 
 
 
@@ -54,15 +71,34 @@ namespace FlatGui
 
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(100,100));
-			FlatEngine::BeginWindowChild("Files Panel", FlatEngine::F_explorerFilesBg);
+			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
 			ImGui::PopStyleVar();
-			// {				
-				RenderDirItems(filepath_clicked);				
+			// {			
+				Vector2 filesStartPos = ImGui::GetCursorScreenPos();
+				Vector2 filesEndPos = Vector2(filesStartPos.x + ImGui::GetContentRegionAvail().x, filesStartPos.y + 24);
+				ImGui::GetWindowDrawList()->AddRectFilled(filesStartPos, filesEndPos, FL::GetColor32("panelTitleBg"));
+				ImGui::SetCursorScreenPos(Vector2(filesStartPos.x + 5, filesStartPos.y + 5));
+				ImGui::Text("Files");
+				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+
+				RenderFilesTopBar(filepath_clicked);
+
+				Vector2 borderStart = ImGui::GetCursorScreenPos();
+	
+				FL::BeginWindowChild("FilesScrolling");
+				// {
+					RenderDirItems(filepath_clicked, filepath_clicked);
+				// }
+				FL::EndWindowChild();
+
+				Vector2 borderEnd = Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x, ImGui::GetCursorScreenPos().y - 3);
+				ImGui::GetWindowDrawList()->AddRect(borderStart, borderEnd, FL::GetColor32("filesPanelOutline"));
+
 			// }
-			FlatEngine::EndWindowChild();
+			FL::EndWindowChild();
 
 		// }
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 	void RenderDirNodes(std::string dir, std::string& filepath_clicked)
@@ -114,7 +150,14 @@ namespace FlatGui
 
 			b_nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, fs_filepath.filename().string().c_str());
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+			{
+				// save last location
+				if (lastExplorerLocations.size() >= maxStoredLocations)
+					lastExplorerLocations.pop_back();
+				lastExplorerLocations.push_back(filepath_clicked);
+
 				filepath_clicked = fs_filepath.string();
+			}
 
 			if (FG_fileExplorerLeafTracker.count(treeID))
 				FG_fileExplorerLeafTracker.at(treeID) = b_nodeOpen;
@@ -132,43 +175,72 @@ namespace FlatGui
 		{			
 			ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, fs_filepath.filename().string().c_str());
 			if (ImGui::IsItemClicked())
+			{
+				// save last location
+				if (lastExplorerLocations.size() >= maxStoredLocations)
+					lastExplorerLocations.pop_back();
+				lastExplorerLocations.push_back(filepath_clicked);
+
 				filepath_clicked = fs_filepath.string();
-		}
-	}
-
-	void RenderDirItems(std::filesystem::path fs_filepath)
-	{
-		float availableWidth = ImGui::GetContentRegionMax().x;
-		float iconWidth = (float)FlatEngine::GetTextureObject("folderFileIcon")->GetWidth();
-		float iconHeight = (float)FlatEngine::GetTextureObject("folderFileIcon")->GetHeight();
-		float horizontalSpacing = 10;
-		float verticalSpacing = 0;
-		int maxIconsPerRow = (int)(availableWidth / (iconWidth + horizontalSpacing) - 1);
-		int iconsThisRow = 0;
-
-		//FlatEngine::LogString(fs_filepath.string());
-		if (std::filesystem::is_directory(fs_filepath))
-		{
-			for (const auto& entry : std::filesystem::directory_iterator(fs_filepath.string()))
-			{				
-				if (iconsThisRow == 0)
-					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
-				Vector2 currentPos = ImGui::GetCursorScreenPos();
-
-				RenderFileIcon(entry, currentPos);
-
-				if (iconsThisRow != maxIconsPerRow)
-				{
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconWidth + horizontalSpacing, currentPos.y));
-					iconsThisRow++;
-				}
-				else
-					iconsThisRow = 0;
 			}
 		}
 	}
 
-	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos)
+	void RenderFilesTopBar(std::string& filepath_clicked)
+	{		
+		Vector2 topBarStart = ImGui::GetCursorScreenPos();
+		Vector2 topBarEnd = Vector2(topBarStart.x + ImGui::GetContentRegionAvail().x, topBarStart.y + 32);
+		ImGui::GetWindowDrawList()->AddRectFilled(topBarStart, topBarEnd, FL::GetColor32("filePanelTopBar")); // Background color
+		ImGui::SetCursorScreenPos(Vector2(topBarStart.x + 5, topBarStart.y + 6)); // Top padding
+
+		if (FL::RenderImageButton("##BackButtonFileExplorer", FL::GetTexture("left")))
+		{
+			if (lastExplorerLocations.size() > 0)
+			{
+				// use last location
+				filepath_clicked = lastExplorerLocations.back();
+				lastExplorerLocations.pop_back();
+			}
+		}
+		ImGui::SameLine();
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x - 2, ImGui::GetCursorScreenPos().y + 3));
+		ImGui::Text("Back");
+
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+	}
+
+	void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked)
+	{
+		float availableWidth = ImGui::GetContentRegionMax().x;
+		float horizontalSpacing = 10;
+		float verticalSpacing = 10;
+		int maxIconsPerRow = (int)(availableWidth / (iconButtonSize.x + horizontalSpacing) - 1);
+		int iconsThisRow = 0;		
+
+		if (std::filesystem::is_directory(fs_filepath))
+		{
+			for (const auto& entry : std::filesystem::directory_iterator(fs_filepath.string()))
+			{				
+				// Drawing the first button in the row
+				if (iconsThisRow == 0)
+					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+
+				Vector2 currentPos = ImGui::GetCursorScreenPos();
+
+				RenderFileIcon(entry, currentPos, filepath_clicked);
+
+				if (iconsThisRow != maxIconsPerRow)
+				{
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconButtonSize.x + horizontalSpacing, currentPos.y)); // Ready to draw the next button
+					iconsThisRow++;
+				}
+				else
+					iconsThisRow = 0;					
+			}
+		}
+	}
+
+	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked)
 	{
 		std::string extension = fs_filepath.extension().string();
 		std::string icon;
@@ -176,57 +248,132 @@ namespace FlatGui
 		std::shared_ptr<Texture> thumbnail;
 		SDL_Texture* texture = nullptr;		
 		Vector2 dimensions;
-
+		
 		if (std::filesystem::is_directory(fs_filepath.string()))
-			icon = "folderFileIcon";
+			icon = "folderFile";
 		else if (extension == ".cpp")
-			icon = "cppFileIcon";
+			icon = "cppFile";
 		else if (extension == ".h")
-			icon = "hFileIcon";
+			icon = "hFile";
 		else if (extension == ".lua")
-			icon = "luaFileIcon";
+			icon = "luaFile";
 		else if (extension == ".png")
 		{
-			icon = "pngFileIcon";
+			icon = "pngFile";
 			if (FG_visibleThumbnails.count(fs_filepath.string()) < 1)
 			{
+				// Create and save a Texture for the file if it is an image file so we can display as a thumbnail
 				thumbnail = std::make_shared<Texture>(fs_filepath.string());
 				FG_visibleThumbnails.emplace(fs_filepath.string(), thumbnail);
 			}
 		}
 		else
-			icon = "fileFileIcon";
+			icon = "unmarkedFile";
 	
+		// If it's an image we have a saved Texture for, use it
 		if  (FG_visibleThumbnails.count(fs_filepath.string()))
 			thumbnail = FG_visibleThumbnails.at(fs_filepath.string());
-		else
-			thumbnail = FlatEngine::GetTextureObject(icon);
+		else  // Else use default PNG file icon
+			thumbnail = FL::GetTextureObject(icon);
 
 		texture = thumbnail->GetTexture();
-		dimensions = Vector2(thumbnail->GetWidth(), thumbnail->GetHeight());
-
+		dimensions = Vector2((float)thumbnail->GetWidth(), (float)thumbnail->GetHeight());
 		float xAspect = dimensions.x / dimensions.y;
 		float yAspect = dimensions.y / dimensions.x;
 
+		// Resizing thumbnails
 		if (dimensions.x > maxThumbnailSize.x && dimensions.y < maxThumbnailSize.y)
 		{
 			dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
 		}
-		if (dimensions.y > maxThumbnailSize.y && dimensions.x < maxThumbnailSize.x)
+		else if (dimensions.y > maxThumbnailSize.y && dimensions.x < maxThumbnailSize.x)
 			dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
-		else if (dimensions.x - maxThumbnailSize.x > dimensions.y - maxThumbnailSize.y)
+		else if (dimensions.x > maxThumbnailSize.x && dimensions.y > maxThumbnailSize.y)
 		{
-			dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
+			if (dimensions.x - maxThumbnailSize.x > dimensions.y - maxThumbnailSize.y)
+			{
+				dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
+			}
+			else
+				dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
 		}
-		else
-			dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
+		
 
-		if (FlatEngine::RenderImageButton("##" + icon + fs_filepath.string(), texture, dimensions, 5, FlatEngine::F_transparentColor, FlatEngine::F_whiteColor, FlatEngine::F_transparentColor))
+		std::string buttonID = "FileIcon-" + fs_filepath.string();
+		int imageXOffset = (int)(((maxThumbnailSize.x - dimensions.x) / 2) + horizontalThumbnailPadding);
+		int imageYOffset = (int)(((maxThumbnailSize.y - dimensions.y) / 2) + topThumbnailPadding);
+		int textBoxXOffset = (int)(iconButtonSize.x - iconButtonTextBoxSize.x) / 2;
+		std::string truncatedName = fs_filepath.filename().string().substr(0, maxCharactersPerFile);
+		if (fs_filepath.filename().string().length() > maxCharactersPerFile)
+			truncatedName += "..";
+		float textWidth = ImGui::CalcTextSize(truncatedName.c_str()).x;
+		int filenameXOffset = (int)(iconButtonSize.x - textWidth) / 2;
+		bool b_highlightIconButton = false;
+
+
+
+		// Button interactions
+		//
+		for (std::string clickedFile : FL::F_selectedFiles)
+			if (clickedFile == fs_filepath.string())
+				b_highlightIconButton = true;
+
+		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, b_highlightIconButton);
+		if (ImGui::IsItemHovered())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+
+		bool b_clicked = ImGui::IsItemClicked();
+		bool b_doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0);
+
+		// Multi select
+		if (b_clicked)
 		{
+			if (!ImGui::GetIO().KeyCtrl)
+				FL::F_selectedFiles.clear();
 
+			bool b_alreadyClicked = false;
+
+			for (std::vector<std::string>::iterator clickedFile = FL::F_selectedFiles.begin(); clickedFile != FL::F_selectedFiles.end();)
+			{
+				if (*clickedFile == fs_filepath.string())
+				{
+					FL::F_selectedFiles.erase(clickedFile);
+					b_alreadyClicked = true;
+					break;
+				}
+				clickedFile++;
+			}
+
+			if (!b_alreadyClicked)
+				FL::F_selectedFiles.push_back(fs_filepath.string());
 		}
-		ImGui::SetCursorScreenPos(Vector2(currentPos.x + 5, currentPos.y + dimensions.y + filenamePadding.y));
-		ImGui::SetNextItemWidth(dimensions.x * 0.8f);
-		ImGui::TextWrapped(fs_filepath.filename().string().c_str());
+		if (std::filesystem::is_directory(fs_filepath.string()) && b_doubleClicked)
+		{
+			// save last location
+			if (lastExplorerLocations.size() >= maxStoredLocations)
+				lastExplorerLocations.pop_back();
+			lastExplorerLocations.push_back(filepath_clicked);
+
+			filepath_clicked = fs_filepath.string();
+		}
+
+		// Drag source
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoHoldToOpenOthers))
+		{
+			// Just saves the number of files selected and passes it to the drop source to query F_SelectedFiles
+			int numSelectedFiles = (int)FL::F_selectedFiles.size();
+			ImGui::SetDragDropPayload("FILE_PATH_DRAGGED", &numSelectedFiles, sizeof(int));
+			ImGui::Text("Use this file");
+			ImGui::EndDragDropSource();
+		}
+		
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x + imageXOffset, currentPos.y + imageYOffset));
+		ImGui::Image(texture, dimensions);
+		
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x + filenameXOffset, currentPos.y + maxThumbnailSize.y + thumbnailTextSpacing + topThumbnailPadding));
+		Vector2 startTextBoxPos = ImGui::GetCursorScreenPos();
+		ImGui::SetNextItemWidth(iconButtonTextBoxSize.x);
+		ImGui::Text(truncatedName.c_str());		
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, startTextBoxPos.y + iconButtonTextBoxSize.y));
 	}
 }

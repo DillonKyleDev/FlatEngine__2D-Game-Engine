@@ -202,9 +202,6 @@ namespace FlatEngine
 		std::string GetAnimationPath();
 		void AddEventFunction(std::string name, std::function<void(GameObject)> callback);
 		std::map<std::string, std::function<void(GameObject)>> GetEventFunctions();
-
-		// Test Animations
-		void LerpToCenter();
 	
 	private:
 		std::shared_ptr<S_AnimationProperties> animationProperties;

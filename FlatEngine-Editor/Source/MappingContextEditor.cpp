@@ -4,13 +4,15 @@
 #include "MappingContext.h"
 #include <vector>
 
-using MappingContext = FlatEngine::MappingContext;
+namespace FL = FlatEngine;
+
+using MappingContext = FL::MappingContext;
 
 namespace FlatGui 
 {
 	void RenderMappingContextEditor()
 	{
-		FlatEngine::BeginWindow("Mapping Context Editor", _showMappingContextEditor);
+		FL::BeginWindow("Mapping Context Editor", _showMappingContextEditor);
 		
 		const char* inputs[] = { 
 			// XInput
@@ -78,10 +80,10 @@ namespace FlatGui
 		// Select Mapping Context to edit //
 
 		// Section Label
-		if (FlatEngine::F_MappingContexts.size() > 0)
+		if (FL::F_MappingContexts.size() > 0)
 		{
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_innerWindowColor);
-			ImGui::BeginChild("Animation Preview", Vector2(0, 30), FlatEngine::F_headerFlags);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
+			ImGui::BeginChild("Animation Preview", Vector2(0, 30), FL::F_headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -90,19 +92,19 @@ namespace FlatGui
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		}
 
-		if (FlatEngine::F_MappingContexts.size() > 0)
+		if (FL::F_MappingContexts.size() > 0)
 		{
-			MappingContext currentContext = FlatEngine::F_MappingContexts.at(current_context);
+			MappingContext currentContext = FL::F_MappingContexts.at(current_context);
 
-			FlatEngine::PushComboStyles();
+			FL::PushComboStyles();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 184);
 			if (ImGui::BeginCombo("##contexts", currentContext.GetName().c_str()))
 			{
-				for (int n = 0; n < FlatEngine::F_MappingContexts.size(); n++)
+				for (int n = 0; n < FL::F_MappingContexts.size(); n++)
 				{
-					bool is_selected = (FlatEngine::F_MappingContexts.at(current_context).GetName() == FlatEngine::F_MappingContexts.at(n).GetName()); // You can store your selection however you want, outside or inside your objects
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_outerWindowColor);
-					if (ImGui::Selectable(FlatEngine::F_MappingContexts.at(n).GetName().c_str(), is_selected))
+					bool is_selected = (FL::F_MappingContexts.at(current_context).GetName() == FL::F_MappingContexts.at(n).GetName()); // You can store your selection however you want, outside or inside your objects
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("outerWindow"));
+					if (ImGui::Selectable(FL::F_MappingContexts.at(n).GetName().c_str(), is_selected))
 						current_context = n;
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();
@@ -110,28 +112,28 @@ namespace FlatGui
 				}
 				ImGui::EndCombo();
 			}
-			FlatEngine::PopComboStyles();
+			FL::PopComboStyles();
 
 			ImGui::SameLine();
 			// Save and create new mapping contexts
-			if (FlatEngine::F_MappingContexts.size() > 0)
+			if (FL::F_MappingContexts.size() > 0)
 			{
-				if (FlatEngine::RenderButton("Save"))
+				if (FL::RenderButton("Save"))
 				{
-					MappingContext currentContext = FlatEngine::F_MappingContexts.at(current_context);
+					MappingContext currentContext = FL::F_MappingContexts.at(current_context);
 					SaveMappingContext(currentContext.GetPath(), currentContext);
 				}
 			}
 			ImGui::SameLine(0, 5);
-			if (FlatEngine::RenderButton("Create New Context"))
+			if (FL::RenderButton("Create New Context"))
 			{
-				std::string path = FlatEngine::OpenSaveFileExplorer();
+				std::string path = FL::OpenSaveFileExplorer();
 				std::string name = path.substr(path.find_last_of("/\\") + 1);
 				MappingContext newContext = MappingContext();
 				newContext.SetPath(path);
 				newContext.SetName(name);
 				SaveMappingContext(path, newContext);
-				FlatEngine::InitializeMappingContexts();
+				FL::InitializeMappingContexts();
 			}
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -141,8 +143,8 @@ namespace FlatGui
 			// Section Label
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_innerWindowColor);
-			ImGui::BeginChild("Create New Input Action", Vector2(0, 30), FlatEngine::F_headerFlags);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
+			ImGui::BeginChild("Create New Input Action", Vector2(0, 30), FL::F_headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -162,7 +164,7 @@ namespace FlatGui
 			ImGui::Text("Input Source");
 
 			// Select New Input
-			FlatEngine::PushComboStyles();
+			FL::PushComboStyles();
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 			if (ImGui::BeginCombo("##inputs", inputs[current_input]))
@@ -177,7 +179,7 @@ namespace FlatGui
 				}
 				ImGui::EndCombo();
 			}
-			FlatEngine::PopComboStyles();
+			FL::PopComboStyles();
 
 			ImGui::NextColumn();
 
@@ -193,7 +195,7 @@ namespace FlatGui
 			ImGui::Text(nameLabel.c_str());
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 32);
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
 			if (ImGui::InputText("##InputActionName", inputActionName, IM_ARRAYSIZE(inputActionName), flags))
 			{
 				placeHolder = inputActionName;
@@ -201,7 +203,7 @@ namespace FlatGui
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
-			if (FlatEngine::RenderButton("Add"))
+			if (FL::RenderButton("Add"))
 			{
 				currentContext.AddKeyBinding(inputs[current_input], inputActionName);
 				//currentContext->AddInputAction(inputs[current_input], inputActionName);
@@ -213,8 +215,8 @@ namespace FlatGui
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_innerWindowColor);
-			ImGui::BeginChild("Existing Bindings", Vector2(0, 30), FlatEngine::F_headerFlags);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
+			ImGui::BeginChild("Existing Bindings", Vector2(0, 30), FL::F_headerFlags);
 			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -241,7 +243,7 @@ namespace FlatGui
 
 					std::string comboId = "##selectedInput" + currentContext.GetName() + std::to_string(inputIDCounter);
 
-					FlatEngine::PushComboStyles();
+					FL::PushComboStyles();
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
 					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 					if (ImGui::BeginCombo(comboId.c_str(), inputs[selected_input]))
@@ -263,7 +265,7 @@ namespace FlatGui
 						}
 						ImGui::EndCombo();
 					}
-					FlatEngine::PopComboStyles();
+					FL::PopComboStyles();
 
 					inputIDCounter++;
 				}
@@ -287,7 +289,7 @@ namespace FlatGui
 
 					std::string textLabelID = "##InputActionName" + keyBinding.second + std::to_string(inputActionIDCounter);
 
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
 					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 39);
 					if (ImGui::InputText(textLabelID.c_str(), inputActionName, IM_ARRAYSIZE(inputActionName), 0))
 					{
@@ -301,7 +303,7 @@ namespace FlatGui
 						//	 tempInputActionName = inputActionName;
 					}
 					ImGui::SameLine();
-					if (FlatEngine::RenderButton("Save"))
+					if (FL::RenderButton("Save"))
 					{
 						//currentContext->SetKeyBinding(keyBinding.first, tempInputActionName);
 					}
@@ -317,7 +319,7 @@ namespace FlatGui
 
 		ImGui::PopStyleVar();
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 }

@@ -101,7 +101,6 @@ namespace FlatEngine
 		void SetActive(bool _active);
 		bool IsActive();
 
-		std::string luaName;
 	private:
 		std::string name;
 		bool _isValid;

@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "FlatGui.h"
+#include "AssetManager.h"
 #include "Component.h"
 #include "imgui.h"
 #include "Scene.h"
@@ -320,6 +321,14 @@ namespace FlatGui
 			}
 			if (ImGui::BeginMenu("Settings"))
 			{
+				if (ImGui::MenuItem("Reload Lua Colors"))
+				{
+					FL::F_AssetManager.CollectColors();					
+				}
+				if (ImGui::MenuItem("Reload Lua Textures"))
+				{
+					FL::F_AssetManager.CollectTextures();					
+				}
 				if (ImGui::BeginMenu("Widgets"))
 				{
 					if (ImGui::BeginMenu("Scene View Icon Transparency"))

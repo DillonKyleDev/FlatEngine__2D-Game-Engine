@@ -16,7 +16,12 @@
 ######################################
 */
 
-namespace FlatEngine {
+namespace FL = FlatEngine;
+
+namespace FlatEngine 
+{
+	class Vector2;
+	class Vector4;
 	class GameObject;
 	class TagList;
 	class Texture;
@@ -40,30 +45,32 @@ namespace FlatEngine {
 	class RigidBody;
 }
 
-using GameObject = FlatEngine::GameObject;
-using TagList = FlatEngine::TagList;
-using Texture = FlatEngine::Texture;
-using Animation = FlatEngine::Animation;
-using Project = FlatEngine::Project;
-using SceneManager = FlatEngine::SceneManager;
-using Scene = FlatEngine::Scene;
-using Process = FlatEngine::Process;
-using Component = FlatEngine::Component;
-using Transform = FlatEngine::Transform;
-using Sprite = FlatEngine::Sprite;
-using Camera = FlatEngine::Camera;
-using Script = FlatEngine::Script;
-using Button = FlatEngine::Button;
-using Canvas = FlatEngine::Canvas;
-using Animation = FlatEngine::Animation;
-using Audio = FlatEngine::Audio;
-using Text = FlatEngine::Text;
-using CharacterController = FlatEngine::CharacterController;
-using BoxCollider = FlatEngine::BoxCollider;
-using CircleCollider = FlatEngine::CircleCollider;
-using RigidBody = FlatEngine::RigidBody;
+using Vector2 = FL::Vector2;
+using Vector4 = FL::Vector4;
+using GameObject = FL::GameObject;
+using TagList = FL::TagList;
+using Texture = FL::Texture;
+using Animation = FL::Animation;
+using Project = FL::Project;
+using SceneManager = FL::SceneManager;
+using Scene = FL::Scene;
+using Process = FL::Process;
+using Component = FL::Component;
+using Transform = FL::Transform;
+using Sprite = FL::Sprite;
+using Camera = FL::Camera;
+using Script = FL::Script;
+using Button = FL::Button;
+using Canvas = FL::Canvas;
+using Animation = FL::Animation;
+using Audio = FL::Audio;
+using Text = FL::Text;
+using CharacterController = FL::CharacterController;
+using BoxCollider = FL::BoxCollider;
+using CircleCollider = FL::CircleCollider;
+using RigidBody = FL::RigidBody;
 
-using ComponentTypes = FlatEngine::Component::ComponentTypes;
+using ComponentTypes = FL::Component::ComponentTypes;
 
 namespace FlatGui
 {
@@ -79,7 +86,6 @@ namespace FlatGui
 	extern void SaveProject(Project project, std::string path);
 
 	// File Explorer
-	extern std::vector<std::string> FG_clickedExplorerFiles;
 	extern std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails;
 	extern Vector2 maxThumbnailSize;
 
@@ -89,16 +95,16 @@ namespace FlatGui
 	extern long GetFocusedGameObjectID();
 
 	// Focused Animation
-	extern std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation;
+	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FocusedAnimation;
 	extern GameObject objectForFocusedAnimation;
-	extern std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit;
+	extern std::shared_ptr<FL::Animation::S_Property> selectedKeyFrameToEdit;
 	extern long previewAnimationStartTime;
 	extern long previewAnimationTime;
 	extern bool _playPreviewAnimation;
-	extern void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation);
-	extern std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation();
+	extern void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation);
+	extern std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation();
 	// Global Animation Event Functions
-	extern void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject);
+	extern void DestroySelf(std::shared_ptr<FL::GameObject> thisObject);
 
 	// Scene view
 	extern float SCENE_VIEWPORT_WIDTH;
@@ -165,10 +171,11 @@ namespace FlatGui
 	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
 	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 	extern void RenderFileExplorer();
+	extern void RenderFilesTopBar(std::string& filepath_clicked);
 	extern void RenderDirNodes(std::string dir, std::string& filepath_clicked);
 	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
-	extern void RenderDirItems(std::filesystem::path fs_filepath);
-	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos);
+	extern void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked);
+	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked);
 
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);

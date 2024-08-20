@@ -4,7 +4,9 @@
 #include "Scene.h"
 #include "Transform.h"
 
-using Transform = FlatEngine::Transform;
+namespace FL = FlatEngine;
+
+using Transform = FL::Transform;
 
 namespace FlatGui 
 {
@@ -13,7 +15,7 @@ namespace FlatGui
 		ImGuiWindowFlags window_flags = ImGuiChildFlags_AutoResizeX;
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		FlatEngine::BeginWindow("Hierarchy");
+		FL::BeginWindow("Hierarchy");
 
 		// Variables for viewport dimensions
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
@@ -25,30 +27,30 @@ namespace FlatGui
 		ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
 
 		// Render Loaded Scene text and threeDots more menu button
-		std::string sceneName = FlatEngine::GetLoadedScene()->GetName();
+		std::string sceneName = FL::GetLoadedScene()->GetName();
 		std::string loadedSceneString = "Loaded Scene: " + sceneName;
 
-		FlatEngine::RenderSectionHeader(loadedSceneString);
+		FL::RenderSectionHeader(loadedSceneString);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 26, 0);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 29);
 
-		FlatEngine::RenderImageButton("##AddGameObjectHierarchy", FlatEngine::F_threeDotsIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor);
-		FlatEngine::PushMenuStyles();
+		FL::RenderImageButton("##AddGameObjectHierarchy", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
+		FL::PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 		{
 			if (ImGui::MenuItem("Quick save"))
 			{
-				FlatEngine::SaveCurrentScene();
+				FL::SaveCurrentScene();
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Reload scene"))
 			{
-				FlatEngine::LoadScene(FlatEngine::GetLoadedScenePath());
+				FL::LoadScene(FL::GetLoadedScenePath());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
-		FlatEngine::PopMenuStyles();
+		FL::PopMenuStyles();
 
 		// Hides bottom separator in the RenderSectionHeader under hierarchy
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
@@ -60,12 +62,12 @@ namespace FlatGui
 			float isPrefabIconColumnWidth = 20;
 			static float currentIndent = 10;
 			static bool _allAreVisible = false;
-			std::map<long, GameObject> &sceneObjects = FlatEngine::GetSceneObjects();
+			std::map<long, GameObject> &sceneObjects = FL::GetSceneObjects();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });			
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_innerWindowColor);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-			ImGui::BeginTable("##HierarchyTable", 3, FlatEngine::F_tableFlags);
+			ImGui::BeginTable("##HierarchyTable", 3, FL::F_tableFlags);
 
 			ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
 			ImGui::TableSetupColumn("##OBJECT", 0, objectColumnWidth);
@@ -77,7 +79,7 @@ namespace FlatGui
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY() + 1));
 			if (_allAreVisible)
 			{
-				if (FlatEngine::RenderImageButton("##SetAllInvisible", FlatEngine::F_showIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor))
+				if (FL::RenderImageButton("##SetAllInvisible", FL::GetTexture("show"), Vector2(16, 16), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 				{
 					for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
 					{
@@ -89,7 +91,7 @@ namespace FlatGui
 			}
 			else
 			{
-				if (FlatEngine::RenderImageButton("##SetAllVisible", FlatEngine::F_hideIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor))
+				if (FL::RenderImageButton("##SetAllVisible", FL::GetTexture("hide"), Vector2(16, 16), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 				{
 					for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
 					{
@@ -103,14 +105,14 @@ namespace FlatGui
 			ImGui::TableSetColumnIndex(1);
 			Vector2 cellSize = Vector2(ImGui::GetContentRegionAvail().x + 1, 20);
 			Vector2 cursorScreen = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 1);
-			ImGui::PushStyleColor(ImGuiCol_Text, FlatEngine::F_logTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor("logText"));
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 7, ImGui::GetCursorPosY() + 4));
 			ImGui::Text("ALL SCENE OBJECTS");
 			ImGui::PopStyleColor();
 
 			ImGui::TableSetColumnIndex(2);
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 1));
-			if (FlatEngine::RenderImageButton("##PrefabCubes", FlatEngine::F_prefabCubeIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor))
+			if (FL::RenderImageButton("##PrefabCubes", FL::GetTexture("prefabCube"), Vector2(16, 16), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 			{
 				// Doesn't do anything, should just be an icon
 			}
@@ -118,11 +120,11 @@ namespace FlatGui
 			ImGui::TableNextRow();
 			ImGui::TableNextRow();
 			ImGui::TableNextRow();
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), ImGui::GetColorU32(FlatEngine::F_buttonActiveColor));
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), FL::GetColor32("buttonActive"));
 
 			static int node_clicked = -1;
 			long queuedForDelete = -1;
-			/*FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "Start: ");*/
+			/*FL::LogFloat(FL::GetEngineTime(), "Start: ");*/
 			for (std::map<long, GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 			{
 				// Add new scene Objects to the tracker as they appear
@@ -141,7 +143,7 @@ namespace FlatGui
 					AddObjectToHierarchy(currentObject, charName, node_clicked, queuedForDelete, indent);
 				}
 			}
-			//FlatEngine::LogFloat(FlatEngine::GetEngineTime(), "End: ");
+			//FL::LogFloat(FL::GetEngineTime(), "End: ");
 			if (node_clicked != -1)
 			{
 				// Update selection state
@@ -183,15 +185,15 @@ namespace FlatGui
 
 				// Unfocus focused GameObject first
 				SetFocusedGameObjectID(-1);
-				FlatEngine::DeleteGameObject(queuedForDelete);
+				FL::DeleteGameObject(queuedForDelete);
 
 				// If previous focused object still exists, set it to focused object again
-				if (FlatEngine::GetObjectById(saveFocusedObject) != nullptr)
+				if (FL::GetObjectById(saveFocusedObject) != nullptr)
 					SetFocusedGameObjectID(saveFocusedObject);
 			}
 		}
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 	// Add GameObject to Hierarchy viewport
@@ -242,12 +244,12 @@ namespace FlatGui
 		// Show Visible/Invisible Icons
 		if (currentObject.IsActive())
 		{
-			if (FlatEngine::RenderImageButton(visibleID.c_str(), FlatEngine::F_showIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_transparentColor))
+			if (FL::RenderImageButton(visibleID.c_str(), FL::GetTexture("show"), Vector2(16, 16), 0, FL::GetColor("transparent")))
 				currentObject.SetActive(false);
 		}
 		else
 		{
-			if (FlatEngine::RenderImageButton(visibleID.c_str(), FlatEngine::F_hideIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_transparentColor))
+			if (FL::RenderImageButton(visibleID.c_str(), FL::GetTexture("hide"), Vector2(16, 16), 0, FL::GetColor("transparent")))
 				currentObject.SetActive(true);
 		}
 
@@ -263,7 +265,7 @@ namespace FlatGui
 			size.x = 30;
 		std::string id = "##SwapDropSource" + std::to_string(index);
 
-		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, FlatEngine::F_buttonHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_DragDropTarget, FL::GetColor("buttonHovered"));
 		ImGui::InvisibleButton(id.c_str(), size);
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -273,11 +275,11 @@ namespace FlatGui
 				int ID = *(const int*)payload->Data;
 
 				// Save Dropped Object
-				GameObject *dropped = FlatEngine::GetObjectById(ID);
+				GameObject *dropped = FL::GetObjectById(ID);
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
-					GameObject parent = FlatEngine::GetObjectById(dropped->GetParentID());
+					GameObject parent = FL::GetObjectById(dropped->GetParentID());
 					parent.RemoveChild(dropped->GetID());
 				}
 				// Set parent ID of dropped object to -1
@@ -290,15 +292,17 @@ namespace FlatGui
 
 		bool node_open = false;
 
-		ImGui::PushStyleColor(ImGuiCol_Header, FlatEngine::F_treeSelectableSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, FlatEngine::F_treeSelectableHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, FlatEngine::F_treeSelectableActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_Header, FL::GetColor("treeSelectableSelected"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, FL::GetColor("treeSelectableHovered"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, FL::GetColor("treeSelectableActive"));
 		// Indent for the GameObject name
 		if (currentObject.GetParentID() != -1)
 		{
 			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorPos().x + indent, ImGui::GetCursorScreenPos().y));
-			// Set table cell bg color for child object						
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(FlatEngine::F_hierarchyChildObjectColor.x, FlatEngine::F_hierarchyChildObjectColor.y, FlatEngine::F_hierarchyChildObjectColor.z, FlatEngine::F_hierarchyChildObjectColor.w * .03f * indent)));
+			// Set table cell bg color for child object		
+			Vector4 childNodeColor = FL::GetColor("hierarchyChildObject");
+			childNodeColor.w *= 0.03f * indent; // Gets darker the deeper the child object is nested in the hierarchy
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(childNodeColor));
 		}
 		if (currentObject.HasChildren())
 		{
@@ -321,18 +325,18 @@ namespace FlatGui
 		Vector2 sceneViewDimensions;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
-		FlatEngine::PushWindowStyles();
+		FL::PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8);
 		sceneViewDimensions = Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 		ImGui::End();
-		FlatEngine::PopWindowStyles();
+		FL::PopWindowStyles();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 
 		// Control click a Hierarchy item to focus on it in the Scene View
 		if (ImGui::GetIO().KeyCtrl && ImGui::IsItemClicked())
 		{
-			FlatEngine::Transform* transform = currentObject.GetTransform();
+			FL::Transform* transform = currentObject.GetTransform();
 			Vector2 position = transform->GetTruePosition();
 			FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (sceneViewDimensions.x / 2), position.y * FG_sceneViewGridStep.y + (sceneViewDimensions.y / 2));
 		}
@@ -340,11 +344,11 @@ namespace FlatGui
 		// Hold Alt key and hover object in Hierarchy for ToolTip with information about that GameObject
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{	
-			FlatEngine::BeginToolTip("GameObject Data");
-			FlatEngine::RenderToolTipLong("Object ID", currentObject.GetID());
-			FlatEngine::RenderToolTipLong("Parent ID", currentObject.GetParentID());
-			FlatEngine::RenderToolTipLongVector("Children IDs", currentObject.GetChildren());
-			FlatEngine::EndToolTip();
+			FL::BeginToolTip("GameObject Data");
+			FL::RenderToolTipLong("Object ID", currentObject.GetID());
+			FL::RenderToolTipLong("Parent ID", currentObject.GetParentID());
+			FL::RenderToolTipLongVector("Children IDs", currentObject.GetChildren());
+			FL::EndToolTip();
 		}
 
 		Vector2 savedCursorPos = ImGui::GetCursorPos();
@@ -352,20 +356,20 @@ namespace FlatGui
 		// Right click menu
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
-			FlatEngine::PushMenuStyles();
+			FL::PushMenuStyles();
 			if (ImGui::MenuItem("Create Child"))
 			{
-				GameObject childObject = FlatEngine::CreateGameObject(currentObject.GetID());
+				GameObject childObject = FL::CreateGameObject(currentObject.GetID());
 				SetFocusedGameObjectID(childObject.GetID());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Create Prefab"))
 			{
-				std::string prefabPath = FlatEngine::OpenSaveFileExplorer();
+				std::string prefabPath = FL::OpenSaveFileExplorer();
 				if (prefabPath != "")
 				{
-					std::string prefabName = FlatEngine::GetFilenameFromPath(prefabPath);
+					std::string prefabName = FL::GetFilenameFromPath(prefabPath);
 					CreatePrefab(prefabPath, currentObject);
 					currentObject.SetIsPrefab(true);
 					currentObject.SetPrefabName(prefabName);
@@ -395,7 +399,7 @@ namespace FlatGui
 
 				ImGui::CloseCurrentPopup();
 			}
-			FlatEngine::PopMenuStyles();
+			FL::PopMenuStyles();
 
 			ImGui::EndPopup();
 		}
@@ -423,7 +427,7 @@ namespace FlatGui
 				int ID = *(const int*)payload->Data;
 
 				// Save Dropped Object
-				GameObject *dropped = FlatEngine::GetObjectById(ID);
+				GameObject *dropped = FL::GetObjectById(ID);
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
@@ -447,7 +451,7 @@ namespace FlatGui
 			// Render SceneObject children
 			for (long childID : childrenIDs)
 			{
-				GameObject* child = FlatEngine::GetObjectById(childID);
+				GameObject* child = FL::GetObjectById(childID);
 
 				if (child != nullptr)
 				{
@@ -468,8 +472,8 @@ namespace FlatGui
 			std::string prefabIDContextMenu = "PrefabID" + std::to_string(currentObject.GetID());
 			ImGui::TableSetColumnIndex(2);
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY()));
-			FlatEngine::RenderImageButton(prefabIDImageButton.c_str(), FlatEngine::F_prefabCubeIcon.GetTexture(), Vector2(16, 16), 0, FlatEngine::F_transparentColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor);
-			FlatEngine::PushMenuStyles();
+			FL::RenderImageButton(prefabIDImageButton.c_str(), FL::GetTexture("prefabCube"), Vector2(16, 16), 0, FL::GetColor("transparent"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
+			FL::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				if (ImGui::MenuItem("Disassemble prefab"))
@@ -481,7 +485,7 @@ namespace FlatGui
 				}
 				ImGui::EndPopup();
 			}
-			FlatEngine::PopMenuStyles();
+			FL::PopMenuStyles();
 		}
 	}
 
@@ -489,7 +493,7 @@ namespace FlatGui
 	{
 		// Initialize Hierarchy scene object expanded tracker
 		leafExpandedTracker.clear();
-		std::map<long, GameObject> sceneObjects = FlatEngine::GetSceneObjects();
+		std::map<long, GameObject> sceneObjects = FL::GetSceneObjects();
 		for (std::map<long, GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 		{
 			if (leafExpandedTracker.count(object->second.GetID()) == 0)

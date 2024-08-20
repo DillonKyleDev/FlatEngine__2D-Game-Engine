@@ -39,6 +39,7 @@
 #include <filesystem>
 #include <windows.h> // For getting directory name
 
+namespace FL = FlatEngine;
 
 /*
 ######################################
@@ -48,18 +49,18 @@
 ######################################
 */
 
-using GameObject = FlatEngine::GameObject;
-using Button = FlatEngine::Button;
-using Component = FlatEngine::Component;
-using MappingContext = FlatEngine::MappingContext;
-using Transform = FlatEngine::Transform;
-using Sprite = FlatEngine::Sprite;
-using Camera = FlatEngine::Camera;
-using Canvas = FlatEngine::Canvas;
-using Text = FlatEngine::Text;
-using BoxCollider = FlatEngine::BoxCollider;
-using CircleCollider = FlatEngine::CircleCollider;
-using Sound = FlatEngine::Sound;
+using GameObject = FL::GameObject;
+using Button = FL::Button;
+using Component = FL::Component;
+using MappingContext = FL::MappingContext;
+using Transform = FL::Transform;
+using Sprite = FL::Sprite;
+using Camera = FL::Camera;
+using Canvas = FL::Canvas;
+using Text = FL::Text;
+using BoxCollider = FL::BoxCollider;
+using CircleCollider = FL::CircleCollider;
+using Sound = FL::Sound;
 using ComponentTypes = Component::ComponentTypes;
 
 namespace FlatGui 
@@ -108,7 +109,7 @@ namespace FlatGui
 	void Init()
 	{
 		// If Release
-		if (FlatEngine::_isDebugMode == false)
+		if (FL::_isDebugMode == false)
 		{
 			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
 			// we don't want to have to include it in the final release build anyway.
@@ -116,93 +117,93 @@ namespace FlatGui
 			io.IniFilename = NULL;
 
 			// Set fullscreen here for now
-			Window::SetFullscreen(FlatEngine::F_LoadedProject.IsFullscreen());
+			Window::SetFullscreen(FL::F_LoadedProject.IsFullscreen());
 		}
 		else
-			FlatEngine::CreateNewScene();
+			FL::CreateNewScene();
 	}
 
 	void SetupProfilerProcesses()
 	{
-		if (_showProfiler && FlatEngine::_isDebugMode)
+		if (_showProfiler && FL::_isDebugMode)
 		{
 			// Add Profiler Processes
 			// 						
-			FlatEngine::AddProfilerProcess("Render");
-			FlatEngine::AddProfilerProcess("Render Present");
+			FL::AddProfilerProcess("Render");
+			FL::AddProfilerProcess("Render Present");
 			// RenderMainMenuBar()						
-			//FlatEngine::AddProfilerProcess("Render Main Menu Bar");
+			//FL::AddProfilerProcess("Render Main Menu Bar");
 			// RenderToolbar()							
-			//FlatEngine::AddProfilerProcess("Render Toolbar");
+			//FL::AddProfilerProcess("Render Toolbar");
 
 			// RenderHierarchy()
 			if (_showHierarchy)
-				FlatEngine::AddProfilerProcess("Render Hierarchy");
+				FL::AddProfilerProcess("Render Hierarchy");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Hierarchy");
+				FL::RemoveProfilerProcess("Render Hierarchy");
 
 			// RenderInspector()
 			if (_showInspector)
-				FlatEngine::AddProfilerProcess("Render Inspector");
+				FL::AddProfilerProcess("Render Inspector");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Inspector");
+				FL::RemoveProfilerProcess("Render Inspector");
 
 			// Game_RenderView
 			if (_showGameView)
-				FlatEngine::AddProfilerProcess("Render Game View");
+				FL::AddProfilerProcess("Render Game View");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Game View");
+				FL::RemoveProfilerProcess("Render Game View");
 
 			// Scene_RenderView
 			if (_showSceneView)
-				FlatEngine::AddProfilerProcess("Render Scene View");
+				FL::AddProfilerProcess("Render Scene View");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Scene View");
+				FL::RemoveProfilerProcess("Render Scene View");
 
 			// RenderAnimator
 			if (_showAnimator)
-				FlatEngine::AddProfilerProcess("Render Animator");
+				FL::AddProfilerProcess("Render Animator");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Animator");
+				FL::RemoveProfilerProcess("Render Animator");
 
 			// RenderAnimationPreview
 			if (_showAnimationPreview)
-				FlatEngine::AddProfilerProcess("Render Animation Preview");
+				FL::AddProfilerProcess("Render Animation Preview");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Animation Preview");
+				FL::RemoveProfilerProcess("Render Animation Preview");
 
 			// RenderKeyFrameEditor
 			if (_showKeyFrameEditor)
-				FlatEngine::AddProfilerProcess("Render Key Frame Editor");
+				FL::AddProfilerProcess("Render Key Frame Editor");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Key Frame Editor");
+				FL::RemoveProfilerProcess("Render Key Frame Editor");
 
 			// RenderLog
 			if (_showLogger)
-				FlatEngine::AddProfilerProcess("Render Log");
+				FL::AddProfilerProcess("Render Log");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Log");
+				FL::RemoveProfilerProcess("Render Log");
 
 			// RenderProfiler
 			if (_showProfiler)
-				FlatEngine::AddProfilerProcess("Render Profiler");
+				FL::AddProfilerProcess("Render Profiler");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Profiler");
+				FL::RemoveProfilerProcess("Render Profiler");
 
 			// RenderMappingContextEditor
 			if (_showMappingContextEditor)
-				FlatEngine::AddProfilerProcess("Render Mapping Context Editor");
+				FL::AddProfilerProcess("Render Mapping Context Editor");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Mapping Context Editor");
+				FL::RemoveProfilerProcess("Render Mapping Context Editor");
 
 			// RenderSettings
 			if (_showSettings)
-				FlatEngine::AddProfilerProcess("Render Settings");
+				FL::AddProfilerProcess("Render Settings");
 			else
-				FlatEngine::RemoveProfilerProcess("Render Settings");
+				FL::RemoveProfilerProcess("Render Settings");
 
 			// Collision Testing
-			FlatEngine::AddProfilerProcess("Collision Testing");
+			FL::AddProfilerProcess("Collision Testing");
 		}
 	}
 
@@ -214,16 +215,16 @@ namespace FlatGui
 		if (_initialized && !_hasRunOnce)
 		{
 			// Initialize Mapping Contexts
-			FlatEngine::InitializeMappingContexts();
+			FL::InitializeMappingContexts();
 
 			// Initialize prefab objects
-			FlatEngine::prefabManager->InitializePrefabs();
+			FL::prefabManager->InitializePrefabs();
 
 			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
-			//FlatEngine::F_Application->GetGameLoop()->CollectPhysicsBodies();
+			//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
 
 			// Hierarchy management
-			if (FlatEngine::_isDebugMode)
+			if (FL::_isDebugMode)
 				ResetHierarchyExpanderTracker();
 
 			SetupProfilerProcesses();
@@ -238,10 +239,10 @@ namespace FlatGui
 	void Cleanup()
 	{
 		// Remove Profiler Processes
-		if (FlatEngine::_isDebugMode)
+		if (FL::_isDebugMode)
 		{
-			FlatEngine::RemoveProfilerProcess("Render");
-			FlatEngine::RemoveProfilerProcess("Render Present");
+			FL::RemoveProfilerProcess("Render");
+			FL::RemoveProfilerProcess("Render Present");
 		}
 	}
 
@@ -250,9 +251,9 @@ namespace FlatGui
 		FocusedGameObjectID = ID;
 		if (ID != -1)
 		{
-			GameObject focusedObject = FlatEngine::GetObjectById(ID);
-			/*FlatEngine::F_Lua["this_object"] = &(*FlatEngine::GetObjectById(ID));*/
-			FlatEngine::LuaTesting((*FlatEngine::GetObjectById(ID)));
+			GameObject focusedObject = FL::GetObjectById(ID);
+			/*FL::F_Lua["this_object"] = &(*FL::GetObjectById(ID));*/
+			FL::LuaTesting((*FL::GetObjectById(ID)));
 			Animation* animationComponent = focusedObject.GetAnimation();
 			std::string animationPath = "";
 
@@ -265,11 +266,11 @@ namespace FlatGui
 			{
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
-				//objectForFocusedAnimation = GameObject(FlatEngine::GetObjectById(ID), animatorObjects, FlatEngine::GetLoadedScene()->GetSceneObjects(), -1);
-				FlatEngine::Transform* transform = objectForFocusedAnimation.GetTransform();
+				//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
+				FL::Transform* transform = objectForFocusedAnimation.GetTransform();
 				transform->SetPosition(Vector2(0, 0));
 				animatorObjects.push_back(&objectForFocusedAnimation);
-				//FlatEngine::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
+				//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
 			}
 		}
 	}
@@ -279,9 +280,9 @@ namespace FlatGui
 		return FocusedGameObjectID;
 	}
 
-	void DestroySelf(std::shared_ptr<FlatEngine::GameObject> thisObject)
+	void DestroySelf(std::shared_ptr<FL::GameObject> thisObject)
 	{
-		FlatEngine::DeleteGameObject(thisObject->GetID());
+		FL::DeleteGameObject(thisObject->GetID());
 	}
 
 	// Project Management
@@ -382,7 +383,7 @@ namespace FlatGui
 						_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
 						if (_clearBufferEveryFrame)
 						{
-							FlatEngine::F_Logger.ClearBuffer();
+							FL::F_Logger.ClearBuffer();
 						}
 					}
 					if (currentObjectJson.contains("_autoSave"))
@@ -403,22 +404,22 @@ namespace FlatGui
 
 
 		if (newProject.GetLoadedPreviewAnimationPath() != "")
-			SetFocusedAnimation(FlatEngine::LoadAnimationFile(newProject.GetLoadedPreviewAnimationPath()));
+			SetFocusedAnimation(FL::LoadAnimationFile(newProject.GetLoadedPreviewAnimationPath()));
 		Vector2 scrolling = newProject.GetSceneViewScrolling();
 		FG_sceneViewScrolling = scrolling;
 		Vector2 gridStep = newProject.GetSceneViewGridStep();
 		FG_sceneViewGridStep = gridStep;
 
-		if (newProject.GetFocusedGameObjectID() != -1 && FlatEngine::GetObjectById(newProject.GetFocusedGameObjectID()) != nullptr)
+		if (newProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(newProject.GetFocusedGameObjectID()) != nullptr)
 			SetFocusedGameObjectID(newProject.GetFocusedGameObjectID());
 
 		if (newProject.GetLoadedScenePath() != "")
-			FlatEngine::LoadScene(newProject.GetLoadedScenePath());
+			FL::LoadScene(newProject.GetLoadedScenePath());
 		else
-			FlatEngine::CreateNewScene();
+			FL::CreateNewScene();
 
 		// Set loaded project
-		FlatEngine::SetLoadedProject(newProject);
+		FL::SetLoadedProject(newProject);
 	}
 
 	void SaveProject(Project project, std::string path)
@@ -458,13 +459,13 @@ namespace FlatGui
 			{ "_showProfiler", _showProfiler },
 			{ "_showMappingContextEditor", _showMappingContextEditor },
 			{ "_clearLogBuffer", _clearBufferEveryFrame },
-			{ "_autoSave", FlatEngine::F_LoadedProject.AutoSaveOn() },
-			{ "physicsSystem", FlatEngine::F_LoadedProject.GetPhysicsSystem() },
-			{ "collisionDetection", FlatEngine::F_LoadedProject.GetCollisionDetection() },
-			{ "resolutionWidth", FlatEngine::F_LoadedProject.GetResolution().x },
-			{ "resolutionHeight", FlatEngine::F_LoadedProject.GetResolution().y },
-			{ "_fullscreen", FlatEngine::F_LoadedProject.IsFullscreen() },
-			{ "_vsyncEnabled", FlatEngine::F_LoadedProject.IsVsyncEnabled() },
+			{ "_autoSave", FL::F_LoadedProject.AutoSaveOn() },
+			{ "physicsSystem", FL::F_LoadedProject.GetPhysicsSystem() },
+			{ "collisionDetection", FL::F_LoadedProject.GetCollisionDetection() },
+			{ "resolutionWidth", FL::F_LoadedProject.GetResolution().x },
+			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
+			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
+			{ "_vsyncEnabled", FL::F_LoadedProject.IsVsyncEnabled() },
 			});
 		projectProperties.push_back(animationName);
 
@@ -484,26 +485,25 @@ namespace FlatGui
 		// Get all project files in the projects folder to present in the project selection screen
 		std::vector<Project> projects = std::vector<Project>();
 
-		std::string path = "../engine-assets/projects";
-		for (const auto& entry : std::filesystem::directory_iterator(path))
+		for (const auto& entry : std::filesystem::directory_iterator(FL::GetDir("projects")))
 		{			
-			json contextData = FlatEngine::LoadFileData(entry.path().string());
+			json contextData = FL::LoadFileData(entry.path().string());
 			if (contextData != NULL)
 			{
 				auto projectProperties = contextData["Project Properties"][0];
 				Project project = Project();
-				project.SetPath(FlatEngine::CheckJsonString(contextData["Project Properties"][0], "path", "Project Hub project property check."));
+				project.SetPath(FL::CheckJsonString(contextData["Project Properties"][0], "path", "Project Hub project property check."));
 				projects.push_back(project);
 			}
 		}
 
 		bool b_isOpen = true;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0,0));
-		FlatEngine::SetNextViewportToFillWindow();  // Maximize viewport
-		FlatEngine::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize, FlatEngine::F_transparentColor);
+		FL::SetNextViewportToFillWindow();  // Maximize viewport
+		FL::BeginWindow("Project Hub", b_isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize, FL::GetColor("transparent"));
 		// Set background to transparent
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, FlatEngine::F_transparentColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_frameBgColor);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, FL::GetColor("transparent"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("frameBg"));
 		ImGui::PopStyleVar();
 
 		// Get window dimensions for background image
@@ -512,39 +512,40 @@ namespace FlatGui
 		float headerHeight = 50;
 
 		// Draw window background gradient
-		ImGui::Image(FlatEngine::F_projectHubBgImage.GetTexture(), canvas_sz);
+		ImGui::Image(FL::GetTexture("projectHubBg"), canvas_sz);
 
 		// Reset cursor to before drawing the bg image
 		ImGui::SetCursorScreenPos(canvas_p0);
 
 		// Draw header background gradient
-		ImGui::Image(FlatEngine::F_flatEngineLogoGradient.GetTexture(), Vector2(canvas_sz.x, headerHeight + 10));
+		ImGui::Image(FL::GetTexture("flatEngineLogoGradient"), Vector2(canvas_sz.x, headerHeight + 10));
 		// Reset cursor to before the header bg image
 		ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 10, canvas_p0.y + 5));
 
-		// Draw the FlatEngine logo and header text image
-		ImGui::Image(FlatEngine::F_flatEngineLogo.GetTexture(), Vector2(headerHeight, headerHeight));
+		// Draw the FL logo and header text image
+		ImGui::Image(FL::GetTexture("flatEngineLogo"), Vector2(headerHeight, headerHeight));
 		ImGui::SameLine();
-		ImGui::Image(FlatEngine::F_selectProjectImage.GetTexture(), Vector2((float)FlatEngine::F_selectProjectImage.GetWidth(), headerHeight));
+		ImGui::Image(FL::GetTexture("selectProject"), Vector2((float)FL::GetTextureObject("selectProject")->GetWidth(), headerHeight));
 
 		ImGui::Separator();
 		ImGui::Separator();
 
 		ImGui::Text("");
 			
-		FlatEngine::BeginWindowChild("Projects", FlatEngine::F_transparentColor);
+		FL::BeginWindowChild("Projects", FL::GetColor("transparent"));
 		// Set background to transparent
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_transparentColor);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("transparent"));
 
 		for (Project project : projects)
 		{
 			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 20, ImGui::GetCursorScreenPos().y));
 			std::string path = project.GetPath();
-			if (FlatEngine::RenderButton(FlatEngine::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x - 20, 40)))
+			if (FL::RenderButton(FL::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x - 20, 60), 1, FL::GetColor("projectHubButton"), FL::GetColor("projectHubButtonHovered"), FL::GetColor("projectHubButtonActive")))
 			{
 				b_projectSelected = true;
 				projectPath = path;
 			}
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
 		}
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y - 65));
@@ -554,9 +555,9 @@ namespace FlatGui
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x - 110, ImGui::GetCursorScreenPos().y + 6));
 
-		if (FlatEngine::RenderButton("New Project", Vector2(100, 30)))
+		if (FL::RenderButton("New Project", Vector2(100, 30)))
 		{
-			std::string newProjectPath = FlatEngine::OpenSaveFileExplorer();
+			std::string newProjectPath = FL::OpenSaveFileExplorer();
 			if (newProjectPath != "")
 			{
 				Project newProject = Project();
@@ -566,11 +567,11 @@ namespace FlatGui
 		}
 
 		ImGui::PopStyleColor();
-		FlatEngine::EndWindowChild();
+		FL::EndWindowChild();
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 	void AddViewports()
@@ -581,89 +582,89 @@ namespace FlatGui
 
 		RenderFileExplorer();
 
-		float startTime = (float)FlatEngine::GetEngineTime();
+		float startTime = (float)FL::GetEngineTime();
 		MainMenuBar();
-		FlatEngine::AddProcessData("Render Main Menu Bar", (float)FlatEngine::GetEngineTime() - startTime);
+		FL::AddProcessData("Render Main Menu Bar", (float)FL::GetEngineTime() - startTime);
 
-		startTime = (float)FlatEngine::GetEngineTime();
+		startTime = (float)FL::GetEngineTime();
 		RenderToolbar();
-		FlatEngine::AddProcessData("Render Toolbar", (float)FlatEngine::GetEngineTime() - startTime);
+		FL::AddProcessData("Render Toolbar", (float)FL::GetEngineTime() - startTime);
 		
 		if (_showHierarchy)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderHierarchy();
-			FlatEngine::AddProcessData("Render Hierarchy", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Hierarchy", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showInspector)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderInspector();
-			FlatEngine::AddProcessData("Render Inspector", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Inspector", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showGameView)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
-			FlatEngine::Game_RenderView();
-			FlatEngine::AddProcessData("Render Game View", (float)FlatEngine::GetEngineTime() - startTime);
+			startTime = (float)FL::GetEngineTime();
+			FL::Game_RenderView();
+			FL::AddProcessData("Render Game View", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showSceneView)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			Scene_RenderView();
-			FlatEngine::AddProcessData("Render Scene View", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Scene View", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showAnimator)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderAnimator();
-			FlatEngine::AddProcessData("Render Animator", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Animator", (float)FL::GetEngineTime() - startTime);
 		}
 		
 		if (_showAnimationPreview)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderAnimationPreview();
-			FlatEngine::AddProcessData("Render Animation Preview", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Animation Preview", (float)FL::GetEngineTime() - startTime);
 		}
 		
 		if (_showKeyFrameEditor)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderKeyFrameEditor();
-			FlatEngine::AddProcessData("Render Key Frame Editor", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Key Frame Editor", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showLogger)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderLog();
-			FlatEngine::AddProcessData("Render Log", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Log", (float)FL::GetEngineTime() - startTime);
 		}
 	
 		if (_showProfiler)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderProfiler();
-			FlatEngine::AddProcessData("Render Profiler", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Profiler", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showMappingContextEditor)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderMappingContextEditor();
-			FlatEngine::AddProcessData("Render Mapping Context Editor", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Mapping Context Editor", (float)FL::GetEngineTime() - startTime);
 		}
 
 		if (_showSettings)
 		{
-			startTime = (float)FlatEngine::GetEngineTime();
+			startTime = (float)FL::GetEngineTime();
 			RenderSettings();
-			FlatEngine::AddProcessData("Render Settings", (float)FlatEngine::GetEngineTime() - startTime);
+			FL::AddProcessData("Render Settings", (float)FL::GetEngineTime() - startTime);
 		}
 	}
 
@@ -688,10 +689,10 @@ namespace FlatGui
 
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
-			FlatEngine::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
-			FlatEngine::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+			FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
 
 		// Draw our x and y axis blue and green lines
 		//
@@ -736,9 +737,9 @@ namespace FlatGui
 
 
 		// Draw the axis and center point
-		FlatEngine::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
-		FlatEngine::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
-		FlatEngine::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
+		FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
+		FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
+		FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
 		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
@@ -749,7 +750,7 @@ namespace FlatGui
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
 		// 4 channels for now in this scene view. 0 = scene objects, 1 &2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, FlatEngine::F_maxSpriteLayers + 5);
+		drawSplitter->Split(draw_list, FL::F_maxSpriteLayers + 5);
 
 		// Loop through scene objects
 		for (GameObject object : objects)
@@ -802,11 +803,11 @@ namespace FlatGui
 				// Get Input and Output
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * FlatEngine::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * FlatEngine::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
 				ImGui::SetCursorPos(positionOnScreen);
 				//// This will catch our interactions  - 4096 for overlap or keyword if it works
 				ImGui::SetNextItemAllowOverlap();
-				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FlatEngine::F_spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * FlatEngine::F_spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 				const bool is_active = ImGui::IsItemActive();   // Held
 				const bool is_clicked = ImGui::IsItemClicked();
@@ -866,13 +867,13 @@ namespace FlatGui
 				//////////////////
 
 				// Change the draw channel for the scene object
-				if (renderOrder <= FlatEngine::F_maxSpriteLayers && renderOrder >= 0)
+				if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 				else
 					drawSplitter->SetCurrentChannel(draw_list, 0);
 
 				// Draw the texture
-				FlatEngine::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			// If it has a text component, render that text texture at the objects transform position
@@ -890,13 +891,13 @@ namespace FlatGui
 				if (textTexture.GetTexture() != nullptr)
 				{
 					// Change the draw channel for the scene object
-					if (renderOrder <= FlatEngine::F_maxSpriteLayers && renderOrder >= 0)
+					if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					FlatEngine::AddImageToDrawList(textTexture.GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation);
+					FL::AddImageToDrawList(textTexture.GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation);
 				}
 			}
 
@@ -916,23 +917,23 @@ namespace FlatGui
 				Vector2 topRightCorner = Vector2(cameraRightEdge, cameraTopEdge);
 				Vector2 bottomLeftCorner = Vector2(cameraLeftEdge, cameraBottomEdge);
 
-				float cameraTextureWidth = (float)FlatEngine::F_cameraIcon.GetWidth() / 4;
-				float cameraTextureHeight = (float)FlatEngine::F_cameraIcon.GetHeight() / 4;
+				float cameraTextureWidth = (float)FL::GetTextureObject("camera")->GetWidth() / 4;
+				float cameraTextureHeight = (float)FL::GetTextureObject("camera")->GetHeight() / 4;
 				bool _scalesWithZoom = false;
 				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
 				Vector2 cameraTextureScale = { 1, 1 };
 				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
 
 				// Draw channel 2 for Lower UI
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FlatEngine::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
-				FlatEngine::DrawLine(topLeftCorner, bottomRightCorner, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
-				FlatEngine::DrawLine(topRightCorner, bottomLeftCorner, FlatEngine::F_cameraBoxColor, 2.0f, draw_list);
+				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FL::GetColor("cameraBox"), 2.0f, draw_list);
+				FL::DrawLine(topLeftCorner, bottomRightCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
+				FL::DrawLine(topRightCorner, bottomLeftCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
 
 				// Draw actual camera icon
-				FlatEngine::AddImageToDrawList(FlatEngine::F_cameraIcon.GetTexture(), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
+				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
 			// Renders Canvas Component
@@ -948,9 +949,9 @@ namespace FlatGui
 				Vector2 renderStart = Vector2(renderXStart, renderYStart);
 				Vector2 renderEnd = Vector2(renderXStart + ((activeWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((activeHeight * transformScale.y) * FG_sceneViewGridStep.x));
 
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				FlatEngine::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FlatEngine::F_canvasBorderColor, 3.0f, draw_list);
+				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 3.0f, draw_list);
 			}
 
 			// Renders Button Component
@@ -973,7 +974,7 @@ namespace FlatGui
 				Vector2 topRight = { activeRight, activeTop };
 				Vector2 bottomLeft = { activeLeft, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
 				if (rotation != 0)
 				{
@@ -995,20 +996,20 @@ namespace FlatGui
 
 					if (_isActive)
 					{
-						FlatEngine::DrawLine(pos[0], pos[1], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[1], pos[2], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[2], pos[3], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
-						FlatEngine::DrawLine(pos[3], pos[0], FlatEngine::F_buttonComponentActiveColor, 2.0f, draw_list);
+						FL::DrawLine(pos[0], pos[1], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
+						FL::DrawLine(pos[1], pos[2], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
+						FL::DrawLine(pos[2], pos[3], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
+						FL::DrawLine(pos[3], pos[0], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
 					}
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentInctiveColor, 1.0f, draw_list);
+						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 1.0f, draw_list);
 				}
 				else
 				{
 					if (_isActive)
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentActiveColor, 1.0f, draw_list);
+						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 1.0f, draw_list);
 					else
-						FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonComponentInctiveColor, 1.0f, draw_list);
+						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 1.0f, draw_list);
 				}
 			}
 
@@ -1034,18 +1035,18 @@ namespace FlatGui
 					boxCollider->GetCorners()[3],
 				};
 
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				if (FlatEngine::F_LoadedProject.GetCollisionDetection() == "Shared Axis")
+				if (FL::F_LoadedProject.GetCollisionDetection() == "Shared Axis")
 				{
 					if (_isActive && !_isColliding)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
 					else if (!_isActive)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
 					else if (_isColliding)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
 				}
-				else if (FlatEngine::F_LoadedProject.GetCollisionDetection() == "Separating Axis")
+				else if (FL::F_LoadedProject.GetCollisionDetection() == "Separating Axis")
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -1062,22 +1063,22 @@ namespace FlatGui
 					};
 
 					// Draw Normals
-					FlatEngine::DrawLine(center, normals[0], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-					FlatEngine::DrawLine(center, normals[1], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-					FlatEngine::DrawLine(center, normals[2], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
-					FlatEngine::DrawLine(center, normals[3], FlatEngine::F_colliderInactiveColor, 2.0f, draw_list);
+					FL::DrawLine(center, normals[0], FL::GetColor("colliderInactive"), 2.0f, draw_list);
+					FL::DrawLine(center, normals[1], FL::GetColor("colliderInactive"), 2.0f, draw_list);
+					FL::DrawLine(center, normals[2], FL::GetColor("colliderInactive"), 2.0f, draw_list);
+					FL::DrawLine(center, normals[3], FL::GetColor("colliderInactive"), 2.0f, draw_list);
 
 					if (_isActive && !_isColliding)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderActiveColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
 					else if (!_isActive)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderInactiveColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
 					else if (_isColliding)
-						FlatEngine::DrawRectangleFromLines(corners, FlatEngine::F_colliderCollidingColor, 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
 				}
 
 				// Draw activeRadius circle
 				if (_showActiveRadius)
-					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
 			}
 
 			// Renders CircleCollider Component
@@ -1092,16 +1093,16 @@ namespace FlatGui
 				bool _showActiveRadius = circleCollider->GetShowActiveRadius();
 				Vector2 center = circleCollider->GetCenterCoord();
 
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				circleCollider->UpdateActiveEdges(FlatEngine::F_LoadedProject.GetCollisionDetection(), FG_sceneViewGridStep.x, FG_sceneViewCenter);
+				circleCollider->UpdateActiveEdges(FL::F_LoadedProject.GetCollisionDetection(), FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				if (_isActive && !_isColliding)
-					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderActiveColor, draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
 				else if (!_isActive)
-					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderInactiveColor, draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderInactive"), draw_list);
 				else if (_isColliding)
-					FlatEngine::DrawCircle(center, activeRadius, FlatEngine::F_colliderCollidingColor, draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), draw_list);
 			}
 
 			// Renders Transform Arrow // 
@@ -1109,52 +1110,52 @@ namespace FlatGui
 			// Should be last in line here to be rendered top-most -- If this obect is focused
 			if (focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
-				GameObject focusedObject = FlatEngine::GetObjectById(focusedObjectID);
-				SDL_Texture* arrowToRender = FlatEngine::F_transformArrow.GetTexture();
+				GameObject focusedObject = FL::GetObjectById(focusedObjectID);
+				SDL_Texture* arrowToRender = FL::GetTexture("transformArrow");
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting position. We only want to change the render ending position so we adjust dimensions only
-				float arrowWidth = (float)FlatEngine::F_transformArrow.GetWidth() * 3;
-				float arrowHeight = (float)FlatEngine::F_transformArrow.GetHeight() * 3;
+				float arrowWidth = (float)FL::GetTextureObject("transformArrow")->GetWidth() * 3;
+				float arrowHeight = (float)FL::GetTextureObject("transformArrow")->GetHeight() * 3;
 				Vector2 arrowScale = { 1, 1 };
 				Vector2 arrowOffset = { 3, arrowHeight - 3 };
 				bool _scalesWithZoom = false;
 				float transformMoveModifier = 0.02f;
 				ImGuiIO& inputOutput = ImGui::GetIO();
 				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step), FG_sceneViewCenter.y - (position.y * step));
-
+			
 				// Invisible button for Transform Arrow Move X and Y
 				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
-				FlatEngine::RenderInvisibleButton("TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
+				FL::RenderInvisibleButton("##TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
 				const bool _baseHovered = ImGui::IsItemHovered();
 				const bool _baseActive = ImGui::IsItemActive();
 				const bool _baseClicked = ImGui::IsItemClicked();
 
 				if (_baseHovered || _baseActive)
 				{
-					arrowToRender = FlatEngine::F_transformArrowAllWhite.GetTexture();
+					arrowToRender = FL::GetTexture("transformArrowAllWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
 				// Invisible button for X arrow
 				Vector2 moveXStartPos = Vector2(positionOnScreen.x + 24, positionOnScreen.y - 30);
-				FlatEngine::RenderInvisibleButton("TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
+				FL::RenderInvisibleButton("##TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
 				const bool _xHovered = ImGui::IsItemHovered();
 				const bool _xActive = ImGui::IsItemActive();
 				const bool _xClicked = ImGui::IsItemClicked();
 				if (_xHovered || _xActive)
 				{
-					arrowToRender = FlatEngine::F_transformArrowXWhite.GetTexture();
+					arrowToRender = FL::GetTexture("transformArrowXWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
 				// Invisible button for Y arrow
 				Vector2 moveYStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 86);
-				FlatEngine::RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
+				FL::RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
 				const bool _yHovered = ImGui::IsItemHovered();
 				const bool _yActive = ImGui::IsItemActive();
 				const bool _yClicked = ImGui::IsItemClicked();
 				if (_yHovered || _yActive)
 				{
-					arrowToRender = FlatEngine::F_transformArrowYWhite.GetTexture();
+					arrowToRender = FL::GetTexture("transformArrowYWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				}
 
@@ -1181,8 +1182,8 @@ namespace FlatGui
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
-				drawSplitter->SetCurrentChannel(draw_list, FlatEngine::F_maxSpriteLayers + 3);
-				FlatEngine::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 3);
+				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
 			}
 		}
 	}

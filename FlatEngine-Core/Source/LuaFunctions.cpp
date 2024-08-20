@@ -65,7 +65,6 @@ namespace FlatEngine
 		F_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
 		RegisterLuaFunctions();
 		RegisterLuaTypes();
-		RetrieveLuaScriptNames();
 	}
 
 	// Inject functions that can be called from within Lua directly into the Lua state
@@ -247,7 +246,7 @@ namespace FlatEngine
 		F_luaScriptNames.clear();
 		F_luaScriptNames.push_back(""); // Empty string for when Scripts don't have any selected script attached
 
-		std::string path = "../runtime-assets/scripts";
+		std::string path = GetDir("scripts");
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{			
 			if (FilepathHasExtension(entry.path().string(), ".lua"))
@@ -267,7 +266,7 @@ namespace FlatEngine
 		}
 
 		std::ofstream outfile;
-		std::string filenameWExtention = "../scripts/" + filename + ".lua";
+		std::string filenameWExtention = GetDir("scripts") + filename + ".lua";
 		outfile.open(filenameWExtention, std::ios_base::app);
 		outfile << 
 			"-- " + filename + "\n\n\n" +

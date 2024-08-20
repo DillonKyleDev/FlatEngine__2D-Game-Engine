@@ -8,7 +8,6 @@ using namespace nlohmann::literals;
 
 namespace FlatEngine
 {
-	
 	class Transform : public Component
 	{
 	public:

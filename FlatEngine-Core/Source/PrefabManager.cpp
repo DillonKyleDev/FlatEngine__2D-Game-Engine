@@ -81,7 +81,7 @@ namespace FlatEngine
 	{
 		m_prefabs.clear();
 
-		std::string path = "../runtime-assets/prefabs";
+		std::string path = GetDir("prefabs");
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			std::vector<GameObject> prefabContainer;

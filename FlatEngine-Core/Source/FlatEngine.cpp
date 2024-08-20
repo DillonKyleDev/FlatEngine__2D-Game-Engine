@@ -50,8 +50,10 @@
 
 namespace FlatEngine
 {
+	std::string F_DirectoriesLuaFilepath = "../assets/engine-assets/scripts/Directories.lua";
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
+	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
 
 
 	bool _isDebugMode = true;
@@ -111,21 +113,37 @@ namespace FlatEngine
 		F_fontCinzel = NULL;
 	}
 
+	// Get directory path using name given in Directories.lua
+	std::string GetDir(std::string dirName)
+	{
+		return F_AssetManager.GetDir(dirName);
+	}
+
+	// Get file path using name given in Directories.lua
+	std::string GetFilePath(std::string fileName)
+	{
+		return F_AssetManager.GetFilePath(fileName);
+	}
+	
+	// Get entire std::shared_ptr<Texture> object using name given in Textures.lua file
 	std::shared_ptr<Texture> GetTextureObject(std::string textureName)
 	{
 		return F_AssetManager.GetTextureObject(textureName);
 	}
 
+	// Get SDL_Texture* using name given in Textures.lua file
 	SDL_Texture* GetTexture(std::string textureName)
 	{
 		return F_AssetManager.GetTexture(textureName);
 	}
 
+	// Get color using name given in Colors.lua file
 	Vector4 GetColor(std::string colorName)
 	{
 		return F_AssetManager.GetColor(colorName);
 	}
 
+	// Get color using name given in Colors.lua file converted to Uint32 format
 	Uint32 GetColor32(std::string colorName)
 	{
 		return F_AssetManager.GetColor32(colorName);
@@ -259,16 +277,21 @@ namespace FlatEngine
 						}
 						else
 						{
-							SetupImGui();							// Set up ImGui Context and global styles
 							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
 							LogString("SDL_mixer initialized...");
 
 							InitLua();
 							LogString("Lua initialized...");
 
-							F_AssetManager.CollectColors();         // Collect global colors
-							F_AssetManager.CollectTextures();       // Collect and create Texture icons
+							F_AssetManager.CollectDirectories();    // Collect important directories and file paths from Directories.lua
+							F_AssetManager.CollectColors();         // Collect global colors from Colors.lua
+
+							SetupImGui();							// Set up ImGui Context and global styles
+
+							F_AssetManager.CollectTextures();       // Collect and create Texture icons from Textures.lua
 							
+							RetrieveLuaScriptNames();               // Uses scripts directory collected from above CollectDirectories() call
+
 							LogString("Ready...");
 							LogSeparator();
 							LogString("Begin Logging...");
@@ -312,41 +335,41 @@ namespace FlatEngine
 		for (int i = 0; i < ImGuiCol_COUNT; i++)
 		{
 			const char* name = ImGui::GetStyleColorName(i);
-			//LogString(name);
+			
 			if (name == "TitleBgActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_titleBgActiveColor;
+				ref->Colors[i] = GetColor("titleBgActive");
 			}
 			if (name == "TabUnfocusedActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_tabUnfocusedActiveColor;
+				ref->Colors[i] = GetColor("tabUnfocusedActive");
 			}
 			if (name == "TabActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_tabActiveColor;
+				ref->Colors[i] = GetColor("tabActive");
 			}
 			if (name == "ResizeGripHovered")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_resizeGripHoveredColor;
+				ref->Colors[i] = GetColor("resizeGripHovered");
 			}
 			if (name == "ResizeGripActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_resizeGripActiveColor;
+				ref->Colors[i] = GetColor("resizeGripActive");
 			}
 			if (name == "DockingPreview")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_dockingPreviewColor;
+				ref->Colors[i] = GetColor("dockingPreview");
 			}
 			if (name == "DockingEmptyBg")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = F_dockingPreviewEmptyColor;
+				ref->Colors[i] = GetColor("dockingPreviewEmpty");
 			}
 		}
 	}
@@ -579,7 +602,7 @@ namespace FlatEngine
 	{
 		F_MappingContexts.clear();
 
-		std::string path = "../runtime-assets/mappingContexts";
+		std::string path = GetDir("mappingContexts");
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			// Create a new context to save the loaded keybindings to
@@ -2834,15 +2857,18 @@ namespace FlatEngine
 
 		//  FORMAT STRING FOR EXECUTABLE NAME
 		const size_t slash = sFilePath.find_last_of("/\\");
-		//  Removes absolute path from the beginning of the selected filepath
-		const size_t currentDirIndex = sFilePath.find("FlatEngine-Editor");
 		sSelectedFile = sFilePath.substr(slash);
 		//  SUCCESS, CLEAN UP
+
+		std::string relativePath = MakePathRelative(sFilePath);
+
 		CoTaskMemFree(f_Path);
 		f_Files->Release();
 		f_FileSystem->Release();
 		CoUninitialize();
-		return sFilePath.substr(currentDirIndex + 18);
+
+	
+		return relativePath;
 	}
 
 	std::string GetFilenameFromPath(std::string path, bool _keepExtension)
@@ -2861,6 +2887,20 @@ namespace FlatEngine
 			finalName = wholeFilename;
 
 		return finalName;
+	}
+
+	//  Removes absolute path from the beginning of the selected filepath up to just after "FlatEngine"
+	std::string MakePathRelative(std::string filepath)
+	{
+		std::string relativePath;
+		const size_t rootDirIndex = filepath.find(GetDir("root"));
+
+		if (rootDirIndex < 1000)
+			relativePath = ".." + filepath.substr(rootDirIndex + 10);
+		else
+			relativePath = filepath;
+
+		return relativePath;
 	}
 
 	std::string GetCurrentDir()

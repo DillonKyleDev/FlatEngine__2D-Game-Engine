@@ -10,8 +10,10 @@
 #include "math.h"
 #include <fstream>
 
-namespace FlatGui {
+namespace FL = FlatEngine;
 
+namespace FlatGui 
+{
 	Vector4 darker = Vector4(float(0.2), float(0.2), float(0.2), float(1));
 	Vector4 lighter = Vector4(float(0.8), float(0.8), float(0.8), float(1));
 	Vector4 light = Vector4(float(0.7), float(0.7), float(0.7), float(1));
@@ -24,21 +26,21 @@ namespace FlatGui {
 
 	void RenderAnimator()
 	{
-		FlatEngine::PushWindowStyles();
+		FL::PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
 		ImGui::Begin("Animator", &_showAnimator, 16 | 8);
-		FlatEngine::PopWindowStyles();
+		FL::PopWindowStyles();
 
 		// Animated Properties BeginChild()
-		FlatEngine::BeginResizeWindowChild("Animated Properties");
+		FL::BeginResizeWindowChild("Animated Properties");
 
 		std::string animationName = "-No Animation Selected-";
 		if (GetFocusedAnimation() != nullptr && GetFocusedAnimation()->animationName != "")
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
 
-		ImGui::BeginChild("Manage Animation", Vector2(0, 0), FlatEngine::F_autoResizeChildFlags);
+		ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);
 	
-		FlatEngine::RenderSectionHeader(animationName, 18);
+		FL::RenderSectionHeader(animationName, 18);
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));
 
 		static std::string animationFilePath;
@@ -46,9 +48,9 @@ namespace FlatGui {
 			animationFilePath = GetFocusedAnimation()->animationPath;
 
 		// Loading, saving and opening animation json files
-		if (FlatEngine::RenderImageButton("##NewAnimationFile", FlatEngine::F_newFileIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor))
+		if (FL::RenderImageButton("##NewAnimationFile", FL::GetTexture("newFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
 		{
-			animationFilePath = FlatEngine::OpenSaveFileExplorer();
+			animationFilePath = FL::OpenSaveFileExplorer();
 
 			if (animationFilePath != "")
 			{
@@ -56,7 +58,7 @@ namespace FlatGui {
 				std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
 				animationProperties->animationName = "New Animation";
 
-				FlatEngine::CreateNewAnimationFile(animationFilePath);
+				FL::CreateNewAnimationFile(animationFilePath);
 				SaveAnimationFile(animationProperties, animationFilePath);
 			}
 		}
@@ -68,13 +70,13 @@ namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);			
-		if (FlatEngine::RenderImageButton("#OpenAnim", FlatEngine::F_openFileIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor))
+		if (FL::RenderImageButton("#OpenAnim", FL::GetTexture("openFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
 		{
-			animationFilePath = FlatEngine::OpenLoadFileExplorer();
+			animationFilePath = FL::OpenLoadFileExplorer();
 			if (animationFilePath != "")
 			{
-				SetFocusedAnimation(FlatEngine::LoadAnimationFile(animationFilePath));
-				FlatEngine::F_LoadedProject.SetLoadedPreviewAnimationPath(animationFilePath);
+				SetFocusedAnimation(FL::LoadAnimationFile(animationFilePath));
+				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animationFilePath);
 			}
 		}
 		// Tooltip
@@ -85,10 +87,10 @@ namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);		
-		if (FlatEngine::RenderImageButton("#SaveAnimationFile", FlatEngine::F_saveFileIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor))
+		if (FL::RenderImageButton("#SaveAnimationFile", FL::GetTexture("saveFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
 		{
 			if (animationFilePath != "")
-				FlatEngine::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
+				FL::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
 		}
 		// Tooltip
 		if (ImGui::BeginItemTooltip())
@@ -98,11 +100,11 @@ namespace FlatGui {
 		}
 
 		ImGui::SameLine(0, 2);
-		if (FlatEngine::RenderImageButton("#SaveAsAnimationFile", FlatEngine::F_saveAsFileIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor))
+		if (FL::RenderImageButton("#SaveAsAnimationFile", FL::GetTexture("saveAsFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
 		{
-			animationFilePath = FlatEngine::OpenSaveFileExplorer();
+			animationFilePath = FL::OpenSaveFileExplorer();
 			if (animationFilePath != "")
-				FlatEngine::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
+				FL::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
 		}
 		// Tooltip
 		if (ImGui::BeginItemTooltip())
@@ -208,17 +210,17 @@ namespace FlatGui {
 			if (objectForFocusedAnimation != nullptr)
 				animation = objectForFocusedAnimation.GetAnimation();
 
-			if (FlatEngine::RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
+			if (FL::RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
 			{
 				animation->Stop();
-				animation->Play(FlatEngine::GetEngineTime());
+				animation->Play(FL::GetEngineTime());
 			}
 
 			static std::string selected_property = "";			
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			ImGui::Text("Add Properties:");
 			std::vector<std::string> props = std::vector<std::string>();
-			FlatEngine::PushComboStyles();
+			FL::PushComboStyles();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 34);
 			if (ImGui::BeginCombo("##properties", properties[current_property]))
 			{
@@ -248,9 +250,9 @@ namespace FlatGui {
 				}
 				ImGui::EndCombo();
 			}
-			FlatEngine::PopComboStyles();
+			FL::PopComboStyles();
 			ImGui::SameLine(0, 5);
-			if (FlatEngine::RenderButton("Add"))
+			if (FL::RenderButton("Add"))
 			{
 				L_PushBackKeyFrame(properties[current_property]);
 				// Reset selector box to default
@@ -261,9 +263,9 @@ namespace FlatGui {
 			// List properties on this animation
 
 
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_innerWindowColor);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-			FlatEngine::PushMenuStyles();
+			FL::PushMenuStyles();
 
 			// Conditionally begin the table
 			if (animProps->eventProperties.size() > 0 ||
@@ -279,7 +281,7 @@ namespace FlatGui {
 				animProps->circleColliderProperties.size() > 0 ||
 				animProps->rigidBodyProperties.size() > 0 || 
 				animProps->characterControllerProperties.size() > 0)
-			if (ImGui::BeginTable("##AnimationProperties", 1, FlatEngine::F_tableFlags))
+			if (ImGui::BeginTable("##AnimationProperties", 1, FL::F_tableFlags))
 			{
 				ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
 		
@@ -328,7 +330,7 @@ namespace FlatGui {
 			
 				ImGui::EndTable();
 			}
-			FlatEngine::PopMenuStyles();
+			FL::PopMenuStyles();
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
 		}
@@ -338,13 +340,13 @@ namespace FlatGui {
 		ImGui::SameLine(0, 5);
 
 		// Timeline Events
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_outerWindowColor);
-		ImGui::BeginChild("##AnimationTimeline", Vector2(0, 0), FlatEngine::F_childFlags);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("outerWindow"));
+		ImGui::BeginChild("##AnimationTimeline", Vector2(0, 0), FL::F_childFlags);
 		ImGui::PopStyleColor();
 
-		FlatEngine::RenderSectionHeader("Animation Timeline");
+		FL::RenderSectionHeader("Animation Timeline");
 
-		ImGui::BeginChild("Property Header", Vector2(0,0), FlatEngine::F_headerFlags);
+		ImGui::BeginChild("Property Header", Vector2(0,0), FL::F_headerFlags);
 		float availableSpace = ImGui::GetContentRegionAvail().x / 2;
 		ImGui::SetNextItemWidth(availableSpace);
 		ImGui::Text("Property Selected: ");
@@ -356,7 +358,7 @@ namespace FlatGui {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 			Vector2 textSize = ImGui::CalcTextSize(node_clicked.c_str());
 			Vector2 cursorScreen = ImGui::GetCursorScreenPos();
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FlatEngine::F_tableCellLightColor), 2);
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FL::GetColor("tableCellLight")), 2);
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
 			ImGui::Text(node_clicked.c_str());
 		}
@@ -364,11 +366,11 @@ namespace FlatGui {
 		if (node_clicked != "")
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
-			if (FlatEngine::RenderButton("Add Keyframe"))
+			if (FL::RenderButton("Add Keyframe"))
 				L_PushBackKeyFrame(node_clicked);
 			ImGui::SameLine(0, 5);
 			//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
-			if (FlatEngine::RenderButton("Remove Property"))
+			if (FL::RenderButton("Remove Property"))
 				L_PushBackKeyFrame(node_clicked);
 		}
 
@@ -387,17 +389,17 @@ namespace FlatGui {
 			if (_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				FlatEngine::RenderImageButton(playID.c_str(), FlatEngine::F_playIcon.GetTexture(), Vector2(14, 14), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor);
+				FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (FlatEngine::RenderImageButton(playID.c_str(), FlatEngine::F_playIcon.GetTexture(), Vector2(14, 14), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor))
+				if (FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 				{
 					if (animation != nullptr)
 					{
-						previewAnimationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
-						previewAnimationTime = FlatEngine::GetEllapsedGameTimeInMs();
+						previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
+						previewAnimationTime = FL::GetEllapsedGameTimeInMs();
 						animation->Play(previewAnimationStartTime);
 						_isPreviewing = true;
 					}
@@ -410,12 +412,12 @@ namespace FlatGui {
 			if (!_isPreviewing)
 			{
 				ImGui::BeginDisabled();
-				FlatEngine::RenderImageButton(stopID.c_str(), FlatEngine::F_stopIcon.GetTexture(), Vector2(14, 14), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor);
+				FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
 				ImGui::EndDisabled();
 			}
 			else
 			{
-				if (FlatEngine::RenderImageButton(stopID.c_str(), FlatEngine::F_stopIcon.GetTexture(), Vector2(14, 14), 0, FlatEngine::F_buttonColor, FlatEngine::F_whiteColor, FlatEngine::F_buttonHoveredColor, FlatEngine::F_buttonActiveColor))
+				if (FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 				{
 					animation->Stop();
 					_isPreviewing = false;
@@ -528,9 +530,9 @@ namespace FlatGui {
 			int renderOrder = 1;
 
 			// If there is a valid Icon.GetTexture() loaded into the Sprite Component
-			if (FlatEngine::F_keyFrameIcon.GetTexture() != nullptr)
+			if (FL::GetTexture("keyFrame") != nullptr)
 			{
-				Vector2 pipStartingPoint = FlatEngine::AddImageToDrawList(FlatEngine::F_keyFrameIcon.GetTexture(), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
+				Vector2 pipStartingPoint = FL::AddImageToDrawList(FL::GetTexture("keyFrame"), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
 
 				ImGui::SetCursorScreenPos(pipStartingPoint);
 				std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
@@ -833,7 +835,7 @@ namespace FlatGui {
 	{
 		static Vector2 step = Vector2(50, 50);
 
-		FlatEngine::BeginWindow("Animator Preview", _showAnimationPreview);
+		FL::BeginWindow("Animator Preview", _showAnimationPreview);
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -890,7 +892,7 @@ namespace FlatGui {
 				// If animation component is playing, play the animation
 				if (animation != nullptr && animation->IsPlaying())
 				{
-					previewAnimationTime = FlatEngine::GetEngineTime();
+					previewAnimationTime = FL::GetEngineTime();
 					animation->PlayAnimation(previewAnimationTime);
 				}
 			}
@@ -898,7 +900,7 @@ namespace FlatGui {
 			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
 		}
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 	void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
@@ -910,29 +912,29 @@ namespace FlatGui {
 		// Draw vertical grid lines
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
 		{
-			FlatEngine::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), dark, 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), dark, 1.0f, draw_list);
 		}
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
 		{
-			FlatEngine::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), light, 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), light, 1.0f, draw_list);
 		}
 		// Draw horizontal grid lines
 		for (float y = trunc(fmodf(zeroPoint.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
 		{
 			if (y > canvas_p0.y)
-				FlatEngine::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), dark, 1.0f, draw_list);
+				FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), dark, 1.0f, draw_list);
 		}
 	}
 
 	void RenderKeyFrameEditor()
 	{
-		FlatEngine::BeginWindow("Keyframe Editor", _showKeyFrameEditor);
+		FL::BeginWindow("Keyframe Editor", _showKeyFrameEditor);
 
 		std::string keyFrameProperty = "No KeyFrame Selected";
 		if (selectedKeyFrameToEdit != nullptr)
 			keyFrameProperty = selectedKeyFrameToEdit->name;
 
-		FlatEngine::RenderSectionHeader(keyFrameProperty);
+		FL::RenderSectionHeader(keyFrameProperty);
 
 		if (selectedKeyFrameToEdit != nullptr)
 		{
@@ -941,7 +943,7 @@ namespace FlatGui {
 			{
 				std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(selectedKeyFrameToEdit);
 				std::string functionName = event->functionName;
-				if (FlatEngine::RenderInput("AnimationEventName", "Function Name", functionName))
+				if (FL::RenderInput("AnimationEventName", "Function Name", functionName))
 					event->functionName = functionName;
 			}
 			else if (selectedKeyFrameToEdit->name == "Transform")
@@ -1068,28 +1070,28 @@ namespace FlatGui {
 				ImGui::SameLine(0, 5);
 
 				std::string openFileID = "##openFileIconForAnimatorSprite";
-				if (FlatEngine::RenderImageButton(openFileID.c_str(), FlatEngine::F_openFileIcon.GetTexture()))
+				if (FL::RenderImageButton(openFileID.c_str(), FL::GetTexture("openFile")))
 				{
-					std::string assetPath = FlatEngine::OpenLoadFileExplorer();
+					std::string assetPath = FL::OpenLoadFileExplorer();
 					strcpy_s(newPath, assetPath.c_str());
 					sprite->path = newPath;
 				}
 
 				ImGui::SameLine(0, 5);
 				
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
 				if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath)))
 					sprite->path = newPath;
 				ImGui::PopStyleColor();
 
 				// Render Table
-				if (FlatEngine::PushTable("##AnimatedSpriteProperties", 2))
+				if (FL::PushTable("##AnimatedSpriteProperties", 2))
 				{
-					if (FlatEngine::RenderFloatDragTableRow("##AnimatedxSpriteOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+					if (FL::RenderFloatDragTableRow("##AnimatedxSpriteOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 						sprite->xOffset = xOffset;
-					if (FlatEngine::RenderFloatDragTableRow("##AnimatedySpriteOffsetDrag", "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+					if (FL::RenderFloatDragTableRow("##AnimatedySpriteOffsetDrag", "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 						sprite->yOffset = yOffset;
-					FlatEngine::PopTable();
+					FL::PopTable();
 				}
 
 				// Tint color picker
@@ -1102,7 +1104,7 @@ namespace FlatGui {
 				ImGui::SameLine(0, 5);
 				ImGui::Text("Tint color");
 
-				if (FlatEngine::RenderCheckbox("Instantly change tint", _instantlyChangeTint))
+				if (FL::RenderCheckbox("Instantly change tint", _instantlyChangeTint))
 					sprite->_instantTintChange = _instantlyChangeTint;
 			}
 		}
@@ -1111,15 +1113,15 @@ namespace FlatGui {
 			ImGui::TextWrapped("Select a keyframe to edit from the Animation Timeline...");
 		}
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
-	void SetFocusedAnimation(std::shared_ptr<Animation::S_AnimationProperties> animation)
+	void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation)
 	{
 		FocusedAnimation = animation;
 	}
 
-	std::shared_ptr<Animation::S_AnimationProperties> GetFocusedAnimation()
+	std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation()
 	{
 		return FocusedAnimation;
 	}

@@ -343,7 +343,6 @@
     <ClCompile Include="Source\GameLoop.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\GameView.cpp" />
-    <ClCompile Include="Source\Icons.cpp" />
     <ClCompile Include="Source\ImGuiWrappersCore.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\LuaFunctions.cpp" />

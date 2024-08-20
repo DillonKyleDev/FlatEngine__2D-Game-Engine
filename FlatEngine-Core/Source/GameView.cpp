@@ -11,12 +11,14 @@
 
 #include "imgui.h"
 
-using ComponentTypes = FlatEngine::Animation::ComponentTypes;
-using Button = FlatEngine::Button;
-using Transform = FlatEngine::Transform;
-using Sprite = FlatEngine::Sprite;
-using Text = FlatEngine::Text;
-using Texture = FlatEngine::Texture;
+namespace FL = FlatEngine;
+
+using ComponentTypes = FL::Animation::ComponentTypes;
+using Button = FL::Button;
+using Transform = FL::Transform;
+using Sprite = FL::Sprite;
+using Text = FL::Text;
+using Texture = FL::Texture;
 
 
 namespace FlatEngine 
@@ -39,7 +41,7 @@ namespace FlatEngine
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
 		// If Release - Make GameView full screen and disable tab decoration and resizing
-		if (!FlatEngine::_isDebugMode)
+		if (!FL::_isDebugMode)
 		{
 			// Get InputOutput
 			ImGuiIO& inputOutput = ImGui::GetIO();
@@ -50,13 +52,13 @@ namespace FlatEngine
 			flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize;
 		}
 
-		FlatEngine::PushWindowStyles();
+		FL::PushWindowStyles();
 		ImGui::Begin("Game View", 0, flags);
-		FlatEngine::PopWindowStyles();
+		FL::PopWindowStyles();
 
 		//if (ImGui::IsWindowFocused())
 		//	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
-		//		FlatEngine::gameManager->PauseGame();
+		//		FL::gameManager->PauseGame();
 
 		static bool opt_enable_context_menu = true;
 
@@ -91,9 +93,9 @@ namespace FlatEngine
 	void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz)
 	{
 		// Get loaded scene if it's not a nullptr and initialize necessary entities
-		Scene* loadedScene = FlatEngine::GetLoadedScene();
+		Scene* loadedScene = FL::GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
-		FlatEngine::Camera* primaryCamera;
+		FL::Camera* primaryCamera;
 		Transform* cameraTransform;
 
 		if (loadedScene != nullptr)
@@ -123,7 +125,7 @@ namespace FlatEngine
 
 
 		// For Profiler
-		float cameraStartTime = (float)FlatEngine::GetEngineTime();
+		float cameraStartTime = (float)FL::GetEngineTime();
 
 		// If the primaryCamera is found and not nullptr, set the cameraPosition accordingly, else it remains at {0,0} above
 		if (primaryCamera != nullptr)
@@ -149,8 +151,8 @@ namespace FlatEngine
 
 		// For Profiler
 		float renderStartTime = 0;
-		if (FlatEngine::_isDebugMode)
-			renderStartTime = (float)FlatEngine::GetEngineTime();
+		if (FL::_isDebugMode)
+			renderStartTime = (float)FL::GetEngineTime();
 
 		// Render Game Objects
 		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
@@ -203,7 +205,7 @@ namespace FlatEngine
 	void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
 	{
 		// Get Components
-		FlatEngine::Transform* transform = self.GetTransform();
+		FL::Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
 		Animation* animation = self.GetAnimation();
 		Text* text = self.GetText();
@@ -215,7 +217,7 @@ namespace FlatEngine
 		{
 			// If animation component is playing, play the animation
 			if (animation != nullptr && animation->IsPlaying())
-				animation->PlayAnimation((int)FlatEngine::GetEllapsedGameTimeInMs());
+				animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
 		}
 
 
@@ -318,9 +320,9 @@ namespace FlatEngine
 				drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
 
 				if (_isActive)
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonActiveColor, 3.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonActive"), 3.0f, draw_list);
 				else
-					FlatEngine::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FlatEngine::F_buttonColor, 3.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("button"), 3.0f, draw_list);
 			}
 		}
 	}

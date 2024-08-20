@@ -1,17 +1,13 @@
-//////////////////////
-//Global      Assets//
-//  //////VV///////  /
-//     UUUUUUUU     //
-///\-------------/////
-//////////////////////
+///////////////////////
+//// Global Assets ////
+///////////////////////
 #include <map>
 #include <string>
 #include "Texture.h"
 
-class Vector4;
-
 namespace FlatEngine
 {
+	class Vector4;
 	class Texture;
 
 	class AssetManager
@@ -19,13 +15,18 @@ namespace FlatEngine
 	public:
 		AssetManager();
 		~AssetManager();
+		void CollectDirectories();
 		void CollectColors();
 		void CollectTextures();
+		std::string GetDir(std::string dirName);
+		std::string GetFilePath(std::string fileName);
 		Vector4 GetColor(std::string colorName);
 		Uint32 GetColor32(std::string colorName);
 		std::shared_ptr<Texture>GetTextureObject(std::string textureName);
 		SDL_Texture* GetTexture(std::string textureName);		
 	private:
+		std::map<std::string, std::string> m_directories;
+		std::map<std::string, std::string> m_files;
 		std::map<std::string, Vector4> m_colors;
 		std::map<std::string, std::shared_ptr<Texture>> m_textures;		
 		std::string m_resourceFailedToLoadImagePath;

@@ -91,28 +91,28 @@ namespace FlatEngine
 	void PushWindowStyles(Vector4 bgColor)
 	{
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_frameBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, F_frameBgActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_frameBgHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_Tab, F_tabColor);
-		ImGui::PushStyleColor(ImGuiCol_TabActive, F_tabActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TabHovered, F_tabHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, F_tabUnfocusedColor);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, F_tabUnfocusedActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, F_titleBgColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, F_titleBgActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, F_titleBgCollapsedColor);
-		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, F_textSelectedBgColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, F_resizeGripColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, F_resizeGripActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, F_resizeGripHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, F_popupBgColor);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, F_navWindowHighlightColor);
-		ImGui::PushStyleColor(ImGuiCol_NavHighlight, F_navHighlightColor);
-		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, F_navWindowDimBgColor);
-		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, F_modalWindowDimBgColor);
-		ImGui::PushStyleColor(ImGuiCol_DockingPreview, F_dockingPreviewColor);
-		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, F_dockingPreviewEmptyColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("frameBg"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("frameBgActive"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("frameBgHovered"));
+		ImGui::PushStyleColor(ImGuiCol_Tab, GetColor("tab"));
+		ImGui::PushStyleColor(ImGuiCol_TabActive, GetColor("tabActive"));
+		ImGui::PushStyleColor(ImGuiCol_TabHovered, GetColor("tabHovered"));
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, GetColor("tabUnfocused"));
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, GetColor("tabUnfocusedActive"));
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, GetColor("titleBg"));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, GetColor("titleBgActive"));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, GetColor("titleBgCollapsed"));
+		ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, GetColor("textSelectedBg"));
+		ImGui::PushStyleColor(ImGuiCol_ResizeGrip, GetColor("resizeGrip"));
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripActive, GetColor("resizeGripActive"));
+		ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, GetColor("resizeGripHovered"));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, GetColor("popupBg"));
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingHighlight, GetColor("navWindowHighlight"));
+		ImGui::PushStyleColor(ImGuiCol_NavHighlight, GetColor("navHighlight"));
+		ImGui::PushStyleColor(ImGuiCol_NavWindowingDimBg, GetColor("navWindowDimBg"));
+		ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, GetColor("modalWindowDimBg"));
+		ImGui::PushStyleColor(ImGuiCol_DockingPreview, GetColor("dockingPreview"));
+		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, GetColor("dockingPreviewEmpty"));
 	}
 
 	void PopWindowStyles()
@@ -144,14 +144,14 @@ namespace FlatEngine
 
 	void PushComboStyles()
 	{
-		ImGui::PushStyleColor(ImGuiCol_Button, F_comboArrowColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, F_comboArrowHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_comboBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_comboHoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_Button, GetColor("comboArrow"));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, GetColor("comboArrowHovered"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("comboBg"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("comboHovered"));
 		// For Selectables
-		ImGui::PushStyleColor(ImGuiCol_Header, F_comboSelectableColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, F_comboSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, F_comboHighlightedColor);
+		ImGui::PushStyleColor(ImGuiCol_Header, GetColor("comboSelectable"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, GetColor("comboSelected"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, GetColor("comboHighlighted"));
 	}
 
 	void PopComboStyles()
@@ -170,9 +170,9 @@ namespace FlatEngine
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10, 5 });
 		//ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		ImGui::PushStyleColor(ImGuiCol_Header, F_treeSelectableSelectedColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, F_treeSelectableHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, F_treeSelectableActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_Header, GetColor("treeSelectableSelected"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, GetColor("treeSelectableHovered"));
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, GetColor("treeSelectableActive"));
 	}
 
 	void PopMenuStyles()
@@ -186,8 +186,8 @@ namespace FlatEngine
 
 	void PushTableStyles()
 	{
-		ImGui::PushStyleColor(ImGuiCol_TableRowBg, F_tableCellDarkColor);
-		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, F_tableCellLightColor);
+		ImGui::PushStyleColor(ImGuiCol_TableRowBg, GetColor("tableCellDark"));
+		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, GetColor("tableCellLight"));
 	}
 
 	void PopTableStyles()
@@ -307,23 +307,23 @@ namespace FlatEngine
 	void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2)
 	{
 		// Push uneditableTableTextColor text color
-		ImGui::PushStyleColor(ImGuiCol_Text, F_noEditTableTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, GetColor("noEditTableText"));
 
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
 		// Set table cell bg color
-		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(F_noEditTableRowFieldBgColor));
+		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowFieldBg")));
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
 		// Set table cell bg color
-		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(F_noEditTableRowValueBgColor));
+		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowValueBg")));
 		ImGui::Text(value.c_str());
 		if (value2 != "")
 		{
 			ImGui::TableSetColumnIndex(2);
 			// Set table cell bg color
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(F_noEditTableRowValueBgColor));
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowValueBg")));
 			ImGui::Text(value2.c_str());
 		}
 		ImGui::PushID(id.c_str());
@@ -341,8 +341,9 @@ namespace FlatEngine
 
 	bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
 	{
-		bool _editedButton = false;
-		bool _editedInput = false;
+		bool b_editedButton = false;
+		bool b_editedInput = false;
+		bool b_dragTargeted = false;
 		char newPath[1024];
 		strcpy_s(newPath, value.c_str());
 		std::string pathString = label;
@@ -354,31 +355,55 @@ namespace FlatEngine
 		}
 
 		if (_canOpenFiles && inputWidth == -1)
-			inputWidth = inputWidth = ImGui::GetContentRegionAvail().x - 30;
+			inputWidth = ImGui::GetContentRegionAvail().x - 30;
 		else if (_canOpenFiles)
 			inputWidth -= 30;
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_inputColor);
+		Vector2 inputStart = ImGui::GetCursorScreenPos();
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("input"));
 		ImGui::SetNextItemWidth(inputWidth);
-		_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
+		b_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
 		ImGui::PopStyleColor();
+		Vector2 inputSize = Vector2(inputWidth, ImGui::GetCursorScreenPos().y - inputStart.y);
+
+		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false);
+
+		// Drop Target
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH_DRAGGED"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				int numFilesDragged = *(const int*)payload->Data;
+				
+				std::filesystem::path fs_path(F_selectedFiles[numFilesDragged - 1]);
+				if (fs_path.extension() == ".png")
+				{
+					b_dragTargeted = true;
+					strcpy_s(newPath, F_selectedFiles[numFilesDragged - 1].c_str());
+				}
+				else
+					LogString("ERROR : File must be of type .png to drop here.");
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		if (_canOpenFiles)
 		{
 			ImGui::SameLine();
 
 			std::string buttonId = id + "openFileButton";
-			if (RenderImageButton(buttonId.c_str(), F_openFileIcon.GetTexture()))
+			if (RenderImageButton(buttonId.c_str(), GetTexture("openFile")))
 			{
 				std::string assetPath = FlatEngine::OpenLoadFileExplorer();
 				strcpy_s(newPath, assetPath.c_str());
-				_editedButton = true;
+				b_editedButton = true;
 			}
 		}
 
 		if (newPath != nullptr)
 			value = newPath;
-		return _editedButton || _editedInput;
+		return b_editedButton || b_editedInput || b_dragTargeted;
 	}
 
 	bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
@@ -395,7 +420,7 @@ namespace FlatEngine
 		if (options[current_option] == "")
 		{
 			currentlySelected = empty;
-			ImGui::PushStyleColor(ImGuiCol_Text, F_logTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, GetColor("logText"));
 			b_currentSelectionEmpty = true;
 		}
 
@@ -410,9 +435,9 @@ namespace FlatEngine
 					selectableLabel = empty;
 					
 				if (options[n] == "")
-					ImGui::PushStyleColor(ImGuiCol_Text, F_logTextColor);
+					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("logText"));
 				else
-					ImGui::PushStyleColor(ImGuiCol_Text, F_whiteColor);
+					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("white"));
 
 				if (ImGui::Selectable(selectableLabel.c_str(), is_selected))
 				{
@@ -437,7 +462,7 @@ namespace FlatEngine
 
 	void PushTreeList(std::string id)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_innerWindowColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("innerWindow"));
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		PushMenuStyles();
 		ImGui::BeginTable(id.c_str(), 1, F_tableFlags);
@@ -508,7 +533,7 @@ namespace FlatEngine
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(2, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
 
-		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, F_uv0, F_uv1, F_transparentColor, tint);
+		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, Vector2((float)0), Vector2(1), GetColor("transparent"), tint);
 
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
@@ -525,9 +550,9 @@ namespace FlatEngine
 
 	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_dragColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_dragHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, F_dragActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("dragHovered"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
 		if (width != 0)
 			ImGui::SetNextItemWidth(width);
@@ -548,9 +573,9 @@ namespace FlatEngine
 
 	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_dragColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_dragHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, F_dragActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("dragHovered"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
 		if (width != 0)
 			ImGui::SetNextItemWidth(width);
@@ -570,10 +595,10 @@ namespace FlatEngine
 
 	bool RenderCheckbox(std::string text, bool& _toCheck)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, F_checkboxBgColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, F_checkboxHoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, F_checkboxActiveColor);
-		ImGui::PushStyleColor(ImGuiCol_CheckMark, F_checkboxCheckColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("checkboxBg"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("checkboxHovered"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("checkboxActive"));
+		ImGui::PushStyleColor(ImGuiCol_CheckMark, GetColor("checkboxCheck"));
 
 		bool _checked = ImGui::Checkbox(text.c_str(), &_toCheck);
 
@@ -597,21 +622,21 @@ namespace FlatEngine
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 		Vector2 screenCursor = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(F_innerWindowColor));
+		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(GetColor("innerWindow")));
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
 		ImGui::Text(headerText.c_str());
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
-		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(F_componentBorderColor));
+		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(GetColor("componentBorder")));
 	}
 
 	// *** Sets CursorScreenPos to the starting point! ***
 	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect)
 	{
 		if (_showRect)
-			FlatEngine::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), F_whiteColor, 1.0f, ImGui::GetWindowDrawList());
+			FlatEngine::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), GetColor("white"), 1.0f, ImGui::GetWindowDrawList());
 
 		ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight;
 		if (_allowOverlap)

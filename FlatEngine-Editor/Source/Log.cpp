@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "Logger.h"
 
+namespace FL = FlatEngine;
 
 namespace FlatGui 
 {
@@ -10,24 +11,24 @@ namespace FlatGui
 
 	void RenderLog()
 	{
-		FlatEngine::BeginWindow("Logger", _showLogger);
+		FL::BeginWindow("Logger", _showLogger);
 
-		if (FlatEngine::RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
+		if (FL::RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
 		{
-			FlatEngine::F_Logger.ClearBuffer();
+			FL::F_Logger.ClearBuffer();
 		}
 
-		ImGuiTextBuffer log = FlatEngine::F_Logger.GetBuffer();
+		ImGuiTextBuffer log = FL::F_Logger.GetBuffer();
 		static int lines = 0;
 
-		if (FlatEngine::RenderButton("Clear"))
+		if (FL::RenderButton("Clear"))
 		{
-			FlatEngine::F_Logger.ClearBuffer();
+			FL::F_Logger.ClearBuffer();
 			lines = 0;
 		}
 		ImGui::SameLine();
 
-		ImGui::PushStyleColor(ImGuiCol_Text, FlatEngine::F_logTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor("logText"));
 		ImGui::Text("Log buffer contents : % d bytes", log.size());
 		ImGui::SameLine(0, 10);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
@@ -41,24 +42,24 @@ namespace FlatGui
 		Vector2 availSpace = ImGui::GetContentRegionAvail();
 
 		// Draw Border around log
-		ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, Vector2(cursorPos.x + availSpace.x + 2, cursorPos.y + availSpace.y + 2), ImGui::GetColorU32(FlatEngine::F_logOutlineColor));
+		ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, Vector2(cursorPos.x + availSpace.x + 2, cursorPos.y + availSpace.y + 2), FL::GetColor32("logOutline"));
 
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_logBgColor);
-		ImGui::BeginChild("Log", Vector2(0, 0), FlatEngine::F_childFlags);
-		ImGui::PushStyleColor(ImGuiCol_Text, FlatEngine::F_logTextColor);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("logBg"));
+		ImGui::BeginChild("Log", Vector2(0, 0), FL::F_childFlags);
+		ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor("logText"));
 		ImGui::TextUnformatted(log.begin(), log.end());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::EndChild(); // Log
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 
 
 		// For keeping the log from filling up when logging continuous values
 		if (_clearBufferEveryFrame)
 		{
-			FlatEngine::F_Logger.ClearBuffer();
-			FlatEngine::LogString("Log buffer is being cleared...");
+			FL::F_Logger.ClearBuffer();
+			FL::LogString("Log buffer is being cleared...");
 		}
 	}
 }

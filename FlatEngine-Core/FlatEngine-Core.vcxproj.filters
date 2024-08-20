@@ -666,9 +666,6 @@
     <ClCompile Include="Source\GameView.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Icons.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ImGuiWrappersCore.cpp">
       <Filter>Source</Filter>
     </ClCompile>

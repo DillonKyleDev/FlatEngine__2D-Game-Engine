@@ -115,45 +115,6 @@ namespace FlatEngine
 		return eventFunctions;
 	}
 
-
-	void Animation::LerpToCenter()
-	{
-		// Get variables
-		GameObject thisObject = FlatEngine::GetObjectById(GetParentID());
-		FlatEngine::Transform* transform = thisObject.GetTransform();
-
-		// Save original position
-		static Vector2 startingPoint = transform->GetPosition();
-
-		// If the animation should still be on the first frame
-		//if (animationStartTime + ticksPerFrame * 1 < FlatEngine::GetEllapsedGameTime())
-		//{
-		//	// Do first frame things
-		//	transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(0, 0), .01f));
-		//}
-
-		// For 500 ticks, do this:
-		if (animationStartTime + 500 > FlatEngine::GetEllapsedGameTimeInMs())
-		{
-			// Do first frame things
-			transform->SetScale(FlatEngine::Lerp(transform->GetScale(), Vector2(2, 2), 0.1f));
-		}
-		else if (animationStartTime + 1000 > FlatEngine::GetEllapsedGameTimeInMs())
-		{
-			transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), Vector2(startingPoint.x + 16, startingPoint.y), 0.5f));
-		}
-		else if (animationStartTime + 1300 > FlatEngine::GetEllapsedGameTimeInMs())
-		{
-			transform->SetPosition(FlatEngine::Lerp(transform->GetPosition(), startingPoint, 0.1f));
-		}
-		else if (animationStartTime + 2000 > FlatEngine::GetEllapsedGameTimeInMs())
-		{
-			transform->SetScale(FlatEngine::Lerp(transform->GetScale(), Vector2(1, 1), 0.1f));
-		}
-		else
-			Stop();
-	}
-
 	void Animation::PlayAnimation(long ellapsedTime)
 	{
 		std::shared_ptr<S_AnimationProperties> props = animationProperties;

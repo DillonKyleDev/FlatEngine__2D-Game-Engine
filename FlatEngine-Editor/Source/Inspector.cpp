@@ -16,37 +16,47 @@
 #include "RigidBody.h"
 #include "Component.h"
 
+namespace FL = FlatEngine;
 
-using Component = FlatEngine::Component;
-using ComponentTypes = FlatEngine::Component::ComponentTypes;
-using Sprite = FlatEngine::Sprite;
-using CharacterController = FlatEngine::CharacterController;
-using BoxCollider = FlatEngine::BoxCollider;
-using CircleCollider = FlatEngine::CircleCollider;
-using RigidBody = FlatEngine::RigidBody;
-using Button = FlatEngine::Button;
+using Component = FL::Component;
+using ComponentTypes = FL::Component::ComponentTypes;
+using Sprite = FL::Sprite;
+using CharacterController = FL::CharacterController;
+using BoxCollider = FL::BoxCollider;
+using CircleCollider = FL::CircleCollider;
+using RigidBody = FL::RigidBody;
+using Button = FL::Button;
 
 
 namespace FlatGui 
 {
 	void RenderInspector()
 	{
-		FlatEngine::BeginWindow("Inspector");
+		FL::BeginWindow("Inspector");
 
 		long focusedObjectID = GetFocusedGameObjectID();
 
-		if (focusedObjectID != -1 && FlatEngine::GetObjectById(focusedObjectID) != nullptr)
+		if (focusedObjectID != -1 && FL::GetObjectById(focusedObjectID) != nullptr)
 		{
 			// Get focused GameObject
-			GameObject* focusedObject = FlatEngine::GetObjectById(focusedObjectID);
+			GameObject* focusedObject = FL::GetObjectById(focusedObjectID);
 
 			// Lambda
 			auto L_ShowAddComponentsWindow = [&]()
 			{
-				FlatEngine::PushMenuStyles();
+				FL::PushMenuStyles();
 
 				// Add all the component types you can add to this GameObject
 				//
+				if (!focusedObject->HasComponent("Transform"))
+				{
+					if (ImGui::MenuItem("Transform"))
+					{
+						focusedObject->AddTransformComponent();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
 				if (!focusedObject->HasComponent("Sprite"))
 				{
 					if (ImGui::MenuItem("Sprite"))
@@ -143,7 +153,7 @@ namespace FlatGui
 					ImGui::CloseCurrentPopup();
 				}
 
-				FlatEngine::PopMenuStyles();
+				FL::PopMenuStyles();
 			};
 
 			// Name editing
@@ -157,8 +167,8 @@ namespace FlatGui
 			ImGui::SameLine(0, 5);
 
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FlatEngine::F_inputColor);
-			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), FlatEngine::F_inputFlags))
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
+			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), FL::F_inputFlags))
 				focusedObject->SetName(newName);
 			ImGui::PopStyleColor();
 
@@ -167,20 +177,20 @@ namespace FlatGui
 			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 2));
 
 			// GameObject Active Checkbox
-			if (FlatEngine::RenderCheckbox("Active", _objectActive))
+			if (FL::RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 62, 5);
 
 			// GameObject TagList Dropdown
 			TagList tagList = focusedObject->GetTagList();			
-			FlatEngine::RenderButton("Tags");
-			FlatEngine::PushMenuStyles();
+			FL::RenderButton("Tags");
+			FL::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				std::string labels[2] = { "Tag", "Ignore" };
-				if (FlatEngine::PushTable("TagsTable", 3, FlatEngine::F_resizeableTableFlags))
+				if (FL::PushTable("TagsTable", 3, FL::F_resizeableTableFlags))
 				{
-					FlatEngine::RenderTextTableRow("TagsTableHeaders", "Tag", "Has", "Ignore");
+					FL::RenderTextTableRow("TagsTableHeaders", "Tag", "Has", "Ignore");
 
 					for (std::pair<std::string, bool> tag : tagList.GetTagsMap())
 					{
@@ -188,19 +198,19 @@ namespace FlatGui
 						RenderTagListTableRow(tableRowId.c_str(), tag.first, tagList);
 					}
 				
-					FlatEngine::PopTable();
+					FL::PopTable();
 				}
 				ImGui::EndPopup();
 			}
-			FlatEngine::PopMenuStyles();
+			FL::PopMenuStyles();
 
 
 			// Three Dots More Options Button
 			ImGui::SameLine(0, 5);
-			FlatEngine::RenderImageButton("##InspectorMoreButton", FlatEngine::F_threeDotsIcon.GetTexture(), Vector2(16, 16), 1, FlatEngine::F_transparentColor);
+			FL::RenderImageButton("##InspectorMoreButton", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 			// Render the actual menu on click
-			FlatEngine::PushMenuStyles();
+			FL::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				if (ImGui::BeginMenu("Add Component"))
@@ -212,22 +222,22 @@ namespace FlatGui
 				if (ImGui::MenuItem("Delete GameObject"))
 				{
 					SetFocusedGameObjectID(-1);
-					FlatEngine::DeleteGameObject(focusedObject->GetID());
+					FL::DeleteGameObject(focusedObject->GetID());
 					ImGui::CloseCurrentPopup();
 				}
 	
 				ImGui::EndPopup();
 			}
-			FlatEngine::PopMenuStyles();
+			FL::PopMenuStyles();
 		
 
 			// Components Section
-			FlatEngine::RenderSectionHeader("Components");
+			FL::RenderSectionHeader("Components");
 
 
 			// For scrolling components section with background
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FlatEngine::F_logBgColor);
-			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), FlatEngine::F_childFlags);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("logBg"));
+			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), FL::F_childFlags);
 			ImGui::PopStyleColor();
 
 			if (focusedObject != nullptr)
@@ -235,7 +245,7 @@ namespace FlatGui
 				long queuedForDelete = -1;
 
 				// Transform
-				FlatEngine::Transform* transform = focusedObject->GetTransform();
+				FL::Transform* transform = focusedObject->GetTransform();
 				if (transform != nullptr)
 				{
 					BeginComponent(transform, queuedForDelete);
@@ -245,7 +255,7 @@ namespace FlatGui
 				}
 
 				// Sprite
-				Sprite* sprite = FlatEngine::GetLoadedScene()->GetSpriteByOwner(focusedObjectID);
+				Sprite* sprite = FL::GetLoadedScene()->GetSpriteByOwner(focusedObjectID);
 				if (sprite != nullptr)
 				{
 					BeginComponent(sprite, queuedForDelete);
@@ -374,7 +384,7 @@ namespace FlatGui
 			ImGui::EndChild(); // ComponentsSectionBg
 
 			// Render the Adding Components button
-			FlatEngine::RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
+			FL::RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
 			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
 				L_ShowAddComponentsWindow();
@@ -382,6 +392,6 @@ namespace FlatGui
 			}
 		}
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 }
