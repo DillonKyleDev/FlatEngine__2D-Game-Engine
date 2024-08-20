@@ -1,0 +1,33 @@
+{
+    "Project Properties": [
+        {
+            "_autoSave": true,
+            "_clearLogBuffer": false,
+            "_fullscreen": false,
+            "_showAnimationPreview": false,
+            "_showAnimator": false,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": false,
+            "_showProfiler": true,
+            "_showSceneView": true,
+            "_vsyncEnabled": true,
+            "collisionDetection": "Shared Axis",
+            "focusedGameObjectID": -1,
+            "loadedAnimationPath": "",
+            "loadSceneOnStart": "Source\\scenes\\Empty.json",
+            "sceneToLoadAtRuntime": "",
+            "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\FlatEngine-Editor\\Source\\projects\\Sandbox.json",
+            "physicsSystem": "Euler",
+            "resolutionHeight": 1200.0,
+            "resolutionWidth": 1920.0,
+            "sceneViewGridStepX": 16.099809646606445,
+            "sceneViewGridStepY": 16.099809646606445,
+            "sceneViewScrollingX": 608.403076171875,
+            "sceneViewScrollingY": 346.73046875
+        }
+    ]
+}

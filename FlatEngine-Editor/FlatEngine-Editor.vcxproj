@@ -55,22 +55,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Debug\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Debug\FlatEngine-Editor\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Debug\FlatEngine-Editor\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Debug\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Release\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Release\FlatEngine-Editor\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Release\FlatEngine-Editor\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Release\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Dist\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Dist\FlatEngine-Editor\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Dist\FlatEngine-Editor\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Dist\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -163,6 +163,7 @@
     <ClCompile Include="Source\MappingContextEditor.cpp" />
     <ClCompile Include="Source\RenderProfiler.cpp" />
     <ClCompile Include="Source\SceneView.cpp" />
+    <ClCompile Include="Source\ScriptEditor.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />
     <ClCompile Include="Source\WidgetsManager.cpp" />

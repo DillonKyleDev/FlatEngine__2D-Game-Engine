@@ -96,12 +96,14 @@ namespace FlatGui
 
 	// Focused Animation
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FocusedAnimation;
+	extern std::string FG_FocusedAnimationName;
 	extern GameObject objectForFocusedAnimation;
 	extern std::shared_ptr<FL::Animation::S_Property> selectedKeyFrameToEdit;
 	extern long previewAnimationStartTime;
 	extern long previewAnimationTime;
 	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation);
+	extern void SetFocusedAnimation(std::string animationName);
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation();
 	// Global Animation Event Functions
 	extern void DestroySelf(std::shared_ptr<FL::GameObject> thisObject);
@@ -176,7 +178,8 @@ namespace FlatGui
 	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
 	extern void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked);
 	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked);
-
+	extern void OpenFileContextually(std::filesystem::path fs_filepath);
+	extern void RenderScriptEditor();
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, long& queuedForDelete);

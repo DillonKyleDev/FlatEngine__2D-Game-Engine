@@ -178,7 +178,7 @@ namespace FlatGui
 
 	void RenderSpriteComponent(Sprite* sprite)
 	{
-		std::string path = sprite->GetPath();
+		std::string path = FL::GetFilenameFromPath(sprite->GetPath(), true);
 		float textureWidth = sprite->GetTextureWidth();
 		float textureHeight = sprite->GetTextureHeight();
 		Vector2 textureScale = sprite->GetScale();
@@ -196,15 +196,33 @@ namespace FlatGui
 		std::string textureHeightString = std::to_string(textureHeight);
 		Vector4 tintColor = sprite->GetTintColor();
 		long id = sprite->GetID();
+		int droppedValue = -1;
 
 		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			sprite->SetActive(_isActive);								
 
-		// Load From File
-		std::string openFileID = "##OpenFileIcon" + std::to_string(sprite->GetID());
-		if (FL::RenderInput("##InputSpritePath", "Path", path, true) && path != "")
-			sprite->SetTexture(path);
+		std::string openedPath = "";
+		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), "FILE_PATH_DRAGGED", droppedValue, openedPath))
+		{
+			if (openedPath != "")
+			{
+				sprite->SetTexture(openedPath);
+			}
+			else if (droppedValue != -1)
+			{
+				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+				if (fs_path.extension() == ".png")
+				{
+					sprite->SetTexture(fs_path.string());
+				}
+				else
+					FL::LogString("ERROR : File must be of type .png to drop here.");
+			}
+		}
+
+		//if (ImGui::IsItemHovered())
+		//	FL::RenderTextToolTip("Drag an image here from the File Explorer");
 
 		// Render Table
 		if (FL::PushTable("##SpriteProperties" + std::to_string(id), 2))
@@ -283,7 +301,7 @@ namespace FlatGui
 	}
 
 	void RenderCameraComponent(Camera* camera)
-	{	
+	{
 		float width = camera->GetWidth();
 		float height = camera->GetHeight();
 		bool _isPrimary = camera->IsPrimary();
@@ -317,8 +335,19 @@ namespace FlatGui
 			FL::PopTable();
 		}
 
-		if (FL::RenderInput("##FollowInput", "To Follow", following))
-			camera->SetFollowing(FL::GetObjectByName(following)->GetID());
+		int droppedValue = -1;
+		if (FL::DropInput("##CameraFollowObject", "Following", following, "DND_HIERARCHY_OBJECT", droppedValue))
+		{
+			if (droppedValue != -1 && FL::GetObjectById(droppedValue) != nullptr)
+			{
+				camera->SetFollowing(droppedValue);
+			}
+			else
+				FL::LogString("ERROR : Something went wrong, item must be a GameObject with a Transform component");
+		}
+
+		if (ImGui::IsItemHovered())
+			FL::RenderTextToolTip("Drag a GameObject here from the Hierarchy");
 
 		// Frustrum color picker
 		std::string frustrumID = "##FrustrumColor" + std::to_string(id);
@@ -354,7 +383,7 @@ namespace FlatGui
 	void RenderScriptComponent(Script* script)
 	{		
 		static int currentLuaScript = 0;
-		std::string path = script->GetAttachedScript();
+		std::string attachedScriptName = script->GetAttachedScript();
 		bool _isActive = script->IsActive();
 		long id = script->GetID();
 
@@ -364,7 +393,7 @@ namespace FlatGui
 
 		for (int i = 0; i < FL::F_luaScriptNames.size(); i++)
 		{
-			if (path == FL::F_luaScriptNames[i])
+			if (attachedScriptName == FL::F_luaScriptNames[i])
 			{
 				currentLuaScript = i;
 				break;
@@ -376,12 +405,14 @@ namespace FlatGui
 
 		// Select which Lua script is attached to this Script
 		if (FL::RenderSelectable("##SelectLuaScript", FL::F_luaScriptNames, currentLuaScript))
-			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]);
+			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]); // + 1 because of the empty space at the beginning of the vector
+	
+		bool b_openModal = false;
+		if (FL::RenderButton("New Script", Vector2(100, 20)))
+			b_openModal = true;
 
 		// Create new Lua script modal
-		if (FL::RenderButton("New Script", Vector2(100, 20)))
-			ImGui::OpenPopup(newScriptModalLabel.c_str());
-		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName))
+		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openModal))
 			FL::CreateNewLuaScript(newScriptName);
 	}
 

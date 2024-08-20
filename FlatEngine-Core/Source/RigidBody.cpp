@@ -107,21 +107,6 @@ namespace FlatEngine {
 		ApplyFriction();
 		ApplyEquilibriumForce();
 	
-		std::string physicsSystemType = FlatEngine::F_LoadedProject.GetPhysicsSystem();
-
-		// Apply them to RigidBody
-		if (physicsSystemType == "Euler")
-		{
-			CalculateEulerPhysics();
-		}
-		else if (physicsSystemType == "Verlet")
-		{
-			CalculateVerletPhysics();
-		}
-	}
-
-	void RigidBody::CalculateEulerPhysics()
-	{		
 		// Linear
 		if (m_mass == 0)
 			m_acceleration = Vector2(m_pendingForces.x, m_pendingForces.y);
@@ -135,26 +120,7 @@ namespace FlatEngine {
 			m_angularAcceleration = m_pendingTorques * m_1overI;
 	}
 
-	void RigidBody::CalculateVerletPhysics()
-	{
-		// TODO
-	}
-
 	void RigidBody::ApplyPhysics(float deltaTime)
-	{
-		std::string physicsSystemType = FlatEngine::F_LoadedProject.GetPhysicsSystem();
-
-		if (physicsSystemType == "Euler")
-		{
-			ApplyEulerPhysics(deltaTime);			
-		}
-		else if (physicsSystemType == "Verlet")
-		{
-			ApplyVerletPhysics(deltaTime);
-		}
-	}
-
-	void RigidBody::ApplyEulerPhysics(float deltaTime)
 	{
 		// In reality, we should be adding acceleration to velocity, but it is difficult to simulate opposing forces that would actually cause objects to slow down (ie. give them negative values in the opposing direction at all times)
 		m_velocity = Vector2(m_acceleration.x, m_acceleration.y);
@@ -168,11 +134,6 @@ namespace FlatEngine {
 
 		float rotation = transform->GetRotation();
 		transform->SetRotation((float)fmod(rotation + m_angularVelocity, 360));
-	}
-
-	void RigidBody::ApplyVerletPhysics(float deltaTime)
-	{
-		// TODO
 	}
 
 	Vector2 RigidBody::AddVelocity(Vector2 vel)

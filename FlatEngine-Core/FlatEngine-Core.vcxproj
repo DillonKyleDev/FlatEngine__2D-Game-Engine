@@ -54,22 +54,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\Binaries\windows-x86_64\Debug\FlatEngine-Core\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Debug\FlatEngine-Core\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Debug\FlatEngine-Core\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Debug\FlatEngine-Core\</IntDir>
     <TargetName>FlatEngine-Core</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;..\Vendor\includes\Lua;..\Vendor\includes\Sol2;..\Vendor\includes\Sol2\include;..\Vendor\includes\Sol2\include\sol;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\Binaries\windows-x86_64\Release\FlatEngine-Core\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Release\FlatEngine-Core\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Release\FlatEngine-Core\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Release\FlatEngine-Core\</IntDir>
     <TargetName>FlatEngine-Core</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;..\Vendor\includes\Lua;..\Vendor\includes\Sol2;..\Vendor\includes\Sol2\include;..\Vendor\includes\Sol2\include\sol;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <OutDir>..\Binaries\windows-x86_64\Dist\FlatEngine-Core\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Dist\FlatEngine-Core\</IntDir>
+    <OutDir>..\Build\windows-x86_64\Dist\FlatEngine-Core\</OutDir>
+    <IntDir>..\Build\Intermediates\windows-x86_64\Dist\FlatEngine-Core\</IntDir>
     <TargetName>FlatEngine-Core</TargetName>
     <TargetExt>.lib</TargetExt>
     <ExternalIncludePath>..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2\lib\x64;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Image\lib\x64;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Text\lib\x64;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\SDL2_Mixer\lib\x64;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;..\Vendor\includes\Lua;..\Vendor\includes\Sol2;..\Vendor\includes\Sol2\include;..\Vendor\includes\Sol2\include\sol;$(ExternalIncludePath)</ExternalIncludePath>
@@ -327,6 +327,7 @@
     <ClCompile Include="..\Vendor\includes\ImPlot\implot_items.cpp" />
     <ClCompile Include="Source\Animation.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\Audio.cpp" />
     <ClCompile Include="Source\BoxCollider.cpp" />
     <ClCompile Include="Source\Button.cpp" />
@@ -335,7 +336,6 @@
     <ClCompile Include="Source\CharacterController.cpp" />
     <ClCompile Include="Source\CircleCollider.cpp" />
     <ClCompile Include="Source\Collider.cpp" />
-    <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\CompositeCollider.cpp" />
     <ClCompile Include="Source\ECSManager.cpp" />

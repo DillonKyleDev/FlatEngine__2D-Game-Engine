@@ -3,6 +3,8 @@
 #include "FlatEngine.h"
 #include "Texture.h"
 #include "Vector4.h"
+#include "imgui.h"
+#include <fstream>
 
 namespace FlatEngine
 {
@@ -20,15 +22,31 @@ namespace FlatEngine
 	{
 	}
 
-	void AssetManager::CollectDirectories()
+	void AssetManager::CollectDirectories(DirectoryType dirType)
 	{
 		m_directories.clear();
 		m_files.clear();
+		std::string dirPath = "";
+
+		switch (dirType)
+		{
+		case RuntimeDir:
+			dirPath = F_RuntimeDirectoriesLuaFilepath;
+			break;
+		case EditorDir:
+			dirPath = F_EditorDirectoriesLuaFilepath;
+			break;
+		case DebugDir:
+			dirPath = F_DebugDirectoriesLuaFilepath;
+			break;
+		default:
+			break;
+		}
 
 		// Load in lua script
-		if (DoesFileExist(F_DirectoriesLuaFilepath))
+		if (DoesFileExist(dirPath))
 		{
-			auto script = F_Lua.safe_script_file(F_DirectoriesLuaFilepath);
+			auto script = F_Lua.safe_script_file(dirPath);
 			std::optional<sol::table> dirTable = F_Lua["F_Dirs"];
 			std::optional<sol::table> pathTable = F_Lua["F_Paths"];
 
@@ -141,7 +159,7 @@ namespace FlatEngine
 		if (m_colors.count(colorName))
 			return m_colors.at(colorName);
 		else
-			return Vector4(1.0f, 0.0f, 0.0f, 1.0f); // Return red
+			return Vector4(0.08f, 0.08f, 0.10f, 1.0f);
 	}
 
 	Uint32 AssetManager::GetColor32(std::string colorName)

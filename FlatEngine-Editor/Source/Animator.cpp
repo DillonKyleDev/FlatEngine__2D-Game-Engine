@@ -56,10 +56,10 @@ namespace FlatGui
 			{
 				// Create S_AnimationProperties struct to store the properties of the json file in
 				std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-				animationProperties->animationName = "New Animation";
-
-				FL::CreateNewAnimationFile(animationFilePath);
-				SaveAnimationFile(animationProperties, animationFilePath);
+				std::string animationName = FL::GetFilenameFromPath(animationFilePath);
+				animationProperties->animationName = animationName;
+				FL::CreateNewAnimationFile(animationName, animationFilePath);
+				SaveAnimationData(animationProperties, animationFilePath);
 			}
 		}
 		// Tooltip
@@ -90,7 +90,7 @@ namespace FlatGui
 		if (FL::RenderImageButton("#SaveAnimationFile", FL::GetTexture("saveFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
 		{
 			if (animationFilePath != "")
-				FL::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
+				FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
 		}
 		// Tooltip
 		if (ImGui::BeginItemTooltip())
@@ -104,7 +104,7 @@ namespace FlatGui
 		{
 			animationFilePath = FL::OpenSaveFileExplorer();
 			if (animationFilePath != "")
-				FL::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
+				FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
 		}
 		// Tooltip
 		if (ImGui::BeginItemTooltip())
@@ -1119,6 +1119,11 @@ namespace FlatGui
 	void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation)
 	{
 		FocusedAnimation = animation;
+	}
+
+	void SetFocusedAnimation(std::string animationName)
+	{
+		FG_FocusedAnimationName = animationName;
 	}
 
 	std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation()

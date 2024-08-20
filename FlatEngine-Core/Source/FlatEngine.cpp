@@ -10,6 +10,7 @@
 #include "ECSManager.h"
 #include "Project.h"
 #include "AssetManager.h"
+#include "MappingContext.h"
 
 #include "GameLoop.h"
 #include "Scene.h"
@@ -50,7 +51,9 @@
 
 namespace FlatEngine
 {
-	std::string F_DirectoriesLuaFilepath = "../assets/engine-assets/scripts/Directories.lua";
+	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/DebugDirectories.lua";
+	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";;
+	std::string F_DebugDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";;
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
@@ -80,6 +83,7 @@ namespace FlatEngine
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
 	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
+	std::string F_selectedMappingContextName = "";
 	TTF_Font* F_fontCinzel;
 	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
 
@@ -220,7 +224,7 @@ namespace FlatEngine
 	}
 
 
-	bool Init(int windowWidth, int windowHeight)
+	bool Init(int windowWidth, int windowHeight, DirectoryType dirType)
 	{
 		//Initialization flag
 		bool success = true;
@@ -277,20 +281,19 @@ namespace FlatEngine
 						}
 						else
 						{
-							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
+							Mix_AllocateChannels(100);							   // Sets number of individual audios that can play at once
 							LogString("SDL_mixer initialized...");
 
 							InitLua();
 							LogString("Lua initialized...");
 
-							F_AssetManager.CollectDirectories();    // Collect important directories and file paths from Directories.lua
-							F_AssetManager.CollectColors();         // Collect global colors from Colors.lua
+							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
+							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
+							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
+							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
+							SetImGuiColors();									   // Use the collected colors to style ImGui elements
 
-							SetupImGui();							// Set up ImGui Context and global styles
-
-							F_AssetManager.CollectTextures();       // Collect and create Texture icons from Textures.lua
-							
-							RetrieveLuaScriptNames();               // Uses scripts directory collected from above CollectDirectories() call
+							RetrieveLuaScriptPaths();							  
 
 							LogString("Ready...");
 							LogSeparator();
@@ -330,12 +333,16 @@ namespace FlatEngine
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::W_Window, Window::W_Renderer);
 		ImGui_ImplSDLRenderer2_Init(Window::W_Renderer);
+		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by FL::GetColor();
+	}
 
+	void SetImGuiColors()
+	{
 		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
 		for (int i = 0; i < ImGuiCol_COUNT; i++)
 		{
 			const char* name = ImGui::GetStyleColorName(i);
-			
+
 			if (name == "TitleBgActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
@@ -374,33 +381,11 @@ namespace FlatEngine
 		}
 	}
 
-	void ManageControllers()
+	void RestartImGui()
 	{
-		static int controllersConnected = 0;
-		if (SDL_NumJoysticks() != controllersConnected)
-		{
-			// Clean up old gamepads
-			for (SDL_Joystick* gamepad : gamepads)
-			{
-				SDL_JoystickClose(gamepad);
-				gamepad = NULL;
-			}
-
-			controllersConnected = SDL_NumJoysticks();
-			for (int i = 0; i < controllersConnected; i++)
-			{
-				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
-				if (gamepad == NULL)
-					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-				else
-				{
-					LogString("Gamepad connected...");
-					gamepads.push_back(gamepad);
-				}
-			}
-		}
+		QuitImGui();
+		SetupImGui();
 	}
-
 
 	void QuitImGui()
 	{
@@ -432,6 +417,35 @@ namespace FlatEngine
 		FlatEngine::_closeProgram = true;
 	}
 
+
+	void ManageControllers()
+	{
+		static int controllersConnected = 0;
+		if (SDL_NumJoysticks() != controllersConnected)
+		{
+			// Clean up old gamepads
+			for (SDL_Joystick* gamepad : gamepads)
+			{
+				SDL_JoystickClose(gamepad);
+				gamepad = NULL;
+			}
+
+			controllersConnected = SDL_NumJoysticks();
+			for (int i = 0; i < controllersConnected; i++)
+			{
+				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
+				if (gamepad == NULL)
+					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+				else
+				{
+					LogString("Gamepad connected...");
+					gamepads.push_back(gamepad);
+				}
+			}
+		}
+	}
+
+
 	Uint32 GetEngineTime()
 	{
 		return (int)SDL_GetTicks();
@@ -443,6 +457,7 @@ namespace FlatEngine
 		return F_PlayerObject;
 	}
 
+
 	// Project Management
 	void SetLoadedProject(Project loadedProject)
 	{
@@ -452,6 +467,148 @@ namespace FlatEngine
 	Project& GetLoadedProject()
 	{
 		return F_LoadedProject;
+	}
+
+	void LoadGameProject(std::string path, json &projectJson)
+	{
+		Project newProject = Project();
+		newProject.SetPath(path);
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Open file in in mode
+		file_obj.open(path, std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		if (file_obj.good())
+		{
+			// Go from string to json object
+			json projectJson = json::parse(fileContent);
+
+			if (projectJson["Project Properties"][0] != "NULL")
+			{
+				// Loop through the saved Properties in the JSON file
+				for (int i = 0; i < projectJson["Project Properties"].size(); i++)
+				{
+					// Get data from the loaded object
+					json currentObjectJson = projectJson["Project Properties"][i];
+
+					// Open items
+					if (currentObjectJson.contains("path"))
+						newProject.SetPath(currentObjectJson["path"]);
+					if (currentObjectJson.contains("loadedScenePath"))
+						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
+					if (currentObjectJson.contains("buildPath"))
+						newProject.SetBuildPath(currentObjectJson["buildPath"]);
+					if (currentObjectJson.contains("loadedAnimationPath"))
+						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
+					if (currentObjectJson.contains("focusedGameObjectID"))
+						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
+					if (currentObjectJson.contains("sceneToLoadAtRuntime"))
+						newProject.SetRuntimeScene(currentObjectJson["sceneToLoadAtRuntime"]);
+
+					// Scene Scrolling + Grid Step
+					Vector2 sceneViewScroll = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewScrollingX"))
+						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
+					if (currentObjectJson.contains("sceneViewScrollingY"))
+						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
+					newProject.SetSceneViewScrolling(sceneViewScroll);
+					Vector2 sceneViewGridStep = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewGridStepX"))
+						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
+					if (currentObjectJson.contains("sceneViewGridStepY"))
+						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
+					newProject.SetSceneViewGridStep(sceneViewGridStep);
+
+					if (currentObjectJson.contains("_autoSave"))
+						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
+					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
+						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
+					if (currentObjectJson.contains("_fullscreen"))
+						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
+					if (currentObjectJson.contains("_vsyncEnabled"))
+						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
+				}
+			}
+		}
+
+		if (newProject.GetLoadedScenePath() != "")
+			FL::LoadScene(newProject.GetLoadedScenePath());
+		else
+			FL::CreateNewScene();
+
+		// Set loaded project
+		FL::SetLoadedProject(newProject);
+	}
+
+	void BuildProject()
+	{
+		if (F_LoadedProject.GetBuildPath() != "")
+		{
+			try
+			{
+				std::filesystem::copy("../FlatEngine-Core", F_LoadedProject.GetBuildPath() + "\\Core", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy FlatEngine-Core : ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy FlatEngine-Runtime : ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../assets", F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy assets : ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../engine", F_LoadedProject.GetBuildPath() + "\\engine", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy engine dependencies: ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy intermediates: ");
+				LogString(e.what());
+			}
+		}
 	}
 
 	// GameObject / Scene management
@@ -517,6 +674,22 @@ namespace FlatEngine
 		return F_SceneManager.GetLoadedScene();
 	}
 
+	void CreateNewSceneFile(std::string filename, std::string path)
+	{
+		Scene* newScene = CreateNewScene();
+		newScene->SetName(filename);
+		std::string filePath = "";
+
+		if (path == "")
+			filePath = GetDir("scenes") + "/" + filename + ".scn";
+		else
+			filePath = path + "/" + filename + ".scn";
+
+		newScene->SetPath(filePath);
+
+		SaveScene(newScene, filePath);
+	}
+
 	Scene *CreateNewScene()
 	{
 		return F_SceneManager.CreateNewScene();
@@ -563,6 +736,23 @@ namespace FlatEngine
 	}
 
 
+	void CreateNewMappingContextFile(std::string fileName, std::string path)
+	{
+		std::string filePath = "";
+		bool b_openModal = true;
+		MappingContext newContext = MappingContext();
+
+		if (path == "")
+			filePath = GetDir("mappingContexts") + "/" + fileName + ".mpc";
+		else
+			filePath = path + "/" + fileName + ".mpc";
+
+		newContext.SetPath(filePath);
+		newContext.SetName(fileName);
+		SaveMappingContext(filePath, newContext);
+		FL::InitializeMappingContexts();
+	}
+
 	// Mapping Context Management
 	void SaveMappingContext(std::string path, MappingContext context)
 	{
@@ -602,13 +792,15 @@ namespace FlatEngine
 	{
 		F_MappingContexts.clear();
 
-		std::string path = GetDir("mappingContexts");
-		for (const auto& entry : std::filesystem::directory_iterator(path))
+		std::vector<std::string> mappingContextFiles = std::vector<std::string>();
+		mappingContextFiles = FindAllFilesWithExtension(GetDir("projectDir"), ".mpc");
+
+		for (std::string path : mappingContextFiles)
 		{
 			// Create a new context to save the loaded keybindings to
 			MappingContext newContext = MappingContext();
 
-			json contextData = LoadFileData(entry.path().string());
+			json contextData = LoadFileData(path);
 			if (contextData != NULL)
 			{
 				//Getting data from the json 
@@ -617,7 +809,7 @@ namespace FlatEngine
 				auto mappings = contextData["Mapping Context"][0];
 				
 				newContext.SetName(mappings["name"]);
-				newContext.SetPath(entry.path().string());
+				newContext.SetPath(path);
 				
 				// XInput
 				newContext.AddKeyBinding("XInput_A", mappings["XInput_A"]);
@@ -718,10 +910,32 @@ namespace FlatEngine
 		while (SDL_PollEvent(&event))
 		{
 			ImGui_ImplSDL2_ProcessEvent(&event);
+
 			if (event.type == SDL_QUIT)
+			{
 				quit = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::W_Window))
-				quit = true;
+			}
+			if (event.type == SDL_WINDOWEVENT)
+			{
+				switch (event.window.event)
+				{
+				case SDL_WINDOWEVENT_CLOSE:
+					if (event.window.windowID == SDL_GetWindowID(Window::W_Window))
+						quit = true;
+						break;
+
+				case SDL_WINDOWEVENT_RESIZED:
+					F_Application->WindowResized();
+					break;
+				
+				case SDL_WINDOWEVENT_MAXIMIZED:
+					F_Application->WindowResized();
+					break;
+
+				default:
+					break;
+				}
+			}
 
 			for (MappingContext &context : F_MappingContexts)
 			{
@@ -1850,17 +2064,22 @@ namespace FlatEngine
 
 
 	// Animations
-	void CreateNewAnimationFile(std::string path)
+	void CreateNewAnimationFile(std::string filename, std::string path)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
-
+		std::string filePath = "";
 		// Delete old contents of the file
+
+		if (path == "")
+			filePath = GetDir("animations") + filename + ".anm";
+		else
+			filePath = path + "/" + filename + ".anm";
 		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
 		file_obj.close();
 
 		// Opening file in append mode
-		file_obj.open(path, std::ios::app);
+		file_obj.open(filePath, std::ios::app);
 
 		// Array that will hold our gameObject json objects
 		json animationObjectsJsonArray;
@@ -1878,7 +2097,7 @@ namespace FlatEngine
 		file_obj.close();
 	}
 
-	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
+	void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -2878,11 +3097,20 @@ namespace FlatEngine
 		//  FORMAT STRING
 		const size_t slash = path.find_last_of("/\\");
 		std::string wholeFilename = path.substr(slash + 1);
-		const size_t dot = wholeFilename.find_last_of(".");
-		std::string extension = wholeFilename.substr(dot);
+		const size_t dot1 = wholeFilename.find_last_of(".");
+		std::string extension1 = wholeFilename.substr(dot1);
 
 		if (!_keepExtension)
-			finalName = wholeFilename.substr(0, wholeFilename.size() - extension.size());
+		{
+			finalName = wholeFilename.substr(0, wholeFilename.size() - extension1.size());
+			// For scripting files (.scp.lua) with two extensions
+			const size_t dot2 = finalName.find_last_of(".");
+			if (dot2 < 100)
+			{
+				std::string extension2 = finalName.substr(dot2);
+				finalName = finalName.substr(0, finalName.size() - extension2.size());
+			}
+		}
 		else
 			finalName = wholeFilename;
 
@@ -2893,10 +3121,16 @@ namespace FlatEngine
 	std::string MakePathRelative(std::string filepath)
 	{
 		std::string relativePath;
-		const size_t rootDirIndex = filepath.find(GetDir("root"));
+		std::string root = GetDir("root");
+		size_t rootDirIndex;
 
-		if (rootDirIndex < 1000)
-			relativePath = ".." + filepath.substr(rootDirIndex + 10);
+		if (root != "")
+			rootDirIndex = filepath.find(root) + 10;
+		else
+			rootDirIndex = 0;
+
+		if (rootDirIndex < 1000 && rootDirIndex != 0)
+			relativePath = ".." + filepath.substr(rootDirIndex);
 		else
 			relativePath = filepath;
 
@@ -2949,7 +3183,7 @@ namespace FlatEngine
 
 	bool DoesFileExist(std::string filepath)
 	{
-		if (std::filesystem::exists(filepath))
+		if (filepath != "" && std::filesystem::exists(filepath))
 			return true;
 		else
 			return false;
@@ -2962,6 +3196,28 @@ namespace FlatEngine
 
 		return actualExtension == extension;
 	}
+
+	void DeleteFileUsingPath(std::string filepath)
+	{
+		if (filepath != "" && DoesFileExist(filepath))
+		{
+			std::filesystem::remove_all(filepath);
+		}
+	}
+
+	std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension)
+	{
+		std::vector<std::string> files;
+
+		for (auto& p : std::filesystem::recursive_directory_iterator(dirPath))
+		{
+			if (p.path().extension() == extension || p.path().string().find(extension) != std::string::npos)
+				files.push_back(p.path().string());				
+		}
+
+		return files;
+	}
+
 
 	//Vector4 objectA(top, right, bottom, left), Vector4 objectB(top, right, bottom, left)
 	bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB)

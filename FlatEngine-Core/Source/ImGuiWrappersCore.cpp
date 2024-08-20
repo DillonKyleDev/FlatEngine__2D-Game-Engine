@@ -144,6 +144,8 @@ namespace FlatEngine
 
 	void PushComboStyles()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, Vector2(8, 8));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 5));
 		ImGui::PushStyleColor(ImGuiCol_Button, GetColor("comboArrow"));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, GetColor("comboArrowHovered"));
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("comboBg"));
@@ -164,12 +166,14 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 	}
 
 	void PushMenuStyles()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10, 5 });
-		//ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, Vector2(8, 8));		
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 5));
 		ImGui::PushStyleColor(ImGuiCol_Header, GetColor("treeSelectableSelected"));
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, GetColor("treeSelectableHovered"));
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, GetColor("treeSelectableActive"));
@@ -180,7 +184,7 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		//ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 	}
 
@@ -304,6 +308,22 @@ namespace FlatEngine
 		ImGui::PopID();
 	}
 
+
+	bool RenderInputTableRow(std::string id, std::string fieldName, std::string &value, bool b_canOpenFiles)
+	{
+		bool b_edited = false;
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		b_edited = RenderInput(id, "", value, b_canOpenFiles);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return b_edited;
+	}
+
 	void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2)
 	{
 		// Push uneditableTableTextColor text color
@@ -366,28 +386,6 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 		Vector2 inputSize = Vector2(inputWidth, ImGui::GetCursorScreenPos().y - inputStart.y);
 
-		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false);
-
-		// Drop Target
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH_DRAGGED"))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(int));
-				int numFilesDragged = *(const int*)payload->Data;
-				
-				std::filesystem::path fs_path(F_selectedFiles[numFilesDragged - 1]);
-				if (fs_path.extension() == ".png")
-				{
-					b_dragTargeted = true;
-					strcpy_s(newPath, F_selectedFiles[numFilesDragged - 1].c_str());
-				}
-				else
-					LogString("ERROR : File must be of type .png to drop here.");
-			}
-			ImGui::EndDragDropTarget();
-		}
-
 		if (_canOpenFiles)
 		{
 			ImGui::SameLine();
@@ -404,6 +402,96 @@ namespace FlatEngine
 		if (newPath != nullptr)
 			value = newPath;
 		return b_editedButton || b_editedInput || b_dragTargeted;
+	}
+
+	bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int &droppedValue, float inputWidth)
+	{		
+		bool b_dragTargeted = false;
+
+		if (label != "")
+		{
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text(label.c_str());
+			ImGui::SameLine(0, 5);
+		}
+
+		if (inputWidth == -1)
+			inputWidth = ImGui::GetContentRegionAvail().x;
+
+		Vector2 inputStart = ImGui::GetCursorScreenPos();
+		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.5f);
+		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"));
+		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
+		ImGui::Text(displayValue.c_str());
+		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+
+		// Drop Target
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(dropTargetID.c_str()))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				droppedValue = *(const int*)payload->Data;
+				b_dragTargeted = true;
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		return b_dragTargeted;
+	}
+
+	bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, float inputWidth)
+	{
+		bool b_editedButton = false;
+		bool b_dragTargeted = false;
+		char newPath[1024];
+		strcpy_s(newPath, openedFileValue.c_str());
+
+		if (label != "")
+		{
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text(label.c_str());
+			ImGui::SameLine(0, 5);
+		}
+
+		if (inputWidth == -1)
+			inputWidth = ImGui::GetContentRegionAvail().x - 30;
+		else
+			inputWidth -= 30;
+
+		Vector2 inputStart = ImGui::GetCursorScreenPos();
+		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.5f);
+		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"));
+		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
+		ImGui::Text(displayValue.c_str());
+		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+
+		// Drop Target
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(dropTargetID.c_str()))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				droppedValue = *(const int*)payload->Data;
+				b_dragTargeted = true;
+				
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::SameLine();
+
+		std::string buttonId = id + "openFileButton";
+		if (RenderImageButton(buttonId.c_str(), GetTexture("openFile")))
+		{
+			std::string assetPath = FlatEngine::OpenLoadFileExplorer();
+			strcpy_s(newPath, assetPath.c_str());
+			b_editedButton = true;
+		}
+
+		if (newPath != nullptr)
+			openedFileValue = newPath;
+		return b_editedButton || b_dragTargeted;
 	}
 
 	bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
@@ -632,21 +720,27 @@ namespace FlatEngine
 		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(GetColor("componentBorder")));
 	}
 
-	// *** Sets CursorScreenPos to the starting point! ***
-	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect)
+	// *** SECOND VECTOR IS THE SIZE, **NOT*** THE END POSITION. *** Sets CursorScreenPos to the starting point! *** 
+	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect, ImGuiButtonFlags flags)
 	{
 		if (_showRect)
 			FlatEngine::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), GetColor("white"), 1.0f, ImGui::GetWindowDrawList());
-
-		ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight;
+;
 		if (_allowOverlap)
 		{
 			ImGui::SetNextItemAllowOverlap();
-			flags += ImGuiButtonFlags_AllowOverlap;
+			flags += ImGuiButtonFlags_AllowOverlap; // 4096
 		}
 
 		ImGui::SetCursorScreenPos(startingPoint);
 		return ImGui::InvisibleButton(id.c_str(), size, flags);
+	}
+
+	void RenderTextToolTip(std::string text)
+	{
+		ImGui::BeginTooltip();
+		ImGui::Text(text.c_str());
+		ImGui::EndTooltip();
 	}
 
 	void BeginToolTip(std::string title)
@@ -654,10 +748,13 @@ namespace FlatEngine
 		// Add ImGui styling pushes here
 		//
 		ImGui::BeginTooltip();
-		ImGui::Text(title.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		if (title != "")
+		{
+			ImGui::Text(title.c_str());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		}
 	}
 
 	void EndToolTip()
@@ -714,9 +811,16 @@ namespace FlatEngine
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 	}
 
-	bool RenderInputModal(std::string label, std::string description, std::string &inputValue)
+	// Returns true if a valid input was retrieved
+	bool RenderInputModal(std::string label, std::string description, std::string &inputValue, bool &b_openModal)
 	{		
-		bool b_valueObtained = false;
+		if (b_openModal)
+		{
+			ImGui::OpenPopup(label.c_str());
+			b_openModal = false;
+		}
+
+		bool b_validInput = false;
 
 		// Always center this window when appearing
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -733,19 +837,23 @@ namespace FlatEngine
 				inputWidth = 250;
 
 			std::string inputLabel = "##" + label;
-			if (RenderInput(inputLabel.c_str(), "", inputValue, false, inputWidth))
+			RenderInput(inputLabel.c_str(), "", inputValue, false, inputWidth);
+
+			if (ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{
-				if (ImGui::IsKeyPressed(ImGuiKey_Enter))
-				{
-					b_valueObtained = true;
-					ImGui::CloseCurrentPopup();
-				}
+				b_validInput = inputValue != "";
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				b_validInput = false;
+				ImGui::CloseCurrentPopup();
 			}
 
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 145);
 			if (ImGui::Button("OK", ImVec2(70, 0))) 
 			{ 
-				b_valueObtained = true;
+				b_validInput = inputValue != "";
 				ImGui::CloseCurrentPopup(); 
 			}
 			ImGui::SetItemDefaultFocus();
@@ -757,6 +865,61 @@ namespace FlatEngine
 			ImGui::EndPopup();
 		}
 
-		return b_valueObtained;
+		return b_validInput;
+	}
+
+	bool RenderConfirmModal(std::string label, std::string description, bool& b_openModal)
+	{
+		bool b_confirm = false;
+
+		if (b_openModal)
+		{
+			ImGui::OpenPopup(label.c_str());
+			b_openModal = false;
+		}
+
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal(label.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text(description.c_str());
+
+			ImGui::Separator();
+
+			float inputWidth = ImGui::CalcTextSize(description.c_str()).x;
+			if (inputWidth < 250)
+				inputWidth = 250;
+
+			if (ImGui::IsKeyPressed(ImGuiKey_Enter))
+			{
+				b_confirm = true;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				b_confirm = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 145);
+			if (ImGui::Button("Confirm", ImVec2(70, 0)))
+			{
+				b_confirm = true;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine(0, 5);
+			if (ImGui::Button("Cancel", ImVec2(70, 0)))
+			{
+				b_confirm = false;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		return b_confirm;
 	}
 }

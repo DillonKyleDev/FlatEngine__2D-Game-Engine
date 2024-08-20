@@ -21,7 +21,6 @@ namespace FlatEngine
 		Collider(Collider* toCopy, long newParentID, long myID = -1);
 		~Collider();
 
-		static bool SharedAxisCheckForCollision(Collider* collider1, Collider* collider2);
 		static bool CheckForCollisionBoxCircle(FlatEngine::BoxCollider* boxCol, FlatEngine::CircleCollider* circleCol);
 		static bool CheckForCollisionBoxBox(FlatEngine::BoxCollider* boxCol1, FlatEngine::BoxCollider* boxCol2);
 

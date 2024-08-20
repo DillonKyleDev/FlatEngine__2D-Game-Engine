@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 #include "Texture.h"
+#include "Application.h"
+
 
 namespace FlatEngine
 {
@@ -15,7 +17,8 @@ namespace FlatEngine
 	public:
 		AssetManager();
 		~AssetManager();
-		void CollectDirectories();
+		//void GetDirectoryPaths();
+		void CollectDirectories(DirectoryType dirType);
 		void CollectColors();
 		void CollectTextures();
 		std::string GetDir(std::string dirName);

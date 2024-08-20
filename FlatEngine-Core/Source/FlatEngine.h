@@ -61,15 +61,30 @@ namespace FlatEngine
 
 	using ComponentTypes = Component::ComponentTypes;
 
-	extern std::string F_DirectoriesLuaFilepath; // If you change the location of Directories.lua, be sure to update this value in FlatEngine.cpp
+
+	extern std::string F_RuntimeDirectoriesLuaFilepath; 
+	extern std::string F_EditorDirectoriesLuaFilepath;  
+	extern std::string F_DebugDirectoriesLuaFilepath; 
+
+
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
+
+
+	// Assets loaded from files on application start	
+	extern std::vector<std::string> F_luaScriptPaths;
 	extern std::vector<std::string> F_luaScriptNames;
+	extern std::map<std::string, std::string> F_LuaScriptsMap;
 	extern AssetManager F_AssetManager;
 	extern std::vector<std::string> F_selectedFiles;
+	extern std::vector<MappingContext> F_MappingContexts;
+	extern std::shared_ptr<PrefabManager> prefabManager;
+	extern std::string F_selectedMappingContextName;
+
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
+	extern bool b_directoriesFilepathSelected;
 
 	// Flags
 	extern ImGuiChildFlags F_childFlags;
@@ -81,7 +96,6 @@ namespace FlatEngine
 	extern ImGuiInputTextFlags F_inputFlags;
 
 	extern float F_childPadding;
-
 
 	// Controller Management
 	extern std::vector<SDL_Joystick*> gamepads;
@@ -95,8 +109,7 @@ namespace FlatEngine
 	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern Sound F_SoundController;
 	extern TTF_Font* F_fontCinzel;
-	extern std::vector<MappingContext> F_MappingContexts;
-	extern std::shared_ptr<PrefabManager> prefabManager;
+
 
 	extern int F_maxSpriteLayers;
 	extern float F_spriteScaleMultiplier;
@@ -109,7 +122,6 @@ namespace FlatEngine
 	extern Vector2 F_gameViewCenter;
 	extern Vector2 F_gameViewGridStep;
 
-
 	extern bool LoadFonts();
 	extern void FreeFonts();
 	extern std::string GetDir(std::string dirName);
@@ -119,8 +131,11 @@ namespace FlatEngine
 	extern Vector4 GetColor(std::string colorName);
 	extern Uint32 GetColor32(std::string colorName);
 
+	// ImGui + Events
 	extern void SetupImGui();
+	extern void RestartImGui();
 	extern void QuitImGui();
+	extern void SetImGuiColors();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
@@ -131,8 +146,7 @@ namespace FlatEngine
 	extern void RunLuaFuncOnAllScripts(std::string functionName);
 	extern void RunAwakeAndStart();
 	extern void LuaTesting(GameObject& toSend);
-	extern void RetrieveLuaScriptNames();
-	extern void CreateNewLuaScript(std::string filename);
+	extern void RetrieveLuaScriptPaths();
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -143,6 +157,8 @@ namespace FlatEngine
 	extern Project F_LoadedProject;
 	extern void SetLoadedProject(Project loadedProject);
 	extern Project& GetLoadedProject();
+	extern void LoadGameProject(std::string path, json& projectJson);
+	extern void BuildProject();
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -170,7 +186,7 @@ namespace FlatEngine
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 
 	// Engine
-	extern bool Init(int windowWidth, int windowHeight);
+	extern bool Init(int windowWidth, int windowHeight, DirectoryType dirType);
 	extern void CloseProgram();
 	extern Uint32 GetEngineTime();
 	extern void ManageControllers();
@@ -200,7 +216,7 @@ namespace FlatEngine
 	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
 
 	// Game View
-	extern void Game_RenderView();
+	extern void Game_RenderView(bool b_inRuntime = false);
 	extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
 	extern void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 
@@ -257,28 +273,32 @@ namespace FlatEngine
 	extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
 	extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool& _value);
 	extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
+	extern bool RenderInputTableRow(std::string id, std::string fieldName, std::string& value, bool b_canOpenFiles = false);
 	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
 	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
+	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, float inputWidth = -1);
+	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, float inputWidth = -1);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
 	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);
 	extern void RenderSectionHeader(std::string headerText, float height = 0);
-	extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false);
+	extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false, ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 	extern bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option);
 	extern void PushTreeList(std::string id);
 	extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
 	extern void PopTreeList();
+	extern void RenderTextToolTip(std::string text);
 	extern void BeginToolTip(std::string title);
 	extern void EndToolTip();
 	extern void RenderToolTipText(std::string label, std::string text);
 	extern void RenderToolTipFloat(std::string label, float data);
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
-	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue);
-
+	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool &b_openModal);
+	extern bool RenderConfirmModal(std::string label, std::string description, bool& b_openModal);
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
@@ -292,9 +312,16 @@ namespace FlatEngine
 	extern bool DoesFileExist(std::string filepath);
 	extern bool FilepathHasExtension(std::string filepath, std::string extension);
 	extern json LoadFileData(std::string filepath);
+	extern void DeleteFileUsingPath(std::string filepath);
+	extern std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension);
+
+	// File Explorer
+	extern void CreateNewLuaScript(std::string filename, std::string path = "");
+	extern void CreateNewSceneFile(std::string filename, std::string path = "");
+	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
+	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
 
 	// Animation Manager
-	extern void CreateNewAnimationFile(std::string path);
-	extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
+	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
 	extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
 };

@@ -23,7 +23,9 @@ namespace FlatGui
 	int maxCharactersPerFile = 10;
 	int maxStoredLocations = 50;
 	static std::vector<std::string> lastExplorerLocations = std::vector<std::string>();
-	
+	bool b_resetScroll = false;
+	static bool b_openDeleteModal = false;
+	static std::string fileToDelete = "";
 
 	void RenderFileExplorer()
 	{		
@@ -70,28 +72,127 @@ namespace FlatGui
 
 
 
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(100,100));
+			// New File Modals
+			bool b_openModal = false;			
+			static std::string modalLabel = "";
+			static std::string modalDescription = "";	
+			static std::string newFileName = "";
+
+			if (b_openModal)
+				ImGui::OpenPopup(modalLabel.c_str());
+
+			static bool b_openLuaModal = false;
+			static bool b_openSceneModal = false;
+			static bool b_openAnimationModal = false;
+			static bool b_openMappingContextModal = false;
+
+			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newFileName, b_openLuaModal))
+				FL::CreateNewLuaScript(newFileName, filepath_clicked);
+			if (FL::RenderInputModal("Create Scene", "Enter a name for the Scene:", newFileName, b_openSceneModal))
+				FL::CreateNewSceneFile(newFileName, filepath_clicked);
+			if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
+				FL::CreateNewAnimationFile(newFileName, filepath_clicked);
+			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context:", newFileName, b_openMappingContextModal))
+				FL::CreateNewMappingContextFile(newFileName, filepath_clicked);
+
 			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
-			ImGui::PopStyleVar();
 			// {			
+				// Header
 				Vector2 filesStartPos = ImGui::GetCursorScreenPos();
 				Vector2 filesEndPos = Vector2(filesStartPos.x + ImGui::GetContentRegionAvail().x, filesStartPos.y + 24);
 				ImGui::GetWindowDrawList()->AddRectFilled(filesStartPos, filesEndPos, FL::GetColor32("panelTitleBg"));
 				ImGui::SetCursorScreenPos(Vector2(filesStartPos.x + 5, filesStartPos.y + 5));
 				ImGui::Text("Files");
 				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-
 				RenderFilesTopBar(filepath_clicked);
 
+				// File icons + border
 				Vector2 borderStart = ImGui::GetCursorScreenPos();
-	
 				FL::BeginWindowChild("FilesScrolling");
-				// {
-					RenderDirItems(filepath_clicked, filepath_clicked);
-				// }
+				Vector2 iconsStart = ImGui::GetCursorScreenPos();
+				Vector2 rightClickAreaSize = Vector2(ImGui::GetContentRegionMax().x, ImGui::GetContentRegionMax().y + ImGui::GetScrollY());
+				Vector2 borderEnd = Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x + 5, borderStart.y + rightClickAreaSize.y + 5);
+
+				// Right clickable background button
+				if (rightClickAreaSize.x > 0 && rightClickAreaSize.y > 0)
+				{
+					FL::RenderInvisibleButton("##FilesRightClickArea", borderStart, rightClickAreaSize, true, false, ImGuiButtonFlags_MouseButtonRight);
+
+					// Right click menu
+					if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+					{
+						FL::PushMenuStyles();
+						if (ImGui::BeginMenu("Add new..."))
+						{
+							if (ImGui::MenuItem("Lua Script"))
+							{
+								b_openLuaModal = true;														
+								ImGui::CloseCurrentPopup();
+							}
+							if (ImGui::MenuItem("Scene"))
+							{
+								b_openSceneModal = true;
+								ImGui::CloseCurrentPopup();
+							}
+							if (ImGui::MenuItem("Animation"))
+							{
+								b_openAnimationModal = true;
+								ImGui::CloseCurrentPopup();
+							}
+							if (ImGui::MenuItem("Mapping Context"))
+							{
+								b_openMappingContextModal = true;
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::EndMenu();
+						}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Create Prefab"))
+						{
+
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Delete GameObject"))
+						{
+
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Lock in view"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+						FL::PopMenuStyles();
+
+						ImGui::EndPopup();
+					}
+				}
+
+				if (b_resetScroll)
+				{
+					ImGui::SetScrollY(0);
+					b_resetScroll = false;
+				}
+				ImGui::SetCursorScreenPos(iconsStart);
+				RenderDirItems(filepath_clicked, filepath_clicked);
+
+
+				if (FL::RenderConfirmModal("Are You Sure?", "Deleting this file cannot be undone", b_openDeleteModal))
+				{
+					FL::DeleteFileUsingPath(fileToDelete);
+					b_openDeleteModal = false;
+					fileToDelete = "";
+
+					// Do specific things per file
+					// If scene deleted was currently loaded, create new scene
+					// If Animation was focused, unload it from the Animator
+					// If the Mapping Context was selected, deselect it and reload Mapping Contexts
+				}
+
+
 				FL::EndWindowChild();
 
-				Vector2 borderEnd = Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x, ImGui::GetCursorScreenPos().y - 3);
 				ImGui::GetWindowDrawList()->AddRect(borderStart, borderEnd, FL::GetColor32("filesPanelOutline"));
 
 			// }
@@ -157,6 +258,7 @@ namespace FlatGui
 				lastExplorerLocations.push_back(filepath_clicked);
 
 				filepath_clicked = fs_filepath.string();
+				b_resetScroll = true; // Reset the scroll of the window
 			}
 
 			if (FG_fileExplorerLeafTracker.count(treeID))
@@ -182,6 +284,7 @@ namespace FlatGui
 				lastExplorerLocations.push_back(filepath_clicked);
 
 				filepath_clicked = fs_filepath.string();
+				b_resetScroll = true; // Reset the scroll of the window
 			}
 		}
 	}
@@ -199,6 +302,7 @@ namespace FlatGui
 			{
 				// use last location
 				filepath_clicked = lastExplorerLocations.back();
+				b_resetScroll = true; // Reset the scroll of the window
 				lastExplorerLocations.pop_back();
 			}
 		}
@@ -248,6 +352,7 @@ namespace FlatGui
 		std::shared_ptr<Texture> thumbnail;
 		SDL_Texture* texture = nullptr;		
 		Vector2 dimensions;
+		std::string openIn = "";
 		
 		if (std::filesystem::is_directory(fs_filepath.string()))
 			icon = "folderFile";
@@ -255,8 +360,11 @@ namespace FlatGui
 			icon = "cppFile";
 		else if (extension == ".h")
 			icon = "hFile";
-		else if (extension == ".lua")
+		else if (extension == ".lua.scp")
+		{
 			icon = "luaFile";
+			openIn = "in Script Editor";
+		}
 		else if (extension == ".png")
 		{
 			icon = "pngFile";
@@ -267,6 +375,22 @@ namespace FlatGui
 				FG_visibleThumbnails.emplace(fs_filepath.string(), thumbnail);
 			}
 		}
+		else if (extension == ".mpc")
+		{
+			icon = "mapFile";
+			openIn = "in Mapping Context Editor";
+		}
+		else if (extension == ".anm")
+		{
+			icon = "animFile";
+			openIn = "in Animator";
+		}
+		else if (extension == ".wav" || extension == ".mp3")
+			icon = "audioFile";
+		else if (extension == ".scn")
+			icon = "sceneFile";
+		else if (extension == ".prj")
+			icon = "projectFile";
 		else
 			icon = "unmarkedFile";
 	
@@ -311,22 +435,55 @@ namespace FlatGui
 		bool b_highlightIconButton = false;
 
 
-
 		// Button interactions
 		//
 		for (std::string clickedFile : FL::F_selectedFiles)
 			if (clickedFile == fs_filepath.string())
 				b_highlightIconButton = true;
 
-		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, b_highlightIconButton);
+		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, b_highlightIconButton, ImGuiButtonFlags_MouseButtonLeft);
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		bool b_leftClicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
+		bool b_rightClicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
+		bool b_doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+		
+		// Right click menu
+		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+		{
+			FL::PushMenuStyles();
+			if (ImGui::MenuItem(std::string("Open " + openIn).c_str()))
+			{
+				OpenFileContextually(fs_filepath);
 
-		bool b_clicked = ImGui::IsItemClicked();
-		bool b_doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete"))
+			{
+				b_openDeleteModal = true;
+				fileToDelete = fs_filepath.string();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Copy"))
+			{
+
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Paste"))
+			{
+
+				ImGui::CloseCurrentPopup();
+			}
+			FL::PopMenuStyles();
+
+			ImGui::EndPopup();
+		}
 
 		// Multi select
-		if (b_clicked)
+		if (b_leftClicked || b_rightClicked)
 		{
 			if (!ImGui::GetIO().KeyCtrl)
 				FL::F_selectedFiles.clear();
@@ -355,6 +512,11 @@ namespace FlatGui
 			lastExplorerLocations.push_back(filepath_clicked);
 
 			filepath_clicked = fs_filepath.string();
+			b_resetScroll = true; // Reset the scroll of the window
+		}
+		else if (b_doubleClicked)
+		{
+			OpenFileContextually(fs_filepath);
 		}
 
 		// Drag source
@@ -375,5 +537,40 @@ namespace FlatGui
 		ImGui::SetNextItemWidth(iconButtonTextBoxSize.x);
 		ImGui::Text(truncatedName.c_str());		
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, startTextBoxPos.y + iconButtonTextBoxSize.y));
+	}
+
+	void OpenFileContextually(std::filesystem::path fs_filepath)
+	{
+		std::string extension = fs_filepath.extension().string();
+
+		// Scene file
+		if (extension == ".scn")
+		{
+			FL::LoadScene(fs_filepath.string());
+		}
+		// Mapping Context file
+		else if (extension == ".mpc")
+		{
+			FL::F_selectedMappingContextName = FL::GetFilenameFromPath(fs_filepath.string());
+			_showMappingContextEditor = true;
+		}
+		// Animation file
+		else if (extension == ".anm")
+		{
+			SetFocusedAnimation(FL::GetFilenameFromPath(fs_filepath.string()));
+			_showAnimator = true;
+			_showAnimationPreview = true;
+		}
+		// Lua file
+		else if (extension == ".scp")
+		{
+			// Open script editor
+			FL::LogString("Script Editor not yet implemented.");
+		}
+		// Project file
+		else if (extension == ".prj")
+		{
+			OpenProject(fs_filepath.string());
+		}
 	}
 }

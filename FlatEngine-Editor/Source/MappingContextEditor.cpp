@@ -10,6 +10,9 @@ using MappingContext = FL::MappingContext;
 
 namespace FlatGui 
 {
+	std::string fileName = "";
+	bool b_openCreateContextModal = false;
+
 	void RenderMappingContextEditor()
 	{
 		FL::BeginWindow("Mapping Context Editor", _showMappingContextEditor);
@@ -94,18 +97,19 @@ namespace FlatGui
 
 		if (FL::F_MappingContexts.size() > 0)
 		{
-			MappingContext currentContext = FL::F_MappingContexts.at(current_context);
+			MappingContext *currentContext = FL::GetMappingContext(FL::F_selectedMappingContextName);
 
 			FL::PushComboStyles();
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 184);
-			if (ImGui::BeginCombo("##contexts", currentContext.GetName().c_str()))
+			if (ImGui::BeginCombo("##contexts", FL::F_selectedMappingContextName.c_str()))
 			{
-				for (int n = 0; n < FL::F_MappingContexts.size(); n++)
+				for (int i = 0; i < FL::F_MappingContexts.size(); i++)
 				{
-					bool is_selected = (FL::F_MappingContexts.at(current_context).GetName() == FL::F_MappingContexts.at(n).GetName()); // You can store your selection however you want, outside or inside your objects
+
+					bool is_selected = (FL::F_MappingContexts.at(i).GetName() == FL::F_selectedMappingContextName); // You can store your selection however you want, outside or inside your objects
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("outerWindow"));
-					if (ImGui::Selectable(FL::F_MappingContexts.at(n).GetName().c_str(), is_selected))
-						current_context = n;
+					if (ImGui::Selectable(FL::F_MappingContexts.at(i).GetName().c_str(), is_selected))
+						FL::F_selectedMappingContextName = FL::F_MappingContexts.at(i).GetName();
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();
 					ImGui::PopStyleColor();
@@ -120,20 +124,13 @@ namespace FlatGui
 			{
 				if (FL::RenderButton("Save"))
 				{
-					MappingContext currentContext = FL::F_MappingContexts.at(current_context);
-					SaveMappingContext(currentContext.GetPath(), currentContext);
+					SaveMappingContext(currentContext->GetPath(), *currentContext);
 				}
 			}
 			ImGui::SameLine(0, 5);
 			if (FL::RenderButton("Create New Context"))
 			{
-				std::string path = FL::OpenSaveFileExplorer();
-				std::string name = path.substr(path.find_last_of("/\\") + 1);
-				MappingContext newContext = MappingContext();
-				newContext.SetPath(path);
-				newContext.SetName(name);
-				SaveMappingContext(path, newContext);
-				FL::InitializeMappingContexts();
+				b_openCreateContextModal = true;			
 			}
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -185,29 +182,23 @@ namespace FlatGui
 
 			// Column 2
 			// Name editing
-			static std::string placeHolder = "Input Action Name";
-			std::string nameLabel = "Input Action Name";
-			char inputActionName[1024];
-			strcpy_s(inputActionName, placeHolder.c_str());
-			ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
+			static std::string inputText = "Input Action Name";
 
 			// Edit field
-			ImGui::Text(nameLabel.c_str());
+			ImGui::Text("Input Action Name");
 
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, Vector2(8, 4));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 5));
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 32);
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
-			if (ImGui::InputText("##InputActionName", inputActionName, IM_ARRAYSIZE(inputActionName), flags))
-			{
-				placeHolder = inputActionName;
-			}
+			FL::RenderInput("##InputActionName", "", inputText, false, -1, ImGuiInputTextFlags_AutoSelectAll);
 			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
 
 			ImGui::SameLine();
 			if (FL::RenderButton("Add"))
-			{
-				currentContext.AddKeyBinding(inputs[current_input], inputActionName);
-				//currentContext->AddInputAction(inputs[current_input], inputActionName);
-			}
+				currentContext->AddKeyBinding(inputs[current_input], inputText);
 
 			// Go back to one column for Label
 			ImGui::Columns(1);
@@ -232,42 +223,45 @@ namespace FlatGui
 			int inputIDCounter = 0;
 
 			// Input Binding
-			for (std::pair<std::string, std::string> keyBinding : currentContext.GetKeyBindings())
+			if (currentContext != nullptr)
 			{
-				if (keyBinding.second != "")
+				for (std::pair<std::string, std::string> keyBinding : currentContext->GetKeyBindings())
 				{
-					int selected_input = 0;
-					for (int i = 0; i < IM_ARRAYSIZE(inputs); i++)
-						if (keyBinding.first == inputs[i])
-							selected_input = i;
-
-					std::string comboId = "##selectedInput" + currentContext.GetName() + std::to_string(inputIDCounter);
-
-					FL::PushComboStyles();
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-					if (ImGui::BeginCombo(comboId.c_str(), inputs[selected_input]))
+					if (keyBinding.second != "")
 					{
-						for (int n = 0; n < IM_ARRAYSIZE(inputs); n++)
-						{
-							bool is_selected = (inputs[selected_input] == inputs[n]);
-	
-							if (ImGui::Selectable(inputs[n], is_selected))
-							{
-								std::string tempInputAction = keyBinding.second;
-								selected_input = n;
-								currentContext.RemoveKeyBinding(keyBinding.first);
-								currentContext.AddKeyBinding(inputs[selected_input], tempInputAction);
-								currentContext.AddInputAction(inputs[selected_input], tempInputAction);
-							}
-							if (is_selected)					
-								ImGui::SetItemDefaultFocus();
-						}
-						ImGui::EndCombo();
-					}
-					FL::PopComboStyles();
+						int selected_input = 0;
+						for (int i = 0; i < IM_ARRAYSIZE(inputs); i++)
+							if (keyBinding.first == inputs[i])
+								selected_input = i;
 
-					inputIDCounter++;
+						std::string comboId = "##selectedInput" + currentContext->GetName() + std::to_string(inputIDCounter);
+
+						FL::PushComboStyles();
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3);
+						ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+						if (ImGui::BeginCombo(comboId.c_str(), inputs[selected_input]))
+						{
+							for (int n = 0; n < IM_ARRAYSIZE(inputs); n++)
+							{
+								bool is_selected = (inputs[selected_input] == inputs[n]);
+
+								if (ImGui::Selectable(inputs[n], is_selected))
+								{
+									std::string tempInputAction = keyBinding.second;
+									selected_input = n;
+									currentContext->RemoveKeyBinding(keyBinding.first);
+									currentContext->AddKeyBinding(inputs[selected_input], tempInputAction);
+									currentContext->AddInputAction(inputs[selected_input], tempInputAction);
+								}
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+							}
+							ImGui::EndCombo();
+						}
+						FL::PopComboStyles();
+
+						inputIDCounter++;
+					}
 				}
 			}
 
@@ -277,47 +271,45 @@ namespace FlatGui
 
 			int inputActionIDCounter = 0;
 			// Input Action name
-			for (std::pair<std::string, std::string> keyBinding : currentContext.GetKeyBindings())
+			if (currentContext != nullptr)
 			{
-				if (keyBinding.second != "")
+				for (std::pair<std::string, std::string> keyBinding : currentContext->GetKeyBindings())
 				{
-					// Name editing
-					std::string tempInputActionName = "";
-					char inputActionName[1024];
-					strcpy_s(inputActionName, keyBinding.second.c_str());
-					//ImGuiInputTextFlags flags = ImGuiInputTextFlags_::ImGuiInputTextFlags_AutoSelectAll;
-
-					std::string textLabelID = "##InputActionName" + keyBinding.second + std::to_string(inputActionIDCounter);
-
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
-					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 39);
-					if (ImGui::InputText(textLabelID.c_str(), inputActionName, IM_ARRAYSIZE(inputActionName), 0))
+					if (keyBinding.second != "")
 					{
-						currentContext.SetKeyBinding(keyBinding.first, inputActionName);
-					}
-					if (ImGui::IsItemEdited())
-					{
-						// BROKEN Figure it out later
-						// LogString(inputActionName);
-						// if (inputActionName != keyBinding.second.c_str())
-						//	 tempInputActionName = inputActionName;
-					}
-					ImGui::SameLine();
-					if (FL::RenderButton("Save"))
-					{
-						//currentContext->SetKeyBinding(keyBinding.first, tempInputActionName);
-					}
+						// Name editing
+						std::string inputActionName = keyBinding.second;
+						std::string textLabelID = "##InputActionName" + keyBinding.first + std::to_string(inputActionIDCounter);
 
-					ImGui::PopStyleColor();
-					inputActionIDCounter++;
+						ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, Vector2(8, 4));
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 5));
+						ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
+						ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 39);
+						if (FL::RenderInput(textLabelID.c_str(), "", inputActionName))
+						{
+							currentContext->SetKeyBinding(keyBinding.first, inputActionName);
+						}
+						ImGui::PopStyleColor();
+						ImGui::PopStyleVar();
+						ImGui::PopStyleVar();
+						inputActionIDCounter++;
+					}
 				}
 			}
 
 			ImGui::Columns(1);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY()  -5);
 		}
 
 		ImGui::PopStyleVar();
+
+		// Create new Mapping Context modal
+		if (FL::RenderInputModal("Create New Mapping Context", "Enter a name for the new Mapping Context", fileName, b_openCreateContextModal))
+		{
+			FL::CreateNewMappingContextFile(fileName);
+			FL::F_selectedMappingContextName = fileName;
+			_showMappingContextEditor = true;
+		}
 
 		FL::EndWindow();
 	}

@@ -46,14 +46,6 @@ namespace FlatEngine
 		Vector2* GetNormals();
 		std::string GetData();
 		void RecalculateBounds(float gridstep, Vector2 viewportCenter);
-		//void ResetCollisions();
-
-		// Shared Axis
-		void SharedAxisUpdateEdges(float step, Vector2 centerPoint);
-		void SharedAxisUpdateCorners(float step, Vector2 centerPoint);
-
-		// Separating Axis
-		// Todo
 
 	private:		
 		float activeWidth;

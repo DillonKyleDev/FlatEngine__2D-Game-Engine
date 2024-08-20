@@ -84,6 +84,7 @@ public:
 	{
 		A_GameLoop = new EditorGameLoop();
 		m_recreateWindow = false;
+		SetDirectoriesType(FL::EditorDir);
 	}
 	~EditorApplication()
 	{
@@ -113,26 +114,18 @@ public:
 			if (FL::_isDebugMode)
 				FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
-
-			//// If Release - Start the Game Loop
-			if (!FL::_isDebugMode && !A_GameLoop->IsStarted())
-				A_GameLoop->Start();
-
-
 			if (A_GameLoop->IsStarted() && !A_GameLoop->IsGamePaused() || A_GameLoop->IsGamePaused() && A_GameLoop->IsFrameSkipped())
 			{
 				// Profiler
 				Uint32 updateLoopStart = 0;
 				static Uint32 updateLoopEnd = 0;
-				if (FL::_isDebugMode)
-				{
-					// Save time before Update starts
-					updateLoopStart = FL::GetEngineTime();
-					// Get hang time of everything after Update Loop for profiler
-					Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
-					FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
-					updateLoopEnd = updateLoopStart;
-				}
+
+				// Save time before Update starts
+				updateLoopStart = FL::GetEngineTime();
+				// Get hang time of everything after Update Loop for profiler
+				Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
+				FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
+				updateLoopEnd = updateLoopStart;
 
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
@@ -160,14 +153,11 @@ public:
 					SDL_Delay((Uint32)(A_GameLoop->deltaTime - frameTime) * 1000);
 
 				// Profiler
-				if (FL::_isDebugMode)
-				{
-					// Get hang time of Update Loop for profiler
-					Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
-					FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);
-					// Save time after update finishes
-					updateLoopEnd = FL::GetEngineTime();
-				}
+				// Get hang time of Update Loop for profiler
+				Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
+				FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);
+				// Save time after update finishes
+				updateLoopEnd = FL::GetEngineTime();
 			}
 			else
 				FL::HandleEvents(_hasQuit);
@@ -180,9 +170,25 @@ public:
 
 			EndRender();
 
-			// For things we only want to execute once after complete initialization
-			FlatGui::RunOnceAfterInitialization();
+
+
+			RunOnceAfterInitialization();
 		}
+	}
+	// For things we only want to execute once after complete initialization
+	void RunOnceAfterInitialization()
+	{
+		static bool b_initialized = false;
+		static bool b_hasRunOnce = false;
+
+		if (b_initialized && !b_hasRunOnce)
+		{
+			FlatGui::RunOnceAfterInitialization();
+
+			b_hasRunOnce = true;
+		}
+
+		b_initialized = true;
 	}
 	void BeginRender()
 	{
@@ -202,13 +208,7 @@ public:
 		}
 		else
 		{
-			// Start the engine and Add viewport(s)
-			if (!FL::_isDebugMode)
-			{
-				FL::Game_RenderView();
-			}
-			else
-				FlatGui::AddViewports();
+			FlatGui::AddViewports();
 		}
 	}
 	void EndRender()
@@ -224,15 +224,13 @@ public:
 		//  After recreating the window, you need to recreate any assets that were created using that window!!!    // 
 		//  This can lead to assets not appearing even though everything seems like it should be working and fine  //
 		
-		// If window was recreated this frame
+		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
 			Window::SetScreenDimensions(1900, 960);
-			ImPlot::DestroyContext();
-			ImGui::DestroyContext();
-			FL::F_AssetManager.CollectDirectories();
+			FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
-			FL::SetupImGui(); // ImGui setup relies on global colors
+			FL::RestartImGui(); // ImGui setup relies on global colors
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
 			FlatGui::OpenProject(m_startupProject);

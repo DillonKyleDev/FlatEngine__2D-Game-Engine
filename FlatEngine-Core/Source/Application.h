@@ -1,9 +1,20 @@
 #pragma once
 #include <string>
 #include "GameLoop.h"
+#include <string>
+
+
+namespace FL = FlatEngine;
 
 namespace FlatEngine
 {
+	enum DirectoryType {
+		RuntimeDir,
+		EditorDir,
+		DebugDir,
+		NoDir
+	};
+
 	class GameLoop;
 
 	class Application
@@ -11,20 +22,26 @@ namespace FlatEngine
 	public:
 		Application()
 		{
-			_hasQuit = false;
+			m_b_hasQuit = false;
+			m_b_windowResized = false;
 			m_windowWidth = 1920;
 			m_windowHeight = 1080;
+			m_directoriesType = NoDir;  // Tells the engine where to look for the xxxDirectories.lua file containing important paths and dir locations
 		}
 		~Application() {};
 
 		virtual void Init() {};
 		virtual void Run() {};
+		virtual void RunOnceAfterInitialization() {};
 		void SetWindowDimensions(int width, int height) { m_windowWidth = width; m_windowHeight = height; };
 		int WindowWidth() { return m_windowWidth; };
 		int WindowHeight() { return m_windowHeight; };
+		void WindowResized() { m_b_windowResized = true; };
 		void BeginRender(); // Defined in Application.cpp
 		void EndRender();   // Defined in Application.cpp
-		virtual FlatEngine::GameLoop* GetGameLoop() { return nullptr; };
+		void SetDirectoriesType(DirectoryType dirType) { m_directoriesType = dirType; };
+		DirectoryType GetDirectoriesType() { return m_directoriesType;  };
+		virtual FL::GameLoop* GetGameLoop() { return nullptr; };
 		virtual bool GameLoopStarted() { return false; };
 		virtual bool GameLoopPaused() { return false; };
 		virtual void StartGameLoop() {};
@@ -33,13 +50,15 @@ namespace FlatEngine
 		virtual void StopGameLoop() {};
 		virtual void PauseGame() {};
 
-		void Quit() { _hasQuit = true; };
-		bool& HasQuit() { return _hasQuit; };
+		void Quit() { m_b_hasQuit = true; };
+		bool& HasQuit() { return m_b_hasQuit; };
 		void OnLoadScene(std::string sceneName) {};
 		
 	private:
-		bool _hasQuit;
+		bool m_b_hasQuit;
+		bool m_b_windowResized;
 		int m_windowWidth;
 		int m_windowHeight;
+		DirectoryType m_directoriesType;
 	};
 }

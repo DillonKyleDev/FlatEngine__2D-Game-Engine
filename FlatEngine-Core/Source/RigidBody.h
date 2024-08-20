@@ -18,12 +18,7 @@ namespace FlatEngine
 		std::string GetData();
 
 		void CalculatePhysics();
-		void CalculateEulerPhysics();
-		void CalculateVerletPhysics();
-
 		void ApplyPhysics(float deltaTime);
-		void ApplyEulerPhysics(float deltaTime);
-		void ApplyVerletPhysics(float deltaTime);
 
 		Vector2 AddVelocity(Vector2 vel);
 		void ApplyGravity();

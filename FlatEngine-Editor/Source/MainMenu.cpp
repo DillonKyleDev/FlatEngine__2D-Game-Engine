@@ -12,6 +12,8 @@
 #include "Project.h"
 #include "Vector2.h"
 
+namespace FL = FlatEngine;
+
 namespace FlatEngine {
 	class BoxCollider;
 	class Sprite;
@@ -19,20 +21,22 @@ namespace FlatEngine {
 	class MappingContext;
 }
 
-using ComponentTypes = FlatEngine::Component::ComponentTypes;
-using BoxCollider = FlatEngine::BoxCollider;
-using Sprite = FlatEngine::Sprite;
-using Transform = FlatEngine::Transform;
-using MappingContext = FlatEngine::MappingContext;
+using ComponentTypes = FL::Component::ComponentTypes;
+using BoxCollider = FL::BoxCollider;
+using Sprite = FL::Sprite;
+using Transform = FL::Transform;
+using MappingContext = FL::MappingContext;
 
 namespace FlatGui 
 {
 	void MainMenuBar()
 	{
 		std::string newScriptModalLabel = "Create Lua Script";
-		bool b_openNewScriptModal = false;
+		static bool b_openNewScriptModal = false;
+		static bool b_openAnimationModal = false;
+		static bool b_openMappingContextModal = false;
 
-		FlatEngine::PushMenuStyles();
+		FL::PushMenuStyles();
 
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -41,8 +45,8 @@ namespace FlatGui
 				if (ImGui::MenuItem("New Project..."))
 				{
 					// First, save current project
-					SaveProject(FlatEngine::F_LoadedProject, FlatEngine::F_LoadedProject.GetPath());
-					std::string projectPath = FlatEngine::OpenSaveFileExplorer();
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+					std::string projectPath = FL::OpenSaveFileExplorer();
 					if (projectPath != "")
 					{
 						// Then Create New Project and open it
@@ -55,23 +59,23 @@ namespace FlatGui
 				if (ImGui::MenuItem("Open Project..."))
 				{
 					// Open Project
-					std::string projectPath = FlatEngine::OpenLoadFileExplorer();
+					std::string projectPath = FL::OpenLoadFileExplorer();
 					if (projectPath != "")
 						OpenProject(projectPath);
 				}
 				if (ImGui::MenuItem("Save Project"))
 				{
 					// Save Project
-					std::string projectPath = FlatEngine::F_LoadedProject.GetPath();
-					SaveProject(FlatEngine::F_LoadedProject, projectPath);
+					std::string projectPath = FL::F_LoadedProject.GetPath();
+					SaveProject(FL::F_LoadedProject, projectPath);
 				}
 				if (ImGui::MenuItem("Save Project As..."))
 				{
 					// Save Project As....
-					std::string projectPath = FlatEngine::OpenSaveFileExplorer();
+					std::string projectPath = FL::OpenSaveFileExplorer();
 					if (projectPath != "")
 					{
-						SaveProject(FlatEngine::F_LoadedProject, projectPath);
+						SaveProject(FL::F_LoadedProject, projectPath);
 					}
 				}
 
@@ -80,47 +84,47 @@ namespace FlatGui
 				if (ImGui::MenuItem("New Scene..."))
 				{
 					// First Save Loaded scene
-					FlatEngine::F_SceneManager.SaveCurrentScene();
+					FL::F_SceneManager.SaveCurrentScene();
 
-					std::string scenePath = FlatEngine::OpenSaveFileExplorer();
+					std::string scenePath = FL::OpenSaveFileExplorer();
 					if (scenePath != "")
 					{
-						FlatEngine::F_SceneManager.SaveScene(FlatEngine::F_SceneManager.CreateNewScene(), scenePath);
+						FL::F_SceneManager.SaveScene(FL::F_SceneManager.CreateNewScene(), scenePath);
 						ResetHierarchyExpanderTracker();
-						FlatEngine::F_SceneManager.LoadScene(scenePath);
-						FlatEngine::F_LoadedProject.SetLoadedScenePath(scenePath);
+						FL::F_SceneManager.LoadScene(scenePath);
+						FL::F_LoadedProject.SetLoadedScenePath(scenePath);
 					}
 				}
 
 				if (ImGui::MenuItem("Load Scene...", "Ctrl+L"))
 				{
 					// Load the scene
-					std::string scenePath = FlatEngine::OpenLoadFileExplorer();
+					std::string scenePath = FL::OpenLoadFileExplorer();
 					if (scenePath != "")
 					{
-						FlatEngine::F_SceneManager.LoadScene(scenePath);
-						FlatEngine::F_LoadedProject.SetLoadedScenePath(scenePath);
+						FL::F_SceneManager.LoadScene(scenePath);
+						FL::F_LoadedProject.SetLoadedScenePath(scenePath);
 					}
 				}
 
 				// Save the scene
 				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
-					FlatEngine::F_SceneManager.SaveCurrentScene();
+					FL::F_SceneManager.SaveCurrentScene();
 
 				if (ImGui::MenuItem("Save Scene As..."))
 				{
 					// Save the scene
-					std::string scenePath = FlatEngine::OpenSaveFileExplorer();
+					std::string scenePath = FL::OpenSaveFileExplorer();
 					if (scenePath != "")
 					{
-						Scene* currentScene = FlatEngine::GetLoadedScene();
-						FlatEngine::F_SceneManager.SaveScene(currentScene, scenePath);
+						Scene* currentScene = FL::GetLoadedScene();
+						FL::F_SceneManager.SaveScene(currentScene, scenePath);
 					}
 				}
 
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", "Alt+F4"))
-					FlatEngine::CloseProgram();
+					FL::CloseProgram();
 
 				ImGui::EndMenu();
 			}
@@ -165,42 +169,42 @@ namespace FlatGui
 			{
 				if (ImGui::MenuItem("New GameObject"))
 				{
-					GameObject* newObject = FlatEngine::CreateGameObject(-1);
+					GameObject* newObject = FL::CreateGameObject(-1);
 					SetFocusedGameObjectID(newObject->GetID());
 				}
 				if (ImGui::BeginMenu("Components"))
 				{
 					if (ImGui::MenuItem("Sprite"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						newObject->AddSpriteComponent();
 						newObject->SetName("Sprite(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Button"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						newObject->AddButtonComponent();
 						newObject->SetName("Button(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						newObject->AddCameraComponent();
 						newObject->SetName("Camera(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Canvas"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);					
+						GameObject *newObject = FL::CreateGameObject(-1);					
 						newObject->AddCanvasComponent();
 						newObject->SetName("Canvas(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Animation"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						GameObject *newObject = FL::CreateGameObject(-1);						
 						newObject->AddAnimationComponent();
 						Sprite* sprite = newObject->AddSpriteComponent();
 						sprite->SetTexture("assets/images/resources/block.png");
@@ -209,28 +213,28 @@ namespace FlatGui
 					}
 					if (ImGui::MenuItem("Audio"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						newObject->AddAudioComponent();
 						newObject->SetName("Audio(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Text"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						GameObject *newObject = FL::CreateGameObject(-1);						
 						newObject->AddTextComponent();
 						newObject->SetName("Text(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Script"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						newObject->AddScriptComponent();
 						newObject->SetName("Script(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("CharacterController"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);
+						GameObject *newObject = FL::CreateGameObject(-1);
 						
 						newObject->AddCharacterControllerComponent();
 						newObject->SetName("CharacterController(" + std::to_string(newObject->GetID()) + ")");
@@ -238,21 +242,21 @@ namespace FlatGui
 					}
 					if (ImGui::MenuItem("RigidBody"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						GameObject *newObject = FL::CreateGameObject(-1);						
 						newObject->AddRigidBodyComponent();
 						newObject->SetName("RigidBody(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("BoxCollider"))
 					{
-						GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+						GameObject *newObject = FL::CreateGameObject(-1);						
 						newObject->AddBoxColliderComponent();
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					//if (ImGui::MenuItem("CircleCollider"))
 					//{
-					//	GameObject *newObject = FlatEngine::CreateGameObject(-1);						
+					//	GameObject *newObject = FL::CreateGameObject(-1);						
 					//	newObject->AddCircleColliderComponent();
 					//	newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
 					//	SetFocusedGameObjectID(newObject->GetID());
@@ -261,14 +265,14 @@ namespace FlatGui
 				}
 				if (ImGui::BeginMenu("Prefabs"))
 				{
-					std::map<std::string, std::vector<GameObject>> prefabs = FlatEngine::GetPrefabs();
+					std::map<std::string, std::vector<GameObject>> prefabs = FL::GetPrefabs();
 					if (prefabs.size() > 0)
 					{
 						for (std::pair<std::string, std::vector<GameObject>> pair : prefabs)
 						{
 							if (ImGui::MenuItem(pair.first.c_str()))
 							{
-								GameObject instantiatedObject = FlatEngine::Instantiate(pair.first, Vector2(0, 0), -1);
+								GameObject instantiatedObject = FL::Instantiate(pair.first, Vector2(0, 0), -1);
 								SetFocusedGameObjectID(instantiatedObject.GetID());
 							}
 						}
@@ -281,35 +285,12 @@ namespace FlatGui
 				if (ImGui::BeginMenu("Asset files"))
 				{
 					if (ImGui::MenuItem("Mapping Context"))
-					{
-						std::string path = FlatEngine::OpenSaveFileExplorer();
-						if (path != "")
-						{
-							std::string name = FlatEngine::GetFilenameFromPath(path);
-							MappingContext newContext = MappingContext();
-							newContext.SetPath(path);
-							newContext.SetName(name);
-							FlatEngine::SaveMappingContext(path, newContext);
-							FlatEngine::InitializeMappingContexts();
-							_showMappingContextEditor = true;
-						}
+					{						
+						b_openMappingContextModal = true;
 					}
 					if (ImGui::MenuItem("Animation"))
 					{
-						std::string path = FlatEngine::OpenSaveFileExplorer();
-						if (path != "")
-						{
-							std::string name = FlatEngine::GetFilenameFromPath(path);
-							std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-							animationProperties->animationName = name;
-							FlatEngine::CreateNewAnimationFile(path);
-							SaveAnimationFile(animationProperties, path);
-							//LoadAnimationFile(path);
-							SetFocusedAnimation(animationProperties);
-							
-							_showAnimator = true;
-							_showAnimationPreview = true;
-						}
+						b_openAnimationModal = true;
 					}
 					if (ImGui::MenuItem("Lua Script"))
 					{						
@@ -342,21 +323,40 @@ namespace FlatGui
 				}
 				if (ImGui::MenuItem("Project Settings", NULL, _showSettings))
 					_showSettings = !_showSettings;
+				if (ImGui::MenuItem("Build Project", NULL, _showSettings))
+					FL::BuildProject();
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
 		}
 
-		if (b_openNewScriptModal) // Strange workaround to open a modal (probably because this is not inside a ImGui::Begin() tag)
-			ImGui::OpenPopup(newScriptModalLabel.c_str());
-
+		// New Lua Script Modal
 		std::string newScriptName = "";
-
-		if (FlatEngine::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName))
+		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openNewScriptModal))
 		{
-			FlatEngine::CreateNewLuaScript(newScriptName);
+			FL::CreateNewLuaScript(newScriptName);
+		}
+		// New Animation Modal
+		std::string animationName = "";
+		if (FL::RenderInputModal("Create New Animation", "Enter a name for the new Animation file", animationName, b_openAnimationModal))
+		{
+			std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+			animationProperties->animationName = animationName;
+			FL::CreateNewAnimationFile(animationName);
+			SaveAnimationData(animationProperties, FL::GetDir("animations") + "/" + animationName + ".anm");
+			SetFocusedAnimation(animationProperties);
+			_showAnimator = true;
+			_showAnimationPreview = true;
+		}
+		// New Mapping Context Modal
+		std::string mappingContextName = "";
+		if (FL::RenderInputModal("Create New Mapping Context", "Enter a name for the new Mapping Context", mappingContextName, b_openMappingContextModal))
+		{
+			FL::CreateNewMappingContextFile(mappingContextName);
+			FL::F_selectedMappingContextName = mappingContextName;
+			_showMappingContextEditor = true;
 		}
 
-		FlatEngine::PopMenuStyles();
+		FL::PopMenuStyles();
 	}
 }

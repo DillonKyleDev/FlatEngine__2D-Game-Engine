@@ -405,7 +405,7 @@ namespace FlatGui
 		}
 
 		// Setting the focus to this GameObject
-		if (ImGui::IsItemClicked())
+		if (ImGui::IsItemHovered() && ImGui::IsKeyReleased(ImGuiKey::ImGuiKey_MouseLeft))
 		{
 			node_clicked = currentObject.GetID();
 			SetFocusedGameObjectID(currentObject.GetID());

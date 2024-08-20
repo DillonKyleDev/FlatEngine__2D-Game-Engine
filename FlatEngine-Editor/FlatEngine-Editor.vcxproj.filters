@@ -25,5 +25,6 @@
     <ClCompile Include="Source\Toolbar.cpp" />
     <ClCompile Include="Source\WidgetsManager.cpp" />
     <ClCompile Include="Source\FileExplorer.cpp" />
+    <ClCompile Include="Source\ScriptEditor.cpp" />
   </ItemGroup>
 </Project>

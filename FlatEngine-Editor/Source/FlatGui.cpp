@@ -73,6 +73,7 @@ namespace FlatGui
 
 	// FlatGui Variables
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = nullptr;
+	std::string FG_FocusedAnimationName = "";
 	GameObject objectForFocusedAnimation = GameObject(nullptr);
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
 	long previewAnimationStartTime = 0;
@@ -108,24 +109,12 @@ namespace FlatGui
 
 	void Init()
 	{
-		// If Release
-		if (FL::_isDebugMode == false)
-		{
-			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
-			// we don't want to have to include it in the final release build anyway.
-			ImGuiIO& io = ImGui::GetIO(); (void)io;
-			io.IniFilename = NULL;
-
-			// Set fullscreen here for now
-			Window::SetFullscreen(FL::F_LoadedProject.IsFullscreen());
-		}
-		else
-			FL::CreateNewScene();
+		FL::CreateNewScene();
 	}
 
 	void SetupProfilerProcesses()
 	{
-		if (_showProfiler && FL::_isDebugMode)
+		if (_showProfiler)
 		{
 			// Add Profiler Processes
 			// 						
@@ -209,41 +198,25 @@ namespace FlatGui
 
 	void RunOnceAfterInitialization()
 	{
-		static bool _initialized = false;
-		static bool _hasRunOnce = false;
+		FL::InitializeMappingContexts();
 
-		if (_initialized && !_hasRunOnce)
-		{
-			// Initialize Mapping Contexts
-			FL::InitializeMappingContexts();
+		FL::prefabManager->InitializePrefabs();
 
-			// Initialize prefab objects
-			FL::prefabManager->InitializePrefabs();
+		// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
+		//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
 
-			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
-			//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
+		// Hierarchy management
+		ResetHierarchyExpanderTracker();
 
-			// Hierarchy management
-			if (FL::_isDebugMode)
-				ResetHierarchyExpanderTracker();
-
-			SetupProfilerProcesses();
-
-			_hasRunOnce = true;
-		}
-
-		_initialized = true;
+		SetupProfilerProcesses();
 	}
 
 
 	void Cleanup()
 	{
 		// Remove Profiler Processes
-		if (FL::_isDebugMode)
-		{
-			FL::RemoveProfilerProcess("Render");
-			FL::RemoveProfilerProcess("Render Present");
-		}
+		FL::RemoveProfilerProcess("Render");
+		FL::RemoveProfilerProcess("Render Present");
 	}
 
 	void SetFocusedGameObjectID(long ID)
@@ -288,138 +261,60 @@ namespace FlatGui
 	// Project Management
 	void OpenProject(std::string path)
 	{
-		Project newProject = Project();
-		newProject.SetPath(path);
+		json projectJson;
+		FL::LoadGameProject(path, projectJson);
 
-		// Declare file and input stream
-		std::ofstream file_obj;
-		std::ifstream ifstream(path);
-
-		// Open file in in mode
-		file_obj.open(path, std::ios::in);
-
-		// Variable to save the current file data into
-		std::string fileContent = "";
-
-		// Loop through the file line by line and save the data
-		if (file_obj.good())
+		if (projectJson["Project Properties"][0] != "NULL")
 		{
-			std::string line;
-			while (!ifstream.eof()) {
-				std::getline(ifstream, line);
-				fileContent.append(line + "\n");
-			}
-		}
-
-		// Close the file after reading
-		file_obj.close();
-
-		if (file_obj.good())
-		{
-			// Go from string to json object
-			json fileContentJson = json::parse(fileContent);
-
-			if (fileContentJson["Project Properties"][0] != "NULL")
+			// Loop through the saved Properties in the JSON file
+			for (int i = 0; i < projectJson["Project Properties"].size(); i++)
 			{
-				// Getting data from the json 
-				// auto properties = fileContentJson["Animation Properties"];
-				// std::string name = properties[0]["name"];
+				// Get data from the loaded object
+				json currentObjectJson = projectJson["Project Properties"][i];
 
-				// Loop through the saved Properties in the JSON file
-				for (int i = 0; i < fileContentJson["Project Properties"].size(); i++)
+				// Show/hide windows
+				if (currentObjectJson.contains("_showSceneView"))
+					_showSceneView = currentObjectJson["_showSceneView"];
+				if (currentObjectJson.contains("_showGameView"))
+					_showGameView = currentObjectJson["_showGameView"];
+				if (currentObjectJson.contains("_showHierarchy"))
+					_showHierarchy = currentObjectJson["_showHierarchy"];
+				if (currentObjectJson.contains("_showInspector"))
+					_showInspector = currentObjectJson["_showInspector"];
+				if (currentObjectJson.contains("_showAnimator"))
+					_showAnimator = currentObjectJson["_showAnimator"];
+				if (currentObjectJson.contains("_showAnimationPreview"))
+					_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+				if (currentObjectJson.contains("_showKeyFrameEditor"))
+					_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+				if (currentObjectJson.contains("_showLogger"))
+					_showLogger = currentObjectJson["_showLogger"];
+				if (currentObjectJson.contains("_showProfiler"))
+					_showProfiler = currentObjectJson["_showProfiler"];
+				if (currentObjectJson.contains("_showMappingContextEditor"))
+					_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
+
+				// Settings
+				if (currentObjectJson.contains("_clearLogBuffer"))
 				{
-					// Get data from the loaded object
-					json currentObjectJson = fileContentJson["Project Properties"][i];
-
-					// Open items
-					if (currentObjectJson.contains("path"))
-						newProject.SetPath(currentObjectJson["path"]);
-					if (currentObjectJson.contains("loadedScenePath"))
-						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
-					if (currentObjectJson.contains("loadedAnimationPath"))
-						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
-					if (currentObjectJson.contains("focusedGameObjectID"))
-						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
-
-					// Scene Scrolling + Grid Step
-					Vector2 sceneViewScroll = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewScrollingX"))
-						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
-					if (currentObjectJson.contains("sceneViewScrollingY"))
-						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
-					newProject.SetSceneViewScrolling(sceneViewScroll);
-					Vector2 sceneViewGridStep = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewGridStepX"))
-						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
-					if (currentObjectJson.contains("sceneViewGridStepY"))
-						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
-					newProject.SetSceneViewGridStep(sceneViewGridStep);
-
-					// Show/hide windows
-					if (currentObjectJson.contains("_showSceneView"))
-						_showSceneView = currentObjectJson["_showSceneView"];
-					if (currentObjectJson.contains("_showGameView"))
-						_showGameView = currentObjectJson["_showGameView"];
-					if (currentObjectJson.contains("_showHierarchy"))
-						_showHierarchy = currentObjectJson["_showHierarchy"];
-					if (currentObjectJson.contains("_showInspector"))
-						_showInspector = currentObjectJson["_showInspector"];
-					if (currentObjectJson.contains("_showAnimator"))
-						_showAnimator = currentObjectJson["_showAnimator"];
-					if (currentObjectJson.contains("_showAnimationPreview"))
-						_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
-					if (currentObjectJson.contains("_showKeyFrameEditor"))
-						_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
-					if (currentObjectJson.contains("_showLogger"))
-						_showLogger = currentObjectJson["_showLogger"];
-					if (currentObjectJson.contains("_showProfiler"))
-						_showProfiler = currentObjectJson["_showProfiler"];
-					if (currentObjectJson.contains("_showMappingContextEditor"))
-						_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
-
-					// Settings
-					if (currentObjectJson.contains("_clearLogBuffer"))
+					_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
+					if (_clearBufferEveryFrame)
 					{
-						_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
-						if (_clearBufferEveryFrame)
-						{
-							FL::F_Logger.ClearBuffer();
-						}
+						FL::F_Logger.ClearBuffer();
 					}
-					if (currentObjectJson.contains("_autoSave"))
-						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
-					if (currentObjectJson.contains("physicsSystem"))
-						newProject.SetPhysicsSystem(currentObjectJson["physicsSystem"]);
-					if (currentObjectJson.contains("collisionDetection"))
-						newProject.SetCollisionDetection(currentObjectJson["collisionDetection"]);
-					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
-						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
-					if (currentObjectJson.contains("_fullscreen"))
-						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
-					if (currentObjectJson.contains("_vsyncEnabled"))
-						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
 				}
 			}
 		}
 
-
-		if (newProject.GetLoadedPreviewAnimationPath() != "")
-			SetFocusedAnimation(FL::LoadAnimationFile(newProject.GetLoadedPreviewAnimationPath()));
-		Vector2 scrolling = newProject.GetSceneViewScrolling();
+		if (FL::F_LoadedProject.GetLoadedPreviewAnimationPath() != "")
+			SetFocusedAnimation(FL::LoadAnimationFile(FL::F_LoadedProject.GetLoadedPreviewAnimationPath()));
+		Vector2 scrolling = FL::F_LoadedProject.GetSceneViewScrolling();
 		FG_sceneViewScrolling = scrolling;
-		Vector2 gridStep = newProject.GetSceneViewGridStep();
+		Vector2 gridStep = FL::F_LoadedProject.GetSceneViewGridStep();
 		FG_sceneViewGridStep = gridStep;
 
-		if (newProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(newProject.GetFocusedGameObjectID()) != nullptr)
-			SetFocusedGameObjectID(newProject.GetFocusedGameObjectID());
-
-		if (newProject.GetLoadedScenePath() != "")
-			FL::LoadScene(newProject.GetLoadedScenePath());
-		else
-			FL::CreateNewScene();
-
-		// Set loaded project
-		FL::SetLoadedProject(newProject);
+		if (FL::F_LoadedProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(FL::F_LoadedProject.GetFocusedGameObjectID()) != nullptr)
+			SetFocusedGameObjectID(FL::F_LoadedProject.GetFocusedGameObjectID());
 	}
 
 	void SaveProject(Project project, std::string path)
@@ -442,7 +337,9 @@ namespace FlatGui
 		json animationName = json::object({
 			{ "path", path },
 			{ "loadedScenePath", project.GetLoadedScenePath()},
-			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath()},
+			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath() },
+			{ "sceneToLoadAtRuntime", project.GetRuntimeScene() },
+			{ "buildPath", project.GetBuildPath() },
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
@@ -460,8 +357,6 @@ namespace FlatGui
 			{ "_showMappingContextEditor", _showMappingContextEditor },
 			{ "_clearLogBuffer", _clearBufferEveryFrame },
 			{ "_autoSave", FL::F_LoadedProject.AutoSaveOn() },
-			{ "physicsSystem", FL::F_LoadedProject.GetPhysicsSystem() },
-			{ "collisionDetection", FL::F_LoadedProject.GetCollisionDetection() },
 			{ "resolutionWidth", FL::F_LoadedProject.GetResolution().x },
 			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
 			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
@@ -479,23 +374,22 @@ namespace FlatGui
 		file_obj.close();
 	}
 
+	std::vector<std::string> RetrieveProjectPaths()
+	{
+		std::vector<std::string> projectPaths = std::vector<std::string>();
+
+		for (std::string projectPath : FL::FindAllFilesWithExtension(FL::GetDir("projectDir"), ".prj"))
+		{
+			projectPaths.push_back(projectPath);
+		}
+
+		return projectPaths;
+	}
 
 	void RenderProjectHub(bool& b_projectSelected, std::string &projectPath)
 	{
 		// Get all project files in the projects folder to present in the project selection screen
-		std::vector<Project> projects = std::vector<Project>();
-
-		for (const auto& entry : std::filesystem::directory_iterator(FL::GetDir("projects")))
-		{			
-			json contextData = FL::LoadFileData(entry.path().string());
-			if (contextData != NULL)
-			{
-				auto projectProperties = contextData["Project Properties"][0];
-				Project project = Project();
-				project.SetPath(FL::CheckJsonString(contextData["Project Properties"][0], "path", "Project Hub project property check."));
-				projects.push_back(project);
-			}
-		}
+		static std::vector<std::string> projectPaths = RetrieveProjectPaths();
 
 		bool b_isOpen = true;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0,0));
@@ -531,43 +425,73 @@ namespace FlatGui
 		ImGui::Separator();
 
 		ImGui::Text("");
-			
+		
+		Vector2 startProjects = ImGui::GetCursorScreenPos();
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(50, 0));
 		FL::BeginWindowChild("Projects", FL::GetColor("transparent"));
-		// Set background to transparent
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("transparent"));
+		ImGui::PopStyleVar();
 
-		for (Project project : projects)
+
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, startProjects.y));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("projectSelectionTable"));
+		ImGui::BeginChild("ProjectsTable", Vector2(0, ImGui::GetContentRegionAvail().y - 100), FL::F_childFlags);
+		ImGui::PopStyleColor();
+
+		Vector2 startTable = ImGui::GetCursorScreenPos();
+
+		ImGui::PushStyleColor(ImGuiCol_TableRowBg, FL::GetColor32("transparent"));
+		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, FL::GetColor32("transparent"));
+		ImGui::PushStyleColor(ImGuiCol_TableBorderLight, FL::GetColor32("transparent"));
+		ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, FL::GetColor32("transparent"));
+		FL::PushTable("#ProjectsTable", 1);
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+
+		ImGui::TableNextRow();
+		for (std::string path : projectPaths)
 		{
-			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 20, ImGui::GetCursorScreenPos().y));
-			std::string path = project.GetPath();
-			if (FL::RenderButton(FL::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x - 20, 60), 1, FL::GetColor("projectHubButton"), FL::GetColor("projectHubButtonHovered"), FL::GetColor("projectHubButtonActive")))
+			ImGui::TableSetColumnIndex(0);
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y));
+			if (FL::RenderButton(FL::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 60), 1, FL::GetColor("projectHubButton"), FL::GetColor("projectHubButtonHovered"), FL::GetColor("projectHubButtonActive")))
 			{
 				b_projectSelected = true;
 				projectPath = path;
 			}
-			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
+			ImGui::TableNextRow();
 		}
+		float scrollY = ImGui::GetScrollY(); // Save table scroll for table outline
+		FL::PopTable();
+		FL::EndWindowChild();
 
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y - 65));
+		Vector2 endTable = ImGui::GetCursorScreenPos();
 
+		// "New Project" button section
 		ImGui::Text("");
 		ImGui::Separator();
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x - 110, ImGui::GetCursorScreenPos().y + 6));
 
+		std::string projectName = "";
+		static bool b_openProjectModal = false;
+
 		if (FL::RenderButton("New Project", Vector2(100, 30)))
+			b_openProjectModal = true;
+		
+		if (FL::RenderInputModal("Create New Project", "Project name", projectName, b_openProjectModal))
 		{
-			std::string newProjectPath = FL::OpenSaveFileExplorer();
-			if (newProjectPath != "")
-			{
-				Project newProject = Project();
-				SaveProject(newProject, newProjectPath);
-				OpenProject(newProjectPath);
-			}
+			Project newProject = Project();
+			std::string projectPath = FL::GetDir("projects") + "/" + projectName + ".prj";
+			SaveProject(newProject, projectPath);
+			OpenProject(projectPath);
+			projectPaths = RetrieveProjectPaths();
 		}
 
-		ImGui::PopStyleColor();
 		FL::EndWindowChild();
+				
+		ImGui::GetWindowDrawList()->AddRect(Vector2(startTable.x - 6, startTable.y - 6 + scrollY), Vector2(startTable.x + ImGui::GetContentRegionAvail().x - 104, endTable.y - 3), FL::GetColor32("filesPanelOutline"));
+
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -579,6 +503,8 @@ namespace FlatGui
 		// ImGui Demo Window
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
+		
+		//RenderScriptEditor();
 
 		RenderFileExplorer();
 
@@ -740,7 +666,6 @@ namespace FlatGui
 		FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
 		FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
 		FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
-		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
 	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
@@ -749,7 +674,7 @@ namespace FlatGui
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
-		// 4 channels for now in this scene view. 0 = scene objects, 1 &2 = other UI (camera icon, etc), 4 = transform arrow
+		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
 		drawSplitter->Split(draw_list, FL::F_maxSpriteLayers + 5);
 
 		// Loop through scene objects
@@ -1037,7 +962,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				if (FL::F_LoadedProject.GetCollisionDetection() == "Shared Axis")
+				if (transform->GetRotation() == 0)
 				{
 					if (_isActive && !_isColliding)
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
@@ -1046,7 +971,7 @@ namespace FlatGui
 					else if (_isColliding)
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
 				}
-				else if (FL::F_LoadedProject.GetCollisionDetection() == "Separating Axis")
+				else
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -1095,7 +1020,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				circleCollider->UpdateActiveEdges(FL::F_LoadedProject.GetCollisionDetection(), FG_sceneViewGridStep.x, FG_sceneViewCenter);
+				circleCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				if (_isActive && !_isColliding)
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);

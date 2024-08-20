@@ -1,0 +1,21 @@
+----------------------------------------
+--- Runtime Directories & File Paths ---
+----------------------------------------
+
+F_Dirs = {
+	root = "FlatEngine/",	-- For turning absolute paths into relative paths in FlatEngine::OpenLoadFileExplorer()
+	projectDir = "../", -- Relative to the solution
+	projects = "../assets/projects/",
+	mappingContexts = "../assets/mappingContexts/",
+	prefabs = "../assets/prefabs/",
+	animations = "assets/animations/",
+	scenes = "assets/scenes/",
+	scripts = "../assets/scripts/",	-- in-game lua scripting
+}
+
+F_Paths = {
+	colors = "../engine/scripts/Colors.lua",
+	textures = "../engine/scripts/Textures.lua",
+
+	gameStartupProject = "../assets/projects/OwlTower.json" -- Project that will be started at runtime (includes startup scene)
+}

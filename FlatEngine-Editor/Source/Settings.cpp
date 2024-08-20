@@ -5,10 +5,11 @@
 #include "imgui.h"
 
 
-namespace FlatGui {
-
+namespace FlatGui 
+{
 	void RenderSettings()
 	{
+		ImGui::SetNextItemWidth(400);
 		FlatEngine::BeginWindow("Settings", _showSettings);
 
 
@@ -16,10 +17,8 @@ namespace FlatGui {
 		FlatEngine::BeginResizeWindowChild("EngineSettings");
 		FlatEngine::RenderSectionHeader("Engine Setting");
 		// List settings grouping
-		static std::string settingSelected = "Collision Detection";
+		static std::string settingSelected = "State";
 		FlatEngine::PushTreeList("EngineSettingSelect");
-		FlatEngine::RenderTreeLeaf("Collision Detection", settingSelected);
-		FlatEngine::RenderTreeLeaf("Physics", settingSelected);
 		FlatEngine::RenderTreeLeaf("State", settingSelected);
 		FlatEngine::RenderTreeLeaf("Game", settingSelected);
 		FlatEngine::PopTreeList();
@@ -34,31 +33,7 @@ namespace FlatGui {
 		if (FlatEngine::PushTable("SettingsTable", 2))
 		{
 			// List settings per grouping
-			if (settingSelected == "Collision Detection")
-			{
-				std::vector<std::string> collisionTypes = { "Shared Axis", "Separating Axis" };
-				static int currentCollisionIndex = 0;
-				for (int c = 0; c < collisionTypes.size(); c++)
-				{
-					if (collisionTypes[c] == FlatEngine::F_LoadedProject.GetCollisionDetection())
-						currentCollisionIndex = c;
-				}
-				FlatEngine::RenderSelectableTableRow("##CollisionDetectionSelect", "Collision Detection", collisionTypes, currentCollisionIndex);
-				FlatEngine::F_LoadedProject.SetCollisionDetection(collisionTypes.at(currentCollisionIndex));
-			}
-			else if (settingSelected == "Physics")
-			{
-				std::vector<std::string> physicsTypes = { "Euler", "Verlet" };
-				static int currentPhysicsIndex = 0;
-				for (int p = 0; p < physicsTypes.size(); p++)
-				{
-					if (physicsTypes[p] == FlatEngine::F_LoadedProject.GetPhysicsSystem())
-						currentPhysicsIndex = p;
-				}
-				FlatEngine::RenderSelectableTableRow("##PhysicsSystemSelect", "Physics System", physicsTypes, currentPhysicsIndex);
-				FlatEngine::F_LoadedProject.SetPhysicsSystem(physicsTypes.at(currentPhysicsIndex));
-			}
-			else if (settingSelected == "State")
+			if (settingSelected == "State")
 			{
 				bool _autoSave = FlatEngine::F_LoadedProject.AutoSaveOn();
 				if (FlatEngine::RenderCheckboxTableRow("##AutoSaveCheckbox", "Auto Save", _autoSave))
@@ -67,7 +42,13 @@ namespace FlatGui {
 			else if (settingSelected == "Game")
 			{
 				// Scene to load on start
-				// TODO
+				std::string startupScene = FL::F_LoadedProject.GetRuntimeScene();
+				if (FL::RenderInputTableRow("Scene Loaded On Start", "Scene to load on game start", startupScene, true))
+					FlatEngine::F_LoadedProject.SetRuntimeScene(startupScene);
+
+				std::string finalBuildPath = FL::F_LoadedProject.GetBuildPath();
+				if (FL::RenderInputTableRow("Final Build Path", "Final project build path", finalBuildPath))
+					FlatEngine::F_LoadedProject.SetBuildPath(finalBuildPath);
 
 
 				// Resolution
@@ -105,7 +86,7 @@ namespace FlatGui {
 
 			FlatEngine::PopTable();
 		}
-	
+
 		ImGui::EndChild();
 
 

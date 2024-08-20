@@ -39,7 +39,6 @@ namespace FlatEngine
 
 	Scene *SceneManager::CreateNewScene()
 	{
-		// Remove loaded scene from memory
 		m_loadedScene = Scene();
 		return &m_loadedScene;
 	}
