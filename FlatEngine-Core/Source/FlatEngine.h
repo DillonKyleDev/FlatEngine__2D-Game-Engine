@@ -120,6 +120,7 @@ namespace FlatEngine
 	extern Uint32 GetColor32(std::string colorName);
 
 	extern void SetupImGui();
+	extern void RestartImGui();
 	extern void QuitImGui();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
@@ -143,6 +144,7 @@ namespace FlatEngine
 	extern Project F_LoadedProject;
 	extern void SetLoadedProject(Project loadedProject);
 	extern Project& GetLoadedProject();
+	extern void LoadGameProject();
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -200,7 +202,7 @@ namespace FlatEngine
 	extern void DebugRectangle(Vector2 startingPoint, Vector2 endPoint, Vector4 color, float thickness, ImDrawList* drawList);
 
 	// Game View
-	extern void Game_RenderView();
+	extern void Game_RenderView(bool b_inRuntime = false);
 	extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
 	extern void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 

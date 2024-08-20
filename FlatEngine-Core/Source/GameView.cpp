@@ -32,7 +32,7 @@ namespace FlatEngine
 	Vector2 F_gameViewGridStep = Vector2(50, 50);
 
 
-	void Game_RenderView()
+	void Game_RenderView(bool b_inRuntime)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
@@ -41,7 +41,7 @@ namespace FlatEngine
 		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
 		// If Release - Make GameView full screen and disable tab decoration and resizing
-		if (!FL::_isDebugMode)
+		if (b_inRuntime)
 		{
 			// Get InputOutput
 			ImGuiIO& inputOutput = ImGui::GetIO();

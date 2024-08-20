@@ -1,15 +1,35 @@
 #include "FlatEngine.h"
 #include "Application.h"
+#include "AssetManager.h"
+#include "Window.h"
+#include "SDL.h"
+
+namespace FL = FlatEngine;
 
 namespace FlatEngine
 {
 	void Application::BeginRender()
 	{
-		FlatEngine::BeginImGuiRender();
+		FL::BeginImGuiRender();
 	}
 
 	void Application::EndRender()
 	{
-		FlatEngine::EndImGuiRender();
+		FL::EndImGuiRender();
+
+		// Handle window resizing and recreating ImGui
+		if (m_b_windowResized)
+		{
+			//FL::SaveCurrentScene();
+
+			//int width;
+			//int height;
+			//SDL_GetWindowSize(Window::W_Window, &width, &height);
+			//Window::SetScreenDimensions(width, height);
+			//FL::F_AssetManager.CollectDirectories();
+			FL::RestartImGui(); // ImGui setup relies on global colors
+
+			m_b_windowResized = false;
+		}
 	}
 }

@@ -180,9 +180,25 @@ public:
 
 			EndRender();
 
-			// For things we only want to execute once after complete initialization
-			FlatGui::RunOnceAfterInitialization();
+
+
+			RunOnceAfterInitialization();
 		}
+	}
+	// For things we only want to execute once after complete initialization
+	void RunOnceAfterInitialization()
+	{
+		static bool b_initialized = false;
+		static bool b_hasRunOnce = false;
+
+		if (b_initialized && !b_hasRunOnce)
+		{
+			FlatGui::RunOnceAfterInitialization();
+
+			b_hasRunOnce = true;
+		}
+
+		b_initialized = true;
 	}
 	void BeginRender()
 	{
@@ -224,15 +240,13 @@ public:
 		//  After recreating the window, you need to recreate any assets that were created using that window!!!    // 
 		//  This can lead to assets not appearing even though everything seems like it should be working and fine  //
 		
-		// If window was recreated this frame
+		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
 			Window::SetScreenDimensions(1900, 960);
-			ImPlot::DestroyContext();
-			ImGui::DestroyContext();
 			FL::F_AssetManager.CollectDirectories();
 			FL::F_AssetManager.CollectColors();
-			FL::SetupImGui(); // ImGui setup relies on global colors
+			FL::RestartImGui(); // ImGui setup relies on global colors
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
 			FlatGui::OpenProject(m_startupProject);

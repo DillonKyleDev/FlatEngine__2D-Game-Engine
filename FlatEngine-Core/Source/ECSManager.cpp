@@ -244,6 +244,7 @@ namespace FlatEngine
 			for (std::map<long, BoxCollider>::iterator iter = m_BoxColliders.at(ownerID).begin(); iter != m_BoxColliders.at(ownerID).end();)
 			{
 				colliders.push_back(&(*iter).second);
+				iter++;
 			}
 		}
 		return colliders;
@@ -257,6 +258,7 @@ namespace FlatEngine
 			for (std::map<long, CircleCollider>::iterator iter = m_CircleColliders.at(ownerID).begin(); iter != m_CircleColliders.at(ownerID).end();)
 			{
 				colliders.push_back(&(*iter).second);
+				iter++;
 			}
 		}
 		return colliders;

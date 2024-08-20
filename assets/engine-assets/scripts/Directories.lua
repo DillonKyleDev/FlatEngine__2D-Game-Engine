@@ -15,4 +15,6 @@ F_Dirs = {
 F_Paths = {
 	colors = "../assets/engine-assets/scripts/Colors.lua",
 	textures = "../assets/engine-assets/scripts/Textures.lua",
+
+	gameStartupProject = "../assets/engine-assets/projects/OwlTower.json" -- Project that will be started at runtime (includes startup scene)
 }

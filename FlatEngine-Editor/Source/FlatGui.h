@@ -176,7 +176,7 @@ namespace FlatGui
 	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
 	extern void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked);
 	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked);
-
+	extern void RenderScriptEditor();
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, long& queuedForDelete);

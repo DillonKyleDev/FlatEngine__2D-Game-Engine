@@ -70,23 +70,23 @@ namespace FlatEngine
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
-		F_Lua["F_LogString"] = [](std::string line)
+		F_Lua["LogString"] = [](std::string line)
 		{
 			LogString(line, "[LUA]");
 		};
-		F_Lua["F_LogInt"] = [](int value, std::string line)
+		F_Lua["LogInt"] = [](int value, std::string line)
 		{
 			LogInt(value, line, "[LUA]");
 		};
-		F_Lua["F_LogFloat"] = [](float value, std::string line)
+		F_Lua["LogFloat"] = [](float value, std::string line)
 		{
 			LogFloat(value, line, "[LUA]");
 		};
-		F_Lua["F_LogVector2"] = [](float xValue, float yValue, std::string line)
+		F_Lua["LogVector2"] = [](float xValue, float yValue, std::string line)
 		{
 			LogVector2(Vector2(xValue, yValue), line, "[LUA]");
 		};
-		F_Lua["F_GetMappingContext"] = [](std::string contextName)
+		F_Lua["GetMappingContext"] = [](std::string contextName)
 		{
 			return GetMappingContext(contextName);
 		};
@@ -203,7 +203,7 @@ namespace FlatEngine
 			{
 				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
-					std::string filepath = "../scripts/" + script.second.GetAttachedScript() + ".lua";
+					std::string filepath = GetDir("scripts") + "/" + script.second.GetAttachedScript() + ".lua";
 					if (DoesFileExist(filepath))
 					{
 						auto script = F_Lua.safe_script_file(filepath);

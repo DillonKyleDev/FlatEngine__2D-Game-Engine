@@ -8,7 +8,7 @@
 
 -- use "this_object" to reference the object that is attached to this script 
 -- use ":" to access member variables and functions of objects: object:member_variable ..or.. object::member_function() 
--- to concatinate two or more strings, use two periods: ".."  F_LogString("Just add two periods between arguments like"..string_variable_name) 
+-- to concatinate two or more strings, use two periods: ".."  LogString("Just add two periods between arguments like"..string_variable_name) 
 -- to create new objects of type Type with construction parameters, use: Type:new(parameters,...)  
 
 
@@ -19,18 +19,18 @@ end
 
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
-     F_LogString("PlayerController : Start() called on "..this_object:GetName()) 
-     mappingContext = F_GetMappingContext("MC_CharacterContext.json")
+     LogString("PlayerController : Start() called on "..this_object:GetName()) 
+     mappingContext = GetMappingContext("MC_CharacterContext.json")
      rigidBody = this_object:GetRigidBody()
 end 
 
 --called once per gameloop frame 
 function Update() 
     if mappingContext:Fired("IA_Jump") then
-        --rigidBody:SetAngularVelocity(1)
-        F_LogString("Jumped")
+        rigidBody:AddForce(Vector2:new(0, 1), 20);
+        LogString("Jumped")
         --rigidBody:SetTorquesAllowed(false)
-        rigidBody:AddTorque(-10, 1)
+        --rigidBody:AddTorque(-10, 1)
 
     end
 end 

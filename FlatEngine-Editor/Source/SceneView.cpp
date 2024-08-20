@@ -67,7 +67,7 @@ namespace FlatGui
 		// This will catch our interactions
 		ImGui::SetCursorScreenPos(currentPos);
 		ImGui::SetNextItemAllowOverlap();
-		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);		
 		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 
@@ -100,6 +100,8 @@ namespace FlatGui
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{
+			// This does not seem to work properly when resizing the window
+			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
 			FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
 			FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
 		}
@@ -108,6 +110,7 @@ namespace FlatGui
 		if (is_hovered && inputOutput.KeyAlt)
 			RenderSceneViewTooltip();
 
+		// For centering on focused GameObject
 		if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObject != nullptr)
 		{
 			Transform* transform = FG_sceneViewLockedObject->GetTransform();

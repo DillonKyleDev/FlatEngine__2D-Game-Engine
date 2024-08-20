@@ -32,6 +32,9 @@ project "FlatEngine-Runtime"
       "../Vendor/includes/SDL2_Text/include",
       "../Vendor/includes/SDL2_Mixer/include",
       "../Vendor/includes/Json_Formatter",
+      "../Vendor/includes/Lua",
+      "../Vendor/includes/Sol2/include",
+      "../Vendor/includes/Sol2/include/sol",
    }
 
    libdirs 
@@ -40,6 +43,7 @@ project "FlatEngine-Runtime"
         "../Vendor/includes/SDL2_Image/lib/x64",
         "../Vendor/includes/SDL2_Text/lib/x64",
         "../Vendor/includes/SDL2_Mixer/lib/x64",
+        "../Vendor/includes/Lua",
    }
 
    links
@@ -53,6 +57,7 @@ project "FlatEngine-Runtime"
       "d3dcompiler.lib",
       "dxgi.lib",
       "SDL2_mixer.lib",
+      "lua54.lib",   
    }
 
    defines

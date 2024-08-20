@@ -327,6 +327,7 @@
     <ClCompile Include="..\Vendor\includes\ImPlot\implot_items.cpp" />
     <ClCompile Include="Source\Animation.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\Audio.cpp" />
     <ClCompile Include="Source\BoxCollider.cpp" />
     <ClCompile Include="Source\Button.cpp" />
@@ -335,7 +336,6 @@
     <ClCompile Include="Source\CharacterController.cpp" />
     <ClCompile Include="Source\CircleCollider.cpp" />
     <ClCompile Include="Source\Collider.cpp" />
-    <ClCompile Include="Source\AssetManager.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\CompositeCollider.cpp" />
     <ClCompile Include="Source\ECSManager.cpp" />

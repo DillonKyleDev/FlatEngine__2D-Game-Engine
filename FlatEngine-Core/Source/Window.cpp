@@ -23,7 +23,10 @@ namespace Window
 	{
 		W_isFullscreen = _isFullscreen;
 
-		SDL_SetWindowFullscreen(W_Window, _isFullscreen);
+		if (W_isFullscreen)
+			SDL_SetWindowFullscreen(W_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		else
+			SDL_SetWindowFullscreen(W_Window, 0);
 		//SDL_ShowCursor(true);
 	}
 

@@ -108,24 +108,12 @@ namespace FlatGui
 
 	void Init()
 	{
-		// If Release
-		if (FL::_isDebugMode == false)
-		{
-			// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
-			// we don't want to have to include it in the final release build anyway.
-			ImGuiIO& io = ImGui::GetIO(); (void)io;
-			io.IniFilename = NULL;
-
-			// Set fullscreen here for now
-			Window::SetFullscreen(FL::F_LoadedProject.IsFullscreen());
-		}
-		else
-			FL::CreateNewScene();
+		FL::CreateNewScene();
 	}
 
 	void SetupProfilerProcesses()
 	{
-		if (_showProfiler && FL::_isDebugMode)
+		if (_showProfiler)
 		{
 			// Add Profiler Processes
 			// 						
@@ -209,41 +197,25 @@ namespace FlatGui
 
 	void RunOnceAfterInitialization()
 	{
-		static bool _initialized = false;
-		static bool _hasRunOnce = false;
+		FL::InitializeMappingContexts();
 
-		if (_initialized && !_hasRunOnce)
-		{
-			// Initialize Mapping Contexts
-			FL::InitializeMappingContexts();
+		FL::prefabManager->InitializePrefabs();
 
-			// Initialize prefab objects
-			FL::prefabManager->InitializePrefabs();
+		// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
+		//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
 
-			// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
-			//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
+		// Hierarchy management
+		ResetHierarchyExpanderTracker();
 
-			// Hierarchy management
-			if (FL::_isDebugMode)
-				ResetHierarchyExpanderTracker();
-
-			SetupProfilerProcesses();
-
-			_hasRunOnce = true;
-		}
-
-		_initialized = true;
+		SetupProfilerProcesses();
 	}
 
 
 	void Cleanup()
 	{
 		// Remove Profiler Processes
-		if (FL::_isDebugMode)
-		{
-			FL::RemoveProfilerProcess("Render");
-			FL::RemoveProfilerProcess("Render Present");
-		}
+		FL::RemoveProfilerProcess("Render");
+		FL::RemoveProfilerProcess("Render Present");
 	}
 
 	void SetFocusedGameObjectID(long ID)
@@ -401,6 +373,7 @@ namespace FlatGui
 				}
 			}
 		}
+
 
 
 		if (newProject.GetLoadedPreviewAnimationPath() != "")
@@ -579,6 +552,8 @@ namespace FlatGui
 		// ImGui Demo Window
 		if (_showDemoWindow)
 			ImGui::ShowDemoWindow(&_showDemoWindow);
+		
+		//RenderScriptEditor();
 
 		RenderFileExplorer();
 
@@ -740,7 +715,6 @@ namespace FlatGui
 		FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
 		FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
 		FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
-		//DrawLine(sceneViewCenter, Vector2(sceneViewCenter.x + 40, sceneViewCenter.y + 40), whiteColor, 3, drawList);
 	}
 
 	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
@@ -749,7 +723,7 @@ namespace FlatGui
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
-		// 4 channels for now in this scene view. 0 = scene objects, 1 &2 = other UI (camera icon, etc), 4 = transform arrow
+		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
 		drawSplitter->Split(draw_list, FL::F_maxSpriteLayers + 5);
 
 		// Loop through scene objects

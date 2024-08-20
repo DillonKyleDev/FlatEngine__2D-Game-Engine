@@ -2,6 +2,9 @@
 #include <string>
 #include "GameLoop.h"
 
+
+namespace FL = FlatEngine;
+
 namespace FlatEngine
 {
 	class GameLoop;
@@ -11,7 +14,8 @@ namespace FlatEngine
 	public:
 		Application()
 		{
-			_hasQuit = false;
+			m_b_hasQuit = false;
+			m_b_windowResized = false;
 			m_windowWidth = 1920;
 			m_windowHeight = 1080;
 		}
@@ -19,12 +23,14 @@ namespace FlatEngine
 
 		virtual void Init() {};
 		virtual void Run() {};
+		virtual void RunOnceAfterInitialization() {};
 		void SetWindowDimensions(int width, int height) { m_windowWidth = width; m_windowHeight = height; };
 		int WindowWidth() { return m_windowWidth; };
 		int WindowHeight() { return m_windowHeight; };
+		void WindowResized() { m_b_windowResized = true; };
 		void BeginRender(); // Defined in Application.cpp
 		void EndRender();   // Defined in Application.cpp
-		virtual FlatEngine::GameLoop* GetGameLoop() { return nullptr; };
+		virtual FL::GameLoop* GetGameLoop() { return nullptr; };
 		virtual bool GameLoopStarted() { return false; };
 		virtual bool GameLoopPaused() { return false; };
 		virtual void StartGameLoop() {};
@@ -33,12 +39,13 @@ namespace FlatEngine
 		virtual void StopGameLoop() {};
 		virtual void PauseGame() {};
 
-		void Quit() { _hasQuit = true; };
-		bool& HasQuit() { return _hasQuit; };
+		void Quit() { m_b_hasQuit = true; };
+		bool& HasQuit() { return m_b_hasQuit; };
 		void OnLoadScene(std::string sceneName) {};
 		
 	private:
-		bool _hasQuit;
+		bool m_b_hasQuit;
+		bool m_b_windowResized;
 		int m_windowWidth;
 		int m_windowHeight;
 	};

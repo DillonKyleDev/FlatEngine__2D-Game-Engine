@@ -374,33 +374,11 @@ namespace FlatEngine
 		}
 	}
 
-	void ManageControllers()
+	void RestartImGui()
 	{
-		static int controllersConnected = 0;
-		if (SDL_NumJoysticks() != controllersConnected)
-		{
-			// Clean up old gamepads
-			for (SDL_Joystick* gamepad : gamepads)
-			{
-				SDL_JoystickClose(gamepad);
-				gamepad = NULL;
-			}
-
-			controllersConnected = SDL_NumJoysticks();
-			for (int i = 0; i < controllersConnected; i++)
-			{
-				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
-				if (gamepad == NULL)
-					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-				else
-				{
-					LogString("Gamepad connected...");
-					gamepads.push_back(gamepad);
-				}
-			}
-		}
+		QuitImGui();
+		SetupImGui();
 	}
-
 
 	void QuitImGui()
 	{
@@ -432,6 +410,35 @@ namespace FlatEngine
 		FlatEngine::_closeProgram = true;
 	}
 
+
+	void ManageControllers()
+	{
+		static int controllersConnected = 0;
+		if (SDL_NumJoysticks() != controllersConnected)
+		{
+			// Clean up old gamepads
+			for (SDL_Joystick* gamepad : gamepads)
+			{
+				SDL_JoystickClose(gamepad);
+				gamepad = NULL;
+			}
+
+			controllersConnected = SDL_NumJoysticks();
+			for (int i = 0; i < controllersConnected; i++)
+			{
+				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
+				if (gamepad == NULL)
+					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+				else
+				{
+					LogString("Gamepad connected...");
+					gamepads.push_back(gamepad);
+				}
+			}
+		}
+	}
+
+
 	Uint32 GetEngineTime()
 	{
 		return (int)SDL_GetTicks();
@@ -443,6 +450,7 @@ namespace FlatEngine
 		return F_PlayerObject;
 	}
 
+
 	// Project Management
 	void SetLoadedProject(Project loadedProject)
 	{
@@ -452,6 +460,98 @@ namespace FlatEngine
 	Project& GetLoadedProject()
 	{
 		return F_LoadedProject;
+	}
+
+	void LoadGameProject()
+	{
+		std::string path = GetFilePath("gameStartupProject");
+
+		Project newProject = Project();
+		newProject.SetPath(path);
+
+		// Declare file and input stream
+		std::ofstream file_obj;
+		std::ifstream ifstream(path);
+
+		// Open file in in mode
+		file_obj.open(path, std::ios::in);
+
+		// Variable to save the current file data into
+		std::string fileContent = "";
+
+		// Loop through the file line by line and save the data
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof()) {
+				std::getline(ifstream, line);
+				fileContent.append(line + "\n");
+			}
+		}
+
+		// Close the file after reading
+		file_obj.close();
+
+		if (file_obj.good())
+		{
+			// Go from string to json object
+			json fileContentJson = json::parse(fileContent);
+
+			if (fileContentJson["Project Properties"][0] != "NULL")
+			{
+				// Loop through the saved Properties in the JSON file
+				for (int i = 0; i < fileContentJson["Project Properties"].size(); i++)
+				{
+					// Get data from the loaded object
+					json currentObjectJson = fileContentJson["Project Properties"][i];
+
+					// Open items
+					if (currentObjectJson.contains("path"))
+						newProject.SetPath(currentObjectJson["path"]);
+					if (currentObjectJson.contains("loadedScenePath"))
+						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
+					if (currentObjectJson.contains("loadedAnimationPath"))
+						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
+					if (currentObjectJson.contains("focusedGameObjectID"))
+						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
+
+					// Scene Scrolling + Grid Step
+					Vector2 sceneViewScroll = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewScrollingX"))
+						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
+					if (currentObjectJson.contains("sceneViewScrollingY"))
+						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
+					newProject.SetSceneViewScrolling(sceneViewScroll);
+					Vector2 sceneViewGridStep = Vector2(0, 0);
+					if (currentObjectJson.contains("sceneViewGridStepX"))
+						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
+					if (currentObjectJson.contains("sceneViewGridStepY"))
+						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
+					newProject.SetSceneViewGridStep(sceneViewGridStep);
+
+					if (currentObjectJson.contains("_autoSave"))
+						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
+					if (currentObjectJson.contains("physicsSystem"))
+						newProject.SetPhysicsSystem(currentObjectJson["physicsSystem"]);
+					if (currentObjectJson.contains("collisionDetection"))
+						newProject.SetCollisionDetection(currentObjectJson["collisionDetection"]);
+					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
+						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
+					if (currentObjectJson.contains("_fullscreen"))
+						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
+					if (currentObjectJson.contains("_vsyncEnabled"))
+						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
+				}
+			}
+		}
+
+		if (newProject.GetLoadedScenePath() != "")
+			FL::LoadScene(newProject.GetLoadedScenePath());
+		else
+			FL::CreateNewScene();
+
+		// Set loaded project
+		FL::SetLoadedProject(newProject);
 	}
 
 	// GameObject / Scene management
@@ -718,10 +818,32 @@ namespace FlatEngine
 		while (SDL_PollEvent(&event))
 		{
 			ImGui_ImplSDL2_ProcessEvent(&event);
+
 			if (event.type == SDL_QUIT)
+			{
 				quit = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(Window::W_Window))
-				quit = true;
+			}
+			if (event.type == SDL_WINDOWEVENT)
+			{
+				switch (event.window.event)
+				{
+				case SDL_WINDOWEVENT_CLOSE:
+					if (event.window.windowID == SDL_GetWindowID(Window::W_Window))
+						quit = true;
+						break;
+
+				case SDL_WINDOWEVENT_RESIZED:
+					F_Application->WindowResized();
+					break;
+				
+				case SDL_WINDOWEVENT_MAXIMIZED:
+					F_Application->WindowResized();
+					break;
+
+				default:
+					break;
+				}
+			}
 
 			for (MappingContext &context : F_MappingContexts)
 			{
