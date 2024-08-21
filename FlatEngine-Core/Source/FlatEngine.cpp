@@ -50,7 +50,9 @@
 
 namespace FlatEngine
 {
-	std::string F_DirectoriesLuaFilepath = "../assets/engine-assets/scripts/Directories.lua";
+	std::string F_RuntimeDirectoriesLuaFilepath = "";	
+	std::string F_EditorDirectoriesLuaFilepath = "";
+	std::string F_DebugDirectoriesLuaFilepath = "";
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
@@ -220,7 +222,7 @@ namespace FlatEngine
 	}
 
 
-	bool Init(int windowWidth, int windowHeight)
+	bool Init(int windowWidth, int windowHeight, DirectoryType dirType)
 	{
 		//Initialization flag
 		bool success = true;
@@ -277,20 +279,20 @@ namespace FlatEngine
 						}
 						else
 						{
-							Mix_AllocateChannels(100);				// Sets number of individual audios that can play at once
+							Mix_AllocateChannels(100);							   // Sets number of individual audios that can play at once
 							LogString("SDL_mixer initialized...");
 
 							InitLua();
 							LogString("Lua initialized...");
 
-							F_AssetManager.CollectDirectories();    // Collect important directories and file paths from Directories.lua
-							F_AssetManager.CollectColors();         // Collect global colors from Colors.lua
+							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
+							F_AssetManager.GetDirectoryPaths();					   // Prompt user to give Directories.lua path which populates paths for different build types
+							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
+							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
+							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
+							SetImGuiColors();									   // Use the collected colors to style ImGui elements
 
-							SetupImGui();							// Set up ImGui Context and global styles
-
-							F_AssetManager.CollectTextures();       // Collect and create Texture icons from Textures.lua
-							
-							RetrieveLuaScriptNames();               // Uses scripts directory collected from above CollectDirectories() call
+							RetrieveLuaScriptNames();							   // Uses scripts directory collected from above CollectDirectories() call
 
 							LogString("Ready...");
 							LogSeparator();
@@ -330,12 +332,16 @@ namespace FlatEngine
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::W_Window, Window::W_Renderer);
 		ImGui_ImplSDLRenderer2_Init(Window::W_Renderer);
+		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by FL::GetColor();
+	}
 
+	void SetImGuiColors()
+	{
 		// Round about way of editing the active titlebgactive color since pushstylecolor doesn't seem to work for it.
 		for (int i = 0; i < ImGuiCol_COUNT; i++)
 		{
 			const char* name = ImGui::GetStyleColorName(i);
-			
+
 			if (name == "TitleBgActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
@@ -462,10 +468,8 @@ namespace FlatEngine
 		return F_LoadedProject;
 	}
 
-	void LoadGameProject()
+	void LoadGameProject(std::string path, json &projectJson)
 	{
-		std::string path = GetFilePath("gameStartupProject");
-
 		Project newProject = Project();
 		newProject.SetPath(path);
 
@@ -495,15 +499,15 @@ namespace FlatEngine
 		if (file_obj.good())
 		{
 			// Go from string to json object
-			json fileContentJson = json::parse(fileContent);
+			json projectJson = json::parse(fileContent);
 
-			if (fileContentJson["Project Properties"][0] != "NULL")
+			if (projectJson["Project Properties"][0] != "NULL")
 			{
 				// Loop through the saved Properties in the JSON file
-				for (int i = 0; i < fileContentJson["Project Properties"].size(); i++)
+				for (int i = 0; i < projectJson["Project Properties"].size(); i++)
 				{
 					// Get data from the loaded object
-					json currentObjectJson = fileContentJson["Project Properties"][i];
+					json currentObjectJson = projectJson["Project Properties"][i];
 
 					// Open items
 					if (currentObjectJson.contains("path"))
@@ -3015,10 +3019,16 @@ namespace FlatEngine
 	std::string MakePathRelative(std::string filepath)
 	{
 		std::string relativePath;
-		const size_t rootDirIndex = filepath.find(GetDir("root"));
+		std::string root = GetDir("root");
+		size_t rootDirIndex;
 
-		if (rootDirIndex < 1000)
-			relativePath = ".." + filepath.substr(rootDirIndex + 10);
+		if (root != "")
+			rootDirIndex = filepath.find(root) + 10;
+		else
+			rootDirIndex = 0;
+
+		if (rootDirIndex < 1000 && rootDirIndex != 0)
+			relativePath = ".." + filepath.substr(rootDirIndex);
 		else
 			relativePath = filepath;
 

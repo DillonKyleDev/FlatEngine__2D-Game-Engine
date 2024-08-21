@@ -1,12 +1,20 @@
 #pragma once
 #include <string>
 #include "GameLoop.h"
+#include <string>
 
 
 namespace FL = FlatEngine;
 
 namespace FlatEngine
 {
+	enum DirectoryType {
+		RuntimeDir,
+		EditorDir,
+		DebugDir,
+		NoDir
+	};
+
 	class GameLoop;
 
 	class Application
@@ -18,6 +26,7 @@ namespace FlatEngine
 			m_b_windowResized = false;
 			m_windowWidth = 1920;
 			m_windowHeight = 1080;
+			m_directoriesType = NoDir;  // Tells the engine where to look for the xxxDirectories.lua file containing important paths and dir locations
 		}
 		~Application() {};
 
@@ -30,6 +39,8 @@ namespace FlatEngine
 		void WindowResized() { m_b_windowResized = true; };
 		void BeginRender(); // Defined in Application.cpp
 		void EndRender();   // Defined in Application.cpp
+		void SetDirectoriesType(DirectoryType dirType) { m_directoriesType = dirType; };
+		DirectoryType GetDirectoriesType() { return m_directoriesType;  };
 		virtual FL::GameLoop* GetGameLoop() { return nullptr; };
 		virtual bool GameLoopStarted() { return false; };
 		virtual bool GameLoopPaused() { return false; };
@@ -48,5 +59,6 @@ namespace FlatEngine
 		bool m_b_windowResized;
 		int m_windowWidth;
 		int m_windowHeight;
+		DirectoryType m_directoriesType;
 	};
 }

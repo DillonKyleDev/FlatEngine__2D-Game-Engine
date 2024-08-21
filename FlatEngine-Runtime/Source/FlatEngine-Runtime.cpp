@@ -62,6 +62,7 @@ public:
 	{
 		A_GameLoop = new RuntimeGameLoop();
 		m_recreateWindow = false;
+		SetDirectoriesType(FL::RuntimeDir);
 	}
 	~RuntimeApplication()
 	{
@@ -149,9 +150,10 @@ public:
 
 		if (b_initialized && !b_hasRunOnce)
 		{
+			json projectJson;
 			FL::InitializeMappingContexts();
 			FL::prefabManager->InitializePrefabs();
-			FL::LoadGameProject();
+			FL::LoadGameProject(FL::GetFilePath("gameStartupProject"), projectJson);
 
 			b_hasRunOnce = true;
 		}

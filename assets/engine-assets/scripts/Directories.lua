@@ -1,20 +1,13 @@
----------------------------------------
---- Engine Directories & File Paths ---
----------------------------------------
+----------------------------------------
+----- Engine Directories Locations -----
+----------------------------------------
 
-F_Dirs = {
-	root = "FlatEngine",	-- For turning absolute paths into relative paths in FlatEngine::OpenLoadFileExplorer()
-	-- If you change the name of the FlatEngine folder or the location of the assets folder, you need to update this value in order to get relative paths from above function
-	projectDir = "../", -- Relative to the solution
-	projects = "../assets/engine-assets/projects",
-	mappingContexts = "../assets/runtime-assets/mappingContexts",
-	prefabs = "../assets/runtime-assets/prefabs",
-	scripts = "../assets/runtime-assets/scripts",	-- in-game lua scripting
-}
+-- These paths provide the Engine with the directories script file to use for whichever build type is needed.
+-- Each directories file houses unique values for the specific build type
+-- You can but probably shouldn't change these locations, but you're free to change the data inside each of these files to suit your needs, ie. startupProject or colors.lua file used for custom engine coloring
 
-F_Paths = {
-	colors = "../assets/engine-assets/scripts/Colors.lua",
-	textures = "../assets/engine-assets/scripts/Textures.lua",
-
-	gameStartupProject = "../assets/engine-assets/projects/OwlTower.json" -- Project that will be started at runtime (includes startup scene)
+F_DirectoryPaths = {
+	runtime = "../assets/engine-assets/scripts/RuntimeDirectories.lua",
+	editor = "../assets/engine-assets/scripts/EditorDirectories.lua",
+	debug = "../assets/engine-assets/scripts/DebugDirectories.lua",
 }

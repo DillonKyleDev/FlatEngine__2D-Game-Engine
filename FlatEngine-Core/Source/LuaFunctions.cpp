@@ -275,7 +275,7 @@ namespace FlatEngine
 			"-- ### please visit RegisterLuaFunctions() in \"FlatEngine-Core/Source/LuaFunctions.cpp\" to see the FlatEngine functions exposed to Lua scripts              ### \n\n" +
 			"-- use \"this_object\" to reference the object that is attached to this script \n" +
 			"-- use \":\" to access member variables and functions of objects: object:member_variable ..or.. object::member_function() \n" +
-			"-- to concatinate two or more strings, use two periods: \"..\"  F_LogString(\"Just add two periods between arguments like\"..string_variable_name) \n" +
+			"-- to concatinate two or more strings, use two periods: \"..\"  LogString(\"Just add two periods between arguments like\"..string_variable_name) \n" +
 			"-- to create new objects of type Type with construction parameters, use: Type:new(parameters,...)  \n\n\n" +
 
 			"-- called on each script before Start() runs at the start of the gameloop (or upon instantiation) \n" +
@@ -284,7 +284,7 @@ namespace FlatEngine
 
 			"-- called at the start of the gameloop after Awake() (or upon instantiation) \n" +
 			"function Start() \n" +
-			"     F_LogString(\"" + filename + " : Start() called on \"..this_object:GetName()) \n\n" +
+			"     LogString(\"" + filename + " : Start() called on \"..this_object:GetName()) \n\n" +
 			"end \n" +
 			
 			"--called once per gameloop frame \n" +

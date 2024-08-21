@@ -260,139 +260,60 @@ namespace FlatGui
 	// Project Management
 	void OpenProject(std::string path)
 	{
-		Project newProject = Project();
-		newProject.SetPath(path);
+		json projectJson;
+		FL::LoadGameProject(path, projectJson);
 
-		// Declare file and input stream
-		std::ofstream file_obj;
-		std::ifstream ifstream(path);
-
-		// Open file in in mode
-		file_obj.open(path, std::ios::in);
-
-		// Variable to save the current file data into
-		std::string fileContent = "";
-
-		// Loop through the file line by line and save the data
-		if (file_obj.good())
+		if (projectJson["Project Properties"][0] != "NULL")
 		{
-			std::string line;
-			while (!ifstream.eof()) {
-				std::getline(ifstream, line);
-				fileContent.append(line + "\n");
-			}
-		}
-
-		// Close the file after reading
-		file_obj.close();
-
-		if (file_obj.good())
-		{
-			// Go from string to json object
-			json fileContentJson = json::parse(fileContent);
-
-			if (fileContentJson["Project Properties"][0] != "NULL")
+			// Loop through the saved Properties in the JSON file
+			for (int i = 0; i < projectJson["Project Properties"].size(); i++)
 			{
-				// Getting data from the json 
-				// auto properties = fileContentJson["Animation Properties"];
-				// std::string name = properties[0]["name"];
+				// Get data from the loaded object
+				json currentObjectJson = projectJson["Project Properties"][i];
 
-				// Loop through the saved Properties in the JSON file
-				for (int i = 0; i < fileContentJson["Project Properties"].size(); i++)
+				// Show/hide windows
+				if (currentObjectJson.contains("_showSceneView"))
+					_showSceneView = currentObjectJson["_showSceneView"];
+				if (currentObjectJson.contains("_showGameView"))
+					_showGameView = currentObjectJson["_showGameView"];
+				if (currentObjectJson.contains("_showHierarchy"))
+					_showHierarchy = currentObjectJson["_showHierarchy"];
+				if (currentObjectJson.contains("_showInspector"))
+					_showInspector = currentObjectJson["_showInspector"];
+				if (currentObjectJson.contains("_showAnimator"))
+					_showAnimator = currentObjectJson["_showAnimator"];
+				if (currentObjectJson.contains("_showAnimationPreview"))
+					_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+				if (currentObjectJson.contains("_showKeyFrameEditor"))
+					_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+				if (currentObjectJson.contains("_showLogger"))
+					_showLogger = currentObjectJson["_showLogger"];
+				if (currentObjectJson.contains("_showProfiler"))
+					_showProfiler = currentObjectJson["_showProfiler"];
+				if (currentObjectJson.contains("_showMappingContextEditor"))
+					_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
+
+				// Settings
+				if (currentObjectJson.contains("_clearLogBuffer"))
 				{
-					// Get data from the loaded object
-					json currentObjectJson = fileContentJson["Project Properties"][i];
-
-					// Open items
-					if (currentObjectJson.contains("path"))
-						newProject.SetPath(currentObjectJson["path"]);
-					if (currentObjectJson.contains("loadedScenePath"))
-						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
-					if (currentObjectJson.contains("loadedAnimationPath"))
-						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
-					if (currentObjectJson.contains("focusedGameObjectID"))
-						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
-
-					// Scene Scrolling + Grid Step
-					Vector2 sceneViewScroll = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewScrollingX"))
-						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
-					if (currentObjectJson.contains("sceneViewScrollingY"))
-						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
-					newProject.SetSceneViewScrolling(sceneViewScroll);
-					Vector2 sceneViewGridStep = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewGridStepX"))
-						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
-					if (currentObjectJson.contains("sceneViewGridStepY"))
-						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
-					newProject.SetSceneViewGridStep(sceneViewGridStep);
-
-					// Show/hide windows
-					if (currentObjectJson.contains("_showSceneView"))
-						_showSceneView = currentObjectJson["_showSceneView"];
-					if (currentObjectJson.contains("_showGameView"))
-						_showGameView = currentObjectJson["_showGameView"];
-					if (currentObjectJson.contains("_showHierarchy"))
-						_showHierarchy = currentObjectJson["_showHierarchy"];
-					if (currentObjectJson.contains("_showInspector"))
-						_showInspector = currentObjectJson["_showInspector"];
-					if (currentObjectJson.contains("_showAnimator"))
-						_showAnimator = currentObjectJson["_showAnimator"];
-					if (currentObjectJson.contains("_showAnimationPreview"))
-						_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
-					if (currentObjectJson.contains("_showKeyFrameEditor"))
-						_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
-					if (currentObjectJson.contains("_showLogger"))
-						_showLogger = currentObjectJson["_showLogger"];
-					if (currentObjectJson.contains("_showProfiler"))
-						_showProfiler = currentObjectJson["_showProfiler"];
-					if (currentObjectJson.contains("_showMappingContextEditor"))
-						_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
-
-					// Settings
-					if (currentObjectJson.contains("_clearLogBuffer"))
+					_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
+					if (_clearBufferEveryFrame)
 					{
-						_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
-						if (_clearBufferEveryFrame)
-						{
-							FL::F_Logger.ClearBuffer();
-						}
+						FL::F_Logger.ClearBuffer();
 					}
-					if (currentObjectJson.contains("_autoSave"))
-						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
-					if (currentObjectJson.contains("physicsSystem"))
-						newProject.SetPhysicsSystem(currentObjectJson["physicsSystem"]);
-					if (currentObjectJson.contains("collisionDetection"))
-						newProject.SetCollisionDetection(currentObjectJson["collisionDetection"]);
-					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
-						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
-					if (currentObjectJson.contains("_fullscreen"))
-						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
-					if (currentObjectJson.contains("_vsyncEnabled"))
-						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
 				}
 			}
 		}
 
-
-
-		if (newProject.GetLoadedPreviewAnimationPath() != "")
-			SetFocusedAnimation(FL::LoadAnimationFile(newProject.GetLoadedPreviewAnimationPath()));
-		Vector2 scrolling = newProject.GetSceneViewScrolling();
+		if (FL::F_LoadedProject.GetLoadedPreviewAnimationPath() != "")
+			SetFocusedAnimation(FL::LoadAnimationFile(FL::F_LoadedProject.GetLoadedPreviewAnimationPath()));
+		Vector2 scrolling = FL::F_LoadedProject.GetSceneViewScrolling();
 		FG_sceneViewScrolling = scrolling;
-		Vector2 gridStep = newProject.GetSceneViewGridStep();
+		Vector2 gridStep = FL::F_LoadedProject.GetSceneViewGridStep();
 		FG_sceneViewGridStep = gridStep;
 
-		if (newProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(newProject.GetFocusedGameObjectID()) != nullptr)
-			SetFocusedGameObjectID(newProject.GetFocusedGameObjectID());
-
-		if (newProject.GetLoadedScenePath() != "")
-			FL::LoadScene(newProject.GetLoadedScenePath());
-		else
-			FL::CreateNewScene();
-
-		// Set loaded project
-		FL::SetLoadedProject(newProject);
+		if (FL::F_LoadedProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(FL::F_LoadedProject.GetFocusedGameObjectID()) != nullptr)
+			SetFocusedGameObjectID(FL::F_LoadedProject.GetFocusedGameObjectID());
 	}
 
 	void SaveProject(Project project, std::string path)

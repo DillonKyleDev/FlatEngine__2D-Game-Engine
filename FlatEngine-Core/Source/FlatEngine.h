@@ -61,7 +61,12 @@ namespace FlatEngine
 
 	using ComponentTypes = Component::ComponentTypes;
 
-	extern std::string F_DirectoriesLuaFilepath; // If you change the location of Directories.lua, be sure to update this value in FlatEngine.cpp
+
+	extern std::string F_RuntimeDirectoriesLuaFilepath; 
+	extern std::string F_EditorDirectoriesLuaFilepath;  
+	extern std::string F_DebugDirectoriesLuaFilepath; 
+
+
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
 	extern std::vector<std::string> F_luaScriptNames;
@@ -70,6 +75,7 @@ namespace FlatEngine
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
+	extern bool b_directoriesFilepathSelected;
 
 	// Flags
 	extern ImGuiChildFlags F_childFlags;
@@ -122,6 +128,7 @@ namespace FlatEngine
 	extern void SetupImGui();
 	extern void RestartImGui();
 	extern void QuitImGui();
+	extern void SetImGuiColors();
 	extern void HandleEvents(bool& quit);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
@@ -144,7 +151,7 @@ namespace FlatEngine
 	extern Project F_LoadedProject;
 	extern void SetLoadedProject(Project loadedProject);
 	extern Project& GetLoadedProject();
-	extern void LoadGameProject();
+	extern void LoadGameProject(std::string path, json& projectJson);
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -172,7 +179,7 @@ namespace FlatEngine
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
 
 	// Engine
-	extern bool Init(int windowWidth, int windowHeight);
+	extern bool Init(int windowWidth, int windowHeight, DirectoryType dirType);
 	extern void CloseProgram();
 	extern Uint32 GetEngineTime();
 	extern void ManageControllers();
