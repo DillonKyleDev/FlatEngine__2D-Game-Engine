@@ -66,6 +66,16 @@ namespace FlatEngine
 		return loadedAnimationPath;
 	}
 
+	std::string Project::GetRuntimeScene()
+	{
+		return m_sceneToLoadAtRuntime;
+	}
+
+	void Project::SetRuntimeScene(std::string scene)
+	{
+		m_sceneToLoadAtRuntime = scene;
+	}
+
 	void Project::SetSceneViewScrolling(Vector2 scrolling)
 	{
 		sceneViewScrolling = scrolling;
@@ -163,6 +173,7 @@ namespace FlatEngine
 		json jsonData = {
 			{ "path", path },
 			{ "loadedScenePath", loadedScenePath },
+			{ "sceneToLoadAtRuntime", m_sceneToLoadAtRuntime },
 			{ "loadedAnimationPath", loadedAnimationPath },
 			{ "sceneViewScrollingX", sceneViewScrolling.x },
 			{ "sceneViewScrollingY", sceneViewScrolling.y },

@@ -19,6 +19,7 @@
             "focusedGameObjectID": -1,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets/runtime-assets/scenes/OwlScene.json",
+            "sceneToLoadAtRuntime": "../assets/runtime-assets/scenes/OwlScene.json",
             "path": "../assets/engine-assets/projects/OwlTower.json",
             "physicsSystem": "Euler",
             "resolutionHeight": 1080.0,

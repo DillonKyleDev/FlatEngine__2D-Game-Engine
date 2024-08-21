@@ -154,6 +154,7 @@ public:
 			FL::InitializeMappingContexts();
 			FL::prefabManager->InitializePrefabs();
 			FL::LoadGameProject(FL::GetFilePath("gameStartupProject"), projectJson);
+			FL::LoadScene(FL::F_LoadedProject.GetRuntimeScene());
 
 			b_hasRunOnce = true;
 		}

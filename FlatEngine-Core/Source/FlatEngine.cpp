@@ -518,6 +518,8 @@ namespace FlatEngine
 						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
 					if (currentObjectJson.contains("focusedGameObjectID"))
 						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
+					if (currentObjectJson.contains("sceneToLoadAtRuntime"))
+						newProject.SetRuntimeScene(currentObjectJson["sceneToLoadAtRuntime"]);
 
 					// Scene Scrolling + Grid Step
 					Vector2 sceneViewScroll = Vector2(0, 0);

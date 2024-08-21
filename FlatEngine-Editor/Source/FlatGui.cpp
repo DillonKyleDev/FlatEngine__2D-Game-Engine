@@ -336,7 +336,8 @@ namespace FlatGui
 		json animationName = json::object({
 			{ "path", path },
 			{ "loadedScenePath", project.GetLoadedScenePath()},
-			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath()},
+			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath() },
+			{ "sceneToLoadAtRuntime", project.GetRuntimeScene() },
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
