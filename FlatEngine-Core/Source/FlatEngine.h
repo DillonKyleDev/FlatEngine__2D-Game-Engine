@@ -152,6 +152,7 @@ namespace FlatEngine
 	extern void SetLoadedProject(Project loadedProject);
 	extern Project& GetLoadedProject();
 	extern void LoadGameProject(std::string path, json& projectJson);
+	extern void BuildProject();
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -266,6 +267,7 @@ namespace FlatEngine
 	extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
 	extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool& _value);
 	extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
+	extern bool RenderInputTableRow(std::string id, std::string fieldName, std::string& value, bool b_canOpenFiles = false);
 	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
 	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
@@ -287,7 +289,6 @@ namespace FlatEngine
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
 	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue);
-
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);

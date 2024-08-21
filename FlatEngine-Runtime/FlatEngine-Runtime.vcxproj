@@ -55,22 +55,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Debug\FlatEngine-Runtime\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Debug\FlatEngine-Runtime\</IntDir>
+    <OutDir>..\Build\FlatEngine-Runtime\</OutDir>
+    <IntDir>..\Build\Intermediates\FlatEngine-Runtime\Debug\</IntDir>
     <TargetName>FlatEngine-Runtime</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Release\FlatEngine-Runtime\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Release\FlatEngine-Runtime\</IntDir>
+    <OutDir>..\Build\FlatEngine-Runtime\</OutDir>
+    <IntDir>..\Build\Intermediates\FlatEngine-Runtime\Release\</IntDir>
     <TargetName>FlatEngine-Runtime</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Binaries\windows-x86_64\Dist\FlatEngine-Runtime\</OutDir>
-    <IntDir>..\Binaries\Intermediates\windows-x86_64\Dist\FlatEngine-Runtime\</IntDir>
+    <OutDir>..\Build\FlatEngine-Runtime\</OutDir>
+    <IntDir>..\Build\Intermediates\FlatEngine-Runtime\Dist\</IntDir>
     <TargetName>FlatEngine-Runtime</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>

@@ -16,11 +16,9 @@ namespace FlatEngine
 		~CircleCollider();
 
 		void UpdateCenter(float step, Vector2 centerPoint);
-		void UpdateActiveEdges(std::string collisionDetectionType, float step, Vector2 centerPoint);
-		void SharedAxisUpdateActiveEdges(float step, Vector2 centerPoint);
+		void UpdateActiveEdges(float step, Vector2 centerPoint);
 		std::string GetData();
-		void RecalculateBounds(std::string collisionDetectionType, float step, Vector2 centerPoint);
-		//void ResetCollisions();
+		void RecalculateBounds(float step, Vector2 centerPoint);
 
 	private:
 		bool _activeEdgesSet;

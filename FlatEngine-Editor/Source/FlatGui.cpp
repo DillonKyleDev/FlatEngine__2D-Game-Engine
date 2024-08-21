@@ -338,6 +338,7 @@ namespace FlatGui
 			{ "loadedScenePath", project.GetLoadedScenePath()},
 			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath() },
 			{ "sceneToLoadAtRuntime", project.GetRuntimeScene() },
+			{ "buildPath", project.GetBuildPath() },
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
@@ -355,8 +356,6 @@ namespace FlatGui
 			{ "_showMappingContextEditor", _showMappingContextEditor },
 			{ "_clearLogBuffer", _clearBufferEveryFrame },
 			{ "_autoSave", FL::F_LoadedProject.AutoSaveOn() },
-			{ "physicsSystem", FL::F_LoadedProject.GetPhysicsSystem() },
-			{ "collisionDetection", FL::F_LoadedProject.GetCollisionDetection() },
 			{ "resolutionWidth", FL::F_LoadedProject.GetResolution().x },
 			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
 			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
@@ -933,7 +932,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				if (FL::F_LoadedProject.GetCollisionDetection() == "Shared Axis")
+				if (transform->GetRotation() == 0)
 				{
 					if (_isActive && !_isColliding)
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
@@ -942,7 +941,7 @@ namespace FlatGui
 					else if (_isColliding)
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
 				}
-				else if (FL::F_LoadedProject.GetCollisionDetection() == "Separating Axis")
+				else
 				{
 					Vector2 corners[4] = {
 						boxCollider->GetCorners()[0],
@@ -991,7 +990,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				circleCollider->UpdateActiveEdges(FL::F_LoadedProject.GetCollisionDetection(), FG_sceneViewGridStep.x, FG_sceneViewCenter);
+				circleCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				if (_isActive && !_isColliding)
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);

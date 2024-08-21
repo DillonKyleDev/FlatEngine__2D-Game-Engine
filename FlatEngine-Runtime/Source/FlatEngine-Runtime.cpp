@@ -92,6 +92,10 @@ public:
 			_hasQuit = FL::_closeProgram;
 
 
+			// For things we only want to execute once after complete initialization
+			RunOnceAfterInitialization();
+
+
 			BeginRender();
 
 
@@ -137,18 +141,14 @@ public:
 
 
 			EndRender();
-
-			// For things we only want to execute once after complete initialization
-			RunOnceAfterInitialization();
 		}
 	}
 	// For things we only want to execute once after complete initialization
 	void RunOnceAfterInitialization()
 	{
-		static bool b_initialized = false;
 		static bool b_hasRunOnce = false;
 
-		if (b_initialized && !b_hasRunOnce)
+		if (!b_hasRunOnce)
 		{
 			json projectJson;
 			FL::InitializeMappingContexts();
@@ -158,8 +158,6 @@ public:
 
 			b_hasRunOnce = true;
 		}
-
-		b_initialized = true;
 	}
 	void BeginRender()
 	{

@@ -35,6 +35,9 @@ project "FlatEngine-Hub"
       "../Vendor/includes/Json_Formatter",
       "../Vendor/includes/ImPlot",
       "../Vendor/includes/ImSequencer",
+      "../Vendor/includes/Lua",
+      "../Vendor/includes/Sol2/include",
+      "../Vendor/includes/Sol2/include/sol",
    }
 
    libdirs 
@@ -45,6 +48,7 @@ project "FlatEngine-Hub"
         "../Vendor/includes/SDL2_Mixer/lib/x64",
         "../Vendor/includes/ImPlot",
         "../Vendor/includes/ImSequencer",
+        "../Vendor/includes/Lua",
    }
 
    links
@@ -59,6 +63,7 @@ project "FlatEngine-Hub"
         "d3dcompiler.lib",
         "dxgi.lib",
         "SDL2_mixer.lib",
+        "lua54.lib",   
    }
 
    defines

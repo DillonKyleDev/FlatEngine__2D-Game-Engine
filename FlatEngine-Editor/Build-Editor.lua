@@ -2,7 +2,7 @@ project "FlatEngine-Editor"
    kind "ConsoleApp"
    language "C++"
    cppdialect "C++20"
-   targetdir "Binaries/%{cfg.buildcfg}"
+   targetdir "%{cfg.buildcfg}"
    staticruntime "off"
 
    files { 
@@ -61,8 +61,10 @@ project "FlatEngine-Editor"
     "_WINDOWS"
    }
 
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+--    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+--    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("../Build/%{prj.name}")
+    objdir ("../Build/Intermediates/%{prj.name}")
 
    filter "system:windows"
        systemversion "latest"

@@ -91,26 +91,12 @@ namespace FlatEngine
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	void BoxCollider::UpdateActiveEdges(float gridstep, Vector2 viewportCenter)
 	{
-		std::string collisionType = GetLoadedProject().GetCollisionDetection();
-
-		if (collisionType == "Shared Axis")
-		{
-			SharedAxisUpdateEdges(gridstep, viewportCenter);
-		}
-		else if(collisionType == "Separating Axis")
-		{
-
-		}		
-	}
-
-	void BoxCollider::SharedAxisUpdateEdges(float gridstep, Vector2 centerPoint)
-	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
 
 
-		GameObject *parent = GetParent();
-		Transform *transform = nullptr;
+		GameObject* parent = GetParent();
+		Transform* transform = nullptr;
 		Vector2 scale = Vector2(1, 1);
 
 		if (parent->IsValid())
@@ -143,10 +129,10 @@ namespace FlatEngine
 			// For visual representation ( screen space values )
 			SetCenterGrid(Vector2(transform->GetTruePosition().x + activeOffset.x, transform->GetTruePosition().y + activeOffset.y));
 
-			activeLeft = centerPoint.x + (GetCenterGrid().x - (activeWidth * scale.x / 2)) * gridstep;
-			activeTop = centerPoint.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2)) * gridstep;
-			activeRight = centerPoint.x + (GetCenterGrid().x + (activeWidth * scale.x / 2)) * gridstep;
-			activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2)) * gridstep;
+			activeLeft = viewportCenter.x + (GetCenterGrid().x - (activeWidth * scale.x / 2)) * gridstep;
+			activeTop = viewportCenter.y + (-GetCenterGrid().y - (activeHeight * scale.y / 2)) * gridstep;
+			activeRight = viewportCenter.x + (GetCenterGrid().x + (activeWidth * scale.x / 2)) * gridstep;
+			activeBottom = viewportCenter.y + (-GetCenterGrid().y + (activeHeight * scale.y / 2)) * gridstep;
 
 			SetCenterCoord(Vector2(activeLeft + (activeRight - activeLeft) / 2, activeTop + (activeBottom - activeTop) / 2));
 
@@ -160,10 +146,10 @@ namespace FlatEngine
 			nextActiveTop = GetNextCenterGrid().y + (activeHeight * scale.y / 2);
 			nextActiveRight = GetNextCenterGrid().x + (activeWidth * scale.x / 2);
 			nextActiveBottom = GetNextCenterGrid().y - (activeHeight * scale.y / 2);
-		
+
 			SetNextCenterCoord(Vector2(nextActiveLeft + (nextActiveRight - nextActiveLeft) / 2, nextActiveTop + (nextActiveBottom - nextActiveTop) / 2));
 
-			SharedAxisUpdateCorners(gridstep, centerPoint);
+			UpdateCorners(gridstep, viewportCenter);
 		}
 	}
 
@@ -212,48 +198,37 @@ namespace FlatEngine
 		Vector2 topLeft = { activeLeft, activeTop };
 		Vector2 bottomRight = { activeRight, activeBottom };
 		Vector2 topRight = { activeRight, activeTop };
-		Vector2 bottomLeft = { activeLeft, activeBottom };		
+		Vector2 bottomLeft = { activeLeft, activeBottom };
 
 		if (GetRotation() != 0)
 		{
 			// Corners with rotation
-			topLeft = ImRotate(Vector2(-activeWidth * gridstep / 2 * scale.x, -activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);			
+			topLeft = ImRotate(Vector2(-activeWidth * gridstep / 2 * scale.x, -activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
 			topRight = ImRotate(Vector2(+activeWidth * gridstep / 2 * scale.x, -activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
 			bottomRight = ImRotate(Vector2(+activeWidth * gridstep / 2 * scale.x, +activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
 			bottomLeft = ImRotate(Vector2(-activeWidth * gridstep / 2 * scale.x, +activeHeight * gridstep / 2 * scale.y), cos_a, sin_a);
+
+			Vector2 newCorners[4] =
+			{
+				Vector2(center.x + topLeft.x, center.y + topLeft.y),
+				Vector2(center.x + topRight.x, center.y + topRight.y),
+				Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
+				Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
+			};
+
+			SetCorners(newCorners);
 		}
-
-		Vector2 newCorners[4] =
+		else
 		{
-			Vector2(center.x + topLeft.x, center.y + topLeft.y),
-			Vector2(center.x + topRight.x, center.y + topRight.y),
-			Vector2(center.x + bottomRight.x, center.y + bottomRight.y),
-			Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
-		};
-
-		SetCorners(newCorners);
-	}
-
-	// Corners without rotation
-	void BoxCollider::SharedAxisUpdateCorners(float gridstep, Vector2 centerPoint)
-	{
-		Transform* transform = GetParent()->GetTransform();
-		Vector2 scale = transform->GetScale();
-
-		// For visual representation
-		Vector2 topLeft = { activeLeft, activeTop };
-		Vector2 topRight = { activeRight, activeTop };
-		Vector2 bottomRight = { activeRight, activeBottom };
-		Vector2 bottomLeft = { activeLeft, activeBottom };
-
-		Vector2 newCorners[4] =
-		{
-			topLeft,
-			topRight,
-			bottomRight,
-			bottomLeft
-		};
-		SetCorners(newCorners);
+			Vector2 newCorners[4] =
+			{
+				topLeft,
+				topRight,
+				bottomRight,
+				bottomLeft
+			};
+			SetCorners(newCorners);
+		}
 
 		// Calculate activeRadius with pythag
 		float rise = std::abs(topLeft.y - GetCenterCoord().y);
@@ -276,11 +251,6 @@ namespace FlatEngine
 		};
 		SetNextCorners(newNextCorners);
 	}
-
-	//void BoxCollider::ResetCollisions()
-	//{
-	//	
-	//}
 
 	void BoxCollider::UpdateCenter(float gridstep, Vector2 centerPoint)
 	{

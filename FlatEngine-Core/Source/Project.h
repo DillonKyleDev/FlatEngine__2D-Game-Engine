@@ -16,6 +16,8 @@ namespace FlatEngine
 		std::string GetLoadedScenePath();
 		void SetRuntimeScene(std::string scene);
 		std::string GetRuntimeScene();
+		void SetBuildPath(std::string path);
+		std::string GetBuildPath();
 		void SetFocusedGameObjectID(long ID);
 		long GetFocusedGameObjectID();
 		void SetLoadedPreviewAnimationPath(std::string path);
@@ -26,10 +28,6 @@ namespace FlatEngine
 		Vector2 GetSceneViewGridStep();
 		bool AutoSaveOn();
 		void SetAutoSave(bool _newAutoSave);
-		void SetPhysicsSystem(std::string system);
-		std::string GetPhysicsSystem();
-		void SetCollisionDetection(std::string system);
-		std::string GetCollisionDetection();
 		void SetResolution(Vector2 resolution);
 		Vector2 GetResolution();
 		void SetFullscreen(bool _newFullscreen);
@@ -40,19 +38,18 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		std::string path;
-		std::string loadedScenePath;
+		std::string m_path;
+		std::string m_buildPath;
+		std::string m_loadedScenePath;
 		std::string m_sceneToLoadAtRuntime;
-		std::string loadedAnimationPath;
-		Vector2 sceneViewScrolling;
-		Vector2 sceneViewGridStep;
-		long focusedGameObjectID;
-		bool _autoSave;
-		std::string physicsSystem;
-		std::string collisionDetection;
-		Vector2 resolution;
-		bool _fullscreen;
-		bool _vsyncEnabled;
+		std::string m_loadedAnimationPath;
+		Vector2 m_sceneViewScrolling;
+		Vector2 m_sceneViewGridStep;
+		long m_focusedGameObjectID;
+		bool m_b_autoSave;
+		Vector2 m_resolution;
+		bool m_b_fullscreen;
+		bool m_b_vsyncEnabled;
 		// Add more project properties here
 	};
 }

@@ -304,6 +304,22 @@ namespace FlatEngine
 		ImGui::PopID();
 	}
 
+
+	bool RenderInputTableRow(std::string id, std::string fieldName, std::string &value, bool b_canOpenFiles)
+	{
+		bool b_edited = false;
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		b_edited = RenderInput(id, "", value, b_canOpenFiles);
+		ImGui::PushID(id.c_str());
+		ImGui::PopID();
+
+		return b_edited;
+	}
+
 	void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2)
 	{
 		// Push uneditableTableTextColor text color

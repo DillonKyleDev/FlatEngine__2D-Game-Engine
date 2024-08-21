@@ -183,28 +183,12 @@ namespace FlatEngine
 
 	bool Collider::CheckForCollision(Collider* collider1, Collider* collider2)
 	{
-		std::string collisionDetectionType = F_LoadedProject.GetCollisionDetection();
-
-		if (collisionDetectionType == "Shared Axis")
-		{
-			return SharedAxisCheckForCollision(collider1, collider2);
-		}
-		else if (collisionDetectionType == "Separating Axis")
-		{
-			// TODO
-			return false;
-		}
-		return false;
-	}
-
-	bool Collider::SharedAxisCheckForCollision(Collider* collider1, Collider* collider2)
-	{
 		bool b_colliding = false;
 		Vector2 collider1Center = collider1->GetCenterGrid();
 		Vector2 collider2Center = collider2->GetCenterGrid();
 
 		//LogString("Checking Collision for " + collider1->GetParent()->GetName() + " and " + collider2->GetParent()->GetName());
-		
+
 		// Calculate center distance with pythag
 		float rise = std::abs(collider1Center.y - collider2Center.y);
 		float run = std::abs(collider1Center.x - collider2Center.x);
@@ -277,7 +261,7 @@ namespace FlatEngine
 					collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
 			}
 			else
-			{				
+			{
 				CompositeCollider* compositeCollider = collider2->GetParent()->GetCompositeCollider();
 				compositeCollider->AddCollidingObject(collider1);
 				if (compositeCollider->OnActiveCollisionSet())

@@ -17,7 +17,7 @@ namespace FlatEngine
 	public:
 		AssetManager();
 		~AssetManager();
-		void GetDirectoryPaths();
+		//void GetDirectoryPaths();
 		void CollectDirectories(DirectoryType dirType);
 		void CollectColors();
 		void CollectTextures();

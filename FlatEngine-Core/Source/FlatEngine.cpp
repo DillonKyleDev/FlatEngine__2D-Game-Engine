@@ -50,9 +50,9 @@
 
 namespace FlatEngine
 {
-	std::string F_RuntimeDirectoriesLuaFilepath = "";	
-	std::string F_EditorDirectoriesLuaFilepath = "";
-	std::string F_DebugDirectoriesLuaFilepath = "";
+	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/DebugDirectories.lua";
+	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";;
+	std::string F_DebugDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";;
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
@@ -285,11 +285,11 @@ namespace FlatEngine
 							InitLua();
 							LogString("Lua initialized...");
 
-							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
-							F_AssetManager.GetDirectoryPaths();					   // Prompt user to give Directories.lua path which populates paths for different build types
+							//F_AssetManager.GetDirectoryPaths();				   // Prompt user to give Directories.lua path which populates paths for different build types
 							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
 							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
+							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
 							SetImGuiColors();									   // Use the collected colors to style ImGui elements
 
 							RetrieveLuaScriptNames();							   // Uses scripts directory collected from above CollectDirectories() call
@@ -514,6 +514,8 @@ namespace FlatEngine
 						newProject.SetPath(currentObjectJson["path"]);
 					if (currentObjectJson.contains("loadedScenePath"))
 						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
+					if (currentObjectJson.contains("buildPath"))
+						newProject.SetBuildPath(currentObjectJson["buildPath"]);
 					if (currentObjectJson.contains("loadedAnimationPath"))
 						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
 					if (currentObjectJson.contains("focusedGameObjectID"))
@@ -537,10 +539,6 @@ namespace FlatEngine
 
 					if (currentObjectJson.contains("_autoSave"))
 						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
-					if (currentObjectJson.contains("physicsSystem"))
-						newProject.SetPhysicsSystem(currentObjectJson["physicsSystem"]);
-					if (currentObjectJson.contains("collisionDetection"))
-						newProject.SetCollisionDetection(currentObjectJson["collisionDetection"]);
 					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
 						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
 					if (currentObjectJson.contains("_fullscreen"))
@@ -558,6 +556,49 @@ namespace FlatEngine
 
 		// Set loaded project
 		FL::SetLoadedProject(newProject);
+	}
+
+	void BuildProject()
+	{
+		if (F_LoadedProject.GetBuildPath() != "")
+		{
+			try
+			{
+				std::filesystem::copy("../FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy FlatEngine-Runtime : ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../assets", F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy assets : ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../engine", F_LoadedProject.GetBuildPath() + "\\engine", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy engine dependencies: ");
+				LogString(e.what());
+			}
+			try
+			{
+				std::filesystem::copy("../intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+			}
+			catch (std::exception& e)
+			{
+				LogString("ERROR : Failed to copy intermediates: ");
+				LogString(e.what());
+			}
+		}
 	}
 
 	// GameObject / Scene management

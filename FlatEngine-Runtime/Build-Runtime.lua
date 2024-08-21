@@ -7,7 +7,6 @@ project "FlatEngine-Runtime"
 
    files 
     { 
-        "../FlatEngine-Editor/Source/scripts/**.h", 
         "Source/**.h", "Source/**.cpp" 
     }
 
@@ -65,8 +64,10 @@ project "FlatEngine-Runtime"
     "_WINDOWS"
    }
 
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+--    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+--    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+    targetdir ("../Build/%{prj.name}")
+    objdir ("../Build/Intermediates/%{prj.name}")
 
    filter "system:windows"
        systemversion "latest"

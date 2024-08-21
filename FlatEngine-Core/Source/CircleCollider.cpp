@@ -52,11 +52,6 @@ namespace FlatEngine {
 	{
 	}
 
-	//void CircleCollider::ResetCollisions()
-	//{
-
-	//}
-
 	void CircleCollider::UpdateCenter(float step, Vector2 centerPoint)
 	{
 		FlatEngine::Transform* transform = GetParent()->GetTransform();
@@ -73,19 +68,7 @@ namespace FlatEngine {
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
-	void CircleCollider::UpdateActiveEdges(std::string collisionDetectionType, float step, Vector2 centerPoint)
-	{
-		if (collisionDetectionType == "Shared Axis")
-		{
-			SharedAxisUpdateActiveEdges(step, centerPoint);
-		}
-		else if (collisionDetectionType == "Separating Axis")
-		{
-			// TODO
-		}
-	}
-
-	void CircleCollider::SharedAxisUpdateActiveEdges(float step, Vector2 centerPoint)
+	void CircleCollider::UpdateActiveEdges(float step, Vector2 centerPoint)
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
@@ -171,9 +154,9 @@ namespace FlatEngine {
 		return data;
 	}
 
-	void CircleCollider::RecalculateBounds(std::string collisionDetectionType, float step, Vector2 centerPoint)
+	void CircleCollider::RecalculateBounds(float step, Vector2 centerPoint)
 	{
 		UpdateCenter(step, centerPoint);
-		UpdateActiveEdges(collisionDetectionType, step, centerPoint);
+		UpdateActiveEdges(step, centerPoint);
 	}
 }

@@ -342,6 +342,8 @@ namespace FlatGui
 				}
 				if (ImGui::MenuItem("Project Settings", NULL, _showSettings))
 					_showSettings = !_showSettings;
+				if (ImGui::MenuItem("Build Project", NULL, _showSettings))
+					FL::BuildProject();
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
