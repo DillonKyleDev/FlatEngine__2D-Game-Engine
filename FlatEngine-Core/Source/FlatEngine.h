@@ -122,6 +122,8 @@ namespace FlatEngine
 	extern Vector2 F_gameViewCenter;
 	extern Vector2 F_gameViewGridStep;
 
+	extern float F_pixelsPerGridSpace;
+
 	extern bool LoadFonts();
 	extern void FreeFonts();
 	extern std::string GetDir(std::string dirName);
@@ -277,8 +279,8 @@ namespace FlatEngine
 	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
 	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
-	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, float inputWidth = -1);
-	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, float inputWidth = -1);
+	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string tooltip = "", float inputWidth = -1);
+	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
 	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
@@ -297,12 +299,8 @@ namespace FlatEngine
 	extern void RenderToolTipFloat(std::string label, float data);
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
-<<<<<<< HEAD
 	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool &b_openModal);
 	extern bool RenderConfirmModal(std::string label, std::string description, bool& b_openModal);
-=======
-	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue);
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);
@@ -324,6 +322,7 @@ namespace FlatEngine
 	extern void CreateNewSceneFile(std::string filename, std::string path = "");
 	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
 	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
+	extern GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position);
 
 	// Animation Manager
 	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);

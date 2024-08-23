@@ -6,6 +6,7 @@ F_ResourceFailedToLoadImagePath = "../engine/images/resources/resourceFailedToLo
 
 F_Textures = {
 	-- Project Hub
+	flatEngine = "../engine/images/engine/FlatEngine.png",
 	flatEngineLogo = "../engine/images/engine/FlatEngineLogo.png",
 	flatEngineLogoGradient = "../engine/images/engine/FlatEngineLogoGradient.png",
 	selectProject = "../engine/images/engine/selectProject.png",
@@ -16,14 +17,11 @@ F_Textures = {
 	luaFile = "../engine/images/fileTypes/lua.png",
 	pngFile = "../engine/images/fileTypes/png.png",
 	folderFile = "../engine/images/fileTypes/folder.png",
-<<<<<<< HEAD
 	mapFile = "../engine/images/fileTypes/contextFile.png",
 	sceneFile = "../engine/images/fileTypes/sceneFile.png",
 	projectFile = "../engine/images/fileTypes/projectFile.png",
 	animFile = "../engine/images/fileTypes/animFile.png",
 	audioFile = "../engine/images/fileTypes/audioFile.png",
-=======
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 	unmarkedFile = "../engine/images/fileTypes/file.png",
 	-- Scene View
 	transformArrow = "../engine/images/widgets/transformArrow.png",

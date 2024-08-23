@@ -240,6 +240,11 @@ namespace FlatGui
 			ImGui::BeginChild("ComponentsSectionBg", Vector2(0,ImGui::GetContentRegionAvail().y - 30), FL::F_childFlags);
 			ImGui::PopStyleColor();
 
+			// Border around each component
+			auto wPos = ImGui::GetWindowPos();
+			auto wSize = ImGui::GetWindowSize();
+		
+
 			if (focusedObject != nullptr)
 			{
 				long queuedForDelete = -1;
@@ -382,6 +387,9 @@ namespace FlatGui
 			}
 
 			ImGui::EndChild(); // ComponentsSectionBg
+
+			// Border around Components Section
+			ImGui::GetWindowDrawList()->AddRect({ wPos.x, wPos.y - 1 }, { wPos.x + wSize.x, wPos.y + wSize.y + 1}, FL::GetColor32("componentSectionBorder"), 1);
 
 			// Render the Adding Components button
 			FL::RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));

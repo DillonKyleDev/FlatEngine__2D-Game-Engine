@@ -83,20 +83,17 @@ namespace FlatEngine
 		return data;
 	}
 
-	// Setters
 	void Transform::SetPosition(Vector2 newPosition)
 	{
-		//if (GetParent()->HasComponent("BoxCollider"))
-		//	GetParent()->GetBoxCollider()->RecalculateBounds();
 		position = newPosition;
 
 		if (GetParent() != nullptr && GetParent()->HasChildren())
 		{
 			for (long id : GetParent()->GetChildren())
 			{
-				GameObject child = GetObjectById(id);
-				if (child.HasComponent("Transform"))
-					child.GetTransform()->UpdateOrigin(GetTruePosition());
+				GameObject *child = GetObjectById(id);
+				if (child->HasComponent("Transform"))
+					child->GetTransform()->UpdateOrigin(GetTruePosition());
 			}
 		}
 	}

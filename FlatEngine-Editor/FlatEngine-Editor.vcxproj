@@ -55,37 +55,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-<<<<<<< HEAD
-    <OutDir>..\Build\windows-x86_64\Debug\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\windows-x86_64\Debug\FlatEngine-Editor\</IntDir>
-=======
-    <OutDir>..\Build\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\FlatEngine-Editor\Debug\</IntDir>
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
+    <OutDir>..\..\..\..\Desktop\Build\windows-x86_64\Debug\FlatEngine-Editor\</OutDir>
+    <IntDir>..\..\..\..\Desktop\Build\Intermediates\windows-x86_64\Debug\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-<<<<<<< HEAD
-    <OutDir>..\Build\windows-x86_64\Release\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\windows-x86_64\Release\FlatEngine-Editor\</IntDir>
-=======
-    <OutDir>..\Build\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\FlatEngine-Editor\Release\</IntDir>
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
+    <OutDir>..\..\..\..\Desktop\Build\windows-x86_64\Release\FlatEngine-Editor\</OutDir>
+    <IntDir>..\..\..\..\Desktop\Build\Intermediates\windows-x86_64\Release\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-<<<<<<< HEAD
-    <OutDir>..\Build\windows-x86_64\Dist\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\windows-x86_64\Dist\FlatEngine-Editor\</IntDir>
-=======
-    <OutDir>..\Build\FlatEngine-Editor\</OutDir>
-    <IntDir>..\Build\Intermediates\FlatEngine-Editor\Dist\</IntDir>
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
+    <OutDir>..\..\..\..\Desktop\Build\windows-x86_64\Dist\FlatEngine-Editor\</OutDir>
+    <IntDir>..\..\..\..\Desktop\Build\Intermediates\windows-x86_64\Dist\FlatEngine-Editor\</IntDir>
     <TargetName>FlatEngine-Editor</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -176,7 +161,7 @@
     <ClCompile Include="Source\Log.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />
     <ClCompile Include="Source\MappingContextEditor.cpp" />
-    <ClCompile Include="Source\RenderProfiler.cpp" />
+    <ClCompile Include="Source\Profiler.cpp" />
     <ClCompile Include="Source\SceneView.cpp" />
     <ClCompile Include="Source\ScriptEditor.cpp" />
     <ClCompile Include="Source\Settings.cpp" />

@@ -11,34 +11,23 @@
             "_showInspector": true,
             "_showKeyFrameEditor": false,
             "_showLogger": true,
-<<<<<<<< HEAD:assets/projects/OwlTower.prj
-            "_showMappingContextEditor": true,
-========
             "_showMappingContextEditor": false,
->>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2:assets/projects/OwlTower.json
             "_showProfiler": true,
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
+            "currentFileDirectory": "../assets\\images",
             "focusedGameObjectID": -1,
             "loadedAnimationPath": "",
-<<<<<<<< HEAD:assets/projects/OwlTower.prj
             "loadedScenePath": "../assets/scenes/OwlScene.scn",
             "path": "../assets/projects/OwlTower.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.scn",
-========
-            "loadedScenePath": "../assets/scenes/OwlScene.json",
-            "path": "../assets/projects/OwlTower.json",
-            "resolutionHeight": 1080.0,
-            "resolutionWidth": 1920.0,
-            "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.json",
->>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2:assets/projects/OwlTower.json
             "sceneViewGridStepX": 23.00008201599121,
             "sceneViewGridStepY": 23.00008201599121,
-            "sceneViewScrollingX": 601.0,
-            "sceneViewScrollingY": 524.0
+            "sceneViewScrollingX": 543.0,
+            "sceneViewScrollingY": 302.0
         }
     ]
 }

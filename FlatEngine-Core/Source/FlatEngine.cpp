@@ -72,7 +72,8 @@ namespace FlatEngine
 	// then to make an 8x8 sprite fit properly into a 10px by 10px grid block
 	// take the ratio of 10px / 8px and multiply it by our now scaled down sprite size to get:  0.1 * (10 / 8) = 0.125 = the scale multiplier
 	// Now our 8x8, 16x16, 32x32, etc, pixel art fits nicely inside the grid space blocks
-	float F_spriteScaleMultiplier = 0.125f;  
+	float F_pixelsPerGridSpace = 8.0f;
+	float F_spriteScaleMultiplier = 0.1f * (10.0f / F_pixelsPerGridSpace);
 
 	GameObject* F_PlayerObject = nullptr;
 	Project F_LoadedProject = Project();
@@ -287,21 +288,12 @@ namespace FlatEngine
 							InitLua();
 							LogString("Lua initialized...");
 
-<<<<<<< HEAD
-=======
-							//F_AssetManager.GetDirectoryPaths();				   // Prompt user to give Directories.lua path which populates paths for different build types
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
 							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
 							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
 							SetImGuiColors();									   // Use the collected colors to style ImGui elements
-
-<<<<<<< HEAD
 							RetrieveLuaScriptPaths();							  
-=======
-							RetrieveLuaScriptNames();							   // Uses scripts directory collected from above CollectDirectories() call
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 
 							LogString("Ready...");
 							LogSeparator();
@@ -508,7 +500,7 @@ namespace FlatEngine
 		if (file_obj.good())
 		{
 			// Go from string to json object
-			json projectJson = json::parse(fileContent);
+			projectJson = json::parse(fileContent);
 
 			if (projectJson["Project Properties"][0] != "NULL")
 			{
@@ -573,7 +565,6 @@ namespace FlatEngine
 		{
 			try
 			{
-<<<<<<< HEAD
 				std::filesystem::copy("../FlatEngine-Core", F_LoadedProject.GetBuildPath() + "\\Core", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
@@ -583,8 +574,6 @@ namespace FlatEngine
 			}
 			try
 			{
-=======
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 				std::filesystem::copy("../FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
@@ -762,6 +751,46 @@ namespace FlatEngine
 		newContext.SetName(fileName);
 		SaveMappingContext(filePath, newContext);
 		FL::InitializeMappingContexts();
+	}
+
+	GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position)
+	{
+		std::string extension = std::filesystem::path(filePath).extension().string();
+
+		// Scene file
+		if (extension == ".png")
+		{
+			GameObject* newObject = CreateGameObject();
+			newObject->SetName(GetFilenameFromPath(filePath) + std::to_string(newObject->GetID()));
+			newObject->GetTransform()->SetPosition(position);
+			newObject->AddSpriteComponent()->SetTexture(filePath);
+			return newObject;
+		}
+		else return nullptr;
+		//else if (extension == ".scn")
+		//{
+
+		//}
+		//// Mapping Context file
+		//else if (extension == ".mpc")
+		//{
+
+		//}
+		//// Animation file
+		//else if (extension == ".anm")
+		//{
+
+		//}
+		//// Lua file
+		//else if (extension == ".scp")
+		//{
+
+		//}
+		//// Project file
+		//else if (extension == ".prj")
+		//{
+		//
+		//}
 	}
 
 	// Mapping Context Management
@@ -1916,10 +1945,10 @@ namespace FlatEngine
 					newCamera->SetPrimaryCamera(_isPrimaryCamera);
 					newCamera->SetZoom(CheckJsonFloat(componentJson, "zoom", objectName));
 					newCamera->SetFrustrumColor(Vector4(
-						CheckJsonFloat(componentJson, "f_red", objectName),
-						CheckJsonFloat(componentJson, "f_green", objectName),
-						CheckJsonFloat(componentJson, "f_blue", objectName),
-						CheckJsonFloat(componentJson, "f_alpha", objectName)
+						CheckJsonFloat(componentJson, "frustrumRed", objectName),
+						CheckJsonFloat(componentJson, "frustrumGreen", objectName),
+						CheckJsonFloat(componentJson, "frustrumBlue", objectName),
+						CheckJsonFloat(componentJson, "frustrumAlpha", objectName)
 					));
 					newCamera->SetShouldFollow(CheckJsonBool(componentJson, "_follow", objectName));
 					newCamera->SetFollowSmoothing(CheckJsonFloat(componentJson, "followSmoothing", objectName));
@@ -3103,27 +3132,30 @@ namespace FlatEngine
 
 	std::string GetFilenameFromPath(std::string path, bool _keepExtension)
 	{
-		std::string finalName;
+		std::string finalName = "";
 
-		//  FORMAT STRING
-		const size_t slash = path.find_last_of("/\\");
-		std::string wholeFilename = path.substr(slash + 1);
-		const size_t dot1 = wholeFilename.find_last_of(".");
-		std::string extension1 = wholeFilename.substr(dot1);
-
-		if (!_keepExtension)
+		if (path != "")
 		{
-			finalName = wholeFilename.substr(0, wholeFilename.size() - extension1.size());
-			// For scripting files (.scp.lua) with two extensions
-			const size_t dot2 = finalName.find_last_of(".");
-			if (dot2 < 100)
+			//  FORMAT STRING
+			const size_t slash = path.find_last_of("/\\");
+			std::string wholeFilename = path.substr(slash + 1);
+			const size_t dot1 = wholeFilename.find_last_of(".");
+			std::string extension1 = wholeFilename.substr(dot1);
+
+			if (!_keepExtension)
 			{
-				std::string extension2 = finalName.substr(dot2);
-				finalName = finalName.substr(0, finalName.size() - extension2.size());
+				finalName = wholeFilename.substr(0, wholeFilename.size() - extension1.size());
+				// For scripting files (.scp.lua) with two extensions
+				const size_t dot2 = finalName.find_last_of(".");
+				if (dot2 < 100)
+				{
+					std::string extension2 = finalName.substr(dot2);
+					finalName = finalName.substr(0, finalName.size() - extension2.size());
+				}
 			}
+			else
+				finalName = wholeFilename;
 		}
-		else
-			finalName = wholeFilename;
 
 		return finalName;
 	}
@@ -3131,19 +3163,22 @@ namespace FlatEngine
 	//  Removes absolute path from the beginning of the selected filepath up to just after "FlatEngine"
 	std::string MakePathRelative(std::string filepath)
 	{
-		std::string relativePath;
+		std::string relativePath = "";
 		std::string root = GetDir("root");
 		size_t rootDirIndex;
 
-		if (root != "")
-			rootDirIndex = filepath.find(root) + 10;
-		else
-			rootDirIndex = 0;
+		if (filepath != "")
+		{
+			if (root != "")
+				rootDirIndex = filepath.find(root) + 10;
+			else
+				rootDirIndex = 0;
 
-		if (rootDirIndex < 1000 && rootDirIndex != 0)
-			relativePath = ".." + filepath.substr(rootDirIndex);
-		else
-			relativePath = filepath;
+			if (rootDirIndex < 1000 && rootDirIndex != 0)
+				relativePath = ".." + filepath.substr(rootDirIndex);
+			else
+				relativePath = filepath;
+		}
 
 		return relativePath;
 	}
@@ -3253,3 +3288,11 @@ namespace FlatEngine
 		return Vector2(startPos.x + easedDiff.x, startPos.y + easedDiff.y);
 	}
 }
+
+// ImGui cheat sheet
+
+// Border around object
+//auto wPos = ImGui::GetWindowPos();
+//auto wSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+//ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, FL::GetColor32("componentBorder"), 2);
+

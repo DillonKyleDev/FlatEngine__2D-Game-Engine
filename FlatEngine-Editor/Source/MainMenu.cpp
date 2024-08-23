@@ -90,7 +90,6 @@ namespace FlatGui
 					if (scenePath != "")
 					{
 						FL::F_SceneManager.SaveScene(FL::F_SceneManager.CreateNewScene(), scenePath);
-						ResetHierarchyExpanderTracker();
 						FL::F_SceneManager.LoadScene(scenePath);
 						FL::F_LoadedProject.SetLoadedScenePath(scenePath);
 					}

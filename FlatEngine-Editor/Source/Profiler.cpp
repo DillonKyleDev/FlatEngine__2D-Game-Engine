@@ -8,15 +8,17 @@
 #include "Scene.h"
 #include <deque>
 
-using Process = FlatEngine::Process;
-using Collider = FlatEngine::Collider;
-using Scene = FlatEngine::Scene;
+namespace FL = FlatEngine;
+
+using Process = FL::Process;
+using Collider = FL::Collider;
+using Scene = FL::Scene;
 
 namespace FlatGui 
 { 
 	void RenderProfiler()
 	{
-		FlatEngine::BeginWindow("Profiler", _showProfiler);
+		FL::BeginWindow("Profiler", _showProfiler);
 
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
@@ -30,56 +32,56 @@ namespace FlatGui
 		std::string sdlTicks = "---";
 		std::string numberOfColliderPairs = "---";
 
-		if (FlatEngine::GameLoopStarted())
+		if (FL::GameLoopStarted())
 		{
-			ellapsedTime = std::to_string(FlatEngine::GetEllapsedGameTimeInSec());
-			averageFPS = std::to_string(FlatEngine::GetAverageFps());
-			deltaTime = std::to_string(FlatEngine::GetDeltaTime());
-			//framesCounted = std::to_string(FlatEngine::gameLoop->GetFramesCounted());
-			sdlTicks = std::to_string(FlatEngine::GetEngineTime());
-			//numberOfColliderPairs = std::to_string(gameLoop->GetColliderPairs().size());
+			ellapsedTime = std::to_string(FL::GetEllapsedGameTimeInSec());
+			averageFPS = std::to_string(FL::GetAverageFps());
+			deltaTime = std::to_string(FL::GetDeltaTime());
+			framesCounted = std::to_string(FL::F_Application->GetGameLoop()->GetFramesCounted());
+			sdlTicks = std::to_string(FL::GetEngineTime());
+			numberOfColliderPairs = std::to_string(FL::GetLoadedScene()->GetColliderPairs().size());
 		}
 
 		// Render runtime data
-		if (FlatEngine::PushTable("##RunTimeData", 2))
+		if (FL::PushTable("##RunTimeData", 2))
 		{
-			FlatEngine::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
-			FlatEngine::RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
-			FlatEngine::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
-			FlatEngine::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
-			FlatEngine::RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-			FlatEngine::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
-			FlatEngine::RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
-			FlatEngine::PopTable();
+			FL::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
+			FL::RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
+			FL::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
+			FL::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
+			FL::RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
+			FL::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+			FL::RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
+			FL::PopTable();
 		}
 
 		static bool _showColliderPairs = true;
-		FlatEngine::RenderCheckbox("Show Collider Pairs", _showColliderPairs);
+		FL::RenderCheckbox("Show Collider Pairs", _showColliderPairs);
 		if (_showColliderPairs)
 		{
 			// Render runtime data
-			if (FlatEngine::PushTable("##RunTimeData", 2))
+			if (FL::PushTable("##RunTimeData", 2))
 			{
-				FlatEngine::RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
+				FL::RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
 
-				for (std::pair<Collider*, Collider*> pair : FlatEngine::GetLoadedScene()->GetColliderPairs())
+				for (std::pair<Collider*, Collider*> pair : FL::GetLoadedScene()->GetColliderPairs())
 				{
 					std::string col1String = pair.first->GetParent()->GetName();
 					std::string col2String = pair.second->GetParent()->GetName();
 					std::string TableRowID = "##ColliderPairID-" + std::to_string(pair.first->GetParent()->GetID()) + std::to_string(pair.second->GetParent()->GetID());					
 
-					FlatEngine::RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
+					FL::RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
 				}
-				FlatEngine::PopTable();
+				FL::PopTable();
 			}
 		}
 
-		FlatEngine::RenderCheckbox("Animate", anim);
+		FL::RenderCheckbox("Animate", anim);
 		if (anim)
 			offset = (offset + 1) % 100;
 
 
-		std::vector<Process>::iterator it = FlatEngine::F_ProfilerProcesses.begin();
+		std::vector<Process>::iterator it = FL::F_ProfilerProcesses.begin();
 		int processCounter = 1;
 
 		if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
@@ -90,8 +92,8 @@ namespace FlatGui
 			ImGui::TableHeadersRow();
 			ImPlot::PushColormap(ImPlotColormap_Cool);
 
-			if (FlatEngine::F_ProfilerProcesses.size() > 0)
-				while (it != FlatEngine::F_ProfilerProcesses.end())
+			if (FL::F_ProfilerProcesses.size() > 0)
+				while (it != FL::F_ProfilerProcesses.end())
 				{
 					std::string processName = (*it).GetProcessName();
 					std::vector<float> hangTimeVector = (*it).GetHangTimeData();
@@ -123,7 +125,7 @@ namespace FlatGui
 			ImGui::EndTable();
 		}
 
-		FlatEngine::EndWindow();
+		FL::EndWindow();
 	}
 
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) {

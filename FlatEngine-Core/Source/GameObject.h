@@ -91,7 +91,7 @@ namespace FlatEngine
 
 		void SetParentID(long parentID);
 		long GetParentID();
-		GameObject GetParent();
+		GameObject *GetParent();
 		void AddChild(long childID);
 		void RemoveChild(long childID);
 		GameObject GetFirstChild();

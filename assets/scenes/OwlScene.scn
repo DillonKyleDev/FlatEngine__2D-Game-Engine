@@ -15,11 +15,7 @@
                     "xPos": -0.017162322998046875,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-<<<<<<<< HEAD:assets/scenes/OwlScene.scn
                     "yPos": 21.175933837890625,
-========
-                    "yPos": 9.723459243774414,
->>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2:assets/scenes/OwlScene.json
                     "yScale": 1.0
                 },
                 {
@@ -101,11 +97,7 @@
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": -0.017162322998046875,
-<<<<<<<< HEAD:assets/scenes/OwlScene.scn
             "spawnLocationY": 21.175933837890625,
-========
-            "spawnLocationY": 9.723459243774414,
->>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2:assets/scenes/OwlScene.json
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

@@ -12,7 +12,8 @@ namespace FlatGui
 {
 	std::map<std::string, bool> FG_fileExplorerLeafTracker = std::map<std::string, bool>();	
 	std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails = std::map<std::string, std::shared_ptr<Texture>>();
-	
+	std::string FG_currentDirectory = "../";
+
 	// "Local" values
 	float topThumbnailPadding = 5;
 	float horizontalThumbnailPadding = 4;
@@ -31,7 +32,6 @@ namespace FlatGui
 	{		
 		std::string rootDirPath = FL::GetDir("projectDir");  // Relative to the solution
 		std::filesystem::path rootPath(rootDirPath);
-		static std::string filepath_clicked = rootDirPath;
 		std::error_code err;
 		bool b_isDirectory = std::filesystem::is_directory(rootPath, err);
 
@@ -54,7 +54,7 @@ namespace FlatGui
 					ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x);
 
 					if (b_isDirectory)
-						RenderDirNodes(rootDirPath, filepath_clicked);
+						RenderDirNodes(rootDirPath);
 
 					ImGui::EndTable();
 				}
@@ -87,13 +87,13 @@ namespace FlatGui
 			static bool b_openMappingContextModal = false;
 
 			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newFileName, b_openLuaModal))
-				FL::CreateNewLuaScript(newFileName, filepath_clicked);
+				FL::CreateNewLuaScript(newFileName, FG_currentDirectory);
 			if (FL::RenderInputModal("Create Scene", "Enter a name for the Scene:", newFileName, b_openSceneModal))
-				FL::CreateNewSceneFile(newFileName, filepath_clicked);
+				FL::CreateNewSceneFile(newFileName, FG_currentDirectory);
 			if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
-				FL::CreateNewAnimationFile(newFileName, filepath_clicked);
+				FL::CreateNewAnimationFile(newFileName, FG_currentDirectory);
 			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context:", newFileName, b_openMappingContextModal))
-				FL::CreateNewMappingContextFile(newFileName, filepath_clicked);
+				FL::CreateNewMappingContextFile(newFileName, FG_currentDirectory);
 
 			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
 			// {			
@@ -104,7 +104,7 @@ namespace FlatGui
 				ImGui::SetCursorScreenPos(Vector2(filesStartPos.x + 5, filesStartPos.y + 5));
 				ImGui::Text("Files");
 				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-				RenderFilesTopBar(filepath_clicked);
+				RenderFilesTopBar();
 
 				// File icons + border
 				Vector2 borderStart = ImGui::GetCursorScreenPos();
@@ -175,7 +175,7 @@ namespace FlatGui
 					b_resetScroll = false;
 				}
 				ImGui::SetCursorScreenPos(iconsStart);
-				RenderDirItems(filepath_clicked, filepath_clicked);
+				RenderDirItems();
 
 
 				if (FL::RenderConfirmModal("Are You Sure?", "Deleting this file cannot be undone", b_openDeleteModal))
@@ -202,17 +202,17 @@ namespace FlatGui
 		FL::EndWindow();
 	}
 
-	void RenderDirNodes(std::string dir, std::string& filepath_clicked)
+	void RenderDirNodes(std::string dir)
 	{
 		for (const auto& entry : std::filesystem::directory_iterator(dir))
 		{
 			bool b_isDirectory = std::filesystem::is_directory(entry.path().string());
 			if (b_isDirectory)
-				RenderDirNode(entry.path(), filepath_clicked);
+				RenderDirNode(entry.path());
 		}
 	}
 
-	void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked)
+	void RenderDirNode(std::filesystem::path fs_filepath)
 	{
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
@@ -225,7 +225,7 @@ namespace FlatGui
 		//bool b_isFile = std::filesystem::is_regular_file(fs_filepath, err);
 
 		// If this node is selected, use the node_selected to highlight it
-		if (filepath_clicked == fs_filepath.string())
+		if (FG_currentDirectory == fs_filepath.string())
 		{
 			if (b_isDirectory)
 				nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
@@ -255,9 +255,9 @@ namespace FlatGui
 				// save last location
 				if (lastExplorerLocations.size() >= maxStoredLocations)
 					lastExplorerLocations.pop_back();
-				lastExplorerLocations.push_back(filepath_clicked);
+				lastExplorerLocations.push_back(FG_currentDirectory);
 
-				filepath_clicked = fs_filepath.string();
+				FG_currentDirectory = fs_filepath.string();
 				b_resetScroll = true; // Reset the scroll of the window
 			}
 
@@ -268,7 +268,7 @@ namespace FlatGui
 
 			if (b_nodeOpen)
 			{
-				RenderDirNodes(fs_filepath.string(), filepath_clicked);
+				RenderDirNodes(fs_filepath.string());
 				ImGui::TreePop();
 			}
 		}
@@ -281,15 +281,15 @@ namespace FlatGui
 				// save last location
 				if (lastExplorerLocations.size() >= maxStoredLocations)
 					lastExplorerLocations.pop_back();
-				lastExplorerLocations.push_back(filepath_clicked);
+				lastExplorerLocations.push_back(FG_currentDirectory);
 
-				filepath_clicked = fs_filepath.string();
+				FG_currentDirectory = fs_filepath.string();
 				b_resetScroll = true; // Reset the scroll of the window
 			}
 		}
 	}
 
-	void RenderFilesTopBar(std::string& filepath_clicked)
+	void RenderFilesTopBar()
 	{		
 		Vector2 topBarStart = ImGui::GetCursorScreenPos();
 		Vector2 topBarEnd = Vector2(topBarStart.x + ImGui::GetContentRegionAvail().x, topBarStart.y + 32);
@@ -301,7 +301,7 @@ namespace FlatGui
 			if (lastExplorerLocations.size() > 0)
 			{
 				// use last location
-				filepath_clicked = lastExplorerLocations.back();
+				FG_currentDirectory = lastExplorerLocations.back();
 				b_resetScroll = true; // Reset the scroll of the window
 				lastExplorerLocations.pop_back();
 			}
@@ -313,7 +313,7 @@ namespace FlatGui
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
 	}
 
-	void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked)
+	void RenderDirItems()
 	{
 		float availableWidth = ImGui::GetContentRegionMax().x;
 		float horizontalSpacing = 10;
@@ -321,9 +321,9 @@ namespace FlatGui
 		int maxIconsPerRow = (int)(availableWidth / (iconButtonSize.x + horizontalSpacing) - 1);
 		int iconsThisRow = 0;		
 
-		if (std::filesystem::is_directory(fs_filepath))
+		if (std::filesystem::is_directory(std::filesystem::path(FG_currentDirectory)))
 		{
-			for (const auto& entry : std::filesystem::directory_iterator(fs_filepath.string()))
+			for (const auto& entry : std::filesystem::directory_iterator(FG_currentDirectory))
 			{				
 				// Drawing the first button in the row
 				if (iconsThisRow == 0)
@@ -331,7 +331,7 @@ namespace FlatGui
 
 				Vector2 currentPos = ImGui::GetCursorScreenPos();
 
-				RenderFileIcon(entry, currentPos, filepath_clicked);
+				RenderFileIcon(entry, currentPos);
 
 				if (iconsThisRow != maxIconsPerRow)
 				{
@@ -344,7 +344,7 @@ namespace FlatGui
 		}
 	}
 
-	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked)
+	void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos)
 	{
 		std::string extension = fs_filepath.extension().string();
 		std::string icon;
@@ -441,7 +441,13 @@ namespace FlatGui
 			if (clickedFile == fs_filepath.string())
 				b_highlightIconButton = true;
 
-		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, b_highlightIconButton, ImGuiButtonFlags_MouseButtonLeft);
+		if (b_highlightIconButton)
+		{
+			ImGui::GetWindowDrawList()->AddRectFilled(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("selectedFileBg"), 2);
+			ImGui::GetWindowDrawList()->AddRect(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("selectedFileOutline"), 2);
+		}
+
+		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, false, ImGuiButtonFlags_MouseButtonLeft);
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 		bool b_leftClicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
@@ -509,9 +515,9 @@ namespace FlatGui
 			// save last location
 			if (lastExplorerLocations.size() >= maxStoredLocations)
 				lastExplorerLocations.pop_back();
-			lastExplorerLocations.push_back(filepath_clicked);
+			lastExplorerLocations.push_back(FG_currentDirectory);
 
-			filepath_clicked = fs_filepath.string();
+			FG_currentDirectory = fs_filepath.string();
 			b_resetScroll = true; // Reset the scroll of the window
 		}
 		else if (b_doubleClicked)

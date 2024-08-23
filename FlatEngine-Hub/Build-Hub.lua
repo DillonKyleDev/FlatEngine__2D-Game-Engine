@@ -73,8 +73,11 @@ project "FlatEngine-Hub"
 
 --    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
 --    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
-    targetdir ("../Build/" .. OutputDir .. "/%{prj.name}")
-    objdir ("../Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
+    -- targetdir ("../Build/" .. OutputDir .. "/%{prj.name}")
+    -- objdir ("../Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
+
+    targetdir ("C:/Users/Dillon Kyle/Desktop/Build/" .. OutputDir .. "/%{prj.name}")
+    objdir ("C:/Users/Dillon Kyle/Desktop/Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
    filter "system:windows"
        systemversion "latest"

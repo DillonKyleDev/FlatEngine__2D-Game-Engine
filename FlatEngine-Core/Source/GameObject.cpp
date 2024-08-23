@@ -426,6 +426,14 @@ namespace FlatEngine
 
 	BoxCollider* GameObject::AddBoxColliderComponent(long id, bool _active, bool _collapsed)
 	{
+		Vector2 spriteDimensions = Vector2(2, 2);
+		if (HasComponent("Sprite"))
+		{
+			Sprite* sprite = GetSprite();
+			// Get sprite dimensions in terms of grid squares because that is the unit used by the engine
+			spriteDimensions = Vector2(sprite->GetTextureWidth() / F_pixelsPerGridSpace, sprite->GetTextureHeight() / F_pixelsPerGridSpace);
+		}
+
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
@@ -434,6 +442,7 @@ namespace FlatEngine
 		boxCollider.SetCollapsed(_collapsed);
 
 		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
+		colliderPtr->SetActiveDimensions(spriteDimensions.x, spriteDimensions.y);
 		components.push_back(colliderPtr);
 		return colliderPtr;
 	}
@@ -658,7 +667,7 @@ namespace FlatEngine
 		return _isActive;
 	}
 	
-	GameObject GameObject::GetParent()
+	GameObject *GameObject::GetParent()
 	{
 		return GetObjectById(parentID);
 	}

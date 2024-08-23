@@ -205,9 +205,6 @@ namespace FlatGui
 		// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
 		//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
 
-		// Hierarchy management
-		ResetHierarchyExpanderTracker();
-
 		SetupProfilerProcesses();
 	}
 
@@ -294,6 +291,10 @@ namespace FlatGui
 				if (currentObjectJson.contains("_showMappingContextEditor"))
 					_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
 
+				// Current directory opened
+				if (currentObjectJson.contains("currentFileDirectory"))
+					FG_currentDirectory = currentObjectJson["currentFileDirectory"];
+
 				// Settings
 				if (currentObjectJson.contains("_clearLogBuffer"))
 				{
@@ -340,6 +341,7 @@ namespace FlatGui
 			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath() },
 			{ "sceneToLoadAtRuntime", project.GetRuntimeScene() },
 			{ "buildPath", project.GetBuildPath() },
+			{ "currentFileDirectory", FG_currentDirectory },
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
@@ -403,7 +405,8 @@ namespace FlatGui
 		// Get window dimensions for background image
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();		
-		float headerHeight = 50;
+		Vector2 dimensions = Vector2((float)FL::GetTextureObject("selectProject")->GetWidth(), (float)FL::GetTextureObject("selectProject")->GetHeight());
+		float headerHeight = dimensions.y;
 
 		// Draw window background gradient
 		ImGui::Image(FL::GetTexture("projectHubBg"), canvas_sz);
@@ -417,9 +420,9 @@ namespace FlatGui
 		ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 10, canvas_p0.y + 5));
 
 		// Draw the FL logo and header text image
-		ImGui::Image(FL::GetTexture("flatEngineLogo"), Vector2(headerHeight, headerHeight));
+		ImGui::Image(FL::GetTexture("flatEngineLogo"), Vector2(dimensions.y));
 		ImGui::SameLine();
-		ImGui::Image(FL::GetTexture("selectProject"), Vector2((float)FL::GetTextureObject("selectProject")->GetWidth(), headerHeight));
+		ImGui::Image(FL::GetTexture("selectProject"), dimensions);
 
 		ImGui::Separator();
 		ImGui::Separator();
@@ -434,7 +437,9 @@ namespace FlatGui
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, startProjects.y));
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("projectSelectionTable"));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 2);
 		ImGui::BeginChild("ProjectsTable", Vector2(0, ImGui::GetContentRegionAvail().y - 100), FL::F_childFlags);
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 
 		Vector2 startTable = ImGui::GetCursorScreenPos();
@@ -490,7 +495,7 @@ namespace FlatGui
 
 		FL::EndWindowChild();
 				
-		ImGui::GetWindowDrawList()->AddRect(Vector2(startTable.x - 6, startTable.y - 6 + scrollY), Vector2(startTable.x + ImGui::GetContentRegionAvail().x - 104, endTable.y - 3), FL::GetColor32("filesPanelOutline"));
+		ImGui::GetWindowDrawList()->AddRect(Vector2(startTable.x - 6, startTable.y - 6 + scrollY), Vector2(startTable.x + ImGui::GetContentRegionAvail().x - 104, endTable.y - 3), FL::GetColor32("projectHubTableOutline"), 2);
 
 
 		ImGui::PopStyleColor();

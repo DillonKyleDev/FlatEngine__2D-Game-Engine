@@ -27,22 +27,19 @@ namespace FlatGui
 	// ImGui Wrappers
 	void BeginComponent(FL::Component* component, long &queuedForDelete)
 	{
-		// Is Collapsed
 		bool _isCollapsed = component->IsCollapsed();
 		long id = component->GetID();
 
-		// Component Name
 		std::string componentType = component->GetTypeString();
-		// Get Component ID in to keep the child unique
 		std::string componentID = componentType + std::to_string(component->GetID());
 
 		// Begin Component Child
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
 		ImGui::PushStyleColor(ImGuiCol_Border, FL::GetColor("componentBorder"));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
-
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 2);
 		ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
-
+		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -50,10 +47,10 @@ namespace FlatGui
 		// Border around each component
 		auto wPos = ImGui::GetWindowPos();
 		auto wSize = ImGui::GetWindowSize();		
-		
+		ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, FL::GetColor32("componentBorder"), 2);
+
 		// Tooltip for Component meta data
-		ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, FL::GetColor32("componentBorder"));
-		FL::RenderInvisibleButton("ComponentToolTipButton-" + std::to_string(id), { wPos.x, wPos.y }, { wSize.x, 40 });
+		FL::RenderInvisibleButton("ComponentToolTipButton-" + std::to_string(id), { wPos.x, wPos.y }, { wSize.x, 27 });
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{
 			FL::BeginToolTip("Component Info");
@@ -66,7 +63,7 @@ namespace FlatGui
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
 		ImGui::Text(componentType.c_str());
 
-		ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 42), 5);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 36), 5);
 
 		// Pushes	
 		ImGui::PushItemWidth(-1.0f);
@@ -79,14 +76,12 @@ namespace FlatGui
 		std::string openFileID = "##openFileIcon-" + std::to_string(id);
 
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
-		// Trash Can Icon for removing Component from Focused Object
 		if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
 			queuedForDelete = component->GetID();
 
 		ImGui::SameLine(0, 5);
 
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
-		// Draw Expand Icon for expanding/collapsing current component information
 		if (_isCollapsed)
 		{
 			if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expand")))
@@ -97,22 +92,15 @@ namespace FlatGui
 				component->SetCollapsed(!_isCollapsed);
 
 		if (!_isCollapsed)
-		{
 			ImGui::Separator();
-			ImGui::Separator();
-		}
-		else {
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 15));
-			ImGui::Text("");
-		}
-
-		 //Component Data - Give it background color and padding
-		std::string componentItemID = "##ComponentItem-" + componentType;
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
-		// Make full width Push
-
+		
 		if (!component->IsCollapsed())
+		{
+			//Component Data - Give it background color
+			std::string componentItemID = "##ComponentItem-" + componentType;
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
 			ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
+		}
 	}
 
 	void EndComponent(Component* component)
@@ -121,11 +109,11 @@ namespace FlatGui
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
 
 		// Add some space to the bottom of each component
 		if (!component->IsCollapsed())
 		{
+			ImGui::PopStyleColor();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
 			ImGui::EndChild();
 		}
@@ -164,14 +152,14 @@ namespace FlatGui
 		// Render Table
 		if (FL::PushTable("##TransformProperties" + std::to_string(id), 2))
 		{
-			FL::RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX);
-			FL::RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX);
-			transform->SetPosition(Vector2(xPos, yPos));
-			FL::RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360);
-			transform->SetRotation(rotation);
-			FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000);
-			FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000);
-			transform->SetScale(Vector2(scaleX, scaleY));
+			if (FL::RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX) ||
+				FL::RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
+				transform->SetPosition(Vector2(xPos, yPos));
+			if (FL::RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360))
+				transform->SetRotation(rotation);
+			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000) ||
+				FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000))
+				transform->SetScale(Vector2(scaleX, scaleY));
 			FL::PopTable();
 		}
 	}
@@ -203,7 +191,7 @@ namespace FlatGui
 			sprite->SetActive(_isActive);								
 
 		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), "FILE_PATH_DRAGGED", droppedValue, openedPath))
+		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), "FILE_PATH_DRAGGED", droppedValue, openedPath, "Drop images here from File Explorer"))
 		{
 			if (openedPath != "")
 			{
@@ -336,7 +324,7 @@ namespace FlatGui
 		}
 
 		int droppedValue = -1;
-		if (FL::DropInput("##CameraFollowObject", "Following", following, "DND_HIERARCHY_OBJECT", droppedValue))
+		if (FL::DropInput("##CameraFollowObject", "Following", following, "DND_HIERARCHY_OBJECT", droppedValue, "Drag a GameObject here from the Hierarchy"))
 		{
 			if (droppedValue != -1 && FL::GetObjectById(droppedValue) != nullptr)
 			{
@@ -345,9 +333,6 @@ namespace FlatGui
 			else
 				FL::LogString("ERROR : Something went wrong, item must be a GameObject with a Transform component");
 		}
-
-		if (ImGui::IsItemHovered())
-			FL::RenderTextToolTip("Drag a GameObject here from the Hierarchy");
 
 		// Frustrum color picker
 		std::string frustrumID = "##FrustrumColor" + std::to_string(id);

@@ -88,6 +88,7 @@ namespace FlatGui
 	// File Explorer
 	extern std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails;
 	extern Vector2 maxThumbnailSize;
+	extern std::string FG_currentDirectory;
 
 	// Focused GameObject
 	extern long FocusedGameObjectID;
@@ -173,15 +174,12 @@ namespace FlatGui
 	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
 	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 	extern void RenderFileExplorer();
-	extern void RenderFilesTopBar(std::string& filepath_clicked);
-	extern void RenderDirNodes(std::string dir, std::string& filepath_clicked);
-	extern void RenderDirNode(std::filesystem::path fs_filepath, std::string& filepath_clicked);
-	extern void RenderDirItems(std::filesystem::path fs_filepath, std::string& filepath_clicked);
-	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos, std::string& filepath_clicked);
-<<<<<<< HEAD
+	extern void RenderFilesTopBar();
+	extern void RenderDirNodes(std::string dir);
+	extern void RenderDirNode(std::filesystem::path fs_filepath);
+	extern void RenderDirItems();
+	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos);
 	extern void OpenFileContextually(std::filesystem::path fs_filepath);
-=======
->>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 	extern void RenderScriptEditor();
 	// Component Wrappers
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
@@ -205,7 +203,6 @@ namespace FlatGui
 	extern void RenderSceneViewTooltip();
 	// Hierarchy
 	extern void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
-	extern void ResetHierarchyExpanderTracker();
 	// Profiler
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);
 }

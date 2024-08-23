@@ -3,8 +3,4 @@ bin/
 bin-int
 WindowsApplication/x64/
 Release/
-/vendors
 /Vendor
-/Build/
-/Build
-Build/

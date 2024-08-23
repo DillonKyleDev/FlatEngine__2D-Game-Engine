@@ -8,6 +8,7 @@ F_Colors = {
 	----------------------
 	-- Components --------
 	----------------------
+	componentSectionBorder = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	componentBorder = Vector4:new(0.2, 0.2, 0.2, 1.0),
 	componentBg = Vector4:new(0.16, 0.16, 0.17, 1.0),
 	-- Colliders
@@ -36,7 +37,7 @@ F_Colors = {
 	projectHubButtonActive = Vector4:new(0.2, 0.2, 0.45, 1.0),
 	projectHubButtonHovered = Vector4:new(0.4, 0.4, 0.65, 1.0),
 	projectSelectionTable = Vector4:new(0.16, 0.16, 0.17, 1.0),
-	projectSelectionTableOutline = Vector4:new(0.16, 0.16, 0.17, 1.0),
+	projectHubTableOutline = Vector4:new(0.36, 0.36, 0.37, 1.0),
 	-- Log
 	logText = Vector4:new(0.75, 0.75, 0.75, 1.0),
 	logBg = Vector4:new(0.2, 0.2, 0.22, 1.0),
@@ -46,6 +47,8 @@ F_Colors = {
 	panelTitleBg =  Vector4:new(0.14, 0.14, 0.14, 1.0),
 	filePanelTopBar = Vector4:new(0.3, 0.3, 0.38, 1.0),
 	filesPanelOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
+	selectedFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.11),
+	selectedFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.45),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

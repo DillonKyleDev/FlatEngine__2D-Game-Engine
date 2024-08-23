@@ -404,7 +404,7 @@ namespace FlatEngine
 		return b_editedButton || b_editedInput || b_dragTargeted;
 	}
 
-	bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int &droppedValue, float inputWidth)
+	bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int &droppedValue, std::string tooltip, float inputWidth)
 	{		
 		bool b_dragTargeted = false;
 
@@ -424,6 +424,11 @@ namespace FlatEngine
 		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
 		ImGui::Text(displayValue.c_str());
 		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		// Tooltip
+		if (tooltip != "" && ImGui::IsItemHovered())
+		{
+			RenderTextToolTip(tooltip);
+		}
 
 		// Drop Target
 		if (ImGui::BeginDragDropTarget())
@@ -440,7 +445,7 @@ namespace FlatEngine
 		return b_dragTargeted;
 	}
 
-	bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, float inputWidth)
+	bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip, float inputWidth)
 	{
 		bool b_editedButton = false;
 		bool b_dragTargeted = false;
@@ -465,6 +470,11 @@ namespace FlatEngine
 		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
 		ImGui::Text(displayValue.c_str());
 		RenderInvisibleButton("##dropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		// Tooltip
+		if (tooltip != "" && ImGui::IsItemHovered())
+		{
+			RenderTextToolTip(tooltip);
+		}
 
 		// Drop Target
 		if (ImGui::BeginDragDropTarget())
@@ -617,18 +627,16 @@ namespace FlatEngine
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(2, 2));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);		
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
-
+		
 		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, Vector2((float)0), Vector2(1), GetColor("transparent"), tint);
 
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();		
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -706,18 +714,12 @@ namespace FlatEngine
 		auto cursorPos = ImGui::GetCursorScreenPos();
 		auto regionAvailable = ImGui::GetContentRegionAvail();
 
-		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
 		Vector2 screenCursor = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(GetColor("innerWindow")));
+		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(GetColor("innerWindow")), 1);
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
 		ImGui::Text(headerText.c_str());
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-
-		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y + 4), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 37), ImGui::GetColorU32(GetColor("componentBorder")));
+		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 30), ImGui::GetColorU32(GetColor("componentBorder")), 1);
 	}
 
 	// *** SECOND VECTOR IS THE SIZE, **NOT*** THE END POSITION. *** Sets CursorScreenPos to the starting point! *** 

@@ -74,6 +74,27 @@ namespace FlatGui
 
 		RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
 
+		int droppedValue = -1;
+		// Drop Target
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH_DRAGGED"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				droppedValue = *(const int*)payload->Data;
+			}
+			ImGui::EndDragDropTarget();
+		}
+		// Create a GameObject from a file in the Explorer by dragging it into the Scene View space
+		if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+		{
+			ImGuiIO& inputOutput = ImGui::GetIO();
+			Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
+			std::string filePath = FL::F_selectedFiles[droppedValue - 1];
+			FL::LogString(filePath);
+			
+			FL::CreateObjectUsingFilePath(filePath, mousePosInGrid);
+		}
 
 		// Get currently loaded scene objects
 		Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();

@@ -19,7 +19,7 @@
     <ClCompile Include="Source\Log.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />
     <ClCompile Include="Source\MappingContextEditor.cpp" />
-    <ClCompile Include="Source\RenderProfiler.cpp" />
+    <ClCompile Include="Source\Profiler.cpp" />
     <ClCompile Include="Source\SceneView.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />

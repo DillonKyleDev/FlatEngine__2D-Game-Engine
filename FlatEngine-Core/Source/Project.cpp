@@ -13,6 +13,7 @@ namespace FlatEngine
 		m_path = "";
 		m_loadedScenePath = "";
 		m_loadedAnimationPath = "";
+		m_currentFileDirectory = "";
 		m_sceneViewScrolling = Vector2(0, 0);
 		m_focusedGameObjectID = -1;
 		m_b_autoSave = true;
@@ -53,6 +54,16 @@ namespace FlatEngine
 	std::string Project::GetBuildPath()
 	{
 		return m_buildPath;
+	}
+
+	void Project::SetCurrentFileDirectory(std::string dirName)
+	{
+		m_currentFileDirectory = dirName;
+	}
+
+	std::string Project::GetCurrentFileDirectory()
+	{
+		return m_currentFileDirectory;
 	}
 
 	void Project::SetFocusedGameObjectID(long ID)
@@ -164,6 +175,7 @@ namespace FlatEngine
 			{ "loadedScenePath", m_loadedScenePath },
 			{ "sceneToLoadAtRuntime", m_sceneToLoadAtRuntime },
 			{ "buildPath", m_buildPath },
+			{ "currentFileDirectory", m_currentFileDirectory },
 			{ "loadedAnimationPath", m_loadedAnimationPath },
 			{ "sceneViewScrollingX", m_sceneViewScrolling.x },
 			{ "sceneViewScrollingY", m_sceneViewScrolling.y },

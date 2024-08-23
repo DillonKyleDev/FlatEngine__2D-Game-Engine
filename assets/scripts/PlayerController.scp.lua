@@ -20,11 +20,7 @@ end
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
      LogString("PlayerController : Start() called on "..this_object:GetName()) 
-<<<<<<<< HEAD:assets/scripts/PlayerController.scp.lua
      mappingContext = GetMappingContext("MC_CharacterContext")
-========
-     mappingContext = GetMappingContext("MC_CharacterContext.json")
->>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2:assets/scripts/PlayerController.lua
      rigidBody = this_object:GetRigidBody()
 end 
 

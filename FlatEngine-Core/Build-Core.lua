@@ -49,8 +49,8 @@ project "FlatEngine-Core"
     "_WINDOWS"
    }
 
-   targetdir ("../Build/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
+   targetdir ("C:/Users/Dillon Kyle/Desktop/Build/" .. OutputDir .. "/%{prj.name}")
+   objdir ("C:/Users/Dillon Kyle/Desktop/Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
    filter "system:windows"
        systemversion "latest"

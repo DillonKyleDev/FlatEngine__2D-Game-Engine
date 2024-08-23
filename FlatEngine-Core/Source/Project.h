@@ -18,6 +18,8 @@ namespace FlatEngine
 		std::string GetRuntimeScene();
 		void SetBuildPath(std::string path);
 		std::string GetBuildPath();
+		void SetCurrentFileDirectory(std::string dirName);
+		std::string GetCurrentFileDirectory();
 		void SetFocusedGameObjectID(long ID);
 		long GetFocusedGameObjectID();
 		void SetLoadedPreviewAnimationPath(std::string path);
@@ -43,6 +45,7 @@ namespace FlatEngine
 		std::string m_loadedScenePath;
 		std::string m_sceneToLoadAtRuntime;
 		std::string m_loadedAnimationPath;
+		std::string m_currentFileDirectory;
 		Vector2 m_sceneViewScrolling;
 		Vector2 m_sceneViewGridStep;
 		long m_focusedGameObjectID;

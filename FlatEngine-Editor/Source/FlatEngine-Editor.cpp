@@ -245,8 +245,6 @@ public:
 	{
 		if (FL::GetObjectById(FlatGui::GetFocusedGameObjectID()) != nullptr)
 			FlatGui::SetFocusedGameObjectID(-1);
-
-		FlatGui::ResetHierarchyExpanderTracker();
 	}
 	FL::GameLoop* GetGameLoop()
 	{
