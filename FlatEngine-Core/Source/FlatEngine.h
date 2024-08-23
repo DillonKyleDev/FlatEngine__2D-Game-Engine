@@ -297,8 +297,12 @@ namespace FlatEngine
 	extern void RenderToolTipFloat(std::string label, float data);
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
+<<<<<<< HEAD
 	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool &b_openModal);
 	extern bool RenderConfirmModal(std::string label, std::string description, bool& b_openModal);
+=======
+	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue);
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
 	extern Vector2 Lerp(Vector2 startPos, Vector2 endPos, float ease);

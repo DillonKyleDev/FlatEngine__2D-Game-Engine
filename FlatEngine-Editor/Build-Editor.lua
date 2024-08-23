@@ -63,8 +63,13 @@ project "FlatEngine-Editor"
 
 --    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
 --    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+<<<<<<< HEAD
     targetdir ("../Build/" .. OutputDir .. "/%{prj.name}")
     objdir ("../Build/Intermediates/" .. OutputDir .. "/%{prj.name}")
+=======
+    targetdir ("../Build/%{prj.name}")
+    objdir ("../Build/Intermediates/%{prj.name}")
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 
    filter "system:windows"
        systemversion "latest"

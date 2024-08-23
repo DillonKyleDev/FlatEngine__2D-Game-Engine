@@ -1,0 +1,48 @@
+{
+    "Animation Properties": [
+        {
+            "Length": 0.0,
+            "Loop": false,
+            "Name": "New Animation"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\jump.png",
+                    "speed": 0.10000000149011612,
+                    "time": 140.000732421875,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\jump.png",
+                    "speed": 0.10000000149011612,
+                    "time": 0.4077281951904297,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        },
+        {
+            "Frames": [
+                {
+                    "interpType": 0,
+                    "path": "C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine\\WindowsApplication\\assets\\images\\Sprites\\Player\\jump.png",
+                    "speed": 0.10000000149011612,
+                    "time": 3980.0,
+                    "xOffset": 0.0,
+                    "yOffset": 0.0
+                }
+            ],
+            "Property": "Sprite"
+        }
+    ]
+}

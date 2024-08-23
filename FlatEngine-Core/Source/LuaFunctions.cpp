@@ -209,10 +209,14 @@ namespace FlatEngine
 			{
 				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
+<<<<<<< HEAD
 					std::string filepath = "";
 					if (FL::F_LuaScriptsMap.count(script.second.GetAttachedScript()))
 						filepath = F_LuaScriptsMap.at(script.second.GetAttachedScript());
 
+=======
+					std::string filepath = GetDir("scripts") + "/" + script.second.GetAttachedScript() + ".lua";
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 					if (DoesFileExist(filepath))
 					{
 						auto script = F_Lua.safe_script_file(filepath);

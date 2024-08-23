@@ -287,13 +287,21 @@ namespace FlatEngine
 							InitLua();
 							LogString("Lua initialized...");
 
+<<<<<<< HEAD
+=======
+							//F_AssetManager.GetDirectoryPaths();				   // Prompt user to give Directories.lua path which populates paths for different build types
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
 							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
 							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
 							SetImGuiColors();									   // Use the collected colors to style ImGui elements
 
+<<<<<<< HEAD
 							RetrieveLuaScriptPaths();							  
+=======
+							RetrieveLuaScriptNames();							   // Uses scripts directory collected from above CollectDirectories() call
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 
 							LogString("Ready...");
 							LogSeparator();
@@ -565,6 +573,7 @@ namespace FlatEngine
 		{
 			try
 			{
+<<<<<<< HEAD
 				std::filesystem::copy("../FlatEngine-Core", F_LoadedProject.GetBuildPath() + "\\Core", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
@@ -574,6 +583,8 @@ namespace FlatEngine
 			}
 			try
 			{
+=======
+>>>>>>> 24d0864ad64ce468c9379edd41450b523a6108f2
 				std::filesystem::copy("../FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
