@@ -77,7 +77,7 @@ public:
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.IniFilename = NULL;
 
-		//Window::SetFullscreen(true);
+		//Window::SetFullscreen(false);
 	}
 	void Run()
 	{

@@ -28,40 +28,6 @@ namespace FlatEngine
 	std::vector<std::string> F_luaScriptNames = std::vector<std::string>();
 	std::map<std::string, std::string> F_LuaScriptsMap = std::map<std::string, std::string>();
 
-	void LuaTesting(GameObject& toSend)
-	{
-		// Load in lua script
-		if (DoesFileExist("../scripts/LuaScript.lua"))
-		{
-			auto script = F_Lua.safe_script_file("../scripts/LuaScript.lua");
-
-			F_Lua["this_object"] = toSend;
-			if (script.valid())
-			{
-				sol::protected_function addSpriteFunc = F_Lua["AddSprite"];
-				if (addSpriteFunc)
-				{
-					//auto player1 = 
-					addSpriteFunc();
-					//if (player1.valid())
-					//{
-					//	Transform* transform = player1.get<GameObject>().GetTransform();
-					//}
-					//else
-					//{
-					//	sol::error err = player1;
-					//	LogString(err.what());
-					//}
-				}
-			}
-			else
-			{
-				sol::error err = script;
-				LogString(err.what());
-			}
-		}
-	}
-
 	void InitLua()
 	{
 		F_Lua.open_libraries(sol::lib::base, sol::lib::io, sol::lib::math, sol::lib::table);
@@ -185,6 +151,8 @@ namespace FlatEngine
 			"TorquesAllowed", &RigidBody::TorquesAllowed,
 			"AddForce", &RigidBody::AddForce,
 			"AddTorque", &RigidBody::AddTorque,
+			"SetPendingForces", &RigidBody::SetPendingForces,
+			"GetPendingForces", &RigidBody::GetPendingForces,
 			"SetTerminalVelocity", &RigidBody::SetTerminalVelocity,
 			"GetTerminalVelocity", &RigidBody::GetTerminalVelocity
 		);
@@ -215,8 +183,7 @@ namespace FlatEngine
 
 					if (DoesFileExist(filepath))
 					{
-						auto script = F_Lua.safe_script_file(filepath);
-						if (script.valid())
+						if (CheckLuaScriptFile(filepath))
 						{
 							F_Lua["this_object"] = &(*GetObjectById(object.first)); // Store this object inside the Lua state to be accessed by the next Lua function calls
 
@@ -232,11 +199,6 @@ namespace FlatEngine
 								sol::error err = calledFunction;
 								LogString(err.what());
 							}
-						}
-						else
-						{
-							sol::error err = script;
-							LogString(err.what());
 						}
 					}
 				}
@@ -311,6 +273,21 @@ namespace FlatEngine
 			"end \n\n";
 
 		RetrieveLuaScriptPaths();
+	}
+
+	bool CheckLuaScriptFile(std::string filePath)
+	{
+		try
+		{
+			F_Lua.safe_script_file(filePath);
+			return true;
+		}
+		catch (const sol::error& err)
+		{
+			LogString("ERROR : Lua script failed to load");
+			LogString(err.what());
+			return false;
+		}
 	}
 }
 

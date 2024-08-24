@@ -86,6 +86,7 @@ namespace FlatEngine {
 			{ "mass", m_mass},
 			{ "angularDrag", m_angularDrag },
 			{ "gravity", m_gravity },
+			{ "fallingGravity", m_fallingGravity },
 			{ "friction", m_friction },
 			{ "equilibriumForce", m_equilibriumForce },
 			{ "terminalVelocity", m_terminalVelocity },

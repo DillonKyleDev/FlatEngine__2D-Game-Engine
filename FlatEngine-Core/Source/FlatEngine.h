@@ -146,9 +146,9 @@ namespace FlatEngine
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
 	extern void RunLuaFuncOnAllScripts(std::string functionName);
-	extern void RunAwakeAndStart();
-	extern void LuaTesting(GameObject& toSend);
+	extern void RunAwakeAndStart();	
 	extern void RetrieveLuaScriptPaths();
+	extern bool CheckLuaScriptFile(std::string filePath);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);

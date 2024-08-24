@@ -2037,6 +2037,7 @@ namespace FlatEngine
 					newRigidBody->SetMass(CheckJsonFloat(componentJson, "mass", objectName));
 					newRigidBody->SetAngularDrag(CheckJsonFloat(componentJson, "angularDrag", objectName));
 					newRigidBody->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
+					newRigidBody->SetFallingGravity(CheckJsonFloat(componentJson, "fallingGravity", objectName));
 					newRigidBody->SetFriction(CheckJsonFloat(componentJson, "friction", objectName));
 					newRigidBody->SetWindResistance(CheckJsonFloat(componentJson, "windResistance", objectName));
 					newRigidBody->SetEquilibriumForce(CheckJsonFloat(componentJson, "equilibriumForce", objectName));

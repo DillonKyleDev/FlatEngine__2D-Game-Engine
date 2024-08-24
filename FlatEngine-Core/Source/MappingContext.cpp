@@ -219,16 +219,12 @@ namespace FlatEngine {
 		std::map<std::string, std::string>::iterator iterator = keyBindings.begin();
 		SDL_Event emptyEvent = SDL_Event();
 
-		//// If it's not empty, set the keyBinding InputAction value to an inputActionBindings key to be looked up later
-		while (iterator != keyBindings.end())
+		if (keyBindings.count(keyBinding) > 0)
 		{
-			if (iterator->first == keyBinding && inputActionBindings.count(iterator->second) > 0)
-			{		
-				inputActionBindings.at(iterator->second) = emptyEvent;
-				return;
+			if (inputActionBindings.count(keyBindings.at(keyBinding)) > 0)
+			{
+				inputActionBindings.at(keyBindings.at(keyBinding)) = emptyEvent;
 			}
-				
-			iterator++;
 		}
 	}
 

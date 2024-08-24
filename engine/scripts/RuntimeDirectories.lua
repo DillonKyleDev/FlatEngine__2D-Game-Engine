@@ -17,5 +17,5 @@ F_Paths = {
 	colors = "../engine/scripts/Colors.lua",
 	textures = "../engine/scripts/Textures.lua",
 
-	gameStartupProject = "../assets/projects/OwlTower.json" -- Project that will be started at runtime (includes startup scene)
+	gameStartupProject = "../assets/projects/OwlTower.prj" -- Project that will be started at runtime (includes startup scene)
 }

@@ -11,7 +11,8 @@
 #include "TagList.h"
 #include "Camera.h"
 #include "Project.h"
-#include "ECSManager.h"
+#include "Scene.h"
+#include "CharacterController.h"
 
 // Multithreading
 #include <vector>
@@ -90,6 +91,11 @@ namespace FlatEngine
 		AddFrame();
 		activeTime = time - pausedTime;
 
+		// Reset b_isMoving on all CharacterControllers
+		for (std::pair<const long, CharacterController> &owner : FL::GetLoadedScene()->GetCharacterControllers())
+		{
+			owner.second.SetMoving(false);
+		}
 
 		float processTime = (float)FlatEngine::GetEngineTime();
 		RunLuaFuncOnAllScripts("Update");
@@ -149,17 +155,14 @@ namespace FlatEngine
 			continuousCounter = 0;
 		continuousCounter++;
 
+
 		for (std::thread *thread : threads)
 		{
 			thread->join();
 		}
 
 		m_threads.clear();
-		//for (std::thread* thread : threads)
-		//{
-		//	delete thread;
-		//	thread = nullptr;
-		//}
+
 
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		FlatEngine::AddProcessData("Collision Testing", processTime);
@@ -184,11 +187,6 @@ namespace FlatEngine
 		_started = false;
 		_paused = false;
 		framesCounted = 0;
-
-
-
-		// Release all active scripts
-		//activeScripts.clear();
 
 		// Load back up the saved version of the scene
 		FlatEngine::LoadScene(startedScene);

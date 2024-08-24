@@ -7,20 +7,20 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 0,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -0.017162322998046875,
+                    "xPos": 0.09969265013933182,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 21.175933837890625,
+                    "yPos": 19.594072341918945,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 1,
                     "path": "../assets\\images\\sprites\\owl\\idle.png",
                     "pivotPoint": "Center",
@@ -42,8 +42,9 @@
                     "_isStatic": false,
                     "angularDrag": 0.9990000128746033,
                     "equilibriumForce": 2.0,
+                    "fallingGravity": 0.3199999928474426,
                     "friction": 0.8600000143051147,
-                    "gravity": 1.0,
+                    "gravity": 0.3100000023841858,
                     "id": 5,
                     "mass": 2.0,
                     "terminalVelocity": 0.4000000059604645,
@@ -52,7 +53,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "attachedScript": "PlayerController",
                     "id": 6,
                     "type": "Script"
@@ -72,6 +73,15 @@
                     "activeWidth": 2.0,
                     "id": 7,
                     "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "airControl": 0.20000000298023224,
+                    "id": 11,
+                    "maxAcceleration": 0.6600000262260437,
+                    "maxSpeed": 10.0,
+                    "type": "CharacterController"
                 }
             ],
             "id": 0,
@@ -96,8 +106,8 @@
             "name": "Player",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": -0.017162322998046875,
-            "spawnLocationY": 21.175933837890625,
+            "spawnLocationX": 0.09969265013933182,
+            "spawnLocationY": 19.594072341918945,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -288,10 +298,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0.0,
+                    "xPos": 0.09969261288642883,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 0.0,
+                    "yPos": 19.59408187866211,
                     "yScale": 1.0
                 },
                 {
@@ -334,8 +344,8 @@
             "name": "Camera",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": 0.0,
+            "spawnLocationX": 0.09969261288642883,
+            "spawnLocationY": 19.59408187866211,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

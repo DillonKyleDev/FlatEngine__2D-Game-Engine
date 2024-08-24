@@ -353,6 +353,7 @@ namespace FlatGui
 		SDL_Texture* texture = nullptr;		
 		Vector2 dimensions;
 		std::string openIn = "";
+		std::filesystem::path stem = fs_filepath.stem();
 		
 		if (std::filesystem::is_directory(fs_filepath.string()))
 			icon = "folderFile";
@@ -360,7 +361,7 @@ namespace FlatGui
 			icon = "cppFile";
 		else if (extension == ".h")
 			icon = "hFile";
-		else if (extension == ".lua.scp")
+		else if (extension == ".lua" && stem.extension() == ".scp")
 		{
 			icon = "luaFile";
 			openIn = "in Script Editor";

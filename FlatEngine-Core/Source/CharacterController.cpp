@@ -13,8 +13,8 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
-		maxAcceleration = 1;
-		maxSpeed = 0.1f;
+		maxAcceleration = 0.5f;
+		maxSpeed = 10.0f;
 		airControl = 0.2f;
 		speedCorrection = 1;
 		_isMoving = false;
@@ -60,6 +60,8 @@ namespace FlatEngine
 
 	void CharacterController::MoveToward(Vector2 direction)
 	{
+		_isMoving = true;
+
 		if (GetParent()->HasComponent("Transform") && GetParent()->HasComponent("RigidBody"))
 		{
 			Vector2 pendingForces = Vector2(0, 0);

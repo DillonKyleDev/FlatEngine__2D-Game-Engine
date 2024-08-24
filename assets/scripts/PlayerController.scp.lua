@@ -21,17 +21,42 @@ end
 function Start() 
      LogString("PlayerController : Start() called on "..this_object:GetName()) 
      mappingContext = GetMappingContext("MC_CharacterContext")
+     characterController = this_object:GetCharacterController()
      rigidBody = this_object:GetRigidBody()
+     i_maxJumps = 3
+     i_totalJumps = 0
 end 
 
 --called once per gameloop frame 
 function Update() 
     if mappingContext:Fired("IA_Jump") then
+        pendingXForces = rigidBody:GetPendingForces():x()
+        rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0));   
         rigidBody:AddForce(Vector2:new(0, 1), 20);
-        LogString("Jumped")
-        --rigidBody:SetTorquesAllowed(false)
-        --rigidBody:AddTorque(-10, 1)
-
     end
+
+    b_hasLanded = false
+    b_movingLeft = false
+    b_movingRight = false
+
+    moveDirection = Vector2:new(0,0)
+
+    if mappingContext:ActionPressed("IA_MoveRight") then
+        b_movingRight = true
+        moveDirection = Vector2:new(1,0)
+        characterController:MoveToward(Vector2:new(1, 0))
+    end
+    if mappingContext:ActionPressed("IA_MoveLeft") then
+        b_movingLeft = true
+        moveDirection = Vector2:new(-1,0)
+    end
+
+    if b_movingLeft and b_movingRight then
+        moveDirection = Vector2:new(0,0)
+        LogString("Both")
+    end
+
+    LogFloat(moveDirection:x(), "Move X: ")
+    characterController:MoveToward(moveDirection)
 end 
 
