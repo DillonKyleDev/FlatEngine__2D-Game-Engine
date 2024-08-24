@@ -242,6 +242,7 @@ namespace FlatEngine
 			{
 				collider1->AddCollidingObject(collider2);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
+				CallLuaOnActiveCollision(collider1->GetParent(), collider2->GetParent());
 				if (collider1->OnActiveCollisionSet())
 					collider1->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
 			}
@@ -257,6 +258,7 @@ namespace FlatEngine
 			{
 				collider2->AddCollidingObject(collider1);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
+				CallLuaOnActiveCollision(collider2->GetParent(), collider1->GetParent());
 				if (collider2->OnActiveCollisionSet())
 					collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
 			}
@@ -1049,6 +1051,7 @@ namespace FlatEngine
 		}
 
 		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to m_collidingObjects for the first time)
+		CallLuaOnCollisionEnter(GetParent(), collidedWith->GetParent());
 		if (OnCollisionEnterSet())
 			OnCollisionEnter(GetParent(), collidedWith->GetParent());
 	}
@@ -1060,12 +1063,6 @@ namespace FlatEngine
 
 	void Collider::ClearCollidingObjects()
 	{
-		
-		std::string colliderName = GetParent()->GetName();
-		if (colliderName == "WhipArm")
-		{
-			float test = 1;
-		}
 		// Check which objects have left collision state since last frame
 		for (GameObject *collidedLastFrame : collidingLastFrame)
 		{		
@@ -1078,8 +1075,11 @@ namespace FlatEngine
 			// Fire OnLeave if not colliding
 			if (!_objectStillColliding)
 				for (BoxCollider* boxCollider : collidedLastFrame->GetBoxColliders())
+				{
+					CallLuaOnCollisionLeave(GetParent(), boxCollider->GetParent());
 					if (boxCollider->OnCollisionLeaveSet())
-						OnCollisionLeave(GetParent(), GetParent());
+						OnCollisionLeave(GetParent(), boxCollider->GetParent());
+				}
 		}
 
 		// Save colliding objects for next frame

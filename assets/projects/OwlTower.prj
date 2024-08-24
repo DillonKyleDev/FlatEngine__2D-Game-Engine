@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": true,
+            "_clearLogBuffer": false,
             "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,
@@ -12,7 +12,7 @@
             "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": false,
-            "_showProfiler": true,
+            "_showProfiler": false,
             "_showSceneView": true,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",

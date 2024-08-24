@@ -19,12 +19,14 @@ end
 
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
-     LogString("PlayerController : Start() called on "..this_object:GetName()) 
+     LogString("Start() called on "..this_object:GetName()) 
      mappingContext = GetMappingContext("MC_CharacterContext")
      characterController = this_object:GetCharacterController()
      rigidBody = this_object:GetRigidBody()
      i_maxJumps = 3
      i_totalJumps = 0
+     LogInt(3, "Here is an int: ");
+     LogString("Here is a string.");
 end 
 
 --called once per gameloop frame 
@@ -53,10 +55,21 @@ function Update()
 
     if b_movingLeft and b_movingRight then
         moveDirection = Vector2:new(0,0)
-        LogString("Both")
+        
     end
-
-    LogFloat(moveDirection:x(), "Move X: ")
+    
     characterController:MoveToward(moveDirection)
 end 
 
+function OnActiveCollision(collidedWith)
+   -- LogString("OnActiveCollision called!")
+end
+
+function OnCollisionEnter(collidedWith)
+    collidedName = collidedWith:GetName()
+    LogString("Collision started with: " .. collidedName)
+end
+
+function OnCollisionLeave(collidedWith)
+    LogString("Collision ended with: " .. collidedWith:GetName())
+end

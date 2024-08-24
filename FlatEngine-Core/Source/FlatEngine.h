@@ -149,6 +149,11 @@ namespace FlatEngine
 	extern void RunAwakeAndStart();	
 	extern void RetrieveLuaScriptPaths();
 	extern bool CheckLuaScriptFile(std::string filePath);
+	extern 	bool InitLuaScript(std::string filePath, GameObject* caller);
+	// Collision Events Passed to Lua
+	extern void CallLuaOnCollisionEnter(GameObject* caller, GameObject* collidedWith);
+	extern void CallLuaOnCollisionLeave(GameObject* caller, GameObject* collidedWith);
+	extern void CallLuaOnActiveCollision(GameObject* caller, GameObject* collidedWith);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);

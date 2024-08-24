@@ -40,19 +40,23 @@ namespace FlatEngine
 	{
 		F_Lua["LogString"] = [](std::string line)
 		{
-			LogString(line, "[LUA]");
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogString(line, prefix);
 		};
 		F_Lua["LogInt"] = [](int value, std::string line)
 		{
-			LogInt(value, line, "[LUA]");
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogInt(value, line, prefix);
 		};
 		F_Lua["LogFloat"] = [](float value, std::string line)
 		{
-			LogFloat(value, line, "[LUA]");
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogFloat(value, line, prefix);
 		};
 		F_Lua["LogVector2"] = [](float xValue, float yValue, std::string line)
 		{
-			LogVector2(Vector2(xValue, yValue), line, "[LUA]");
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogVector2(Vector2(xValue, yValue), line, prefix);
 		};
 		F_Lua["GetMappingContext"] = [](std::string contextName)
 		{
@@ -109,6 +113,7 @@ namespace FlatEngine
 		);
 
 		F_Lua.new_usertype<Transform>("Transform",
+			"GetParent", &Transform::GetParent,
 			"GetID", &Transform::GetID,
 			"SetPosition", &Transform::SetPosition,
 			"GetPosition", &Transform::GetPosition,
@@ -157,6 +162,10 @@ namespace FlatEngine
 			"GetTerminalVelocity", &RigidBody::GetTerminalVelocity
 		);
 
+		F_Lua.new_usertype<Collider>("Collider",
+			"GetParent", &Collider::GetParent
+		);
+
 		F_Lua.new_usertype<CharacterController>("CharacterController",
 			"MoveToward", &CharacterController::MoveToward
 		);
@@ -183,10 +192,9 @@ namespace FlatEngine
 
 					if (DoesFileExist(filepath))
 					{
-						if (CheckLuaScriptFile(filepath))
+						GameObject* caller = GetObjectById(object.first);
+						if (InitLuaScript(filepath, caller))
 						{
-							F_Lua["this_object"] = &(*GetObjectById(object.first)); // Store this object inside the Lua state to be accessed by the next Lua function calls
-
 							sol::protected_function func = F_Lua[functionName];
 							auto calledFunction = func();
 
@@ -287,6 +295,94 @@ namespace FlatEngine
 			LogString("ERROR : Lua script failed to load");
 			LogString(err.what());
 			return false;
+		}
+	}
+
+	// Checks that the script filepath is good and sends the Lua state contextual data
+	bool InitLuaScript(std::string filePath, GameObject* caller)
+	{
+		if (CheckLuaScriptFile(filePath))
+		{
+			// Store this object inside the Lua state to be accessed by the next Lua function calls
+			F_Lua["this_object"] = caller;
+			// Store the name of the script being called in the Lua state (for hands-off named logging from Lua)
+			F_Lua["calling_script_name"] = GetFilenameFromPath(filePath);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	template <class T>
+	void CallVoidLuaFunction(std::string functionName, T param)
+	{
+		sol::protected_function protectedFunc = F_Lua[functionName];
+		if (protectedFunc)
+		{
+			auto result = protectedFunc(param);
+			if (!result.valid())
+			{
+				sol::error err = result;
+				LogString("ERROR : Something went wrong in Lua function: " + functionName + "()");
+				LogString(err.what());
+			}
+		}
+	}
+
+	void CallLuaOnCollisionEnter(GameObject* caller, GameObject* collidedWith)
+	{
+		if (caller->HasComponent("Script"))
+		{
+			for (Script* script : caller->GetScripts())
+			{
+				if (script->IsActive())
+				{
+					if (F_LuaScriptsMap.count(script->GetAttachedScript()) > 0)
+					{
+						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
+						if (InitLuaScript(filePath, caller))
+							CallVoidLuaFunction<GameObject*>("OnCollisionEnter", collidedWith);
+					}
+				}
+			}
+		}
+	}
+
+	void CallLuaOnCollisionLeave(GameObject* caller, GameObject* collidedWith)
+	{
+		if (caller->HasComponent("Script"))
+		{
+			for (Script* script : caller->GetScripts())
+			{
+				if (script->IsActive())
+				{
+					if (F_LuaScriptsMap.count(script->GetAttachedScript()) > 0)
+					{
+						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
+						if (InitLuaScript(filePath, caller))
+							CallVoidLuaFunction<GameObject*>("OnCollisionLeave", collidedWith);
+					}
+				}
+			}
+		}
+	}
+
+	void CallLuaOnActiveCollision(GameObject* caller, GameObject* collidedWith)
+	{
+		if (caller->HasComponent("Script"))
+		{
+			for (Script* script : caller->GetScripts())
+			{
+				if (script->IsActive())
+				{
+					if (F_LuaScriptsMap.count(script->GetAttachedScript()) > 0)
+					{
+						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
+						if (InitLuaScript(filePath, caller))
+							CallVoidLuaFunction<GameObject*>("OnActiveCollision", collidedWith);
+					}
+				}
+			}
 		}
 	}
 }
