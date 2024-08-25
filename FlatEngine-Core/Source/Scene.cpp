@@ -19,6 +19,7 @@
 #include "CharacterController.h"
 #include "GameLoop.h"
 #include "ECSManager.h"
+#include "TileMap.h"
 
 namespace FlatEngine
 {
@@ -407,6 +408,12 @@ namespace FlatEngine
 		return m_ECSManager.AddCharacterController(characterController, ownerID);
 	}
 
+	TileMap* Scene::AddTileMap(TileMap tileMap, long ownerID)
+	{
+		KeepNextComponentIDUpToDate(tileMap.GetID());
+		return m_ECSManager.AddTileMap(tileMap, ownerID);
+	}
+
 	void Scene::RemoveComponent(Component* component, long ownerID)
 	{
 		long id = component->GetID();
@@ -484,6 +491,11 @@ namespace FlatEngine
 		return m_ECSManager.GetCharacterControllerByOwner(ownerID);
 	}
 
+	TileMap* Scene::GetTileMapByOwner(long ownerID)
+	{
+		return m_ECSManager.GetTileMapByOwner(ownerID);
+	}
+
 	std::map<long, Transform> &Scene::GetTransforms()
 	{
 		return m_ECSManager.GetTransforms();
@@ -547,5 +559,9 @@ namespace FlatEngine
 	std::map<long, CharacterController>& Scene::GetCharacterControllers()
 	{
 		return m_ECSManager.GetCharacterControllers();
+	}
+	std::map<long, TileMap>& Scene::GetTileMaps()
+	{
+		return m_ECSManager.GetTileMaps();
 	}
 }

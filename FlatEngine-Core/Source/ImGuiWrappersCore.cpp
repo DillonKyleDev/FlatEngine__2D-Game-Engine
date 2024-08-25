@@ -813,7 +813,7 @@ namespace FlatEngine
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 	}
 
-	// Returns true if a valid input was retrieved
+	// Returns true if a valid input was retrieved. ***Remember to use static std::strings for inputValue***
 	bool RenderInputModal(std::string label, std::string description, std::string &inputValue, bool &b_openModal)
 	{		
 		if (b_openModal)

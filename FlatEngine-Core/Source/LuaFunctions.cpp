@@ -1,3 +1,4 @@
+#pragma once
 #include "FlatEngine.h"
 #include "Vector2.h"
 #include "GameObject.h"
@@ -329,7 +330,7 @@ namespace FlatEngine
 		}
 	}
 
-	void CallLuaOnCollisionEnter(GameObject* caller, GameObject* collidedWith)
+	void CallLuaOnCollisionEnter(GameObject* caller, Collider* collidedWith)
 	{
 		if (caller->HasComponent("Script"))
 		{
@@ -341,14 +342,14 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
-							CallVoidLuaFunction<GameObject*>("OnCollisionEnter", collidedWith);
+							CallVoidLuaFunction<Collider*>("OnCollisionEnter", collidedWith);
 					}
 				}
 			}
 		}
 	}
 
-	void CallLuaOnCollisionLeave(GameObject* caller, GameObject* collidedWith)
+	void CallLuaOnCollisionLeave(GameObject* caller, Collider* collidedWith)
 	{
 		if (caller->HasComponent("Script"))
 		{
@@ -360,14 +361,14 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
-							CallVoidLuaFunction<GameObject*>("OnCollisionLeave", collidedWith);
+							CallVoidLuaFunction<Collider*>("OnCollisionLeave", collidedWith);
 					}
 				}
 			}
 		}
 	}
 
-	void CallLuaOnActiveCollision(GameObject* caller, GameObject* collidedWith)
+	void CallLuaOnActiveCollision(GameObject* caller, Collider* collidedWith)
 	{
 		if (caller->HasComponent("Script"))
 		{
@@ -379,7 +380,7 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
-							CallVoidLuaFunction<GameObject*>("OnActiveCollision", collidedWith);
+							CallVoidLuaFunction<Collider*>("OnActiveCollision", collidedWith);
 					}
 				}
 			}

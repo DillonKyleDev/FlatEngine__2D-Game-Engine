@@ -199,6 +199,7 @@ namespace FlatGui
 	void RunOnceAfterInitialization()
 	{
 		FL::InitializeMappingContexts();
+		FL::InitializeTileSets();
 
 		FL::prefabManager->InitializePrefabs();
 
@@ -520,6 +521,8 @@ namespace FlatGui
 			ImGui::ShowDemoWindow(&_showDemoWindow);
 		
 		//RenderScriptEditor();
+
+		RenderTileSetEditor();
 
 		RenderFileExplorer();
 

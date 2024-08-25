@@ -1,0 +1,10 @@
+{
+    "tileSet": {
+        "name": "GroundTiles",
+        "texturePath": "..Dillon Kyle\\source\\repos\\FlatEngine\\assets\\images\\colors\\cave.png",
+        "tileHeight": 16,
+        "tileSetPath": "../assets/tileSets//GroundTiles.tls",
+        "tileWidth": 16
+    },
+    "tiles": []
+}

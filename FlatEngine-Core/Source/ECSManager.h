@@ -24,6 +24,7 @@ namespace FlatEngine
 	class RigidBody;
 	class CompositeCollider;
 	class CharacterController;
+	class TileMap;
 
 	class ECSManager
 	{
@@ -45,6 +46,7 @@ namespace FlatEngine
 		Button* AddButton(Button button, long ownerID);		
 		RigidBody* AddRigidBody(RigidBody rigidBody, long ownerID);
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);	
+		TileMap* AddTileMap(TileMap tileMap, long ownerID);
 
 		bool RemoveComponent(Component* component, long ownerID);
 		bool RemoveTransform(long ownerID);
@@ -61,6 +63,7 @@ namespace FlatEngine
 		bool RemoveButton(long ownerID);
 		bool RemoveRigidBody(long ownerID);
 		bool RemoveCharacterController(long ownerID);
+		bool RemoveTileMap(long ownerID);
 
 		Transform* GetTransformByOwner(long ownerID);
 		Sprite* GetSpriteByOwner(long ownerID);
@@ -76,6 +79,7 @@ namespace FlatEngine
 		Button* GetButtonByOwner(long ownerID);
 		RigidBody* GetRigidBodyByOwner(long ownerID);
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
+		TileMap* GetTileMapByOwner(long ownerID);
 
 		void CollectPhysicsBodies();
 		void UpdateColliderPairs();
@@ -97,6 +101,7 @@ namespace FlatEngine
 		std::map<long, std::map<long, CircleCollider>>& GetCircleColliders();
 		std::map<long, RigidBody>& GetRigidBodies();
 		std::map<long, CharacterController>& GetCharacterControllers();
+		std::map<long, TileMap>& GetTileMaps();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 
 	private:
@@ -115,6 +120,7 @@ namespace FlatEngine
 		std::map<long, std::map<long, CircleCollider>> m_CircleColliders;
 		std::map<long, RigidBody> m_RigidBodies;
 		std::map<long, CharacterController> m_CharacterControllers;
+		std::map<long, TileMap> m_TileMaps;
 
 		std::vector<std::pair<Collider*, Collider*>> m_ColliderPairs;
 	};

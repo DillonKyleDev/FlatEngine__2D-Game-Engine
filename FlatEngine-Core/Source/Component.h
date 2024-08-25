@@ -31,6 +31,7 @@ namespace FlatEngine
 			T_CompositeCollider,
 			T_RigidBody,
 			T_CharacterController,
+			T_TileMap,
 		};
 
 		Component();

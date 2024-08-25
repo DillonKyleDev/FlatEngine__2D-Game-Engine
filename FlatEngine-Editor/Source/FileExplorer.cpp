@@ -392,6 +392,8 @@ namespace FlatGui
 			icon = "sceneFile";
 		else if (extension == ".prj")
 			icon = "projectFile";
+		else if (extension == ".tls")
+			icon = "tileSetFile";
 		else
 			icon = "unmarkedFile";
 	
@@ -531,7 +533,7 @@ namespace FlatGui
 		{
 			// Just saves the number of files selected and passes it to the drop source to query F_SelectedFiles
 			int numSelectedFiles = (int)FL::F_selectedFiles.size();
-			ImGui::SetDragDropPayload("FILE_PATH_DRAGGED", &numSelectedFiles, sizeof(int));
+			ImGui::SetDragDropPayload(FL::F_fileExplorerTarget.c_str(), &numSelectedFiles, sizeof(int));
 			ImGui::Text("Use this file");
 			ImGui::EndDragDropSource();
 		}
@@ -578,6 +580,11 @@ namespace FlatGui
 		else if (extension == ".prj")
 		{
 			OpenProject(fs_filepath.string());
+		}
+		// Project file
+		else if (extension == ".tls")
+		{
+			FL::F_selectedTileSetToEdit = FL::GetFilenameFromPath(fs_filepath.string());
 		}
 	}
 }

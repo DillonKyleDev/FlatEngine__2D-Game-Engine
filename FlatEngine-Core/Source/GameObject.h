@@ -21,6 +21,7 @@ namespace FlatEngine
 	class BoxCollider;
 	class CircleCollider;
 	class CompositeCollider;
+	class TileMap;
 
 	using ComponentTypes = Component::ComponentTypes;
 
@@ -69,6 +70,7 @@ namespace FlatEngine
 		CompositeCollider* AddCompositeColliderComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		RigidBody* AddRigidBodyComponent(long id = -1, bool _active = true, bool _collapsed = false);
 		CharacterController* AddCharacterControllerComponent(long id = -1, bool _active = true, bool _collapsed = false);
+		TileMap* AddTileMap(long id = -1, bool _active = true, bool _collapsed = false);
 
 		Component* GetComponent(ComponentTypes type);
 		bool HasComponent(ComponentTypes type);
@@ -86,7 +88,8 @@ namespace FlatEngine
 		RigidBody* GetRigidBody();
 		std::vector<BoxCollider*> GetBoxColliders();		
 		std::vector<CircleCollider*> GetCircleColliders();
-		CompositeCollider* GetCompositeCollider();		
+		CompositeCollider* GetCompositeCollider();	
+		TileMap* GetTileMap();
 		std::vector<Component*> GetComponents();		
 
 		void SetParentID(long parentID);

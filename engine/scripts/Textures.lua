@@ -23,6 +23,7 @@ F_Textures = {
 	animFile = "../engine/images/fileTypes/animFile.png",
 	audioFile = "../engine/images/fileTypes/audioFile.png",
 	unmarkedFile = "../engine/images/fileTypes/file.png",
+	tileSetFile = "../engine/images/fileTypes/tileSetFile.png",
 	-- Scene View
 	transformArrow = "../engine/images/widgets/transformArrow.png",
 	transformArrowAllWhite = "../engine/images/widgets/transformArrowAllWhite.png",

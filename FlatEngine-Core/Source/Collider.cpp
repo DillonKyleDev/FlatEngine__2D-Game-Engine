@@ -12,6 +12,7 @@
 
 using BoxCollider = FlatEngine::BoxCollider;
 using CircleCollider = FlatEngine::CircleCollider;
+using GameObject = FlatEngine::GameObject;
 
 namespace FlatEngine
 {
@@ -242,7 +243,7 @@ namespace FlatEngine
 			{
 				collider1->AddCollidingObject(collider2);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
-				CallLuaOnActiveCollision(collider1->GetParent(), collider2->GetParent());
+				CallLuaOnActiveCollision(collider1->GetParent(), collider2);
 				if (collider1->OnActiveCollisionSet())
 					collider1->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
 			}
@@ -258,7 +259,7 @@ namespace FlatEngine
 			{
 				collider2->AddCollidingObject(collider1);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
-				CallLuaOnActiveCollision(collider2->GetParent(), collider1->GetParent());
+				CallLuaOnActiveCollision(collider2->GetParent(), collider1);
 				if (collider2->OnActiveCollisionSet())
 					collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
 			}
@@ -1051,7 +1052,7 @@ namespace FlatEngine
 		}
 
 		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to m_collidingObjects for the first time)
-		CallLuaOnCollisionEnter(GetParent(), collidedWith->GetParent());
+		CallLuaOnCollisionEnter(GetParent(), collidedWith);
 		if (OnCollisionEnterSet())
 			OnCollisionEnter(GetParent(), collidedWith->GetParent());
 	}
@@ -1076,7 +1077,7 @@ namespace FlatEngine
 			if (!_objectStillColliding)
 				for (BoxCollider* boxCollider : collidedLastFrame->GetBoxColliders())
 				{
-					CallLuaOnCollisionLeave(GetParent(), boxCollider->GetParent());
+					CallLuaOnCollisionLeave(GetParent(), boxCollider);
 					if (boxCollider->OnCollisionLeaveSet())
 						OnCollisionLeave(GetParent(), boxCollider->GetParent());
 				}

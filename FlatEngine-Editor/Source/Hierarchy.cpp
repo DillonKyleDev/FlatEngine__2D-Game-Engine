@@ -240,7 +240,7 @@ namespace FlatGui
 		ImGui::InvisibleButton(id.c_str(), size);
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_HIERARCHY_OBJECT"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_hierarchyTarget.c_str()))
 			{
 				IM_ASSERT(payload->DataSize == sizeof(int));
 				int ID = *(const int*)payload->Data;
@@ -395,13 +395,13 @@ namespace FlatGui
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoHoldToOpenOthers))
 		{
 			int ID = currentObject.GetID();
-			ImGui::SetDragDropPayload("DND_HIERARCHY_OBJECT", &ID, sizeof(int));
+			ImGui::SetDragDropPayload(FL::F_hierarchyTarget.c_str(), &ID, sizeof(int));
 			ImGui::Text("Set Parent");
 			ImGui::EndDragDropSource();
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_HIERARCHY_OBJECT"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_hierarchyTarget.c_str()))
 			{
 				IM_ASSERT(payload->DataSize == sizeof(int));
 				int ID = *(const int*)payload->Data;

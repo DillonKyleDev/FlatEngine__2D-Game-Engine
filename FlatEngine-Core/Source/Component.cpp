@@ -116,6 +116,10 @@ namespace FlatEngine
 			return "CharacterController";
 			break;
 
+		case ComponentTypes::T_TileMap:
+			return "TileMap";
+			break;
+
 		default:
 			return "Null";
 		}

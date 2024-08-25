@@ -15,6 +15,7 @@
 #include "CircleCollider.h"
 #include "RigidBody.h"
 #include "Component.h"
+#include "TileMap.h"
 
 namespace FL = FlatEngine;
 
@@ -153,6 +154,15 @@ namespace FlatGui
 					ImGui::CloseCurrentPopup();
 				}
 
+				if (!focusedObject->HasComponent("TileMap"))
+				{
+					if (ImGui::MenuItem("TileMap"))
+					{
+						focusedObject->AddTileMap();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
 				FL::PopMenuStyles();
 			};
 
@@ -258,6 +268,8 @@ namespace FlatGui
 						RenderTransformComponent(transform);
 					EndComponent(transform);
 				}
+
+
 
 				// Sprite
 				Sprite* sprite = FL::GetLoadedScene()->GetSpriteByOwner(focusedObjectID);
@@ -377,6 +389,16 @@ namespace FlatGui
 					if (!rigidBody->IsCollapsed())
 						RenderRigidBodyComponent(rigidBody);
 					EndComponent(rigidBody);
+				}
+
+				// TileMap
+				TileMap* tileMap = focusedObject->GetTileMap();
+				if (tileMap != nullptr)
+				{
+					BeginComponent(tileMap, queuedForDelete);
+					if (!tileMap->IsCollapsed())
+						RenderTileMapComponent(tileMap);
+					EndComponent(tileMap);
 				}
 
 				if (queuedForDelete != -1)

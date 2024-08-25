@@ -1,5 +1,6 @@
 #pragma once
 #include "ECSManager.h"
+#include "TileMap.h"
 #include <vector>
 #include <map>
 #include <string>
@@ -26,7 +27,7 @@ namespace FlatEngine
 	class Button;
 	class RigidBody;
 	class CompositeCollider;
-	class CharacterController;
+	class CharacterController;	
 
 	class Scene
 	{
@@ -67,7 +68,6 @@ namespace FlatEngine
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
 		Script* AddScript(Script script, long ownerID);
-		GameScript* AddScript(GameObject owner, Script scriptComponent, GameScript scriptInstance);
 		Canvas* AddCanvas(Canvas canvas, long ownerID);
 		Audio* AddAudio(Audio audio, long ownerID);
 		Text* AddText(Text text, long ownerID);
@@ -78,6 +78,7 @@ namespace FlatEngine
 		Button* AddButton(Button button, long ownerID);
 		RigidBody* AddRigidBody(RigidBody rigidBody, long ownerID);
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);
+		TileMap* AddTileMap(TileMap tileMap, long ownerID);
 
 		void RemoveComponent(Component* component, long ownerID);
 
@@ -95,6 +96,7 @@ namespace FlatEngine
 		Button* GetButtonByOwner(long ownerID);
 		RigidBody* GetRigidBodyByOwner(long ownerID);
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
+		TileMap* GetTileMapByOwner(long ownerID);
 
 		std::map<long, Transform> &GetTransforms();
 		std::map<long, Sprite>& GetSprites();
@@ -112,6 +114,7 @@ namespace FlatEngine
 		std::map<long, std::map<long, CircleCollider>>& GetCircleColliders();
 		std::map<long, RigidBody>& GetRigidBodies();
 		std::map<long, CharacterController>& GetCharacterControllers();
+		std::map<long, TileMap>& GetTileMaps();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 
 	private:

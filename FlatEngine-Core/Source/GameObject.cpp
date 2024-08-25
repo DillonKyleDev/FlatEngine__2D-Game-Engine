@@ -20,6 +20,7 @@
 #include "CompositeCollider.h"
 #include "ECSManager.h"
 #include "Scene.h"
+#include "TileMap.h"
 
 
 namespace FlatEngine
@@ -503,6 +504,20 @@ namespace FlatEngine
 		return characterControllerPtr;
 	}
 
+	TileMap* GameObject::AddTileMap(long id, bool _active, bool _collapsed)
+	{
+		long nextID = id;
+		if (nextID == -1)
+			nextID = GetLoadedScene()->GetNextComponentID();
+		TileMap tileMap = TileMap(nextID, ID);
+		tileMap.SetActive(_active);
+		tileMap.SetCollapsed(_collapsed);
+
+		TileMap* tileMapPtr = GetLoadedScene()->AddTileMap(tileMap, ID);
+		components.push_back(tileMapPtr);
+		return tileMapPtr;
+	}
+
 
 	Component* GameObject::GetComponent(Component::ComponentTypes type)
 	{
@@ -587,6 +602,10 @@ namespace FlatEngine
 	CompositeCollider* GameObject::GetCompositeCollider()
 	{
 		return GetLoadedScene()->GetCompositeColliderByOwner(ID);
+	}
+	TileMap* GameObject::GetTileMap()
+	{
+		return GetLoadedScene()->GetTileMapByOwner(ID);
 	}
 
 	std::vector<Component*> GameObject::GetComponents()

@@ -66,10 +66,10 @@ function OnActiveCollision(collidedWith)
 end
 
 function OnCollisionEnter(collidedWith)
-    collidedName = collidedWith:GetName()
+    collidedName = collidedWith:GetParent():GetName()
     LogString("Collision started with: " .. collidedName)
 end
 
 function OnCollisionLeave(collidedWith)
-    LogString("Collision ended with: " .. collidedWith:GetName())
+    LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
 end

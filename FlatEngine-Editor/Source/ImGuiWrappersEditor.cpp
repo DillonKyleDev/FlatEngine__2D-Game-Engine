@@ -19,6 +19,7 @@
 #include "CircleCollider.h"
 #include "RigidBody.h"
 #include "Project.h"
+#include "TileMap.h"
 
 namespace FL = FlatEngine;
 
@@ -781,6 +782,11 @@ namespace FlatGui
 		rigidBody->SetIsStatic(_isStatic);
 		FL::RenderCheckbox(" Allow Torques", _allowTorques);
 		rigidBody->SetTorquesAllowed(_allowTorques);
+	}
+
+	void RenderTileMapComponent(TileMap* tileMap)
+	{
+
 	}
 
 	void BeginToolTip(std::string title)

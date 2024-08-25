@@ -165,6 +165,7 @@
     <ClCompile Include="Source\SceneView.cpp" />
     <ClCompile Include="Source\ScriptEditor.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
+    <ClCompile Include="Source\TileSetEditor.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />
     <ClCompile Include="Source\WidgetsManager.cpp" />
   </ItemGroup>

@@ -61,6 +61,10 @@ namespace FlatEngine
 					std::string sValue = value.as<std::string>(); // cast key as a string
 
 					m_directories.emplace(sKey, sValue);
+
+					// Create the directory if it doesn't yet exist
+					if (!DoesFileExist(sValue))
+						std::filesystem::create_directories(sValue);
 				}
 			}
 

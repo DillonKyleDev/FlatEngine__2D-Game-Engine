@@ -41,43 +41,46 @@ namespace FlatEngine
 	{
 		m_path = path;
 
-		//Remove existing texture
-		FreeTexture();
-
-		//The final texture
-		SDL_Texture* newTexture = NULL;
-
-		//Load image at specified path
-		SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-		if (loadedSurface == NULL)
+		if (path != "")
 		{
-			printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-		}
-		else
-		{
-			//Color key image **Whatever color you put in here it will treat as transparent**
-			SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 0));
+			//Remove existing texture
+			FreeTexture();
 
-			//Create texture from surface pixels
-			newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), loadedSurface);
-			if (newTexture == NULL)
+			//The final texture
+			SDL_Texture* newTexture = NULL;
+
+			//Load image at specified path
+			SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+			if (loadedSurface == NULL)
 			{
-				printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+				printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
 			}
 			else
 			{
-				//Set image dimensions
-				m_textureWidth = loadedSurface->w;
-				m_textureHeight = loadedSurface->h;
+				//Color key image **Whatever color you put in here it will treat as transparent**
+				SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 0));
+
+				//Create texture from surface pixels
+				newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), loadedSurface);
+				if (newTexture == NULL)
+				{
+					printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+				}
+				else
+				{
+					//Set image dimensions
+					m_textureWidth = loadedSurface->w;
+					m_textureHeight = loadedSurface->h;
+				}
+
+				//Get rid of old loaded surface
+				SDL_FreeSurface(loadedSurface);
 			}
 
-			//Get rid of old loaded surface
-			SDL_FreeSurface(loadedSurface);
+			//Return success
+			m_texture = newTexture;
+			return m_texture != NULL;
 		}
-
-		//Return success
-		m_texture = newTexture;
-		return m_texture != NULL;
 	}
 
 	bool Texture::LoadSurface(std::string path, SDL_Surface* screenSurface)

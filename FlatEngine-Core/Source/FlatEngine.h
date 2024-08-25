@@ -54,6 +54,7 @@ namespace FlatEngine
 	class CharacterController;
 	class UIManager;
 	class ECSManager;
+	class TileSet;
 
 	namespace FlatGui {
 		class WidgetsManager;
@@ -80,11 +81,17 @@ namespace FlatEngine
 	extern std::vector<MappingContext> F_MappingContexts;
 	extern std::shared_ptr<PrefabManager> prefabManager;
 	extern std::string F_selectedMappingContextName;
+	extern std::vector<TileSet> F_TileSets;
+	extern std::string F_selectedTileSetToEdit;
 
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
 	extern bool b_directoriesFilepathSelected;
+
+	// Drag/Drop IDs
+	extern std::string F_fileExplorerTarget;
+	extern std::string F_hierarchyTarget;
 
 	// Flags
 	extern ImGuiChildFlags F_childFlags;
@@ -151,9 +158,9 @@ namespace FlatEngine
 	extern bool CheckLuaScriptFile(std::string filePath);
 	extern 	bool InitLuaScript(std::string filePath, GameObject* caller);
 	// Collision Events Passed to Lua
-	extern void CallLuaOnCollisionEnter(GameObject* caller, GameObject* collidedWith);
-	extern void CallLuaOnCollisionLeave(GameObject* caller, GameObject* collidedWith);
-	extern void CallLuaOnActiveCollision(GameObject* caller, GameObject* collidedWith);
+	extern void CallLuaOnCollisionEnter(GameObject* caller, Collider* collidedWith);
+	extern void CallLuaOnCollisionLeave(GameObject* caller, Collider* collidedWith);
+	extern void CallLuaOnActiveCollision(GameObject* caller, Collider* collidedWith);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -174,7 +181,7 @@ namespace FlatEngine
 	// Scene Management
 	extern Scene* GetLoadedScene();
 	extern Scene* CreateNewScene();
-	extern void SaveScene(std::shared_ptr<Scene> scene, std::string filepath);
+	extern void SaveScene(Scene* scene, std::string filepath);
 	extern void SaveCurrentScene();
 	extern void LoadScene(std::string filepath);
 	std::string GetLoadedScenePath();
@@ -190,7 +197,7 @@ namespace FlatEngine
 	extern long GetNextGameObjectID();
 
 	// SDL
-	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)));
+	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1,1));
 
 	// Engine
 	extern bool Init(int windowWidth, int windowHeight, DirectoryType dirType);
@@ -239,6 +246,23 @@ namespace FlatEngine
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
 	extern float GetDeltaTime();
+
+	// File Explorer
+	extern void CreateNewLuaScript(std::string filename, std::string path = "");
+	extern void CreateNewSceneFile(std::string filename, std::string path = "");
+	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
+	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
+	extern void CreateNewTileSetFile(std::string fileName, std::string path);
+	extern GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position);
+
+	// Animation Manager
+	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
+	extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
+
+	// TileSet / TileMap Management
+	extern void SaveTileSet(TileSet tileSet);
+	extern void InitializeTileSets();
+	extern TileSet* GetTileSet(std::string tileSetName);
 
 	//////////////////////
 	// Helper Functions //
@@ -321,15 +345,4 @@ namespace FlatEngine
 	extern json LoadFileData(std::string filepath);
 	extern void DeleteFileUsingPath(std::string filepath);
 	extern std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension);
-
-	// File Explorer
-	extern void CreateNewLuaScript(std::string filename, std::string path = "");
-	extern void CreateNewSceneFile(std::string filename, std::string path = "");
-	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
-	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
-	extern GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position);
-
-	// Animation Manager
-	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
-	extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
 };

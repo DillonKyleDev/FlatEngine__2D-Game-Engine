@@ -38,7 +38,7 @@
                 {
                     "_allowTorques": true,
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isStatic": false,
                     "angularDrag": 0.9990000128746033,
                     "equilibriumForce": 2.0,
@@ -60,7 +60,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "_isComposite": false,
                     "_isContinuous": true,
                     "_isSolid": true,
@@ -76,7 +76,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "airControl": 0.20000000298023224,
                     "id": 11,
                     "maxAcceleration": 0.6600000262260437,

@@ -16,6 +16,7 @@
 #include "CircleCollider.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include "TileMap.h"
 
 namespace FlatEngine
 {
@@ -172,6 +173,12 @@ namespace FlatEngine
 		return &m_CharacterControllers.at(ownerID);
 	}
 
+	TileMap* ECSManager::AddTileMap(TileMap tileMap, long ownerID)
+	{
+		m_TileMaps.emplace(ownerID, tileMap);
+		return &m_TileMaps.at(ownerID);
+	}
+
 	// Get Components
 	Transform* ECSManager::GetTransformByOwner(long ownerID)
 	{
@@ -292,6 +299,13 @@ namespace FlatEngine
 		else return nullptr;
 	}
 
+	TileMap* ECSManager::GetTileMapByOwner(long ownerID)
+	{
+		if (m_TileMaps.count(ownerID))
+			return &m_TileMaps.at(ownerID);
+		else return nullptr;
+	}
+
 	// Remove Components
 	bool ECSManager::RemoveComponent(Component *component, long ownerID)
 	{
@@ -342,6 +356,10 @@ namespace FlatEngine
 		else if (component->GetTypeString() == "CharacterController")
 		{
 			return RemoveCharacterController(ownerID);
+		}
+		else if (component->GetTypeString() == "TileMap")
+		{
+			return RemoveTileMap(ownerID);
 		}
 		else
 			return false;
@@ -495,6 +513,17 @@ namespace FlatEngine
 		if (m_CharacterControllers.count(ownerID))
 		{
 			m_CharacterControllers.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
+	}
+
+	bool ECSManager::RemoveTileMap(long ownerID)
+	{
+		bool b_success = false;
+		if (m_TileMaps.count(ownerID))
+		{
+			m_TileMaps.erase(ownerID);
 			b_success = true;
 		}
 		return b_success;
@@ -678,5 +707,9 @@ namespace FlatEngine
 	std::map<long, CharacterController> &ECSManager::GetCharacterControllers()
 	{
 		return m_CharacterControllers;
+	}
+	std::map<long, TileMap>& ECSManager::GetTileMaps()
+	{
+		return m_TileMaps;
 	}
 }

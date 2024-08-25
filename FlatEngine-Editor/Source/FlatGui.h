@@ -43,6 +43,7 @@ namespace FlatEngine
 	class BoxCollider;
 	class CircleCollider;
 	class RigidBody;
+	class TileMap;
 }
 
 using Vector2 = FL::Vector2;
@@ -69,6 +70,7 @@ using CharacterController = FL::CharacterController;
 using BoxCollider = FL::BoxCollider;
 using CircleCollider = FL::CircleCollider;
 using RigidBody = FL::RigidBody;
+using TileMap = FL::TileMap;
 
 using ComponentTypes = FL::Component::ComponentTypes;
 
@@ -180,8 +182,10 @@ namespace FlatGui
 	extern void RenderDirItems();
 	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos);
 	extern void OpenFileContextually(std::filesystem::path fs_filepath);
+	extern void RenderTileSetEditor();
+	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Texture *texture, Vector2 tileSize, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list);
 	extern void RenderScriptEditor();
-	// Component Wrappers
+	// Component Wrappers	
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, long& queuedForDelete);
 	extern void EndComponent(Component* component);
@@ -198,6 +202,7 @@ namespace FlatGui
 	extern void RenderBoxColliderComponent(BoxCollider* boxCollider);
 	extern void RenderCircleColliderComponent(CircleCollider* circleCollider);
 	extern void RenderRigidBodyComponent(RigidBody* rigidBody);
+	extern void RenderTileMapComponent(TileMap* tileMap);
 
 	// SceneView
 	extern void RenderSceneViewTooltip();
