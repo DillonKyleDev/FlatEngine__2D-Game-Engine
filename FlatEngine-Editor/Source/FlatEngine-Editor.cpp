@@ -100,6 +100,9 @@ public:
 		bool& _hasQuit = HasQuit();
 		while (!_hasQuit)
 		{
+			RunOnceAfterInitialization();
+
+
 			Uint32 renderStartTime = 0;
 			static Uint32 frameStart = FL::GetEngineTime();
 
@@ -169,10 +172,6 @@ public:
 			
 
 			EndRender();
-
-
-
-			RunOnceAfterInitialization();
 		}
 	}
 	// For things we only want to execute once after complete initialization
@@ -234,6 +233,7 @@ public:
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
 			FlatGui::OpenProject(m_startupProject);
+			FL::InitializeTileSets();
 		}
 	}
 	void Quit()

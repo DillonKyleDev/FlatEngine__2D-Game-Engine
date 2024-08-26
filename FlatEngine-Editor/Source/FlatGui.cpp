@@ -23,6 +23,7 @@
 #include "Process.h"
 #include <Windows.h>
 #include "ECSManager.h"
+#include "TileMap.h"
 
 #include "imgui.h"
 #include <math.h>
@@ -62,6 +63,7 @@ using BoxCollider = FL::BoxCollider;
 using CircleCollider = FL::CircleCollider;
 using Sound = FL::Sound;
 using ComponentTypes = Component::ComponentTypes;
+using TileMap = FL::TileMap;
 
 namespace FlatGui 
 {
@@ -200,12 +202,7 @@ namespace FlatGui
 	{
 		FL::InitializeMappingContexts();
 		FL::InitializeTileSets();
-
 		FL::prefabManager->InitializePrefabs();
-
-		// Initialize GameLoop handlers (colliders, rigidbodies, scripts)
-		//FL::F_Application->GetGameLoop()->CollectPhysicsBodies();
-
 		SetupProfilerProcesses();
 	}
 
@@ -614,7 +611,7 @@ namespace FlatGui
 
 
 	// General in order to be used with multiple views that render objects (animation preview, scene view, etc)
-	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset)
+	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset, bool b_showAxis)
 	{
 		drawList = ImGui::GetWindowDrawList();
 		drawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
@@ -647,43 +644,47 @@ namespace FlatGui
 		float modY = fmodf(scrolling.y, step.y);
 		float offsetY = (step.y * divY) + modY;
 
-		// Blue, green and pink colors for axis and center
-		Vector4 xColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
-		Vector4 yColor = Vector4(0, 0.82f, 0.14f, 1.0f);
-		Vector4 centerColor = Vector4(1.0f, 0, 0.96f, 1.0f);
-
 		centerPoint = Vector2(offsetX + canvas_p0.x, offsetY + canvas_p0.y);
-		float drawYAxisAt = centerPoint.x;
-		float drawXAxisAt = centerPoint.y;
 
-		// x axis bounds check + color change (lighten) if out of bounds
-		if (centerPoint.x > canvas_p1.x - 1)
+		if (b_showAxis)
 		{
-			drawYAxisAt = canvas_p1.x - 1;
-			yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
-		}
-		else if (centerPoint.x < canvas_p0.x)
-		{
-			drawYAxisAt = canvas_p0.x;
-			yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
-		}
-		// y axis bounds check + color change (lighten) if out of bounds
-		if (centerPoint.y > canvas_p1.y - 1)
-		{
-			drawXAxisAt = canvas_p1.y - 1;
-			xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
-		}
-		else if (centerPoint.y < canvas_p0.y)
-		{
-			drawXAxisAt = canvas_p0.y;
-			xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
-		}
+			// Blue, green and pink colors for axis and center
+			Vector4 xColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
+			Vector4 yColor = Vector4(0, 0.82f, 0.14f, 1.0f);
+			Vector4 centerColor = Vector4(1.0f, 0, 0.96f, 1.0f);
+
+			float drawYAxisAt = centerPoint.x;
+			float drawXAxisAt = centerPoint.y;
+
+			// x axis bounds check + color change (lighten) if out of bounds
+			if (centerPoint.x > canvas_p1.x - 1)
+			{
+				drawYAxisAt = canvas_p1.x - 1;
+				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
+			}
+			else if (centerPoint.x < canvas_p0.x)
+			{
+				drawYAxisAt = canvas_p0.x;
+				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
+			}
+			// y axis bounds check + color change (lighten) if out of bounds
+			if (centerPoint.y > canvas_p1.y - 1)
+			{
+				drawXAxisAt = canvas_p1.y - 1;
+				xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
+			}
+			else if (centerPoint.y < canvas_p0.y)
+			{
+				drawXAxisAt = canvas_p0.y;
+				xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
+			}
 
 
-		// Draw the axis and center point
-		FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
-		FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
-		FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
+			// Draw the axis and center point
+			FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
+			FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
+			FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
+		}
 	}
 
 	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
@@ -717,6 +718,7 @@ namespace FlatGui
 		Text* text = self.GetText();
 		std::vector<BoxCollider*> boxColliders = self.GetBoxColliders();
 		std::vector<CircleCollider*> circleColliders = self.GetCircleColliders();
+		TileMap* tileMap = self.GetTileMap();
 
 
 		// Check if each object has a Transform component
@@ -1048,6 +1050,110 @@ namespace FlatGui
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), draw_list);
 			}
 
+			// Renders TileMap Component
+			if (tileMap != nullptr)
+			{				
+				long id = tileMap->GetID();
+				bool _isActive = tileMap->IsActive();
+				int width = tileMap->GetWidth();										// in tiles
+				int height = tileMap->GetHeight();										// in tiles
+				int tileWidth = tileMap->GetTileWidth();
+				int tileHeight = tileMap->GetTileHeight();
+				int gridWidth = width * tileWidth / (int)FL::F_pixelsPerGridSpace;		// in grid tiles
+				int gridHeight = height * tileHeight / (int)FL::F_pixelsPerGridSpace;	// in grid tiles
+
+				std::vector<std::string> tileSets = tileMap->GetTileSets();				
+
+				// Draw TileMap border
+				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
+				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
+				Vector2 renderStart = Vector2(renderXStart, renderYStart);
+				Vector2 renderEnd = Vector2(renderXStart + ((gridWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((gridHeight * transformScale.y) * FG_sceneViewGridStep.x));
+
+				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				
+				int index = 0;
+				// Draw TileMap indices
+				for (int w = 0; w < width; w++)
+				{
+					for (int h = 0; h < height; h++)
+					{
+						std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
+
+						SDL_Texture* texture = nullptr;
+						Vector2 uvStart;
+						Vector2 uvEnd;
+
+						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);
+						//float hIndex = uvStart.x / tileWidth;
+						float tileHeightInPx = FG_sceneViewGridStep.x * (tileHeight / FL::F_pixelsPerGridSpace);
+						//float vIndex = uvStart.y / tileHeight;
+						Vector2 tileSize = Vector2(tileWidthInPx, tileHeightInPx);
+
+						//                 viewport center		+		         	top left corner in pixel screen space                  +     tile offset
+						float tileStartX = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x) + (w * tileWidthInPx);
+						float tileStartY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x) + (h * tileHeightInPx);
+
+						Vector2 tileStart = Vector2(tileStartX, tileStartY);
+						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
+						
+						AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("white"));
+						const bool is_hovered = ImGui::IsItemHovered();
+						const bool is_active = ImGui::IsItemActive();
+						const bool is_clicked = ImGui::IsItemClicked();
+
+						if (is_hovered)
+						{
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+						}
+						if (is_clicked)
+						{
+							std::string activeTileSetName = FL::F_tileSetAndIndexOnBrush.first;
+							if (activeTileSetName != "")
+							{
+								TileSet* activeTileSet = FL::GetTileSet(activeTileSetName);
+								if (activeTileSet != nullptr)
+								{
+									tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+								}
+							}					
+						}
+						if (is_active)
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+
+						std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> indexedTiles = tileMap->GetIndexedTiles();
+						
+						if (indexedTiles.count(index) > 0)
+						{
+							texture = indexedTiles.at(index).first;
+							uvStart = indexedTiles.at(index).second.first;
+							uvEnd = indexedTiles.at(index).second.second;
+
+							uvEnd.x = uvEnd.x / tileWidth;
+							uvEnd.y = uvEnd.y / tileHeight;
+
+							float gridXPosition = (position.x - (gridWidth /2)) + 2 * w;
+							float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
+							Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidthInPx, tileHeightInPx, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
+						}
+
+						index++;
+					}
+				}
+				
+				//int index = tile.first;
+				//bool b_selected = false;
+
+				//std::vector<int> selectedIndices = tileSet->GetTileSetIndices();
+				//for (int i = 0; i < selectedIndices.size(); i++)
+				//	if (index == selectedIndices[i])
+				//		b_selected = true;
+
+
+				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBox"), 2.0f, draw_list);
+			}
+
 			// Renders Transform Arrow // 
 			//
 			// Should be last in line here to be rendered top-most -- If this obect is focused
@@ -1127,6 +1233,78 @@ namespace FlatGui
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 3);
 				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
+			}
+		}
+	}
+
+	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled)
+	{
+		ImGuiIO& inputOutput = ImGui::GetIO();
+		Vector2 currentPos = ImGui::GetCursorScreenPos();
+		bool _weightedScroll = true;
+		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
+
+		// For calculating scrolling mouse position and what vector to zoom to
+		DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);
+		DYNAMIC_VIEWPORT_HEIGHT = trunc(endPos.y - startPos.y);
+
+		// Border
+		if (b_filled)
+			ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+		else
+			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+
+		//ImGui::SetNextItemAllowOverlap();
+		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		const bool is_active = ImGui::IsItemActive();   // Held
+		const bool is_clicked = ImGui::IsItemClicked();
+
+		// For panning the scene view
+		const float mouse_threshold_for_pan = 0.0f;
+		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+		{
+			// This does not seem to work properly when resizing the window
+			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
+			scrolling.x += inputOutput.MouseDelta.x;
+			scrolling.y += inputOutput.MouseDelta.y;
+		}
+
+		// Get scroll amount for changing zoom level of scene view
+		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+		float scrollInput = inputOutput.MouseWheel;
+		float weight = 0.01f;
+		float signedMousePosX = mousePos.x - centerPoint.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+		float signedMousePosY = mousePos.y - centerPoint.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+		float zoomSpeed = 0.1f;
+		float zoomMultiplier = 10;
+		float finalZoomSpeed = zoomSpeed;
+
+		if (inputOutput.KeyCtrl)
+			finalZoomSpeed *= zoomMultiplier;
+
+		// Change scrolling offset based on mouse position and weight
+		if (is_hovered)
+		{
+			if (scrollInput > 0)
+			{
+				if (_weightedScroll)
+				{
+					scrolling.x -= trunc(signedMousePosX * weight);
+					scrolling.y -= trunc(signedMousePosY * weight);
+				}
+				gridStep.x += finalZoomSpeed;
+				gridStep.y += finalZoomSpeed;
+			}
+			else if (scrollInput < 0 && gridStep.x > 2 && gridStep.y > 2)
+			{
+				if (_weightedScroll)
+				{
+					scrolling.x += trunc(signedMousePosX * weight);
+					scrolling.y += trunc(signedMousePosY * weight);
+				}
+				gridStep.x -= finalZoomSpeed;
+				gridStep.y -= finalZoomSpeed;
 			}
 		}
 	}

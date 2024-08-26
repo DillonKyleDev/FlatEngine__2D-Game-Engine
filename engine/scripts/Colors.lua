@@ -40,7 +40,7 @@ F_Colors = {
 	projectHubTableOutline = Vector4:new(0.36, 0.36, 0.37, 1.0),
 	-- Log
 	logText = Vector4:new(0.75, 0.75, 0.75, 1.0),
-	logBg = Vector4:new(0.2, 0.2, 0.22, 1.0),
+	logBg = Vector4:new(0.15, 0.15, 0.17, 1.0),
 	logOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	-- File Explorer
 	explorerFilesPanelBg = Vector4:new(0.2, 0.2, 0.22, 1.0),
@@ -49,6 +49,13 @@ F_Colors = {
 	filesPanelOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	selectedFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.11),
 	selectedFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.45),
+	-- TileSet Editing
+	tileSetTileBorder = Vector4:new(0.92, 1.0, 0.0, 0.5),
+	tileSetHoveredTile = Vector4:new(1, 1, 1, 0.35),
+	tileSetSelectedTile = Vector4:new(1, 1, 1, 0.15),
+	tileSetHoldingTile = Vector4:new(1, 1, 1, 0.45),
+	-- TileMap
+	tileMapBox = Vector4:new(0.76, 0.42, 0.0, 0.5),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

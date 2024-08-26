@@ -33,7 +33,7 @@ namespace FlatGui
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 
 		FlatEngine::PushWindowStyles();
-		ImGui::Begin("Scene View", 0, 16 | 8);
+		ImGui::Begin("Scene View", 0, 16 | 8); // Window flags 	ImGuiWindowFlags_NoScrollWithMouse
 		FlatEngine::PopWindowStyles();
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();

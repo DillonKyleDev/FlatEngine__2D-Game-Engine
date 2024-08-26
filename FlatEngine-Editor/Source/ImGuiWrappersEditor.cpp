@@ -20,6 +20,7 @@
 #include "RigidBody.h"
 #include "Project.h"
 #include "TileMap.h"
+#include "TileSet.h"
 
 namespace FL = FlatEngine;
 
@@ -391,7 +392,7 @@ namespace FlatGui
 
 		// Select which Lua script is attached to this Script
 		if (FL::RenderSelectable("##SelectLuaScript", FL::F_luaScriptNames, currentLuaScript))
-			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]); // + 1 because of the empty space at the beginning of the vector
+			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]);
 	
 		bool b_openModal = false;
 		if (FL::RenderButton("New Script", Vector2(100, 20)))
@@ -786,7 +787,138 @@ namespace FlatGui
 
 	void RenderTileMapComponent(TileMap* tileMap)
 	{
+		long id = tileMap->GetID();
+		bool _isActive = tileMap->IsActive();
+		int width = tileMap->GetWidth();
+		int height = tileMap->GetHeight();
+		int tileWidth = tileMap->GetTileWidth();
+		int tileHeight = tileMap->GetTileHeight();
+		std::vector<std::string> tileSets = tileMap->GetTileSets();
 
+		// Active Checkbox
+		if (RenderIsActiveCheckbox(_isActive))
+			tileMap->SetActive(_isActive);
+
+		// Render Table
+		if (FL::PushTable("##tileMapProps" + std::to_string(id), 2))
+		{
+			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1.0f, 1, -INT_MAX))
+				tileMap->SetWidth(width);
+			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1.0f, 1, -INT_MAX))
+				tileMap->SetHeight(height);
+			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1.0f, 1, -INT_MAX))
+				tileMap->SetTileWidth(tileWidth);
+			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1.0f, 1, -INT_MAX))
+				tileMap->SetTileHeight(tileHeight);
+			FL::PopTable();
+		}
+
+		ImGui::Text("Add TileSets to TileMap");
+
+		static int currentSelectableTileSet = 0;
+		std::string activeTileSet = tileMap->GetSelectedTileSet();
+		std::vector<std::string> tileSetNames;
+
+		// Collect TileSets not already in this TileMap
+		for (int i = 0; i < FL::F_TileSets.size(); i++)
+		{
+			bool b_alreadyInTileMap = false;
+
+			for (int j = 0; j < tileSets.size(); j++)
+			{
+				if (FL::F_TileSets[i].GetName() == tileSets[j])
+					b_alreadyInTileMap = true;
+			}
+
+			if (!b_alreadyInTileMap)
+				tileSetNames.push_back(FL::F_TileSets[i].GetName());
+		}
+
+		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);		
+
+		if (FL::RenderButton("Add TileSet", Vector2(100, 20)))
+		{			
+			if (tileSetNames.size() >= currentSelectableTileSet + 1)
+				tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
+		}
+
+		Vector2 dirStartPos = ImGui::GetCursorScreenPos();
+		Vector2 dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
+		ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
+		ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
+		ImGui::Text("TileSets");
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		FL::PushMenuStyles();
+
+		if (ImGui::BeginTable("##TileSetsTable", 1, FL::F_tableFlags))
+		{
+			ImGui::TableSetupColumn("##TileSets", 0, ImGui::GetContentRegionAvail().x);
+
+			for (std::string tileSetName : tileSets)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+
+				ImGuiTreeNodeFlags nodeFlags;
+				std::string treeID = "##SelectActiveTileSetTree";
+
+				// If node selected
+				if (activeTileSet == tileSetName)
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+				else
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+				
+				// render a leaf
+				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, tileSetName.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					tileMap->SetSelectedTileSet(tileSetName);
+				}
+			}
+
+			ImGui::EndTable();
+		}
+		FL::PopMenuStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+
+
+		// Tiles in the selected TileMap
+		TileSet* selectedTileSet = FL::GetTileSet(activeTileSet);
+		if (selectedTileSet != nullptr)
+		{
+			std::map<int, std::pair<Vector2, Vector2>> allTiles = selectedTileSet->GetTileSet();
+
+			for (int index : selectedTileSet->GetTileSetIndices())
+			{
+				SDL_Texture* texture = selectedTileSet->GetTexture()->GetTexture();
+				Vector2 uvStart = allTiles.at(index).first;
+				Vector2 uvEnd = allTiles.at(index).second;
+
+				uvStart = Vector2(uvStart.x / tileWidth, uvStart.y / tileHeight);
+				uvEnd = Vector2(uvEnd.x / tileWidth, uvEnd.y / tileHeight);
+
+				ImGui::Text("Tile");
+				std::string tileButtonID = "##TileSelect" + std::to_string(index);
+				if (FL::RenderButton("Select Tile " + std::to_string(index)))
+				{
+					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };
+					FL::F_tileSetAndIndexOnBrush = tileBrushPair;
+					FL::LogString("Tile brush selected");
+				}
+				if (FL::RenderImageButton(tileButtonID, texture, Vector2(16, 16), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("imageButtonHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
+				{
+					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };
+					FL::F_tileSetAndIndexOnBrush = tileBrushPair;
+					FL::LogString("Tile brush selected");
+				}
+			}
+		}
+
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 	}
 
 	void BeginToolTip(std::string title)

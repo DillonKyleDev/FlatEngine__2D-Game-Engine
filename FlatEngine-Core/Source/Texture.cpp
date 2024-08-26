@@ -81,6 +81,7 @@ namespace FlatEngine
 			m_texture = newTexture;
 			return m_texture != NULL;
 		}
+		else return false;
 	}
 
 	bool Texture::LoadSurface(std::string path, SDL_Surface* screenSurface)

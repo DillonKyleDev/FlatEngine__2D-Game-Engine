@@ -69,17 +69,17 @@ namespace FlatEngine
 		ImGui::End();
 	}
 
-	void BeginWindowChild(std::string title, Vector4 bgColor)
+	void BeginWindowChild(std::string title, Vector4 bgColor, ImGuiWindowFlags flags)
 	{
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, bgColor);
-		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_childFlags);
+		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_childFlags, flags);
 		ImGui::PopStyleColor();
 	}
 
-	void BeginResizeWindowChild(std::string title, Vector4 bgColor)
+	void BeginResizeWindowChild(std::string title, Vector4 bgColor, ImGuiWindowFlags flags)
 	{
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, bgColor);
-		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_resizeChildFlags);
+		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_resizeChildFlags, flags);
 		ImGui::PopStyleColor();
 	}
 
@@ -509,12 +509,19 @@ namespace FlatEngine
 		bool b_selectionMade = false;
 		bool b_currentSelectionEmpty = false;
 		std::string empty = " - empty -";
+		std::string currentlySelected = empty;
+		if (options.size() == 0)
+			options.push_back(empty);
+
+		if (options.size() <= current_option)
+			current_option = 0;
 
 		PushComboStyles();
 		PushMenuStyles();
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 
-		std::string currentlySelected = " " + options[current_option];
+		currentlySelected = " " + options[current_option];
+
 		if (options[current_option] == "")
 		{
 			currentlySelected = empty;
@@ -526,7 +533,7 @@ namespace FlatEngine
 		{
 			for (int n = 0; n < options.size(); n++)
 			{
-				bool is_selected = (options[current_option] == options[n]); // You can store your selection however you want, outside or inside your objects
+				bool is_selected = (options[current_option] == options[n]);
 				
 				std::string selectableLabel = " " + options[n];
 				if (options[n] == "")
@@ -623,14 +630,14 @@ namespace FlatEngine
 		return _isClicked;
 	}
 
-	bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor)
+	bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor, Vector2 uvStart, Vector2 uvEnd)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);		
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
 		
-		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, Vector2((float)0), Vector2(1), GetColor("transparent"), tint);
+		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
 
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())

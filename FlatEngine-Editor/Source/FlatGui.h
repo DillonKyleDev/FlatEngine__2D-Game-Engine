@@ -4,6 +4,7 @@
 #include "Animation.h"
 
 #include <sstream>
+#include <memory>
 #include <map>
 #include "imgui.h"
 #include "SDL.h"
@@ -44,6 +45,7 @@ namespace FlatEngine
 	class CircleCollider;
 	class RigidBody;
 	class TileMap;
+	class TileSet;
 }
 
 using Vector2 = FL::Vector2;
@@ -71,6 +73,7 @@ using BoxCollider = FL::BoxCollider;
 using CircleCollider = FL::CircleCollider;
 using RigidBody = FL::RigidBody;
 using TileMap = FL::TileMap;
+using TileSet = FL::TileSet;
 
 using ComponentTypes = FL::Component::ComponentTypes;
 
@@ -172,7 +175,7 @@ namespace FlatGui
 	extern void RenderMappingContextEditor();
 	extern void RenderSettings();
 	extern void Cleanup();
-	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset);
+	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset, bool b_showAxis = true);
 	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
 	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 	extern void RenderFileExplorer();
@@ -183,8 +186,13 @@ namespace FlatGui
 	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos);
 	extern void OpenFileContextually(std::filesystem::path fs_filepath);
 	extern void RenderTileSetEditor();
-	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Texture *texture, Vector2 tileSize, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list);
+	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2 &scrolling, Vector2 canvas_p0, Vector2 canvas_sz, Vector2 &step, TileSet* tileSet);
+	
+
 	extern void RenderScriptEditor();
+
+	// *** Don't forget to add flags to the window for preventing scrolling *** ImGuiWindowFlags flags = 8 | 16 or ImGuiWindowFlags_NoScrollbar 
+	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false);
 	// Component Wrappers	
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, long& queuedForDelete);

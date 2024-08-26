@@ -10,9 +10,9 @@ namespace FlatEngine
     TileSet::TileSet()
     {
         m_texturePath = "";
-        m_texture = Texture();
+        m_texture = std::make_shared<Texture>();
         m_allTileUVs = std::map<int, std::pair<Vector2, Vector2>>();
-        m_tileSetUVs = std::map<int, std::pair<Vector2, Vector2>>();
+        m_tileSetIndices = std::vector<int>();
         m_tileWidth = 16;
         m_tileHeight = 16;
     }
@@ -46,10 +46,18 @@ namespace FlatEngine
         return m_name;
     }
 
+    std::pair<Vector2, Vector2> TileSet::GetIndexUVs(int index)
+    {
+        if (m_allTileUVs.count(index) > 0)
+            return m_allTileUVs.at(index);
+        else
+            return std::pair<Vector2, Vector2>();
+    }
+
     void TileSet::SetTexturePath(std::string texturePath)
     {
         m_texturePath = texturePath;
-        m_texture.LoadFromFile(m_texturePath);
+        m_texture->LoadFromFile(m_texturePath);
         InitializeUVs();
     }
 
@@ -68,14 +76,24 @@ namespace FlatEngine
         return m_tileSetPath;
     }
 
-    Texture* TileSet::GetTexture()
+    std::shared_ptr<Texture> TileSet::GetTexture()
     {
-        return &m_texture;
+        return m_texture;
     }
 
     std::map<int, std::pair<Vector2, Vector2>> TileSet::GetTileSet()
     {
-        return m_tileSetUVs;
+        return m_allTileUVs;
+    }
+
+    void TileSet::SetTileSetIndices(std::vector<int> indices)
+    {
+        m_tileSetIndices = indices;
+    }
+
+    std::vector<int> TileSet::GetTileSetIndices()
+    {
+        return m_tileSetIndices;
     }
 
     void TileSet::SetTileWidth(int width)
@@ -115,10 +133,13 @@ namespace FlatEngine
 
     void TileSet::InitializeUVs()
     {
-        if (m_tileWidth != 0 && m_tileHeight != 0 && m_texture.GetTexture() != nullptr)
+        m_tileSetIndices.clear();
+        m_allTileUVs.clear();
+
+        if (m_tileWidth != 0 && m_tileHeight != 0 && m_texture->GetTexture() != nullptr)
         {
-            int textureWidth = m_texture.GetWidth();
-            int textureHeight = m_texture.GetHeight();
+            int textureWidth = m_texture->GetWidth();
+            int textureHeight = m_texture->GetHeight();
             int tilesAcross = textureWidth / m_tileWidth;
             int tilesDown = textureHeight / m_tileHeight;
 
@@ -127,8 +148,6 @@ namespace FlatEngine
                 tilesAcross += 1;
             if (textureHeight % m_tileHeight != 0)
                 tilesDown += 1;
-
-            m_allTileUVs.clear();
 
             int counter = 0;
 
@@ -147,6 +166,8 @@ namespace FlatEngine
 
                     std::pair<Vector2, Vector2> uvs = { uvStart, uvEnd };
                     m_allTileUVs.emplace(counter, uvs);
+
+                    counter++;
                 }
             }
         }
@@ -154,9 +175,16 @@ namespace FlatEngine
 
     void TileSet::ToggleTile(int index)
     {
-        if (m_tileSetUVs.count(index) > 0)
-            m_tileSetUVs.erase(index);
-        else if (m_allTileUVs.count(index) > 0)
-            m_tileSetUVs.emplace(index, m_allTileUVs.at(index));
+        for (std::vector<int>::iterator iter = m_tileSetIndices.begin(); iter != m_tileSetIndices.end(); iter++)
+        {
+            if ((*iter) == index)
+            {
+                m_tileSetIndices.erase(iter);
+                return;
+            }
+        }
+        
+        if (m_allTileUVs.count(index) > 0)
+            m_tileSetIndices.push_back(index);
     }
 }

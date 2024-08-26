@@ -1,10 +1,14 @@
 {
-    "tileSet": {
+    "tileSetData": {
         "name": "GroundTiles",
-        "texturePath": "..Dillon Kyle\\source\\repos\\FlatEngine\\assets\\images\\colors\\cave.png",
+        "texturePath": "../assets\\images\\tilesets\\BrickWall.png",
         "tileHeight": 16,
         "tileSetPath": "../assets/tileSets//GroundTiles.tls",
         "tileWidth": 16
     },
-    "tiles": []
+    "tiles": [
+        {
+            "index": 0
+        }
+    ]
 }

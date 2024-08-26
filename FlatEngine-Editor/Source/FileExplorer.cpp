@@ -49,9 +49,9 @@ namespace FlatGui
 				ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 				FL::PushMenuStyles();
 
-				if (ImGui::BeginTable("##AnimationProperties", 1, FL::F_tableFlags))
+				if (ImGui::BeginTable("##DirectoriesTable", 1, FL::F_tableFlags))
 				{
-					ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x);
+					ImGui::TableSetupColumn("##Directory", 0, ImGui::GetContentRegionAvail().x);
 
 					if (b_isDirectory)
 						RenderDirNodes(rootDirPath);

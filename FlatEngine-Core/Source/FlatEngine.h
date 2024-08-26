@@ -83,6 +83,7 @@ namespace FlatEngine
 	extern std::string F_selectedMappingContextName;
 	extern std::vector<TileSet> F_TileSets;
 	extern std::string F_selectedTileSetToEdit;
+	extern std::pair<std::string, int> F_tileSetAndIndexOnBrush;
 
 
 	extern bool _isDebugMode;
@@ -287,8 +288,8 @@ namespace FlatEngine
 	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = GetColor("windowBg"));
 	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = GetColor("windowBg"));
 	extern void EndWindow();
-	extern void BeginWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"));
-	extern void BeginResizeWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"));
+	extern void BeginWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"), ImGuiWindowFlags flags = 0);
+	extern void BeginResizeWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"), ImGuiWindowFlags flags = 0);
 	extern void EndWindowChild();
 	extern void PushWindowStyles(Vector4 bgColor = GetColor("windowBg"));
 	extern void PopWindowStyles();
@@ -311,7 +312,7 @@ namespace FlatEngine
 	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
-	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"));
+	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);

@@ -1,4 +1,3 @@
-#pragma once
 #include "FlatEngine.h"
 #include "Vector2.h"
 #include "GameObject.h"

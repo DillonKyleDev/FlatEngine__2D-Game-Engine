@@ -90,6 +90,7 @@ namespace FlatEngine
 	std::shared_ptr<PrefabManager> prefabManager = std::make_shared<PrefabManager>();
 	std::vector<TileSet> F_TileSets = std::vector<TileSet>();
 	std::string F_selectedTileSetToEdit = "";
+	std::pair<std::string, int> F_tileSetAndIndexOnBrush = std::pair<std::string, int>();
 
 	// Drag/Drop target IDs
 	std::string F_fileExplorerTarget = "DND_FILE_PATH_OBJECT";
@@ -1713,15 +1714,11 @@ namespace FlatEngine
 		// Declare array json object for Tiles
 		json tileArray = json::array();
 
-		for (std::pair<int, std::pair<Vector2, Vector2>> tile : tileSet.GetTileSet())
+		for (int index : tileSet.GetTileSetIndices())
 		{
 			// Get tile data
 			json jsonData = {
-				{ "index", tile.first },
-				{ "uvStartX", tile.second.first.x },
-				{ "uvStartY", tile.second.first.y },
-				{ "uvEndX", tile.second.second.x },
-				{ "uvEndY", tile.second.second.y },
+				{ "index", index }
 			};
 
 			// Dumped json object with required data for saving
@@ -1733,7 +1730,7 @@ namespace FlatEngine
 
 		// Create TileSet Json data object
 		json tileSetJson = json::object({
-			{ "tileSet", json::parse(data) },
+			{ "tileSetData", json::parse(data) },
 			{ "tiles", tileArray }
 		});
 
@@ -1762,7 +1759,7 @@ namespace FlatEngine
 				//Getting data from the json 
 				//std::string name = firstObjectName[0]["name"];
 
-				auto tileSetData = tileSetJson["tileSet"];
+				auto tileSetData = tileSetJson["tileSetData"];
 
 				tileSet.SetName(tileSetData["name"]);
 				tileSet.SetTileSetPath(tileSetData["tileSetPath"]);
@@ -1770,10 +1767,17 @@ namespace FlatEngine
 				tileSet.SetTileWidth(tileSetData["tileWidth"]);
 				tileSet.SetTileHeight(tileSetData["tileHeight"]);
 
-				for (auto tile : tileSetData["tiles"])
+				std::vector<int> indices;
+				for (auto tile : tileSetJson["tiles"])
 				{
-					//CheckJsonFloat()
+					int index = CheckJsonInt(tile, "index", "TileSet tiles");
+					// Fix this later to return a bool and change the value of the int within the parameters
+					if (index != -1)
+					{
+						indices.push_back(index);
+					}
 				}
+				tileSet.SetTileSetIndices(indices);
 
 				// Add context to context managing vector
 				F_TileSets.push_back(tileSet);
@@ -3136,7 +3140,7 @@ namespace FlatEngine
 
 	int CheckJsonInt(json obj, std::string checkFor, std::string loadedName)
 	{
-		int value = 0;
+		int value = -1;
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
@@ -3400,6 +3404,20 @@ namespace FlatEngine
 					newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
 					newRigidBody->SetTorquesAllowed(CheckJsonBool(componentJson, "_allowTorques", objectName));
 				}
+				else if (type == "TileMap")
+				{
+					TileMap* newTileMap = loadedObject.AddTileMap(id, _isActive, _isCollapsed);
+					newTileMap->SetWidth(CheckJsonInt(componentJson, "width", objectName));
+					newTileMap->SetHeight(CheckJsonInt(componentJson, "height", objectName));
+					newTileMap->SetTileWidth(CheckJsonInt(componentJson, "tileWidth", objectName));
+					newTileMap->SetTileHeight(CheckJsonInt(componentJson, "tileHeight", objectName));
+
+
+					//SetTile(int tileMapIndex, std::string tileSetName, int tileSetIndex);
+
+					//newTileMap->SetTile(CheckJsonFloat(componentJson, "angularDrag", objectName));
+					//newTileMap->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
+					}
 			}
 		}
 

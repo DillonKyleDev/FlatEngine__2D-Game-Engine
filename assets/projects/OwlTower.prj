@@ -17,17 +17,17 @@
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
             "currentFileDirectory": "../assets",
-            "focusedGameObjectID": 0,
+            "focusedGameObjectID": 4,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets/scenes/OwlScene.scn",
             "path": "../assets/projects/OwlTower.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.scn",
-            "sceneViewGridStepX": 23.00008201599121,
-            "sceneViewGridStepY": 23.00008201599121,
-            "sceneViewScrollingX": 559.0,
-            "sceneViewScrollingY": 752.0
+            "sceneViewGridStepX": 22.00010108947754,
+            "sceneViewGridStepY": 22.00010108947754,
+            "sceneViewScrollingX": 540.0,
+            "sceneViewScrollingY": 266.0
         }
     ]
 }
