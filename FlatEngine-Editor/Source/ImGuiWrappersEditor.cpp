@@ -894,20 +894,17 @@ namespace FlatGui
 			for (int index : selectedTileSet->GetTileSetIndices())
 			{
 				SDL_Texture* texture = selectedTileSet->GetTexture()->GetTexture();
+				int textureWidth = selectedTileSet->GetTexture()->GetWidth();
+				int textureHeight = selectedTileSet->GetTexture()->GetHeight();
+
 				Vector2 uvStart = allTiles.at(index).first;
 				Vector2 uvEnd = allTiles.at(index).second;
 
-				uvStart = Vector2(uvStart.x / tileWidth, uvStart.y / tileHeight);
-				uvEnd = Vector2(uvEnd.x / tileWidth, uvEnd.y / tileHeight);
+				uvStart = Vector2(uvStart.x / textureWidth, uvStart.y / textureHeight);
+				uvEnd = Vector2(uvEnd.x / textureWidth, uvEnd.y / textureHeight);
 
 				ImGui::Text("Tile");
 				std::string tileButtonID = "##TileSelect" + std::to_string(index);
-				if (FL::RenderButton("Select Tile " + std::to_string(index)))
-				{
-					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };
-					FL::F_tileSetAndIndexOnBrush = tileBrushPair;
-					FL::LogString("Tile brush selected");
-				}
 				if (FL::RenderImageButton(tileButtonID, texture, Vector2(16, 16), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("imageButtonHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
 				{
 					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };

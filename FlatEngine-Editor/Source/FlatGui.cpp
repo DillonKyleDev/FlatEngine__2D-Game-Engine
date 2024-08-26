@@ -24,6 +24,7 @@
 #include <Windows.h>
 #include "ECSManager.h"
 #include "TileMap.h"
+#include "TileSet.h"
 
 #include "imgui.h"
 #include <math.h>
@@ -1079,15 +1080,19 @@ namespace FlatGui
 					for (int h = 0; h < height; h++)
 					{
 						std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
+						TileSet* activeTileSet;
 
+						// Get active TileSet for texture dimensions
+						std::string activeTileSetName = FL::F_tileSetAndIndexOnBrush.first;
+						if (activeTileSetName != "")
+							activeTileSet = FL::GetTileSet(activeTileSetName);
+		
 						SDL_Texture* texture = nullptr;
 						Vector2 uvStart;
 						Vector2 uvEnd;
 
-						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);
-						//float hIndex = uvStart.x / tileWidth;
+						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);			
 						float tileHeightInPx = FG_sceneViewGridStep.x * (tileHeight / FL::F_pixelsPerGridSpace);
-						//float vIndex = uvStart.y / tileHeight;
 						Vector2 tileSize = Vector2(tileWidthInPx, tileHeightInPx);
 
 						//                 viewport center		+		         	top left corner in pixel screen space                  +     tile offset
@@ -1097,7 +1102,7 @@ namespace FlatGui
 						Vector2 tileStart = Vector2(tileStartX, tileStartY);
 						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
 						
-						AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("white"));
+						AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
 						const bool is_hovered = ImGui::IsItemHovered();
 						const bool is_active = ImGui::IsItemActive();
 						const bool is_clicked = ImGui::IsItemClicked();
@@ -1106,17 +1111,9 @@ namespace FlatGui
 						{
 							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
 						}
-						if (is_clicked)
+						if (is_clicked && activeTileSet != nullptr)
 						{
-							std::string activeTileSetName = FL::F_tileSetAndIndexOnBrush.first;
-							if (activeTileSetName != "")
-							{
-								TileSet* activeTileSet = FL::GetTileSet(activeTileSetName);
-								if (activeTileSet != nullptr)
-								{
-									tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
-								}
-							}					
+							tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
 						}
 						if (is_active)
 							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
@@ -1124,18 +1121,23 @@ namespace FlatGui
 						std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> indexedTiles = tileMap->GetIndexedTiles();
 						
 						if (indexedTiles.count(index) > 0)
-						{
+						{							
+							int textureWidth = activeTileSet->GetTexture()->GetWidth();
+							int textureHeight = activeTileSet->GetTexture()->GetHeight();
+
 							texture = indexedTiles.at(index).first;
 							uvStart = indexedTiles.at(index).second.first;
 							uvEnd = indexedTiles.at(index).second.second;
 
-							uvEnd.x = uvEnd.x / tileWidth;
-							uvEnd.y = uvEnd.y / tileHeight;
+							uvStart.x = uvStart.x / textureWidth;
+							uvStart.y = uvStart.y / textureHeight;
+							uvEnd.x = uvEnd.x / textureWidth;
+							uvEnd.y = uvEnd.y / textureHeight;
 
 							float gridXPosition = (position.x - (gridWidth /2)) + 2 * w;
 							float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
 							Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
-							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidthInPx, tileHeightInPx, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
+							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 						}
 
 						index++;

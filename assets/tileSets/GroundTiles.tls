@@ -9,6 +9,30 @@
     "tiles": [
         {
             "index": 0
+        },
+        {
+            "index": 30
+        },
+        {
+            "index": 5
+        },
+        {
+            "index": 35
+        },
+        {
+            "index": 6
+        },
+        {
+            "index": 31
+        },
+        {
+            "index": 1
+        },
+        {
+            "index": 11
+        },
+        {
+            "index": 14
         }
     ]
 }

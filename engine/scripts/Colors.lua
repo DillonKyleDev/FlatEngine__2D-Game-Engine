@@ -55,7 +55,8 @@ F_Colors = {
 	tileSetSelectedTile = Vector4:new(1, 1, 1, 0.15),
 	tileSetHoldingTile = Vector4:new(1, 1, 1, 0.45),
 	-- TileMap
-	tileMapBox = Vector4:new(0.76, 0.42, 0.0, 0.5),
+	tileMapBox = Vector4:new(0.71, 0.0, 0.88, 0.8),
+	tileMapGridLines = Vector4:new(0.71, 0.0, 0.88, 0.15),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),
