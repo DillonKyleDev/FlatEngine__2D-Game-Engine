@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": false,
+            "_clearLogBuffer": true,
             "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,

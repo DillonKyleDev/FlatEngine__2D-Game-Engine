@@ -1080,18 +1080,18 @@ namespace FlatGui
 					for (int h = 0; h < height; h++)
 					{
 						std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
-						TileSet* activeTileSet;
+						TileSet* activeTileSet = nullptr;
 
 						// Get active TileSet for texture dimensions
 						std::string activeTileSetName = FL::F_tileSetAndIndexOnBrush.first;
 						if (activeTileSetName != "")
 							activeTileSet = FL::GetTileSet(activeTileSetName);
-		
+
 						SDL_Texture* texture = nullptr;
 						Vector2 uvStart;
 						Vector2 uvEnd;
 
-						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);			
+						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);
 						float tileHeightInPx = FG_sceneViewGridStep.x * (tileHeight / FL::F_pixelsPerGridSpace);
 						Vector2 tileSize = Vector2(tileWidthInPx, tileHeightInPx);
 
@@ -1101,27 +1101,34 @@ namespace FlatGui
 
 						Vector2 tileStart = Vector2(tileStartX, tileStartY);
 						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
-						
+						ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBg"));
 						AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
-						const bool is_hovered = ImGui::IsItemHovered();
+						// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
+						const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
 						const bool is_active = ImGui::IsItemActive();
 						const bool is_clicked = ImGui::IsItemClicked();
 
 						if (is_hovered)
 						{
 							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+							if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+							{
+								tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+							}
 						}
 						if (is_clicked && activeTileSet != nullptr)
 						{
 							tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
 						}
 						if (is_active)
+						{				
 							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+						}
 
 						std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> indexedTiles = tileMap->GetIndexedTiles();
-						
+
 						if (indexedTiles.count(index) > 0)
-						{							
+						{
 							int textureWidth = activeTileSet->GetTexture()->GetWidth();
 							int textureHeight = activeTileSet->GetTexture()->GetHeight();
 
@@ -1134,7 +1141,7 @@ namespace FlatGui
 							uvEnd.x = uvEnd.x / textureWidth;
 							uvEnd.y = uvEnd.y / textureHeight;
 
-							float gridXPosition = (position.x - (gridWidth /2)) + 2 * w;
+							float gridXPosition = (position.x - (gridWidth / 2)) + 2 * w;
 							float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
 							Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
 							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
@@ -1143,15 +1150,6 @@ namespace FlatGui
 						index++;
 					}
 				}
-				
-				//int index = tile.first;
-				//bool b_selected = false;
-
-				//std::vector<int> selectedIndices = tileSet->GetTileSetIndices();
-				//for (int i = 0; i < selectedIndices.size(); i++)
-				//	if (index == selectedIndices[i])
-				//		b_selected = true;
-
 
 				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBox"), 2.0f, draw_list);
 			}
@@ -1239,7 +1237,7 @@ namespace FlatGui
 		}
 	}
 
-	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled)
+	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags)
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		Vector2 currentPos = ImGui::GetCursorScreenPos();
@@ -1257,8 +1255,8 @@ namespace FlatGui
 			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
 
 		//ImGui::SetNextItemAllowOverlap();
-		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap | buttonFlags);
+		const bool is_hovered = ImGui::IsItemHovered(buttonFlags); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 		const bool is_clicked = ImGui::IsItemClicked();
 
