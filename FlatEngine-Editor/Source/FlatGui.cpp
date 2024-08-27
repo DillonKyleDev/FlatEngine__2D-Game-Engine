@@ -1108,22 +1108,7 @@ namespace FlatGui
 						const bool is_active = ImGui::IsItemActive();
 						const bool is_clicked = ImGui::IsItemClicked();
 
-						if (is_hovered)
-						{
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
-							if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
-							{
-								tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
-							}
-						}
-						if (is_clicked && activeTileSet != nullptr)
-						{
-							tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
-						}
-						if (is_active)
-						{				
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
-						}
+					
 
 						std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> indexedTiles = tileMap->GetIndexedTiles();
 
@@ -1147,6 +1132,22 @@ namespace FlatGui
 							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 						}
 
+						if (is_hovered)
+						{
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+							if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+							{
+								tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+							}
+						}
+						if (is_clicked && activeTileSet != nullptr)
+						{
+							tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+						}
+						if (is_active)
+						{
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+						}
 						index++;
 					}
 				}

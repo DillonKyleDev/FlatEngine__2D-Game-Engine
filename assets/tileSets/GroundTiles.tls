@@ -8,49 +8,7 @@
     },
     "tiles": [
         {
-            "index": 0
-        },
-        {
-            "index": 30
-        },
-        {
-            "index": 5
-        },
-        {
-            "index": 35
-        },
-        {
-            "index": 6
-        },
-        {
-            "index": 31
-        },
-        {
-            "index": 1
-        },
-        {
-            "index": 11
-        },
-        {
-            "index": 14
-        },
-        {
-            "index": 7
-        },
-        {
-            "index": 25
-        },
-        {
-            "index": 28
-        },
-        {
-            "index": 26
-        },
-        {
-            "index": 10
-        },
-        {
-            "index": 9
+            "index": 13
         }
     ]
 }

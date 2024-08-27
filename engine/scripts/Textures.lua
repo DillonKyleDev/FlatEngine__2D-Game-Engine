@@ -25,6 +25,9 @@ F_Textures = {
 	unmarkedFile = "../engine/images/fileTypes/file.png",
 	tileSetFile = "../engine/images/fileTypes/tileSetFile.png",
 	-- Scene View
+	translate = "../engine/images/icons/translate.png",
+	scale = "../engine/images/icons/scale.png",
+	rotate = "../engine/images/icons/rotate.png",
 	transformArrow = "../engine/images/widgets/transformArrow.png",
 	transformArrowAllWhite = "../engine/images/widgets/transformArrowAllWhite.png",
 	transformArrowXWhite = "../engine/images/widgets/transformArrowXWhite.png",
