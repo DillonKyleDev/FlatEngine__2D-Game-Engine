@@ -7,6 +7,15 @@
 
 namespace FlatEngine
 {
+    struct Tile {
+        Vector2 tileCoord;
+        std::string tileSetName;
+        SDL_Texture* tileSetTexture;
+        int tileSetIndex;
+        Vector2 uvStart;
+        Vector2 uvEnd;
+    };
+
     class TileMap : public Component
     {
     public:
@@ -29,20 +38,15 @@ namespace FlatEngine
         void RemoveTileSet(std::string name);
         void SetTileSets(std::vector<std::string> tileSets);
         std::vector<std::string> GetTileSets();
-        std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> GetIndexedTiles();
-
-        void SetTile(int tileMapIndex, TileSet* tileSet, int tileSetIndex);
-        void CreateTileMap();
+        std::map<int, std::map<int, Tile>> GetTiles();
+        void SetTile(Vector2 tileMapCoords, TileSet* tileSet, int tileSetIndex);
 
     private:
         int m_width;
         int m_height;
         int m_tileWidth;
         int m_tileHeight;
-        // index in TileMap, <TileSet name, index in TileSet> // For loading the data from files
-        std::map<int, std::pair<std::string, int>> m_storedTextureUVs;
-        // For faster access once data has been collected from files
-        std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> m_indexedTextureUVs;
+        std::map<int, std::map<int, Tile>> m_tiles;
         std::string m_selectedTileSet;
         std::vector<std::string> m_tileSetNames;  
     };

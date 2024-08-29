@@ -13,8 +13,7 @@ namespace FlatEngine
 		m_height = 20;
 		m_tileWidth = 16;
 		m_tileHeight = 16;
-		m_storedTextureUVs = std::map<int, std::pair<std::string, int>>();
-		m_indexedTextureUVs = std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>>();
+		m_tiles = std::map<int, std::map<int, Tile>>();
 		m_selectedTileSet = "";
 		m_tileSetNames = std::vector<std::string>();
 	}
@@ -28,8 +27,7 @@ namespace FlatEngine
 		m_height = toCopy->m_height;
 		m_tileWidth = toCopy->m_tileWidth;
 		m_tileHeight = toCopy->m_tileHeight;
-		m_storedTextureUVs = toCopy->m_storedTextureUVs;
-		m_indexedTextureUVs = toCopy->m_indexedTextureUVs;
+		m_tiles = toCopy->m_tiles;
 		m_selectedTileSet = toCopy->m_selectedTileSet;
 		m_tileSetNames = toCopy->m_tileSetNames;
 	}
@@ -40,9 +38,8 @@ namespace FlatEngine
 
 	std::string TileMap::GetData()
 	{
-		std::map<int, std::pair<std::string, int>> m_storedTextureUVs;
 		json tileSetNames = json::array();
-		json indexData = json::array();
+		json tileData = json::array();
 
 		for (std::string tileSetName : m_tileSetNames)
 		{
@@ -52,12 +49,20 @@ namespace FlatEngine
 			tileSetNames.push_back(name);
 		}
 
-		for (std::pair<int, std::pair<std::string, int>> data : m_storedTextureUVs)
-		{
-			json index = {
-				{ "index", { data.first, { data.second.first, data.second.second } } }
-			};
-			indexData.push_back(index);
+		for (std::pair<int, std::map<int, Tile>> row : m_tiles)
+		{	
+			for (std::pair<int, Tile> col : row.second)
+			{
+				Tile tile = col.second;
+
+				json tileJson = {
+						{ "tileCoordX", tile.tileCoord.x },
+						{ "tileCoordY", tile.tileCoord.y },
+						{ "tileSetName", tile.tileSetName },
+						{ "tileSetIndex", tile.tileSetIndex }
+				};
+				tileData.push_back(tileJson);
+			}
 		}
 
 		json jsonData = {
@@ -70,7 +75,7 @@ namespace FlatEngine
 			{ "tileWidth", m_tileWidth },
 			{ "tileHeight", m_tileHeight },
 			{ "tileSets", tileSetNames },
-			{ "indexData", indexData }
+			{ "tiles", tileData }
 		};
 
 		std::string data = jsonData.dump();
@@ -152,47 +157,42 @@ namespace FlatEngine
 		return m_tileSetNames;
 	}
 
-	std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> TileMap::GetIndexedTiles()
+	std::map<int, std::map<int, Tile>> TileMap::GetTiles()
 	{
-		return m_indexedTextureUVs;
+		return m_tiles;
 	}
 
-	void TileMap::SetTile(int tileMapIndex, TileSet* tileSet, int tileSetIndex)
+	void TileMap::SetTile(Vector2 coord, TileSet* tileSet, int tileSetIndex)
 	{
-		std::pair<std::string, int> newPair = { tileSet->GetName(), tileSetIndex};
-		if (m_storedTextureUVs.count(tileMapIndex) == 0)
-		{
-			m_storedTextureUVs.emplace(tileMapIndex, newPair);
-		}
-		else
-		{
-			m_storedTextureUVs.at(tileMapIndex) = newPair;
-		}
-
 		SDL_Texture* texture = tileSet->GetTexture()->GetTexture();
 		Vector2 uvStart = tileSet->GetIndexUVs(tileSetIndex).first;
 		Vector2 uvEnd = tileSet->GetIndexUVs(tileSetIndex).second;
-		std::pair<SDL_Texture*, std::pair<Vector2, Vector2>> indexedPair = { texture, { uvStart, uvEnd } };
-		if (m_indexedTextureUVs.count(tileMapIndex) > 0)
+
+		Tile newTile = Tile();
+		newTile.tileCoord = coord;
+		int x = (int)coord.x;
+		int y = (int)coord.y;
+		newTile.tileSetName = tileSet->GetName();
+		newTile.tileSetIndex = tileSetIndex;
+		newTile.tileSetTexture = texture;
+		newTile.uvStart = uvStart;
+		newTile.uvEnd = uvEnd;
+
+		if (m_tiles.count(x) > 0 && m_tiles.at(x).count(y) > 0)
 		{
-			m_indexedTextureUVs.at(tileMapIndex) = indexedPair;
+			m_tiles.at(x).at(y) = newTile;
 		}
-		else
-			m_indexedTextureUVs.emplace(tileMapIndex, indexedPair);
-	}
-
-	void TileMap::CreateTileMap()
-	{
-		m_indexedTextureUVs.clear();
-
-		for (std::pair<int, std::pair<std::string, int>> indexData : m_storedTextureUVs)
+		else if (m_tiles.count(x) > 0 && m_tiles.at(x).count(y) == 0)
 		{
-			TileSet* tileSet = GetTileSet(indexData.second.first);								// Get the TileSet
-			SDL_Texture* texture = tileSet->GetTexture()->GetTexture();							// Get the TileSets SDL_Texture*
-			std::pair<Vector2,Vector2> UVs = tileSet->GetIndexUVs(indexData.second.second);		// Get the UVs for the TileSet index
-			std::pair<SDL_Texture*, std::pair<Vector2, Vector2>> newPair = { texture, UVs };	// Create a new pair with all of that data
-
-			m_indexedTextureUVs.emplace(indexData.first, newPair);								// Save the data for fast access at runtime
+			std::pair<int, Tile> newPair = { y, newTile };
+			m_tiles.at(x).emplace(newPair);
+		}
+		else if (m_tiles.count(x) == 0)
+		{
+			std::pair<int, Tile> newPair = { y, newTile };
+			std::map<int, Tile> yCoords;
+			yCoords.emplace(newPair);
+			m_tiles.emplace(x, yCoords);
 		}
 	}
 }

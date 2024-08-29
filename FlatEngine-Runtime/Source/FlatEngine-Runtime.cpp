@@ -151,6 +151,7 @@ public:
 		if (!b_hasRunOnce)
 		{
 			json projectJson;
+			FL::InitializeTileSets();
 			FL::InitializeMappingContexts();
 			FL::prefabManager->InitializePrefabs();
 			FL::LoadGameProject(FL::GetFilePath("gameStartupProject"), projectJson);

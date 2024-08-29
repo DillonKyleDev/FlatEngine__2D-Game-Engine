@@ -59,6 +59,8 @@ namespace FlatEngine
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
 
+	F_CURSOR_MODE F_CursorMode = F_CURSOR_MODE::TRANSFORM;
+
 
 	bool _isDebugMode = true;
 	bool _closeProgram = false;
@@ -299,7 +301,8 @@ namespace FlatEngine
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
 							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
 							SetImGuiColors();									   // Use the collected colors to style ImGui elements
-							RetrieveLuaScriptPaths();							  
+							RetrieveLuaScriptPaths();
+							InitializeTileSets();
 
 							LogString("Ready...");
 							LogSeparator();
@@ -3412,12 +3415,34 @@ namespace FlatEngine
 					newTileMap->SetTileWidth(CheckJsonInt(componentJson, "tileWidth", objectName));
 					newTileMap->SetTileHeight(CheckJsonInt(componentJson, "tileHeight", objectName));
 
-
-					//SetTile(int tileMapIndex, std::string tileSetName, int tileSetIndex);
-
-					//newTileMap->SetTile(CheckJsonFloat(componentJson, "angularDrag", objectName));
-					//newTileMap->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
+					// Get used TileSet names
+					if (JsonContains(componentJson, "tileSets", objectName))
+					{
+						for (int tileSet = 0; tileSet < componentJson["tileSets"].size(); tileSet++)
+						{
+							json tileSetJson = componentJson["tileSets"][tileSet];
+							newTileMap->AddTileSet(CheckJsonString(tileSetJson, "name", objectName));
+						}
 					}
+					// Get Tile data
+					if (JsonContains(componentJson, "tiles", objectName))
+					{
+						LogInt(componentJson["tiles"].size());
+						for (int tile = 0; tile < componentJson["tiles"].size(); tile++)
+						{
+							json tileJson = componentJson["tiles"][tile];
+							int x = CheckJsonInt(tileJson, "tileCoordX", objectName);
+							int y = CheckJsonInt(tileJson, "tileCoordY", objectName);
+							std::string tileSetName = CheckJsonString(tileJson, "tileSetName", objectName);
+							int tileSetIndex = CheckJsonInt(tileJson, "tileSetIndex", objectName);
+
+							if (tileSetName != "" && tileSetIndex != -1)
+							{
+								newTileMap->SetTile(Vector2(x, y), GetTileSet(tileSetName), tileSetIndex);
+							}
+						}
+					}
+				}
 			}
 		}
 

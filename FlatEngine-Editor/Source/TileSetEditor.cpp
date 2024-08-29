@@ -115,9 +115,10 @@ namespace FlatGui
 		// This will catch our interactions
 		ImGui::SetCursorScreenPos(currentPos);
 		ImGui::SetNextItemAllowOverlap();
-		AddSceneViewMouseControls("#TileSetEditorGrid", gridStart, canvas_sz, scrolling, centerPoint, gridStep);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
+		if (canvas_sz.x > 0 && canvas_sz.y > 0)
+		{
+			AddSceneViewMouseControls("#TileSetEditorGrid", gridStart, canvas_sz, scrolling, centerPoint, gridStep);
+		}
 
 		FlatGui::RenderGridView(centerPoint, scrolling, false, gridStart, gridEnd, canvas_sz, gridStep, Vector2(0, 0), false);
 

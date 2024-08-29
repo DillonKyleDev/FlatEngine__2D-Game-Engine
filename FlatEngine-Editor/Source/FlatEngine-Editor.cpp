@@ -232,8 +232,8 @@ public:
 			FL::RestartImGui(); // ImGui setup relies on global colors
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
-			FlatGui::OpenProject(m_startupProject);
 			FL::InitializeTileSets();
+			FlatGui::OpenProject(m_startupProject);
 		}
 	}
 	void Quit()

@@ -56,6 +56,14 @@ namespace FlatEngine
 	class ECSManager;
 	class TileSet;
 
+	enum F_CURSOR_MODE {
+		TRANSFORM,
+		SCALE,
+		ROTATE,
+		TILE_BRUSH,
+		TILE_ERASE,
+	};
+
 	namespace FlatGui {
 		class WidgetsManager;
 	};
@@ -71,6 +79,7 @@ namespace FlatEngine
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
 
+	extern F_CURSOR_MODE F_CursorMode;
 
 	// Assets loaded from files on application start	
 	extern std::vector<std::string> F_luaScriptPaths;

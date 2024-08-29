@@ -202,7 +202,7 @@ namespace FlatGui
 	void RunOnceAfterInitialization()
 	{
 		FL::InitializeMappingContexts();
-		FL::InitializeTileSets();
+		//FL::InitializeTileSets();
 		FL::prefabManager->InitializePrefabs();
 		SetupProfilerProcesses();
 	}
@@ -522,7 +522,7 @@ namespace FlatGui
 
 		RenderTileSetEditor();
 
-		RenderFileExplorer();
+		//RenderFileExplorer();
 
 		float startTime = (float)FL::GetEngineTime();
 		MainMenuBar();
@@ -1056,12 +1056,12 @@ namespace FlatGui
 			{				
 				long id = tileMap->GetID();
 				bool _isActive = tileMap->IsActive();
-				int width = tileMap->GetWidth();										// in tiles
-				int height = tileMap->GetHeight();										// in tiles
-				int tileWidth = tileMap->GetTileWidth();
-				int tileHeight = tileMap->GetTileHeight();
-				int gridWidth = width * tileWidth / (int)FL::F_pixelsPerGridSpace;		// in grid tiles
-				int gridHeight = height * tileHeight / (int)FL::F_pixelsPerGridSpace;	// in grid tiles
+				float width = (float)tileMap->GetWidth();							// in tiles
+				float height = (float)tileMap->GetHeight();							// in tiles
+				float tileWidth = (float)tileMap->GetTileWidth();
+				float tileHeight = (float)tileMap->GetTileHeight();
+				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
+				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
 
 				std::vector<std::string> tileSets = tileMap->GetTileSets();				
 
@@ -1073,23 +1073,26 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 				
-				int index = 0;
+				std::map<int, std::map<int, FL::Tile>> tiles = tileMap->GetTiles();
+
 				// Draw TileMap indices
-				for (int w = 0; w < width; w++)
+				for (float w = 0; w < width; w++)
 				{
-					for (int h = 0; h < height; h++)
+					for (float h = 0; h < height; h++)
 					{
+						Vector2 tileCoord = Vector2(w, h);
+
+						// TileMap interactions
+						//
 						std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
 						TileSet* activeTileSet = nullptr;
 
 						// Get active TileSet for texture dimensions
 						std::string activeTileSetName = FL::F_tileSetAndIndexOnBrush.first;
 						if (activeTileSetName != "")
+						{
 							activeTileSet = FL::GetTileSet(activeTileSetName);
-
-						SDL_Texture* texture = nullptr;
-						Vector2 uvStart;
-						Vector2 uvEnd;
+						}
 
 						float tileWidthInPx = FG_sceneViewGridStep.x * (tileWidth / FL::F_pixelsPerGridSpace);
 						float tileHeightInPx = FG_sceneViewGridStep.x * (tileHeight / FL::F_pixelsPerGridSpace);
@@ -1102,53 +1105,60 @@ namespace FlatGui
 						Vector2 tileStart = Vector2(tileStartX, tileStartY);
 						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
 						ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBg"));
-						AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
-						// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
-						const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
-						const bool is_active = ImGui::IsItemActive();
-						const bool is_clicked = ImGui::IsItemClicked();
-
-					
-
-						std::map<int, std::pair<SDL_Texture*, std::pair<Vector2, Vector2>>> indexedTiles = tileMap->GetIndexedTiles();
-
-						if (indexedTiles.count(index) > 0)
+						
+						// Draw tile texture if it has one on it currently
+						if (tiles.count(w) > 0 && tiles.at(w).count(h) > 0)
 						{
-							int textureWidth = activeTileSet->GetTexture()->GetWidth();
-							int textureHeight = activeTileSet->GetTexture()->GetHeight();
+							FL::Tile tile = tiles.at(w).at(h);
 
-							texture = indexedTiles.at(index).first;
-							uvStart = indexedTiles.at(index).second.first;
-							uvEnd = indexedTiles.at(index).second.second;
+							// Get TileSet for this tiles texture data
+							TileSet* usedTileSet = nullptr;
+							std::string tileSetName = tile.tileSetName;
+							if (tileSetName != "")
+								usedTileSet = FL::GetTileSet(tileSetName);
 
-							uvStart.x = uvStart.x / textureWidth;
-							uvStart.y = uvStart.y / textureHeight;
-							uvEnd.x = uvEnd.x / textureWidth;
-							uvEnd.y = uvEnd.y / textureHeight;
+							// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
+							float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
+							float gridHeightsInATile = tileHeight / FL::F_pixelsPerGridSpace;
 
-							float gridXPosition = (position.x - (gridWidth / 2)) + 2 * w;
-							float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
+							SDL_Texture* texture = tile.tileSetTexture;
+							float textureWidth = (float)usedTileSet->GetTexture()->GetWidth();
+							float textureHeight = (float)usedTileSet->GetTexture()->GetHeight();
+							Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
+							Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
+							float gridXPosition = (position.x - (gridWidth / 2)) + gridWidthsInATile * w;
+							float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * h;
 							Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+
 							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 						}
 
-						if (is_hovered)
+						// Catch interactions on the TileMap container
+						if (ImGui::IsWindowFocused())
 						{
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
-							if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+							AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
+							// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
+							const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
+							const bool is_active = ImGui::IsItemActive();
+							const bool is_clicked = ImGui::IsItemClicked();
+
+							if (is_hovered)
 							{
-								tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+								ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+								if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+								{
+									tileMap->SetTile(tileCoord, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+								}
+							}
+							if (is_clicked && activeTileSet != nullptr)
+							{
+								tileMap->SetTile(tileCoord, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+							}
+							if (is_active)
+							{
+								ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
 							}
 						}
-						if (is_clicked && activeTileSet != nullptr)
-						{
-							tileMap->SetTile(index, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
-						}
-						if (is_active)
-						{
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
-						}
-						index++;
 					}
 				}
 

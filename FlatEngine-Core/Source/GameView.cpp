@@ -8,6 +8,8 @@
 #include "Animation.h"
 #include "Button.h"
 #include "Texture.h"
+#include "TileMap.h"
+#include "TileSet.h"
 
 #include "imgui.h"
 
@@ -73,9 +75,9 @@ namespace FlatEngine
 		F_GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
 
 		// This will catch our interactions
-		ImGui::InvisibleButton("GameViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
+		//ImGui::InvisibleButton("GameViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		//const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+		//const bool is_active = ImGui::IsItemActive();   // Held
 
 		// Render GameObjects in game view
 		Game_RenderObjects(canvas_p0, canvas_sz);
@@ -207,6 +209,7 @@ namespace FlatEngine
 		// Get Components
 		FL::Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
+		TileMap* tileMap = self.GetTileMap();
 		Animation* animation = self.GetAnimation();
 		Text* text = self.GetText();
 		Button* button = self.GetButton();
@@ -295,6 +298,56 @@ namespace FlatEngine
 					AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
+
+			// Renders TileMap Component
+			if (tileMap != nullptr)
+			{
+				long id = tileMap->GetID();
+				bool _isActive = tileMap->IsActive();
+				int width = tileMap->GetWidth();										// in tiles
+				int height = tileMap->GetHeight();										// in tiles
+				int tileWidth = tileMap->GetTileWidth();
+				int tileHeight = tileMap->GetTileHeight();
+				int gridWidth = width * tileWidth / (int)FL::F_pixelsPerGridSpace;		// in grid tiles
+				int gridHeight = height * tileHeight / (int)FL::F_pixelsPerGridSpace;	// in grid tiles
+				drawSplitter->SetCurrentChannel(draw_list, 5);
+
+				std::map<int, std::map<int, Tile>> tiles = tileMap->GetTiles();
+
+				// Draw TileMap indices
+				for (int w = 0; w < width; w++)
+				{
+					if (tiles.count(w) > 0)
+					{
+						for (int h = 0; h < height; h++)
+						{
+							Vector2 tileCoord = Vector2(w, h);
+		
+							if (tiles.at(tileCoord.x).count(tileCoord.y) > 0)
+							{
+								Tile tile = tiles.at(w).at(h);
+
+								// Get TileSet for this tiles texture data
+								TileSet* usedTileSet = nullptr;
+								std::string tileSetName = tile.tileSetName;
+								if (tileSetName != "")
+									usedTileSet = FL::GetTileSet(tileSetName);
+
+								SDL_Texture* texture = tile.tileSetTexture;
+								int textureWidth = usedTileSet->GetTexture()->GetWidth();
+								int textureHeight = usedTileSet->GetTexture()->GetHeight();
+								Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
+								Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
+								float gridXPosition = (position.x - (gridWidth / 2)) + 2 * w;
+								float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
+								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
+							}
+						}
+					}
+				}
+			}
+
 
 			// Renders Button Component
 			if (button != nullptr)

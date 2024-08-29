@@ -154,9 +154,14 @@ namespace FlatGui
 		// Render Table
 		if (FL::PushTable("##TransformProperties" + std::to_string(id), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX) ||
-				FL::RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX))
+			{
 				transform->SetPosition(Vector2(xPos, yPos));
+			}
+			if (FL::RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
+			{
+				transform->SetPosition(Vector2(xPos, yPos));
+			}	
 			if (FL::RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360))
 				transform->SetRotation(rotation);
 			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000) ||
@@ -802,14 +807,22 @@ namespace FlatGui
 		// Render Table
 		if (FL::PushTable("##tileMapProps" + std::to_string(id), 2))
 		{
-			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1.0f, 1, -INT_MAX))
+			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1, 1, INT_MAX))
+			{
 				tileMap->SetWidth(width);
-			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1.0f, 1, -INT_MAX))
+			}
+			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1, 1, INT_MAX))
+			{
 				tileMap->SetHeight(height);
-			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1.0f, 1, -INT_MAX))
+			}
+			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1, 1, INT_MAX))
+			{
 				tileMap->SetTileWidth(tileWidth);
-			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1.0f, 1, -INT_MAX))
+			}
+			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1, 1, INT_MAX))
+			{
 				tileMap->SetTileHeight(tileHeight);
+			}
 			FL::PopTable();
 		}
 

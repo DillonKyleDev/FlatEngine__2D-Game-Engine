@@ -8,6 +8,45 @@
     },
     "tiles": [
         {
+            "index": 0
+        },
+        {
+            "index": 7
+        },
+        {
+            "index": 6
+        },
+        {
+            "index": 30
+        },
+        {
+            "index": 1
+        },
+        {
+            "index": 5
+        },
+        {
+            "index": 11
+        },
+        {
+            "index": 35
+        },
+        {
+            "index": 34
+        },
+        {
+            "index": 16
+        },
+        {
+            "index": 10
+        },
+        {
+            "index": 28
+        },
+        {
+            "index": 25
+        },
+        {
             "index": 13
         }
     ]
