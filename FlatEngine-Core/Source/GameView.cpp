@@ -304,12 +304,12 @@ namespace FlatEngine
 			{
 				long id = tileMap->GetID();
 				bool _isActive = tileMap->IsActive();
-				int width = tileMap->GetWidth();										// in tiles
-				int height = tileMap->GetHeight();										// in tiles
-				int tileWidth = tileMap->GetTileWidth();
-				int tileHeight = tileMap->GetTileHeight();
-				int gridWidth = width * tileWidth / (int)FL::F_pixelsPerGridSpace;		// in grid tiles
-				int gridHeight = height * tileHeight / (int)FL::F_pixelsPerGridSpace;	// in grid tiles
+				float width = (float)tileMap->GetWidth();										// in tiles
+				float height = (float)tileMap->GetHeight();										// in tiles
+				float tileWidth = (float)tileMap->GetTileWidth();
+				float tileHeight = (float)tileMap->GetTileHeight();
+				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
+				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
 				drawSplitter->SetCurrentChannel(draw_list, 5);
 
 				std::map<int, std::map<int, Tile>> tiles = tileMap->GetTiles();
@@ -317,13 +317,11 @@ namespace FlatEngine
 				// Draw TileMap indices
 				for (int w = 0; w < width; w++)
 				{
-					if (tiles.count(w) > 0)
+					if (tiles.count((int)w) > 0)
 					{
 						for (int h = 0; h < height; h++)
-						{
-							Vector2 tileCoord = Vector2(w, h);
-		
-							if (tiles.at(tileCoord.x).count(tileCoord.y) > 0)
+						{	
+							if (tiles.at((int)w).count((int)h) > 0)
 							{
 								Tile tile = tiles.at(w).at(h);
 
@@ -338,8 +336,8 @@ namespace FlatEngine
 								int textureHeight = usedTileSet->GetTexture()->GetHeight();
 								Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
 								Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
-								float gridXPosition = (position.x - (gridWidth / 2)) + 2 * w;
-								float gridYPosition = (position.y + (gridHeight / 2)) - 2 * h;
+								float gridXPosition = (position.x - (gridWidth / 2)) + 2 * (float)w;
+								float gridYPosition = (position.y + (gridHeight / 2)) - 2 * (float)h;
 								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
 								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 							}

@@ -6,14 +6,13 @@ namespace FL = FlatEngine;
 
 namespace FlatGui 
 {
-	bool _clearBufferEveryFrame = false;
-	bool _logProfilerOutput = false;
+	bool FG_b_clearBufferEveryFrame = false;
 
 	void RenderLog()
 	{
-		FL::BeginWindow("Logger", _showLogger);
+		FL::BeginWindow("Logger", FG_b_showLogger);
 
-		if (FL::RenderCheckbox("Clear buffer after every frame?", _clearBufferEveryFrame))
+		if (FL::RenderCheckbox("Clear buffer after every frame?", FG_b_clearBufferEveryFrame))
 		{
 			FL::F_Logger.ClearBuffer();
 		}
@@ -56,7 +55,7 @@ namespace FlatGui
 
 
 		// For keeping the log from filling up when logging continuous values
-		if (_clearBufferEveryFrame)
+		if (FG_b_clearBufferEveryFrame)
 		{
 			FL::F_Logger.ClearBuffer();
 			FL::LogString("Log buffer is being cleared...");

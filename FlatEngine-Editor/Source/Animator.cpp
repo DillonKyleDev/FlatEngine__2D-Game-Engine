@@ -28,7 +28,7 @@ namespace FlatGui
 	{
 		FL::PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
-		ImGui::Begin("Animator", &_showAnimator, 16 | 8);
+		ImGui::Begin("Animator", &FG_b_showAnimator, 16 | 8);
 		FL::PopWindowStyles();
 
 		// Animated Properties BeginChild()
@@ -835,7 +835,7 @@ namespace FlatGui
 	{
 		static Vector2 step = Vector2(50, 50);
 
-		FL::BeginWindow("Animator Preview", _showAnimationPreview);
+		FL::BeginWindow("Animator Preview", FG_b_showAnimationPreview);
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -929,7 +929,7 @@ namespace FlatGui
 
 	void RenderKeyFrameEditor()
 	{
-		FL::BeginWindow("Keyframe Editor", _showKeyFrameEditor);
+		FL::BeginWindow("Keyframe Editor", FG_b_showKeyFrameEditor);
 
 		std::string keyFrameProperty = "No KeyFrame Selected";
 		if (selectedKeyFrameToEdit != nullptr)

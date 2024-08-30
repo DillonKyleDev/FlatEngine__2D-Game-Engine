@@ -561,14 +561,14 @@ namespace FlatGui
 		else if (extension == ".mpc")
 		{
 			FL::F_selectedMappingContextName = FL::GetFilenameFromPath(fs_filepath.string());
-			_showMappingContextEditor = true;
+			FG_b_showMappingContextEditor = true;
 		}
 		// Animation file
 		else if (extension == ".anm")
 		{
 			SetFocusedAnimation(FL::GetFilenameFromPath(fs_filepath.string()));
-			_showAnimator = true;
-			_showAnimationPreview = true;
+			FG_b_showAnimator = true;
+			FG_b_showAnimationPreview = true;
 		}
 		// Lua file
 		else if (extension == ".scp")

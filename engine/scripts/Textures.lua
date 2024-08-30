@@ -28,6 +28,7 @@ F_Textures = {
 	translate = "../engine/images/icons/translate.png",
 	scale = "../engine/images/icons/scale.png",
 	rotate = "../engine/images/icons/rotate.png",
+	tileBrush = "../engine/images/icons/tileBrush.png",
 	transformArrow = "../engine/images/widgets/transformArrow.png",
 	transformArrowAllWhite = "../engine/images/widgets/transformArrowAllWhite.png",
 	transformArrowXWhite = "../engine/images/widgets/transformArrowXWhite.png",

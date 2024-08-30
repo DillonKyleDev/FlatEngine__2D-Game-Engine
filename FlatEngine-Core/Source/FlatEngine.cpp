@@ -59,7 +59,7 @@ namespace FlatEngine
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
 
-	F_CURSOR_MODE F_CursorMode = F_CURSOR_MODE::TRANSFORM;
+	F_CURSOR_MODE F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 
 
 	bool _isDebugMode = true;

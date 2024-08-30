@@ -1,6 +1,6 @@
 #include "TileMap.h"
 #include "TileSet.h"
-
+#include "BoxCollider.h"
 
 namespace FlatEngine
 {
@@ -9,8 +9,8 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_TileMap);
 		SetID(myID);
 		SetParentID(parentID);
-		m_width = 20;
-		m_height = 20;
+		m_width = 10;
+		m_height = 5;
 		m_tileWidth = 16;
 		m_tileHeight = 16;
 		m_tiles = std::map<int, std::map<int, Tile>>();
@@ -131,6 +131,16 @@ namespace FlatEngine
 	void TileMap::SetSelectedTileSet(std::string tileSet)
 	{
 		m_selectedTileSet = tileSet;
+	}
+
+	std::map<std::string, BoxCollider>& TileMap::GetBoxCollisionAreas()
+	{
+		return m_boxCollisionAreas;
+	}
+
+	void TileMap::AddBoxCollisionArea(std::string label, BoxCollider collisionArea)
+	{
+		m_boxCollisionAreas.emplace(label, collisionArea);
 	}
 
 	void TileMap::AddTileSet(std::string name)

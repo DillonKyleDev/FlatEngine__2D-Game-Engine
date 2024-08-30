@@ -31,10 +31,10 @@ namespace FlatGui
 {
 	void MainMenuBar()
 	{
-		std::string newScriptModalLabel = "Create Lua Script";
-		static bool b_openNewScriptModal = false;
+		static bool b_openScriptModal = false;
 		static bool b_openAnimationModal = false;
 		static bool b_openMappingContextModal = false;
+		static bool b_openTileSetModal = false;
 
 		FL::PushMenuStyles();
 
@@ -139,38 +139,52 @@ namespace FlatGui
 			}
 			if (ImGui::BeginMenu("Viewports"))
 			{
-				if (ImGui::MenuItem("ImGui Demo Window", NULL, _showDemoWindow))
-					_showDemoWindow = !_showDemoWindow;
-				if (ImGui::MenuItem("Scene View", NULL, _showSceneView))
-					_showSceneView = !_showSceneView;
-				if (ImGui::MenuItem("Game View", NULL, _showGameView))
-					_showGameView = !_showGameView;
-				if (ImGui::MenuItem("Hierarchy", NULL, _showHierarchy))
-					_showHierarchy = !_showHierarchy;
-				if (ImGui::MenuItem("Inspector", NULL, _showInspector))
-					_showInspector = !_showInspector;
-				if (ImGui::MenuItem("Animator", NULL, _showAnimator))
-					_showAnimator = !_showAnimator;
-				if (ImGui::MenuItem("Key Frame Editor", NULL, _showKeyFrameEditor))
-					_showKeyFrameEditor = !_showKeyFrameEditor;
-				if (ImGui::MenuItem("Animation Preview", NULL, _showAnimationPreview))
-					_showAnimationPreview = !_showAnimationPreview;
-				if (ImGui::MenuItem("Logger", NULL, _showLogger))
-					_showLogger = !_showLogger;
-				if (ImGui::MenuItem("Profiler", NULL, _showProfiler))
-					_showProfiler = !_showProfiler;
-				if (ImGui::MenuItem("Mapping Context Editor", NULL, _showMappingContextEditor))
-					_showMappingContextEditor = !_showMappingContextEditor;
+				if (ImGui::MenuItem("ImGui Demo Window", NULL, FG_b_showDemoWindow))
+					FG_b_showDemoWindow = !FG_b_showDemoWindow;
+				ImGui::Separator();
+				ImGui::Text("- Main Panels -");
+				ImGui::Separator();
+				if (ImGui::MenuItem("Scene View", NULL, FG_b_showSceneView))
+					FG_b_showSceneView = !FG_b_showSceneView;
+				if (ImGui::MenuItem("Game View", NULL, FG_b_showGameView))
+					FG_b_showGameView = !FG_b_showGameView;
+				if (ImGui::MenuItem("Hierarchy", NULL, FG_b_showHierarchy))
+					FG_b_showHierarchy = !FG_b_showHierarchy;
+				if (ImGui::MenuItem("Inspector", NULL, FG_b_showInspector))
+					FG_b_showInspector = !FG_b_showInspector;
+				if (ImGui::MenuItem("File Explorer", NULL, FG_b_showFileExplorer))
+					FG_b_showFileExplorer = !FG_b_showFileExplorer;
+				ImGui::Separator();
+				if (ImGui::MenuItem("Logger", NULL, FG_b_showLogger))
+					FG_b_showLogger = !FG_b_showLogger;
+				if (ImGui::MenuItem("Profiler", NULL, FG_b_showProfiler))
+					FG_b_showProfiler = !FG_b_showProfiler;
+				if (ImGui::MenuItem("Animator", NULL, FG_b_showAnimator))
+					FG_b_showAnimator = !FG_b_showAnimator;
+				if (ImGui::MenuItem("Animation Preview", NULL, FG_b_showAnimationPreview))
+					FG_b_showAnimationPreview = !FG_b_showAnimationPreview;
+				ImGui::Separator();
+				ImGui::Text("- Editors -");
+				ImGui::Separator();
+				if (ImGui::MenuItem("Key Frame Editor", NULL, FG_b_showKeyFrameEditor))
+					FG_b_showKeyFrameEditor = !FG_b_showKeyFrameEditor;
+				if (ImGui::MenuItem("TileSet Editor", NULL, FG_b_showTileSetEditor))
+					FG_b_showTileSetEditor = !FG_b_showTileSetEditor;
+				if (ImGui::MenuItem("Script Editor", NULL, FG_b_showScriptEditor))
+					FG_b_showScriptEditor = !FG_b_showScriptEditor;
+				if (ImGui::MenuItem("Mapping Context Editor", NULL, FG_b_showMappingContextEditor))
+					FG_b_showMappingContextEditor = !FG_b_showMappingContextEditor;
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Assets"))
+			if (ImGui::BeginMenu("Create"))
 			{
-				if (ImGui::MenuItem("New GameObject"))
+				if (ImGui::MenuItem("GameObject         "))
 				{
 					GameObject* newObject = FL::CreateGameObject(-1);
 					SetFocusedGameObjectID(newObject->GetID());
 				}
+				ImGui::Separator();
 				if (ImGui::BeginMenu("Components"))
 				{
 					if (ImGui::MenuItem("Sprite"))
@@ -253,13 +267,13 @@ namespace FlatGui
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
-					//if (ImGui::MenuItem("CircleCollider"))
-					//{
-					//	GameObject *newObject = FL::CreateGameObject(-1);						
-					//	newObject->AddCircleColliderComponent();
-					//	newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
-					//	SetFocusedGameObjectID(newObject->GetID());
-					//}
+					if (ImGui::MenuItem("TileMap"))
+					{
+						GameObject* newObject = FL::CreateGameObject(-1);
+						newObject->AddTileMap();
+						newObject->SetName("TileMap(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Prefabs"))
@@ -293,7 +307,11 @@ namespace FlatGui
 					}
 					if (ImGui::MenuItem("Lua Script"))
 					{						
-						b_openNewScriptModal = true;
+						b_openScriptModal = true;
+					}
+					if (ImGui::MenuItem("Tile Set"))
+					{
+						b_openTileSetModal = true;
 					}
 					ImGui::EndMenu();
 				}
@@ -309,6 +327,7 @@ namespace FlatGui
 				{
 					FL::F_AssetManager.CollectTextures();					
 				}
+				ImGui::Separator();
 				if (ImGui::BeginMenu("Widgets"))
 				{
 					if (ImGui::BeginMenu("Scene View Icon Transparency"))
@@ -320,9 +339,10 @@ namespace FlatGui
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Project Settings", NULL, _showSettings))
-					_showSettings = !_showSettings;
-				if (ImGui::MenuItem("Build Project", NULL, _showSettings))
+				ImGui::Separator();
+				if (ImGui::MenuItem("Project Settings", NULL, FG_b_showSettings))
+					FG_b_showSettings = !FG_b_showSettings;
+				if (ImGui::MenuItem("Build Project", NULL, FG_b_showSettings))
 					FL::BuildProject();
 				ImGui::EndMenu();
 			}
@@ -331,7 +351,7 @@ namespace FlatGui
 
 		// New Lua Script Modal
 		std::string newScriptName = "";
-		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openNewScriptModal))
+		if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newScriptName, b_openScriptModal))
 		{
 			FL::CreateNewLuaScript(newScriptName);
 		}
@@ -344,8 +364,8 @@ namespace FlatGui
 			FL::CreateNewAnimationFile(animationName);
 			SaveAnimationData(animationProperties, FL::GetDir("animations") + "/" + animationName + ".anm");
 			SetFocusedAnimation(animationProperties);
-			_showAnimator = true;
-			_showAnimationPreview = true;
+			FG_b_showAnimator = true;
+			FG_b_showAnimationPreview = true;
 		}
 		// New Mapping Context Modal
 		std::string mappingContextName = "";
@@ -353,7 +373,14 @@ namespace FlatGui
 		{
 			FL::CreateNewMappingContextFile(mappingContextName);
 			FL::F_selectedMappingContextName = mappingContextName;
-			_showMappingContextEditor = true;
+			FG_b_showMappingContextEditor = true;
+		}
+		// New TileSet Modal
+		std::string tileSetName = "";
+		if (FL::RenderInputModal("Create New TileSet", "Enter a name for the new TileSet", tileSetName, b_openTileSetModal))
+		{
+			FL::CreateNewTileSetFile(tileSetName, FL::GetDir("tileSets"));
+			FG_b_showTileSetEditor = true;
 		}
 
 		FL::PopMenuStyles();

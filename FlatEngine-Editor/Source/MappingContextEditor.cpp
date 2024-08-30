@@ -15,7 +15,7 @@ namespace FlatGui
 
 	void RenderMappingContextEditor()
 	{
-		FL::BeginWindow("Mapping Context Editor", _showMappingContextEditor);
+		FL::BeginWindow("Mapping Context Editor", FG_b_showMappingContextEditor);
 		
 		const char* inputs[] = { 
 			// XInput
@@ -308,7 +308,7 @@ namespace FlatGui
 		{
 			FL::CreateNewMappingContextFile(fileName);
 			FL::F_selectedMappingContextName = fileName;
-			_showMappingContextEditor = true;
+			FG_b_showMappingContextEditor = true;
 		}
 
 		FL::EndWindow();

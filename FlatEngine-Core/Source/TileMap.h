@@ -7,6 +7,8 @@
 
 namespace FlatEngine
 {
+    class BoxCollider;
+
     struct Tile {
         Vector2 tileCoord;
         std::string tileSetName;
@@ -34,6 +36,8 @@ namespace FlatEngine
         void SetHeight(int height);
         std::string GetSelectedTileSet();
         void SetSelectedTileSet(std::string tileSet);
+        std::map<std::string, BoxCollider> &GetBoxCollisionAreas();
+        void AddBoxCollisionArea(std::string label, BoxCollider collisionArea);
         void AddTileSet(std::string name);
         void RemoveTileSet(std::string name);
         void SetTileSets(std::vector<std::string> tileSets);
@@ -49,6 +53,7 @@ namespace FlatEngine
         std::map<int, std::map<int, Tile>> m_tiles;
         std::string m_selectedTileSet;
         std::vector<std::string> m_tileSetNames;  
+        std::map<std::string, BoxCollider> m_boxCollisionAreas;
     };
 }
 

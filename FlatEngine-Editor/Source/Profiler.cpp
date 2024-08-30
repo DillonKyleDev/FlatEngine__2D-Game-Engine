@@ -18,7 +18,7 @@ namespace FlatGui
 { 
 	void RenderProfiler()
 	{
-		FL::BeginWindow("Profiler", _showProfiler);
+		FL::BeginWindow("Profiler", FG_b_showProfiler);
 
 		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
 			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;

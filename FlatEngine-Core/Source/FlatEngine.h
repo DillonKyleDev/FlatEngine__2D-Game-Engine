@@ -57,15 +57,12 @@ namespace FlatEngine
 	class TileSet;
 
 	enum F_CURSOR_MODE {
-		TRANSFORM,
+		TRANSLATE,
 		SCALE,
 		ROTATE,
 		TILE_BRUSH,
 		TILE_ERASE,
-	};
-
-	namespace FlatGui {
-		class WidgetsManager;
+		TILE_COLLIDER_DRAW,
 	};
 
 	using ComponentTypes = Component::ComponentTypes;
@@ -123,7 +120,6 @@ namespace FlatEngine
 	extern UIManager F_UIManager;
 	extern Logger F_Logger;
 	extern std::vector<Process> F_ProfilerProcesses;
-	extern std::shared_ptr<FlatEngine::FlatGui::WidgetsManager> widgetsManager;
 	extern Sound F_SoundController;
 	extern TTF_Font* F_fontCinzel;
 

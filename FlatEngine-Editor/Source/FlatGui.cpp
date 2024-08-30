@@ -96,18 +96,21 @@ namespace FlatGui
 	std::map<long, bool> leafExpandedTracker = std::map<long, bool>();
 
 	// Window Visibility
-	bool _showDemoWindow = false;
-	bool _showSceneView = true;
-	bool _showGameView = true;
-	bool _showHierarchy = true;
-	bool _showInspector = true;
-	bool _showAnimator = false;
-	bool _showAnimationPreview = false;
-	bool _showKeyFrameEditor = false;
-	bool _showLogger = true;
-	bool _showProfiler = true;
-	bool _showMappingContextEditor = false;
-	bool _showSettings = false;
+	bool FG_b_showDemoWindow = false;
+	bool FG_b_showScriptEditor = false;
+	bool FG_b_showTileSetEditor = false;
+	bool FG_b_showFileExplorer = false;
+	bool FG_b_showSceneView = true;
+	bool FG_b_showGameView = true;
+	bool FG_b_showHierarchy = true;
+	bool FG_b_showInspector = true;
+	bool FG_b_showAnimator = false;
+	bool FG_b_showAnimationPreview = false;
+	bool FG_b_showKeyFrameEditor = false;
+	bool FG_b_showLogger = true;
+	bool FG_b_showProfiler = true;
+	bool FG_b_showMappingContextEditor = false;
+	bool FG_b_showSettings = false;
 
 
 	void Init()
@@ -117,84 +120,84 @@ namespace FlatGui
 
 	void SetupProfilerProcesses()
 	{
-		if (_showProfiler)
+		if (FG_b_showProfiler)
 		{
 			// Add Profiler Processes
 			// 						
 			FL::AddProfilerProcess("Render");
 			FL::AddProfilerProcess("Render Present");
-			// RenderMainMenuBar()						
-			//FL::AddProfilerProcess("Render Main Menu Bar");
-			// RenderToolbar()							
-			//FL::AddProfilerProcess("Render Toolbar");
 
-			// RenderHierarchy()
-			if (_showHierarchy)
-				FL::AddProfilerProcess("Render Hierarchy");
+			if (FG_b_showFileExplorer)
+				FL::AddProfilerProcess("File Explorer");
 			else
-				FL::RemoveProfilerProcess("Render Hierarchy");
+				FL::RemoveProfilerProcess("File Explorer");
 
-			// RenderInspector()
-			if (_showInspector)
-				FL::AddProfilerProcess("Render Inspector");
+
+			if (FG_b_showTileSetEditor)
+				FL::AddProfilerProcess("TileSet Editor");
 			else
-				FL::RemoveProfilerProcess("Render Inspector");
+				FL::RemoveProfilerProcess("TileSet Editor");
 
-			// Game_RenderView
-			if (_showGameView)
-				FL::AddProfilerProcess("Render Game View");
+			if (FG_b_showScriptEditor)
+				FL::AddProfilerProcess("Script Editor");
 			else
-				FL::RemoveProfilerProcess("Render Game View");
+				FL::RemoveProfilerProcess("Script Editor");
 
-			// Scene_RenderView
-			if (_showSceneView)
-				FL::AddProfilerProcess("Render Scene View");
+			if (FG_b_showHierarchy)
+				FL::AddProfilerProcess("Hierarchy");
 			else
-				FL::RemoveProfilerProcess("Render Scene View");
+				FL::RemoveProfilerProcess("Hierarchy");
 
-			// RenderAnimator
-			if (_showAnimator)
-				FL::AddProfilerProcess("Render Animator");
+			if (FG_b_showInspector)
+				FL::AddProfilerProcess("Inspector");
 			else
-				FL::RemoveProfilerProcess("Render Animator");
+				FL::RemoveProfilerProcess("Inspector");
 
-			// RenderAnimationPreview
-			if (_showAnimationPreview)
-				FL::AddProfilerProcess("Render Animation Preview");
+			if (FG_b_showGameView)
+				FL::AddProfilerProcess("Game View");
 			else
-				FL::RemoveProfilerProcess("Render Animation Preview");
+				FL::RemoveProfilerProcess("Game View");
 
-			// RenderKeyFrameEditor
-			if (_showKeyFrameEditor)
-				FL::AddProfilerProcess("Render Key Frame Editor");
+			if (FG_b_showSceneView)
+				FL::AddProfilerProcess("Scene View");
 			else
-				FL::RemoveProfilerProcess("Render Key Frame Editor");
+				FL::RemoveProfilerProcess("Scene View");
 
-			// RenderLog
-			if (_showLogger)
-				FL::AddProfilerProcess("Render Log");
+			if (FG_b_showAnimator)
+				FL::AddProfilerProcess("Animator");
 			else
-				FL::RemoveProfilerProcess("Render Log");
+				FL::RemoveProfilerProcess("Animator");
 
-			// RenderProfiler
-			if (_showProfiler)
-				FL::AddProfilerProcess("Render Profiler");
+			if (FG_b_showAnimationPreview)
+				FL::AddProfilerProcess("Animation Preview");
 			else
-				FL::RemoveProfilerProcess("Render Profiler");
+				FL::RemoveProfilerProcess("Animation Preview");
 
-			// RenderMappingContextEditor
-			if (_showMappingContextEditor)
-				FL::AddProfilerProcess("Render Mapping Context Editor");
+			if (FG_b_showKeyFrameEditor)
+				FL::AddProfilerProcess("Key Frame Editor");
 			else
-				FL::RemoveProfilerProcess("Render Mapping Context Editor");
+				FL::RemoveProfilerProcess("Key Frame Editor");
 
-			// RenderSettings
-			if (_showSettings)
-				FL::AddProfilerProcess("Render Settings");
+			if (FG_b_showLogger)
+				FL::AddProfilerProcess("Log");
 			else
-				FL::RemoveProfilerProcess("Render Settings");
+				FL::RemoveProfilerProcess("Log");
 
-			// Collision Testing
+			if (FG_b_showProfiler)
+				FL::AddProfilerProcess("Profiler");
+			else
+				FL::RemoveProfilerProcess("Profiler");
+
+			if (FG_b_showMappingContextEditor)
+				FL::AddProfilerProcess("Mapping Context Editor");
+			else
+				FL::RemoveProfilerProcess("Mapping Context Editor");
+		
+			if (FG_b_showSettings)
+				FL::AddProfilerProcess("Settings");
+			else
+				FL::RemoveProfilerProcess("Settings");
+
 			FL::AddProfilerProcess("Collision Testing");
 		}
 	}
@@ -228,7 +231,7 @@ namespace FlatGui
 				animationPath = animationComponent->GetAnimationPath();
 
 			// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
-			if (_showAnimator && FocusedAnimation != nullptr &&
+			if (FG_b_showAnimator && FocusedAnimation != nullptr &&
 				animationComponent != nullptr && animationPath == FocusedAnimation->animationPath)
 			{
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
@@ -268,25 +271,25 @@ namespace FlatGui
 
 				// Show/hide windows
 				if (currentObjectJson.contains("_showSceneView"))
-					_showSceneView = currentObjectJson["_showSceneView"];
+					FG_b_showSceneView = currentObjectJson["_showSceneView"];
 				if (currentObjectJson.contains("_showGameView"))
-					_showGameView = currentObjectJson["_showGameView"];
+					FG_b_showGameView = currentObjectJson["_showGameView"];
 				if (currentObjectJson.contains("_showHierarchy"))
-					_showHierarchy = currentObjectJson["_showHierarchy"];
+					FG_b_showHierarchy = currentObjectJson["_showHierarchy"];
 				if (currentObjectJson.contains("_showInspector"))
-					_showInspector = currentObjectJson["_showInspector"];
+					FG_b_showInspector = currentObjectJson["_showInspector"];
 				if (currentObjectJson.contains("_showAnimator"))
-					_showAnimator = currentObjectJson["_showAnimator"];
+					FG_b_showAnimator = currentObjectJson["_showAnimator"];
 				if (currentObjectJson.contains("_showAnimationPreview"))
-					_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+					FG_b_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
 				if (currentObjectJson.contains("_showKeyFrameEditor"))
-					_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+					FG_b_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
 				if (currentObjectJson.contains("_showLogger"))
-					_showLogger = currentObjectJson["_showLogger"];
+					FG_b_showLogger = currentObjectJson["_showLogger"];
 				if (currentObjectJson.contains("_showProfiler"))
-					_showProfiler = currentObjectJson["_showProfiler"];
+					FG_b_showProfiler = currentObjectJson["_showProfiler"];
 				if (currentObjectJson.contains("_showMappingContextEditor"))
-					_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
+					FG_b_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
 
 				// Current directory opened
 				if (currentObjectJson.contains("currentFileDirectory"))
@@ -295,8 +298,8 @@ namespace FlatGui
 				// Settings
 				if (currentObjectJson.contains("_clearLogBuffer"))
 				{
-					_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
-					if (_clearBufferEveryFrame)
+					FG_b_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
+					if (FG_b_clearBufferEveryFrame)
 					{
 						FL::F_Logger.ClearBuffer();
 					}
@@ -344,17 +347,17 @@ namespace FlatGui
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
 			{ "sceneViewGridStepX", FG_sceneViewGridStep.x },
 			{ "sceneViewGridStepY", FG_sceneViewGridStep.y },
-			{ "_showSceneView", _showSceneView },
-			{ "_showGameView", _showGameView },
-			{ "_showHierarchy", _showHierarchy },
-			{ "_showInspector", _showInspector },
-			{ "_showAnimator", _showAnimator },
-			{ "_showAnimationPreview", _showAnimationPreview },
-			{ "_showKeyFrameEditor", _showKeyFrameEditor },
-			{ "_showLogger", _showLogger },
-			{ "_showProfiler", _showProfiler },
-			{ "_showMappingContextEditor", _showMappingContextEditor },
-			{ "_clearLogBuffer", _clearBufferEveryFrame },
+			{ "_showSceneView", FG_b_showSceneView },
+			{ "_showGameView", FG_b_showGameView },
+			{ "_showHierarchy", FG_b_showHierarchy },
+			{ "_showInspector", FG_b_showInspector },
+			{ "_showAnimator", FG_b_showAnimator },
+			{ "_showAnimationPreview", FG_b_showAnimationPreview },
+			{ "_showKeyFrameEditor", FG_b_showKeyFrameEditor },
+			{ "_showLogger", FG_b_showLogger },
+			{ "_showProfiler", FG_b_showProfiler },
+			{ "_showMappingContextEditor", FG_b_showMappingContextEditor },
+			{ "_clearLogBuffer", FG_b_clearBufferEveryFrame },
 			{ "_autoSave", FL::F_LoadedProject.AutoSaveOn() },
 			{ "resolutionWidth", FL::F_LoadedProject.GetResolution().x },
 			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
@@ -515,98 +518,111 @@ namespace FlatGui
 	void AddViewports()
 	{
 		// ImGui Demo Window
-		if (_showDemoWindow)
-			ImGui::ShowDemoWindow(&_showDemoWindow);
-		
-		//RenderScriptEditor();
+		if (FG_b_showDemoWindow)
+			ImGui::ShowDemoWindow(&FG_b_showDemoWindow);
 
-		RenderTileSetEditor();
+		MainMenuBar();
+		RenderToolbar();
 
-		//RenderFileExplorer();
 
 		float startTime = (float)FL::GetEngineTime();
-		MainMenuBar();
-		FL::AddProcessData("Render Main Menu Bar", (float)FL::GetEngineTime() - startTime);
 
-		startTime = (float)FL::GetEngineTime();
-		RenderToolbar();
-		FL::AddProcessData("Render Toolbar", (float)FL::GetEngineTime() - startTime);
+		if (FG_b_showScriptEditor)
+		{
+			startTime = (float)FL::GetEngineTime();
+			RenderScriptEditor();
+			FL::AddProcessData("Script Editor", (float)FL::GetEngineTime() - startTime);
+		}
+
+		if (FG_b_showTileSetEditor)
+		{
+			startTime = (float)FL::GetEngineTime();
+			RenderTileSetEditor();
+			FL::AddProcessData("TileSet Editor", (float)FL::GetEngineTime() - startTime);
+		}
+
+		if (FG_b_showFileExplorer)
+		{
+			startTime = (float)FL::GetEngineTime();
+			RenderFileExplorer();
+			FL::AddProcessData("File Explorer", (float)FL::GetEngineTime() - startTime);
+		}
 		
-		if (_showHierarchy)
+		if (FG_b_showHierarchy)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderHierarchy();
-			FL::AddProcessData("Render Hierarchy", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Hierarchy", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showInspector)
+		if (FG_b_showInspector)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderInspector();
-			FL::AddProcessData("Render Inspector", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Inspector", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showGameView)
+		if (FG_b_showGameView)
 		{
 			startTime = (float)FL::GetEngineTime();
 			FL::Game_RenderView();
-			FL::AddProcessData("Render Game View", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Game View", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showSceneView)
+		if (FG_b_showSceneView)
 		{
 			startTime = (float)FL::GetEngineTime();
 			Scene_RenderView();
-			FL::AddProcessData("Render Scene View", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Scene View", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showAnimator)
+		if (FG_b_showAnimator)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderAnimator();
-			FL::AddProcessData("Render Animator", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Animator", (float)FL::GetEngineTime() - startTime);
 		}
 		
-		if (_showAnimationPreview)
+		if (FG_b_showAnimationPreview)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderAnimationPreview();
-			FL::AddProcessData("Render Animation Preview", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Animation Preview", (float)FL::GetEngineTime() - startTime);
 		}
 		
-		if (_showKeyFrameEditor)
+		if (FG_b_showKeyFrameEditor)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderKeyFrameEditor();
-			FL::AddProcessData("Render Key Frame Editor", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Key Frame Editor", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showLogger)
+		if (FG_b_showLogger)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderLog();
-			FL::AddProcessData("Render Log", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Log", (float)FL::GetEngineTime() - startTime);
 		}
 	
-		if (_showProfiler)
+		if (FG_b_showProfiler)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderProfiler();
-			FL::AddProcessData("Render Profiler", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Profiler", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showMappingContextEditor)
+		if (FG_b_showMappingContextEditor)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderMappingContextEditor();
-			FL::AddProcessData("Render Mapping Context Editor", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Mapping Context Editor", (float)FL::GetEngineTime() - startTime);
 		}
 
-		if (_showSettings)
+		if (FG_b_showSettings)
 		{
 			startTime = (float)FL::GetEngineTime();
 			RenderSettings();
-			FL::AddProcessData("Render Settings", (float)FL::GetEngineTime() - startTime);
+			FL::AddProcessData("Settings", (float)FL::GetEngineTime() - startTime);
 		}
 	}
 
@@ -1062,26 +1078,19 @@ namespace FlatGui
 				float tileHeight = (float)tileMap->GetTileHeight();
 				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
 				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
-
-				std::vector<std::string> tileSets = tileMap->GetTileSets();				
-
-				// Draw TileMap border
-				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
-				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
-				Vector2 renderStart = Vector2(renderXStart, renderYStart);
-				Vector2 renderEnd = Vector2(renderXStart + ((gridWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((gridHeight * transformScale.y) * FG_sceneViewGridStep.x));
-
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
-				
+		
 				std::map<int, std::map<int, FL::Tile>> tiles = tileMap->GetTiles();
+				
+				static Vector2 boxColStartTile = Vector2(-1, -1);
+				static Vector2 boxColEndTile = Vector2(-1, -1);
+				static Vector2 boxColCurrentHoveredTile = Vector2(-1, -1);
+
 
 				// Draw TileMap indices
 				for (float w = 0; w < width; w++)
 				{
 					for (float h = 0; h < height; h++)
 					{
-						Vector2 tileCoord = Vector2(w, h);
-
 						// TileMap interactions
 						//
 						std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
@@ -1104,12 +1113,20 @@ namespace FlatGui
 
 						Vector2 tileStart = Vector2(tileStartX, tileStartY);
 						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
-						ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBg"));
+
+						if (focusedObjectID == self.GetID())
+						{
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBgFocused"));
+						}
+						else
+						{
+							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBgUnfocused"));
+						}
 						
 						// Draw tile texture if it has one on it currently
-						if (tiles.count(w) > 0 && tiles.at(w).count(h) > 0)
+						if (tiles.count((int)w) > 0 && tiles.at((int)w).count((int)h) > 0)
 						{
-							FL::Tile tile = tiles.at(w).at(h);
+							FL::Tile tile = tiles.at((int)w).at((int)h);
 
 							// Get TileSet for this tiles texture data
 							TileSet* usedTileSet = nullptr;
@@ -1134,41 +1151,101 @@ namespace FlatGui
 						}
 
 						// Catch interactions on the TileMap container
-						if (ImGui::IsWindowFocused())
-						{
+						if ((focusedObjectID == self.GetID()) && (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW))
+						{							
 							AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
+			
 							// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
 							const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
 							const bool is_active = ImGui::IsItemActive();
 							const bool is_clicked = ImGui::IsItemClicked();
 
+						
+							// Highlight all boxes between startBoxCol tile and currentlyHoveredBoxCol tile
+							if (focusedObjectID == self.GetID() && boxColStartTile.x != -1 && boxColStartTile.y != -1 && 
+								FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW &&
+								ImGui::IsKeyDown(ImGuiKey_MouseLeft) &&
+								(boxColStartTile.x <= w && boxColCurrentHoveredTile.x >= w || boxColCurrentHoveredTile.x <= w && boxColStartTile.x >= w ) && 
+								(boxColStartTile.y <= h && boxColCurrentHoveredTile.y >= h || boxColCurrentHoveredTile.y <= h && boxColStartTile.y >= h))
+							{
+								ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileBoxColHighlight"));
+							}
+
 							if (is_hovered)
 							{
-								ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
-								if (activeTileSet != nullptr && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
-								{
-									tileMap->SetTile(tileCoord, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+								// Mouse down
+								if (ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+								{								
+									if (activeTileSet != nullptr && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+										tileMap->SetTile(Vector2(w, h), activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+									}
+									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileBoxColHighlight"));
+										boxColCurrentHoveredTile = Vector2(w, h);
+									}
 								}
-							}
-							if (is_clicked && activeTileSet != nullptr)
-							{
-								tileMap->SetTile(tileCoord, activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
-							}
-							if (is_active)
-							{
-								ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+								// Mouse not down
+								else
+								{
+									if (activeTileSet != nullptr && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+									}
+									if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileBoxColHoveredHighlight"));
+									}
+								}
+
+								if (ImGui::IsKeyPressed(ImGuiKey_MouseLeft, false))
+								{
+									boxColStartTile = Vector2(w, h);
+								}
+
+								if (ImGui::IsKeyReleased(ImGuiKey_MouseLeft))
+								{
+									boxColEndTile = Vector2(w, h);
+									boxColStartTile = Vector2(-1, -1);
+								}
 							}
 						}
 					}
 				}
 
-				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBox"), 2.0f, draw_list);
+				// Draw TileMap border
+				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
+				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
+				Vector2 renderStart = Vector2(renderXStart, renderYStart);
+				Vector2 renderEnd = Vector2(renderXStart + ((gridWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((gridHeight * transformScale.y) * FG_sceneViewGridStep.x));
+
+				if (focusedObjectID == self.GetID())
+				{
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, draw_list);
+				}
+				else
+				{
+					Vector2 focusObjectButtonSize = Vector2(renderEnd.x - renderStart.x, renderEnd.y - renderStart.y);
+					if (focusObjectButtonSize.x <= 0 || focusObjectButtonSize.y <= 0)
+						focusObjectButtonSize = Vector2(1, 1);
+
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, draw_list);
+					
+					// This is scrolling scene view on right click drag too fast
+					AddSceneViewMouseControls("##SelectThisTileMapObjectButton", renderStart, focusObjectButtonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"));
+					if (ImGui::IsItemClicked())
+					{
+						SetFocusedGameObjectID(self.GetID());
+					}
+				}
 			}
 
 			// Renders Transform Arrow // 
 			//
 			// Should be last in line here to be rendered top-most -- If this obect is focused
-			if (focusedObjectID != -1 && focusedObjectID == self.GetID())
+			if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE && focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
 				GameObject focusedObject = FL::GetObjectById(focusedObjectID);
 				SDL_Texture* arrowToRender = FL::GetTexture("transformArrow");

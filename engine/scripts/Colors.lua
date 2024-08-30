@@ -25,6 +25,12 @@ F_Colors = {
 	----------------------
 	-- Windows -----------
 	----------------------
+	-- Scene View
+	cursorModeSelectBg = Vector4:new(0.9, 0.9, 0.9, 0.05),
+	cursorModeSelectBorder = Vector4:new(0.9, 0.9, 0.9, 0.2),
+	cursorModeButtonHover = Vector4:new(0.9, 0.9, 0.9, 0.2),
+	cursorModeButtonHoverSelected = Vector4:new(0.4, 0.4, 0.4, 0.6),
+	selectedCursorModeButtonBg =  Vector4:new(0.4, 0.4, 0.4, 0.8),
 	windowBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
 	outerWindow = Vector4:new(0.13, 0.13, 0.15, 1.0),
 	innerWindow = Vector4:new(0.1, 0.1, 0.12, 1.0),
@@ -55,9 +61,13 @@ F_Colors = {
 	tileSetSelectedTile = Vector4:new(1, 1, 1, 0.15),
 	tileSetHoldingTile = Vector4:new(1, 1, 1, 0.45),
 	-- TileMap
-	tileMapBox = Vector4:new(0.71, 0.0, 0.88, 0.8),
+	tileMapBoxFocused = Vector4:new(0.71, 0.0, 0.88, 0.8),
+	tileMapGridBgFocused = Vector4:new(0.71, 0.0, 0.88, 0.1),
+	tileMapBoxUnfocused = Vector4:new(0.71, 0.0, 0.88, 0.4),
+	tileMapGridBgUnfocused = Vector4:new(0.71, 0.0, 0.88, 0.05),
 	tileMapGridLines = Vector4:new(0.71, 0.0, 0.88, 0.15),
-	tileMapGridBg = Vector4:new(0.71, 0.0, 0.88, 0.1),
+	tileBoxColHighlight = Vector4:new(0.5, 1, 0.5, 0.55),
+	tileBoxColHoveredHighlight = Vector4:new(0.5, 1, 0.5, 0.55),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

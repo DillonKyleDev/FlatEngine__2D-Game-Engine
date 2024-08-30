@@ -129,25 +129,28 @@ namespace FlatGui
 
 	// Settings
 	extern int iconTransparency;
-	extern bool _clearBufferEveryFrame;
+	extern bool FG_b_clearBufferEveryFrame;
 
 	// Hierarchy
 	extern std::map<long, bool> leafExpandedTracker;
 	extern std::map<std::string, bool> FG_fileExplorerLeafTracker;
 
 	// Window Visibility
-	extern bool _showDemoWindow;
-	extern bool _showSceneView;
-	extern bool _showGameView;
-	extern bool _showHierarchy;
-	extern bool _showInspector;
-	extern bool _showAnimator;
-	extern bool _showAnimationPreview;
-	extern bool _showKeyFrameEditor;
-	extern bool _showLogger;
-	extern bool _showProfiler;
-	extern bool _showMappingContextEditor;
-	extern bool _showSettings;
+	extern bool FG_b_showDemoWindow;
+	extern bool FG_b_showScriptEditor;
+	extern bool FG_b_showTileSetEditor;
+	extern bool FG_b_showFileExplorer;
+	extern bool FG_b_showSceneView;
+	extern bool FG_b_showGameView;
+	extern bool FG_b_showHierarchy;
+	extern bool FG_b_showInspector;
+	extern bool FG_b_showAnimator;
+	extern bool FG_b_showAnimationPreview;
+	extern bool FG_b_showKeyFrameEditor;
+	extern bool FG_b_showLogger;
+	extern bool FG_b_showProfiler;
+	extern bool FG_b_showMappingContextEditor;
+	extern bool FG_b_showSettings;
 
 	extern void Init();
 
@@ -188,6 +191,7 @@ namespace FlatGui
 	extern void RenderTileSetEditor();
 	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2 &scrolling, Vector2 canvas_p0, Vector2 canvas_sz, Vector2 &step, TileSet* tileSet);
 	
+	extern void RenderCursorModeButtons();
 
 	extern void RenderScriptEditor();
 

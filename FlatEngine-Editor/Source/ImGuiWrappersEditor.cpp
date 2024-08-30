@@ -492,8 +492,8 @@ namespace FlatGui
 		{									
 			if (FL::RenderButton("Edit Animation"))
 			{
-				_showAnimator = true;
-				_showAnimationPreview = true;
+				FG_b_showAnimator = true;
+				FG_b_showAnimationPreview = true;
 
 				SetFocusedAnimation(FL::LoadAnimationFile(animation->GetAnimationPath()));
 				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
@@ -832,7 +832,7 @@ namespace FlatGui
 		std::string activeTileSet = tileMap->GetSelectedTileSet();
 		std::vector<std::string> tileSetNames;
 
-		// Collect TileSets not already in this TileMap
+		// Collect TileSets not already in this TileMap that are available to add to it
 		for (int i = 0; i < FL::F_TileSets.size(); i++)
 		{
 			bool b_alreadyInTileMap = false;
@@ -848,7 +848,6 @@ namespace FlatGui
 		}
 
 		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);		
-
 		if (FL::RenderButton("Add TileSet", Vector2(100, 20)))
 		{			
 			if (tileSetNames.size() >= currentSelectableTileSet + 1)
@@ -897,15 +896,37 @@ namespace FlatGui
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 
+		// Render Tiles within selected TileSet
+		static float iconSize = 30;
+		FL::PushComboStyles();
+		ImGui::SliderFloat("##IconSizeSlider", &iconSize, 10, 128, "%.3f");
+		FL::PopComboStyles();
 
-		// Tiles in the selected TileMap
 		TileSet* selectedTileSet = FL::GetTileSet(activeTileSet);
 		if (selectedTileSet != nullptr)
 		{
+			float availableWidth = ImGui::GetContentRegionMax().x;
+			int iconsThisRow = 0;
 			std::map<int, std::pair<Vector2, Vector2>> allTiles = selectedTileSet->GetTileSet();
 
 			for (int index : selectedTileSet->GetTileSetIndices())
 			{
+				float horizontalSpacing = 5;
+				float verticalSpacing = 5;
+				
+				int maxIconsPerRow = (int)(availableWidth / (iconSize + horizontalSpacing) - 1);
+				
+
+
+				// Drawing the first button in the row
+				if (iconsThisRow == 0)
+					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+
+				Vector2 currentPos = ImGui::GetCursorScreenPos();
+
+				
+
+
 				SDL_Texture* texture = selectedTileSet->GetTexture()->GetTexture();
 				int textureWidth = selectedTileSet->GetTexture()->GetWidth();
 				int textureHeight = selectedTileSet->GetTexture()->GetHeight();
@@ -916,18 +937,90 @@ namespace FlatGui
 				uvStart = Vector2(uvStart.x / textureWidth, uvStart.y / textureHeight);
 				uvEnd = Vector2(uvEnd.x / textureWidth, uvEnd.y / textureHeight);
 
-				ImGui::Text("Tile");
 				std::string tileButtonID = "##TileSelect" + std::to_string(index);
-				if (FL::RenderImageButton(tileButtonID, texture, Vector2(16, 16), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("imageButtonHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
+				if (FL::RenderImageButton(tileButtonID, texture, Vector2(iconSize, iconSize), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("imageButtonHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
 				{
 					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };
 					FL::F_tileSetAndIndexOnBrush = tileBrushPair;
-					FL::LogString("Tile brush selected");
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
 				}
+
+
+
+				if (iconsThisRow != maxIconsPerRow)
+				{
+					ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconSize + horizontalSpacing, currentPos.y)); // Ready to draw the next button
+					iconsThisRow++;
+				}
+				else
+					iconsThisRow = 0;
 			}
 		}
 
 
+		// BoxCollider Areas
+		static std::string selectedCollisionArea = "";
+		std::map<std::string, BoxCollider> boxCollisionAreas = tileMap->GetBoxCollisionAreas();
+
+		std::vector<std::string> areaNames;
+		for (std::pair<std::string, BoxCollider> collisionArea : boxCollisionAreas)
+		{
+			areaNames.push_back(collisionArea.first);
+
+		}
+		FL::RenderSelectable("##BoxColliderAreas", tileSetNames, currentSelectableTileSet);
+
+		if (FL::RenderButton("Add BoxCollision Area", Vector2(150, 20)))
+		{
+			BoxCollider newCollisionArea = BoxCollider();
+			newCollisionArea.SetActiveDimensions(10, 5);
+
+			tileMap->AddBoxCollisionArea("Ground Collision", newCollisionArea);
+		}
+
+		dirStartPos = ImGui::GetCursorScreenPos();
+		dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
+		ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
+		ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
+		ImGui::Text("Collision Areas");
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		FL::PushMenuStyles();
+
+		if (ImGui::BeginTable("##CollisionAreasTable", 1, FL::F_tableFlags))
+		{
+			ImGui::TableSetupColumn("##CollisionAreaName", 0, ImGui::GetContentRegionAvail().x);
+
+			for (std::pair<std::string, BoxCollider> collisionArea : boxCollisionAreas)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+
+				ImGuiTreeNodeFlags nodeFlags;
+				std::string treeID = "##SelectActiveCollisionAreaTree";
+
+				// If node selected
+				if (selectedCollisionArea == collisionArea.first)
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+				else
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+				// render a leaf
+				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, collisionArea.first.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					selectedCollisionArea = collisionArea.first;
+				}
+			}
+
+			ImGui::EndTable();
+		}
+		FL::PopMenuStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+
+		// Bottom padding
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 	}
 

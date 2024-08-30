@@ -10,7 +10,7 @@ namespace FlatGui
 	void RenderSettings()
 	{
 		ImGui::SetNextItemWidth(400);
-		FlatEngine::BeginWindow("Settings", _showSettings);
+		FlatEngine::BeginWindow("Settings", FG_b_showSettings);
 
 
 		// LEFT SIDE
