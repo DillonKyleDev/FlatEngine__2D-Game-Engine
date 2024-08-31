@@ -181,9 +181,10 @@ namespace FlatGui
 	{
 		ImGuiTreeNodeFlags node_flags;
 		long focusedObjectID = GetFocusedGameObjectID();
+		bool b_objectFocused = focusedObjectID == currentObject.GetID();
 
 		// If this node is selected, use the nodeFlag_selected to highlight it
-		if (focusedObjectID == currentObject.GetID())
+		if (b_objectFocused)
 			if (currentObject.HasChildren())
 				node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected;
 			else
@@ -289,7 +290,7 @@ namespace FlatGui
 			ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
 
 		// Don't change the background color of the tree node, change the background of the table row because it will fill the entire rect
-		if (ImGui::IsItemFocused())
+		if (b_objectFocused)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, FL::GetColor32("treeSelectableSelected"));
 		if (ImGui::IsItemHovered())
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, FL::GetColor32("treeSelectableHovered"));

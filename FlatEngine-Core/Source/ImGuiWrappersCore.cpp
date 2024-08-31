@@ -36,6 +36,23 @@ namespace FlatEngine
 
 
 	// ImGui Wrappers
+	void MoveScreenCursor(float x, float y)
+	{
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + x, ImGui::GetCursorScreenPos().y + y));
+	}
+
+	void RenderSubTitle(std::string title)
+	{
+		Vector2 titleStartPos = ImGui::GetCursorScreenPos();
+		Vector2 titleEndPos = Vector2(titleStartPos.x + ImGui::GetContentRegionAvail().x, titleStartPos.y + 24);
+		ImGui::GetWindowDrawList()->AddRectFilled(titleStartPos, titleEndPos, FL::GetColor32("componentSubTileBg"));
+		ImGui::SetCursorScreenPos(Vector2(titleStartPos.x + 5, titleStartPos.y + 5));
+		ImGui::Text(title.c_str());
+		FL::MoveScreenCursor(0, 6);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 8);
+	}
+
 	void BeginWindow(std::string name, Vector4 bgColor)
 	{
 		PushWindowStyles(bgColor);
@@ -379,12 +396,14 @@ namespace FlatEngine
 		else if (_canOpenFiles)
 			inputWidth -= 30;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
 		Vector2 inputStart = ImGui::GetCursorScreenPos();
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("input"));
 		ImGui::SetNextItemWidth(inputWidth);
 		b_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
 		ImGui::PopStyleColor();
 		Vector2 inputSize = Vector2(inputWidth, ImGui::GetCursorScreenPos().y - inputStart.y);
+		ImGui::PopStyleVar();
 
 		if (_canOpenFiles)
 		{
@@ -612,6 +631,7 @@ namespace FlatEngine
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 3));
 
 		if (size.x != 0 || size.y != 0)
 			_isClicked = ImGui::Button(text.c_str(), size);
@@ -621,7 +641,8 @@ namespace FlatEngine
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
-
+	
+		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -636,13 +657,15 @@ namespace FlatEngine
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);		
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, rounding);
-		
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(0, 0));
+
 		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
 
 		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
 
+		//ImGui::PopStyleVar();
 		ImGui::PopStyleVar();		
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();

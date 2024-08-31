@@ -8,6 +8,7 @@ F_Colors = {
 	----------------------
 	-- Components --------
 	----------------------
+	componentSubTileBg = Vector4:new(0.1, 0.1, 0.1, 1.0),
 	componentSectionBorder = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	componentBorder = Vector4:new(0.2, 0.2, 0.2, 1.0),
 	componentBg = Vector4:new(0.16, 0.16, 0.17, 1.0),
@@ -25,11 +26,14 @@ F_Colors = {
 	----------------------
 	-- Windows -----------
 	----------------------
-	-- Scene View
+	-- Scene View --
+	-- Buttons container
 	cursorModeSelectBg = Vector4:new(0.9, 0.9, 0.9, 0.05),
 	cursorModeSelectBorder = Vector4:new(0.9, 0.9, 0.9, 0.2),
-	cursorModeButtonHover = Vector4:new(0.9, 0.9, 0.9, 0.2),
+	-- Buttons
+	cursorModeButtonHover = Vector4:new(0.9, 0.9, 0.9, 0.3),
 	cursorModeButtonHoverSelected = Vector4:new(0.4, 0.4, 0.4, 0.6),
+	cursorModeButtonSelectedBorder = Vector4:new(1, 1, 1, 1);
 	selectedCursorModeButtonBg =  Vector4:new(0.4, 0.4, 0.4, 0.8),
 	windowBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
 	outerWindow = Vector4:new(0.13, 0.13, 0.15, 1.0),
@@ -58,6 +62,7 @@ F_Colors = {
 	-- TileSet Editing
 	tileSetTileBorder = Vector4:new(0.92, 1.0, 0.0, 0.5),
 	tileSetHoveredTile = Vector4:new(1, 1, 1, 0.35),
+	tileSetHoveredTileBorder = Vector4:new(1, 1, 1, 1),
 	tileSetSelectedTile = Vector4:new(1, 1, 1, 0.15),
 	tileSetHoldingTile = Vector4:new(1, 1, 1, 0.45),
 	-- TileMap
@@ -66,8 +71,13 @@ F_Colors = {
 	tileMapBoxUnfocused = Vector4:new(0.71, 0.0, 0.88, 0.4),
 	tileMapGridBgUnfocused = Vector4:new(0.71, 0.0, 0.88, 0.05),
 	tileMapGridLines = Vector4:new(0.71, 0.0, 0.88, 0.15),
-	tileBoxColHighlight = Vector4:new(0.5, 1, 0.5, 0.55),
-	tileBoxColHoveredHighlight = Vector4:new(0.5, 1, 0.5, 0.55),
+	tileBoxColHighlight = Vector4:new(0.2, 1, 0.2, 0.4),
+	tileBoxColHoveredHighlight = Vector4:new(0.2, 1, 0.2, 0.4),
+	tileSetIconHovered = Vector4:new(0.8, 0.8, 0.8, 0.8),
+	tileSetEraseModeClick = Vector4:new(0.5, 0, 0, 0.6);
+	tileSetEraseModeClickBorder = Vector4:new(0.8, 0, 0, 1);
+	tileSetEraseModeHover = Vector4:new(1, 0, 0, 0.5);
+	tileSetEraseModeHoverBorder = Vector4:new(1, 0.1, 0.1, 1);
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

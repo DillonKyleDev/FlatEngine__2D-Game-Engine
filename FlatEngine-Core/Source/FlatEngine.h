@@ -152,6 +152,7 @@ namespace FlatEngine
 	extern void QuitImGui();
 	extern void SetImGuiColors();
 	extern void HandleEvents(bool& quit);
+	extern void HandleEngineEvents(SDL_Event event);
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
 	// Lua / Sol
@@ -223,6 +224,7 @@ namespace FlatEngine
 	extern std::map<std::string, std::vector<GameObject>> GetPrefabs();
 
 	// Logging Prettification
+	extern void LogError(std::string line = "", std::string from = "[C++]");
 	extern void LogString(std::string line = "", std::string from = "[C++]");
 	extern void LogFloat(float var, std::string line = "", std::string from = "[C++]");
 	extern void LogInt(int var, std::string line = "", std::string from = "[C++]");
@@ -289,6 +291,9 @@ namespace FlatEngine
 	extern void EndImGuiRender();
 	extern void SetNextViewportToFillWindow();
 
+	extern void MoveScreenCursor(float x, float y);
+
+	extern void RenderSubTitle(std::string title);
 	extern void BeginWindow(std::string name, Vector4 bgColor = GetColor("windowBg"));
 	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = GetColor("windowBg"));
 	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = GetColor("windowBg"));

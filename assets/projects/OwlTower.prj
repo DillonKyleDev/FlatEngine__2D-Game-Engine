@@ -6,6 +6,7 @@
             "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,
+            "_showFileExplorer": true,
             "_showGameView": true,
             "_showHierarchy": true,
             "_showInspector": true,
@@ -14,9 +15,11 @@
             "_showMappingContextEditor": false,
             "_showProfiler": false,
             "_showSceneView": true,
+            "_showScriptEditor": false,
+            "_showTileSetEditor": false,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
-            "currentFileDirectory": "../assets",
+            "currentFileDirectory": "../assets\\audio",
             "focusedGameObjectID": 4,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets/scenes/OwlScene.scn",
@@ -26,8 +29,8 @@
             "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.scn",
             "sceneViewGridStepX": 47.60010528564453,
             "sceneViewGridStepY": 47.60010528564453,
-            "sceneViewScrollingX": 792.0,
-            "sceneViewScrollingY": 840.0
+            "sceneViewScrollingX": 745.0,
+            "sceneViewScrollingY": 902.0
         }
     ]
 }

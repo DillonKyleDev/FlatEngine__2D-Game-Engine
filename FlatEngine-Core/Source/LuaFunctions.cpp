@@ -96,7 +96,7 @@ namespace FlatEngine
 			"SetActive", &GameObject::SetActive,
 			"HasTag", &GameObject::HasTag,
 			"GetTransform", &GameObject::GetTransform,
-			"AddSprite", &GameObject::AddSpriteComponent,
+			"AddSprite", &GameObject::AddTransform,
 			"GetSprite", &GameObject::GetSprite,
 			"GetCamera", &GameObject::GetCamera,
 			"GetAnimation", &GameObject::GetAnimation,
@@ -126,6 +126,8 @@ namespace FlatEngine
 
 		F_Lua.new_usertype<Sprite>("Sprite",
 			"SetActive", &Sprite::SetActive,
+			"IsActive", &Sprite::IsActive,
+			"GetParent", &Sprite::GetParent,
 			"GetID", &Sprite::GetID,
 			"SetTexture", &Sprite::SetTexture,
 			"GetPath", &Sprite::GetPath,
@@ -137,8 +139,32 @@ namespace FlatEngine
 			"GetTintColor", &Sprite::GetTintColor
 		);
 
+		F_Lua.new_usertype<Audio>("Audio",
+			"GetParent", &Audio::GetParent,
+			"SetActive", &Audio::SetActive,
+			"IsActive", &Audio::IsActive,
+			"GetID", &Audio::GetID,
+			"IsMusicPlaying", &Audio::IsMusicPlaying,
+			"PlaySound", &Audio::PlaySound,
+			"PauseSound", &Audio::PauseSound,
+			"StopSound", &Audio::PauseSound,
+			"StopAll", &Audio::StopAll
+		);
+
+		F_Lua.new_usertype<Animation>("Animation",
+			"GetParent", &Animation::GetParent,
+			"SetActive", &Animation::SetActive,
+			"IsActive", &Animation::IsActive,
+			"GetID", &Animation::GetID,
+			"Play", &Animation::Play,
+			"Stop", &Animation::Stop,
+			"SetAnimationPath", &Animation::SetAnimationPath			
+		);
+
 		F_Lua.new_usertype<RigidBody>("RigidBody",
 			"SetActive", &RigidBody::SetActive,
+			"IsActive", &RigidBody::IsActive,
+			"GetParent", &RigidBody::GetParent,
 			"GetID", &RigidBody::GetID,
 			"SetMass", &RigidBody::SetMass,
 			"GetMass", &RigidBody::GetMass,
@@ -163,11 +189,18 @@ namespace FlatEngine
 		);
 
 		F_Lua.new_usertype<Collider>("Collider",
-			"GetParent", &Collider::GetParent
+			"GetParent", &Collider::GetParent,
+			"SetActive", &Collider::SetActive,
+			"IsActive", &Collider::IsActive,
+			"GetID", &Collider::GetID
 		);
 
 		F_Lua.new_usertype<CharacterController>("CharacterController",
-			"MoveToward", &CharacterController::MoveToward
+			"MoveToward", &CharacterController::MoveToward,
+			"GetParent", &CharacterController::GetParent,
+			"SetActive", &CharacterController::SetActive,
+			"IsActive", &CharacterController::IsActive,
+			"GetID", &CharacterController::GetID
 		);
 
 		F_Lua.new_usertype<MappingContext>("MappingContext",

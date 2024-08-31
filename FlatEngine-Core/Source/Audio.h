@@ -2,10 +2,18 @@
 #include "Sound.h"
 #include "Component.h"
 #include <string>
+#include <map>
 
 
 namespace FlatEngine
 {
+	struct SoundData {
+		std::string name;
+		std::string path;
+		std::shared_ptr<Sound> sound;
+		bool b_isMusic;
+	};
+
 	class Audio : public Component
 	{
 	public:
@@ -13,22 +21,27 @@ namespace FlatEngine
 		Audio(Audio* toCopy, long newParentID, long myID = -1);
 		~Audio();
 
-		void LoadMusic(std::string path);
-		void LoadEffect(std::string path);
-		void SetPath(std::string path);
-		std::string GetPath();
-		void SetIsMusic(bool _isMusic);
-		bool IsMusic();
-		void Play(int channel = -1);
-		void Pause(int channel = -1);
-		void Stop(int channel = -1);
-		bool IsMusicPlaying();
-		std::string GetData();
+		std::vector<SoundData> &GetSounds();
+		std::string GetPath(std::string soundName);
+		bool ContainsName(std::string soundName);
+		void SetPath(std::string soundName, std::string newPath);
+		void SetIsMusic(std::string soundName, bool b_isMusic);
+		void LoadAudio(SoundData& soundData);
+		bool IsMusic(std::string soundName);
+		void AddSound(std::string soundName, std::string soundPath, bool b_isMusic);
+		void RemoveSound(std::string soundName);
+		void PlaySound(std::string soundName);
+		void PauseSound(std::string soundName);
+		void StopSound(std::string soundName);
+		void StopAll();
+		bool IsMusicPlaying(std::string soundName);
 
 	private:
-		std::string soundName;
-		std::shared_ptr<Sound> sound;
-		std::string path;
-		bool _isMusic;
+		void Play(std::string soundName, int channel = -1);
+		void Pause(std::string soundName, int channel = -1);
+		void Stop(std::string soundName, int channel = -1);
+		std::string GetData();
+
+		std::vector<SoundData> m_sounds;
 	};
 }

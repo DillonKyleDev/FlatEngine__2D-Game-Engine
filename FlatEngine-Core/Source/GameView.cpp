@@ -310,7 +310,7 @@ namespace FlatEngine
 				float tileHeight = (float)tileMap->GetTileHeight();
 				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
 				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
-				drawSplitter->SetCurrentChannel(draw_list, 5);
+				int renderOrder = tileMap->GetRenderOrder();				
 
 				std::map<int, std::map<int, Tile>> tiles = tileMap->GetTiles();
 
@@ -339,6 +339,12 @@ namespace FlatEngine
 								float gridXPosition = (position.x - (gridWidth / 2)) + 2 * (float)w;
 								float gridYPosition = (position.y + (gridHeight / 2)) - 2 * (float)h;
 								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+
+								if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
+									drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+								else
+									drawSplitter->SetCurrentChannel(draw_list, 0);
+
 								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 							}
 						}

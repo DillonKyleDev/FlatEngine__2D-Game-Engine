@@ -33,6 +33,7 @@ namespace FlatGui
 {
 	void RenderInspector()
 	{
+		ImGui::SetNextWindowScroll(Vector2(0, 0));
 		FL::BeginWindow("Inspector");
 
 		long focusedObjectID = GetFocusedGameObjectID();
@@ -53,7 +54,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Transform"))
 					{
-						focusedObject->AddTransformComponent();
+						focusedObject->AddTransform();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -62,14 +63,14 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Sprite"))
 					{
-						focusedObject->AddSpriteComponent();
+						focusedObject->AddSprite();
 						ImGui::CloseCurrentPopup();
 					}
 				}
 
 				if (ImGui::MenuItem("Button"))
 				{
-					focusedObject->AddButtonComponent();
+					focusedObject->AddButton();
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -77,7 +78,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Camera"))
 					{
-						focusedObject->AddCameraComponent();
+						focusedObject->AddCamera();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -86,7 +87,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Canvas"))
 					{
-						focusedObject->AddCanvasComponent();
+						focusedObject->AddCanvas();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -95,7 +96,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Animation"))
 					{
-						focusedObject->AddAnimationComponent();
+						focusedObject->AddAnimation();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -104,7 +105,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Audio"))
 					{
-						focusedObject->AddAudioComponent();
+						focusedObject->AddAudio();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -113,14 +114,14 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("Text"))
 					{
-						focusedObject->AddTextComponent();
+						focusedObject->AddText();
 						ImGui::CloseCurrentPopup();
 					}
 				}
 
 				if (ImGui::MenuItem("Script"))
 				{
-					focusedObject->AddScriptComponent();
+					focusedObject->AddScript();
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -128,7 +129,7 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("CharacterController"))
 					{
-						focusedObject->AddCharacterControllerComponent();
+						focusedObject->AddCharacterController();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -137,20 +138,20 @@ namespace FlatGui
 				{
 					if (ImGui::MenuItem("RigidBody"))
 					{
-						focusedObject->AddRigidBodyComponent();
+						focusedObject->AddRigidBody();
 						ImGui::CloseCurrentPopup();
 					}
 				}
 
 				if (ImGui::MenuItem("BoxCollider"))
 				{
-					focusedObject->AddBoxColliderComponent();
+					focusedObject->AddBoxCollider();
 					ImGui::CloseCurrentPopup();
 				}
 
 				if (ImGui::MenuItem("CircleCollider"))
 				{
-					focusedObject->AddCircleColliderComponent();
+					focusedObject->AddCircleCollider();
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -184,15 +185,15 @@ namespace FlatGui
 
 			bool _objectActive = focusedObject->IsActive();
 
-			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 2));
+			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 3, ImGui::GetCursorScreenPos().y + 2));
 
 			// GameObject Active Checkbox
 			if (FL::RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 62, 5);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 70, 5);
 
 			// GameObject TagList Dropdown
-			TagList tagList = focusedObject->GetTagList();			
+			TagList &tagList = focusedObject->GetTagList();			
 			FL::RenderButton("Tags");
 			FL::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id

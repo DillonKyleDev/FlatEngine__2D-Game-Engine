@@ -87,7 +87,7 @@ namespace FlatGui
 	extern WidgetsManager widgetsManager;
 
 	// Project Management
-	extern void OpenProject(std::string path);
+	extern void LoadProject(std::string path);
 	extern void SaveProject(Project project, std::string path);
 
 	// File Explorer
@@ -196,7 +196,7 @@ namespace FlatGui
 	extern void RenderScriptEditor();
 
 	// *** Don't forget to add flags to the window for preventing scrolling *** ImGuiWindowFlags flags = 8 | 16 or ImGuiWindowFlags_NoScrollbar 
-	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0);
+	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0, bool b_allowOverlap = true);
 	// Component Wrappers	
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, long& queuedForDelete);

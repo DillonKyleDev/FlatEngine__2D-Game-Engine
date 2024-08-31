@@ -1,14 +1,14 @@
 #pragma once
 #include "Component.h"
 #include "FlatEngine.h"
+#include "BoxCollider.h"
+
 #include <vector>
 #include <string>
 #include <map>
 
 namespace FlatEngine
 {
-    class BoxCollider;
-
     struct Tile {
         Vector2 tileCoord;
         std::string tileSetName;
@@ -16,6 +16,11 @@ namespace FlatEngine
         int tileSetIndex;
         Vector2 uvStart;
         Vector2 uvEnd;
+    };
+
+    struct CollisionAreaData {
+        std::string name;
+        BoxCollider collider;
     };
 
     class TileMap : public Component
@@ -34,26 +39,31 @@ namespace FlatEngine
         void SetTileHeight(int height);
         void SetWidth(int width);
         void SetHeight(int height);
+        void SetRenderOrder(int renderOrder);
+        int GetRenderOrder();
         std::string GetSelectedTileSet();
         void SetSelectedTileSet(std::string tileSet);
-        std::map<std::string, BoxCollider> &GetBoxCollisionAreas();
-        void AddBoxCollisionArea(std::string label, BoxCollider collisionArea);
+        std::vector<CollisionAreaData> &GetCollisionAreas();
+        BoxCollider* AddCollisionArea(std::string label);
+        bool ContainsCollisionAreaLabel(std::string label);
         void AddTileSet(std::string name);
         void RemoveTileSet(std::string name);
         void SetTileSets(std::vector<std::string> tileSets);
         std::vector<std::string> GetTileSets();
         std::map<int, std::map<int, Tile>> GetTiles();
         void SetTile(Vector2 tileMapCoords, TileSet* tileSet, int tileSetIndex);
+        void EraseTile(Vector2 tileMapCoords);
 
     private:
         int m_width;
         int m_height;
         int m_tileWidth;
         int m_tileHeight;
+        int m_renderOrder;
         std::map<int, std::map<int, Tile>> m_tiles;
         std::string m_selectedTileSet;
         std::vector<std::string> m_tileSetNames;  
-        std::map<std::string, BoxCollider> m_boxCollisionAreas;
+        std::vector<CollisionAreaData> m_collisionAreas;
     };
 }
 

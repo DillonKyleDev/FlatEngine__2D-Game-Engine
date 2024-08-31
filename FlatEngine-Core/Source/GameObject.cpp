@@ -286,7 +286,7 @@ namespace FlatEngine
 		components.clear();
 	}
 
-	Transform* GameObject::AddTransformComponent(long id, bool _active, bool _collapsed)
+	Transform* GameObject::AddTransform(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -313,7 +313,7 @@ namespace FlatEngine
 		return transformPtr;
 	}
 
-	Sprite* GameObject::AddSpriteComponent(long id, bool _active, bool _collapsed)
+	Sprite* GameObject::AddSprite(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -327,7 +327,7 @@ namespace FlatEngine
 		return spritePtr;
 	}
 
-	Camera* GameObject::AddCameraComponent(long id, bool _active, bool _collapsed)
+	Camera* GameObject::AddCamera(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -341,7 +341,7 @@ namespace FlatEngine
 		return cameraPtr;
 	}
 
-	Script* GameObject::AddScriptComponent(long id, bool _active, bool _collapsed)
+	Script* GameObject::AddScript(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -355,7 +355,7 @@ namespace FlatEngine
 		return scriptPtr;
 	}
 
-	Button* GameObject::AddButtonComponent(long id, bool _active, bool _collapsed)
+	Button* GameObject::AddButton(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -369,7 +369,7 @@ namespace FlatEngine
 		return buttonPtr;
 	}
 
-	Canvas* GameObject::AddCanvasComponent(long id, bool _active, bool _collapsed)
+	Canvas* GameObject::AddCanvas(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -383,7 +383,7 @@ namespace FlatEngine
 		return canvasPtr;
 	}
 
-	Animation* GameObject::AddAnimationComponent(long id, bool _active, bool _collapsed)
+	Animation* GameObject::AddAnimation(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -397,7 +397,7 @@ namespace FlatEngine
 		return animationPtr;
 	}
 
-	Audio* GameObject::AddAudioComponent(long id, bool _active, bool _collapsed)
+	Audio* GameObject::AddAudio(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -411,7 +411,7 @@ namespace FlatEngine
 		return audioPtr;
 	}
 
-	Text* GameObject::AddTextComponent(long id, bool _active, bool _collapsed)
+	Text* GameObject::AddText(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -425,14 +425,14 @@ namespace FlatEngine
 		return textPtr;
 	}
 
-	BoxCollider* GameObject::AddBoxColliderComponent(long id, bool _active, bool _collapsed)
+	BoxCollider* GameObject::AddBoxCollider(long id, bool _active, bool _collapsed)
 	{
-		Vector2 spriteDimensions = Vector2(2, 2);
+		Vector2 dimensions = Vector2(2, 2);
 		if (HasComponent("Sprite"))
 		{
 			Sprite* sprite = GetSprite();
 			// Get sprite dimensions in terms of grid squares because that is the unit used by the engine
-			spriteDimensions = Vector2(sprite->GetTextureWidth() / F_pixelsPerGridSpace, sprite->GetTextureHeight() / F_pixelsPerGridSpace);
+			dimensions = Vector2(sprite->GetTextureWidth() / F_pixelsPerGridSpace, sprite->GetTextureHeight() / F_pixelsPerGridSpace);
 		}
 
 		long nextID = id;
@@ -443,12 +443,12 @@ namespace FlatEngine
 		boxCollider.SetCollapsed(_collapsed);
 
 		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
-		colliderPtr->SetActiveDimensions(spriteDimensions.x, spriteDimensions.y);
+		colliderPtr->SetActiveDimensions(dimensions.x, dimensions.y);
 		components.push_back(colliderPtr);
 		return colliderPtr;
 	}
 
-	CircleCollider* GameObject::AddCircleColliderComponent(long id, bool _active, bool _collapsed)
+	CircleCollider* GameObject::AddCircleCollider(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -462,7 +462,7 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
-	CompositeCollider* GameObject::AddCompositeColliderComponent(long id, bool _active, bool _collapsed)
+	CompositeCollider* GameObject::AddCompositeCollider(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -476,7 +476,7 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
-	RigidBody* GameObject::AddRigidBodyComponent(long id, bool _active, bool _collapsed)
+	RigidBody* GameObject::AddRigidBody(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
@@ -490,7 +490,7 @@ namespace FlatEngine
 		return rigidBodyPtr;
 	}
 
-	CharacterController* GameObject::AddCharacterControllerComponent(long id, bool _active, bool _collapsed)
+	CharacterController* GameObject::AddCharacterController(long id, bool _active, bool _collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)

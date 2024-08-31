@@ -233,7 +233,7 @@ public:
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
 			FL::InitializeTileSets();
-			FlatGui::OpenProject(m_startupProject);
+			FlatGui::LoadProject(m_startupProject);
 		}
 	}
 	void Quit()

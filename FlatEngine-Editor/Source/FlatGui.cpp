@@ -256,7 +256,7 @@ namespace FlatGui
 	}
 
 	// Project Management
-	void OpenProject(std::string path)
+	void LoadProject(std::string path)
 	{
 		json projectJson;
 		FL::LoadGameProject(path, projectJson);
@@ -274,6 +274,12 @@ namespace FlatGui
 					FG_b_showSceneView = currentObjectJson["_showSceneView"];
 				if (currentObjectJson.contains("_showGameView"))
 					FG_b_showGameView = currentObjectJson["_showGameView"];
+				if (currentObjectJson.contains("_showFileExplorer"))
+					FG_b_showFileExplorer = currentObjectJson["_showFileExplorer"];
+				if (currentObjectJson.contains("_showTileSetEditor"))
+					FG_b_showTileSetEditor = currentObjectJson["_showTileSetEditor"];
+				if (currentObjectJson.contains("_showScriptEditor"))
+					FG_b_showScriptEditor = currentObjectJson["_showScriptEditor"];
 				if (currentObjectJson.contains("_showHierarchy"))
 					FG_b_showHierarchy = currentObjectJson["_showHierarchy"];
 				if (currentObjectJson.contains("_showInspector"))
@@ -347,6 +353,9 @@ namespace FlatGui
 			{ "sceneViewScrollingY", FG_sceneViewScrolling.y },
 			{ "sceneViewGridStepX", FG_sceneViewGridStep.x },
 			{ "sceneViewGridStepY", FG_sceneViewGridStep.y },
+			{ "_showFileExplorer", FG_b_showFileExplorer },
+			{ "_showTileSetEditor", FG_b_showTileSetEditor },
+			{ "_showScriptEditor", FG_b_showScriptEditor },
 			{ "_showSceneView", FG_b_showSceneView },
 			{ "_showGameView", FG_b_showGameView },
 			{ "_showHierarchy", FG_b_showHierarchy },
@@ -501,7 +510,7 @@ namespace FlatGui
 			Project newProject = Project();
 			std::string projectPath = FL::GetDir("projects") + "/" + projectName + ".prj";
 			SaveProject(newProject, projectPath);
-			OpenProject(projectPath);
+			LoadProject(projectPath);
 			projectPaths = RetrieveProjectPaths();
 		}
 
@@ -1078,13 +1087,56 @@ namespace FlatGui
 				float tileHeight = (float)tileMap->GetTileHeight();
 				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
 				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
-		
+				int renderOrder = tileMap->GetRenderOrder();
 				std::map<int, std::map<int, FL::Tile>> tiles = tileMap->GetTiles();
 				
 				static Vector2 boxColStartTile = Vector2(-1, -1);
 				static Vector2 boxColEndTile = Vector2(-1, -1);
 				static Vector2 boxColCurrentHoveredTile = Vector2(-1, -1);
 
+				// For Drawing TileMap border and background color
+				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
+				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
+				Vector2 renderStart = Vector2(renderXStart, renderYStart);
+				Vector2 renderEnd = Vector2(renderXStart + ((gridWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((gridHeight * transformScale.y) * FG_sceneViewGridStep.x));
+				Vector2 focusObjectButtonSize = Vector2(renderEnd.x - renderStart.x, renderEnd.y - renderStart.y);
+
+				// Select this GameObject button
+				if (focusedObjectID != self.GetID() && FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE)
+				{
+					if (focusObjectButtonSize.x <= 0 || focusObjectButtonSize.y <= 0)
+					{
+						focusObjectButtonSize = Vector2(1, 1);
+					}
+					std::string focusObjectButtonID = "##SelectThisTileMapObjectButton" + std::to_string(self.GetID()) + "-" + std::to_string(id);
+					AddSceneViewMouseControls(focusObjectButtonID, renderStart, focusObjectButtonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
+					if (ImGui::IsItemClicked())
+					{
+						FL::LogString(self.GetName());
+						SetFocusedGameObjectID(self.GetID());
+					}
+				}
+
+				drawSplitter->SetCurrentChannel(draw_list, 0);
+
+				if (focusedObjectID == self.GetID())
+				{
+					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgFocused"));
+				}
+				else
+				{
+					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgUnfocused"));
+				}
+
+				// Draw border around TileMap and add focusing button
+				if (focusedObjectID == self.GetID())
+				{
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, draw_list);
+				}
+				else
+				{
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, draw_list);
+				}
 
 				// Draw TileMap indices
 				for (float w = 0; w < width; w++)
@@ -1113,15 +1165,6 @@ namespace FlatGui
 
 						Vector2 tileStart = Vector2(tileStartX, tileStartY);
 						Vector2 tileEnd = Vector2(tileStartX + tileWidthInPx, tileStartY + tileHeightInPx);
-
-						if (focusedObjectID == self.GetID())
-						{
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBgFocused"));
-						}
-						else
-						{
-							ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMapGridBgUnfocused"));
-						}
 						
 						// Draw tile texture if it has one on it currently
 						if (tiles.count((int)w) > 0 && tiles.at((int)w).count((int)h) > 0)
@@ -1147,18 +1190,26 @@ namespace FlatGui
 							float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * h;
 							Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
 
+							//////////////////
+
+							// Change the draw channel for the scene object
+							if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+								drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+							else
+								drawSplitter->SetCurrentChannel(draw_list, 0);
+
 							FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 						}
 
 						// Catch interactions on the TileMap container
-						if ((focusedObjectID == self.GetID()) && (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW))
-						{							
+						if ((focusedObjectID == self.GetID()) && (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW))
+						{		
+							// Set Draw Channel to 2 for lower level UI
+							drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+
 							AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
-			
 							// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
-							const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
-							const bool is_active = ImGui::IsItemActive();
-							const bool is_clicked = ImGui::IsItemClicked();
+							const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);														
 
 						
 							// Highlight all boxes between startBoxCol tile and currentlyHoveredBoxCol tile
@@ -1175,11 +1226,17 @@ namespace FlatGui
 							{
 								// Mouse down
 								if (ImGui::IsKeyDown(ImGuiKey_MouseLeft))
-								{								
+								{
 									if (activeTileSet != nullptr && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
 									{
 										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
 										tileMap->SetTile(Vector2(w, h), activeTileSet, FL::F_tileSetAndIndexOnBrush.second);
+									}
+									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetEraseModeClick"));
+										ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetEraseModeClickBorder"));
+										tileMap->EraseTile(Vector2(w, h));
 									}
 									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 									{
@@ -1193,6 +1250,12 @@ namespace FlatGui
 									if (activeTileSet != nullptr && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
 									{
 										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+										ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTileBorder"));
+									}
+									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE)
+									{
+										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetEraseModeHover"));
+										ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetEraseModeHoverBorder"));										
 									}
 									if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 									{
@@ -1212,32 +1275,6 @@ namespace FlatGui
 								}
 							}
 						}
-					}
-				}
-
-				// Draw TileMap border
-				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
-				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
-				Vector2 renderStart = Vector2(renderXStart, renderYStart);
-				Vector2 renderEnd = Vector2(renderXStart + ((gridWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((gridHeight * transformScale.y) * FG_sceneViewGridStep.x));
-
-				if (focusedObjectID == self.GetID())
-				{
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, draw_list);
-				}
-				else
-				{
-					Vector2 focusObjectButtonSize = Vector2(renderEnd.x - renderStart.x, renderEnd.y - renderStart.y);
-					if (focusObjectButtonSize.x <= 0 || focusObjectButtonSize.y <= 0)
-						focusObjectButtonSize = Vector2(1, 1);
-
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, draw_list);
-					
-					// This is scrolling scene view on right click drag too fast
-					AddSceneViewMouseControls("##SelectThisTileMapObjectButton", renderStart, focusObjectButtonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"));
-					if (ImGui::IsItemClicked())
-					{
-						SetFocusedGameObjectID(self.GetID());
 					}
 				}
 			}
@@ -1325,7 +1362,7 @@ namespace FlatGui
 		}
 	}
 
-	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags)
+	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap)
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		Vector2 currentPos = ImGui::GetCursorScreenPos();
@@ -1343,15 +1380,15 @@ namespace FlatGui
 			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
 
 		//ImGui::SetNextItemAllowOverlap();
-		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_AllowOverlap | buttonFlags);
-		const bool is_hovered = ImGui::IsItemHovered(buttonFlags); // Hovered
+		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 		const bool is_active = ImGui::IsItemActive();   // Held
 		const bool is_clicked = ImGui::IsItemClicked();
 
 		// For panning the scene view
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-		{
+		{			
 			// This does not seem to work properly when resizing the window
 			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
 			scrolling.x += inputOutput.MouseDelta.x;

@@ -40,6 +40,7 @@ namespace FlatGui
 		ImGui::PushStyleColor(ImGuiCol_Border, FL::GetColor("componentBorder"));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 2);
+		ImGui::SetNextWindowScroll(Vector2(0, 0));
 		ImGui::BeginChild(componentID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
@@ -504,44 +505,121 @@ namespace FlatGui
 	void RenderAudioComponent(Audio* audio)
 	{
 		// Retrieve Audio values
-		std::string path = audio->GetPath();
-		bool _isMusic = audio->IsMusic();
-		bool _isActive = audio->IsActive();
 		long id = audio->GetID();
+		bool _isActive = audio->IsActive();
+		std::vector<FL::SoundData> &sounds = audio->GetSounds();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			audio->SetActive(_isActive);
 
-		// Path Input
-		bool _canOpenFiles = true;
-		std::string inputId = "##audioPath_" + std::to_string(id);
-		bool _pathChanged = FL::RenderInput(inputId, "Path: ", path, _canOpenFiles);
-		audio->SetPath(path);						
-		bool _soundTypeChanged = FL::RenderCheckbox("Is Music", _isMusic);
+		// Creating and adding new Sounds to this Audio component
+		static std::string path = "";
+		static std::string name = "";
+		int droppedValue = -1;
+		static bool b_isNewAudioMusic = false;
 
-		// Reload the effect as music or chunk if changed	
-		if (_pathChanged || _soundTypeChanged)
+		FL::RenderSubTitle("Add Audio");
+
+		FL::RenderInput("##NameNewAudioDataObject", "Name", name, false);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		if (FL::DropInput("##AddAudioFile", "Path", path, FL::F_fileExplorerTarget, droppedValue, "Drop audio files here from the Explorer window"))
 		{
-			if (_isMusic)
-				audio->LoadMusic(path);
-			else
-				audio->LoadEffect(path);
+			if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+			{
+				path = FL::F_selectedFiles[droppedValue - 1];
+			}
+		}
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
-			audio->SetIsMusic(_isMusic);
+		FL::RenderCheckbox("Is Music?", b_isNewAudioMusic);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		if (FL::RenderButton("Add Audio"))
+		{
+			if (name != "" && !audio->ContainsName(name) && path != "" && FL::DoesFileExist(path))
+			{
+				audio->AddSound(name, path, b_isNewAudioMusic);
+				path = "";
+				name = "";
+				b_isNewAudioMusic = false;
+			}
+			else
+			{
+				if (audio->ContainsName(name))
+				{
+					FL::LogError("Name already taken in this Audio component, please choose a different one.");
+				}
+				if (name == "")
+				{
+					FL::LogError("Please enter a valid name for the sound object.");
+				}
+				if (path == "")
+				{
+					FL::LogError("Please enter a valid path for the sound object.");
+				}
+			}
 		}
 
-		// Play Audio
-		if (FL::RenderButton("Play"))
-			audio->Play();
-		ImGui::SameLine(0, 5);
-		// Pause Audio
-		if (FL::RenderButton("Pause"))
-			audio->Pause();
-		ImGui::SameLine(0, 5);
-		// Stop Audio
-		if (FL::RenderButton("Stop"))
-			audio->Stop();
+		if (sounds.size() > 0)
+		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+			FL::RenderSubTitle("Attached Audio Files");
+		}
+
+		// Show existing Sounds in this Audio component
+		int IDCounter = 0;
+		for (FL::SoundData &sound : sounds)
+		{
+			std::string audioPath = sound.path;
+			std::string audioName = sound.name;
+			std::string newName = audioName;
+			bool b_isMusic = sound.b_isMusic;
+			int newDroppedValue = -1;
+			std::string inputId = "##audioPath_" + std::to_string(id) + sound.name;
+
+			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", sound.name, false))
+			{				
+				//sound.name = audioName;
+			}
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+			if (FL::DropInput(inputId, "Path", audioPath, FL::F_fileExplorerTarget, newDroppedValue, "Drop audio files here from the Explorer window"))
+			{
+				if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+				{
+					path = FL::F_selectedFiles[droppedValue - 1];
+					sound.path = path;
+				}
+			}
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+			if (FL::RenderCheckbox("Is Music##" + std::to_string(IDCounter), b_isMusic))
+			{
+				sound.b_isMusic = b_isMusic;
+				audio->LoadAudio(sound);
+			}
+
+			// Play Audio
+			if (FL::RenderImageButton("##ImageButtonPlay" + sound.name, FL::GetTexture("play")))
+				audio->PlaySound(sound.name);
+			ImGui::SameLine(0, 5);
+			// Pause Audio
+			if (FL::RenderImageButton("##ImageButtonPause" + sound.name, FL::GetTexture("pause")))
+				audio->PauseSound(sound.name);
+			ImGui::SameLine(0, 5);
+			// Stop Audio
+			if (FL::RenderImageButton("##ImageButtonStop" + sound.name, FL::GetTexture("stop")))
+				audio->StopSound(sound.name);
+
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			ImGui::Separator();
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+			IDCounter++;
+		}
 	}
 
 	void RenderTextComponent(Text* text)
@@ -798,6 +876,7 @@ namespace FlatGui
 		int height = tileMap->GetHeight();
 		int tileWidth = tileMap->GetTileWidth();
 		int tileHeight = tileMap->GetTileHeight();
+		int renderOrder = tileMap->GetRenderOrder();
 		std::vector<std::string> tileSets = tileMap->GetTileSets();
 
 		// Active Checkbox
@@ -823,12 +902,21 @@ namespace FlatGui
 			{
 				tileMap->SetTileHeight(tileHeight);
 			}
+			if (FL::RenderIntDragTableRow("##RenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, FL::F_maxSpriteLayers))
+			{
+				tileMap->SetRenderOrder(renderOrder);
+			}
 			FL::PopTable();
 		}
 
-		ImGui::Text("Add TileSets to TileMap");
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		FL::RenderSubTitle("Add TileSets");
 
 		static int currentSelectableTileSet = 0;
+		static int currentSelectableCollisionArea = 0;
 		std::string activeTileSet = tileMap->GetSelectedTileSet();
 		std::vector<std::string> tileSetNames;
 
@@ -846,24 +934,24 @@ namespace FlatGui
 			if (!b_alreadyInTileMap)
 				tileSetNames.push_back(FL::F_TileSets[i].GetName());
 		}
-
-		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);		
-		if (FL::RenderButton("Add TileSet", Vector2(100, 20)))
+		
+		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);	
+		if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
 		{			
 			if (tileSetNames.size() >= currentSelectableTileSet + 1)
 				tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
 		}
 
-		Vector2 dirStartPos = ImGui::GetCursorScreenPos();
-		Vector2 dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
-		ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
-		ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
-		ImGui::Text("TileSets");
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+		FL::RenderSubTitle("Tile Palettes");
+
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		FL::PushMenuStyles();
-
 		if (ImGui::BeginTable("##TileSetsTable", 1, FL::F_tableFlags))
 		{
 			ImGui::TableSetupColumn("##TileSets", 0, ImGui::GetContentRegionAvail().x);
@@ -896,129 +984,144 @@ namespace FlatGui
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 
-		// Render Tiles within selected TileSet
-		static float iconSize = 30;
-		FL::PushComboStyles();
-		ImGui::SliderFloat("##IconSizeSlider", &iconSize, 10, 128, "%.3f");
-		FL::PopComboStyles();
+		Vector2 tileSetTilesStart = ImGui::GetCursorScreenPos();
+		Vector2 regionAvailable = ImGui::GetContentRegionMax();
 
+		// Render Tiles within selected TileSet
 		TileSet* selectedTileSet = FL::GetTileSet(activeTileSet);
 		if (selectedTileSet != nullptr)
 		{
-			float availableWidth = ImGui::GetContentRegionMax().x;
+			// Tile icon size slider
+			FL::MoveScreenCursor(10, 10);
+			ImGui::Text("Icon Size");
+			ImGui::SameLine();
+			static float iconSize = 50;
+			FL::MoveScreenCursor(0, -5);
+			FL::PushComboStyles();
+			ImGui::SliderFloat("##IconSizeSlider", &iconSize, 10, 128, "%.3f");
+			FL::PopComboStyles();
+
+			// Render Palette Tile Icons
+			float availableWidth = ImGui::GetWindowSize().x;
 			int iconsThisRow = 0;
 			std::map<int, std::pair<Vector2, Vector2>> allTiles = selectedTileSet->GetTileSet();
+			float horizontalSpacing = 5;
+			float verticalSpacing = 2;
+			int maxIconsPerRow = (int)(((regionAvailable.x - 20) / (iconSize + (horizontalSpacing))) - 1);
 
 			for (int index : selectedTileSet->GetTileSetIndices())
-			{
-				float horizontalSpacing = 5;
-				float verticalSpacing = 5;
-				
-				int maxIconsPerRow = (int)(availableWidth / (iconSize + horizontalSpacing) - 1);
-				
-
-
+			{				
 				// Drawing the first button in the row
 				if (iconsThisRow == 0)
-					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+				{
+					FL::MoveScreenCursor(horizontalSpacing + 5, verticalSpacing);					
+				}
 
 				Vector2 currentPos = ImGui::GetCursorScreenPos();
-
-				
-
-
 				SDL_Texture* texture = selectedTileSet->GetTexture()->GetTexture();
 				int textureWidth = selectedTileSet->GetTexture()->GetWidth();
 				int textureHeight = selectedTileSet->GetTexture()->GetHeight();
-
 				Vector2 uvStart = allTiles.at(index).first;
 				Vector2 uvEnd = allTiles.at(index).second;
-
 				uvStart = Vector2(uvStart.x / textureWidth, uvStart.y / textureHeight);
 				uvEnd = Vector2(uvEnd.x / textureWidth, uvEnd.y / textureHeight);
 
-				std::string tileButtonID = "##TileSelect" + std::to_string(index);
-				if (FL::RenderImageButton(tileButtonID, texture, Vector2(iconSize, iconSize), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("imageButtonHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
+				std::string tileButtonID = "##TileSelect" + std::to_string(index);				
+				if (FL::RenderImageButton(tileButtonID, texture, Vector2(iconSize, iconSize), 0, FL::GetColor("imageButton"), FL::GetColor("imageButtonTint"), FL::GetColor("tileSetIconHovered"), FL::GetColor("imageButtonActive"), uvStart, uvEnd))
 				{
 					std::pair<std::string, int> tileBrushPair = { selectedTileSet->GetName(), index };
 					FL::F_tileSetAndIndexOnBrush = tileBrushPair;
 					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
 				}
 
-
-
-				if (iconsThisRow != maxIconsPerRow)
+				if (iconsThisRow < maxIconsPerRow)
 				{
 					ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconSize + horizontalSpacing, currentPos.y)); // Ready to draw the next button
 					iconsThisRow++;
 				}
 				else
+				{
 					iconsThisRow = 0;
+				}
 			}
+			
+			FL::MoveScreenCursor(0, iconSize + verticalSpacing + 5);
+
+			ImGui::GetWindowDrawList()->AddRect(tileSetTilesStart, Vector2(tileSetTilesStart.x + regionAvailable.x - 5, ImGui::GetCursorScreenPos().y), FL::GetColor32("componentSectionBorder"), 0, 0, 2);
 		}
 
+		ImGui::SetCursorScreenPos(Vector2(tileSetTilesStart.x, ImGui::GetCursorScreenPos().y + 4));
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+
+
+		FL::RenderSubTitle("Collision Areas");
 
 		// BoxCollider Areas
 		static std::string selectedCollisionArea = "";
-		std::map<std::string, BoxCollider> boxCollisionAreas = tileMap->GetBoxCollisionAreas();
+		std::vector<FL::CollisionAreaData> collisionAreas = tileMap->GetCollisionAreas();
 
 		std::vector<std::string> areaNames;
-		for (std::pair<std::string, BoxCollider> collisionArea : boxCollisionAreas)
+		for (FL::CollisionAreaData collisionArea : collisionAreas)
 		{
-			areaNames.push_back(collisionArea.first);
-
-		}
-		FL::RenderSelectable("##BoxColliderAreas", tileSetNames, currentSelectableTileSet);
-
-		if (FL::RenderButton("Add BoxCollision Area", Vector2(150, 20)))
-		{
-			BoxCollider newCollisionArea = BoxCollider();
-			newCollisionArea.SetActiveDimensions(10, 5);
-
-			tileMap->AddBoxCollisionArea("Ground Collision", newCollisionArea);
+			areaNames.push_back(collisionArea.name);
 		}
 
-		dirStartPos = ImGui::GetCursorScreenPos();
-		dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
-		ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
-		ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
-		ImGui::Text("Collision Areas");
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		FL::PushMenuStyles();
+		FL::RenderSelectable("##BoxColliderAreas", areaNames, currentSelectableCollisionArea);
 
-		if (ImGui::BeginTable("##CollisionAreasTable", 1, FL::F_tableFlags))
+		static std::string collisionAreaLabel = "";
+
+		FL::RenderInput("##CollisionAreaLabel" + std::to_string(id), "Collision Area Name", collisionAreaLabel, false);
+		if (FL::RenderButton("Add BoxCollision Area"))
 		{
-			ImGui::TableSetupColumn("##CollisionAreaName", 0, ImGui::GetContentRegionAvail().x);
-
-			for (std::pair<std::string, BoxCollider> collisionArea : boxCollisionAreas)
+			if (!tileMap->ContainsCollisionAreaLabel(collisionAreaLabel))
 			{
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
-
-				ImGuiTreeNodeFlags nodeFlags;
-				std::string treeID = "##SelectActiveCollisionAreaTree";
-
-				// If node selected
-				if (selectedCollisionArea == collisionArea.first)
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-				else
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-				// render a leaf
-				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, collisionArea.first.c_str());
-				if (ImGui::IsItemClicked())
-				{
-					selectedCollisionArea = collisionArea.first;
-				}
+				tileMap->AddCollisionArea(collisionAreaLabel);
 			}
-
-			ImGui::EndTable();
+			else
+			{
+				FL::LogError("Collision area label already being used in this TileMap, please choose a different one.");
+			}
 		}
-		FL::PopMenuStyles();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
+
+
+		if (tileMap->GetCollisionAreas().size() > 0)
+		{
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+			FL::PushMenuStyles();
+			if (ImGui::BeginTable("##CollisionAreasTable", 1, FL::F_tableFlags))
+			{
+				ImGui::TableSetupColumn("##CollisionAreaName", 0, ImGui::GetContentRegionAvail().x);
+
+				for (FL::CollisionAreaData collisionArea : collisionAreas)
+				{
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+
+					ImGuiTreeNodeFlags nodeFlags;
+					std::string treeID = "##SelectActiveCollisionAreaTree";
+
+					// If node selected
+					if (selectedCollisionArea == collisionArea.name)
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+					else
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+					// render a leaf
+					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, collisionArea.name.c_str());
+					if (ImGui::IsItemClicked())
+					{
+						selectedCollisionArea = collisionArea.name;
+					}
+				}
+
+				ImGui::EndTable();
+			}
+			FL::PopMenuStyles();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+		}
 
 		// Bottom padding
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);

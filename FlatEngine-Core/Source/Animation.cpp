@@ -161,9 +161,7 @@ namespace FlatEngine
 					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
 					FlatEngine::Transform* transform = GetParent()->GetTransform();
-					LogFloat(percentDone, "Percent Done: ");
-					LogVector2(lastFrameScale, "lastFrameScale: ");
-					//LogFloat(lastFrameScale, "lastFrameScale: ");
+
 					switch ((*transformFrame)->transformInterpType)
 					{
 						case Lerp:

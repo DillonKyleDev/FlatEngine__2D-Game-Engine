@@ -771,7 +771,7 @@ namespace FlatEngine
 			GameObject* newObject = CreateGameObject();
 			newObject->SetName(GetFilenameFromPath(filePath) + std::to_string(newObject->GetID()));
 			newObject->GetTransform()->SetPosition(position);
-			newObject->AddSpriteComponent()->SetTexture(filePath);
+			newObject->AddSprite()->SetTexture(filePath);
 			return newObject;
 		}
 		else return nullptr;
@@ -986,6 +986,8 @@ namespace FlatEngine
 				}
 			}
 
+			HandleEngineEvents(event);
+
 			for (MappingContext &context : F_MappingContexts)
 			{
 				HandleContextEvents(context, event, firedKeys);
@@ -1030,6 +1032,40 @@ namespace FlatEngine
 		}
 	}
 
+	void HandleEngineEvents(SDL_Event event)
+	{
+		// Keyboard Keys Down
+		if (event.type == SDL_KEYDOWN)
+		{
+			// Send event to context inputAction
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_t:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+				break;
+
+			case SDLK_s:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
+				break;
+
+			case SDLK_r:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
+				break;
+
+			case SDLK_b:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
+				break;
+
+			case SDLK_e:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
+				break;
+
+			case SDLK_c:
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+				break;
+			}
+		}
+	}
 	void HandleContextEvents(MappingContext& context, SDL_Event event, std::vector<std::string> &firedKeys)
 	{
 		// Keyboard Keys Down
@@ -2603,6 +2639,11 @@ namespace FlatEngine
 
 
 	// Logging
+	void LogError(std::string line, std::string from)
+	{
+		F_Logger.LogString("ERROR : " + line, from);
+	}
+
 	void LogString(std::string line, std::string from)
 	{
 		F_Logger.LogString(line, from);
@@ -3273,7 +3314,7 @@ namespace FlatEngine
 				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
-					Transform* newTransform = loadedObject.AddTransformComponent(id, _isActive, _isCollapsed);
+					Transform* newTransform = loadedObject.AddTransform(id, _isActive, _isCollapsed);
 					float rotation = CheckJsonFloat(componentJson, "rotation", objectName);
 					newTransform->SetOrigin(Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName)));
 					newTransform->SetInitialPosition(Vector2(CheckJsonFloat(componentJson, "xPos", objectName), CheckJsonFloat(componentJson, "yPos", objectName)));
@@ -3283,7 +3324,7 @@ namespace FlatEngine
 				}
 				else if (type == "Sprite")
 				{
-					Sprite* newSprite = loadedObject.AddSpriteComponent(id, _isActive, _isCollapsed);
+					Sprite* newSprite = loadedObject.AddSprite(id, _isActive, _isCollapsed);
 					std::string pivotPoint = "Center";
 					if (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
 						pivotPoint = CheckJsonString(componentJson, "pivotPoint", objectName);
@@ -3301,7 +3342,7 @@ namespace FlatEngine
 				}
 				else if (type == "Camera")
 				{
-					Camera* newCamera = loadedObject.AddCameraComponent(id, _isActive, _isCollapsed);
+					Camera* newCamera = loadedObject.AddCamera(id, _isActive, _isCollapsed);
 					bool _isPrimaryCamera = CheckJsonBool(componentJson, "_isPrimaryCamera", objectName);
 					newCamera->SetDimensions(CheckJsonFloat(componentJson, "width", objectName), CheckJsonFloat(componentJson, "height", objectName));
 					newCamera->SetPrimaryCamera(_isPrimaryCamera);
@@ -3318,37 +3359,49 @@ namespace FlatEngine
 				}
 				else if (type == "Script")
 				{
-					Script* newScript = loadedObject.AddScriptComponent(id, _isActive, _isCollapsed);
+					Script* newScript = loadedObject.AddScript(id, _isActive, _isCollapsed);
 					newScript->SetAttachedScript(CheckJsonString(componentJson, "attachedScript", objectName));
 				}
 				else if (type == "Button")
 				{
-					Button* newButton = loadedObject.AddButtonComponent(id, _isActive, _isCollapsed);
+					Button* newButton = loadedObject.AddButton(id, _isActive, _isCollapsed);
 					newButton->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newButton->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newButton->SetActiveLayer(CheckJsonInt(componentJson, "activeLayer", objectName));
 				}
 				else if (type == "Canvas")
 				{
-					Canvas* newCanvas = loadedObject.AddCanvasComponent(id, _isActive, _isCollapsed);
+					Canvas* newCanvas = loadedObject.AddCanvas(id, _isActive, _isCollapsed);
 					newCanvas->SetDimensions(CheckJsonFloat(componentJson, "canvasWidth", objectName), CheckJsonFloat(componentJson, "canvasHeight", objectName));
 					newCanvas->SetLayerNumber(CheckJsonInt(componentJson, "layerNumber", objectName));
 					newCanvas->SetBlocksLayers(CheckJsonBool(componentJson, "_blocksLayers", objectName));
 				}
 				else if (type == "Animation")
 				{
-					Animation* newAnimation = loadedObject.AddAnimationComponent(id, _isActive, _isCollapsed);
+					Animation* newAnimation = loadedObject.AddAnimation(id, _isActive, _isCollapsed);
 					newAnimation->SetAnimationPath(CheckJsonString(componentJson, "path", objectName));
 				}
 				else if (type == "Audio")
 				{
-					Audio* newAudio = loadedObject.AddAudioComponent(id, _isActive, _isCollapsed);
-					newAudio->SetIsMusic(CheckJsonBool(componentJson, "_isMusic", objectName));
-					newAudio->SetPath(CheckJsonString(componentJson, "path", objectName));
+					Audio* newAudio = loadedObject.AddAudio(id, _isActive, _isCollapsed);				
+
+					// Get Sounds data
+					if (JsonContains(componentJson, "soundData", objectName))
+					{
+						for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
+						{
+							json tileJson = componentJson["soundData"][sound];
+							std::string path = CheckJsonString(tileJson, "path", objectName);
+							std::string name = CheckJsonString(tileJson, "name", objectName);
+							bool b_isMusic = CheckJsonBool(tileJson, "b_isMusic", objectName);							
+
+							newAudio->AddSound(name, path, b_isMusic);
+						}
+					}
 				}
 				else if (type == "Text")
 				{
-					Text* newText = loadedObject.AddTextComponent(id, _isActive, _isCollapsed);
+					Text* newText = loadedObject.AddText(id, _isActive, _isCollapsed);
 					newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
 					newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
 					newText->SetColor(Vector4(
@@ -3364,14 +3417,14 @@ namespace FlatEngine
 				}
 				else if (type == "CharacterController")
 				{
-					CharacterController* newCharacterController = loadedObject.AddCharacterControllerComponent(id, _isActive, _isCollapsed);
+					CharacterController* newCharacterController = loadedObject.AddCharacterController(id, _isActive, _isCollapsed);
 					newCharacterController->SetMaxAcceleration(CheckJsonFloat(componentJson, "maxAcceleration", objectName));
 					newCharacterController->SetMaxSpeed(CheckJsonFloat(componentJson, "maxSpeed", objectName));
 					newCharacterController->SetAirControl(CheckJsonFloat(componentJson, "airControl", objectName));
 				}
 				else if (type == "BoxCollider")
 				{
-					BoxCollider* newBoxCollider = loadedObject.AddBoxColliderComponent(id, _isActive, _isCollapsed);
+					BoxCollider* newBoxCollider = loadedObject.AddBoxCollider(id, _isActive, _isCollapsed);
 					newBoxCollider->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newBoxCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newBoxCollider->SetIsContinuous(CheckJsonBool(componentJson, "_isContinuous", objectName));
@@ -3384,7 +3437,7 @@ namespace FlatEngine
 				}
 				else if (type == "CircleCollider")
 				{
-					CircleCollider* newCircleCollider = loadedObject.AddCircleColliderComponent(id, _isActive, _isCollapsed);
+					CircleCollider* newCircleCollider = loadedObject.AddCircleCollider(id, _isActive, _isCollapsed);
 					newCircleCollider->SetActiveRadiusGrid(CheckJsonFloat(componentJson, "activeRadius", objectName));
 					newCircleCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newCircleCollider->SetIsContinuous(CheckJsonBool(componentJson, "_isContinuous", objectName));
@@ -3395,7 +3448,7 @@ namespace FlatEngine
 				}
 				else if (type == "RigidBody")
 				{
-					RigidBody* newRigidBody = loadedObject.AddRigidBodyComponent(id, _isActive, _isCollapsed);
+					RigidBody* newRigidBody = loadedObject.AddRigidBody(id, _isActive, _isCollapsed);
 					newRigidBody->SetMass(CheckJsonFloat(componentJson, "mass", objectName));
 					newRigidBody->SetAngularDrag(CheckJsonFloat(componentJson, "angularDrag", objectName));
 					newRigidBody->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
@@ -3427,12 +3480,11 @@ namespace FlatEngine
 					// Get Tile data
 					if (JsonContains(componentJson, "tiles", objectName))
 					{
-						LogInt(componentJson["tiles"].size());
 						for (int tile = 0; tile < componentJson["tiles"].size(); tile++)
 						{
 							json tileJson = componentJson["tiles"][tile];
-							int x = CheckJsonInt(tileJson, "tileCoordX", objectName);
-							int y = CheckJsonInt(tileJson, "tileCoordY", objectName);
+							float x = CheckJsonFloat(tileJson, "tileCoordX", objectName);
+							float y = CheckJsonFloat(tileJson, "tileCoordY", objectName);
 							std::string tileSetName = CheckJsonString(tileJson, "tileSetName", objectName);
 							int tileSetIndex = CheckJsonInt(tileJson, "tileSetIndex", objectName);
 

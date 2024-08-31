@@ -1,6 +1,7 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
 #include "AssetManager.h"
+#include "Project.h"
 
 #include <process.h>
 #include <Windows.h>
@@ -258,6 +259,7 @@ namespace FlatGui
 				lastExplorerLocations.push_back(FG_currentDirectory);
 
 				FG_currentDirectory = fs_filepath.string();
+				SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 				b_resetScroll = true; // Reset the scroll of the window
 			}
 
@@ -284,6 +286,7 @@ namespace FlatGui
 				lastExplorerLocations.push_back(FG_currentDirectory);
 
 				FG_currentDirectory = fs_filepath.string();
+				SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 				b_resetScroll = true; // Reset the scroll of the window
 			}
 		}
@@ -302,6 +305,7 @@ namespace FlatGui
 			{
 				// use last location
 				FG_currentDirectory = lastExplorerLocations.back();
+				SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 				b_resetScroll = true; // Reset the scroll of the window
 				lastExplorerLocations.pop_back();
 			}
@@ -521,6 +525,7 @@ namespace FlatGui
 			lastExplorerLocations.push_back(FG_currentDirectory);
 
 			FG_currentDirectory = fs_filepath.string();
+			SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 			b_resetScroll = true; // Reset the scroll of the window
 		}
 		else if (b_doubleClicked)
@@ -579,7 +584,7 @@ namespace FlatGui
 		// Project file
 		else if (extension == ".prj")
 		{
-			OpenProject(fs_filepath.string());
+			LoadProject(fs_filepath.string());
 		}
 		// Project file
 		else if (extension == ".tls")

@@ -56,20 +56,20 @@ namespace FlatEngine
 		// Components
 		void RemoveComponent(long componentID);
 		void DeleteComponents();
-		Transform* AddTransformComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Sprite* AddSpriteComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Camera* AddCameraComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Script* AddScriptComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Button* AddButtonComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Canvas* AddCanvasComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Animation* AddAnimationComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Audio* AddAudioComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		Text* AddTextComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		BoxCollider* AddBoxColliderComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		CircleCollider* AddCircleColliderComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		CompositeCollider* AddCompositeColliderComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		RigidBody* AddRigidBodyComponent(long id = -1, bool _active = true, bool _collapsed = false);
-		CharacterController* AddCharacterControllerComponent(long id = -1, bool _active = true, bool _collapsed = false);
+		Transform* AddTransform(long id = -1, bool _active = true, bool _collapsed = false);
+		Sprite* AddSprite(long id = -1, bool _active = true, bool _collapsed = false);
+		Camera* AddCamera(long id = -1, bool _active = true, bool _collapsed = false);
+		Script* AddScript(long id = -1, bool _active = true, bool _collapsed = false);
+		Button* AddButton(long id = -1, bool _active = true, bool _collapsed = false);
+		Canvas* AddCanvas(long id = -1, bool _active = true, bool _collapsed = false);
+		Animation* AddAnimation(long id = -1, bool _active = true, bool _collapsed = false);
+		Audio* AddAudio(long id = -1, bool _active = true, bool _collapsed = false);
+		Text* AddText(long id = -1, bool _active = true, bool _collapsed = false);
+		BoxCollider* AddBoxCollider(long id = -1, bool _active = true, bool _collapsed = false);
+		CircleCollider* AddCircleCollider(long id = -1, bool _active = true, bool _collapsed = false);
+		CompositeCollider* AddCompositeCollider(long id = -1, bool _active = true, bool _collapsed = false);
+		RigidBody* AddRigidBody(long id = -1, bool _active = true, bool _collapsed = false);
+		CharacterController* AddCharacterController(long id = -1, bool _active = true, bool _collapsed = false);
 		TileMap* AddTileMap(long id = -1, bool _active = true, bool _collapsed = false);
 
 		Component* GetComponent(ComponentTypes type);

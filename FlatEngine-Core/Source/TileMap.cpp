@@ -1,6 +1,9 @@
 #include "TileMap.h"
 #include "TileSet.h"
 #include "BoxCollider.h"
+#include "FlatEngine.h"
+#include "Scene.h"
+
 
 namespace FlatEngine
 {
@@ -13,9 +16,11 @@ namespace FlatEngine
 		m_height = 5;
 		m_tileWidth = 16;
 		m_tileHeight = 16;
+		m_renderOrder = FL::F_maxSpriteLayers / 2;
 		m_tiles = std::map<int, std::map<int, Tile>>();
 		m_selectedTileSet = "";
 		m_tileSetNames = std::vector<std::string>();
+		m_collisionAreas = std::vector<CollisionAreaData>();
 	}
 
 	TileMap::TileMap(TileMap* toCopy, long myID, long newParentID)
@@ -27,9 +32,11 @@ namespace FlatEngine
 		m_height = toCopy->m_height;
 		m_tileWidth = toCopy->m_tileWidth;
 		m_tileHeight = toCopy->m_tileHeight;
+		m_renderOrder = toCopy->m_renderOrder;
 		m_tiles = toCopy->m_tiles;
 		m_selectedTileSet = toCopy->m_selectedTileSet;
 		m_tileSetNames = toCopy->m_tileSetNames;
+		m_collisionAreas = toCopy->m_collisionAreas;
 	}
 
 	TileMap::~TileMap()
@@ -123,6 +130,16 @@ namespace FlatEngine
 		m_height = height;
 	}
 
+	void TileMap::SetRenderOrder(int renderOrder)
+	{
+		m_renderOrder = renderOrder;
+	}
+
+	int TileMap::GetRenderOrder()
+	{
+		return m_renderOrder;
+	}
+
 	std::string TileMap::GetSelectedTileSet()
 	{
 		return m_selectedTileSet;
@@ -133,14 +150,38 @@ namespace FlatEngine
 		m_selectedTileSet = tileSet;
 	}
 
-	std::map<std::string, BoxCollider>& TileMap::GetBoxCollisionAreas()
+	std::vector<CollisionAreaData>& TileMap::GetCollisionAreas()
 	{
-		return m_boxCollisionAreas;
+		return m_collisionAreas;
 	}
 
-	void TileMap::AddBoxCollisionArea(std::string label, BoxCollider collisionArea)
+	BoxCollider* TileMap::AddCollisionArea(std::string label)
 	{
-		m_boxCollisionAreas.emplace(label, collisionArea);
+		long nextID = GetLoadedScene()->GetNextComponentID();
+		BoxCollider boxCollider = BoxCollider(nextID, GetParentID());
+		boxCollider.SetActive(true);
+		boxCollider.SetCollapsed(false);
+		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, GetParentID());
+		//colliderPtr->SetActiveDimensions(spriteDimensions.x, spriteDimensions.y);
+
+		CollisionAreaData newCollisionData;
+		newCollisionData.name = label;
+		newCollisionData.collider = boxCollider;
+		m_collisionAreas.push_back(newCollisionData);
+		return colliderPtr;
+	}
+
+	bool TileMap::ContainsCollisionAreaLabel(std::string label)
+	{
+		bool b_containsAreaLabel = false;
+		for (CollisionAreaData collisionData : m_collisionAreas)
+		{
+			if (collisionData.name == label)
+			{
+				b_containsAreaLabel = true;
+			}
+		}
+		return b_containsAreaLabel;
 	}
 
 	void TileMap::AddTileSet(std::string name)
@@ -203,6 +244,17 @@ namespace FlatEngine
 			std::map<int, Tile> yCoords;
 			yCoords.emplace(newPair);
 			m_tiles.emplace(x, yCoords);
+		}
+	}
+
+	void TileMap::EraseTile(Vector2 tileMapCoords)
+	{
+		int x = (int)tileMapCoords.x;
+		int y = (int)tileMapCoords.y;
+
+		if (m_tiles.count(x) > 0 && m_tiles.at(x).count(y) > 0)
+		{
+			m_tiles.at(x).erase(y);
 		}
 	}
 }

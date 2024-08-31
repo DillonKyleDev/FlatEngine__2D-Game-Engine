@@ -8,8 +8,7 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_Audio);
 		SetID(myID);
 		SetParentID(parentID);
-		sound = std::make_shared<Sound>();
-		_isMusic = false;
+		m_sounds = std::vector<SoundData>();
 	}
 
 	Audio::Audio(Audio* toCopy, long newParentID, long myID)
@@ -21,87 +20,242 @@ namespace FlatEngine
 			SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		_isMusic = toCopy->IsMusic();
-		sound = toCopy->sound;
-		path = toCopy->path;
 	}
 
 	Audio::~Audio()
 	{
 	}
 
-	void Audio::LoadMusic(std::string path)
+	void Audio::SetPath(std::string soundName, std::string newPath)
 	{
-		sound->LoadMusic(path);
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				sound.path = newPath;
+				LoadAudio(sound);
+			}
+		}
 	}
 
-	void Audio::LoadEffect(std::string path)
+	std::vector<SoundData> &Audio::GetSounds()
 	{
-		sound->LoadEffect(path);
+		return m_sounds;
 	}
 
-	void Audio::SetPath(std::string newPath)
+	std::string Audio::GetPath(std::string soundName)
 	{
-		path = newPath;
-		if (_isMusic)
-			LoadMusic(path);
-		else
-			LoadEffect(path);
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				return sound.path;
+			}
+		}
+		return "";
 	}
 
-	std::string Audio::GetPath()
+	bool Audio::ContainsName(std::string soundName)
 	{
-		return path;
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
-	void Audio::SetIsMusic(bool _music)
+	void Audio::SetIsMusic(std::string soundName, bool b_isMusic)
 	{
-		_isMusic = _music;
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				sound.b_isMusic = b_isMusic;
+				LoadAudio(sound);
+				break;
+			}
+		}
 	}
 
-	bool Audio::IsMusic()
+	void Audio::LoadAudio(SoundData &soundData)
 	{
-		return _isMusic;
+		if (soundData.path != "" && soundData.sound != nullptr)
+		{
+			if (soundData.b_isMusic)
+			{
+				soundData.sound->LoadMusic(soundData.path);
+			}
+			else
+			{
+				soundData.sound->LoadEffect(soundData.path);
+			}
+		}
 	}
 
-	void Audio::Play(int channel)
+	bool Audio::IsMusic(std::string soundName)
 	{
-		if (_isMusic)
-			sound->PlayMusic();
-		else
-			sound->PlayEffect(channel);
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				return sound.b_isMusic;
+			}
+		}
+		return false;
 	}
 
-	void Audio::Pause(int channel)
+	void Audio::AddSound(std::string soundName, std::string soundPath, bool b_isMusic)
 	{
-		if (_isMusic)
-			sound->PauseMusic();
-		else
-			sound->HaultChannel(channel);
+		SoundData soundData;
+		soundData.name = soundName;
+		soundData.b_isMusic = b_isMusic;
+		soundData.path = soundPath;
+		soundData.sound = std::make_shared<Sound>();
+		bool b_containsSound = false;
+
+		for (std::vector<SoundData>::iterator iter = m_sounds.begin(); iter != m_sounds.end(); iter++)
+		{
+			if (iter->name == soundName)
+			{
+				m_sounds.erase(iter);
+				break;
+			}
+		}
+
+		LoadAudio(soundData);
+		m_sounds.push_back(soundData);
 	}
 
-	void Audio::Stop(int channel)
+	void Audio::RemoveSound(std::string soundName)
 	{
-		if (_isMusic)
-			sound->StopMusic();
-		else
-			sound->HaultChannel(channel);
+		for (std::vector<SoundData>::iterator iter = m_sounds.begin(); iter != m_sounds.end(); iter++)
+		{
+			if (iter->name == soundName)
+			{
+				m_sounds.erase(iter);
+				break;
+			}
+		}
 	}
 
-	bool Audio::IsMusicPlaying()
+	void Audio::PlaySound(std::string soundName)
 	{
-		return sound->IsMusicPlaying();
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				Play(sound.name);
+			}
+		}
+	}
+
+	void Audio::PauseSound(std::string soundName)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				Pause(sound.name);
+			}
+		}
+	}
+
+	void Audio::StopSound(std::string soundName)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				Stop(sound.name);
+			}
+		}
+	}
+
+	void Audio::StopAll()
+	{
+		for (SoundData sound : m_sounds)
+		{
+			Stop(sound.name);
+		}
+	}
+
+	void Audio::Play(std::string soundName, int channel)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				if (sound.b_isMusic)
+				{
+					sound.sound->PlayMusic();
+				}
+				else
+				{
+					sound.sound->PlayEffect(channel);
+				}
+			}
+		}
+	}
+
+	void Audio::Pause(std::string soundName, int channel)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				sound.sound->PauseMusic();
+				sound.sound->HaultChannel(channel);
+			}
+		}
+	}
+
+	void Audio::Stop(std::string soundName, int channel)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				sound.sound->StopMusic();
+				sound.sound->HaultChannel(channel);
+			}
+		}
+	}
+
+	bool Audio::IsMusicPlaying(std::string soundName)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				return sound.sound->IsMusicPlaying();
+			}
+		}
+		return false;
 	}
 
 	std::string Audio::GetData()
 	{
+		json soundData = json::array();		
+
+		for (SoundData sound : m_sounds)
+		{
+			json soundJson = {
+				{ "path", sound.path },
+				{ "name", sound.name },
+				{ "b_isMusic", sound.b_isMusic }
+			};
+			soundData.push_back(soundJson);
+		}
+
 		json jsonData = {
 			{ "type", "Audio" },
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "path", path },
-			{ "_isMusic", _isMusic },
+			{ "soundData", soundData }
 		};
 
 		std::string data = jsonData.dump();

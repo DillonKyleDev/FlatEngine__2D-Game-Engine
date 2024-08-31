@@ -52,7 +52,7 @@ namespace FlatGui
 						// Then Create New Project and open it
 						Project newProject = Project();
 						SaveProject(newProject, projectPath);
-						OpenProject(projectPath);
+						LoadProject(projectPath);
 					}
 				}
 				ImGui::Separator();
@@ -61,7 +61,7 @@ namespace FlatGui
 					// Open Project
 					std::string projectPath = FL::OpenLoadFileExplorer();
 					if (projectPath != "")
-						OpenProject(projectPath);
+						LoadProject(projectPath);
 				}
 				if (ImGui::MenuItem("Save Project"))
 				{
@@ -140,40 +140,82 @@ namespace FlatGui
 			if (ImGui::BeginMenu("Viewports"))
 			{
 				if (ImGui::MenuItem("ImGui Demo Window", NULL, FG_b_showDemoWindow))
+				{
 					FG_b_showDemoWindow = !FG_b_showDemoWindow;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				ImGui::Separator();
 				ImGui::Text("- Main Panels -");
 				ImGui::Separator();
 				if (ImGui::MenuItem("Scene View", NULL, FG_b_showSceneView))
+				{
 					FG_b_showSceneView = !FG_b_showSceneView;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Game View", NULL, FG_b_showGameView))
+				{
 					FG_b_showGameView = !FG_b_showGameView;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Hierarchy", NULL, FG_b_showHierarchy))
+				{
 					FG_b_showHierarchy = !FG_b_showHierarchy;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Inspector", NULL, FG_b_showInspector))
+				{
 					FG_b_showInspector = !FG_b_showInspector;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("File Explorer", NULL, FG_b_showFileExplorer))
+				{
 					FG_b_showFileExplorer = !FG_b_showFileExplorer;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Logger", NULL, FG_b_showLogger))
+				{
 					FG_b_showLogger = !FG_b_showLogger;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Profiler", NULL, FG_b_showProfiler))
+				{
 					FG_b_showProfiler = !FG_b_showProfiler;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Animator", NULL, FG_b_showAnimator))
+				{
 					FG_b_showAnimator = !FG_b_showAnimator;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Animation Preview", NULL, FG_b_showAnimationPreview))
+				{
 					FG_b_showAnimationPreview = !FG_b_showAnimationPreview;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				ImGui::Separator();
 				ImGui::Text("- Editors -");
 				ImGui::Separator();
 				if (ImGui::MenuItem("Key Frame Editor", NULL, FG_b_showKeyFrameEditor))
+				{
 					FG_b_showKeyFrameEditor = !FG_b_showKeyFrameEditor;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("TileSet Editor", NULL, FG_b_showTileSetEditor))
+				{
 					FG_b_showTileSetEditor = !FG_b_showTileSetEditor;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Script Editor", NULL, FG_b_showScriptEditor))
+				{
 					FG_b_showScriptEditor = !FG_b_showScriptEditor;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 				if (ImGui::MenuItem("Mapping Context Editor", NULL, FG_b_showMappingContextEditor))
+				{
 					FG_b_showMappingContextEditor = !FG_b_showMappingContextEditor;
+					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+				}
 
 				ImGui::EndMenu();
 			}
@@ -190,36 +232,36 @@ namespace FlatGui
 					if (ImGui::MenuItem("Sprite"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
-						newObject->AddSpriteComponent();
+						newObject->AddSprite();
 						newObject->SetName("Sprite(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Button"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
-						newObject->AddButtonComponent();
+						newObject->AddButton();
 						newObject->SetName("Button(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Camera"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
-						newObject->AddCameraComponent();
+						newObject->AddCamera();
 						newObject->SetName("Camera(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Canvas"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);					
-						newObject->AddCanvasComponent();
+						newObject->AddCanvas();
 						newObject->SetName("Canvas(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Animation"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);						
-						newObject->AddAnimationComponent();
-						Sprite* sprite = newObject->AddSpriteComponent();
+						newObject->AddAnimation();
+						Sprite* sprite = newObject->AddSprite();
 						sprite->SetTexture("assets/images/resources/block.png");
 						newObject->SetName("Animation(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
@@ -227,21 +269,21 @@ namespace FlatGui
 					if (ImGui::MenuItem("Audio"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
-						newObject->AddAudioComponent();
+						newObject->AddAudio();
 						newObject->SetName("Audio(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Text"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);						
-						newObject->AddTextComponent();
+						newObject->AddText();
 						newObject->SetName("Text(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("Script"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
-						newObject->AddScriptComponent();
+						newObject->AddScript();
 						newObject->SetName("Script(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
@@ -249,21 +291,21 @@ namespace FlatGui
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);
 						
-						newObject->AddCharacterControllerComponent();
+						newObject->AddCharacterController();
 						newObject->SetName("CharacterController(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("RigidBody"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);						
-						newObject->AddRigidBodyComponent();
+						newObject->AddRigidBody();
 						newObject->SetName("RigidBody(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
 					if (ImGui::MenuItem("BoxCollider"))
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);						
-						newObject->AddBoxColliderComponent();
+						newObject->AddBoxCollider();
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}

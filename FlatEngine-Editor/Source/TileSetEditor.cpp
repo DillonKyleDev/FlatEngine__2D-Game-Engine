@@ -183,6 +183,7 @@ namespace FlatGui
 		if (is_hovered)
 		{
 			ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
+			ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTileBorder"));
 		}
 		else if (b_selected)
 		{

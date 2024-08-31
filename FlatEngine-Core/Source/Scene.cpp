@@ -137,7 +137,7 @@ namespace FlatEngine
 	GameObject* Scene::CreateGameObject(long parentID)
 	{
 		GameObject newObject = GameObject(parentID);
-		newObject.AddTransformComponent();
+		newObject.AddTransform();
 		if (parentID != -1)
 			m_sceneObjects.at(parentID).AddChild(newObject.GetID());
 		return AddSceneObject(newObject);

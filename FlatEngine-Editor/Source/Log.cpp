@@ -1,6 +1,7 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
 #include "Logger.h"
+#include "Project.h"
 
 namespace FL = FlatEngine;
 
@@ -15,6 +16,7 @@ namespace FlatGui
 		if (FL::RenderCheckbox("Clear buffer after every frame?", FG_b_clearBufferEveryFrame))
 		{
 			FL::F_Logger.ClearBuffer();
+			SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 		}
 
 		ImGuiTextBuffer log = FL::F_Logger.GetBuffer();
