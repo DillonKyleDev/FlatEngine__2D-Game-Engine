@@ -92,6 +92,7 @@ namespace FlatGui
 						FL::F_SceneManager.SaveScene(FL::F_SceneManager.CreateNewScene(), scenePath);
 						FL::F_SceneManager.LoadScene(scenePath);
 						FL::F_LoadedProject.SetLoadedScenePath(scenePath);
+						SaveCurrentProject();
 					}
 				}
 
@@ -102,7 +103,8 @@ namespace FlatGui
 					if (scenePath != "")
 					{
 						FL::F_SceneManager.LoadScene(scenePath);
-						FL::F_LoadedProject.SetLoadedScenePath(scenePath);
+						FL::F_LoadedProject.SetLoadedScenePath(scenePath);						
+						SaveCurrentProject();
 					}
 				}
 

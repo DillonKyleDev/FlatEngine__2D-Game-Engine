@@ -32,6 +32,8 @@ namespace FlatGui
 				FL::SaveCurrentScene();
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::Separator();
+			ImGui::Separator();
 			if (ImGui::MenuItem("Reload scene"))
 			{
 				FL::LoadScene(FL::GetLoadedScenePath());

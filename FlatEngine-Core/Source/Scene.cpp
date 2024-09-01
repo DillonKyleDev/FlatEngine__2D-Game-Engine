@@ -67,7 +67,8 @@ namespace FlatEngine
 		m_sceneObjects.emplace(id, sceneObject);
 		KeepNextGameObjectIDUpToDate(id);
 
-		if (sceneObject.HasComponent("BoxCollider"))
+		if (sceneObject.HasComponent("BoxCollider") ||
+			(sceneObject.HasComponent("TileMap") && sceneObject.GetTileMap()->GetCollisionAreas().size() > 0))
 			UpdateColliderPairs();
 
 		return &m_sceneObjects.at(id);
@@ -171,13 +172,28 @@ namespace FlatEngine
 		{
 			if (component->GetTypeString() == "RigidBody")
 			{
-				//gameLoop->RemoveRigidBody(component->GetID());
-				_hadRigidBody = true;
+				m_ECSManager.RemoveRigidBody(objectToDelete->GetID());
 			}
-			if (component->GetTypeString() == "CircleCollider" || component->GetTypeString() == "BoxCollider")
+			else if (component->GetTypeString() == "BoxCollider")
 			{
-				//gameLoop->RemoveCollider(component->GetID());
-				_hadCollider = true;
+				m_ECSManager.RemoveBoxCollider(component->GetID(), objectToDelete->GetID());
+			}
+			else if (component->GetTypeString() == "TileMap")
+			{
+				TileMap* tileMap = static_cast<TileMap*>(component);
+				if (tileMap->GetCollisionAreas().size() > 0)
+				{
+					for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
+					{
+						m_ECSManager.RemoveBoxCollider(collisionArea.second->GetID(), objectToDelete->GetID());
+					}
+				}
+				m_ECSManager.RemoveCircleCollider(component->GetID(), objectToDelete->GetID());
+			}
+			else if (component->GetTypeString() == "CircleCollider")
+			{
+
+				m_ECSManager.RemoveCircleCollider(component->GetID(), objectToDelete->GetID());
 			}
 		}
 
@@ -186,13 +202,6 @@ namespace FlatEngine
 
 		// Save the ID for use on the next created GameObject
 		m_freedGameObjectIDs.push_back(sceneObjectID);
-
-		// TODO
-		// 
-		//if (_hadRigidBody)
-		//	F_Application->GetGameLoop()->UpdateActiveRigidBodies();
-		//if (_hadCollider)
-		//	F_Application->GetGameLoop()->UpdateActiveColliders();
 	}
 
 	// Recursive
@@ -305,7 +314,6 @@ namespace FlatEngine
 	void Scene::OnPrefabInstantiated(std::vector<GameObject> children)
 	{
 		m_ECSManager.UpdateColliderPairs();
-		m_ECSManager.UpdateActiveRigidBodies();
 	}
 
 	void Scene::UpdateColliderPairs()
@@ -414,10 +422,10 @@ namespace FlatEngine
 		return m_ECSManager.AddTileMap(tileMap, ownerID);
 	}
 
-	void Scene::RemoveComponent(Component* component, long ownerID)
+	void Scene::RemoveComponent(Component* component)
 	{
 		long id = component->GetID();
-		if (m_ECSManager.RemoveComponent(component, ownerID))
+		if (m_ECSManager.RemoveComponent(component))
 			m_freedComponentIDs.push_back(id);
 	}
 

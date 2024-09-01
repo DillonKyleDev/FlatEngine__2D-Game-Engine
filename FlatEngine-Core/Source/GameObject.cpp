@@ -257,23 +257,24 @@ namespace FlatEngine
 		m_tagList.SetTag(tagName, _value);
 	}
 
-	void GameObject::RemoveComponent(long componentID)
+	void GameObject::RemoveComponent(FL::Component* component)
 	{
+		if (component != nullptr)
+		{
+			// Remove from ECSManager
+			GetLoadedScene()->RemoveComponent(component);
+		}
+
 		for (std::vector<Component*>::iterator iter = components.begin(); iter != components.end();)
 		{
-			if ((*iter)->GetID() == componentID)
+			if ((*iter)->GetID() == component->GetID())
 			{
-				// Remove from ECSManager
-				GetLoadedScene()->RemoveComponent(*iter, ID);
-
 				// Remove GameObject ptr to it
 				components.erase(iter);		
 				break;
 			}
 			iter++;
 		}
-
-
 	}
 
 	void GameObject::DeleteComponents()

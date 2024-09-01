@@ -1,0 +1,691 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 0,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "collisionAreas": [
+                        {
+                            "colliderData": {
+                                "_isActive": true,
+                                "_isCollapsed": false,
+                                "_isComposite": false,
+                                "_isContinuous": false,
+                                "_isSolid": true,
+                                "_isStatic": true,
+                                "_isTileMapCollider": true,
+                                "_showActiveRadius": false,
+                                "activeHeight": 12.0,
+                                "activeLayer": 0,
+                                "activeOffsetX": -10.0,
+                                "activeOffsetY": -3.0,
+                                "activeWidth": 10.0,
+                                "id": 2,
+                                "type": "BoxCollider"
+                            },
+                            "name": "GroundCol_1"
+                        },
+                        {
+                            "colliderData": {
+                                "_isActive": true,
+                                "_isCollapsed": false,
+                                "_isComposite": false,
+                                "_isContinuous": false,
+                                "_isSolid": true,
+                                "_isStatic": true,
+                                "_isTileMapCollider": true,
+                                "_showActiveRadius": false,
+                                "activeHeight": 8.0,
+                                "activeLayer": 0,
+                                "activeOffsetX": 6.0,
+                                "activeOffsetY": -5.0,
+                                "activeWidth": 22.0,
+                                "id": 3,
+                                "type": "BoxCollider"
+                            },
+                            "name": "GroundCol_2"
+                        }
+                    ],
+                    "height": 11,
+                    "id": 1,
+                    "tileHeight": 16,
+                    "tileSets": [
+                        {
+                            "name": "GroundTiles"
+                        }
+                    ],
+                    "tileWidth": 16,
+                    "tiles": [
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 4.0,
+                            "tileSetIndex": 0,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 5.0,
+                            "tileSetIndex": 1,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 1,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 1,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 4,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 3.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 5,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 4.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 5.0,
+                            "tileSetIndex": 7,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 8,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 8,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 10,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 4.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 4.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 5.0,
+                            "tileSetIndex": 19,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 15,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 15,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 5.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 4.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 5.0,
+                            "tileSetIndex": 25,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 26,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 26,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 6.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 7.0,
+                            "tileCoordY": 4.0,
+                            "tileSetIndex": 30,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 7.0,
+                            "tileCoordY": 5.0,
+                            "tileSetIndex": 31,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 7.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 7.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 7.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 8.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 8.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 8.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 8.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 9.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 9.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 9.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 9.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 10.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 10.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 10.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 10.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 11.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 11.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 11.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 11.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 12.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 12.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 12.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 12.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 13.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 13.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 13.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 13.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 14.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 14.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 14.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 14.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 15.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 15.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 15.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 15.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 16.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 16.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 13,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 16.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 16,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 16.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 17.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 6,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 17.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 25,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 17.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 28,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 17.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 11,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 18.0,
+                            "tileCoordY": 6.0,
+                            "tileSetIndex": 30,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 18.0,
+                            "tileCoordY": 7.0,
+                            "tileSetIndex": 31,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 18.0,
+                            "tileCoordY": 8.0,
+                            "tileSetIndex": 31,
+                            "tileSetName": "GroundTiles"
+                        },
+                        {
+                            "tileCoordX": 18.0,
+                            "tileCoordY": 9.0,
+                            "tileSetIndex": 35,
+                            "tileSetName": "GroundTiles"
+                        }
+                    ],
+                    "type": "TileMap",
+                    "width": 21
+                }
+            ],
+            "id": 0,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "TileMap(0)",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 4,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 1.3768062591552734,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 3.3695526123046875,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 5,
+                    "path": "../assets\\images\\sprites\\owl\\idle.png",
+                    "pivotPoint": "Center",
+                    "renderOrder": 27,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 16.0,
+                    "xScale": 1.0,
+                    "yOffset": 16.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isComposite": false,
+                    "_isContinuous": true,
+                    "_isSolid": true,
+                    "_isStatic": false,
+                    "_isTileMapCollider": false,
+                    "_showActiveRadius": false,
+                    "activeHeight": 3.0999999046325684,
+                    "activeLayer": 0,
+                    "activeOffsetX": 0.0,
+                    "activeOffsetY": -0.4399999976158142,
+                    "activeWidth": 2.0,
+                    "id": 6,
+                    "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "PlayerController",
+                    "id": 7,
+                    "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "airControl": 0.20000000298023224,
+                    "id": 8,
+                    "maxAcceleration": 0.5,
+                    "maxSpeed": 10.0,
+                    "type": "CharacterController"
+                },
+                {
+                    "_allowTorques": true,
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "_isStatic": false,
+                    "angularDrag": 1.0,
+                    "equilibriumForce": 2.0,
+                    "fallingGravity": 1.2000000476837158,
+                    "friction": 0.8600000143051147,
+                    "gravity": 1.0,
+                    "id": 9,
+                    "mass": 1.0,
+                    "terminalVelocity": 0.4000000059604645,
+                    "type": "RigidBody",
+                    "windResistance": 1.0
+                }
+            ],
+            "id": 1,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Sprite(1)",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 1.3768062591552734,
+            "spawnLocationY": 3.3695526123046875,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        }
+    ]
+}

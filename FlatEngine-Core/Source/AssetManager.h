@@ -31,8 +31,8 @@ namespace FlatEngine
 		std::map<std::string, std::string> m_directories;
 		std::map<std::string, std::string> m_files;
 		std::map<std::string, Vector4> m_colors;
-		std::map<std::string, std::shared_ptr<Texture>> m_textures;		
+		std::map<std::string, std::shared_ptr<Texture>> m_textures;
 		std::string m_resourceFailedToLoadImagePath;
-		Texture m_errorTexture;
+		std::shared_ptr<Texture> m_errorTexture;
 	};
 }

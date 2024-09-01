@@ -27,13 +27,17 @@ namespace FL = FlatEngine;
 namespace FlatGui 
 {
 	// ImGui Wrappers
-	void BeginComponent(FL::Component* component, long &queuedForDelete)
+	void BeginComponent(FL::Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride)
 	{
 		bool _isCollapsed = component->IsCollapsed();
 		long id = component->GetID();
 
 		std::string componentType = component->GetTypeString();
-		std::string componentID = componentType + std::to_string(component->GetID());
+		if (typeNameOverride != "")
+		{
+			componentType = typeNameOverride;
+		}
+		std::string componentID = component->GetTypeString() + std::to_string(component->GetID());
 
 		// Begin Component Child
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
@@ -58,6 +62,7 @@ namespace FlatGui
 		{
 			FL::BeginToolTip("Component Info");
 			FL::RenderToolTipLong("ID", id);
+			FL::RenderToolTipLong("ParentID", component->GetParentID());
 			FL::EndToolTip();
 		}
 		ImGui::SetCursorScreenPos({ wPos.x + 5, wPos.y + 5 });
@@ -80,7 +85,9 @@ namespace FlatGui
 
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
 		if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
-			queuedForDelete = component->GetID();
+		{
+			queuedForDelete = component;
+		}
 
 		ImGui::SameLine(0, 5);
 
@@ -100,7 +107,7 @@ namespace FlatGui
 		if (!component->IsCollapsed())
 		{
 			//Component Data - Give it background color
-			std::string componentItemID = "##ComponentItem-" + componentType;
+			std::string componentItemID = "##ComponentItem-" + component->GetTypeString();
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
 			ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
 		}
@@ -199,7 +206,7 @@ namespace FlatGui
 			sprite->SetActive(_isActive);								
 
 		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), "FILE_PATH_DRAGGED", droppedValue, openedPath, "Drop images here from File Explorer"))
+		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop images here from File Explorer"))
 		{
 			if (openedPath != "")
 			{
@@ -693,7 +700,7 @@ namespace FlatGui
 		}
 	}
 
-	void RenderBoxColliderComponent(BoxCollider* boxCollider)
+	void RenderBoxColliderComponent(BoxCollider* boxCollider, TileMap* tileMap, std::string collisionAreaName)
 	{
 		bool _isActive = boxCollider->IsActive();
 		bool _isColliding = boxCollider->IsColliding();
@@ -716,16 +723,38 @@ namespace FlatGui
 		if (RenderIsActiveCheckbox(_isActive))
 			boxCollider->SetActive(_isActive);
 
+		float widthIncrement = 0.01f;
+		float heightIncrement = 0.01f;
+		float offsetIncrementX = 0.01f;
+		float offsetIncrementY = 0.01f;
+		float maxWidth = 1000.0f;
+		float maxHeight = 1000.0f;
+
+		if (tileMap != nullptr)
+		{
+			float tileWidth = (float)tileMap->GetTileWidth();
+			float tileHeight = (float)tileMap->GetTileHeight();
+			float tileMapWidth = (float)tileMap->GetWidth();
+			float tileMapHeight = (float)tileMap->GetHeight();
+
+			widthIncrement = tileWidth / FL::F_pixelsPerGridSpace;
+			heightIncrement = tileHeight / FL::F_pixelsPerGridSpace;
+			offsetIncrementX = tileWidth / FL::F_pixelsPerGridSpace;
+			offsetIncrementY = tileHeight / FL::F_pixelsPerGridSpace;
+			maxWidth = tileMapWidth * tileWidth / FL::F_pixelsPerGridSpace;
+			maxHeight = tileMapWidth * tileWidth / FL::F_pixelsPerGridSpace;
+		}
+
 		// Render Table
 		if (FL::PushTable("##BoxColliderProps" + std::to_string(id), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, 0.01f, 0.0f, 20.0f))
+			if (FL::RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, widthIncrement, 0.0f, maxWidth))
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-			if (FL::RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, 0.01f, 0.0f, 20.0f))
+			if (FL::RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, heightIncrement, 0.0f, maxHeight))
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, offsetIncrementX, -FLT_MAX, -FLT_MAX))
 				boxCollider->SetActiveOffset(activeOffset);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, offsetIncrementY, -FLT_MAX, -FLT_MAX))
 				boxCollider->SetActiveOffset(activeOffset);
 			if (FL::RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
 				boxCollider->SetActiveLayer(activeLayer);
@@ -744,6 +773,18 @@ namespace FlatGui
 			boxCollider->SetShowActiveRadius(_showActiveRadius);
 		if (FL::RenderCheckbox(" Is Composite", _isComposite))
 			boxCollider->SetIsComposite(_isComposite);
+
+		// Enter Collision Area draw mode for this BoxCollider
+		if (tileMap != nullptr)
+		{
+			if (FL::RenderImageButton("##DrawCollisionArea" + std::to_string(id), FL::GetTexture("tileColliderDraw")))
+			{
+				FG_currentSelectedColliderArea = collisionAreaName;
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+			}
+			if (ImGui::IsItemHovered())
+				FL::RenderTextToolTip("Draw this collision area directly in the Scene View");
+		}
 	}
 
 	void RenderCircleColliderComponent(CircleCollider* circleCollider)
@@ -889,18 +930,22 @@ namespace FlatGui
 			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1, 1, INT_MAX))
 			{
 				tileMap->SetWidth(width);
+				tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1, 1, INT_MAX))
 			{
 				tileMap->SetHeight(height);
+				tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileWidth(tileWidth);
+				tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileHeight(tileHeight);
+				tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##RenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, FL::F_maxSpriteLayers))
 			{
@@ -1057,22 +1102,13 @@ namespace FlatGui
 
 		FL::RenderSubTitle("Collision Areas");
 
-		// BoxCollider Areas
+		// Collision Areas
+		std::map<std::string, BoxCollider*> collisionAreas = tileMap->GetCollisionAreas();
 		static std::string selectedCollisionArea = "";
-		std::vector<FL::CollisionAreaData> collisionAreas = tileMap->GetCollisionAreas();
-
-		std::vector<std::string> areaNames;
-		for (FL::CollisionAreaData collisionArea : collisionAreas)
-		{
-			areaNames.push_back(collisionArea.name);
-		}
-
-		FL::RenderSelectable("##BoxColliderAreas", areaNames, currentSelectableCollisionArea);
-
 		static std::string collisionAreaLabel = "";
 
 		FL::RenderInput("##CollisionAreaLabel" + std::to_string(id), "Collision Area Name", collisionAreaLabel, false);
-		if (FL::RenderButton("Add BoxCollision Area"))
+		if (FL::RenderButton("Add Collision Area"))
 		{
 			if (!tileMap->ContainsCollisionAreaLabel(collisionAreaLabel))
 			{
@@ -1082,45 +1118,6 @@ namespace FlatGui
 			{
 				FL::LogError("Collision area label already being used in this TileMap, please choose a different one.");
 			}
-		}
-
-
-		if (tileMap->GetCollisionAreas().size() > 0)
-		{
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
-			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-			FL::PushMenuStyles();
-			if (ImGui::BeginTable("##CollisionAreasTable", 1, FL::F_tableFlags))
-			{
-				ImGui::TableSetupColumn("##CollisionAreaName", 0, ImGui::GetContentRegionAvail().x);
-
-				for (FL::CollisionAreaData collisionArea : collisionAreas)
-				{
-					ImGui::TableNextRow();
-					ImGui::TableSetColumnIndex(0);
-
-					ImGuiTreeNodeFlags nodeFlags;
-					std::string treeID = "##SelectActiveCollisionAreaTree";
-
-					// If node selected
-					if (selectedCollisionArea == collisionArea.name)
-						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-					else
-						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-					// render a leaf
-					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, collisionArea.name.c_str());
-					if (ImGui::IsItemClicked())
-					{
-						selectedCollisionArea = collisionArea.name;
-					}
-				}
-
-				ImGui::EndTable();
-			}
-			FL::PopMenuStyles();
-			ImGui::PopStyleVar();
-			ImGui::PopStyleColor();
 		}
 
 		// Bottom padding

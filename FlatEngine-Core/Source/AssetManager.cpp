@@ -14,7 +14,7 @@ namespace FlatEngine
 		m_files = std::map<std::string, std::string>();
 		m_colors = std::map<std::string, Vector4>();
 		m_textures = std::map<std::string, std::shared_ptr<Texture>>();
-		m_errorTexture = Texture();
+		m_errorTexture = std::make_shared<Texture>();
 		m_resourceFailedToLoadImagePath = "";
 	}
 
@@ -119,6 +119,7 @@ namespace FlatEngine
 			auto script = F_Lua.safe_script_file(GetFilePath("textures"));
 			sol::object errPath = F_Lua["F_ResourceFailedToLoadImagePath"];
 			m_resourceFailedToLoadImagePath = errPath.as<std::string>();
+			m_errorTexture->LoadFromFile(m_resourceFailedToLoadImagePath);
 
 			std::optional<sol::table> textureTable = F_Lua["F_Textures"];
 			if (textureTable)
@@ -139,7 +140,7 @@ namespace FlatEngine
 
 		// Load error texture
 		if (m_resourceFailedToLoadImagePath != "")
-			m_errorTexture.LoadFromFile(m_resourceFailedToLoadImagePath);
+			m_errorTexture->LoadFromFile(m_resourceFailedToLoadImagePath);
 	}
 
 	std::string AssetManager::GetDir(std::string dirName)
@@ -187,6 +188,6 @@ namespace FlatEngine
 		if (m_textures.count(textureName))
 			return m_textures.at(textureName)->GetTexture();
 		else
-			return nullptr; // Return "failed to load texture" texture
+			return m_errorTexture->GetTexture();
 	}
 }

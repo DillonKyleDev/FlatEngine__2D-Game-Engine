@@ -13,9 +13,9 @@ F_Colors = {
 	componentBorder = Vector4:new(0.2, 0.2, 0.2, 1.0),
 	componentBg = Vector4:new(0.16, 0.16, 0.17, 1.0),
 	-- Colliders
-	colliderActive = Vector4:new(0.19, 0.9, 0.2, 0.5),
-	colliderInactive = Vector4:new(0.9, 0.2, 0.2, 0.5),
-	colliderColliding = Vector4:new(0.76, 0.42, 0.0, 0.5),
+	colliderActive = Vector4:new(0.19, 0.9, 0.2, 1.0),
+	colliderInactive = Vector4:new(0.9, 0.2, 0.2, 1.0),
+	colliderColliding = Vector4:new(0.76, 0.42, 0.0, 1.0),
 	-- Button Components
 	buttonComponentActive = Vector4:new(0.19, 0.9, 0.2, 0.5),
 	buttonComponentInctive = Vector4:new(0.9, 0.2, 0.2, 0.5),
@@ -59,6 +59,8 @@ F_Colors = {
 	filesPanelOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	selectedFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.11),
 	selectedFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.45),
+	hoveredFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.05),
+	hoveredFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.05),
 	-- TileSet Editing
 	tileSetTileBorder = Vector4:new(0.92, 1.0, 0.0, 0.5),
 	tileSetHoveredTile = Vector4:new(1, 1, 1, 0.35),
@@ -73,11 +75,16 @@ F_Colors = {
 	tileMapGridLines = Vector4:new(0.71, 0.0, 0.88, 0.15),
 	tileBoxColHighlight = Vector4:new(0.2, 1, 0.2, 0.4),
 	tileBoxColHoveredHighlight = Vector4:new(0.2, 1, 0.2, 0.4),
+	tileMultiSelectHighlightDragging = Vector4:new(1, 1, 1, 0.35),
+	tileMultiSelectHighlight = Vector4:new(1, 1, 1, 0.15),
+	tileMultiSelectHighlightBorder = Vector4:new(1, 1, 1, 0.95),
+	tileMoveModeClickBorder = Vector4:new(1, 1, 1, 0.95),
 	tileSetIconHovered = Vector4:new(0.8, 0.8, 0.8, 0.8),
 	tileSetEraseModeClick = Vector4:new(0.5, 0, 0, 0.6);
 	tileSetEraseModeClickBorder = Vector4:new(0.8, 0, 0, 1);
 	tileSetEraseModeHover = Vector4:new(1, 0, 0, 0.5);
 	tileSetEraseModeHoverBorder = Vector4:new(1, 0.1, 0.1, 1);
+	tileSelectModeClickBorder = Vector4:new(1, 1, 1, 1),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

@@ -54,7 +54,7 @@ namespace FlatEngine
 
 
 		// Components
-		void RemoveComponent(long componentID);
+		void RemoveComponent(Component* component);
 		void DeleteComponents();
 		Transform* AddTransform(long id = -1, bool _active = true, bool _collapsed = false);
 		Sprite* AddSprite(long id = -1, bool _active = true, bool _collapsed = false);

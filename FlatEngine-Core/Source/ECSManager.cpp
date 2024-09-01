@@ -307,8 +307,9 @@ namespace FlatEngine
 	}
 
 	// Remove Components
-	bool ECSManager::RemoveComponent(Component *component, long ownerID)
+	bool ECSManager::RemoveComponent(Component *component)
 	{
+		long ownerID = component->GetParentID();
 		if (component->GetTypeString() == "Transform")
 		{
 			return RemoveTransform(ownerID);
@@ -343,11 +344,11 @@ namespace FlatEngine
 		}
 		else if (component->GetTypeString() == "BoxCollider")
 		{
-			return RemoveBoxCollider(ownerID);
+			return RemoveBoxCollider(component->GetID(), ownerID);
 		}
 		else if (component->GetTypeString() == "CircleCollider")
 		{
-			return RemoveCircleCollider(ownerID);
+			return RemoveCircleCollider(component->GetID(), ownerID);
 		}
 		else if (component->GetTypeString() == "RigidBody")
 		{
@@ -455,26 +456,32 @@ namespace FlatEngine
 		return b_success;
 	}
 
-	bool ECSManager::RemoveBoxCollider(long ownerID)
+	bool ECSManager::RemoveBoxCollider(long componentID, long ownerID)
 	{
 		bool b_success = false;
 		if (m_BoxColliders.count(ownerID))
 		{
-			m_BoxColliders.erase(ownerID);
-			b_success = true;
-			UpdateColliderPairs();
+			if (m_BoxColliders.at(ownerID).count(componentID))
+			{
+				m_BoxColliders.at(ownerID).erase(componentID);
+				b_success = true;
+				UpdateColliderPairs();
+			}
 		}
 		return b_success;
 	}
 
-	bool ECSManager::RemoveCircleCollider(long ownerID)
+	bool ECSManager::RemoveCircleCollider(long componentID, long ownerID)
 	{
 		bool b_success = false;
 		if (m_CircleColliders.count(ownerID))
 		{
-			m_CircleColliders.erase(ownerID);
-			b_success = true;
-			UpdateColliderPairs();
+			if (m_CircleColliders.at(ownerID).count(componentID))
+			{
+				m_CircleColliders.at(ownerID).erase(componentID);
+				b_success = true;
+				UpdateColliderPairs();
+			}
 		}
 		return b_success;
 	}
@@ -527,13 +534,6 @@ namespace FlatEngine
 			b_success = true;
 		}
 		return b_success;
-	}
-
-
-	void ECSManager::CollectPhysicsBodies()
-	{
-		UpdateColliderPairs();
-		UpdateActiveRigidBodies();
 	}
 
 	void ECSManager::UpdateColliderPairs()
@@ -599,29 +599,6 @@ namespace FlatEngine
 	std::vector<std::pair<Collider*, Collider*>> ECSManager::GetColliderPairs()
 	{
 		return m_ColliderPairs;
-	}
-
-	void ECSManager::UpdateActiveRigidBodies()
-	{
-		// Get currently loaded scenes GameObjects
-		//gameObjects = FlatEngine::GetSceneObjects();
-		//rigidBodies.clear();
-
-		//// Find all script components on Scene GameObjects and add those GameObjects
-		//// to their corresponding script class entity vector members
-		//for (int i = 0; i < gameObjects.size(); i++)
-		//{
-		//	std::vector<Component*> components = gameObjects[i].GetComponents();
-
-		//	for (int j = 0; j < components.size(); j++)
-		//	{
-		//		if (components[j]->GetTypeString() == "RigidBody" && components[j]->IsActive())
-		//		{
-		//			// Collect all BoxCollider components for collision detection in Update()
-		//			rigidBodies.push_back(static_cast<RigidBody*>(components[j]));
-		//		}
-		//	}
-		//}
 	}
 
 	std::map<long, Transform> &ECSManager::GetTransforms()

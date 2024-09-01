@@ -258,7 +258,7 @@ namespace FlatGui
 
 			if (focusedObject != nullptr)
 			{
-				long queuedForDelete = -1;
+				FL::Component* queuedForDelete = nullptr;
 
 				// Transform
 				FL::Transform* transform = focusedObject->GetTransform();
@@ -366,10 +366,13 @@ namespace FlatGui
 				std::vector<BoxCollider*> boxColliders = focusedObject->GetBoxColliders();
 				for (BoxCollider* boxCollider : boxColliders)
 				{
-					BeginComponent(boxCollider, queuedForDelete);
-					if (!boxCollider->IsCollapsed())
-						RenderBoxColliderComponent(boxCollider);
-					EndComponent(boxCollider);
+					if (!boxCollider->IsTileMapCollider())
+					{
+						BeginComponent(boxCollider, queuedForDelete);
+						if (!boxCollider->IsCollapsed())
+							RenderBoxColliderComponent(boxCollider);
+						EndComponent(boxCollider);
+					}
 				}
 
 				// CircleColliders
@@ -400,12 +403,28 @@ namespace FlatGui
 					if (!tileMap->IsCollapsed())
 						RenderTileMapComponent(tileMap);
 					EndComponent(tileMap);
+
+					for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
+					{
+						BoxCollider *collider = collisionArea.second;
+
+						BeginComponent(collider, queuedForDelete, "Collision Area - " + collisionArea.first);
+						if (!collider->IsCollapsed())
+							RenderBoxColliderComponent(collider, tileMap, collisionArea.first);
+						EndComponent(collider);
+
+						if (queuedForDelete != nullptr && collider->GetID() == queuedForDelete->GetID())
+						{
+							tileMap->RemoveCollisionArea(collisionArea.first);
+							break;
+						}
+					}
 				}
 
-				if (queuedForDelete != -1)
+				if (queuedForDelete != nullptr)
 				{
 					focusedObject->RemoveComponent(queuedForDelete);
-					queuedForDelete = -1;
+					queuedForDelete = nullptr;
 				}
 			}
 

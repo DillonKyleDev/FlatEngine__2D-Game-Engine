@@ -135,9 +135,6 @@ namespace FlatEngine
 			{
 				auto firstObjectName = fileContentJson["Scene GameObjects"];
 
-				//Getting data from the json 
-				//std::string name = firstObjectName[0]["name"];
-
 				// Loop through the saved GameObjects in the JSON file
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{

@@ -456,7 +456,11 @@ namespace FlatGui
 
 		FL::RenderInvisibleButton(buttonID.c_str(), currentPos, iconButtonSize, true, false, ImGuiButtonFlags_MouseButtonLeft);
 		if (ImGui::IsItemHovered())
+		{
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+			ImGui::GetWindowDrawList()->AddRectFilled(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("hoveredFileBg"), 2);
+			ImGui::GetWindowDrawList()->AddRect(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("hoveredFileOutline"), 2);
+		}
 		bool b_leftClicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
 		bool b_rightClicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 		bool b_doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
@@ -561,6 +565,8 @@ namespace FlatGui
 		if (extension == ".scn")
 		{
 			FL::LoadScene(fs_filepath.string());
+			FL::F_LoadedProject.SetLoadedScenePath(fs_filepath.string());
+			SaveCurrentProject();
 		}
 		// Mapping Context file
 		else if (extension == ".mpc")

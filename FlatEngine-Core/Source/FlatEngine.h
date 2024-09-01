@@ -27,6 +27,14 @@
 ######################################
 */
 
+//widthIncrement   = tileWidthInGrid;     
+//heightIncrement  = tileHeightInGrid;
+//maxHeight        = tileWidth;        
+//offsetIncrementX = tileWidthInPx;        
+//offsetIncrementY = tileHeight;
+//maxWidth         = offsetIncrementX;
+//maxHeight        = offsetIncrementY;
+
 class GameManager;
 
 namespace FlatEngine
@@ -63,6 +71,8 @@ namespace FlatEngine
 		TILE_BRUSH,
 		TILE_ERASE,
 		TILE_COLLIDER_DRAW,
+		TILE_MULTISELECT,
+		TILE_MOVE,
 	};
 
 	using ComponentTypes = Component::ComponentTypes;
@@ -94,7 +104,6 @@ namespace FlatEngine
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
-	extern bool b_directoriesFilepathSelected;
 
 	// Drag/Drop IDs
 	extern std::string F_fileExplorerTarget;
@@ -110,6 +119,7 @@ namespace FlatEngine
 	extern ImGuiInputTextFlags F_inputFlags;
 
 	extern float F_childPadding;
+	extern bool F_b_sceneViewFocused;
 
 	// Controller Management
 	extern std::vector<SDL_Joystick*> gamepads;
@@ -261,7 +271,7 @@ namespace FlatEngine
 	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
 	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
 	extern void CreateNewTileSetFile(std::string fileName, std::string path);
-	extern GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position);
+	extern GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position);
 
 	// Animation Manager
 	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);

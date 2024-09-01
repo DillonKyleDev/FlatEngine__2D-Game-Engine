@@ -89,6 +89,7 @@ namespace FlatGui
 	// Project Management
 	extern void LoadProject(std::string path);
 	extern void SaveProject(Project project, std::string path);
+	extern void SaveCurrentProject();
 
 	// File Explorer
 	extern std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails;
@@ -126,6 +127,9 @@ namespace FlatGui
 	extern Vector2 FG_sceneViewCenter;
 	extern bool FG_b_sceneViewLockedOnObject;
 	extern GameObject *FG_sceneViewLockedObject;
+
+	// TileMap
+	extern std::string FG_currentSelectedColliderArea;
 
 	// Settings
 	extern int iconTransparency;
@@ -199,7 +203,7 @@ namespace FlatGui
 	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0, bool b_allowOverlap = true);
 	// Component Wrappers	
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
-	extern void BeginComponent(Component* component, long& queuedForDelete);
+	extern void BeginComponent(Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride = "");
 	extern void EndComponent(Component* component);
 	extern void RenderTransformComponent(Transform* transform);
 	extern void RenderSpriteComponent(Sprite* sprite);
@@ -211,7 +215,7 @@ namespace FlatGui
 	extern void RenderAudioComponent(Audio* audio);
 	extern void RenderTextComponent(Text* text);
 	extern void RenderCharacterControllerComponent(CharacterController* characterController);
-	extern void RenderBoxColliderComponent(BoxCollider* boxCollider);
+	extern void RenderBoxColliderComponent(BoxCollider* boxCollider, TileMap* tileMap = nullptr, std::string collisionAreaName = "");
 	extern void RenderCircleColliderComponent(CircleCollider* circleCollider);
 	extern void RenderRigidBodyComponent(RigidBody* rigidBody);
 	extern void RenderTileMapComponent(TileMap* tileMap);

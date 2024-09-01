@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": false,
+            "_clearLogBuffer": true,
             "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,
@@ -13,24 +13,24 @@
             "_showKeyFrameEditor": false,
             "_showLogger": true,
             "_showMappingContextEditor": false,
-            "_showProfiler": false,
+            "_showProfiler": true,
             "_showSceneView": true,
             "_showScriptEditor": false,
-            "_showTileSetEditor": false,
+            "_showTileSetEditor": true,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
-            "currentFileDirectory": "../assets\\audio",
-            "focusedGameObjectID": 4,
+            "currentFileDirectory": "../assets\\images\\colors",
+            "focusedGameObjectID": 9,
             "loadedAnimationPath": "",
-            "loadedScenePath": "../assets/scenes/OwlScene.scn",
+            "loadedScenePath": "../assets\\scenes\\OwlScene.scn",
             "path": "../assets/projects/OwlTower.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.scn",
-            "sceneViewGridStepX": 47.60010528564453,
-            "sceneViewGridStepY": 47.60010528564453,
-            "sceneViewScrollingX": 745.0,
-            "sceneViewScrollingY": 902.0
+            "sceneViewGridStepX": 9.600107192993164,
+            "sceneViewGridStepY": 9.600107192993164,
+            "sceneViewScrollingX": 593.0,
+            "sceneViewScrollingY": 194.0
         }
     ]
 }

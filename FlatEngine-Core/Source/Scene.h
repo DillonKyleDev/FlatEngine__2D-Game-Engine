@@ -80,7 +80,7 @@ namespace FlatEngine
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);
 		TileMap* AddTileMap(TileMap tileMap, long ownerID);
 
-		void RemoveComponent(Component* component, long ownerID);
+		void RemoveComponent(Component* component);
 
 		Transform* GetTransformByOwner(long ownerID);
 		Sprite* GetSpriteByOwner(long ownerID);

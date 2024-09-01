@@ -387,8 +387,10 @@ namespace FlatEngine
 
 		if (pathString != "")
 		{
+			pathString += ":";
 			ImGui::Text(pathString.c_str());
 			ImGui::SameLine(0, 5);
+			FL::MoveScreenCursor(0, -3);
 		}
 
 		if (_canOpenFiles && inputWidth == -1)

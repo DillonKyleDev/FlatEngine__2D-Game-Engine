@@ -60,6 +60,7 @@ namespace FlatEngine
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
 
 	F_CURSOR_MODE F_CursorMode = F_CURSOR_MODE::TRANSLATE;
+	bool F_b_sceneViewFocused = false;
 
 
 	bool _isDebugMode = true;
@@ -649,7 +650,7 @@ namespace FlatEngine
 			if (FlatEngine::GameLoopStarted())
 				GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
 
-			F_PlayerObject = GetObjectByTag("Player");
+			F_PlayerObject = GetObjectByTag("Player");			
 		}
 	}
 
@@ -761,7 +762,7 @@ namespace FlatEngine
 		FL::InitializeMappingContexts();
 	}
 
-	GameObject* CreateObjectUsingFilePath(std::string filePath, Vector2 position)
+	GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position)
 	{
 		std::string extension = std::filesystem::path(filePath).extension().string();
 
@@ -939,6 +940,7 @@ namespace FlatEngine
 		return nullptr;
 	}
 
+	// Events
 	void HandleEvents(bool& quit)
 	{
 		//std::vector<FlatEngine::MappingContext> *FlatEngine::F_MappingContexts = &FlatEngine::F_FlatEngine::F_MappingContexts;
@@ -1037,35 +1039,39 @@ namespace FlatEngine
 		// Keyboard Keys Down
 		if (event.type == SDL_KEYDOWN)
 		{
-			// Send event to context inputAction
-			switch (event.key.keysym.sym)
+			// Scene View inputs
+			if (F_b_sceneViewFocused)
 			{
-			case SDLK_t:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
-				break;
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_t:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+					break;
 
-			case SDLK_s:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
-				break;
+				case SDLK_s:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
+					break;
 
-			case SDLK_r:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
-				break;
+				case SDLK_r:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
+					break;
 
-			case SDLK_b:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
-				break;
+				case SDLK_b:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
+					break;
 
-			case SDLK_e:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
-				break;
+				case SDLK_e:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
+					break;
 
-			case SDLK_c:
-				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
-				break;
+				case SDLK_c:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+					break;
+				}
 			}
 		}
 	}
+
 	void HandleContextEvents(MappingContext& context, SDL_Event event, std::vector<std::string> &firedKeys)
 	{
 		// Keyboard Keys Down
@@ -3174,7 +3180,7 @@ namespace FlatEngine
 
 	float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName)
 	{
-		float value = 0;
+		float value = -1;
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
@@ -3425,6 +3431,7 @@ namespace FlatEngine
 				else if (type == "BoxCollider")
 				{
 					BoxCollider* newBoxCollider = loadedObject.AddBoxCollider(id, _isActive, _isCollapsed);
+					newBoxCollider->SetTileMapCollider(false);
 					newBoxCollider->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newBoxCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newBoxCollider->SetIsContinuous(CheckJsonBool(componentJson, "_isContinuous", objectName));
@@ -3491,6 +3498,40 @@ namespace FlatEngine
 							if (tileSetName != "" && tileSetIndex != -1)
 							{
 								newTileMap->SetTile(Vector2(x, y), GetTileSet(tileSetName), tileSetIndex);
+							}
+						}
+					}
+					// Get Collision Area data
+					if (JsonContains(componentJson, "collisionAreas", objectName))
+					{
+						for (int collisionArea = 0; collisionArea < componentJson["collisionAreas"].size(); collisionArea++)
+						{
+							json colliderAreaJson = componentJson["collisionAreas"][collisionArea];
+							json colliderDataJson = componentJson["collisionAreas"][collisionArea]["colliderData"];
+							Vector2 startCoord = Vector2(CheckJsonFloat(colliderDataJson, "startCoordX", objectName), CheckJsonFloat(colliderDataJson, "startCoordY", objectName));
+							Vector2 endCoord = Vector2(CheckJsonFloat(colliderDataJson, "endCoordX", objectName), CheckJsonFloat(colliderDataJson, "endCoordY", objectName));
+
+							std::string collisionAreaName = CheckJsonString(colliderAreaJson, "name", objectName);
+							long colliderID = CheckJsonLong(colliderDataJson, "id", objectName);
+							BoxCollider newCollisionArea = BoxCollider(colliderID, loadedID);
+
+							newCollisionArea.SetTileMapCollider(true);
+							newCollisionArea.SetActive(CheckJsonBool(colliderDataJson, "_isActive", objectName));
+							newCollisionArea.SetCollapsed(CheckJsonBool(colliderDataJson, "_isCollapsed", objectName));
+							newCollisionArea.SetActiveDimensions(CheckJsonFloat(colliderDataJson, "activeWidth", objectName), CheckJsonFloat(colliderDataJson, "activeHeight", objectName));
+							newCollisionArea.SetActiveOffset(Vector2(CheckJsonFloat(colliderDataJson, "activeOffsetX", objectName), CheckJsonFloat(colliderDataJson, "activeOffsetY", objectName)));
+							newCollisionArea.SetIsContinuous(CheckJsonBool(colliderDataJson, "_isContinuous", objectName));
+							newCollisionArea.SetIsStatic(CheckJsonBool(colliderDataJson, "_isStatic", objectName));
+							newCollisionArea.SetIsSolid(CheckJsonBool(colliderDataJson, "_isSolid", objectName));
+							newCollisionArea.SetActiveLayer(CheckJsonInt(colliderDataJson, "activeLayer", objectName));
+							newCollisionArea.SetRotation(0);
+							newCollisionArea.SetShowActiveRadius(CheckJsonBool(colliderDataJson, "_showActiveRadius", objectName));
+							newCollisionArea.SetIsComposite(CheckJsonBool(colliderDataJson, "_isComposite", objectName));
+
+							newTileMap->AddCollisionArea(collisionAreaName, newCollisionArea);
+							if (startCoord.x != -1 && startCoord.y != -1 && endCoord.x != -1 && endCoord.y != -1)
+							{
+								newTileMap->SetCollisionAreaValues(collisionAreaName, startCoord, endCoord);
 							}
 						}
 					}

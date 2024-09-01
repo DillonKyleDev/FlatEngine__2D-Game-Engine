@@ -27,6 +27,8 @@ namespace FlatGui
 	bool FG_b_sceneViewLockedOnObject = false;
 	GameObject * FG_sceneViewLockedObject = nullptr;
 
+	bool F_b_inputFocused = false;
+
 	void Scene_RenderView()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
@@ -35,6 +37,9 @@ namespace FlatGui
 		FlatEngine::PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8); // Window flags 	ImGuiWindowFlags_NoScrollWithMouse
 		FlatEngine::PopWindowStyles();
+
+		FL::F_b_sceneViewFocused = ImGui::IsWindowFocused();
+
 
 		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
 		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
@@ -94,7 +99,7 @@ namespace FlatGui
 			std::string filePath = FL::F_selectedFiles[droppedValue - 1];
 			FL::LogString(filePath);
 			
-			FL::CreateObjectUsingFilePath(filePath, mousePosInGrid);
+			FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
 		}
 
 		// Get currently loaded scene objects
@@ -220,9 +225,10 @@ namespace FlatGui
 	void RenderCursorModeButtons()
 	{
 		Vector2 startPos = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + 275, startPos.y + 46), FL::GetColor32("cursorModeSelectBg"), 0);
-		ImGui::GetWindowDrawList()->AddRect(Vector2(startPos.x - 1, startPos.y - 1), Vector2(startPos.x + 275, startPos.y + 46), FL::GetColor32("cursorModeSelectBorder"), 0);
+		ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + 360, startPos.y + 46), FL::GetColor32("cursorModeSelectBg"), 0);
+		ImGui::GetWindowDrawList()->AddRect(Vector2(startPos.x - 1, startPos.y - 1), Vector2(startPos.x + 360, startPos.y + 46), FL::GetColor32("cursorModeSelectBorder"), 0);
 		ImGui::SetCursorScreenPos(Vector2(startPos.x + 10, startPos.y + 5));
+
 
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE)
 		{
@@ -257,6 +263,7 @@ namespace FlatGui
 			FL::RenderTextToolTip("Scale Mode (s)");
 		ImGui::SameLine();
 
+
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE)
 		{
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
@@ -272,6 +279,7 @@ namespace FlatGui
 		if (ImGui::IsItemHovered())
 			FL::RenderTextToolTip("Rotate Mode (r)");
 		ImGui::SameLine();
+
 
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
 		{
@@ -289,35 +297,69 @@ namespace FlatGui
 			FL::RenderTextToolTip("Tile Brush Mode (b)");
 		ImGui::SameLine();
 
+
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE)
 		{
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + 35, currentPos.y + 33), FL::GetColor32("cursorModeButtonSelectedBorder"));
-			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileBrush"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileErase"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
 		}
 		else
 		{
-			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileBrush"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileErase"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
 		}
 		if (ImGui::IsItemHovered())
 			FL::RenderTextToolTip("Tile Erase Mode (e)");
 		ImGui::SameLine();
 
+
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 		{
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + 35, currentPos.y + 33), FL::GetColor32("cursorModeButtonSelectedBorder"));
-			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("scale"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("tileColliderDraw"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 		}
 		else
 		{
-			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("scale"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("tileColliderDraw"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 		}
 		if (ImGui::IsItemHovered())
 			FL::RenderTextToolTip("BoxCollider Draw Mode (c)");
+		ImGui::SameLine();
+
+		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
+		{
+			Vector2 currentPos = ImGui::GetCursorScreenPos();
+			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + 35, currentPos.y + 33), FL::GetColor32("cursorModeButtonSelectedBorder"));
+			if (FL::RenderImageButton("#SelectTilesModeIcon", FL::GetTexture("selectTiles"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+		}
+		else
+		{
+			if (FL::RenderImageButton("#SelectTilesModeIcon", FL::GetTexture("selectTiles"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+		}
+		if (ImGui::IsItemHovered())
+			FL::RenderTextToolTip("Select Tiles Mode (s)");
+		ImGui::SameLine();
+
+		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE)
+		{
+			Vector2 currentPos = ImGui::GetCursorScreenPos();
+			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + 35, currentPos.y + 33), FL::GetColor32("cursorModeButtonSelectedBorder"));
+			if (FL::RenderImageButton("#MoveTilesModeIcon", FL::GetTexture("moveTiles"), Vector2(26, 26), 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+		}
+		else
+		{
+			if (FL::RenderImageButton("#MoveTilesModeIcon", FL::GetTexture("moveTiles"), Vector2(26, 26), 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+		}
+		if (ImGui::IsItemHovered())
+			FL::RenderTextToolTip("Move Tiles Mode (m)");
 	}
 }

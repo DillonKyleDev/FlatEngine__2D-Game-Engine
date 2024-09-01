@@ -15,6 +15,7 @@ namespace FlatEngine
 	BoxCollider::BoxCollider(long myID, long parentID) : Collider(myID, parentID)
 	{		
 		SetType(ComponentTypes::T_BoxCollider);
+		m_b_isTileMapCollider = false;
 		activeWidth = 2;
 		activeHeight = 2;
 		activeEdges = Vector4(0, 0, 0, 0);
@@ -38,6 +39,7 @@ namespace FlatEngine
 		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());	
 		SetShowActiveRadius(toCopy->GetShowActiveRadius());
 
+		m_b_isTileMapCollider = toCopy->m_b_isTileMapCollider;
 		activeWidth = toCopy->activeWidth;
 		activeHeight = toCopy->activeHeight;
 		_activeEdgesSet = toCopy->_activeEdgesSet;
@@ -53,6 +55,16 @@ namespace FlatEngine
 
 	BoxCollider::~BoxCollider()
 	{
+	}
+
+	bool BoxCollider::IsTileMapCollider()
+	{
+		return m_b_isTileMapCollider;
+	}
+
+	void BoxCollider::SetTileMapCollider(bool b_isTileMapCollider)
+	{
+		m_b_isTileMapCollider = b_isTileMapCollider;
 	}
 
 	void BoxCollider::SetActiveDimensions(float width, float height)
@@ -309,6 +321,7 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
+			{ "_isTileMapCollider", m_b_isTileMapCollider },
 			{ "activeWidth", activeWidth },
 			{ "activeHeight", activeHeight },
 			{ "activeOffsetX", GetActiveOffset().x},

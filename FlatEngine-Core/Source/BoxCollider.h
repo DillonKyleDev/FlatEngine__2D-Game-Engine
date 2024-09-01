@@ -29,6 +29,8 @@ namespace FlatEngine
 		BoxCollider(BoxCollider* toCopy, long newParentID, long myID = -1);
 		~BoxCollider();
 					
+		bool IsTileMapCollider();
+		void SetTileMapCollider(bool b_tileMapCollider);
 		void SetActiveDimensions(float width, float height);
 		float GetActiveWidth();
 		float GetActiveHeight();
@@ -48,6 +50,7 @@ namespace FlatEngine
 		void RecalculateBounds(float gridstep, Vector2 viewportCenter);
 
 	private:		
+		bool m_b_isTileMapCollider;
 		float activeWidth;
 		float activeHeight;
 

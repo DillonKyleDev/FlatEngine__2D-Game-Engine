@@ -48,7 +48,7 @@ namespace FlatEngine
 		CharacterController* AddCharacterController(CharacterController characterController, long ownerID);	
 		TileMap* AddTileMap(TileMap tileMap, long ownerID);
 
-		bool RemoveComponent(Component* component, long ownerID);
+		bool RemoveComponent(Component* component);
 		bool RemoveTransform(long ownerID);
 		bool RemoveSprite(long ownerID);
 		bool RemoveCamera(long ownerID);
@@ -57,8 +57,8 @@ namespace FlatEngine
 		bool RemoveAudio(long ownerID);
 		bool RemoveText(long ownerID);
 		bool RemoveCompositeCollider(long ownerID);
-		bool RemoveBoxCollider(long ownerID);
-		bool RemoveCircleCollider(long ownerID);
+		bool RemoveBoxCollider(long componentID, long ownerID);
+		bool RemoveCircleCollider(long componentID, long ownerID);
 		bool RemoveAnimation(long ownerID);
 		bool RemoveButton(long ownerID);
 		bool RemoveRigidBody(long ownerID);
@@ -81,9 +81,7 @@ namespace FlatEngine
 		CharacterController* GetCharacterControllerByOwner(long ownerID);
 		TileMap* GetTileMapByOwner(long ownerID);
 
-		void CollectPhysicsBodies();
 		void UpdateColliderPairs();
-		void UpdateActiveRigidBodies();
 
 		std::map<long, Transform> &GetTransforms();
 		std::map<long, Sprite>& GetSprites();
