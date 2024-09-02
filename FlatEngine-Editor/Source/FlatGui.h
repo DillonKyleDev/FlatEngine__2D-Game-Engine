@@ -84,7 +84,6 @@ namespace FlatGui
 
 	extern bool _editingValue;
 	extern ImDrawList* drawList;
-	extern WidgetsManager widgetsManager;
 
 	// Project Management
 	extern void LoadProject(std::string path);
@@ -130,6 +129,7 @@ namespace FlatGui
 
 	// TileMap
 	extern std::string FG_currentSelectedColliderArea;
+	extern std::vector<std::pair<Vector2, Vector2>> FG_collisionAreasBuffer;
 
 	// Settings
 	extern int iconTransparency;

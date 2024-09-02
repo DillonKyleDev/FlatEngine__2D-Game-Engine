@@ -1048,7 +1048,7 @@ namespace FlatEngine
 					FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
 					break;
 
-				case SDLK_s:
+				case SDLK_w:
 					FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
 					break;
 
@@ -1066,6 +1066,46 @@ namespace FlatEngine
 
 				case SDLK_c:
 					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+					break;
+
+				case SDLK_m:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+					break;
+
+				case SDLK_s:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+					break;
+
+				case SDLK_SPACE:
+					FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+					
+					//ImGuiIO& inputOutput = ImGui::GetIO();
+					//Vector2 currentPos = ImGui::GetCursorScreenPos();
+					//bool _weightedScroll = true;
+					//Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
+
+
+					//// Border
+					//if (b_filled)
+					//	ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+					//else
+					//	ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+
+					////ImGui::SetNextItemAllowOverlap();
+					//FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+					//const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+					//const bool is_active = ImGui::IsItemActive();   // Held
+					//const bool is_clicked = ImGui::IsItemClicked();
+
+					//// For panning the scene view
+					//const float mouse_threshold_for_pan = 0.0f;
+					//if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+					//{
+					//	// This does not seem to work properly when resizing the window
+					//	// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
+					//	scrolling.x += inputOutput.MouseDelta.x;
+					//	scrolling.y += inputOutput.MouseDelta.y;
+					//}
 					break;
 				}
 			}
@@ -3507,32 +3547,22 @@ namespace FlatEngine
 						for (int collisionArea = 0; collisionArea < componentJson["collisionAreas"].size(); collisionArea++)
 						{
 							json colliderAreaJson = componentJson["collisionAreas"][collisionArea];
-							json colliderDataJson = componentJson["collisionAreas"][collisionArea]["colliderData"];
-							Vector2 startCoord = Vector2(CheckJsonFloat(colliderDataJson, "startCoordX", objectName), CheckJsonFloat(colliderDataJson, "startCoordY", objectName));
-							Vector2 endCoord = Vector2(CheckJsonFloat(colliderDataJson, "endCoordX", objectName), CheckJsonFloat(colliderDataJson, "endCoordY", objectName));
-
+							json colliderDataJson = colliderAreaJson["areaData"];
 							std::string collisionAreaName = CheckJsonString(colliderAreaJson, "name", objectName);
-							long colliderID = CheckJsonLong(colliderDataJson, "id", objectName);
-							BoxCollider newCollisionArea = BoxCollider(colliderID, loadedID);
+							std::vector<std::pair<Vector2, Vector2>> collisionCoordBuffer;
 
-							newCollisionArea.SetTileMapCollider(true);
-							newCollisionArea.SetActive(CheckJsonBool(colliderDataJson, "_isActive", objectName));
-							newCollisionArea.SetCollapsed(CheckJsonBool(colliderDataJson, "_isCollapsed", objectName));
-							newCollisionArea.SetActiveDimensions(CheckJsonFloat(colliderDataJson, "activeWidth", objectName), CheckJsonFloat(colliderDataJson, "activeHeight", objectName));
-							newCollisionArea.SetActiveOffset(Vector2(CheckJsonFloat(colliderDataJson, "activeOffsetX", objectName), CheckJsonFloat(colliderDataJson, "activeOffsetY", objectName)));
-							newCollisionArea.SetIsContinuous(CheckJsonBool(colliderDataJson, "_isContinuous", objectName));
-							newCollisionArea.SetIsStatic(CheckJsonBool(colliderDataJson, "_isStatic", objectName));
-							newCollisionArea.SetIsSolid(CheckJsonBool(colliderDataJson, "_isSolid", objectName));
-							newCollisionArea.SetActiveLayer(CheckJsonInt(colliderDataJson, "activeLayer", objectName));
-							newCollisionArea.SetRotation(0);
-							newCollisionArea.SetShowActiveRadius(CheckJsonBool(colliderDataJson, "_showActiveRadius", objectName));
-							newCollisionArea.SetIsComposite(CheckJsonBool(colliderDataJson, "_isComposite", objectName));
-
-							newTileMap->AddCollisionArea(collisionAreaName, newCollisionArea);
-							if (startCoord.x != -1 && startCoord.y != -1 && endCoord.x != -1 && endCoord.y != -1)
-							{
-								newTileMap->SetCollisionAreaValues(collisionAreaName, startCoord, endCoord);
+							for (int colArea = 0; colArea < colliderDataJson.size(); colArea++)
+							{											
+								Vector2 startCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "startCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "startCoordY", objectName));
+								Vector2 endCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "endCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "endCoordY", objectName));
+								std::pair<Vector2, Vector2> colPair = { startCoord, endCoord };
+								collisionCoordBuffer.push_back(colPair);
 							}
+
+							if (collisionCoordBuffer.size() > 0)
+							{
+								newTileMap->SetCollisionAreaValues(collisionAreaName, collisionCoordBuffer);
+							}										
 						}
 					}
 				}

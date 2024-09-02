@@ -2,7 +2,7 @@
     "Project Properties": [
         {
             "_autoSave": true,
-            "_clearLogBuffer": true,
+            "_clearLogBuffer": false,
             "_fullscreen": false,
             "_showAnimationPreview": false,
             "_showAnimator": false,
@@ -16,21 +16,21 @@
             "_showProfiler": true,
             "_showSceneView": true,
             "_showScriptEditor": false,
-            "_showTileSetEditor": true,
+            "_showTileSetEditor": false,
             "_vsyncEnabled": true,
-            "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
+            "buildPath": "",
             "currentFileDirectory": "../assets",
-            "focusedGameObjectID": 8,
+            "focusedGameObjectID": 0,
             "loadedAnimationPath": "",
-            "loadedScenePath": "../assets\\scenes\\OwlScene.scn",
-            "path": "../assets/projects/OwlTower.prj",
+            "loadedScenePath": "../assets\\scenes\\Level1.scn",
+            "path": "../assets/projects//FlappyOwl.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
-            "sceneToLoadAtRuntime": "../assets/scenes/OwlScene.scn",
-            "sceneViewGridStepX": 12.000014305114746,
-            "sceneViewGridStepY": 12.000014305114746,
-            "sceneViewScrollingX": 2648.0,
-            "sceneViewScrollingY": 356.0
+            "sceneToLoadAtRuntime": "",
+            "sceneViewGridStepX": 9.800006866455078,
+            "sceneViewGridStepY": 9.800006866455078,
+            "sceneViewScrollingX": 1205.0,
+            "sceneViewScrollingY": 251.0
         }
     ]
 }

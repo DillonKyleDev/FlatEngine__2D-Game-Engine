@@ -4,7 +4,6 @@
 #include "FlatEngine.h"
 #include "Scene.h"
 
-
 namespace FlatEngine
 {
 	FlatEngine::TileMap::TileMap(long myID, long parentID)
@@ -21,8 +20,8 @@ namespace FlatEngine
 		m_tempMoveTiles = std::map<int, std::map<int, Tile>>();
 		m_selectedTileSet = "";
 		m_tileSetNames = std::vector<std::string>();
-		m_collisionAreas = std::map<std::string, BoxCollider*>();
-		m_collisionAreaCoords = std::map<std::string, std::pair<Vector2, Vector2>>();
+		m_selectedCollisionArea = "";
+		m_collisionAreas = std::map<std::string, std::vector<CollisionAreaData>>();	
 	}
 
 	TileMap::TileMap(TileMap* toCopy, long myID, long newParentID)
@@ -39,8 +38,8 @@ namespace FlatEngine
 		m_tempMoveTiles = toCopy->m_tempMoveTiles;
 		m_selectedTileSet = toCopy->m_selectedTileSet;
 		m_tileSetNames = toCopy->m_tileSetNames;
-		m_collisionAreas = toCopy->m_collisionAreas;
-		m_collisionAreaCoords = toCopy->m_collisionAreaCoords;
+		m_selectedCollisionArea = toCopy->m_selectedCollisionArea;
+		m_collisionAreas = toCopy->m_collisionAreas;		
 	}
 
 	TileMap::~TileMap()
@@ -63,41 +62,44 @@ namespace FlatEngine
 		}
 		// Tile data
 		for (std::pair<int, std::map<int, Tile>> row : m_tiles)
-		{	
+		{
 			for (std::pair<int, Tile> col : row.second)
 			{
 				Tile tile = col.second;
 
 				json tileJson = {
-						{ "tileCoordX", tile.tileCoord.x },
-						{ "tileCoordY", tile.tileCoord.y },
-						{ "tileSetName", tile.tileSetName },
-						{ "tileSetIndex", tile.tileSetIndex }
+					{ "tileCoordX", tile.tileCoord.x },
+					{ "tileCoordY", tile.tileCoord.y },
+					{ "tileSetName", tile.tileSetName },
+					{ "tileSetIndex", tile.tileSetIndex }
 				};
 				tileData.push_back(tileJson);
 			}
 		}
 		// Collision Area data
-		for (std::pair<std::string, BoxCollider*> colData : m_collisionAreas)
-		{
-			BoxCollider *collider = colData.second;
-			json colliderJson = json::parse(collider->GetData());
-			Vector2 startCoord = Vector2(0, 0);
-			Vector2 endCoord = Vector2(0, 0);
-
-			if (m_collisionAreaCoords.count(colData.first) > 0)
+		for (std::pair<std::string, std::vector<CollisionAreaData>> colData : m_collisionAreas)
+		{			
+			json areaCoords = json::array();
+		
+			for (CollisionAreaData data : colData.second)
 			{
-				startCoord = m_collisionAreaCoords.at(colData.first).first;
-				endCoord = m_collisionAreaCoords.at(colData.first).second;
+				Vector2 startCoord = data.startCoord;
+				Vector2 endCoord = data.endCoord;
+
+				json colData = {				
+					{ "startCoordX", startCoord.x },
+					{ "startCoordY", startCoord.y },
+					{ "endCoordX", endCoord.x },
+					{ "endCoordY", endCoord.y }
+				};
+				areaCoords.push_back(colData);
 			}
+
 			json colAreaData = {
 				{ "name", colData.first },
-				{ "colliderData", colliderJson },
-				{ "startCoordX", startCoord.x },
-				{ "startCoordY", startCoord.y },
-				{ "endCoordX", endCoord.x },
-				{ "endCoordY", endCoord.y }
+				{ "areaData", areaCoords }
 			};
+
 			collisionAreaData.push_back(colAreaData);
 		}
 
@@ -180,66 +182,87 @@ namespace FlatEngine
 		m_selectedTileSet = tileSet;
 	}
 
-	std::map<std::string, BoxCollider*>& TileMap::GetCollisionAreas()
+	std::map<std::string, std::vector<CollisionAreaData>>& TileMap::GetCollisionAreas()
 	{
 		return m_collisionAreas;
 	}
 
-	BoxCollider* TileMap::AddCollisionArea(std::string label)
+	BoxCollider* TileMap::AddCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord)
 	{
-		long nextID = GetLoadedScene()->GetNextComponentID();
-		BoxCollider boxCollider = BoxCollider(nextID, GetParentID());
-		boxCollider.SetActive(true);
-		boxCollider.SetCollapsed(false);
-		boxCollider.SetActiveDimensions(0, 0);
-		boxCollider.SetTileMapCollider(true);
-		boxCollider.SetIsStatic(true);
-		boxCollider.SetIsContinuous(false);
-		boxCollider.SetIsSolid(true);
-		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, GetParentID());
+		BoxCollider newCollisionArea = BoxCollider(GetNextComponentID(), GetParentID());
+
+		newCollisionArea.SetTileMapCollider(true);
+		newCollisionArea.SetActive(true);
+		newCollisionArea.SetCollapsed(false);
+		newCollisionArea.SetIsContinuous(false);
+		newCollisionArea.SetIsStatic(true);
+		newCollisionArea.SetIsSolid(true);
+		newCollisionArea.SetActiveLayer(0);
+		newCollisionArea.SetRotation(0);
+		newCollisionArea.SetShowActiveRadius(false);
+		newCollisionArea.SetIsComposite(false);
+		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(newCollisionArea, GetParentID());
+
+		CollisionAreaData colData;
+		colData.collider = colliderPtr;
+		colData.startCoord = startCoord;
+		colData.endCoord = endCoord;
+
 
 		if (m_collisionAreas.count(label) == 0)
 		{
-			m_collisionAreas.emplace(label, colliderPtr);
+			std::vector<CollisionAreaData> colVector;
+			colVector.push_back(colData);			
+			m_collisionAreas.emplace(label, colVector);
 		}
 		else
 		{
-			m_collisionAreas.at(label) = colliderPtr;
+			m_collisionAreas.at(label).push_back(colData);
 		}
 
 		return colliderPtr;
 	}
 
-	BoxCollider* TileMap::AddCollisionArea(std::string label, BoxCollider collider)
+	//void TileMap::RemoveCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord)
+	//{
+	//	if (m_collisionAreas.count(label) > 0)
+	//	{
+	//		for (std::pair<Vector2, Vector2> coordVector : m_collisionAreaCoords.at(label))
+	//		{
+	//			if (((coordVector.first.x == startCoord.x && coordVector.first.y == startCoord.y) || (coordVector.first.x == endCoord.x && coordVector.first.y == endCoord.y)) &&
+	//				((coordVector.second.x == startCoord.x && coordVector.second.y == startCoord.y) || (coordVector.second.x == endCoord.x && coordVector.second.y == endCoord.y)))
+	//			{
+	//				m_collisionAreas.erase(label);
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
+	void TileMap::SetCollisionAreaValues(std::string label, std::vector<std::pair<Vector2, Vector2>> colCoords)
 	{
-		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(collider, GetParentID());
-		
 		if (m_collisionAreas.count(label) == 0)
 		{
-			m_collisionAreas.emplace(label, colliderPtr);
-		}
-		else
-		{
-			m_collisionAreas.at(label) = colliderPtr;
+			std::vector<CollisionAreaData> collAreaData = std::vector<CollisionAreaData>();
+			m_collisionAreas.emplace(label, collAreaData);
 		}
 
-		return colliderPtr;
-	}
-
-	void TileMap::RemoveCollisionArea(std::string label)
-	{
-		if (m_collisionAreas.count(label) > 0)
+		// Delete old BoxColliders
+		for (CollisionAreaData collisionArea : m_collisionAreas.at(label))
 		{
-			m_collisionAreas.erase(label);
+			GetLoadedScene()->RemoveComponent(collisionArea.collider);
 		}
-	}
+		m_collisionAreas.at(label).clear();
 
-	void TileMap::SetCollisionAreaValues(std::string label, Vector2 startCoord, Vector2 endCoord)
-	{
-		if (m_collisionAreas.count(label) > 0)
+		// Use the passed coords to create new CollisionAreaDatas in this Collision Area
+		for (std::pair<Vector2, Vector2> coord : colCoords)
 		{
-			Vector2 colliderStart = Vector2(startCoord.x + 1, startCoord.y + 1);
-			Vector2 colliderEnd = Vector2(endCoord.x + 1, endCoord.y + 1);
+			// Create CollisionAreaData object with that data, including BoxCollider
+			BoxCollider* collider = AddCollisionArea(label, coord.first, coord.second);
+
+			// Use that data to set the positioning of the BoxCollider relative to the TileMap
+			Vector2 colliderStart = Vector2(coord.first.x + 1, coord.first.y + 1);
+			Vector2 colliderEnd = Vector2(coord.second.x + 1, coord.second.y + 1);
 
 			float gridWidthsInATile = m_tileWidth / FL::F_pixelsPerGridSpace;
 			float gridHeightsInATile = m_tileHeight / FL::F_pixelsPerGridSpace;
@@ -294,32 +317,26 @@ namespace FlatEngine
 				colliderCenterY = colliderEnd.y + heightToAdd - tileMapCenterY;
 			}
 
-			m_collisionAreas.at(label)->SetActiveOffset(Vector2(colliderCenterX * gridWidthsInATile, -colliderCenterY * gridHeightsInATile));
-			m_collisionAreas.at(label)->SetActiveDimensions(colWidthInTiles * gridWidthsInATile, colHeightInTiles * gridHeightsInATile);
-			
-			// Save start and end coordinates
-			std::pair<Vector2, Vector2> newPair = { startCoord, endCoord };
-			if (m_collisionAreaCoords.count(label) > 0)
-			{
-				m_collisionAreaCoords.at(label) = newPair;
-			}
-			else
-			{
-				m_collisionAreaCoords.emplace(label, newPair);
-			}
+			collider->SetActiveOffset(Vector2(colliderCenterX * gridWidthsInATile, -colliderCenterY * gridHeightsInATile));
+			collider->SetActiveDimensions(colWidthInTiles * gridWidthsInATile, colHeightInTiles * gridHeightsInATile);
 		}
+	}
+
+	std::string TileMap::GetSelectedCollisionArea()
+	{
+		return m_selectedCollisionArea;
+	}
+
+	void TileMap::SetSelectedCollisionArea(std::string selectedCollisionArea)
+	{
+		m_selectedCollisionArea = selectedCollisionArea;
 	}
 
 	void TileMap::RecalcCollisionAreaValues()
 	{
-		for (std::pair<std::string, BoxCollider*> collisionArea : m_collisionAreas)
+		for (std::pair<std::string, std::vector<CollisionAreaData>> collisionArea : m_collisionAreas)
 		{
-			if (m_collisionAreaCoords.count(collisionArea.first) > 0)
-			{
-				Vector2 startCoord = m_collisionAreaCoords.at(collisionArea.first).first;
-				Vector2 endCoord = m_collisionAreaCoords.at(collisionArea.first).second;
-				SetCollisionAreaValues(collisionArea.first, startCoord, endCoord);
-			}
+
 		}
 	}
 

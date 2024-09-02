@@ -730,7 +730,7 @@ namespace FlatGui
 		float maxWidth = 1000.0f;
 		float maxHeight = 1000.0f;
 
-		if (tileMap != nullptr)
+		if (tileMap != nullptr && collisionAreaName != "")
 		{
 			float tileWidth = (float)tileMap->GetTileWidth();
 			float tileHeight = (float)tileMap->GetTileHeight();
@@ -762,7 +762,7 @@ namespace FlatGui
 			FL::PopTable();
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);							
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		if (FL::RenderCheckbox(" Is Continuous", _isContinuous))
 			boxCollider->SetIsContinuous(_isContinuous);
 		if (FL::RenderCheckbox(" Is Static", _isStatic))
@@ -775,7 +775,7 @@ namespace FlatGui
 			boxCollider->SetIsComposite(_isComposite);
 
 		// Enter Collision Area draw mode for this BoxCollider
-		if (tileMap != nullptr)
+		if (tileMap != nullptr && collisionAreaName != "")
 		{
 			if (FL::RenderImageButton("##DrawCollisionArea" + std::to_string(id), FL::GetTexture("tileColliderDraw")))
 			{
@@ -1103,20 +1103,83 @@ namespace FlatGui
 		FL::RenderSubTitle("Collision Areas");
 
 		// Collision Areas
-		std::map<std::string, BoxCollider*> collisionAreas = tileMap->GetCollisionAreas();
+		std::map<std::string, std::vector<FL::CollisionAreaData>> &collisionAreas = tileMap->GetCollisionAreas();
 		static std::string selectedCollisionArea = "";
+		static int currentSelectedColArea = 0;
 		static std::string collisionAreaLabel = "";
+		std::vector<std::string> areaNames;
+		for (std::pair<std::string, std::vector<FL::CollisionAreaData>> collisionArea : collisionAreas)
+		{
+			areaNames.push_back(collisionArea.first);
+		}
 
+
+		// BUG INTRODUCED WHEN CLOSING THE GAME VIA Quit button (possibly) after adding this tree to the end of this section.
+		// Create new Collision Area
 		FL::RenderInput("##CollisionAreaLabel" + std::to_string(id), "Collision Area Name", collisionAreaLabel, false);
 		if (FL::RenderButton("Add Collision Area"))
 		{
 			if (!tileMap->ContainsCollisionAreaLabel(collisionAreaLabel))
 			{
-				tileMap->AddCollisionArea(collisionAreaLabel);
+				std::vector<FL::CollisionAreaData> newData = std::vector<FL::CollisionAreaData>();				
+				collisionAreas.emplace(collisionAreaLabel, newData);					
 			}
 			else
 			{
 				FL::LogError("Collision area label already being used in this TileMap, please choose a different one.");
+			}
+		}
+
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		FL::PushMenuStyles();
+		if (ImGui::BeginTable("#CollisionAreasTable", 1, FL::F_tableFlags))
+		{
+			ImGui::TableSetupColumn("##CollisionArea", 0, ImGui::GetContentRegionAvail().x);
+
+			for (std::string areaName : areaNames)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+
+				ImGuiTreeNodeFlags nodeFlags;
+				std::string treeID = "##SelectActiveTileSetTree";
+
+				// If node selected
+				if (selectedCollisionArea == areaName)
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+				else
+					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+				// render a leaf
+				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, areaName.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					tileMap->SetSelectedCollisionArea(areaName);
+					selectedCollisionArea = areaName;
+				}
+			}
+
+			ImGui::EndTable();
+		}
+		FL::PopMenuStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+
+		if (selectedCollisionArea != "")
+		{
+			if (FL::RenderButton("Create Collisions"))
+			{
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+				FG_collisionAreasBuffer.clear();
+			}
+
+			if (FL::RenderButton("Save Collisions"))
+			{
+				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+				tileMap->SetCollisionAreaValues(selectedCollisionArea, FG_collisionAreasBuffer);
+				FG_collisionAreasBuffer.clear();
 			}
 		}
 

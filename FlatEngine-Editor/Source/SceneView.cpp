@@ -84,7 +84,7 @@ namespace FlatGui
 		// Drop Target
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH_DRAGGED"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_fileExplorerTarget.c_str()))
 			{
 				IM_ASSERT(payload->DataSize == sizeof(int));
 				droppedValue = *(const int*)payload->Data;

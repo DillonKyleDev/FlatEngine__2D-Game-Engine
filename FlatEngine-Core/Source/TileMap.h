@@ -19,8 +19,9 @@ namespace FlatEngine
     };
 
     struct CollisionAreaData {
-        std::string name;
-        BoxCollider &collider;
+        Vector2 startCoord;
+        Vector2 endCoord;
+        BoxCollider *collider;
     };
 
     class TileMap : public Component
@@ -43,11 +44,13 @@ namespace FlatEngine
         int GetRenderOrder();
         std::string GetSelectedTileSet();
         void SetSelectedTileSet(std::string tileSet);
-        std::map<std::string, BoxCollider*> &GetCollisionAreas();
-        BoxCollider* AddCollisionArea(std::string label);
-        BoxCollider* AddCollisionArea(std::string label, BoxCollider collider);
-        void RemoveCollisionArea(std::string label);
-        void SetCollisionAreaValues(std::string label, Vector2 startCoord, Vector2 endCoord);
+        std::map<std::string, std::vector<CollisionAreaData>>& GetCollisionAreas();
+        BoxCollider* AddCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
+        //void RemoveCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
+        void SetCollisionAreaValues(std::string label, std::vector<std::pair<Vector2, Vector2>> colCoords);
+        std::string GetSelectedCollisionArea();
+        void SetSelectedCollisionArea(std::string selectedCollisionArea);
+        //
         void RecalcCollisionAreaValues();
         void MoveTiles(std::vector<Vector2> tiles, Vector2 moveAmount);
         void MoveTile(Vector2 tileCoords, Vector2 moveAmount);
@@ -70,8 +73,9 @@ namespace FlatEngine
         std::map<int, std::map<int, Tile>> m_tempMoveTiles;
         std::string m_selectedTileSet;
         std::vector<std::string> m_tileSetNames;  
-        std::map<std::string, BoxCollider*> m_collisionAreas;
-        std::map<std::string, std::pair<Vector2, Vector2>> m_collisionAreaCoords;
+
+        std::string m_selectedCollisionArea;
+        std::map<std::string, std::vector<CollisionAreaData>> m_collisionAreas;  
     };
 }
 

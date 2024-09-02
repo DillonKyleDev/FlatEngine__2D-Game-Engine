@@ -1,0 +1,17 @@
+{
+    "tileSetData": {
+        "name": "StatueLeft",
+        "texturePath": "../assets\\images\\sprites\\owl\\owlv1\\walkLeft.png",
+        "tileHeight": 16,
+        "tileSetPath": "../assets/tileSets//StatueLeft.tls",
+        "tileWidth": 16
+    },
+    "tiles": [
+        {
+            "index": 1
+        },
+        {
+            "index": 0
+        }
+    ]
+}

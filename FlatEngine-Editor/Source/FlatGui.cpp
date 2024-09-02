@@ -84,6 +84,7 @@ namespace FlatGui
 
 	// TileMap
 	std::string FG_currentSelectedColliderArea = "";
+	std::vector<std::pair<Vector2, Vector2>> FG_collisionAreasBuffer = std::vector<std::pair<Vector2, Vector2>>();
 
 	// Frame Counter
 	int framesDrawn = 0;
@@ -787,12 +788,16 @@ namespace FlatGui
 				const bool is_active = ImGui::IsItemActive();   // Held
 				const bool is_clicked = ImGui::IsItemClicked();
 
-				if (is_clicked)
+				if (is_clicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
+				{
 					SetFocusedGameObjectID(sprite->GetParentID());
+				}
 
 				// Show cursor position in scene view when pressing Alt
 				if (is_hovered && inputOutput.KeyAlt)
+				{
 					RenderSceneViewTooltip();
+				}
 
 				// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
 				////////////////////////
@@ -1096,7 +1101,8 @@ namespace FlatGui
 
 				static std::vector<Vector2> hoveredTiles = std::vector<Vector2>();
 				static std::vector<Vector2> selectedTiles = std::vector<Vector2>();
-				static bool b_selectionBoxMoved = false;
+				
+		
 
 				// For Drawing TileMap border and background color
 				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
@@ -1119,8 +1125,13 @@ namespace FlatGui
 				static Vector2 moveStartTile = Vector2(-1, -1);
 				static Vector2 moveEndTile = Vector2(-1, -1);
 
-				// Select this GameObject button
-				if (focusedObjectID != self.GetID() && FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE)
+				// For selecting Collision Area coordinates
+				static std::vector<std::pair<Vector2, Vector2>> selectedCollisionCoords = std::vector<std::pair<Vector2, Vector2>>();
+				static Vector2 colAreaStartTile = Vector2(-1, -1);
+				static Vector2 colAreaEndTile = Vector2(-1, -1);
+
+				// "Focus on this TileMap GameObject" button
+				if (focusedObjectID != self.GetID() && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
 				{
 					if (focusObjectButtonSize.x <= 0 || focusObjectButtonSize.y <= 0)
 					{
@@ -1137,22 +1148,15 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, 0);
 
+				// TileMap background color and border
 				if (focusedObjectID == self.GetID())
 				{
 					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgFocused"));
-				}
-				else
-				{
-					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgUnfocused"));
-				}
-
-				// Draw border around TileMap and add focusing button
-				if (focusedObjectID == self.GetID())
-				{
 					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, draw_list);
 				}
 				else
 				{
+					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgUnfocused"));
 					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, draw_list);
 				}
 
@@ -1175,7 +1179,7 @@ namespace FlatGui
 								activeTileSet = FL::GetTileSet(activeTileSetName);
 							}
 
-							//                 viewport center		+		         	top left corner in pixel screen space                  +     tile offset
+							// tileStart = viewport center + top left corner in pixel screen space + tile offset
 							float tileStartX = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x) + (w * tileWidthInPx);
 							float tileStartY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x) + (h * tileHeightInPx);
 
@@ -1184,11 +1188,11 @@ namespace FlatGui
 
 							// Catch interactions on the TileMap container
 							if ((focusedObjectID == self.GetID()) &&
-								(((FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH && activeTileSet != nullptr && FL::F_tileSetAndIndexOnBrush.second != -1) ||
-									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE) ||
-									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW && FG_currentSelectedColliderArea != "")) ||
-									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT) ||
-									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE)))
+								((FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH && activeTileSet != nullptr && FL::F_tileSetAndIndexOnBrush.second != -1) ||
+								(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_ERASE) ||
+								(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW && tileMap->GetSelectedCollisionArea() != "")) ||
+								(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT) ||
+								(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE))
 							{
 								// Set Draw Channel to 2 for lower level UI
 								drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
@@ -1203,21 +1207,16 @@ namespace FlatGui
 								if (focusedObjectID == self.GetID() &&
 									multiSelectStartTile.x != -1 &&
 									multiSelectStartTile.y != -1 &&
-									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT /*|| (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE && b_selectionBoxMoved)*/) &&
+									(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT) &&
 									ImGui::IsKeyDown(ImGuiKey_MouseLeft) &&
-									((multiSelectStartTile.x <= w && multiSelectCurrentHoveredTile.x >= w || multiSelectCurrentHoveredTile.x <= w && multiSelectStartTile.x >= w) &&
-										(multiSelectStartTile.y <= h && multiSelectCurrentHoveredTile.y >= h || multiSelectCurrentHoveredTile.y <= h && multiSelectStartTile.y >= h))
-
-									/*(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE && b_selectionBoxMoved &&
-									(savedMultiSelectStartTile.x <= w && multiSelectEndTile.x >= w || multiSelectEndTile.x <= w && savedMultiSelectStartTile.x >= w) &&
-									(savedMultiSelectStartTile.y <= h && multiSelectEndTile.y >= h || multiSelectEndTile.y <= h && savedMultiSelectStartTile.y >= h))*/
-									)
+									(multiSelectStartTile.x <= w && multiSelectCurrentHoveredTile.x >= w || multiSelectCurrentHoveredTile.x <= w && multiSelectStartTile.x >= w) &&
+									(multiSelectStartTile.y <= h && multiSelectCurrentHoveredTile.y >= h || multiSelectCurrentHoveredTile.y <= h && multiSelectStartTile.y >= h))
 								{
 									if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 									{
 										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileBoxColHighlight"));
 									}
-									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT/* || (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE && b_selectionBoxMoved*/)
+									else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
 									{
 										ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileMultiSelectHighlightDragging"));
 
@@ -1231,8 +1230,6 @@ namespace FlatGui
 										{
 											hoveredTiles.push_back(Vector2(w, h));
 										}
-
-										b_selectionBoxMoved = false;
 									}
 								}
 
@@ -1266,13 +1263,12 @@ namespace FlatGui
 										else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE)
 										{
 											ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileMoveModeClickBorder"));
-											FL::LogString("Moving Tiles : " + std::to_string(selectedTiles.size()));
 										}
 									}
 									// Mouse not down
 									else
 									{
-										if (activeTileSet != nullptr && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
+										if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_BRUSH)
 										{
 											ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
 											ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTileBorder"));
@@ -1303,7 +1299,11 @@ namespace FlatGui
 											savedMultiSelectStartTile = Vector2(w, h);
 										}
 
-										if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
+										if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
+										{
+											colAreaStartTile = Vector2(w, h);
+										}
+										else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
 										{
 											hoveredTiles.clear();
 											selectedTiles.clear();
@@ -1326,7 +1326,24 @@ namespace FlatGui
 
 										if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 										{
-											tileMap->SetCollisionAreaValues(FG_currentSelectedColliderArea, multiSelectStartTile, multiSelectEndTile);
+											colAreaEndTile = Vector2(w, h);
+											std::pair<Vector2, Vector2> newPair = { colAreaStartTile, colAreaEndTile };
+											bool b_alreadyContains = false;
+
+											for (std::vector<std::pair<Vector2, Vector2>>::iterator coordPair = FG_collisionAreasBuffer.begin(); coordPair != FG_collisionAreasBuffer.end(); coordPair++)
+											{
+												if ((coordPair->first == colAreaStartTile && coordPair->second == colAreaEndTile) || (coordPair->first == colAreaEndTile && coordPair->second == colAreaStartTile))
+												{
+													FG_collisionAreasBuffer.erase(coordPair);
+													b_alreadyContains = true;
+													break;
+												}
+											}
+
+											if (!b_alreadyContains)
+											{
+												FG_collisionAreasBuffer.push_back(newPair);																								
+											}								
 										}
 										else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
 										{
@@ -1343,16 +1360,6 @@ namespace FlatGui
 												float yMove = moveEndTile.y - moveStartTile.y;
 
 												tileMap->MoveTiles(selectedTiles, Vector2(xMove, yMove));
-
-												//// Move the selection box
-												//multiSelectEndTile.x += xMove;
-												//multiSelectEndTile.y += yMove;
-												///*multiSelectStartTile.x += xMove;
-												//multiSelectStartTile.y += yMove;*/
-												//savedMultiSelectStartTile.x += xMove;
-												//savedMultiSelectStartTile.y += yMove;
-
-												//b_selectionBoxMoved = true;
 											}
 
 											moveStartTile = Vector2(-1, -1);
@@ -1371,7 +1378,7 @@ namespace FlatGui
 					}
 
 					// Draw box around selected multiselect tiles
-					if (selectedTiles.size() > 0)
+					if (selectedTiles.size() > 0 && (FL::F_CursorMode != FL::F_CURSOR_MODE::TILE_MULTISELECT || FL::F_CursorMode != FL::F_CURSOR_MODE::TILE_MOVE))
 					{
 						float startPosX = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x) + (savedMultiSelectStartTile.x * tileWidthInPx);
 						float startPosY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.y) + (savedMultiSelectStartTile.y * tileHeightInPx);
@@ -1400,7 +1407,44 @@ namespace FlatGui
 						}
 					}
 				}
-				// Draw TileMap indices
+
+				// Draw box around each of the collision areas in the buffer
+				if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
+				{
+					for (std::pair<Vector2, Vector2> collAreaBuffer : FG_collisionAreasBuffer)
+					{
+						Vector2 startCoord = collAreaBuffer.first;
+						Vector2 endCoord = collAreaBuffer.second;
+
+						float startPosX = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x) + (startCoord.x * tileWidthInPx);
+						float startPosY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.y) + (startCoord.y * tileHeightInPx);
+						float selectWidth = endCoord.x - startCoord.x;
+						if (selectWidth < 0)
+							selectWidth *= -1;
+						selectWidth += 1;
+						float selectHeight = endCoord.y - startCoord.y;
+						if (selectHeight < 0)
+							selectHeight *= -1;
+						selectHeight += 1;
+
+						Vector2 startTileScreenPos = Vector2(startPosX, startPosY);
+						Vector2 endTileScreenPos = Vector2(startPosX + (tileWidthInPx * selectWidth), startPosY + (tileHeightInPx * selectHeight));
+
+						ImGui::GetWindowDrawList()->AddRectFilled(startTileScreenPos, endTileScreenPos, FL::GetColor32("tileMultiSelectHighlight"));
+						ImGui::GetWindowDrawList()->AddRect(startTileScreenPos, endTileScreenPos, FL::GetColor32("tileMultiSelectHighlightBorder"));
+
+						if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE)
+						{
+							FL::RenderInvisibleButton("##MultiSelectDraggableBox", startTileScreenPos, Vector2(endTileScreenPos.x - startTileScreenPos.x, endTileScreenPos.y - startTileScreenPos.y));
+							if (ImGui::IsItemHovered())
+							{
+								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+							}
+						}
+					}
+				}
+
+				// Draw TileMap indice Textures
 				for (int w = 0; w < width; w++)
 				{
 					if (tiles.count((int)w) > 0)
@@ -1559,6 +1603,8 @@ namespace FlatGui
 			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
 			scrolling.x += inputOutput.MouseDelta.x;
 			scrolling.y += inputOutput.MouseDelta.y;
+
+			SaveCurrentProject();
 		}
 
 		// Get scroll amount for changing zoom level of scene view

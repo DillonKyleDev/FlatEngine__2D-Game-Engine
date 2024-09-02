@@ -1,0 +1,17 @@
+{
+    "tileSetData": {
+        "name": "Statues",
+        "texturePath": "../assets\\images\\sprites\\owl\\owlv1\\idle.png",
+        "tileHeight": 16,
+        "tileSetPath": "../assets/tileSets//Statues.tls",
+        "tileWidth": 16
+    },
+    "tiles": [
+        {
+            "index": 1
+        },
+        {
+            "index": 0
+        }
+    ]
+}

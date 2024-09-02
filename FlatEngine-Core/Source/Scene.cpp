@@ -183,10 +183,10 @@ namespace FlatEngine
 				TileMap* tileMap = static_cast<TileMap*>(component);
 				if (tileMap->GetCollisionAreas().size() > 0)
 				{
-					for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
+				/*	for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
 					{
 						m_ECSManager.RemoveBoxCollider(collisionArea.second->GetID(), objectToDelete->GetID());
-					}
+					}*/
 				}
 				m_ECSManager.RemoveCircleCollider(component->GetID(), objectToDelete->GetID());
 			}

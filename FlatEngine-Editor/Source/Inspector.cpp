@@ -190,7 +190,16 @@ namespace FlatGui
 			// GameObject Active Checkbox
 			if (FL::RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 70, 5);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 120, 5);
+
+			if (FL::RenderImageButton("##ExpandCollapseAllComponents" + std::to_string(focusedObjectID), FL::GetTexture("expandCollapseAll")))
+			{
+				for (Component* component : focusedObject->GetComponents())
+				{
+					component->SetCollapsed(!component->IsCollapsed());
+				}
+			}
+			ImGui::SameLine();
 
 			// GameObject TagList Dropdown
 			TagList &tagList = focusedObject->GetTagList();			
@@ -404,21 +413,21 @@ namespace FlatGui
 						RenderTileMapComponent(tileMap);
 					EndComponent(tileMap);
 
-					for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
-					{
-						BoxCollider *collider = collisionArea.second;
+					//for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
+					//{
+					//	BoxCollider *collider = collisionArea.second;
 
-						BeginComponent(collider, queuedForDelete, "Collision Area - " + collisionArea.first);
-						if (!collider->IsCollapsed())
-							RenderBoxColliderComponent(collider, tileMap, collisionArea.first);
-						EndComponent(collider);
+					//	BeginComponent(collider, queuedForDelete, "Collision Area - " + collisionArea.first);
+					//	if (!collider->IsCollapsed())
+					//		RenderBoxColliderComponent(collider, tileMap, collisionArea.first);
+					//	EndComponent(collider);
 
-						if (queuedForDelete != nullptr && collider->GetID() == queuedForDelete->GetID())
-						{
-							tileMap->RemoveCollisionArea(collisionArea.first);
-							break;
-						}
-					}
+					//	if (queuedForDelete != nullptr && collider->GetID() == queuedForDelete->GetID())
+					//	{
+					//		//tileMap->RemoveCollisionArea(collisionArea.first);
+					//		break;
+					//	}
+					//}
 				}
 
 				if (queuedForDelete != nullptr)

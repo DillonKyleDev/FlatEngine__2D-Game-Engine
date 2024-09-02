@@ -1,0 +1,14 @@
+{
+    "tileSetData": {
+        "name": "Props",
+        "texturePath": "../assets\\images\\tilesets\\Lantern.png",
+        "tileHeight": 16,
+        "tileSetPath": "../assets/tileSets//Props.tls",
+        "tileWidth": 16
+    },
+    "tiles": [
+        {
+            "index": 0
+        }
+    ]
+}
