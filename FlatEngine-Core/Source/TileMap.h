@@ -48,10 +48,10 @@ namespace FlatEngine
         BoxCollider* AddCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
         //void RemoveCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
         void SetCollisionAreaValues(std::string label, std::vector<std::pair<Vector2, Vector2>> colCoords);
+        void CalculateColliderValues(std::string label);
         std::string GetSelectedCollisionArea();
         void SetSelectedCollisionArea(std::string selectedCollisionArea);
-        //
-        void RecalcCollisionAreaValues();
+     
         void MoveTiles(std::vector<Vector2> tiles, Vector2 moveAmount);
         void MoveTile(Vector2 tileCoords, Vector2 moveAmount);
         bool ContainsCollisionAreaLabel(std::string label);

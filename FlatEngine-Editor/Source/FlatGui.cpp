@@ -1327,23 +1327,30 @@ namespace FlatGui
 										if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 										{
 											colAreaEndTile = Vector2(w, h);
-											std::pair<Vector2, Vector2> newPair = { colAreaStartTile, colAreaEndTile };
-											bool b_alreadyContains = false;
 
-											for (std::vector<std::pair<Vector2, Vector2>>::iterator coordPair = FG_collisionAreasBuffer.begin(); coordPair != FG_collisionAreasBuffer.end(); coordPair++)
+											if (colAreaStartTile.x != -1 && colAreaStartTile.y != -1)
 											{
-												if ((coordPair->first == colAreaStartTile && coordPair->second == colAreaEndTile) || (coordPair->first == colAreaEndTile && coordPair->second == colAreaStartTile))
+												std::pair<Vector2, Vector2> newPair = { colAreaStartTile, colAreaEndTile };
+												bool b_alreadyContains = false;
+
+												for (std::vector<std::pair<Vector2, Vector2>>::iterator coordPair = FG_collisionAreasBuffer.begin(); coordPair != FG_collisionAreasBuffer.end(); coordPair++)
 												{
-													FG_collisionAreasBuffer.erase(coordPair);
-													b_alreadyContains = true;
-													break;
+													if ((coordPair->first == colAreaStartTile && coordPair->second == colAreaEndTile) || (coordPair->first == colAreaEndTile && coordPair->second == colAreaStartTile))
+													{
+														FG_collisionAreasBuffer.erase(coordPair);
+														b_alreadyContains = true;
+														break;
+													}
+												}
+
+												if (!b_alreadyContains)
+												{
+													FG_collisionAreasBuffer.push_back(newPair);
 												}
 											}
 
-											if (!b_alreadyContains)
-											{
-												FG_collisionAreasBuffer.push_back(newPair);																								
-											}								
+											colAreaStartTile = Vector2(-1, -1);
+											colAreaEndTile = Vector2(-1, -1);
 										}
 										else if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
 										{
@@ -1378,7 +1385,7 @@ namespace FlatGui
 					}
 
 					// Draw box around selected multiselect tiles
-					if (selectedTiles.size() > 0 && (FL::F_CursorMode != FL::F_CURSOR_MODE::TILE_MULTISELECT || FL::F_CursorMode != FL::F_CURSOR_MODE::TILE_MOVE))
+					if ((selectedTiles.size() > 0) && (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT || FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE))
 					{
 						float startPosX = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x) + (savedMultiSelectStartTile.x * tileWidthInPx);
 						float startPosY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.y) + (savedMultiSelectStartTile.y * tileHeightInPx);

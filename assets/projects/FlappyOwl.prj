@@ -19,7 +19,7 @@
             "_showTileSetEditor": false,
             "_vsyncEnabled": true,
             "buildPath": "",
-            "currentFileDirectory": "../assets",
+            "currentFileDirectory": "../assets\\projects",
             "focusedGameObjectID": 0,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets\\scenes\\Level1.scn",
@@ -27,10 +27,10 @@
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "",
-            "sceneViewGridStepX": 9.800006866455078,
-            "sceneViewGridStepY": 9.800006866455078,
-            "sceneViewScrollingX": 1205.0,
-            "sceneViewScrollingY": 251.0
+            "sceneViewGridStepX": 14.300004959106445,
+            "sceneViewGridStepY": 14.300004959106445,
+            "sceneViewScrollingX": 1706.0,
+            "sceneViewScrollingY": 257.0
         }
     ]
 }

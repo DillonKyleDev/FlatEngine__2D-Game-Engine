@@ -259,66 +259,80 @@ namespace FlatEngine
 		{
 			// Create CollisionAreaData object with that data, including BoxCollider
 			BoxCollider* collider = AddCollisionArea(label, coord.first, coord.second);
+		}
 
-			// Use that data to set the positioning of the BoxCollider relative to the TileMap
-			Vector2 colliderStart = Vector2(coord.first.x + 1, coord.first.y + 1);
-			Vector2 colliderEnd = Vector2(coord.second.x + 1, coord.second.y + 1);
+		CalculateColliderValues(label);
+	}
 
-			float gridWidthsInATile = m_tileWidth / FL::F_pixelsPerGridSpace;
-			float gridHeightsInATile = m_tileHeight / FL::F_pixelsPerGridSpace;
-
-			Vector2 offset = Vector2();
-
-			float colWidthInTiles = colliderEnd.x - colliderStart.x + 1;
-			if (colliderEnd.x < colliderStart.x)
+	void TileMap::CalculateColliderValues(std::string label)
+	{
+		if (m_collisionAreas.count(label) >= 0)
+		{
+			// Delete old BoxColliders
+			for (CollisionAreaData collisionArea : m_collisionAreas.at(label))
 			{
-				colWidthInTiles = colliderStart.x - colliderEnd.x + 1;
-			}
-			if (colWidthInTiles < 0)
-			{
-				colWidthInTiles *= -1;
-			}
-			float colHeightInTiles = colliderEnd.y - colliderStart.y + 1;
-			if (colliderEnd.y < colliderStart.y)
-			{
-				colHeightInTiles = colliderStart.y - colliderEnd.y + 1;
-			}
-			if (colHeightInTiles < 0)
-			{
-				colHeightInTiles *= -1;
-			}
+				BoxCollider* collider = collisionArea.collider;
 
-			float tileMapCenterX = (float)(m_width / 2);
-			if (m_width % 2)
-				tileMapCenterX += 1;
-			else
-				tileMapCenterX += 0.5f;
+				// Use that data to set the positioning of the BoxCollider relative to the TileMap
+				Vector2 colliderStart = Vector2(collisionArea.startCoord.x + 1, collisionArea.startCoord.y + 1);
+				Vector2 colliderEnd = Vector2(collisionArea.endCoord.x + 1, collisionArea.endCoord.y + 1);
 
-			float tileMapCenterY = (float)(m_height / 2);
-			if (m_height % 2)
-				tileMapCenterY += 1;
-			else
-				tileMapCenterY += 0.5f;
+				float gridWidthsInATile = m_tileWidth / FL::F_pixelsPerGridSpace;
+				float gridHeightsInATile = m_tileHeight / FL::F_pixelsPerGridSpace;
 
-			float widthToAdd = colWidthInTiles / 2;
-			widthToAdd -= 0.5f;
-			float heightToAdd = colHeightInTiles / 2;
-			heightToAdd -= 0.5f;
+				Vector2 offset = Vector2();
+
+				float colWidthInTiles = colliderEnd.x - colliderStart.x + 1;
+				if (colliderEnd.x < colliderStart.x)
+				{
+					colWidthInTiles = colliderStart.x - colliderEnd.x + 1;
+				}
+				if (colWidthInTiles < 0)
+				{
+					colWidthInTiles *= -1;
+				}
+				float colHeightInTiles = colliderEnd.y - colliderStart.y + 1;
+				if (colliderEnd.y < colliderStart.y)
+				{
+					colHeightInTiles = colliderStart.y - colliderEnd.y + 1;
+				}
+				if (colHeightInTiles < 0)
+				{
+					colHeightInTiles *= -1;
+				}
+
+				float tileMapCenterX = (float)(m_width / 2);
+				if (m_width % 2)
+					tileMapCenterX += 1;
+				else
+					tileMapCenterX += 0.5f;
+
+				float tileMapCenterY = (float)(m_height / 2);
+				if (m_height % 2)
+					tileMapCenterY += 1;
+				else
+					tileMapCenterY += 0.5f;
+
+				float widthToAdd = colWidthInTiles / 2;
+				widthToAdd -= 0.5f;
+				float heightToAdd = colHeightInTiles / 2;
+				heightToAdd -= 0.5f;
 
 
-			float colliderCenterX = colliderStart.x + widthToAdd - tileMapCenterX;
-			if (colliderEnd.x < colliderStart.x)
-			{
-				colliderCenterX = colliderEnd.x + widthToAdd - tileMapCenterX;
+				float colliderCenterX = colliderStart.x + widthToAdd - tileMapCenterX;
+				if (colliderEnd.x < colliderStart.x)
+				{
+					colliderCenterX = colliderEnd.x + widthToAdd - tileMapCenterX;
+				}
+				float colliderCenterY = colliderStart.y + heightToAdd - tileMapCenterY;
+				if (colliderEnd.y < colliderStart.y)
+				{
+					colliderCenterY = colliderEnd.y + heightToAdd - tileMapCenterY;
+				}
+
+				collider->SetActiveOffset(Vector2(colliderCenterX * gridWidthsInATile, -colliderCenterY * gridHeightsInATile));
+				collider->SetActiveDimensions(colWidthInTiles * gridWidthsInATile, colHeightInTiles * gridHeightsInATile);
 			}
-			float colliderCenterY = colliderStart.y + heightToAdd - tileMapCenterY;
-			if (colliderEnd.y < colliderStart.y)
-			{
-				colliderCenterY = colliderEnd.y + heightToAdd - tileMapCenterY;
-			}
-
-			collider->SetActiveOffset(Vector2(colliderCenterX * gridWidthsInATile, -colliderCenterY * gridHeightsInATile));
-			collider->SetActiveDimensions(colWidthInTiles * gridWidthsInATile, colHeightInTiles * gridHeightsInATile);
 		}
 	}
 
@@ -330,14 +344,6 @@ namespace FlatEngine
 	void TileMap::SetSelectedCollisionArea(std::string selectedCollisionArea)
 	{
 		m_selectedCollisionArea = selectedCollisionArea;
-	}
-
-	void TileMap::RecalcCollisionAreaValues()
-	{
-		for (std::pair<std::string, std::vector<CollisionAreaData>> collisionArea : m_collisionAreas)
-		{
-
-		}
 	}
 
 	void TileMap::MoveTiles(std::vector<Vector2> tiles, Vector2 moveAmount)

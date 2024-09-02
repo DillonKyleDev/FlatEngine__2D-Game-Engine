@@ -19,14 +19,14 @@ end
 
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
-     LogString("Start() called on "..this_object:GetName()) 
+     --LogString("Start() called on "..this_object:GetName()) 
      mappingContext = GetMappingContext("MC_CharacterContext")
      characterController = this_object:GetCharacterController()
      rigidBody = this_object:GetRigidBody()
      i_maxJumps = 3
      i_totalJumps = 0
-     LogInt(3, "Here is an int: ");
-     LogString("Here is a string.");
+     --LogInt(3, "Here is an int: ");
+     --LogString("Here is a string.");
 end 
 
 --called once per gameloop frame 
@@ -45,8 +45,7 @@ function Update()
 
     if mappingContext:ActionPressed("IA_MoveRight") then
         b_movingRight = true
-        moveDirection = Vector2:new(1,0)
-        characterController:MoveToward(Vector2:new(1, 0))
+        moveDirection = Vector2:new(1,0)        
     end
     if mappingContext:ActionPressed("IA_MoveLeft") then
         b_movingLeft = true
@@ -55,10 +54,11 @@ function Update()
 
     if b_movingLeft and b_movingRight then
         moveDirection = Vector2:new(0,0)
-        
     end
     
-    characterController:MoveToward(moveDirection)
+    if b_movingLeft or b_movingRight then
+        characterController:MoveToward(moveDirection)
+    end
 end 
 
 function OnActiveCollision(collidedWith)
@@ -67,9 +67,9 @@ end
 
 function OnCollisionEnter(collidedWith)
     collidedName = collidedWith:GetParent():GetName()
-    LogString("Collision started with: " .. collidedName)
+    --LogString("Collision started with: " .. collidedName)
 end
 
 function OnCollisionLeave(collidedWith)
-    LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
+    --LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
 end

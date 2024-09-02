@@ -930,22 +930,22 @@ namespace FlatGui
 			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1, 1, INT_MAX))
 			{
 				tileMap->SetWidth(width);
-				tileMap->RecalcCollisionAreaValues();
+				//tileMap->CalculateColliderValues();
 			}
 			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1, 1, INT_MAX))
 			{
 				tileMap->SetHeight(height);
-				tileMap->RecalcCollisionAreaValues();
+				//tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileWidth(tileWidth);
-				tileMap->RecalcCollisionAreaValues();
+				//tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileHeight(tileHeight);
-				tileMap->RecalcCollisionAreaValues();
+				//tileMap->RecalcCollisionAreaValues();
 			}
 			if (FL::RenderIntDragTableRow("##RenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, FL::F_maxSpriteLayers))
 			{

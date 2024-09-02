@@ -23,11 +23,11 @@ namespace FlatEngine {
 		bool IsMoving();
 
 	private:
-		float maxAcceleration;
-		float maxSpeed;
-		float airControl;
-		float speedCorrection;
-		bool _isMoving;
+		float m_maxAcceleration;
+		float m_maxSpeed;
+		float m_airControl;
+		float m_speedCorrection;
+		bool m_b_isMoving;
 	};
 }
 

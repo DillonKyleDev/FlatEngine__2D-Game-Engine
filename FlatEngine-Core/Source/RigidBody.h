@@ -10,6 +10,8 @@ namespace FlatEngine
 {
 	class RigidBody : public Component
 	{
+		friend CharacterController;
+
 	public:
 		RigidBody(long myID = -1, long parentID = -1);
 		RigidBody(RigidBody* toCopy, long newParentID, long myID = -1);

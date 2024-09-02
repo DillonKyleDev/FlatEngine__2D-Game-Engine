@@ -13,11 +13,11 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
-		maxAcceleration = 0.5f;
-		maxSpeed = 10.0f;
-		airControl = 0.2f;
-		speedCorrection = 1;
-		_isMoving = false;
+		m_maxAcceleration = 0.5f;
+		m_maxSpeed = 10.0f;
+		m_airControl = 0.2f;
+		m_speedCorrection = 1;
+		m_b_isMoving = false;
 	}
 
 	// Copy constructor
@@ -30,11 +30,11 @@ namespace FlatEngine
 			SetID(GetNextComponentID());
 		SetParentID(newParentID);
 		SetActive(toCopy->IsActive());
-		maxAcceleration = toCopy->maxAcceleration;
-		maxSpeed = toCopy->maxSpeed;
-		airControl = toCopy->airControl;
-		speedCorrection = toCopy->speedCorrection;
-		_isMoving = toCopy->_isMoving;
+		m_maxAcceleration = toCopy->m_maxAcceleration;
+		m_maxSpeed = toCopy->m_maxSpeed;
+		m_airControl = toCopy->m_airControl;
+		m_speedCorrection = toCopy->m_speedCorrection;
+		m_b_isMoving = toCopy->m_b_isMoving;
 	}
 
 	CharacterController::~CharacterController()
@@ -48,9 +48,9 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },			
-			{ "maxAcceleration", maxAcceleration },
-			{ "maxSpeed", maxSpeed },
-			{ "airControl", airControl }
+			{ "maxAcceleration", m_maxAcceleration },
+			{ "maxSpeed", m_maxSpeed },
+			{ "airControl", m_airControl }
 		};
 
 		std::string data = jsonData.dump();
@@ -60,81 +60,130 @@ namespace FlatEngine
 
 	void CharacterController::MoveToward(Vector2 direction)
 	{
-		_isMoving = true;
+		m_b_isMoving = true;
 
 		if (GetParent()->HasComponent("Transform") && GetParent()->HasComponent("RigidBody"))
 		{
 			Vector2 pendingForces = Vector2(0, 0);
 			FlatEngine::RigidBody* rigidBody = GetParent()->GetRigidBody();
 			FlatEngine::Transform* transform = GetParent()->GetTransform();
-			float gravity = 0;
+			float gravity = 1;
+			Vector2 velocity = 1;
+			float oneOverMass = 1;
+			float mass = 1;
+			float forceCorrection = 1;
 
 			if (rigidBody != nullptr)
 			{
-				pendingForces = rigidBody->GetPendingForces();
-				gravity = rigidBody->GetGravity();
+				pendingForces = rigidBody->m_pendingForces;
+				velocity = rigidBody->m_velocity;
+				gravity = rigidBody->m_gravity;				
+				mass = rigidBody->m_mass;
+				oneOverMass = 1 / mass;
+				forceCorrection = rigidBody->m_forceCorrection;
 			}
 			else
 				LogString("CharacterController.cpp - RigidBody == nullptr");
 
 			// If the object has not hit max speed in negative or positive direction
-			if ((pendingForces.x >= 0 && pendingForces.x < maxSpeed) || (pendingForces.x <= 0 && pendingForces.x > -maxSpeed) ||
+			if ((direction.x != 0 || direction.y != 0) &&
+				(velocity.x >= 0 && velocity.x < m_maxSpeed) || (velocity.x <= 0 && velocity.x > -m_maxSpeed) ||
 				// If velocity exceeds positive max speed but x direction is negative
-				((pendingForces.x >= maxSpeed && direction.x * maxAcceleration < 0) ||
+				((velocity.x >= m_maxSpeed && direction.x * m_maxAcceleration < 0) ||
 				// If velocity exceeds negative max speed but x direction is positive
-				(pendingForces.x <= -maxSpeed && direction.x * maxAcceleration > 0)))
+				(velocity.x <= -m_maxSpeed && direction.x * m_maxAcceleration > 0)))
 			{
-				if (rigidBody != nullptr && (gravity != 0 && !rigidBody->IsGrounded()))
-					rigidBody->AddVelocity(Vector2(direction.x * maxAcceleration * airControl, direction.y * maxAcceleration * airControl));
-				else if (rigidBody != nullptr)
+				float skidForce = 0.5f;
+
+				if ((velocity.x < 0 && direction.x > 0) || (velocity.x > 0 && direction.x < 0))
 				{
-					rigidBody->AddVelocity(Vector2(direction.x * maxAcceleration, direction.y * maxAcceleration));
+					rigidBody->SetPendingForces(Vector2(pendingForces.x * skidForce, pendingForces.y));
 				}
-				_isMoving = true;
+
+				if (rigidBody != nullptr)
+				{
+					Vector2 finalForce = direction;
+				
+					if ((gravity != 0 && !rigidBody->IsGrounded()))
+					{
+						Vector2 inAirForce = Vector2(pendingForces.x + (direction.x * m_maxAcceleration * m_airControl), (pendingForces.y + (direction.y * m_maxAcceleration * m_airControl)));
+						float modifiers = 1 / (m_maxAcceleration * m_airControl);
+
+						if (velocity.x + inAirForce.x > m_maxSpeed)
+						{
+							finalForce.x = (m_maxSpeed - pendingForces.x) * modifiers;
+						}
+						else if (velocity.x + inAirForce.x < -m_maxSpeed)
+						{
+							finalForce.x = (-m_maxSpeed - pendingForces.x) * modifiers;
+						}
+
+						finalForce.x *= m_maxAcceleration * m_airControl;
+					}
+					else if (gravity != 0)
+					{
+						Vector2 groundedForce = Vector2(pendingForces.x + (direction.x * m_maxAcceleration), pendingForces.y + (direction.y * m_maxAcceleration));
+						float modifiers = 1 / m_maxAcceleration;
+
+						if (velocity.x + groundedForce.x > m_maxSpeed) // maxSpeed = pendingForces.x + (groundedForce.x * m_maxAcceleration)
+						{
+							finalForce.x = (m_maxSpeed - pendingForces.x) * modifiers;
+						}
+						else if (velocity.x + groundedForce.x < -m_maxSpeed)
+						{
+							finalForce.x = (-m_maxSpeed - pendingForces.x) * modifiers;
+						}
+
+						finalForce.x *= m_maxAcceleration;
+					}
+
+					rigidBody->AddVelocity(finalForce);
+					m_b_isMoving = true;
+				}
 			}
 
 			if (direction.x == 0)
-				_isMoving = false;
+				m_b_isMoving = false;
 		}
 	}
 
 	void CharacterController::SetMaxAcceleration(float newMaxAcceleration)
 	{
-		maxAcceleration = newMaxAcceleration;
+		m_maxAcceleration = newMaxAcceleration;
 	}
 
 	float CharacterController::GetMaxAcceleration()
 	{
-		return maxAcceleration;
+		return m_maxAcceleration;
 	}
 
 	void CharacterController::SetMaxSpeed(float newMaxSpeed)
 	{
-		maxSpeed = newMaxSpeed;
+		m_maxSpeed = newMaxSpeed;
 	}
 
 	float CharacterController::GetMaxSpeed()
 	{
-		return maxSpeed;
+		return m_maxSpeed;
 	}
 
 	void CharacterController::SetAirControl(float newAirControl)
 	{
-		airControl = newAirControl;
+		m_airControl = newAirControl;
 	}
 
 	float CharacterController::GetAirControl()
 	{
-		return airControl;
+		return m_airControl;
 	}
 
 	void CharacterController::SetMoving(bool _newIsMoving)
 	{
-		_isMoving = _newIsMoving;
+		m_b_isMoving = _newIsMoving;
 	}
 
 	bool CharacterController::IsMoving()
 	{
-		return _isMoving;
+		return m_b_isMoving;
 	}
 }
