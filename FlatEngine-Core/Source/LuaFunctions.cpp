@@ -62,6 +62,10 @@ namespace FlatEngine
 		{
 			return GetMappingContext(contextName);
 		};
+		F_Lua["Instantiate"] = [](std::string prefabName, Vector2 position)
+		{
+			return Instantiate(prefabName, position);
+		};
 	}
 
 	// Map C++ types to Lua "Types"

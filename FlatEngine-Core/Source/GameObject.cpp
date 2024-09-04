@@ -27,6 +27,7 @@ namespace FlatEngine
 {
 	GameObject::GameObject(long newParentID, long myID)
 	{
+		m_b_isPrefabData = false;
 		_isValid = true;
 		if (myID == -1)
 			ID = GetNextGameObjectID();
@@ -52,6 +53,7 @@ namespace FlatEngine
 	// Copy Constructor
 	GameObject::GameObject(GameObject* toCopy, std::vector<GameObject>& childObjectVector, std::vector<GameObject> objectPool, long parentID, long myID)
 	{
+		m_b_isPrefabData = true;
 		_isValid = toCopy->_isValid;
 		_isPrefab = toCopy->_isPrefab;
 		prefabName = toCopy->prefabName;
@@ -95,86 +97,105 @@ namespace FlatEngine
 			if (component->GetTypeString() == "Transform")
 			{
 				Transform newComponent = Transform(static_cast<Transform*>(component), GetID());
-				GetLoadedScene()->AddTransform(newComponent, ID);
+				Transform* componentPtr = GetLoadedScene()->AddTransform(newComponent, ID);
 
 				if (parentID != -1 && GetObjectById(parentID)->IsValid())
 				{
 					newComponent.SetOrigin(GetObjectById(parentID)->GetTransform()->GetTruePosition());
 				}
 				newComponent.SetOrigin(Vector2(0,0));
-				//components.push_back(&newComponent);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Sprite")
 			{
 				Sprite newComponent = Sprite(static_cast<Sprite*>(component), GetID());
-				//components.push_back(&newComponent);
+				Sprite* componentPtr = GetLoadedScene()->AddSprite(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Animation")
 			{
 				Animation newComponent = Animation(static_cast<Animation*>(component), GetID());
-				//components.push_back(&newComponent);
+				Animation* componentPtr = GetLoadedScene()->AddAnimation(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Audio")
 			{
 				Audio newComponent = Audio(static_cast<Audio*>(component), GetID());
-				//components.push_back(&newComponent);
+				Audio* componentPtr = GetLoadedScene()->AddAudio(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Button")
 			{
 				Button newComponent = Button(static_cast<Button*>(component), GetID());
-				//components.push_back(&newComponent);
+				Button* componentPtr = GetLoadedScene()->AddButton(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "BoxCollider")
 			{
 				BoxCollider newComponent = BoxCollider(static_cast<BoxCollider*>(component), GetID());
-				//components.push_back(&newComponent);
+				BoxCollider* componentPtr = GetLoadedScene()->AddBoxCollider(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Camera")
 			{
 				Camera newComponent = Camera(static_cast<Camera*>(component), GetID());
-				//components.push_back(&newComponent);
+				Camera* componentPtr = GetLoadedScene()->AddCamera(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Canvas")
 			{
 				Canvas newComponent = Canvas(static_cast<Canvas*>(component), GetID());
-				//components.push_back(&newComponent);
+				Canvas* componentPtr = GetLoadedScene()->AddCanvas(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Script")
 			{
 				Script newComponent = Script(static_cast<Script*>(component), GetID());
-				//components.push_back(&newComponent);
+				Script* componentPtr = GetLoadedScene()->AddScript(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "Text")
 			{
 				Text newComponent = Text(static_cast<Text*>(component), GetID());
-				//components.push_back(&newComponent);
+				Text* componentPtr = GetLoadedScene()->AddText(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "CharacterController")
 			{
 				CharacterController newComponent = CharacterController(static_cast<CharacterController*>(component), GetID());
-				//components.push_back(&newComponent);
+				CharacterController* componentPtr = GetLoadedScene()->AddCharacterController(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "RigidBody")
 			{
 				RigidBody newComponent = RigidBody(static_cast<RigidBody*>(component), GetID());
-				//components.push_back(&newComponent);
+				RigidBody* componentPtr = GetLoadedScene()->AddRigidBody(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "BoxCollider")
 			{
 				BoxCollider newComponent = BoxCollider(static_cast<BoxCollider*>(component), GetID());
-				//components.push_back(&newComponent);
+				BoxCollider* componentPtr = GetLoadedScene()->AddBoxCollider(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 			else if (component->GetTypeString() == "CircleCollider")
 			{
 				CircleCollider newComponent = CircleCollider(static_cast<CircleCollider*>(component), GetID());
-				//components.push_back(&newComponent);
+				CircleCollider* componentPtr = GetLoadedScene()->AddCircleCollider(newComponent, ID);
+				components.push_back(componentPtr);
+			}
+			else if (component->GetTypeString() == "TileMap")
+			{
+				TileMap newComponent = TileMap(static_cast<TileMap*>(component), GetID());
+				TileMap* componentPtr = GetLoadedScene()->AddTileMap(newComponent, ID);
+				components.push_back(componentPtr);
 			}
 		}
 	}
 
 	GameObject::~GameObject()
 	{
-		DeleteComponents();
+		//DeleteComponents();
 	}
 
 	bool GameObject::operator==(const GameObject toCompare)
@@ -279,11 +300,6 @@ namespace FlatEngine
 
 	void GameObject::DeleteComponents()
 	{
-		for (Component* component : components)
-		{
-			component = nullptr;
-		}
-
 		components.clear();
 	}
 
@@ -309,7 +325,17 @@ namespace FlatEngine
 			}
 		}
 
-		Transform* transformPtr = GetLoadedScene()->AddTransform(transform, ID);
+		Transform* transformPtr = nullptr;
+
+		if (!m_b_isPrefabData)
+		{
+			transformPtr = GetLoadedScene()->AddTransform(transform, ID);
+		}
+		else
+		{
+			transformPtr = &transform;
+		}
+
 		components.push_back(transformPtr);
 		return transformPtr;
 	}
@@ -323,7 +349,17 @@ namespace FlatEngine
 		sprite.SetActive(_active);
 		sprite.SetCollapsed(_collapsed);
 		
-		Sprite* spritePtr = GetLoadedScene()->AddSprite(sprite, ID);
+		Sprite* spritePtr;		
+
+		if (!m_b_isPrefabData)
+		{
+			spritePtr = GetLoadedScene()->AddSprite(sprite, ID);
+		}
+		else
+		{
+			spritePtr = &sprite;
+		}
+
 		components.push_back(spritePtr);
 		return spritePtr;
 	}
@@ -443,7 +479,17 @@ namespace FlatEngine
 		boxCollider.SetActive(_active);
 		boxCollider.SetCollapsed(_collapsed);
 
-		BoxCollider* colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
+		BoxCollider* colliderPtr;
+
+		if (!m_b_isPrefabData)
+		{
+			colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
+		}
+		else
+		{
+			colliderPtr = &boxCollider;
+		}
+
 		colliderPtr->SetActiveDimensions(dimensions.x, dimensions.y);
 		components.push_back(colliderPtr);
 		return colliderPtr;

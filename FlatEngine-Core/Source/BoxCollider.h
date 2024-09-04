@@ -15,6 +15,25 @@
 
 namespace FlatEngine
 {
+	struct BoxColliderPrefabData : public ComponentPrefabData {
+		long ownerId;
+		long id;
+		bool b_isActive;
+		bool b_isCollapsed;
+		float activeWidth;
+		float activeHeight;
+		float activeOffsetX;
+		float activeOffsetY;
+		int activeLayer;
+		float rotation;
+		bool b_tileMapCollider;
+		bool b_isContinuous;
+		bool b_isStatic;
+		bool b_isSolid;
+		bool b_showActiveRadius;
+		bool b_isComposite;
+	};
+
 	class BoxCollider : public Collider
 	{
 		using RigidBody = FlatEngine::RigidBody;

@@ -108,6 +108,7 @@ namespace FlatEngine
 		std::string name;
 		bool _isValid;
 		bool _isPrefab;
+		bool m_b_isPrefabData;
 		std::string prefabName;
 		Vector2 prefabSpawnLocation;
 		TagList m_tagList;

@@ -153,9 +153,9 @@ public:
 			json projectJson;
 			FL::InitializeTileSets();
 			FL::InitializeMappingContexts();
-			FL::prefabManager->InitializePrefabs();
 			FL::LoadGameProject(FL::GetFilePath("gameStartupProject"), projectJson);
 			FL::LoadScene(FL::F_LoadedProject.GetRuntimeScene());
+			FL::prefabManager->InitializePrefabs(); // Must be called after scene has been loaded to save the components
 
 			b_hasRunOnce = true;
 		}

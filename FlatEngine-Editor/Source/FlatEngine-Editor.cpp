@@ -11,6 +11,7 @@
 #include "GameObject.h"
 #include "Component.h"
 #include "Script.h"
+#include "PrefabManager.h"
 
 #include <vector>
 #include <SDL_mixer.h>
@@ -234,6 +235,7 @@ public:
 			m_recreateWindow = false;
 			FL::InitializeTileSets();
 			FlatGui::LoadProject(m_startupProject);
+			FL::prefabManager->InitializePrefabs();
 		}
 	}
 	void Quit()

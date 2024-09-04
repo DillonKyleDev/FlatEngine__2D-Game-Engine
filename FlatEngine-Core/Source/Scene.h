@@ -58,7 +58,7 @@ namespace FlatEngine
 		void SetPrimaryCamera(Camera* camera);
 		void RemovePrimaryCamera();
 		Camera *GetPrimaryCamera();		
-		void OnPrefabInstantiated(std::vector<GameObject> children);
+		void OnPrefabInstantiated();
 		void UpdateColliderPairs(); // TODO
 
 		// ECS Wrappers

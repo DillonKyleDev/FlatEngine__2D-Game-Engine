@@ -59,6 +59,13 @@ function Update()
     if b_movingLeft or b_movingRight then
         characterController:MoveToward(moveDirection)
     end
+
+    if mappingContext:Fired("IA_Fire") then
+        iceShard = Instantiate("iceShard", Vector2:new(0,0))
+        iceShard:GetRigidBody():AddForce(Vector2:new(1,0), 10)
+        rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0))   
+        rigidBody:AddForce(Vector2:new(0, 1), 20);
+    end
 end 
 
 function OnActiveCollision(collidedWith)

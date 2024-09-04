@@ -304,8 +304,8 @@ namespace FlatEngine
 			{
 				long id = tileMap->GetID();
 				bool _isActive = tileMap->IsActive();
-				float width = (float)tileMap->GetWidth();										// in tiles
-				float height = (float)tileMap->GetHeight();										// in tiles
+				float width = (float)tileMap->GetWidth();							// in tiles
+				float height = (float)tileMap->GetHeight();							// in tiles
 				float tileWidth = (float)tileMap->GetTileWidth();
 				float tileHeight = (float)tileMap->GetTileHeight();
 				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles

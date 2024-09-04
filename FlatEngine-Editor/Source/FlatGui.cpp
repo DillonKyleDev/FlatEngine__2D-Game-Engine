@@ -206,7 +206,6 @@ namespace FlatGui
 	{
 		FL::InitializeMappingContexts();
 		//FL::InitializeTileSets();
-		FL::prefabManager->InitializePrefabs();
 		SetupProfilerProcesses();
 	}
 

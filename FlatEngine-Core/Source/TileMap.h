@@ -27,8 +27,8 @@ namespace FlatEngine
     class TileMap : public Component
     {
     public:
-        TileMap(long myID, long parentID);
-        TileMap(TileMap* toCopy, long newParentID, long myID);
+        TileMap(long myID = -1, long parentID = -1);
+        TileMap(TileMap* toCopy, long newParentID, long myID = -1);
         ~TileMap();
 
         std::string GetData();

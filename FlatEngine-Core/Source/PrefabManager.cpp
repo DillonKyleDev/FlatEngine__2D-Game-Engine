@@ -18,7 +18,7 @@ namespace FlatEngine
 	{
 	}
 
-	void PrefabManager::CreatePrefab(std::string path, GameObject& gameObject)
+	void PrefabManager::CreatePrefab(std::string path, GameObject gameObject)
 	{
 		std::string prefabName = FlatEngine::GetFilenameFromPath(path);
 
@@ -40,7 +40,7 @@ namespace FlatEngine
 		std::vector<GameObject> viewObjects;
 		for (std::map<long, GameObject>::iterator iter = GetSceneObjects().begin(); iter != GetSceneObjects().end();)
 		{
-			viewObjects.push_back(iter->second);
+			viewObjects.push_back(&iter->second);
 			iter++;
 		}
 
@@ -80,14 +80,15 @@ namespace FlatEngine
 	void PrefabManager::InitializePrefabs()
 	{
 		m_prefabs.clear();
+		std::vector<std::string> prefabPaths = FindAllFilesWithExtension(GetDir("projectDir"), ".prf");
 
-		std::string path = GetDir("prefabs");
-		for (const auto& entry : std::filesystem::directory_iterator(path))
+		for (std::string path : prefabPaths)
 		{
+			std::filesystem::path prefabPath(path);
 			std::vector<GameObject> prefabContainer;
 			GameObject prefabObject = FlatEngine::GameObject();
 
-			json prefab = LoadFileData(entry.path().string());
+			json prefab = LoadFileData(prefabPath.string());
 			if (prefab != NULL)
 			{
 				//Getting data from the json 
@@ -100,9 +101,8 @@ namespace FlatEngine
 					// Loop through the saved GameObjects in the JSON file
 					for (int i = 0; i < prefabObjects.size(); i++)
 					{
-						// Add created GameObject to our freshScene
-						GameObject prefab = CreateObjectFromJson(prefabObjects[i]);
-						prefabContainer.push_back(&prefab);
+						// Add created GameObject to our freshScene						
+						prefabContainer.push_back(CreateObjectFromJson(prefabObjects[i]));
 					}
 				}
 
@@ -133,7 +133,7 @@ namespace FlatEngine
 								instantiatedObject.GetTransform()->SetOrigin(Vector2(0, 0));
 							instantiatedObject.GetTransform()->SetPosition(position);
 						}
-
+						
 						// A little janky but there you go
 						children.push_back(instantiatedObject);
 
@@ -141,7 +141,7 @@ namespace FlatEngine
 						for (GameObject newObject : children)
 							FlatEngine::GetLoadedScene()->AddSceneObject(newObject);
 
-						FlatEngine::GetLoadedScene()->OnPrefabInstantiated(children);
+						FlatEngine::GetLoadedScene()->OnPrefabInstantiated();
 
 						// Figure this out later so Prefabs stay up-to-date with their json files on reloading
 						instantiatedObject.SetIsPrefab(true);
@@ -155,7 +155,7 @@ namespace FlatEngine
 		return instantiatedObject;
 	}
 
-	std::map<std::string, std::vector<GameObject>> &PrefabManager::GetPrefabs()
+	std::map<std::string, std::vector<GameObject>> PrefabManager::GetPrefabs()
 	{
 		return m_prefabs;
 	}
