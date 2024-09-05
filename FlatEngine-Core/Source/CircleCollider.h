@@ -12,7 +12,6 @@ namespace FlatEngine
 
 	public:
 		CircleCollider(long myID = -1, long parentID = -1);
-		CircleCollider(CircleCollider* toCopy, long newParentID, long myID = -1);
 		~CircleCollider();
 
 		void UpdateCenter(float step, Vector2 centerPoint);

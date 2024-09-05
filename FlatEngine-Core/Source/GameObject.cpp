@@ -27,235 +27,73 @@ namespace FlatEngine
 {
 	GameObject::GameObject(long newParentID, long myID)
 	{
-		m_b_isPrefabData = false;
-		_isValid = true;
 		if (myID == -1)
-			ID = GetNextGameObjectID();
+			m_ID = GetNextGameObjectID();
 		else
-			ID = myID;
-		_isPrefab = false;
-		prefabName = "";
-		prefabSpawnLocation = Vector2(0, 0);
+			m_ID = myID;
+		m_b_isPrefab = false;
+		m_prefabName = "";
+		m_prefabSpawnLocation = Vector2(0, 0);
 		m_tagList = TagList();
-		parentID = newParentID;
-		name = "GameObject(" + std::to_string(ID) + ")";
-		components = std::vector<Component*>();
-		_isActive = true;
-		childrenIDs = std::vector<long>();
-	}
-
-	GameObject::GameObject(GameObject* toCopy)
-	{
-		if (toCopy == nullptr)
-			_isValid = false;
-	}
-
-	// Copy Constructor
-	GameObject::GameObject(GameObject* toCopy, std::vector<GameObject>& childObjectVector, std::vector<GameObject> objectPool, long parentID, long myID)
-	{
-		m_b_isPrefabData = true;
-		_isValid = toCopy->_isValid;
-		_isPrefab = toCopy->_isPrefab;
-		prefabName = toCopy->prefabName;
-		prefabSpawnLocation = toCopy->prefabSpawnLocation;
-		m_tagList = toCopy->GetTagList();
-		SetParentID(parentID);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextGameObjectID());
-		SetName(toCopy->GetName());
-		SetActive(toCopy->IsActive());
-
-		for (long childID : toCopy->childrenIDs)
-		{
-			GameObject* actualChild = nullptr;
-
-			// Find child in object pool provided
-			if (childID != -1)
-			{
-				for (GameObject object : objectPool)
-				{
-					if (childID == object.GetID())
-					{
-						actualChild = &object;
-					}
-				}
-			}
-				
-			if (actualChild != nullptr)
-			{
-				GameObject childCopy = GameObject(actualChild, childObjectVector, objectPool, GetID());
-				childObjectVector.push_back(&childCopy);
-				AddChild(childCopy.GetID());
-			}
-		}
-		
-		std::vector<Component*> toCopyComponents = toCopy->GetComponents();
-		for (Component* component : toCopyComponents)
-		{
-			if (component->GetTypeString() == "Transform")
-			{
-				Transform newComponent = Transform(static_cast<Transform*>(component), GetID());
-				Transform* componentPtr = GetLoadedScene()->AddTransform(newComponent, ID);
-
-				if (parentID != -1 && GetObjectById(parentID)->IsValid())
-				{
-					newComponent.SetOrigin(GetObjectById(parentID)->GetTransform()->GetTruePosition());
-				}
-				newComponent.SetOrigin(Vector2(0,0));
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Sprite")
-			{
-				Sprite newComponent = Sprite(static_cast<Sprite*>(component), GetID());
-				Sprite* componentPtr = GetLoadedScene()->AddSprite(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Animation")
-			{
-				Animation newComponent = Animation(static_cast<Animation*>(component), GetID());
-				Animation* componentPtr = GetLoadedScene()->AddAnimation(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Audio")
-			{
-				Audio newComponent = Audio(static_cast<Audio*>(component), GetID());
-				Audio* componentPtr = GetLoadedScene()->AddAudio(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Button")
-			{
-				Button newComponent = Button(static_cast<Button*>(component), GetID());
-				Button* componentPtr = GetLoadedScene()->AddButton(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "BoxCollider")
-			{
-				BoxCollider newComponent = BoxCollider(static_cast<BoxCollider*>(component), GetID());
-				BoxCollider* componentPtr = GetLoadedScene()->AddBoxCollider(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Camera")
-			{
-				Camera newComponent = Camera(static_cast<Camera*>(component), GetID());
-				Camera* componentPtr = GetLoadedScene()->AddCamera(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Canvas")
-			{
-				Canvas newComponent = Canvas(static_cast<Canvas*>(component), GetID());
-				Canvas* componentPtr = GetLoadedScene()->AddCanvas(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Script")
-			{
-				Script newComponent = Script(static_cast<Script*>(component), GetID());
-				Script* componentPtr = GetLoadedScene()->AddScript(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "Text")
-			{
-				Text newComponent = Text(static_cast<Text*>(component), GetID());
-				Text* componentPtr = GetLoadedScene()->AddText(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "CharacterController")
-			{
-				CharacterController newComponent = CharacterController(static_cast<CharacterController*>(component), GetID());
-				CharacterController* componentPtr = GetLoadedScene()->AddCharacterController(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "RigidBody")
-			{
-				RigidBody newComponent = RigidBody(static_cast<RigidBody*>(component), GetID());
-				RigidBody* componentPtr = GetLoadedScene()->AddRigidBody(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "BoxCollider")
-			{
-				BoxCollider newComponent = BoxCollider(static_cast<BoxCollider*>(component), GetID());
-				BoxCollider* componentPtr = GetLoadedScene()->AddBoxCollider(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "CircleCollider")
-			{
-				CircleCollider newComponent = CircleCollider(static_cast<CircleCollider*>(component), GetID());
-				CircleCollider* componentPtr = GetLoadedScene()->AddCircleCollider(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-			else if (component->GetTypeString() == "TileMap")
-			{
-				TileMap newComponent = TileMap(static_cast<TileMap*>(component), GetID());
-				TileMap* componentPtr = GetLoadedScene()->AddTileMap(newComponent, ID);
-				components.push_back(componentPtr);
-			}
-		}
+		m_parentID = newParentID;
+		m_name = "GameObject(" + std::to_string(m_ID) + ")";
+		m_components = std::vector<Component*>();
+		m_b_isActive = true;
+		m_childrenIDs = std::vector<long>();
 	}
 
 	GameObject::~GameObject()
 	{
-		//DeleteComponents();
 	}
 
-	bool GameObject::operator==(const GameObject toCompare)
+	void GameObject::SetIsPrefab(bool b_newIsPrefab)
 	{
-		return ID == toCompare.ID;
-	}
-
-	bool GameObject::IsValid()
-	{
-		return _isValid;
-	}
-
-	void GameObject::SetIsPrefab(bool _newIsPrefab)
-	{
-		_isPrefab = _newIsPrefab;
+		m_b_isPrefab = b_newIsPrefab;
 	}
 
 	bool GameObject::IsPrefab()
 	{
-		return _isPrefab;
+		return m_b_isPrefab;
 	}
 
 	void GameObject::SetPrefabName(std::string newPrefabName)
 	{
-		prefabName = newPrefabName;
+		m_prefabName = newPrefabName;
 	}
 
 	std::string GameObject::GetPrefabName()
 	{
-		return prefabName;
+		return m_prefabName;
 	}
 
 	void GameObject::SetPrefabSpawnLocation(Vector2 newSpawnLocation)
 	{
-		prefabSpawnLocation = newSpawnLocation;
+		m_prefabSpawnLocation = newSpawnLocation;
 	}
 
 	Vector2 GameObject::GetPrefabSpawnLocation()
 	{
-		return prefabSpawnLocation;
+		return m_prefabSpawnLocation;
 	}
 
 	void GameObject::SetID(long newID)
 	{
-		ID = newID;
+		m_ID = newID;
 	}
 
 	long GameObject::GetID()
 	{
-		return ID;
+		return m_ID;
 	}
 
 	void GameObject::SetName(std::string newName)
 	{
-		name = newName;
+		m_name = newName;
 	}
 
 	std::string GameObject::GetName()
 	{
-		return name;
+		return m_name;
 	}
 
 	TagList& GameObject::GetTagList()
@@ -273,9 +111,9 @@ namespace FlatEngine
 		return m_tagList.HasTag(tagName);
 	}
 
-	void GameObject::SetTag(std::string tagName, bool _value)
+	void GameObject::SetTag(std::string tagName, bool b_value)
 	{
-		m_tagList.SetTag(tagName, _value);
+		m_tagList.SetTag(tagName, b_value);
 	}
 
 	void GameObject::RemoveComponent(FL::Component* component)
@@ -286,12 +124,12 @@ namespace FlatEngine
 			GetLoadedScene()->RemoveComponent(component);
 		}
 
-		for (std::vector<Component*>::iterator iter = components.begin(); iter != components.end();)
+		for (std::vector<Component*>::iterator iter = m_components.begin(); iter != m_components.end();)
 		{
 			if ((*iter)->GetID() == component->GetID())
 			{
 				// Remove GameObject ptr to it
-				components.erase(iter);		
+				m_components.erase(iter);
 				break;
 			}
 			iter++;
@@ -300,23 +138,25 @@ namespace FlatEngine
 
 	void GameObject::DeleteComponents()
 	{
-		components.clear();
+		m_components.clear();
 	}
 
-	Transform* GameObject::AddTransform(long id, bool _active, bool _collapsed)
+	Transform* GameObject::AddTransform(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
 
-		Transform transform = Transform(nextID, ID);
-		transform.SetActive(_active);
-		transform.SetCollapsed(_collapsed);
+		Transform transform = Transform(nextID, m_ID);
+		transform.SetActive(b_active);
+		transform.SetCollapsed(b_collapsed);
 
 		// Set transforms origin to parents true position
-		if (parentID != -1)
+		if (m_parentID != -1)
 		{
-			GameObject *parent = GetObjectById(parentID);
+			GameObject *parent = GetObjectById(m_parentID);
 			if (parent != nullptr && parent->HasComponent("Transform"))
 			{
 				Transform* parentTransform = parent->GetTransform();
@@ -326,143 +166,125 @@ namespace FlatEngine
 		}
 
 		Transform* transformPtr = nullptr;
-
-		if (!m_b_isPrefabData)
-		{
-			transformPtr = GetLoadedScene()->AddTransform(transform, ID);
-		}
-		else
-		{
-			transformPtr = &transform;
-		}
-
-		components.push_back(transformPtr);
+		transformPtr = GetLoadedScene()->AddTransform(transform, m_ID);
+		m_components.push_back(transformPtr);
 		return transformPtr;
 	}
 
-	Sprite* GameObject::AddSprite(long id, bool _active, bool _collapsed)
+	Sprite* GameObject::AddSprite(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Sprite sprite = Sprite(nextID, ID);
-		sprite.SetActive(_active);
-		sprite.SetCollapsed(_collapsed);
+		Sprite sprite = Sprite(nextID, m_ID);
+		sprite.SetActive(b_active);
+		sprite.SetCollapsed(b_collapsed);
 		
 		Sprite* spritePtr;		
-
-		if (!m_b_isPrefabData)
-		{
-			spritePtr = GetLoadedScene()->AddSprite(sprite, ID);
-		}
-		else
-		{
-			spritePtr = &sprite;
-		}
-
-		components.push_back(spritePtr);
+		spritePtr = GetLoadedScene()->AddSprite(sprite, m_ID);
+		m_components.push_back(spritePtr);
 		return spritePtr;
 	}
 
-	Camera* GameObject::AddCamera(long id, bool _active, bool _collapsed)
+	Camera* GameObject::AddCamera(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Camera camera = Camera(nextID, ID);
-		camera.SetActive(_active);
-		camera.SetCollapsed(_collapsed);
+		Camera camera = Camera(nextID, m_ID);
+		camera.SetActive(b_active);
+		camera.SetCollapsed(b_collapsed);
 		
-		Camera* cameraPtr = GetLoadedScene()->AddCamera(camera, ID);
-		components.push_back(cameraPtr);
+		Camera* cameraPtr = GetLoadedScene()->AddCamera(camera, m_ID);
+		m_components.push_back(cameraPtr);
 		return cameraPtr;
 	}
 
-	Script* GameObject::AddScript(long id, bool _active, bool _collapsed)
+	Script* GameObject::AddScript(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Script script = Script(nextID, ID);
-		script.SetActive(_active);
-		script.SetCollapsed(_collapsed);
+		Script script = Script(nextID, m_ID);
+		script.SetActive(b_active);
+		script.SetCollapsed(b_collapsed);
 
-		Script* scriptPtr = GetLoadedScene()->AddScript(script, ID);
-		components.push_back(scriptPtr);
+		Script* scriptPtr = GetLoadedScene()->AddScript(script, m_ID);
+		m_components.push_back(scriptPtr);
 		return scriptPtr;
 	}
 
-	Button* GameObject::AddButton(long id, bool _active, bool _collapsed)
+	Button* GameObject::AddButton(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Button button = F_UIManager.CreateButton(nextID, ID, 0);
-		button.SetActive(_active);
-		button.SetCollapsed(_collapsed);
+		Button button = F_UIManager.CreateButton(nextID, m_ID, 0);
+		button.SetActive(b_active);
+		button.SetCollapsed(b_collapsed);
 		
-		Button* buttonPtr = GetLoadedScene()->AddButton(button, ID);
-		components.push_back(buttonPtr);
+		Button* buttonPtr = GetLoadedScene()->AddButton(button, m_ID);
+		m_components.push_back(buttonPtr);
 		return buttonPtr;
 	}
 
-	Canvas* GameObject::AddCanvas(long id, bool _active, bool _collapsed)
+	Canvas* GameObject::AddCanvas(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Canvas canvas = F_UIManager.CreateCanvas(nextID, ID, 0);
-		canvas.SetActive(_active);
-		canvas.SetCollapsed(_collapsed);
+		Canvas canvas = F_UIManager.CreateCanvas(nextID, m_ID, 0);
+		canvas.SetActive(b_active);
+		canvas.SetCollapsed(b_collapsed);
 
-		Canvas* canvasPtr = GetLoadedScene()->AddCanvas(canvas, ID);
-		components.push_back(canvasPtr);
+		Canvas* canvasPtr = GetLoadedScene()->AddCanvas(canvas, m_ID);
+		m_components.push_back(canvasPtr);
 		return canvasPtr;
 	}
 
-	Animation* GameObject::AddAnimation(long id, bool _active, bool _collapsed)
+	Animation* GameObject::AddAnimation(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Animation animation = Animation(nextID, ID);
-		animation.SetActive(_active);
-		animation.SetCollapsed(_collapsed);
+		Animation animation = Animation(nextID, m_ID);
+		animation.SetActive(b_active);
+		animation.SetCollapsed(b_collapsed);
 	
-		Animation* animationPtr = GetLoadedScene()->AddAnimation(animation, ID);
-		components.push_back(animationPtr);
+		Animation* animationPtr = GetLoadedScene()->AddAnimation(animation, m_ID);
+		m_components.push_back(animationPtr);
 		return animationPtr;
 	}
 
-	Audio* GameObject::AddAudio(long id, bool _active, bool _collapsed)
+	Audio* GameObject::AddAudio(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Audio audio = Audio(nextID, ID);
-		audio.SetActive(_active);
-		audio.SetCollapsed(_collapsed);
+		Audio audio = Audio(nextID, m_ID);
+		audio.SetActive(b_active);
+		audio.SetCollapsed(b_collapsed);
 
-		Audio* audioPtr = GetLoadedScene()->AddAudio(audio, ID);
-		components.push_back(audioPtr);
+		Audio* audioPtr = GetLoadedScene()->AddAudio(audio, m_ID);
+		m_components.push_back(audioPtr);
 		return audioPtr;
 	}
 
-	Text* GameObject::AddText(long id, bool _active, bool _collapsed)
+	Text* GameObject::AddText(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Text text = Text(nextID, ID);
-		text.SetActive(_active);
-		text.SetCollapsed(_collapsed);
+		Text text = Text(nextID, m_ID);
+		text.SetActive(b_active);
+		text.SetCollapsed(b_collapsed);
 		
-		Text* textPtr = GetLoadedScene()->AddText(text, ID);
-		components.push_back(textPtr);
+		Text* textPtr = GetLoadedScene()->AddText(text, m_ID);
+		m_components.push_back(textPtr);
 		return textPtr;
 	}
 
-	BoxCollider* GameObject::AddBoxCollider(long id, bool _active, bool _collapsed)
+	BoxCollider* GameObject::AddBoxCollider(long id, bool b_active, bool b_collapsed)
 	{
 		Vector2 dimensions = Vector2(2, 2);
 		if (HasComponent("Sprite"))
@@ -475,104 +297,95 @@ namespace FlatEngine
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		BoxCollider boxCollider = BoxCollider(nextID, ID);
-		boxCollider.SetActive(_active);
-		boxCollider.SetCollapsed(_collapsed);
+		BoxCollider boxCollider = BoxCollider(nextID, m_ID);
+		boxCollider.SetActive(b_active);
+		boxCollider.SetCollapsed(b_collapsed);
 
 		BoxCollider* colliderPtr;
-
-		if (!m_b_isPrefabData)
-		{
-			colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, ID);
-		}
-		else
-		{
-			colliderPtr = &boxCollider;
-		}
-
+		colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, m_ID);
 		colliderPtr->SetActiveDimensions(dimensions.x, dimensions.y);
-		components.push_back(colliderPtr);
+		m_components.push_back(colliderPtr);
 		return colliderPtr;
 	}
 
-	CircleCollider* GameObject::AddCircleCollider(long id, bool _active, bool _collapsed)
+	CircleCollider* GameObject::AddCircleCollider(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		CircleCollider circleCollider = CircleCollider(nextID, ID);
-		circleCollider.SetActive(_active);
-		circleCollider.SetCollapsed(_collapsed);
+		CircleCollider circleCollider = CircleCollider(nextID, m_ID);
+		circleCollider.SetActive(b_active);
+		circleCollider.SetCollapsed(b_collapsed);
 
-		CircleCollider* colliderPtr = GetLoadedScene()->AddCircleCollider(circleCollider, ID);
-		components.push_back(colliderPtr);
+		CircleCollider* colliderPtr = GetLoadedScene()->AddCircleCollider(circleCollider, m_ID);
+		m_components.push_back(colliderPtr);
 		return colliderPtr;
 	}
 
-	CompositeCollider* GameObject::AddCompositeCollider(long id, bool _active, bool _collapsed)
+	CompositeCollider* GameObject::AddCompositeCollider(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		CompositeCollider compositeCollider = CompositeCollider(nextID, ID);
-		compositeCollider.SetActive(_active);
-		compositeCollider.SetCollapsed(_collapsed);
+		CompositeCollider compositeCollider = CompositeCollider(nextID, m_ID);
+		compositeCollider.SetActive(b_active);
+		compositeCollider.SetCollapsed(b_collapsed);
 
-		CompositeCollider* colliderPtr = GetLoadedScene()->AddCompositeCollider(compositeCollider, ID);
-		components.push_back(colliderPtr);
+		CompositeCollider* colliderPtr = GetLoadedScene()->AddCompositeCollider(compositeCollider, m_ID);
+		m_components.push_back(colliderPtr);
 		return colliderPtr;
 	}
 
-	RigidBody* GameObject::AddRigidBody(long id, bool _active, bool _collapsed)
+	RigidBody* GameObject::AddRigidBody(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		RigidBody rigidBody = RigidBody(nextID, ID);
-		rigidBody.SetActive(_active);
-		rigidBody.SetCollapsed(_collapsed);
+		RigidBody rigidBody = RigidBody(nextID, m_ID);
+		rigidBody.SetActive(b_active);
+		rigidBody.SetCollapsed(b_collapsed);
 
-		RigidBody* rigidBodyPtr = GetLoadedScene()->AddRigidBody(rigidBody, ID);
-		components.push_back(rigidBodyPtr);
+		RigidBody* rigidBodyPtr = GetLoadedScene()->AddRigidBody(rigidBody, m_ID);
+		m_components.push_back(rigidBodyPtr);
 		return rigidBodyPtr;
 	}
 
-	CharacterController* GameObject::AddCharacterController(long id, bool _active, bool _collapsed)
+	CharacterController* GameObject::AddCharacterController(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		CharacterController characterController = CharacterController(nextID, ID);
-		characterController.SetActive(_active);
-		characterController.SetCollapsed(_collapsed);
+		CharacterController characterController = CharacterController(nextID, m_ID);
+		characterController.SetActive(b_active);
+		characterController.SetCollapsed(b_collapsed);
 
-		CharacterController* characterControllerPtr = GetLoadedScene()->AddCharacterController(characterController, ID);
-		components.push_back(characterControllerPtr);
+		CharacterController* characterControllerPtr = GetLoadedScene()->AddCharacterController(characterController, m_ID);
+		m_components.push_back(characterControllerPtr);
 		return characterControllerPtr;
 	}
 
-	TileMap* GameObject::AddTileMap(long id, bool _active, bool _collapsed)
+	TileMap* GameObject::AddTileMap(long id, bool b_active, bool b_collapsed)
 	{
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		TileMap tileMap = TileMap(nextID, ID);
-		tileMap.SetActive(_active);
-		tileMap.SetCollapsed(_collapsed);
+		TileMap tileMap = TileMap(nextID, m_ID);
+		tileMap.SetActive(b_active);
+		tileMap.SetCollapsed(b_collapsed);
 
-		TileMap* tileMapPtr = GetLoadedScene()->AddTileMap(tileMap, ID);
-		components.push_back(tileMapPtr);
+		TileMap* tileMapPtr = GetLoadedScene()->AddTileMap(tileMap, m_ID);
+		m_components.push_back(tileMapPtr);
 		return tileMapPtr;
 	}
 
 
 	Component* GameObject::GetComponent(Component::ComponentTypes type)
 	{
-		for (int i = 0; i < components.size(); i++)
+		for (int i = 0; i < m_components.size(); i++)
 		{
-			if (components[i]->GetType() == type)
+			if (m_components[i]->GetType() == type)
 			{
-				return components[i];
+				return m_components[i];
 			}
 		}
 
@@ -586,7 +399,7 @@ namespace FlatEngine
 
 	bool GameObject::HasComponent(std::string type)
 	{
-		for (Component* component : components)
+		for (Component* component : m_components)
 		{
 			if (component->GetTypeString() == type)
 				return true;
@@ -596,145 +409,144 @@ namespace FlatEngine
 
 	Transform* GameObject::GetTransform()
 	{
-		return GetLoadedScene()->GetTransformByOwner(ID);
+		return GetLoadedScene()->GetTransformByOwner(m_ID);
 	}
 	Sprite* GameObject::GetSprite()
 	{
-		return GetLoadedScene()->GetSpriteByOwner(ID);
+		return GetLoadedScene()->GetSpriteByOwner(m_ID);
 	}
 	Camera* GameObject::GetCamera()
 	{
-		return GetLoadedScene()->GetCameraByOwner(ID);
+		return GetLoadedScene()->GetCameraByOwner(m_ID);
 	}
 	Animation* GameObject::GetAnimation()
 	{
-		return GetLoadedScene()->GetAnimationByOwner(ID);
+		return GetLoadedScene()->GetAnimationByOwner(m_ID);
 	}
 	Audio* GameObject::GetAudio()
 	{
-		return GetLoadedScene()->GetAudioByOwner(ID);
+		return GetLoadedScene()->GetAudioByOwner(m_ID);
 	}
 	Button* GameObject::GetButton()
 	{
-		return GetLoadedScene()->GetButtonByOwner(ID);
+		return GetLoadedScene()->GetButtonByOwner(m_ID);
 	}
 	Canvas* GameObject::GetCanvas()
 	{
-		return GetLoadedScene()->GetCanvasByOwner(ID);
+		return GetLoadedScene()->GetCanvasByOwner(m_ID);
 	}
 	std::vector<Script*> GameObject::GetScripts()
 	{
-		return GetLoadedScene()->GetScriptsByOwner(ID);
+		return GetLoadedScene()->GetScriptsByOwner(m_ID);
 	}
 	Text* GameObject::GetText()
 	{
-		return GetLoadedScene()->GetTextByOwner(ID);
+		return GetLoadedScene()->GetTextByOwner(m_ID);
 	}
 	CharacterController* GameObject::GetCharacterController()
 	{
-		return GetLoadedScene()->GetCharacterControllerByOwner(ID);
+		return GetLoadedScene()->GetCharacterControllerByOwner(m_ID);
 	}
 	RigidBody* GameObject::GetRigidBody()
 	{
-		return GetLoadedScene()->GetRigidBodyByOwner(ID);
+		return GetLoadedScene()->GetRigidBodyByOwner(m_ID);
 	}
 	std::vector<BoxCollider*> GameObject::GetBoxColliders()
 	{
-		return GetLoadedScene()->GetBoxCollidersByOwner(ID);
+		return GetLoadedScene()->GetBoxCollidersByOwner(m_ID);
 	}
 	std::vector<CircleCollider*> GameObject::GetCircleColliders()
 	{
-		return GetLoadedScene()->GetCircleCollidersByOwner(ID);
+		return GetLoadedScene()->GetCircleCollidersByOwner(m_ID);
 	}
 	CompositeCollider* GameObject::GetCompositeCollider()
 	{
-		return GetLoadedScene()->GetCompositeColliderByOwner(ID);
+		return GetLoadedScene()->GetCompositeColliderByOwner(m_ID);
 	}
 	TileMap* GameObject::GetTileMap()
 	{
-		return GetLoadedScene()->GetTileMapByOwner(ID);
+		return GetLoadedScene()->GetTileMapByOwner(m_ID);
 	}
 
 	std::vector<Component*> GameObject::GetComponents()
 	{
-		return components;
+		return m_components;
 	}
 
 	void GameObject::SetParentID(long newParentID)
 	{
-		parentID = newParentID;
+		m_parentID = newParentID;
 	}
 
 	long GameObject::GetParentID()
 	{
-		return parentID;
+		return m_parentID;
 	}
 
 	void GameObject::AddChild(long childID)
 	{
 		if (childID != -1)
 		{
-			childrenIDs.push_back(childID);
+			m_childrenIDs.push_back(childID);
 		}
 	}
 
 	void GameObject::RemoveChild(long childID)
 	{
-		for (int i = 0; i < childrenIDs.size(); i++)
+		for (int i = 0; i < m_childrenIDs.size(); i++)
 		{
-			if (childrenIDs[i] == childID)
+			if (m_childrenIDs[i] == childID)
 			{
-				childrenIDs.erase(childrenIDs.begin() + i);
+				m_childrenIDs.erase(m_childrenIDs.begin() + i);
 			}
 		}
 	}
 
-	GameObject GameObject::GetFirstChild()
+	GameObject *GameObject::GetFirstChild()
 	{
-		return GetObjectById(childrenIDs[0]);
+		return GetObjectById(m_childrenIDs[0]);
 	}
 
-	GameObject GameObject::FindChildByName(std::string name)
+	GameObject *GameObject::FindChildByName(std::string name)
 	{
-		for (int i = 0; i < childrenIDs.size(); i++)
+		for (int i = 0; i < m_childrenIDs.size(); i++)
 		{
-			if (GetObjectById(childrenIDs[i])->GetName() == name)
+			if (GetObjectById(m_childrenIDs[i])->GetName() == name)
 			{
-				return GetObjectById(childrenIDs[i]);
+				return GetObjectById(m_childrenIDs[i]);
 			}
 		}
 
-		GameObject nullObject = GameObject(nullptr);
-		return nullObject;
+		return nullptr;
 	}
 
 	std::vector<long> GameObject::GetChildren()
 	{
-		return childrenIDs;
+		return m_childrenIDs;
 	}
 
 	bool GameObject::HasChildren()
 	{
-		return childrenIDs.size() > 0;
+		return m_childrenIDs.size() > 0;
 	}
 
-	void GameObject::SetActive(bool _active)
+	void GameObject::SetActive(bool b_active)
 	{
-		_isActive = _active;
+		m_b_isActive = b_active;
 
 		for (long child : GetChildren())
 		{
-			GetObjectById(child)->SetActive(_active);
+			GetObjectById(child)->SetActive(b_active);
 		}
 	}
 
 	bool GameObject::IsActive()
 	{
-		return _isActive;
+		return m_b_isActive;
 	}
 	
 	GameObject *GameObject::GetParent()
 	{
-		return GetObjectById(parentID);
+		return GetObjectById(m_parentID);
 	}
 }

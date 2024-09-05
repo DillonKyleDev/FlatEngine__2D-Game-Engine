@@ -135,9 +135,9 @@ namespace FlatEngine
 		return nullptr;
 	}
 
-	GameObject* Scene::CreateGameObject(long parentID)
+	GameObject* Scene::CreateGameObject(long parentID, long myID)
 	{
-		GameObject newObject = GameObject(parentID);
+		GameObject newObject = GameObject(parentID, myID);
 		newObject.AddTransform();
 		if (parentID != -1)
 			m_sceneObjects.at(parentID).AddChild(newObject.GetID());
@@ -170,34 +170,7 @@ namespace FlatEngine
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
 		for (Component* component : objectToDelete->GetComponents())
 		{
-			if (component->GetTypeString() == "RigidBody")
-			{
-				m_ECSManager.RemoveRigidBody(objectToDelete->GetID());
-			}
-			else if (component->GetTypeString() == "BoxCollider")
-			{
-				m_ECSManager.RemoveBoxCollider(component->GetID(), objectToDelete->GetID());
-			}
-			else if (component->GetTypeString() == "TileMap")
-			{
-				TileMap* tileMap = static_cast<TileMap*>(component);
-				if (tileMap->GetCollisionAreas().size() > 0)
-				{
-					for (std::pair<std::string, std::vector<CollisionAreaData>> collisionArea : tileMap->GetCollisionAreas())
-					{
-						for (CollisionAreaData collData : collisionArea.second)
-						{
-							m_ECSManager.RemoveBoxCollider(collData.collider->GetID(), objectToDelete->GetID());
-						}
-					}
-				}
-				m_ECSManager.RemoveCircleCollider(component->GetID(), objectToDelete->GetID());
-			}
-			else if (component->GetTypeString() == "CircleCollider")
-			{
-
-				m_ECSManager.RemoveCircleCollider(component->GetID(), objectToDelete->GetID());
-			}
+			m_ECSManager.RemoveComponent(component);
 		}
 
 		// Check for children and delete those as well

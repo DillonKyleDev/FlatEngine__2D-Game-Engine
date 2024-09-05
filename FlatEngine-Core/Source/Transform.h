@@ -12,8 +12,8 @@ namespace FlatEngine
 	{
 	public:
 		Transform(long myID = -1, long parentID = -1);
-		Transform(Transform* toCopy, long newParentID, long myID = -1);
 		~Transform();
+
 		void SetInitialPosition(Vector2 initialPos);
 		void SetOrigin(Vector2 newOrigin);
 		Vector2 GetOrigin();
@@ -30,9 +30,9 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		Vector2 origin;
-		Vector2 position;
-		Vector2 scale;
-		float rotation;
+		Vector2 m_origin;
+		Vector2 m_position;
+		Vector2 m_scale;
+		float m_rotation;
 	};
 }

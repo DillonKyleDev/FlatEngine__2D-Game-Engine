@@ -14,27 +14,11 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_Animation);
 		SetID(myID);
 		SetParentID(parentID);
-		animationName = "";
-		animationProperties = {};
-		animationPath = "";
-		_playing = false;
-		animationStartTime = -1;
-	}
-
-	Animation::Animation(Animation* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_Animation);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		animationName = toCopy->GetAnimationName();
-		animationProperties = toCopy->animationProperties;
-		animationPath = toCopy->GetAnimationPath();
-		_playing = false;
-		animationStartTime = toCopy->animationStartTime;
+		m_animationName = "";
+		m_animationProperties = {};
+		m_animationPath = "";
+		m_b_playing = false;
+		m_animationStartTime = -1;
 	}
 
 	Animation::~Animation()
@@ -47,23 +31,23 @@ namespace FlatEngine
 
 	void Animation::Play(long startTime)
 	{
-		animationProperties = LoadAnimationFile(animationPath);
-		_playing = true;
+		m_animationProperties = LoadAnimationFile(m_animationPath);
+		m_b_playing = true;
 		// Start animation timer
 		if (startTime != -1)
-			animationStartTime = startTime;
+			m_animationStartTime = startTime;
 		else
-			animationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
+			m_animationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
 	}
 
 	void Animation::Stop()
 	{
-		_playing = false;
+		m_b_playing = false;
 	}
 
 	bool Animation::IsPlaying()
 	{
-		return _playing;
+		return m_b_playing;
 	}
 
 	std::string Animation::GetData()
@@ -73,7 +57,7 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "path", animationPath }
+			{ "path", m_animationPath }
 		};
 
 		std::string data = jsonData.dump();
@@ -83,61 +67,61 @@ namespace FlatEngine
 
 	void Animation::SetAnimationName(std::string name)
 	{
-		animationName = name;
+		m_animationName = name;
 	}
 
 	std::string Animation::GetAnimationName()
 	{
-		return animationName;
+		return m_animationName;
 	}
 
 	void Animation::SetAnimationPath(std::string path)
 	{
-		animationPath = path;
-		animationProperties = LoadAnimationFile(path);
+		m_animationPath = path;
+		m_animationProperties = LoadAnimationFile(path);
 		if (path != "")
-			animationName = GetFilenameFromPath(path);
+			m_animationName = GetFilenameFromPath(path);
 	}
 
 	std::string Animation::GetAnimationPath()
 	{
-		return animationPath;
+		return m_animationPath;
 	}
 
-	void Animation::AddEventFunction(std::string name, std::function<void(GameObject)> callback)
+	void Animation::AddEventFunction(std::string name, std::function<void(GameObject*)> callback)
 	{
-		std::pair <std::string, std::function<void(GameObject)>> functionPair = std::pair<std::string, std::function<void(GameObject)>>(name, callback);
-		eventFunctions.emplace(functionPair);
+		std::pair <std::string, std::function<void(GameObject*)>> functionPair = std::pair<std::string, std::function<void(GameObject*)>>(name, callback);
+		m_eventFunctions.emplace(functionPair);
 	}
 
-	std::map<std::string, std::function<void(GameObject)>> Animation::GetEventFunctions()
+	std::map<std::string, std::function<void(GameObject*)>> Animation::GetEventFunctions()
 	{
-		return eventFunctions;
+		return m_eventFunctions;
 	}
 
 	void Animation::PlayAnimation(long ellapsedTime)
 	{
-		std::shared_ptr<S_AnimationProperties> props = animationProperties;
+		std::shared_ptr<S_AnimationProperties> props = m_animationProperties;
 
 		if (!props->_isSorted)
 			props->SortKeyFrames();
 
 		static long lastTransformAnimationFrameEnd = 0;
 		static long lastSpriteAnimationFrameEnd = 0;
-		static long currentKeyFrame = animationStartTime;
+		static long currentKeyFrame = m_animationStartTime;
 		static Vector2 lastFramePosition = Vector2(0, 0);
 		static Vector2 lastFrameScale = Vector2(0, 0);
 		static Vector4 lastFrameSpriteTint = Vector4(1,1,1,1);
 
 		// While the animation is not over
-		if (props->animationLength > ellapsedTime - animationStartTime)
+		if (props->animationLength > ellapsedTime - m_animationStartTime)
 		{
 			// Event Animation Frames
 			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProperties)
 			{
-				if ((eventFrame->time == 0 && !eventFrame->_fired) || (!eventFrame->_fired && (ellapsedTime >= animationStartTime + eventFrame->time || eventFrame->time == 0)))
+				if ((eventFrame->time == 0 && !eventFrame->_fired) || (!eventFrame->_fired && (ellapsedTime >= m_animationStartTime + eventFrame->time || eventFrame->time == 0)))
 				{
-					for (std::pair<std::string, std::function<void(GameObject)>> eventFunction : eventFunctions)
+					for (std::pair<std::string, std::function<void(GameObject*)>> eventFunction : m_eventFunctions)
 					{
 						if (eventFunction.first == eventFrame->functionName)
 						{
@@ -150,14 +134,14 @@ namespace FlatEngine
 			// Transform Animation Frames
 			for (std::vector<std::shared_ptr<S_Transform>>::iterator transformFrame = props->transformProperties.begin(); transformFrame != props->transformProperties.end();)
 			{ 
-				if (ellapsedTime < animationStartTime + (*transformFrame)->time)
+				if (ellapsedTime < m_animationStartTime + (*transformFrame)->time)
 				{
 					std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = transformFrame;
 					if (transformFrame - 1 >= props->transformProperties.begin())
 						lastFrame = transformFrame - 1;
 
-					float timeLeft = (*transformFrame)->time - ellapsedTime - animationStartTime;
-					float percentDone = (float)(ellapsedTime - animationStartTime - (*lastFrame)->time) / (float)((*transformFrame)->time - (*lastFrame)->time);
+					float timeLeft = (*transformFrame)->time - ellapsedTime - m_animationStartTime;
+					float percentDone = (float)(ellapsedTime - m_animationStartTime - (*lastFrame)->time) / (float)((*transformFrame)->time - (*lastFrame)->time);
 					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
 					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
 					FlatEngine::Transform* transform = GetParent()->GetTransform();
@@ -204,15 +188,15 @@ namespace FlatEngine
 			// Sprite Animation Frames
 			for (std::vector<std::shared_ptr<S_Sprite>>::iterator spriteFrame = props->spriteProperties.begin(); spriteFrame != props->spriteProperties.end();)
 			{
-				if (ellapsedTime < animationStartTime + (*spriteFrame)->time)
+				if (ellapsedTime < m_animationStartTime + (*spriteFrame)->time)
 				{
 					FlatEngine::Sprite* sprite = GetParent()->GetSprite();
 					std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = spriteFrame;
 					if (lastFrame != props->spriteProperties.begin() && lastFrame -1 >= props->spriteProperties.begin())
 						lastFrame = lastFrame - 1;
 
-					float timeLeft = (*spriteFrame)->time - ellapsedTime - animationStartTime;
-					float percentDone = (ellapsedTime - animationStartTime - (*lastFrame)->time) / ((*spriteFrame)->time - (*lastFrame)->time);
+					float timeLeft = (*spriteFrame)->time - ellapsedTime - m_animationStartTime;
+					float percentDone = (ellapsedTime - m_animationStartTime - (*lastFrame)->time) / ((*spriteFrame)->time - (*lastFrame)->time);
 					
 					Vector4 correctedTintColor = (*spriteFrame)->tintColor;
 
@@ -238,7 +222,7 @@ namespace FlatEngine
 		}
 		else if (props->_loop)
 		{
-			animationStartTime = ellapsedTime;
+			m_animationStartTime = ellapsedTime;
 		}
 		else
 			Stop();

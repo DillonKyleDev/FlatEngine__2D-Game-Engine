@@ -171,10 +171,18 @@ namespace FlatGui
 				transform->SetPosition(Vector2(xPos, yPos));
 			}	
 			if (FL::RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360))
+			{
 				transform->SetRotation(rotation);
-			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000) ||
-				FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000))
+			}
+			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000))
+			{
 				transform->SetScale(Vector2(scaleX, scaleY));
+			}
+			if (FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000))
+			{
+				transform->SetScale(Vector2(scaleX, scaleY));
+			}
+				
 			FL::PopTable();
 		}
 	}

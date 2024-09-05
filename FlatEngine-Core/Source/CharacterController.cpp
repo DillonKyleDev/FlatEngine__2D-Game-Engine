@@ -20,23 +20,6 @@ namespace FlatEngine
 		m_b_isMoving = false;
 	}
 
-	// Copy constructor
-	CharacterController::CharacterController(CharacterController* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_CharacterController);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		m_maxAcceleration = toCopy->m_maxAcceleration;
-		m_maxSpeed = toCopy->m_maxSpeed;
-		m_airControl = toCopy->m_airControl;
-		m_speedCorrection = toCopy->m_speedCorrection;
-		m_b_isMoving = toCopy->m_b_isMoving;
-	}
-
 	CharacterController::~CharacterController()
 	{
 	}

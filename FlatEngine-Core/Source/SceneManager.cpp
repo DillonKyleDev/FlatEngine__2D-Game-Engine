@@ -139,13 +139,10 @@ namespace FlatEngine
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{
 					// Add created GameObject to our freshScene
-					GameObject loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i]);
+					GameObject *loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i]);
 					// Check for primary camera
-					if (loadedObject.HasComponent("Camera") && loadedObject.GetCamera()->IsPrimary())
-						m_loadedScene.SetPrimaryCamera(loadedObject.GetCamera());
-					// If loaded object was a prefab, it will have been Instantiated, which already adds the object to the loaded scene
-					if (!loadedObject.IsPrefab())
-						m_loadedScene.AddSceneObject(loadedObject);
+					if (loadedObject != nullptr && loadedObject->HasComponent("Camera") && loadedObject->GetCamera()->IsPrimary())
+						m_loadedScene.SetPrimaryCamera(loadedObject->GetCamera());
 				}
 
 				F_Application->OnLoadScene(fileName);

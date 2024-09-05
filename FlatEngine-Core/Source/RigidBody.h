@@ -14,7 +14,6 @@ namespace FlatEngine
 
 	public:
 		RigidBody(long myID = -1, long parentID = -1);
-		RigidBody(RigidBody* toCopy, long newParentID, long myID = -1);
 		~RigidBody();
 
 		std::string GetData();

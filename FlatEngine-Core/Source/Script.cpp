@@ -13,19 +13,7 @@ namespace FlatEngine
 		SetType(Component::ComponentTypes::T_Script);
 		SetID(myID);
 		SetParentID(parentID);
-		attachedScript = "";
-	}
-
-	Script::Script(Script* toCopy, long newParentID, long myID)
-	{
-		SetType(Component::ComponentTypes::T_Script);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		attachedScript = toCopy->GetAttachedScript();
+		m_attachedScript = "";
 	}
 
 	Script::~Script()
@@ -34,12 +22,12 @@ namespace FlatEngine
 
 	void Script::SetAttachedScript(std::string script)
 	{
-		attachedScript = script;
+		m_attachedScript = script;
 	}
 
 	std::string Script::GetAttachedScript()
 	{
-		return attachedScript;
+		return m_attachedScript;
 	}
 
 	std::string Script::GetData()
@@ -49,7 +37,7 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "attachedScript", attachedScript },
+			{ "attachedScript", m_attachedScript },
 		};
 
 		std::string data = jsonData.dump();
@@ -57,37 +45,3 @@ namespace FlatEngine
 		return data;
 	}
 }
-
-
-
-
-// Includes file
-//std::ofstream inludesFile;
-//
-//// Include for the new script header file
-//std::string includeString = "#include <scripts/headers/" + name + ".h> \n";
-//
-//// Open ScriptIncludes.cpp in append mode
-//inludesFile.open("ScriptIncludes.h", std::ios::app);
-//inludesFile << includeString.c_str() << std::endl;
-//inludesFile.close();
-//
-//// New script .h and .cpp files
-//std::ofstream newScriptCPP;
-//std::ofstream newScriptH;
-//
-//// Boilerplate for the new script .cpp file
-//std::string boilerplateCPP = "";
-//// Boilerplate for the new script .cpp file
-//std::string boilerplateH = "";
-//
-//// Create the new script .cpp and .h files
-//newScriptCPP.open("scripts/cpp/" + name + ".cpp", std::ios::app);
-//newScriptCPP << boilerplateCPP.c_str() << std::endl;
-//newScriptCPP.close();
-//
-//newScriptH.open("scripts/headers/" + name + ".h", std::ios::app);
-//newScriptH << boilerplateH.c_str() << std::endl;
-//newScriptH.close();
-//
-//return name + ".cpp";

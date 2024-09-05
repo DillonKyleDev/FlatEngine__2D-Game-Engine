@@ -125,7 +125,8 @@ namespace FlatEngine
 			"SetRotation", &Transform::SetRotation,
 			"GetRotation", &Transform::GetRotation,
 			"SetScale", &Transform::SetScale,
-			"GetScale", &Transform::GetScale
+			"GetScale", &Transform::GetScale,
+			"LookAt", &Transform::LookAt
 		);
 
 		F_Lua.new_usertype<Sprite>("Sprite",

@@ -11,6 +11,7 @@
 #include "SceneManager.h"
 #include "Project.h"
 #include "Vector2.h"
+#include "PrefabManager.h"
 
 namespace FL = FlatEngine;
 
@@ -322,15 +323,15 @@ namespace FlatGui
 				}
 				if (ImGui::BeginMenu("Prefabs"))
 				{
-					std::map<std::string, std::vector<GameObject>> prefabs = FL::GetPrefabs();
+					std::map<std::string, FL::Prefab> prefabs = FL::F_PrefabManager->GetPrefabs();
 					if (prefabs.size() > 0)
 					{
-						for (std::pair<std::string, std::vector<GameObject>> pair : prefabs)
+						for (std::pair<std::string, FL::Prefab> pair : prefabs)
 						{
 							if (ImGui::MenuItem(pair.first.c_str()))
 							{
-								GameObject instantiatedObject = FL::Instantiate(pair.first, Vector2(0, 0), -1);
-								SetFocusedGameObjectID(instantiatedObject.GetID());
+								GameObject *instantiatedObject = FL::Instantiate(pair.first, Vector2(0, 0), -1);
+								SetFocusedGameObjectID(instantiatedObject->GetID());
 							}
 						}
 					}

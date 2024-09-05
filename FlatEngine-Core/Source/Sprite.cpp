@@ -21,27 +21,6 @@ namespace FlatEngine
 		m_renderOrder = FL::F_maxSpriteLayers / 2;
 	}
 
-	Sprite::Sprite(Sprite* toCopy, long newParentID, long myID)
-	{
-		SetType(Component::ComponentTypes::T_Sprite);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		m_texture = toCopy->m_texture;
-		m_textureWidth = toCopy->m_textureHeight;
-		m_textureHeight = toCopy->m_textureWidth;
-		m_scale = toCopy->m_scale;
-		m_pivotPoint = toCopy->m_pivotPoint;
-		m_pivotOffset = toCopy->m_pivotOffset;
-		m_offset = toCopy->m_offset;
-		m_path = toCopy->m_path;
-		m_tintColor = toCopy->m_tintColor;
-		m_renderOrder = toCopy->m_renderOrder;
-	}
-
 	Sprite::~Sprite()
 	{
 	}

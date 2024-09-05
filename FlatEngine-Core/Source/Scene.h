@@ -48,7 +48,7 @@ namespace FlatEngine
 		GameObject* GetObjectById(long ID);
 		GameObject* GetObjectByName(std::string name);
 		GameObject* GetObjectByTag(std::string tag);
-		GameObject* CreateGameObject(long parentID = -1);
+		GameObject* CreateGameObject(long parentID = -1, long myID = -1);
 		void DeleteGameObject(long sceneObjectID);
 		void DeleteChildrenAndSelf(GameObject *objectToDelete);
 		void IncrementGameObjectID();

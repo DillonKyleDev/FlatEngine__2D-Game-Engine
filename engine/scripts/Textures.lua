@@ -24,6 +24,7 @@ F_Textures = {
 	audioFile = "../engine/images/fileTypes/audioFile.png",
 	unmarkedFile = "../engine/images/fileTypes/file.png",
 	tileSetFile = "../engine/images/fileTypes/tileSetFile.png",
+	prefabFile = "../engine/images/fileTypes/prefabFile.png",
 	-- Scene View
 	translate = "../engine/images/icons/translate.png",
 	scale = "../engine/images/icons/scale.png",

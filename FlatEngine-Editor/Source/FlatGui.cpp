@@ -74,7 +74,7 @@ namespace FlatGui
 	// FlatGui Variables
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = nullptr;
 	std::string FG_FocusedAnimationName = "";
-	GameObject objectForFocusedAnimation = GameObject(nullptr);
+	GameObject *objectForFocusedAnimation = nullptr;
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
 	long previewAnimationStartTime = 0;
 	long previewAnimationTime = 0;
@@ -222,8 +222,8 @@ namespace FlatGui
 		FocusedGameObjectID = ID;
 		if (ID != -1)
 		{
-			GameObject focusedObject = FL::GetObjectById(ID);
-			Animation* animationComponent = focusedObject.GetAnimation();
+			GameObject *focusedObject = FL::GetObjectById(ID);
+			Animation* animationComponent = focusedObject->GetAnimation();
 			std::string animationPath = "";
 
 			if (animationComponent != nullptr)
@@ -236,9 +236,9 @@ namespace FlatGui
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
 				//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
-				FL::Transform* transform = objectForFocusedAnimation.GetTransform();
+				FL::Transform* transform = objectForFocusedAnimation->GetTransform();
 				transform->SetPosition(Vector2(0, 0));
-				animatorObjects.push_back(&objectForFocusedAnimation);
+				animatorObjects.push_back(*objectForFocusedAnimation);
 				//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
 			}
 		}
@@ -774,7 +774,7 @@ namespace FlatGui
 				int renderOrder = sprite->GetRenderOrder();
 				Vector4 tintColor = sprite->GetTintColor();
 				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());
-
+				Vector2 spriteScaleFinal = spriteScale;
 				// Get Input and Output
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
@@ -782,7 +782,13 @@ namespace FlatGui
 				ImGui::SetCursorPos(positionOnScreen);
 				//// This will catch our interactions  - 4096 for overlap or keyword if it works
 				ImGui::SetNextItemAllowOverlap();
-				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * scale.x * spriteScale.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * scale.y * spriteScale.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+
+				if (!scale.x == 0)
+					spriteScaleFinal.x *= scale.x;
+				if (!scale.y == 0)
+					spriteScaleFinal.y *= scale.y;
+
+				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 				const bool is_active = ImGui::IsItemActive();   // Held
 				const bool is_clicked = ImGui::IsItemClicked();
@@ -1500,7 +1506,7 @@ namespace FlatGui
 			// Should be last in line here to be rendered top-most -- If this obect is focused
 			if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE && focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
-				GameObject focusedObject = FL::GetObjectById(focusedObjectID);
+				GameObject *focusedObject = FL::GetObjectById(focusedObjectID);
 				SDL_Texture* arrowToRender = FL::GetTexture("transformArrow");
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting position. We only want to change the render ending position so we adjust dimensions only
 				float arrowWidth = (float)FL::GetTextureObject("transformArrow")->GetWidth() * 3;

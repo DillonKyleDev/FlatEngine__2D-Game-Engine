@@ -30,13 +30,8 @@ namespace FlatEngine
 	public:
 		
 		GameObject(long parentID = -1, long myID = -1);
-		// Copy Constructor
-		GameObject(GameObject* toCopy);
-		GameObject(GameObject* toCopy, std::vector<GameObject> &objectVector, std::vector<GameObject> objectPool, long parentID = -1, long ID = -1);
 		~GameObject();
-		bool operator==(const GameObject toCompare);
-	
-		bool IsValid();
+
 		void SetIsPrefab(bool _newIsPrefab);
 		bool IsPrefab();
 		void SetPrefabName(std::string newPrefabName);
@@ -97,25 +92,23 @@ namespace FlatEngine
 		GameObject *GetParent();
 		void AddChild(long childID);
 		void RemoveChild(long childID);
-		GameObject GetFirstChild();
-		GameObject FindChildByName(std::string name);
+		GameObject *GetFirstChild();
+		GameObject *FindChildByName(std::string name);
 		std::vector<long> GetChildren();
 		bool HasChildren();
 		void SetActive(bool _active);
 		bool IsActive();
 
 	private:
-		std::string name;
-		bool _isValid;
-		bool _isPrefab;
-		bool m_b_isPrefabData;
-		std::string prefabName;
-		Vector2 prefabSpawnLocation;
+		std::string m_name;
+		bool m_b_isPrefab;
+		std::string m_prefabName;
+		Vector2 m_prefabSpawnLocation;
 		TagList m_tagList;
-		long ID;
-		long parentID;
-		bool _isActive;
-		std::vector<Component*> components;
-		std::vector<long> childrenIDs;
+		long m_ID;
+		long m_parentID;
+		bool m_b_isActive;
+		std::vector<Component*> m_components;
+		std::vector<long> m_childrenIDs;
 	};
 }

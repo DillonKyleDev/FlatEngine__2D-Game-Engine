@@ -398,6 +398,8 @@ namespace FlatGui
 			icon = "projectFile";
 		else if (extension == ".tls")
 			icon = "tileSetFile";
+		else if (extension == ".prf")
+			icon = "prefabFile";
 		else
 			icon = "unmarkedFile";
 	

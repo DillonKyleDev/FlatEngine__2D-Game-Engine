@@ -9,10 +9,9 @@ namespace FlatEngine
 	{
 	public:
 		CompositeCollider(long myID = -1, long parentID = -1);
-		CompositeCollider(std::shared_ptr<Collider> toCopy, long newParentID, long myID = -1);
 		~CompositeCollider();
 
 	private:
-		std::vector<std::shared_ptr<Collider>> colliders;	
+		std::vector<std::shared_ptr<Collider>> m_colliders;	
 	};
 }

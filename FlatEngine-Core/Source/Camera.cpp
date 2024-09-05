@@ -13,33 +13,14 @@ namespace FlatEngine
 		SetType(ComponentTypes::T_Camera);
 		SetID(myID);
 		SetParentID(parentID);
-		_isPrimaryCamera = false;
-		width = 50;
-		height = 30;
-		zoom = 10;
-		frustrumColor = ImVec4(255,255,255,255);
-		_follow = false;
-		following = -1;
-		followSmoothing = 0.9f;
-	}
-
-	Camera::Camera(Camera* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_Camera);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		_isPrimaryCamera = toCopy->IsPrimary();
-		width = toCopy->GetWidth();
-		height = toCopy->GetHeight();
-		zoom = toCopy->GetZoom();
-		frustrumColor = toCopy->GetFrustrumColor();
-		_follow = toCopy->_follow;
-		following = toCopy->following;
-		followSmoothing = toCopy->followSmoothing;
+		m_b_isPrimaryCamera = false;
+		m_width = 50;
+		m_height = 30;
+		m_zoom = 10;
+		m_frustrumColor = ImVec4(255,255,255,255);
+		m_b_follow = false;
+		m_toFollowID = -1;
+		m_followSmoothing = 0.9f;
 	}
 
 	Camera::~Camera()
@@ -48,92 +29,92 @@ namespace FlatEngine
 
 	void Camera::SetPrimaryCamera(bool _isPrimary)
 	{
-		_isPrimaryCamera = _isPrimary;
+		m_b_isPrimaryCamera = _isPrimary;
 	}
 
 	bool Camera::IsPrimary()
 	{
-		return _isPrimaryCamera;
+		return m_b_isPrimaryCamera;
 	}
 
 	void Camera::SetFrustrumColor(ImVec4 color)
 	{
-		frustrumColor = color;
+		m_frustrumColor = color;
 	}
 
 	ImVec4 Camera::GetFrustrumColor()
 	{
-		return frustrumColor;
+		return m_frustrumColor;
 	}
 
 	void Camera::Follow()
 	{
-		GameObject *followTarget = GetObjectById(following);
-		if (_follow && GetParent()->HasComponent("Transform") && followTarget != nullptr && followTarget->HasComponent("Transform"))
+		GameObject *followTarget = GetObjectById(m_toFollowID);
+		if (m_b_follow && GetParent()->HasComponent("Transform") && followTarget != nullptr && followTarget->HasComponent("Transform"))
 		{
 			FlatEngine::Transform* cameraTransform = GetParent()->GetTransform();
 			Vector2 followPos = followTarget->GetTransform()->GetTruePosition();
 			Vector2 currentPos = cameraTransform->GetPosition(); // Shouldn't have a parent if following so don't need GetTruePosition()
 
-			cameraTransform->SetPosition(Lerp(currentPos, followPos, followSmoothing));
+			cameraTransform->SetPosition(Lerp(currentPos, followPos, m_followSmoothing));
 		}
 	}
 
 	void Camera::SetShouldFollow(bool _shouldFollow)
 	{
-		_follow = _shouldFollow;
+		m_b_follow = _shouldFollow;
 	}
 
 	bool Camera::GetShouldFollow()
 	{
-		return _follow;
+		return m_b_follow;
 	}
 
 	void Camera::SetFollowing(long toFollow)
 	{
-		following = toFollow;
+		m_toFollowID = toFollow;
 	}
 
 	long Camera::GetFollowing()
 	{
-		return following;
+		return m_toFollowID;
 	}
 
 	void Camera::SetFollowSmoothing(float smoothing)
 	{
-		followSmoothing = smoothing;
+		m_followSmoothing = smoothing;
 	}
 
 	float Camera::GetFollowSmoothing()
 	{
-		return followSmoothing;
+		return m_followSmoothing;
 	}
 
 	void Camera::SetZoom(float newZoom)
 	{
 		if (newZoom >= 1 && newZoom <= 100)
-			zoom = newZoom;
+			m_zoom = newZoom;
 	}
 
 	float Camera::GetZoom()
 	{
-		return zoom;
+		return m_zoom;
 	}
 
 	void Camera::SetDimensions(float newWidth, float newHeight)
 	{
-		width = newWidth;
-		height = newHeight;
+		m_width = newWidth;
+		m_height = newHeight;
 	}
 
 	float Camera::GetWidth()
 	{
-		return width;
+		return m_width;
 	}
 
 	float Camera::GetHeight()
 	{
-		return height;
+		return m_height;
 	}
 
 	std::string Camera::GetData()
@@ -143,17 +124,17 @@ namespace FlatEngine
 			{ "id", GetID() },
 			{ "_isCollapsed", IsCollapsed() },
 			{ "_isActive", IsActive() },
-			{ "width", width },
-			{ "height", height },
-			{ "_isPrimaryCamera", _isPrimaryCamera },
-			{ "zoom", zoom },
-			{ "frustrumRed", frustrumColor.x },
-			{ "frustrumGreen", frustrumColor.y },
-			{ "frustrumBlue", frustrumColor.z },
-			{ "frustrumAlpha", frustrumColor.w },
-			{ "_follow", _follow },
-			{ "followSmoothing", followSmoothing },
-			{ "following", following },
+			{ "width", m_width },
+			{ "height", m_height },
+			{ "_isPrimaryCamera", m_b_isPrimaryCamera },
+			{ "zoom", m_zoom },
+			{ "frustrumRed", m_frustrumColor.x },
+			{ "frustrumGreen", m_frustrumColor.y },
+			{ "frustrumBlue", m_frustrumColor.z },
+			{ "frustrumAlpha", m_frustrumColor.w },
+			{ "_follow",m_b_follow },
+			{ "followSmoothing", m_followSmoothing },
+			{ "following", m_toFollowID },
 		};
 
 		std::string data = jsonData.dump();

@@ -12,7 +12,6 @@ namespace FlatEngine
 	{
 	public:
 		Text(long myID = -1, long parentID = -1);
-		Text(Text* toCopy, long newParentID, long myID = -1);
 		~Text();
 
 		void LoadText();
@@ -32,14 +31,14 @@ namespace FlatEngine
 		std::string GetData();
 		
 	private:
-		TTF_Font* font;
-		std::string fontPath;
-		int fontSize;
-		std::string text;
-		SDL_Color color;
-		Texture texture;
-		Vector2 offset;
-		int renderOrder;
+		TTF_Font* m_font;
+		std::string m_fontPath;
+		int m_fontSize;
+		std::string m_text;
+		SDL_Color m_color;
+		Texture m_texture;
+		Vector2 m_offset;
+		int m_renderOrder;
 	};
 }
 

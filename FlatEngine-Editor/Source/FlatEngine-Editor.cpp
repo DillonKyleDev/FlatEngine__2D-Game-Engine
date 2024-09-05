@@ -234,8 +234,8 @@ public:
 			FL::F_AssetManager.CollectTextures(); 
 			m_recreateWindow = false;
 			FL::InitializeTileSets();
+			FL::F_PrefabManager->InitializePrefabs();
 			FlatGui::LoadProject(m_startupProject);
-			FL::prefabManager->InitializePrefabs();
 		}
 	}
 	void Quit()

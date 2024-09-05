@@ -74,10 +74,10 @@ namespace FlatEngine
 			if (gameButtons[i]->IsActive())
 			{
 				// Get the Buttons Transform data
-				GameObject thisObject = FlatEngine::GetObjectById(gameButtons[i]->GetParentID());
+				GameObject *thisObject = FlatEngine::GetObjectById(gameButtons[i]->GetParentID());
 				Transform* transform = nullptr;
-				if (thisObject.IsValid())
-					transform = thisObject.GetTransform();
+				if (thisObject != nullptr)
+					transform = thisObject->GetTransform();
 
 				// Get the buttons active edges
 				Button* button = gameButtons[i];
@@ -93,8 +93,8 @@ namespace FlatEngine
 
 					if (button->MouseOverSet())
 					{
-						GameObject thisObject = FlatEngine::GetObjectById(button->GetParentID());
-						button->OnMouseOverFunction(&thisObject);
+						GameObject *thisObject = FlatEngine::GetObjectById(button->GetParentID());
+						button->OnMouseOverFunction(thisObject);
 					}
 				}
 			}
@@ -108,8 +108,8 @@ namespace FlatEngine
 			{
 				if (this->gameHoveredButtons[i]->MouseEnterSet())
 				{
-					GameObject thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
-					this->gameHoveredButtons[i]->OnMouseEnterFunction(&thisObject);
+					GameObject *thisObject = FlatEngine::GetObjectById(this->gameHoveredButtons[i]->GetParentID());
+					this->gameHoveredButtons[i]->OnMouseEnterFunction(thisObject);
 				}
 			}
 		}
@@ -122,8 +122,8 @@ namespace FlatEngine
 			{
 				if (lastHovered.size() > 0 && lastHovered[i]->MouseLeaveSet())
 				{
-					GameObject thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
-					lastHovered[i]->OnMouseLeaveFunction(&thisObject);
+					GameObject *thisObject = FlatEngine::GetObjectById(lastHovered[i]->GetParentID());
+					lastHovered[i]->OnMouseLeaveFunction(thisObject);
 				}
 			}
 		}
@@ -139,7 +139,7 @@ namespace FlatEngine
 		for (int i = 0; i < this->gameCanvases.size(); i++)
 		{
 			Canvas* canvas = this->gameCanvases[i];
-			GameObject parentObject = FlatEngine::GetObjectById(canvas->GetParentID());
+			GameObject *parentObject = FlatEngine::GetObjectById(canvas->GetParentID());
 
 			// If parent object is active 
 			// AND if the Canvas blocks layers below it 
@@ -147,7 +147,7 @@ namespace FlatEngine
 			// make it the new lowest unblockedlayer
 			bool _blocksLayer = canvas->GetBlocksLayers();
 			int layerNumber = canvas->GetLayerNumber();
-			if (parentObject.IsActive() && _blocksLayer && layerNumber > lowestUnblockedLayer)
+			if (parentObject != nullptr && _blocksLayer && layerNumber > lowestUnblockedLayer)
 			{
 				lowestUnblockedCanvas = canvas;
 				lowestUnblockedLayer = canvas->GetLayerNumber();

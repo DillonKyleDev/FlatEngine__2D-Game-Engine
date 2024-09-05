@@ -13,8 +13,7 @@ namespace FlatEngine
 	class Camera : public Component
 	{
 	public:
-		Camera(long myID = -1, long parentID = -1);
-		Camera(Camera* toCopy, long newParentID, long myID = -1);
+		Camera(long myID = -1, long parentID = -1);		
 		~Camera();
 
 		void SetPrimaryCamera(bool _isPrimary);
@@ -36,14 +35,14 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		float width;
-		float height;
-		float zoom;
-		ImVec4 frustrumColor;
-		bool _isPrimaryCamera;
-		bool _follow;
-		long following;
-		float followSmoothing;
+		float m_width;
+		float m_height;
+		float m_zoom;
+		ImVec4 m_frustrumColor;
+		bool m_b_isPrimaryCamera;
+		bool m_b_follow;
+		long m_toFollowID;
+		float m_followSmoothing;
 	};
 }
 

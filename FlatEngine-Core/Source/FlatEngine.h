@@ -95,7 +95,7 @@ namespace FlatEngine
 	extern AssetManager F_AssetManager;
 	extern std::vector<std::string> F_selectedFiles;
 	extern std::vector<MappingContext> F_MappingContexts;
-	extern std::shared_ptr<PrefabManager> prefabManager;
+	extern std::shared_ptr<PrefabManager> F_PrefabManager;
 	extern std::string F_selectedMappingContextName;
 	extern std::vector<TileSet> F_TileSets;
 	extern std::string F_selectedTileSetToEdit;
@@ -203,7 +203,7 @@ namespace FlatEngine
 	extern void LoadScene(std::string filepath);
 	std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
-	extern GameObject* CreateGameObject(long parentID = -1);
+	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
 	extern void DeleteGameObject(int sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectById(long objectID);
@@ -230,8 +230,8 @@ namespace FlatEngine
 	// Prefabs
 	extern void CreatePrefab(std::string path, GameObject &gameObject);
 	extern void InitializePrefabs();
-	extern GameObject Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
-	extern std::map<std::string, std::vector<GameObject>> GetPrefabs();
+	extern GameObject *Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
+	//extern std::map<std::string, Prefab> GetPrefabs();
 
 	// Logging Prettification
 	extern void LogError(std::string line = "", std::string from = "[C++]");
@@ -288,7 +288,7 @@ namespace FlatEngine
 
 	// Json parsing
 	extern json CreateJsonFromObject(GameObject gameObject);
-	extern GameObject CreateObjectFromJson(json objectJson);
+	extern GameObject *CreateObjectFromJson(json objectJson);
 	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName);
 	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName);
 	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName);

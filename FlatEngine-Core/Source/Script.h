@@ -8,7 +8,6 @@ namespace FlatEngine
 	{
 	public:
 		Script(long myID = -1, long parentID = -1);
-		Script(Script* toCopy, long newParentID, long myID = -1);
 		~Script();
 
 		std::string GetData();
@@ -16,6 +15,6 @@ namespace FlatEngine
 		std::string GetAttachedScript();
 
 	private:
-		std::string attachedScript;
+		std::string m_attachedScript;
 	};
 }

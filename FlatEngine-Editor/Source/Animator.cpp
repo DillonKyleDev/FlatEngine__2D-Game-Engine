@@ -208,7 +208,7 @@ namespace FlatGui
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 12);
 			Animation* animation = nullptr;
 			if (objectForFocusedAnimation != nullptr)
-				animation = objectForFocusedAnimation.GetAnimation();
+				animation = objectForFocusedAnimation->GetAnimation();
 
 			if (FL::RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
 			{
@@ -377,7 +377,7 @@ namespace FlatGui
 		if (objectForFocusedAnimation != nullptr)
 		{
 			// Animate the focused object
-			Animation* animation = objectForFocusedAnimation.GetAnimation();
+			Animation* animation = objectForFocusedAnimation->GetAnimation();
 			std::string playID = "##playAnimationPreview";
 			std::string stopID = "##StopGameloopIcon";
 			bool _isPreviewing = false;
@@ -883,12 +883,12 @@ namespace FlatGui
 		if (objectForFocusedAnimation != nullptr)
 		{
 			std::vector<GameObject> focusedObjectVector;
-			focusedObjectVector.push_back(&objectForFocusedAnimation);
+			focusedObjectVector.push_back(*objectForFocusedAnimation);
 	
 			// Animate the focused object
 			if (_playPreviewAnimation)
 			{				
-				Animation* animation = objectForFocusedAnimation.GetAnimation();
+				Animation* animation = objectForFocusedAnimation->GetAnimation();
 
 				// If animation component is playing, play the animation
 				if (animation != nullptr && animation->IsPlaying())

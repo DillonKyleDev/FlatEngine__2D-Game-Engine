@@ -3,7 +3,7 @@
 ---------------------------------------
 
 F_Dirs = {
-	root = "FlatEngine/",	-- For turning absolute paths into relative paths in FlatEngine::OpenLoadFileExplorer()
+	root = "FlatEngine",	-- For turning absolute paths into relative paths in FlatEngine::OpenLoadFileExplorer()
 	projectDir = "../", -- Relative to the solution
 	projects = "../assets/projects/",
 	mappingContexts = "../assets/mappingContexts/",

@@ -103,7 +103,7 @@ namespace FlatGui
 	// Focused Animation
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FocusedAnimation;
 	extern std::string FG_FocusedAnimationName;
-	extern GameObject objectForFocusedAnimation;
+	extern GameObject *objectForFocusedAnimation;
 	extern std::shared_ptr<FL::Animation::S_Property> selectedKeyFrameToEdit;
 	extern long previewAnimationStartTime;
 	extern long previewAnimationTime;

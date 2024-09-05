@@ -30,35 +30,6 @@ namespace FlatEngine
 		_rightClickSet = false;
 	}
 
-	Button::Button(Button* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_Button);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-		_mouseIsOver = false;
-		_hasMouseOverFired = false;
-		activeWidth = toCopy->GetActiveWidth();
-		activeHeight = toCopy->GetActiveHeight();
-		activeOffset = toCopy->GetActiveOffset();
-		activeLayer = toCopy->GetActiveLayer();
-
-		// Initialize callback functions to nullptr
-		OnMouseOverFunction = nullptr;
-		OnMouseLeaveFunction = nullptr;
-		OnLeftClickFunction = nullptr;
-		OnRightClickFunction = nullptr;
-
-		_mouseOverSet = false;
-		_mouseEnterSet = false;
-		_mouseLeaveSet = false;
-		_leftClickSet = false;
-		_rightClickSet = false;
-	}
-
 	Button::~Button()
 	{
 	}

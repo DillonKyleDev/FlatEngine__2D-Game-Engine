@@ -185,6 +185,24 @@ namespace FlatGui
 		long focusedObjectID = GetFocusedGameObjectID();
 		bool b_objectFocused = focusedObjectID == currentObject.GetID();
 
+		static bool b_openPrefabModal = false;
+		std::string newPrefabName = "";
+		static long modalOpenOn = -1;
+
+		// Create new Prefab modal
+		if (currentObject.GetID() == modalOpenOn)
+		{
+			if (FL::RenderInputModal("Create Prefab", "Enter a name for the Prefab:", newPrefabName, b_openPrefabModal))
+			{
+				b_openPrefabModal = false;
+				FL::CreatePrefab(FL::GetDir("prefabs") + "/" + newPrefabName + ".prf", currentObject);
+				currentObject.SetIsPrefab(true);
+				currentObject.SetPrefabName(newPrefabName);
+				currentObject.SetPrefabSpawnLocation(currentObject.GetTransform()->GetPosition());
+			}
+		}
+
+
 		// If this node is selected, use the nodeFlag_selected to highlight it
 		if (b_objectFocused)
 			if (currentObject.HasChildren())
@@ -253,8 +271,8 @@ namespace FlatGui
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
-					GameObject parent = FL::GetObjectById(dropped->GetParentID());
-					parent.RemoveChild(dropped->GetID());
+					GameObject *parent = FL::GetObjectById(dropped->GetParentID());
+					parent->RemoveChild(dropped->GetID());
 				}
 				// Set parent ID of dropped object to -1
 				dropped->SetParentID(-1);
@@ -342,22 +360,15 @@ namespace FlatGui
 			FL::PushMenuStyles();
 			if (ImGui::MenuItem("Create Child"))
 			{
-				GameObject childObject = FL::CreateGameObject(currentObject.GetID());
-				SetFocusedGameObjectID(childObject.GetID());
+				GameObject *childObject = FL::CreateGameObject(currentObject.GetID());
+				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Create Prefab"))
 			{
-				std::string prefabPath = FL::OpenSaveFileExplorer();
-				if (prefabPath != "")
-				{
-					std::string prefabName = FL::GetFilenameFromPath(prefabPath);
-					CreatePrefab(prefabPath, currentObject);
-					currentObject.SetIsPrefab(true);
-					currentObject.SetPrefabName(prefabName);
-					currentObject.SetPrefabSpawnLocation(currentObject.GetTransform()->GetPosition());
-				}
+				b_openPrefabModal = true;		
+				modalOpenOn = currentObject.GetID();
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -414,8 +425,8 @@ namespace FlatGui
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
-					GameObject parent = dropped->GetParent();
-					parent.RemoveChild(dropped->GetID());
+					GameObject *parent = dropped->GetParent();
+					parent->RemoveChild(dropped->GetID());
 				}
 				// Add dropped object to this object as a child
 				currentObject.AddChild(dropped->GetID());

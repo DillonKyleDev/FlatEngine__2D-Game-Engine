@@ -32,27 +32,6 @@ namespace FlatEngine
 		nextCorners;
 	}
 
-	BoxCollider::BoxCollider(BoxCollider* toCopy, long newParentID, long myID) : Collider(toCopy, newParentID, myID)
-	{		
-		SetType(ComponentTypes::T_BoxCollider);
-		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
-		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());	
-		SetShowActiveRadius(toCopy->GetShowActiveRadius());
-
-		m_b_isTileMapCollider = toCopy->m_b_isTileMapCollider;
-		activeWidth = toCopy->activeWidth;
-		activeHeight = toCopy->activeHeight;
-		_activeEdgesSet = toCopy->_activeEdgesSet;
-		activeLeft = 0;
-		activeRight = 0;
-		activeBottom = 0;
-		activeTop = 0;
-		nextActiveLeft = 0;
-		nextActiveRight = 0;
-		nextActiveBottom = 0;
-		nextActiveTop = 0;
-	}
-
 	BoxCollider::~BoxCollider()
 	{
 	}
@@ -111,7 +90,7 @@ namespace FlatEngine
 		Transform* transform = nullptr;
 		Vector2 scale = Vector2(1, 1);
 
-		if (parent->IsValid())
+		if (parent != nullptr)
 			transform = parent->GetTransform();
 		if (transform != nullptr)
 			scale = transform->GetScale();

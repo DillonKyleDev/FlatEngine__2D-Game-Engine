@@ -360,6 +360,17 @@ namespace FlatEngine
 		}
 		else if (component->GetTypeString() == "TileMap")
 		{
+			TileMap* tileMap = static_cast<TileMap*>(component);
+			if (tileMap->GetCollisionAreas().size() > 0)
+			{
+				for (std::pair<std::string, std::vector<CollisionAreaData>> collisionArea : tileMap->GetCollisionAreas())
+				{
+					for (CollisionAreaData collData : collisionArea.second)
+					{
+						RemoveBoxCollider(collData.collider->GetID(), ownerID);
+					}
+				}
+			}
 			return RemoveTileMap(ownerID);
 		}
 		else

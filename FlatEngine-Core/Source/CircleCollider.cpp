@@ -29,25 +29,6 @@ namespace FlatEngine {
 		nextActiveTop = 0;
 	}
 
-	CircleCollider::CircleCollider(CircleCollider* toCopy, long newParentID, long myID) : Collider(toCopy, newParentID, myID)
-	{		
-		SetType(ComponentTypes::T_CircleCollider);
-		SetActiveRadiusScreen(toCopy->GetActiveRadiusScreen());
-		SetActiveRadiusGrid(toCopy->GetActiveRadiusGrid());
-		SetShowActiveRadius(toCopy->GetShowActiveRadius());
-
-		_activeEdgesSet = false;
-
-		activeLeft = 0;
-		activeRight = 0;
-		activeBottom = 0;
-		activeTop = 0;
-		nextActiveLeft = 0;
-		nextActiveRight = 0;
-		nextActiveBottom = 0;
-		nextActiveTop = 0;
-	}
-
 	CircleCollider::~CircleCollider()
 	{
 	}
@@ -73,18 +54,18 @@ namespace FlatEngine {
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool _shouldUpdate = false;
 
-		FlatEngine::GameObject parent = GetParent();
+		FlatEngine::GameObject *parent = GetParent();
 		FlatEngine::Transform* transform = nullptr;
 		Vector2 scale = Vector2(1, 1);
 		float activeRadius = GetActiveRadiusGrid();
 
-		if (parent.IsValid())
-			transform = parent.GetTransform();
+		if (parent != nullptr)
+			transform = parent->GetTransform();
 		if (transform != nullptr)
 			scale = transform->GetScale();
 
 		FlatEngine::RigidBody* rigidBody;
-		if (GetParent()->IsValid() && GetParent()->HasComponent("RigidBody"))
+		if (parent != nullptr && parent->HasComponent("RigidBody"))
 		{
 			rigidBody = GetParent()->GetRigidBody();
 			Vector2 velocity = rigidBody->GetVelocity();
@@ -100,7 +81,7 @@ namespace FlatEngine {
 
 		if (_shouldUpdate)
 		{
-			FlatEngine::RigidBody* rigidBody = parent.GetRigidBody();
+			FlatEngine::RigidBody* rigidBody = parent->GetRigidBody();
 			FlatEngine::Transform* transform = GetParent()->GetTransform();
 			Vector2 scale = transform->GetScale();
 			Vector2 activeOffset = GetActiveOffset();

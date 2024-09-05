@@ -24,24 +24,6 @@ namespace FlatEngine
 		m_collisionAreas = std::map<std::string, std::vector<CollisionAreaData>>();	
 	}
 
-	TileMap::TileMap(TileMap* toCopy, long myID, long newParentID)
-	{
-		SetType(ComponentTypes::T_TileMap);
-		SetID(myID);
-		SetParentID(newParentID);
-		m_width = toCopy->m_width;
-		m_height = toCopy->m_height;
-		m_tileWidth = toCopy->m_tileWidth;
-		m_tileHeight = toCopy->m_tileHeight;
-		m_renderOrder = toCopy->m_renderOrder;
-		m_tiles = toCopy->m_tiles;
-		m_tempMoveTiles = toCopy->m_tempMoveTiles;
-		m_selectedTileSet = toCopy->m_selectedTileSet;
-		m_tileSetNames = toCopy->m_tileSetNames;
-		m_selectedCollisionArea = toCopy->m_selectedCollisionArea;
-		m_collisionAreas = toCopy->m_collisionAreas;		
-	}
-
 	TileMap::~TileMap()
 	{
 	}

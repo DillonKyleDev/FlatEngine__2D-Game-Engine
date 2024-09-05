@@ -11,17 +11,6 @@ namespace FlatEngine
 		m_sounds = std::vector<SoundData>();
 	}
 
-	Audio::Audio(Audio* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_Audio);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		SetActive(toCopy->IsActive());
-	}
-
 	Audio::~Audio()
 	{
 	}

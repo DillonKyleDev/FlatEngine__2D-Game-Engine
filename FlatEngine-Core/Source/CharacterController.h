@@ -8,7 +8,6 @@ namespace FlatEngine {
 	{
 	public:
 		CharacterController(long myID, long parentID);
-		CharacterController(CharacterController* toCopy, long newParentID, long myID = -1);
 		~CharacterController();
 
 		std::string GetData();

@@ -38,40 +38,6 @@ namespace FlatEngine {
 		m_windResistance = 1.0f;  // Lower value = more resistance
 	}
 
-	RigidBody::RigidBody(RigidBody* toCopy, long newParentID, long myID)
-	{
-		SetType(ComponentTypes::T_RigidBody);
-		if (myID != -1)
-			SetID(myID);
-		else
-			SetID(GetNextComponentID());
-		SetParentID(newParentID);
-		// Linear
-		m_mass = toCopy->m_mass;
-		m_1overMass = 1 / m_mass;
-		m_velocity = toCopy->m_velocity;
-		m_pendingForces = Vector2(0, 0);
-		m_acceleration = Vector2(0, 0);
-		m_friction = toCopy->m_friction;
-		// Rotational
-		m_I = toCopy->m_I;
-		m_1overI = toCopy->m_1overI;
-		m_pendingTorques = toCopy->m_pendingTorques;
-		m_angularVelocity = toCopy->m_angularVelocity;
-		m_angularAcceleration = toCopy->m_angularAcceleration;
-		m_angularDrag = toCopy->m_angularDrag;
-		m_b_allowTorques = toCopy->m_b_allowTorques;
-
-		m_gravity = toCopy->m_gravity;
-		m_fallingGravity = toCopy->m_fallingGravity;
-		m_terminalVelocity = toCopy->m_terminalVelocity;
-		m_windResistance = toCopy->m_windResistance;
-		m_equilibriumForce = toCopy->m_equilibriumForce;		
-		m_b_isGrounded = toCopy->m_b_isGrounded;
-		m_b_isStatic = toCopy->m_b_isStatic;
-		m_forceCorrection = toCopy->m_forceCorrection;
-	}
-
 	RigidBody::~RigidBody()
 	{
 	}
@@ -191,7 +157,7 @@ namespace FlatEngine {
 		// Get Character Controller for _isMoving
 		FlatEngine::CharacterController* characterController = nullptr;
 
-		if (GetParent()->IsValid() && GetParent()->HasComponent("CharacterController"))
+		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
 			characterController = GetParent()->GetCharacterController();
 
 		bool _isMoving = false;
@@ -216,7 +182,7 @@ namespace FlatEngine {
 		float maxSpeed = 1;
 		FlatEngine::CharacterController* characterController = nullptr;
 
-		if (GetParent()->IsValid() && GetParent()->HasComponent("CharacterController"))
+		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
 			characterController = GetParent()->GetCharacterController();
 
 		if (characterController != nullptr)

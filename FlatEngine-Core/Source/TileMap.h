@@ -28,7 +28,6 @@ namespace FlatEngine
     {
     public:
         TileMap(long myID = -1, long parentID = -1);
-        TileMap(TileMap* toCopy, long newParentID, long myID = -1);
         ~TileMap();
 
         std::string GetData();

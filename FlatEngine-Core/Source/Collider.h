@@ -18,7 +18,6 @@ namespace FlatEngine
 		friend class RigidBody;
 	public:
 		Collider(long myID = -1, long parentID = -1);
-		Collider(Collider* toCopy, long newParentID, long myID = -1);
 		~Collider();
 
 		static bool CheckForCollisionBoxCircle(FlatEngine::BoxCollider* boxCol, FlatEngine::CircleCollider* circleCol);

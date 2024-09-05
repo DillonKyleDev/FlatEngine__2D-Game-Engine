@@ -18,7 +18,6 @@ namespace FlatEngine
 	{
 	public:
 		Audio(long myID = -1, long parentID = -1);
-		Audio(Audio* toCopy, long newParentID, long myID = -1);
 		~Audio();
 
 		std::vector<SoundData> &GetSounds();

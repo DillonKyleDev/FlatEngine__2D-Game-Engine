@@ -9,7 +9,6 @@ namespace FlatEngine
 	{
 	public:
 		Canvas(long myID = -1, long parentID = -1, long canvasID = -1);
-		Canvas(Canvas* toCopy, long newParentID, long myID = -1);
 		~Canvas();
 
 		void AddButton(std::shared_ptr<FlatEngine::Button> button);
@@ -25,13 +24,13 @@ namespace FlatEngine
 		std::string GetData();
 
 	private:
-		long canvasID;
+		long m_canvasID;
 		// Buttons a Canvas owns will be established at run time
-		std::vector<std::shared_ptr<FlatEngine::Button>> buttons;
-		int layerNumber;
-		bool _blocksLayers;
-		float width;
-		float height;
+		std::vector<std::shared_ptr<FlatEngine::Button>> m_buttons;
+		int m_layerNumber;
+		bool m_b_blocksLayers;
+		float m_width;
+		float m_height;
 	};
 }
 

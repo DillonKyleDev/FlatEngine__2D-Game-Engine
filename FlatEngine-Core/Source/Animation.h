@@ -186,7 +186,6 @@ namespace FlatEngine
 		};
 
 		Animation(long myID = -1, long parentID = -1);
-		Animation(Animation* toCopy, long newParentID, long myID = -1);
 		~Animation();
 
 		void AddFrame();
@@ -200,16 +199,16 @@ namespace FlatEngine
 		std::string GetAnimationName();
 		void SetAnimationPath(std::string animationPath);
 		std::string GetAnimationPath();
-		void AddEventFunction(std::string name, std::function<void(GameObject)> callback);
-		std::map<std::string, std::function<void(GameObject)>> GetEventFunctions();
+		void AddEventFunction(std::string name, std::function<void(GameObject*)> callback);
+		std::map<std::string, std::function<void(GameObject*)>> GetEventFunctions();
 	
 	private:
-		std::shared_ptr<S_AnimationProperties> animationProperties;
-		std::string animationName;
-		std::string animationPath;
-		bool _playing;
-		long animationStartTime;
-		std::map<std::string, std::function<void(GameObject)>> eventFunctions;
+		std::shared_ptr<S_AnimationProperties> m_animationProperties;
+		std::string m_animationName;
+		std::string m_animationPath;
+		bool m_b_playing;
+		long m_animationStartTime;
+		std::map<std::string, std::function<void(GameObject*)>> m_eventFunctions;
 	};
 }
 

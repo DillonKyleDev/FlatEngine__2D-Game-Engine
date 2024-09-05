@@ -12,10 +12,6 @@ namespace FlatEngine
 {
 	class GameObject;
 
-	struct ComponentPrefabData {
-
-	};
-
 	class Component
 	{
 	public:

@@ -3,7 +3,6 @@
 #include "Window.h"
 #include "Texture.h"
 #include "Vector2.h"
-//#include "GameObject.h"
 #include <functional>
 #include <imgui.h>
 #include <SDL.h>
@@ -17,7 +16,6 @@ namespace FlatEngine
 	{
 	public:
 		Button(long myID = -1, long parentID = -1);
-		Button(Button* toCopy, long newParentID, long myID = -1);
 		~Button();
 		
 		void SetOnMouseOver(std::function<void(GameObject*)> callback);
