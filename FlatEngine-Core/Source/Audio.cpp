@@ -118,6 +118,11 @@ namespace FlatEngine
 		m_sounds.push_back(soundData);
 	}
 
+	void Audio::SetSounds(std::vector<SoundData> sounds)
+	{
+		m_sounds = sounds;
+	}
+
 	void Audio::RemoveSound(std::string soundName)
 	{
 		for (std::vector<SoundData>::iterator iter = m_sounds.begin(); iter != m_sounds.end(); iter++)

@@ -59,8 +59,7 @@ namespace FlatEngine
 	class ScriptComponent;
 	class Sound;
 	class RigidBody;
-	class CharacterController;
-	class UIManager;
+	class CharacterController;	
 	class ECSManager;
 	class TileSet;
 
@@ -127,7 +126,6 @@ namespace FlatEngine
 
 	// Managers
 	extern SceneManager F_SceneManager;
-	extern UIManager F_UIManager;
 	extern Logger F_Logger;
 	extern std::vector<Process> F_ProfilerProcesses;
 	extern Sound F_SoundController;
@@ -166,6 +164,32 @@ namespace FlatEngine
 	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
 	// Lua / Sol
+	enum LuaEventFunction {
+		OnBoxCollision,
+		OnBoxCollisionEnter,
+		OnBoxCollisionLeave,
+		OnCircleCollision,
+		OnCircleCollisionEnter,
+		OnCircleCollisionLeave,
+		OnButtonMouseOver,
+		OnButtonMouseEnter,
+		OnButtonMouseLeave,
+		OnButtonLeftClick,
+		OnButtonRightClick,
+	};
+	const std::string F_LuaEventNames[11] = {
+		"OnBoxCollision",
+		"OnBoxCollisionEnter",
+		"OnBoxCollisionLeave",
+		"OnCircleCollision",
+		"OnCircleCollisionEnter",
+		"OnCircleCollisionLeave",
+		"OnButtonMouseOver",
+		"OnButtonMouseEnter",
+		"OnButtonMouseLeave",
+		"OnButtonLeftClick",
+		"OnButtonRightClick",
+	};
 	extern void InitLua();
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
@@ -174,10 +198,13 @@ namespace FlatEngine
 	extern void RetrieveLuaScriptPaths();
 	extern bool CheckLuaScriptFile(std::string filePath);
 	extern 	bool InitLuaScript(std::string filePath, GameObject* caller);
-	// Collision Events Passed to Lua
-	extern void CallLuaOnCollisionEnter(GameObject* caller, Collider* collidedWith);
-	extern void CallLuaOnCollisionLeave(GameObject* caller, Collider* collidedWith);
-	extern void CallLuaOnActiveCollision(GameObject* caller, Collider* collidedWith);
+	// Lua/Sol Events
+	template <class T>
+	extern void CallVoidLuaFunction(std::string functionName, T param);
+	template <class T>
+	extern void CallVoidLuaFunction(std::string functionName);
+	extern void CallLuaCollisionFunction(GameObject* caller, Collider* collidedWith, LuaEventFunction eventFunc);
+	extern void CallLuaButtonEventFunction(GameObject* caller, LuaEventFunction eventFunc);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);

@@ -3,7 +3,6 @@
 #include "FlatEngine.h"
 #include "MappingContext.h"
 #include "GameObject.h"
-#include "UIManager.h"
 
 #include "Vector2.h"
 #include "Vector4.h"

@@ -1,7 +1,7 @@
 #pragma once
+#include "Application.h"
 #include "GameObject.h"
 #include "Collider.h"
-#include <thread>
 
 
 namespace FlatEngine
@@ -39,20 +39,34 @@ namespace FlatEngine
 		long GetFramesCounted();
 		void ResetCurrentTime();
 
-		float time; // Total time in deltaTime increments
-		float pausedTime;
-		float activeTime;
-		float deltaTime;
-		float accumulator;
-		Uint32 currentTime;
+		// Components
+		void HandleCamera();
+		void ResetCharacterControllers();
+		void HandleButtons();
+		bool CheckForMouseOver();
+		void ResetHoveredButtons();
+		int GetFirstUnblockedLayer();
+		Canvas GetFirstUnblockedCanvas();
+		void CalculatePhysics();
+		void HandleCollisions(float gridstep, Vector2 viewportCenter);
+		void ApplyPhysics();
+		void RunUpdateOnScripts();
 		
+		float m_time; // Total time in deltaTime increments
+		float m_pausedTime;
+		float m_activeTime;
+		float m_deltaTime;
+		float m_accumulator;
+		Uint32 m_currentTime;
+
 	private:
-		std::vector<std::thread*> m_threads;
-		bool _started;
-		bool _paused;
-		bool _frameSkipped;
-		long framesCounted;
-		bool _gamePaused;
-		std::string startedScene;
+		bool m_b_started;
+		bool m_b_paused;
+		bool m_b_frameSkipped;
+		bool m_b_gamePaused;
+		long m_framesCounted;
+		std::string m_startedScene;
+
+		std::vector<Button> m_hoveredButtons;
 	};
 }

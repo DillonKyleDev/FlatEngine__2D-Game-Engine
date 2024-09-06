@@ -15,7 +15,7 @@ namespace FlatEngine
 		m_height = 5;
 		m_tileWidth = 16;
 		m_tileHeight = 16;
-		m_renderOrder = FL::F_maxSpriteLayers / 2;
+		m_renderOrder = F_maxSpriteLayers / 2;
 		m_tiles = std::map<int, std::map<int, Tile>>();
 		m_tempMoveTiles = std::map<int, std::map<int, Tile>>();
 		m_selectedTileSet = "";
@@ -205,6 +205,15 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
+	void TileMap::SetCollisionAreas(std::map<std::string, std::vector<CollisionAreaData>> collisionAreas)
+	{
+		m_collisionAreas = collisionAreas;
+		for (std::pair<std::string, std::vector<CollisionAreaData>> colPair : m_collisionAreas)
+		{
+			CalculateColliderValues(colPair.first);
+		}
+	}
+
 	//void TileMap::RemoveCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord)
 	//{
 	//	if (m_collisionAreas.count(label) > 0)
@@ -259,8 +268,8 @@ namespace FlatEngine
 				Vector2 colliderStart = Vector2(collisionArea.startCoord.x + 1, collisionArea.startCoord.y + 1);
 				Vector2 colliderEnd = Vector2(collisionArea.endCoord.x + 1, collisionArea.endCoord.y + 1);
 
-				float gridWidthsInATile = m_tileWidth / FL::F_pixelsPerGridSpace;
-				float gridHeightsInATile = m_tileHeight / FL::F_pixelsPerGridSpace;
+				float gridWidthsInATile = m_tileWidth / F_pixelsPerGridSpace;
+				float gridHeightsInATile = m_tileHeight / F_pixelsPerGridSpace;
 
 				Vector2 offset = Vector2();
 
@@ -369,13 +378,13 @@ namespace FlatEngine
 
 	void TileMap::MoveTile(Vector2 tileCoords, Vector2 moveAmount)
 	{
-		int oldX = tileCoords.x;
-		int oldY = tileCoords.y;
+		int oldX = (int)tileCoords.x;
+		int oldY = (int)tileCoords.y;
 
 		if (m_tiles.count(oldX) > 0 && m_tiles.at(oldX).count(oldY) > 0)
 		{
-			int x = tileCoords.x + moveAmount.x;
-			int y = tileCoords.y + moveAmount.y;
+			int x = (int)(tileCoords.x + moveAmount.x);
+			int y = (int)(tileCoords.y + moveAmount.y);
 
 			Tile originalTile = m_tiles.at(oldX).at(oldY);
 			Tile newTile;
@@ -386,7 +395,7 @@ namespace FlatEngine
 			}
 			newTile.tileSetIndex = originalTile.tileSetIndex;
 			newTile.tileSetName = originalTile.tileSetName;
-			newTile.tileCoord = Vector2(x, y);
+			newTile.tileCoord = Vector2((float)x, (float)y);
 			newTile.uvStart = originalTile.uvStart;
 			newTile.uvEnd = originalTile.uvEnd;
 
@@ -477,6 +486,11 @@ namespace FlatEngine
 			yCoords.emplace(newPair);
 			m_tiles.emplace(x, yCoords);
 		}
+	}
+
+	void TileMap::SetTiles(std::map<int, std::map<int, Tile>> tiles)
+	{
+		m_tiles = tiles;
 	}
 
 	void TileMap::EraseTile(Vector2 tileMapCoords)

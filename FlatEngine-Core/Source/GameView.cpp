@@ -7,6 +7,7 @@
 #include "Text.h"
 #include "Animation.h"
 #include "Button.h"
+#include "Canvas.h"
 #include "Texture.h"
 #include "TileMap.h"
 #include "TileSet.h"
@@ -73,11 +74,6 @@ namespace FlatEngine
 		// Set viewport dimensions for rendering objects in game view. We want this to always be centered in game view so we can get it every frame.
 		F_GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
 		F_GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
-
-		// This will catch our interactions
-		//ImGui::InvisibleButton("GameViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		//const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		//const bool is_active = ImGui::IsItemActive();   // Held
 
 		// Render GameObjects in game view
 		Game_RenderObjects(canvas_p0, canvas_sz);
@@ -148,6 +144,7 @@ namespace FlatEngine
 
 		// Get the "center point" of the games view. This will appear to move around when we move the camera
 		F_gameViewCenter = Vector2((F_GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * F_gameViewGridStep.x) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * F_gameViewGridStep.x) + canvas_p0.y);
+
 		// Get the center point of the viewport
 		Vector2 viewportCenterPoint = Vector2((F_GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
 
@@ -213,6 +210,7 @@ namespace FlatEngine
 		Animation* animation = self.GetAnimation();
 		Text* text = self.GetText();
 		Button* button = self.GetButton();
+		Canvas* canvas = self.GetCanvas();
 
 
 		// Animation component handling
@@ -223,14 +221,12 @@ namespace FlatEngine
 				animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
 		}
 
-
 		// Check if each object has a Transform component
 		if (transform != nullptr)
 		{
 			Vector2 position = transform->GetTruePosition();
 			Vector2 scale = transform->GetScale();
 
-			// If it has a text component, render that text texture at the objects transform position
 			if (text != nullptr)
 			{
 				// Cast the component to Text shared_ptr
@@ -257,7 +253,6 @@ namespace FlatEngine
 				}
 			}
 
-			// If it has a sprite component, render that sprite texture at the objects transform position
 			if (sprite != nullptr)
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
@@ -299,7 +294,6 @@ namespace FlatEngine
 				}
 			}
 
-			// Renders TileMap Component
 			if (tileMap != nullptr)
 			{
 				long id = tileMap->GetID();
@@ -352,34 +346,38 @@ namespace FlatEngine
 				}
 			}
 
-
-			// Renders Button Component
 			if (button != nullptr)
 			{
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
 				Vector2 activeOffset = button->GetActiveOffset();
 				bool _isActive = button->IsActive();
+				Vector4 activeEdges = button->GetActiveEdges();
 
-				// Get Active Button bounds to check against later for mouse events
-				float activeLeft = F_gameViewCenter.x + ((position.x - (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * F_gameViewGridStep.x);
-				float activeRight = F_gameViewCenter.x + ((position.x + (activeWidth / 2 * scale.x) + activeOffset.x * scale.x) * F_gameViewGridStep.x);
-				float activeTop = F_gameViewCenter.y - ((position.y + (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * F_gameViewGridStep.x);
-				float activeBottom = F_gameViewCenter.y - ((position.y - (activeHeight / 2 * scale.y) + activeOffset.y * scale.y) * F_gameViewGridStep.x);
+				float activeTop = activeEdges.x;
+				float activeRight = activeEdges.y;
+				float activeBottom = activeEdges.z;
+				float activeLeft = activeEdges.w;
 
-				button->SetActiveEdges(ImVec4(activeTop, activeRight, activeBottom, activeLeft));
+				// Active Edges depends on gameViewCenter, which can change with every call to Game_RenderView(), so we recalculate
+				button->CalculateActiveEdges();
 
-				// FOR DRAWING ACTIVE BUTTON RECTANGLE IN GAME VIEW
-				// 
+				// For drawing border in game view
 				Vector2 topLeft = { activeLeft, activeTop };
 				Vector2 bottomRight = { activeRight, activeBottom };
 
 				drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
 
 				if (_isActive)
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonActive"), 3.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 3.0f, draw_list);
 				else
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("button"), 3.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 3.0f, draw_list);
+			}
+
+			if (canvas != nullptr)
+			{
+				// Active Edges depends on gameViewCenter, which can change with every call to Game_RenderView(), so we recalculate
+				canvas->CalculateActiveEdges();
 			}
 		}
 	}

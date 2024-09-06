@@ -308,7 +308,6 @@
     <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\TileSet.h" />
     <ClInclude Include="Source\Transform.h" />
-    <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\Vector2.h" />
     <ClInclude Include="Source\Vector4.h" />
     <ClInclude Include="Source\Window.h" />
@@ -364,7 +363,6 @@
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\TileSet.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
-    <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\Vector2.cpp" />
     <ClCompile Include="Source\Vector4.cpp" />
     <ClCompile Include="Source\Window.cpp" />

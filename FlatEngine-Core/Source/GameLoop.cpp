@@ -8,35 +8,39 @@
 #include "CompositeCollider.h"
 #include "Transform.h"
 #include "Script.h"
+#include "Button.h"
+#include "Canvas.h"
 #include "TagList.h"
 #include "Camera.h"
 #include "Project.h"
 #include "Scene.h"
 #include "CharacterController.h"
 
-// Multithreading
 #include <vector>
 #include <process.h>
-//#include <thread>
 #include <crtdefs.h>
+
+namespace FL = FlatEngine;
 
 
 namespace FlatEngine
 {
 	GameLoop::GameLoop()
 	{
-		_started = false;
-		_gamePaused = false;
-		_paused = false;
-		_frameSkipped = false;
-		time = 0.0f;
-		activeTime = 0.0f;
-		currentTime = 0;
-		pausedTime = 0;
-		framesCounted = 0;
-		deltaTime = 0.005f;
-		accumulator = deltaTime;
-		startedScene = "";
+		m_b_started = false;
+		m_b_gamePaused = false;
+		m_b_paused = false;
+		m_b_frameSkipped = false;
+		m_time = 0.0f;
+		m_activeTime = 0.0f;
+		m_currentTime = 0;
+		m_pausedTime = 0;
+		m_framesCounted = 0;
+		m_deltaTime = 0.005f;
+		m_accumulator = m_deltaTime;
+		m_startedScene = "";
+
+		m_hoveredButtons = std::vector<Button>();
 	}
 
 	GameLoop::~GameLoop()
@@ -46,75 +50,254 @@ namespace FlatEngine
 	void GameLoop::Start()
 	{
 		// Handle Game Time
-		time = 0.0f;
-		activeTime = time - pausedTime;
-		_paused = false;
-		accumulator = 0.0f;
+		m_time = 0.0f;
+		m_activeTime = m_time - m_pausedTime;
+		m_b_paused = false;
+		m_accumulator = 0.0f;
 
 		// Save the name of the scene we started with so we can load it back up when we stop
-		startedScene = FlatEngine::GetLoadedScenePath();
-
-		_started = true;
-
+		m_startedScene = FlatEngine::GetLoadedScenePath();
+		m_b_started = true;
 		RunAwakeAndStart();
-
-		// Get currently loaded scenes GameObjects and instantiate script objects for them
-		//gameObjects = FlatEngine::GetSceneObjects();
-		//activeScripts.clear();
-		//InitializeScriptObjects(gameObjects);
-
-		//CollectPhysicsBodies();
-
-		currentTime = FlatEngine::GetEngineTime();
-		
-		for (std::thread* thread : m_threads)
-		{
-			delete thread;
-			thread = nullptr;
-		}
-		m_threads.clear();
-
-		//for (int i = 0; i < GetLoadedScene()->GetColliderPairs().size(); i++)
-		//{
-		//	std::thread thread = new std::thread();
-		//	m_threads,
-		//}
+		m_currentTime = FlatEngine::GetEngineTime();
 	}
 
 	void GameLoop::Update(float gridstep, Vector2 viewportCenter)
+	{
+		AddFrame();
+		m_activeTime = m_time - m_pausedTime;
+
+		HandleCamera();
+		ResetCharacterControllers();
+		HandleButtons();
+		RunUpdateOnScripts();
+		CalculatePhysics();
+		HandleCollisions(gridstep, viewportCenter);
+		ApplyPhysics();
+	}
+
+	void GameLoop::Stop()
+	{
+		m_b_started = false;
+		m_b_paused = false;
+		m_framesCounted = 0;
+
+		FlatEngine::LoadScene(m_startedScene);
+	}
+
+	void GameLoop::Pause()
+	{
+		// If the timer is running and isn't already paused
+		if (m_b_started && !m_b_paused)
+		{
+			m_b_paused = true;
+			m_activeTime = m_time - m_pausedTime;
+		}
+	}
+
+	void GameLoop::Unpause()
+	{
+		// If the timer is running and paused
+		if (m_b_started && m_b_paused)
+		{
+			m_b_paused = false;
+			ResetCurrentTime();
+			m_pausedTime = m_time - m_activeTime;
+		}
+	}
+
+	void GameLoop::ResetCurrentTime()
+	{
+		m_currentTime = FlatEngine::GetEngineTime();
+	}
+
+	void GameLoop::HandleCamera()
 	{
 		if (GetLoadedScene()->GetPrimaryCamera() != nullptr)
 		{
 			GetLoadedScene()->GetPrimaryCamera()->Follow();
 		}
+	}
 
-		AddFrame();
-		activeTime = time - pausedTime;
+	void GameLoop::HandleButtons()
+	{
+		static bool b_hasLeftClicked = false;
+		static bool b_hasRightClicked = false;
 
-		// Reset b_isMoving on all CharacterControllers
-		for (std::pair<const long, CharacterController> &owner : FL::GetLoadedScene()->GetCharacterControllers())
+		if (CheckForMouseOver())
+		{
+			ImGuiIO inputOutput = ImGui::GetIO();
+
+			for (Button& hovered : m_hoveredButtons)
+			{
+				if (hovered.GetActiveLayer() >= GetFirstUnblockedLayer())
+				{
+					GameObject* owner = hovered.GetParent();
+
+					// Left clicked
+					if (inputOutput.MouseDown[0] && !b_hasLeftClicked)
+					{
+						b_hasLeftClicked = true;
+						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonLeftClick);
+					}
+					// Unclick
+					if (!inputOutput.MouseDown[0])
+					{
+						b_hasLeftClicked = false;
+					}
+
+					// Right clicked
+					if (inputOutput.MouseDown[1] && !b_hasRightClicked)
+					{
+						b_hasRightClicked = true;
+						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonRightClick);
+					}
+					// Unclick
+					if (!inputOutput.MouseDown[1])
+					{
+						b_hasRightClicked = false;
+					}
+				}
+			}
+		}
+	}
+
+	bool GameLoop::CheckForMouseOver()
+	{
+		std::vector<Button> lastHovered = m_hoveredButtons;
+		ResetHoveredButtons();
+
+		std::map<long, Button>& buttons = GetLoadedScene()->GetButtons();
+
+		for (std::pair<long, Button> buttonPair : buttons)
+		{
+			if (buttonPair.second.IsActive())
+			{
+				Transform* transform = buttonPair.second.GetParent()->GetTransform();
+				Vector4 activeEdges = buttonPair.second.GetActiveEdges();
+				Vector2 mousePos = ImGui::GetIO().MousePos;
+
+				if (FlatEngine::AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+				{
+					m_hoveredButtons.push_back(buttonPair.second);
+					buttonPair.second.SetMouseIsOver(true);
+
+					if (buttonPair.second.GetActiveLayer() >= GetFirstUnblockedLayer())
+					{
+						GameObject* owner = buttonPair.second.GetParent();
+						CallLuaButtonEventFunction(buttonPair.second.GetParent(), LuaEventFunction::OnButtonMouseOver);
+					}
+				}
+			}
+		}
+
+		// Mouse Enter
+		for (Button& hoveredButton : m_hoveredButtons)
+		{
+			bool b_mouseJustEntered = true;
+			for (Button& lastHovered : lastHovered)
+			{
+				if (hoveredButton.GetID() == lastHovered.GetID())
+				{
+					b_mouseJustEntered = false;
+				}
+			}
+			if (b_mouseJustEntered)
+			{
+				CallLuaButtonEventFunction(hoveredButton.GetParent(), LuaEventFunction::OnButtonMouseEnter);
+			}
+		}
+
+		// Mouse Leave
+		for (Button& lastHovered : lastHovered)
+		{
+			bool b_stillHovered = false;
+			for (Button& hoveredButton : m_hoveredButtons)
+			{
+				if (hoveredButton.GetID() == lastHovered.GetID())
+				{
+					b_stillHovered = true;
+				}
+			}
+			if (!b_stillHovered)
+			{
+				CallLuaButtonEventFunction(lastHovered.GetParent(), LuaEventFunction::OnButtonMouseLeave);
+			}
+		}
+
+		return m_hoveredButtons.size() > 0;
+	}
+
+	void GameLoop::ResetHoveredButtons()
+	{
+		for (Button button : m_hoveredButtons)
+		{
+			button.SetMouseIsOver(false);
+		}
+
+		m_hoveredButtons.clear();
+	}
+
+	int GameLoop::GetFirstUnblockedLayer()
+	{
+		Canvas canvas = GetFirstUnblockedCanvas();
+		if (canvas.GetID() != -1)
+		{
+			return canvas.GetLayerNumber();
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	Canvas GameLoop::GetFirstUnblockedCanvas()
+	{
+		Canvas lowestUnblockedCanvas = Canvas(-1);
+		int lowestUnblockedLayer = 0;
+		Vector2 mousePos = ImGui::GetIO().MousePos;
+		std::map<long, Canvas> &canvases = GetLoadedScene()->GetCanvases();
+
+		for (std::pair<long, Canvas> canvasPair : canvases)
+		{
+			Canvas canvas = canvasPair.second;
+			Vector4 activeEdges = canvas.GetActiveEdges();
+			bool b_blocksLayers = canvas.GetBlocksLayers();
+			int layerNumber = canvas.GetLayerNumber();
+
+			if (AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)) && b_blocksLayers && layerNumber >= lowestUnblockedLayer)
+			{
+				lowestUnblockedCanvas = canvas;
+				lowestUnblockedLayer = canvas.GetLayerNumber();
+			}
+		}
+
+		return lowestUnblockedCanvas;
+	}
+
+	void GameLoop::ResetCharacterControllers()
+	{
+		for (std::pair<const long, CharacterController>& owner : FL::GetLoadedScene()->GetCharacterControllers())
 		{
 			owner.second.SetMoving(false);
 		}
+	}
 
+	void GameLoop::CalculatePhysics()
+	{
 		float processTime = (float)FlatEngine::GetEngineTime();
-		RunLuaFuncOnAllScripts("Update");
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		//LogFloat(processTime, "Update Scripts: ");
-
-
-		processTime = (float)FlatEngine::GetEngineTime();
-		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
+		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
 				rigidBody.second.CalculatePhysics();
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "CalculatePhysics: ");
+	}
 
-
-		//processTime = (float)FlatEngine::GetEngineTime();
-		std::map<long, std::map<long, BoxCollider>> &boxColliders = GetLoadedScene()->GetBoxColliders();
+	void GameLoop::HandleCollisions(float gridstep, Vector2 viewportCenter)
+	{		
+		std::map<long, std::map<long, BoxCollider>>& boxColliders = GetLoadedScene()->GetBoxColliders();
 		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = boxColliders.begin(); outerIter != boxColliders.end();)
 		{
 			for (std::map<long, BoxCollider>::iterator innerIter = outerIter->second.begin(); innerIter != outerIter->second.end();)
@@ -125,15 +308,10 @@ namespace FlatEngine
 			}
 			outerIter++;
 		}
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		//LogFloat(processTime, "ResetCollisions & Bounds: ");
 
-		std::vector<std::thread*> threads = std::vector<std::thread*>();
-
-		processTime = (float)FlatEngine::GetEngineTime();
-		// Handle Collision updates here
+		float processTime = (float)FlatEngine::GetEngineTime();		
 		static int continuousCounter = 0;
-		for (std::pair<Collider*, Collider*> &colliderPair : GetLoadedScene()->GetColliderPairs())
+		for (std::pair<Collider*, Collider*>& colliderPair : GetLoadedScene()->GetColliderPairs())
 		{
 			Collider* collider1 = colliderPair.first;
 			Collider* collider2 = colliderPair.second;
@@ -143,7 +321,7 @@ namespace FlatEngine
 				if (collider2 != nullptr && (collider1->GetID() != collider2->GetID()) && collider2->IsActive())
 				{
 					if (collider1->GetActiveLayer() == collider2->GetActiveLayer())
-					{					
+					{
 						Collider::CheckForCollision(collider1, collider2);
 					}
 				}
@@ -153,147 +331,109 @@ namespace FlatEngine
 			continuousCounter = 0;
 		continuousCounter++;
 
-
-		for (std::thread *thread : threads)
-		{
-			thread->join();
-		}
-
-		m_threads.clear();
-
-
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		FlatEngine::AddProcessData("Collision Testing", processTime);
 		//LogFloat(processTime, "Collision Detection");
+	}
 
-
-		//processTime = (float)FlatEngine::GetEngineTime();
-		// Apply RigidBody physics calculations
-		for (std::pair<const long, RigidBody> &rigidBody : GetLoadedScene()->GetRigidBodies())
+	void GameLoop::ApplyPhysics()
+	{
+		float processTime = (float)FlatEngine::GetEngineTime();
+		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
 			{
-				rigidBody.second.ApplyPhysics((float)deltaTime);
+				rigidBody.second.ApplyPhysics((float)m_deltaTime);
 			}
 		}
 		processTime = (float)FlatEngine::GetEngineTime() - processTime;
 		//LogFloat(processTime, "Apply Physics: ");
 	}
 
-	void GameLoop::Stop()
+	void GameLoop::RunUpdateOnScripts()
 	{
-		_started = false;
-		_paused = false;
-		framesCounted = 0;
-
-		// Load back up the saved version of the scene
-		FlatEngine::LoadScene(startedScene);
-	}
-
-	void GameLoop::Pause()
-	{
-		// If the timer is running and isn't already paused
-		if (_started && !_paused)
-		{
-			_paused = true;
-			activeTime = time - pausedTime;
-		}
-	}
-
-	void GameLoop::Unpause()
-	{
-		// If the timer is running and paused
-		if (_started && _paused)
-		{
-			_paused = false;
-			ResetCurrentTime();
-			pausedTime = time - activeTime;
-		}
-	}
-
-	void GameLoop::ResetCurrentTime()
-	{
-		currentTime = FlatEngine::GetEngineTime();
+		float processTime = (float)FlatEngine::GetEngineTime();
+		RunLuaFuncOnAllScripts("Update");
+		processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		//LogFloat(processTime, "Update Scripts: ");
 	}
 
 	bool GameLoop::IsGamePaused()
 	{
-		return _gamePaused;
+		return m_b_gamePaused;
 	}
 
 	void GameLoop::PauseGame()
 	{
-		_gamePaused = true;
+		m_b_gamePaused = true;
 	}
 
 	void GameLoop::UnpauseGame()
 	{
-		_gamePaused = false;
+		m_b_gamePaused = false;
 	}
 
-	// In seconds
 	float GameLoop::TimeEllapsedInSec()
 	{
-		if (_started)
+		if (m_b_started)
 		{
-			return activeTime;
+			return m_activeTime;
 		}
 		return 0;
 	}
 
-	// In ms
 	long GameLoop::TimeEllapsedInMs()
 	{
-		if (_started)
+		if (m_b_started)
 		{
-			return (long)(time * 1000.0f);
+			return (long)(m_time * 1000.0f);
 		}
 		return 0;
 	}
 
 	bool GameLoop::IsStarted()
 	{
-		return _started;
+		return m_b_started;
 	}
 
 	bool GameLoop::IsPaused()
 	{
-		return _paused && _started;
+		return m_b_paused && m_b_started;
 	}
 
 	float GameLoop::GetAverageFps()
 	{
 		if (TimeEllapsedInSec() != 0)
-			return (float)framesCounted / (float)activeTime;
+			return (float)m_framesCounted / (float)m_activeTime;
 		else
 			return 200;
 	}
 
 	long GameLoop::GetFramesCounted()
 	{
-		return framesCounted;
+		return m_framesCounted;
 	}
 
 	void GameLoop::AddFrame()
 	{
-		framesCounted++;
+		m_framesCounted++;
 	}
 
 	float GameLoop::GetDeltaTime()
 	{
-		return deltaTime;
+		return m_deltaTime;
 	}
 
-	void GameLoop::SetFrameSkipped(bool _skipped)
+	void GameLoop::SetFrameSkipped(bool b_skipped)
 	{
-		if (_skipped)
+		if (b_skipped)
 			ResetCurrentTime();
 
-		_frameSkipped = _skipped;
+		m_b_frameSkipped = b_skipped;
 	}
 
 	bool GameLoop::IsFrameSkipped()
 	{
-		return _frameSkipped;
+		return m_b_frameSkipped;
 	}
 }

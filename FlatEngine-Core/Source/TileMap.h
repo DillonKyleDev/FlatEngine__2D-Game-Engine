@@ -45,6 +45,7 @@ namespace FlatEngine
         void SetSelectedTileSet(std::string tileSet);
         std::map<std::string, std::vector<CollisionAreaData>>& GetCollisionAreas();
         BoxCollider* AddCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
+        void SetCollisionAreas(std::map<std::string, std::vector<CollisionAreaData>> collisionAreas);
         //void RemoveCollisionArea(std::string label, Vector2 startCoord, Vector2 endCoord);
         void SetCollisionAreaValues(std::string label, std::vector<std::pair<Vector2, Vector2>> colCoords);
         void CalculateColliderValues(std::string label);
@@ -59,7 +60,9 @@ namespace FlatEngine
         void SetTileSets(std::vector<std::string> tileSets);
         std::vector<std::string> GetTileSets();
         std::map<int, std::map<int, Tile>> GetTiles();
+        static void CreateTileForMap(Vector2 coord, TileSet* tileSet, int tileSetIndex, std::map<int, std::map<int, Tile>>& tiles);
         void SetTile(Vector2 tileMapCoords, TileSet* tileSet, int tileSetIndex);
+        void SetTiles(std::map<int, std::map<int, Tile>> tiles);
         void EraseTile(Vector2 tileMapCoords);
 
     private:
@@ -74,7 +77,7 @@ namespace FlatEngine
         std::vector<std::string> m_tileSetNames;  
 
         std::string m_selectedCollisionArea;
-        std::map<std::string, std::vector<CollisionAreaData>> m_collisionAreas;  
+        std::map<std::string, std::vector<CollisionAreaData>> m_collisionAreas;
     };
 }
 

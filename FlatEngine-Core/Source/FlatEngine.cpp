@@ -1,5 +1,4 @@
 #include "FlatEngine.h"
-#include "UIManager.h"
 #include "MappingContext.h"
 #include "PrefabManager.h"
 #include "Logger.h"
@@ -12,7 +11,6 @@
 #include "AssetManager.h"
 #include "MappingContext.h"
 #include "TileSet.h"
-
 #include "GameLoop.h"
 #include "Scene.h"
 #include "Transform.h"
@@ -27,6 +25,7 @@
 #include "Audio.h"
 #include "Sound.h"
 #include "Animation.h"
+#include "Canvas.h"
 
 #include <SDL_ttf.h>
 #include <SDL.h>
@@ -84,7 +83,6 @@ namespace FlatEngine
 
 	// Managers
 	Logger F_Logger = Logger();
-	UIManager F_UIManager = UIManager();
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
 	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
@@ -343,7 +341,7 @@ namespace FlatEngine
 
 		ImGui_ImplSDL2_InitForSDLRenderer(Window::W_Window, Window::W_Renderer);
 		ImGui_ImplSDLRenderer2_Init(Window::W_Renderer);
-		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by FL::GetColor();
+		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by GetColor();
 	}
 
 	void SetImGuiColors()
@@ -561,12 +559,12 @@ namespace FlatEngine
 		}
 
 		if (newProject.GetLoadedScenePath() != "")
-			FL::LoadScene(newProject.GetLoadedScenePath());
+			LoadScene(newProject.GetLoadedScenePath());
 		else
-			FL::CreateNewScene();
+			CreateNewScene();
 
 		// Set loaded project
-		FL::SetLoadedProject(newProject);
+		SetLoadedProject(newProject);
 	}
 
 	void BuildProject()
@@ -636,20 +634,15 @@ namespace FlatEngine
 	{
 		// Stop any playing music
 		F_SoundController.StopMusic();
-		// Reset buttons in UIManager
-		F_UIManager.ResetButtons();
 
 		if (F_SceneManager.LoadScene(filepath))
 		{
 			if (F_SceneManager.GetLoadedScene() != nullptr)
+			{
 				F_SceneManager.SaveAnimationPreviewObjects();
+			}
 
 			F_SceneManager.LoadAnimationPreviewObjects();
-
-			// If the GameLoop is running, reinitialize the new scene's GameObjects
-			if (FlatEngine::GameLoopStarted())
-				GetLoadedScene()->InitializeScriptObjects(); // Empty function may not need
-
 			F_PlayerObject = GetObjectByTag("Player");			
 		}
 	}
@@ -759,7 +752,7 @@ namespace FlatEngine
 		newContext.SetPath(filePath);
 		newContext.SetName(fileName);
 		SaveMappingContext(filePath, newContext);
-		FL::InitializeMappingContexts();
+		InitializeMappingContexts();
 	}
 
 	GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position)
@@ -777,7 +770,7 @@ namespace FlatEngine
 		}
 		else if (extension == ".prf")
 		{
-			return FL::Instantiate(FL::GetFilenameFromPath(filePath), position);
+			return Instantiate(GetFilenameFromPath(filePath), position);
 		}
 		else
 		{
@@ -1002,43 +995,6 @@ namespace FlatEngine
 				HandleContextEvents(context, event, firedKeys);
 			}
 		}
-
-
-		// BUTTON COMPONENT EVENTS - GameView
-		// 
-		// TODO: Check here if the Game viewport is focused before getting the mouse data //
-		// Check for mouse over on all of our Game Buttons
-		static bool _hasLeftClicked = false;
-		static bool _hasRightClicked = false;
-		if (FlatEngine::F_UIManager.CheckForMouseOver())
-		{
-			std::vector<FlatEngine::Button*> hoveredButtons = FlatEngine::F_UIManager.GetHoveredButtons();
-			ImGuiIO inputOutput = ImGui::GetIO();
-			FlatEngine::Button* topLevelButton = FlatEngine::F_UIManager.GetTopLevelButton();
-
-			// Call the OnMouseOverFunction() in the top level button that is hovered
-			GameObject *thisObject = FlatEngine::GetObjectById(FlatEngine::F_UIManager.GetTopLevelButton()->GetParentID());
-
-			// If mouse is clicked call the OnLeftClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[0] && !_hasLeftClicked && topLevelButton != nullptr && topLevelButton->LeftClickSet())
-			{
-				_hasLeftClicked = true;
-				topLevelButton->OnLeftClickFunction(thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[0])
-				_hasLeftClicked = false;
-
-			// If mouse is clicked call the OnRightClickFunction() in the top level button that is hovered
-			if (inputOutput.MouseDown[1] && !_hasRightClicked && topLevelButton != nullptr && topLevelButton->RightClickSet())
-			{
-				_hasRightClicked = true;
-				topLevelButton->OnRightClickFunction(thisObject);
-			}
-			// Unclick check
-			if (!inputOutput.MouseDown[1])
-				_hasRightClicked = false;
-		}
 	}
 
 	void HandleEngineEvents(SDL_Event event)
@@ -1052,67 +1008,39 @@ namespace FlatEngine
 				switch (event.key.keysym.sym)
 				{
 				case SDLK_t:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+					F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 					break;
 
 				case SDLK_w:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
+					F_CursorMode = F_CURSOR_MODE::SCALE;
 					break;
 
 				case SDLK_r:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
+					F_CursorMode = F_CURSOR_MODE::ROTATE;
 					break;
 
 				case SDLK_b:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
+					F_CursorMode = F_CURSOR_MODE::TILE_BRUSH;
 					break;
 
 				case SDLK_e:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
+					F_CursorMode = F_CURSOR_MODE::TILE_ERASE;
 					break;
 
 				case SDLK_c:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+					F_CursorMode = F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 					break;
 
 				case SDLK_m:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+					F_CursorMode = F_CURSOR_MODE::TILE_MOVE;
 					break;
 
 				case SDLK_s:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+					F_CursorMode = F_CURSOR_MODE::TILE_MULTISELECT;
 					break;
 
 				case SDLK_SPACE:
-					FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
-					
-					//ImGuiIO& inputOutput = ImGui::GetIO();
-					//Vector2 currentPos = ImGui::GetCursorScreenPos();
-					//bool _weightedScroll = true;
-					//Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
-
-
-					//// Border
-					//if (b_filled)
-					//	ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
-					//else
-					//	ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
-
-					////ImGui::SetNextItemAllowOverlap();
-					//FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-					//const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-					//const bool is_active = ImGui::IsItemActive();   // Held
-					//const bool is_clicked = ImGui::IsItemClicked();
-
-					//// For panning the scene view
-					//const float mouse_threshold_for_pan = 0.0f;
-					//if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-					//{
-					//	// This does not seem to work properly when resizing the window
-					//	// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
-					//	scrolling.x += inputOutput.MouseDelta.x;
-					//	scrolling.y += inputOutput.MouseDelta.y;
-					//}
+					F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 					break;
 				}
 			}
@@ -3298,12 +3226,11 @@ namespace FlatEngine
 			}
 		}
 
-		// Instantiate Prefab (if it is one) using PrefabManager (keeps objects up-to-date with changes made to Prefab json)
 		if (_isPrefab)
 		{
 			loadedObject = Instantiate(prefabName, spawnLocation, loadedParentID, loadedID);
 		}
-		else // If object does not originate from a Prefab, load it normally
+		else
 		{
 			loadedObject = CreateGameObject(loadedParentID, loadedID);
 			loadedObject->SetActive(_isActive);
@@ -3365,7 +3292,6 @@ namespace FlatEngine
 				bool _isCollapsed = CheckJsonBool(componentJson, "_isCollapsed", objectName);
 				bool _isActive = CheckJsonBool(componentJson, "_isActive", objectName);
 
-				//Add each loaded component to the newly created GameObject
 				if (type == "Transform")
 				{
 					Transform* newTransform = loadedObject->AddTransform(id, _isActive, _isCollapsed);
@@ -3409,7 +3335,7 @@ namespace FlatEngine
 					));
 					newCamera->SetShouldFollow(CheckJsonBool(componentJson, "_follow", objectName));
 					newCamera->SetFollowSmoothing(CheckJsonFloat(componentJson, "followSmoothing", objectName));
-					newCamera->SetFollowing(CheckJsonLong(componentJson, "following", objectName));
+					newCamera->SetToFollowID(CheckJsonLong(componentJson, "following", objectName));
 				}
 				else if (type == "Script")
 				{
@@ -3439,7 +3365,6 @@ namespace FlatEngine
 				{
 					Audio* newAudio = loadedObject->AddAudio(id, _isActive, _isCollapsed);				
 
-					// Get Sounds data
 					if (JsonContains(componentJson, "soundData", objectName))
 					{
 						for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
@@ -3585,6 +3510,11 @@ namespace FlatEngine
 				loadedObject->GetRigidBody()->UpdateI();
 			}
 
+			if (loadedObject->GetButton() != nullptr)
+			{
+				loadedObject->GetButton()->CalculateActiveEdges();
+			}
+
 			loadedObject->SetName(objectName);
 
 			// Set children after because they may not be created yet and SetActive() calls child objects
@@ -3602,5 +3532,5 @@ namespace FlatEngine
 // Border around object
 //auto wPos = ImGui::GetWindowPos();
 //auto wSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
-//ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, FL::GetColor32("componentBorder"), 2);
+//ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, GetColor32("componentBorder"), 2);
 

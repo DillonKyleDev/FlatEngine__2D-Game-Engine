@@ -79,9 +79,6 @@ using ComponentTypes = FL::Component::ComponentTypes;
 
 namespace FlatGui
 {
-	class WidgetsManager;
-
-
 	extern bool _editingValue;
 	extern ImDrawList* drawList;
 

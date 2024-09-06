@@ -157,7 +157,9 @@ namespace FlatGui
 
 		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			transform->SetActive(_isActive);
+		}
 
 		// Render Table
 		if (FL::PushTable("##TransformProperties" + std::to_string(id), 2))
@@ -228,26 +230,40 @@ namespace FlatGui
 					sprite->SetTexture(fs_path.string());
 				}
 				else
+				{
 					FL::LogString("ERROR : File must be of type .png to drop here.");
+				}
 			}
 		}
 
-		//if (ImGui::IsItemHovered())
-		//	FL::RenderTextToolTip("Drag an image here from the File Explorer");
+		if (ImGui::IsItemHovered())
+		{
+			FL::RenderTextToolTip("Drag an image here from the File Explorer");
+		}
 
 		// Render Table
 		if (FL::PushTable("##SpriteProperties" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+			{
 				sprite->SetScale(Vector2(xScale, yScale));
+			}
 			if (FL::RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
-				sprite->SetScale(Vector2(xScale, yScale));																
+			{
+				sprite->SetScale(Vector2(xScale, yScale));
+			}
 			if (FL::RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+			{
 				sprite->SetOffset(Vector2(xOffset, yOffset));
+			}
 			if (FL::RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
-				sprite->SetOffset(Vector2(xOffset, yOffset));										
+			{
+				sprite->SetOffset(Vector2(xOffset, yOffset));
+			}
 			if (FL::RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
+			{
 				sprite->SetRenderOrder(renderOrder);
+			}
 			FL::RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
 			FL::RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
 			FL::PopTable();
@@ -262,13 +278,19 @@ namespace FlatGui
 		ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), FL::GetColor32("logBg"));
 		ImGui::SetCursorScreenPos(Vector2(cursorScreen.x + 5, cursorScreen.y + 5));
 		if (FL::RenderImageButton("##PivotTopLeftButton", FL::GetTexture("upLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::TopLeft);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotTopButton", FL::GetTexture("up"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::Top);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotTopRightButton", FL::GetTexture("upRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::TopRight);
+		}
 								
 		ImGui::SameLine(0, 17);
 		ImGui::Text("Pivot Point:");
@@ -276,13 +298,19 @@ namespace FlatGui
 		// Left, Center, Right
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
 		if (FL::RenderImageButton("##PivotLeftButton", FL::GetTexture("left"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::Left);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotCenterButton", FL::GetTexture("center"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::Center);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotRightButton", FL::GetTexture("right"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::Right);
+		}
 								
 		ImGui::SameLine(0, 17);
 		ImGui::Text(pivotString.c_str());
@@ -290,13 +318,19 @@ namespace FlatGui
 		// BottomLeft, Bottom, BottomRight
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
 		if (FL::RenderImageButton("##PivotBottomLeftButton", FL::GetTexture("downLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::BottomLeft);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotBottomButton", FL::GetTexture("down"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::Bottom);
+		}
 		ImGui::SameLine(0, 3);
 		if (FL::RenderImageButton("##PivotBottomRightButton", FL::GetTexture("downRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		{
 			sprite->SetPivotPoint(Sprite::PivotPoint::BottomRight);
+		}
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
 
@@ -322,27 +356,39 @@ namespace FlatGui
 		long id = camera->GetID();
 		bool _follow = camera->GetShouldFollow();
 		std::string following = "";
-		if (camera->GetFollowing() != -1)
-			following = FL::GetObjectById(camera->GetFollowing())->GetName();
+		if (camera->GetToFollowID() != -1)
+			following = FL::GetObjectById(camera->GetToFollowID())->GetName();
 		float followSmoothing = camera->GetFollowSmoothing();
 
 		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			camera->SetActive(_isActive);
+		}
 
 		// Render Table
 		if (FL::PushTable("##CameraProperties" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000))
+			{
 				camera->SetDimensions(width, height);
+			}
 			if (FL::RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000))
+			{
 				camera->SetDimensions(width, height);
+			}
 			if (FL::RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100))
+			{
 				camera->SetZoom(zoom);
+			}
 			if (FL::RenderCheckboxTableRow("##CameraShouldFollowTargetCheckbox", "Follow", _follow))
+			{
 				camera->SetShouldFollow(_follow);
+			}
 			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(id), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
+			{
 				camera->SetFollowSmoothing(followSmoothing);
+			}
 			FL::PopTable();
 		}
 
@@ -351,10 +397,12 @@ namespace FlatGui
 		{
 			if (droppedValue != -1 && FL::GetObjectById(droppedValue) != nullptr)
 			{
-				camera->SetFollowing(droppedValue);
+				camera->SetToFollowID(droppedValue);
 			}
 			else
+			{
 				FL::LogString("ERROR : Something went wrong, item must be a GameObject with a Transform component");
+			}
 		}
 
 		// Frustrum color picker
@@ -371,16 +419,22 @@ namespace FlatGui
 			if (FL::RenderCheckbox("Is Primary Camera", _isPrimary))
 			{
 				if (_isPrimary)
+				{
 					FL::GetLoadedScene()->SetPrimaryCamera(camera);
+				}
 				else
+				{
 					FL::GetLoadedScene()->RemovePrimaryCamera();
+				}
 			}									
 		}
 		else
 		{
 			bool temp = false;
 			if (FL::RenderCheckbox("Is Primary Camera", temp))
+			{
 				FL::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
+			}
 			temp = false;
 			ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
 		}
@@ -397,7 +451,9 @@ namespace FlatGui
 
 		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			script->SetActive(_isActive);
+		}
 
 		for (int i = 0; i < FL::F_luaScriptNames.size(); i++)
 		{
@@ -413,15 +469,21 @@ namespace FlatGui
 
 		// Select which Lua script is attached to this Script
 		if (FL::RenderSelectable("##SelectLuaScript", FL::F_luaScriptNames, currentLuaScript))
+		{
 			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]);
+		}
 	
 		bool b_openModal = false;
 		if (FL::RenderButton("New Script", Vector2(100, 20)))
+		{
 			b_openModal = true;
+		}
 
 		// Create new Lua script modal
 		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openModal))
+		{
 			FL::CreateNewLuaScript(newScriptName);
+		}
 	}
 
 	void RenderButtonComponent(Button* button)
@@ -433,52 +495,70 @@ namespace FlatGui
 		int activeLayer = button->GetActiveLayer();	
 		long id = button->GetID();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			button->SetActive(_isActive);
+		}
 
-		// Render Table
 		if (FL::PushTable("##ButtonProperties" + std::to_string(id), 2))
 		{
-			FL::RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000);
-			FL::RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000);
-			button->SetActiveDimensions(activeWidth, activeHeight);
-			FL::RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX);
-			FL::RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX);
-			button->SetActiveOffset(activeOffset);
+			if (FL::RenderIntDragTableRow("##activeLayer" + std::to_string(id), "Active layer", activeLayer, 1, 20, 20))
+			{
+				button->SetActiveLayer(activeLayer);
+			}
+			if (FL::RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000))
+			{
+				button->SetActiveDimensions(activeWidth, activeHeight);
+			}
+			if (FL::RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000))
+			{
+				button->SetActiveDimensions(activeWidth, activeHeight);
+			}
+			if (FL::RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX))
+			{
+				button->SetActiveOffset(activeOffset);
+			}
+			if (FL::RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX))
+			{
+				button->SetActiveOffset(activeOffset);
+			}
 			FL::PopTable();
 		}
 	}
 
 	void RenderCanvasComponent(Canvas* canvas)
 	{
-		// Retrieve Canvas values
 		float canvasWidth = canvas->GetWidth();
 		float canvasHeight = canvas->GetHeight();
 		int layerNumber = canvas->GetLayerNumber();
 		bool _blocksLayers = canvas->GetBlocksLayers();
-		std::vector<std::shared_ptr<Button>> canvasButtons = canvas->GetButtons();
 		bool _isActive = canvas->IsActive();
 		long id = canvas->GetID();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			canvas->SetActive(_isActive);
 
-		// Render Table
 		if (FL::PushTable("##CanvasProperties" + std::to_string(id), 2))
 		{
-			FL::RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20);
-			canvas->SetLayerNumber(layerNumber);
-			FL::RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX);
-			FL::RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX);
-			canvas->SetDimensions(canvasWidth, canvasHeight);
+			if (FL::RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20))
+			{
+				canvas->SetLayerNumber(layerNumber);
+			}
+			if (FL::RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX))
+			{
+				canvas->SetDimensions(canvasWidth, canvasHeight);
+			}
+			if (FL::RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX))
+			{
+				canvas->SetDimensions(canvasWidth, canvasHeight);
+			}
 			FL::PopTable();
 		}
 
-		// _BlocksLayers Checkbox
 		if (FL::RenderCheckbox("Blocks Layers:", _blocksLayers))
-			canvas->SetBlocksLayers(_blocksLayers);							
+		{
+			canvas->SetBlocksLayers(_blocksLayers);
+		}
 	}
 
 	void RenderAnimationComponent(Animation* animation)
@@ -487,7 +567,6 @@ namespace FlatGui
 		bool _isActive = animation->IsActive();
 		long id = animation->GetID();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			animation->SetActive(_isActive);
 
@@ -498,10 +577,14 @@ namespace FlatGui
 		if (FL::GameLoopStarted() && !FL::GameLoopPaused())
 		{
 			if (FL::RenderButton("Play Animation"))
+			{
 				animation->Play(FL::GetEllapsedGameTimeInMs());
+			}
 
 			if (animation->GetAnimationPath() != "")
+			{
 				ImGui::SameLine(0, 5);
+			}
 		}
 		
 		if (animation->GetAnimationPath() != "")
@@ -519,15 +602,15 @@ namespace FlatGui
 
 	void RenderAudioComponent(Audio* audio)
 	{
-		// Retrieve Audio values
 		long id = audio->GetID();
 		bool _isActive = audio->IsActive();
 		std::vector<FL::SoundData> &sounds = audio->GetSounds();
 
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			audio->SetActive(_isActive);
+		}
 
-		// Creating and adding new Sounds to this Audio component
 		static std::string path = "";
 		static std::string name = "";
 		int droppedValue = -1;
@@ -597,7 +680,7 @@ namespace FlatGui
 
 			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", sound.name, false))
 			{				
-				//sound.name = audioName;
+				sound.name = audioName;
 			}
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
@@ -650,7 +733,6 @@ namespace FlatGui
 		float yOffset = offset.y;
 		long id = text->GetID();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			text->SetActive(_isActive);
 
@@ -665,7 +747,6 @@ namespace FlatGui
 		if (FL::RenderInput("##FontPath" + std::to_string(id), "Font path: ", fontPath, _canOpenFiles))
 			text->SetFontPath(fontPath);
 
-		// Render Table
 		if (FL::PushTable("##TextProperties" + std::to_string(id), 2))
 		{
 			FL::RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
@@ -690,11 +771,9 @@ namespace FlatGui
 		if (characterController->IsMoving())
 			isMoving = "true";
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			characterController->SetActive(_isActive);
 
-		// Render Table
 		if (FL::PushTable("##CharacterControllerProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##MaxAccelerationDrag" + std::to_string(id), "Max Acceleration", maxAcceleration, 0.01f, 0.0f, 20.0f))
@@ -727,7 +806,6 @@ namespace FlatGui
 		if (_isColliding)
 			isCollidingString = "true";
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			boxCollider->SetActive(_isActive);
 
@@ -753,7 +831,6 @@ namespace FlatGui
 			maxHeight = tileMapWidth * tileWidth / FL::F_pixelsPerGridSpace;
 		}
 
-		// Render Table
 		if (FL::PushTable("##BoxColliderProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, widthIncrement, 0.0f, maxWidth))
@@ -811,11 +888,9 @@ namespace FlatGui
 		if (_isColliding)
 			isCollidingString = "true";
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			circleCollider->SetActive(_isActive);
 
-		// Render Table
 		if (FL::PushTable("##CircleColliderProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f))
@@ -870,11 +945,9 @@ namespace FlatGui
 		if (_isGrounded)
 			isGroundedString = "true";
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			rigidBody->SetActive(_isActive);
 
-		// Render Table
 		if (FL::PushTable("##RigidBodyProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
@@ -910,7 +983,7 @@ namespace FlatGui
 		}								
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		// Static Checkbox
+
 		FL::RenderCheckbox(" Is Static", _isStatic);
 		rigidBody->SetIsStatic(_isStatic);
 		FL::RenderCheckbox(" Allow Torques", _allowTorques);
@@ -928,11 +1001,9 @@ namespace FlatGui
 		int renderOrder = tileMap->GetRenderOrder();
 		std::vector<std::string> tileSets = tileMap->GetTileSets();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 			tileMap->SetActive(_isActive);
 
-		// Render Table
 		if (FL::PushTable("##tileMapProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1, 1, INT_MAX))

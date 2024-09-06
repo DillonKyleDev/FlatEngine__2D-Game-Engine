@@ -25,23 +25,9 @@ namespace FlatEngine
 
 		virtual void RecalculateBounds();
 		static bool CheckForCollision(Collider* collider1, Collider* collider2);
-		virtual void ResetCollisions();
-		virtual void UpdateCenter(); // May be useless??
+		virtual void ResetCollisions();		
 
-		void AddCollidingObject(Collider* collidedWith);
-		void RemoveCollidingObject(GameObject object);
-		void SetOnActiveCollision(std::function<void(GameObject* self, GameObject* collidedWith)> callback);
-		void SetOnCollisionEnter(std::function<void(GameObject* self, GameObject* collidedWith)> callback);
-		void SetOnCollisionLeave(std::function<void(GameObject* self, GameObject* collidedWith)> callback);
-		std::function<void(GameObject* self, GameObject* collidedWith)> OnActiveCollision;
-		std::function<void(GameObject* self, GameObject* collidedWith)> OnCollisionEnter;
-		std::function<void(GameObject* self, GameObject* collidedWith)> OnCollisionLeave;
-		bool OnActiveCollisionSet();
-		bool OnCollisionEnterSet();
-		bool OnCollisionLeaveSet();
-		void SetOnActiveCollisionSet(bool _set);
-		void SetOnCollisionEnterSet(bool _set);
-		void SetOnCollisionLeaveSet(bool _set);
+		void AddCollidingObject(Collider* collidedWith);		
 
 		bool IsColliding();
 		void SetColliding(bool _isColliding);
@@ -143,9 +129,6 @@ namespace FlatEngine
 		bool _isStatic;
 		bool _isSolid;
 		bool _showActiveRadius;
-		bool _onActiveCollidingSet;
-		bool _onCollisionEnterSet;
-		bool _onCollisionLeaveSet;
 		bool _isComposite;
 	};
 }

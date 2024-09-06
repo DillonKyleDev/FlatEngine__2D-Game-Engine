@@ -1,6 +1,7 @@
 #pragma once
 #include "Button.h"
 #include "Component.h"
+#include "Vector4.h"
 
 
 namespace FlatEngine 
@@ -8,29 +9,26 @@ namespace FlatEngine
 	class Canvas : public Component
 	{
 	public:
-		Canvas(long myID = -1, long parentID = -1, long canvasID = -1);
+		Canvas(long myID = -1, long parentID = -1);
 		~Canvas();
 
-		void AddButton(std::shared_ptr<FlatEngine::Button> button);
-		void RemoveButton(std::shared_ptr<FlatEngine::Button> button);
 		float GetWidth();
 		float GetHeight();
 		void SetDimensions(float width, float height);
+		void CalculateActiveEdges();
+		Vector4 GetActiveEdges();
 		void SetLayerNumber(int layerNumber);
 		int GetLayerNumber();
 		void SetBlocksLayers(bool _blocksLayers);
 		bool GetBlocksLayers();
-		std::vector<std::shared_ptr<FlatEngine::Button>> GetButtons();
 		std::string GetData();
 
 	private:
-		long m_canvasID;
-		// Buttons a Canvas owns will be established at run time
-		std::vector<std::shared_ptr<FlatEngine::Button>> m_buttons;
 		int m_layerNumber;
 		bool m_b_blocksLayers;
 		float m_width;
 		float m_height;
+		Vector4 m_activeEdges;
 	};
 }
 

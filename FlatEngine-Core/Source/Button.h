@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Texture.h"
 #include "Vector2.h"
+#include "Vector4.h"
 #include <functional>
 #include <imgui.h>
 #include <SDL.h>
@@ -18,12 +19,6 @@ namespace FlatEngine
 		Button(long myID = -1, long parentID = -1);
 		~Button();
 		
-		void SetOnMouseOver(std::function<void(GameObject*)> callback);
-		void SetOnMouseEnter(std::function<void(GameObject*)> callback);
-		void SetOnMouseLeave(std::function<void(GameObject*)> callback);
-		void SetOnMouseLeftClick(std::function<void(GameObject*)> callback);
-		void SetOnMouseRightClick(std::function<void(GameObject*)> callback);
-
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
 		void SetActiveLayer(int layer);
@@ -31,42 +26,21 @@ namespace FlatEngine
 		float GetActiveWidth();
 		float GetActiveHeight();
 		Vector2 GetActiveOffset();
-		void SetMouseIsOver(bool _isOver);
-		void SetIsOverFired(bool _fired);
+		void SetMouseIsOver(bool b_isOver);
+		void SetIsOverFired(bool b_fired);
 		bool MouseIsOver();
 		//ImVec4(activeTop, activeRight, activeBottom, activeLeft)
-		void SetActiveEdges(ImVec4 edges);
-		ImVec4 GetActiveEdges();
+		void CalculateActiveEdges();
+		Vector4 GetActiveEdges();
 		std::string GetData();
-		void SetConnectedScript(std::string scriptName);
-		std::string GetConnectedScript();
-
-		std::function<void(GameObject*)> OnMouseOverFunction;
-		std::function<void(GameObject*)> OnMouseEnterFunction;
-		std::function<void(GameObject*)> OnMouseLeaveFunction;
-		std::function<void(GameObject*)> OnLeftClickFunction;
-		std::function<void(GameObject*)> OnRightClickFunction;
-
-		bool MouseOverSet();
-		bool MouseEnterSet();
-		bool MouseLeaveSet();
-		bool LeftClickSet();
-		bool RightClickSet();
 
 	private:
-		bool _mouseOverSet;
-		bool _mouseEnterSet;
-		bool _mouseLeaveSet;
-		bool _leftClickSet;
-		bool _rightClickSet;
-
-		bool _mouseIsOver;
-		bool _hasMouseOverFired;
-		float activeWidth;
-		float activeHeight;
-		ImVec4 activeEdges;
-		Vector2 activeOffset;
-		int activeLayer;
-		std::string connectedScript;
+		bool m_b_mouseIsOver;
+		bool m_b_hasMouseOverFired;
+		float m_activeWidth;
+		float m_activeHeight;
+		Vector4 m_activeEdges;
+		Vector2 m_activeOffset;
+		int m_activeLayer;
 	};
 }

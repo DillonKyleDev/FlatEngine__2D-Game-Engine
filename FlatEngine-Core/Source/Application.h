@@ -4,8 +4,6 @@
 #include <string>
 
 
-namespace FL = FlatEngine;
-
 namespace FlatEngine
 {
 	enum DirectoryType {
@@ -41,7 +39,7 @@ namespace FlatEngine
 		void EndRender();   // Defined in Application.cpp
 		void SetDirectoriesType(DirectoryType dirType) { m_directoriesType = dirType; };
 		DirectoryType GetDirectoriesType() { return m_directoriesType;  };
-		virtual FL::GameLoop* GetGameLoop() { return nullptr; };
+		virtual GameLoop* GetGameLoop() { return nullptr; };
 		virtual bool GameLoopStarted() { return false; };
 		virtual bool GameLoopPaused() { return false; };
 		virtual void StartGameLoop() {};

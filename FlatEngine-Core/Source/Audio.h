@@ -28,6 +28,7 @@ namespace FlatEngine
 		void LoadAudio(SoundData& soundData);
 		bool IsMusic(std::string soundName);
 		void AddSound(std::string soundName, std::string soundPath, bool b_isMusic);
+		void SetSounds(std::vector<SoundData> sounds);
 		void RemoveSound(std::string soundName);
 		void PlaySound(std::string soundName);
 		void PauseSound(std::string soundName);

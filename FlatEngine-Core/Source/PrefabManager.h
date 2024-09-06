@@ -3,6 +3,10 @@
 #include "Sprite.h"
 #include "TagList.h"
 #include "Animation.h"
+#include "Audio.h"
+#include "TileMap.h"
+#include "Collider.h"
+#include "Button.h"
 
 #include <string>
 #include <memory>
@@ -54,7 +58,7 @@ namespace FlatEngine
 		float zoom;
 		ImVec4 frustrumColor;
 		bool b_isPrimaryCamera;
-		bool b_follow;
+		bool b_shouldFollow;
 		long toFollowID;
 		float followSmoothing;
 	};
@@ -62,11 +66,11 @@ namespace FlatEngine
 		std::string attachedScript;
 	};
 	struct ButtonPrefabData : public ComponentPrefabData {
-		
+		Vector2 activeDimensions;
+		Vector2 activeOffset;
+		int activeLayer;
 	};
-	struct CanvasPrefabData : public ComponentPrefabData {
-		long canvasID;		
-		std::vector<std::shared_ptr<FlatEngine::Button>> buttons;
+	struct CanvasPrefabData : public ComponentPrefabData {		
 		int layerNumber;
 		bool b_blocksLayers;
 		float width;
@@ -74,22 +78,16 @@ namespace FlatEngine
 	};
 	struct AnimationPrefabData : public ComponentPrefabData {
 		std::shared_ptr<Animation::S_AnimationProperties> animationProperties;
-		std::string animationName;
 		std::string animationPath;
-		bool b_playing;
-		long animationStartTime;
-		std::map<std::string, std::function<void(GameObject*)>> eventFunctions;
 	};
 	struct AudioPrefabData : public ComponentPrefabData {
 		std::vector<SoundData> sounds;
 	};
 	struct TextPrefabData : public ComponentPrefabData {
-		TTF_Font* font;
 		std::string fontPath;
 		int fontSize;
 		std::string text;
-		SDL_Color color;
-		Texture texture;
+		Vector4 color;
 		Vector2 offset;
 		int renderOrder;
 	};
@@ -106,20 +104,20 @@ namespace FlatEngine
 		bool b_isComposite;
 	};
 	struct CircleColliderPrefabData : public ComponentPrefabData {
-
+		float activeRadius;
+		Vector2 activeOffset;
+		bool b_isContinuous;
+		bool b_isStatic;
+		bool b_isSolid;
+		bool b_isComposite;
+		int activeLayer;
 	};
-	struct CompositeColliderPrefabData : public ComponentPrefabData {
-		std::vector<std::shared_ptr<Collider>> colliders;
-	};
-	struct RigidBodyPrefabData : public ComponentPrefabData {
-		// Linear
+	struct RigidBodyPrefabData : public ComponentPrefabData {		
 		float mass;
-		float friction;
-		// Rotational
+		float friction;		
 		float I;
 		float angularDrag;
 		bool b_allowTorques;
-
 		float forceCorrection;
 		bool b_isStatic;
 		float windResistance;
@@ -132,8 +130,6 @@ namespace FlatEngine
 		float maxAcceleration;
 		float maxSpeed;
 		float airControl;
-		float speedCorrection;
-		bool b_isMoving;
 	};
 	struct TileMapPrefabData : public ComponentPrefabData {
 		int width;
@@ -143,7 +139,7 @@ namespace FlatEngine
 		int renderOrder;
 		std::map<int, std::map<int, Tile>> tiles;
 		std::vector<std::string> tileSetNames;
-		std::map<std::string, std::vector<CollisionAreaData>> collisionAreas;
+		std::map<std::string, std::vector<std::pair<Vector2, Vector2>>> collisionAreas;
 	};
 
 	struct Prefab {

@@ -16,6 +16,7 @@
 #include "GameLoop.h"
 #include "Audio.h"
 #include "Vector2.h"
+#include "TileSet.h"
 
 #include <fstream>
 
@@ -97,7 +98,7 @@ namespace FlatEngine
 
 
 		float objectRotation = 0;
-		// Loop through the components in this Prefabs json
+		// Loop through the components in this PrefabsCheckJson
 		for (int j = 0; j < objectJson["components"].size(); j++)
 		{
 			json componentJson = objectJson["components"][j];
@@ -119,8 +120,8 @@ namespace FlatEngine
 				transform->b_isCollapsed = b_isCollapsed;
 				transform->ownerId = object.ID;
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
-				transform->origin = Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName));
-				transform->scale = Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName));
+				transform->origin = CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName);
+				transform->scale = CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName);
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
 				objectRotation = transform->rotation;
 
@@ -136,11 +137,13 @@ namespace FlatEngine
 				sprite->ownerId = object.ID;
 				sprite->path = CheckJsonString(componentJson, "path", objectName);
 				std::string pivotPoint = "Center";
-				if (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
+				if  (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
+				{
 					pivotPoint = CheckJsonString(componentJson, "pivotPoint", objectName);
+				}
 				sprite->pivotPoint = pivotPoint;
-				sprite->scale = Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName));
-				sprite->offset = Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName));
+				sprite->scale = CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName);
+				sprite->offset = CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName);
 				sprite->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);
 				sprite->tintColor = Vector4(
 					CheckJsonFloat(componentJson, "tintColorX", objectName),
@@ -169,7 +172,7 @@ namespace FlatEngine
 					CheckJsonFloat(componentJson, "frustrumBlue", objectName),
 					CheckJsonFloat(componentJson, "frustrumAlpha", objectName)
 				);
-				camera->b_follow = CheckJsonBool(componentJson, "_follow", objectName);
+				camera->b_shouldFollow = CheckJsonBool(componentJson, "_follow", objectName);
 				camera->followSmoothing = CheckJsonFloat(componentJson, "followSmoothing", objectName);
 				camera->toFollowID = CheckJsonLong(componentJson, "following", objectName);
 
@@ -189,64 +192,91 @@ namespace FlatEngine
 			}
 			else if (type == "Button")
 			{
-				//std::shared_ptr<ButtonPrefabData> script = std::make_shared<ScriptPrefabData>();
-				//script->type = "Script";
-				//newButton->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
-				//newButton->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
-				//newButton->SetActiveLayer(CheckJsonInt(componentJson, "activeLayer", objectName));
+				std::shared_ptr<ButtonPrefabData> button = std::make_shared<ButtonPrefabData>();				
+				button->activeDimensions = CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName);
+				button->activeOffset = CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
+				button->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
+				
+				prefab.components.emplace(componentID, button);
 			}
 			else if (type == "Canvas")
 			{
-				//Canvas* newCanvas = loadedObject.AddCanvas(id, _isActive, _isCollapsed);
-				//newCanvas->SetDimensions(CheckJsonFloat(componentJson, "canvasWidth", objectName), CheckJsonFloat(componentJson, "canvasHeight", objectName));
-				//newCanvas->SetLayerNumber(CheckJsonInt(componentJson, "layerNumber", objectName));
-				//newCanvas->SetBlocksLayers(CheckJsonBool(componentJson, "_blocksLayers", objectName));
+				std::shared_ptr<CanvasPrefabData> canvas = std::make_shared<CanvasPrefabData>();
+				canvas->width = CheckJsonFloat(componentJson, "canvasWidth", objectName);
+				canvas->height = CheckJsonFloat(componentJson, "canvasHeight", objectName);
+				canvas->layerNumber = CheckJsonInt(componentJson, "layerNumber", objectName);
+				canvas->b_blocksLayers = CheckJsonBool(componentJson, "_blocksLayers", objectName);
+
+				prefab.components.emplace(componentID, canvas);
 			}
 			else if (type == "Animation")
 			{
-				//Animation* newAnimation = loadedObject->AddAnimation(id, _isActive, _isCollapsed);
-				//newAnimation->SetAnimationPath(CheckJsonString(componentJson, "path", objectName));
+				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();			
+				animation->animationPath = CheckJsonString(componentJson, "path", objectName);
+
+				prefab.components.emplace(componentID, animation);
 			}
 			else if (type == "Audio")
 			{
-				//Audio* newAudio = loadedObject.AddAudio(id, _isActive, _isCollapsed);
+				std::shared_ptr<AudioPrefabData> audio = std::make_shared<AudioPrefabData>();
 
-				//// Get Sounds data
-				//if (JsonContains(componentJson, "soundData", objectName))
-				//{
-				//	for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
-				//	{
-				//		json tileJson = componentJson["soundData"][sound];
-				//		std::string path = CheckJsonString(tileJson, "path", objectName);
-				//		std::string name = CheckJsonString(tileJson, "name", objectName);
-				//		bool b_isMusic = CheckJsonBool(tileJson, "b_isMusic", objectName);
+				if (JsonContains(componentJson, "soundData", objectName))
+				{
+					for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
+					{
+						json tileJson = componentJson["soundData"][sound];
+						std::string path = CheckJsonString(tileJson, "path", objectName);
+						std::string name = CheckJsonString(tileJson, "name", objectName);
+						bool b_isMusic = CheckJsonBool(tileJson, "b_isMusic", objectName);
 
-				//		newAudio->AddSound(name, path, b_isMusic);
-				//	}
-				//}
+						SoundData soundData;
+						soundData.name = name;
+						soundData.b_isMusic = b_isMusic;
+						soundData.path = path;
+						soundData.sound = std::make_shared<Sound>();
+
+						if (soundData.path != "" && soundData.sound != nullptr)
+						{
+							if (soundData.b_isMusic)
+							{
+								soundData.sound->LoadMusic(soundData.path);
+							}
+							else
+							{
+								soundData.sound->LoadEffect(soundData.path);
+							}
+						}
+
+						audio->sounds.push_back(soundData);
+					}
+				}
+
+				prefab.components.emplace(componentID, audio);
 			}
 			else if (type == "Text")
 			{
-				//Text* newText = loadedObject.AddText(id, _isActive, _isCollapsed);
-				//newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
-				//newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
-				//newText->SetColor(Vector4(
-				//	CheckJsonFloat(componentJson, "f_red", objectName),
-				//	CheckJsonFloat(componentJson, "f_green", objectName),
-				//	CheckJsonFloat(componentJson, "f_blue", objectName),
-				//	CheckJsonFloat(componentJson, "f_alpha", objectName)
-				//));
-				//newText->SetText(CheckJsonString(componentJson, "text", objectName));
-				//newText->SetOffset(Vector2(CheckJsonFloat(componentJson, "offsetX", objectName), CheckJsonFloat(componentJson, "offsetY", objectName)));
-				//newText->SetRenderOrder(CheckJsonInt(componentJson, "renderOrder", objectName));
-				//newText->LoadText();
+				std::shared_ptr<TextPrefabData> text = std::make_shared<TextPrefabData>();
+				text->fontPath = CheckJsonString(componentJson, "fontPath", objectName);
+				text->fontSize = CheckJsonInt(componentJson, "fontSize", objectName);
+				text->color = Vector4(
+					CheckJsonFloat(componentJson, "f_red", objectName),
+					CheckJsonFloat(componentJson, "f_green", objectName),
+					CheckJsonFloat(componentJson, "f_blue", objectName),
+					CheckJsonFloat(componentJson, "f_alpha", objectName)
+				);
+				text->text = CheckJsonString(componentJson, "text", objectName);
+				text->offset = CheckJsonFloat(componentJson, "offsetX", objectName), CheckJsonFloat(componentJson, "offsetY", objectName);
+				text->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);				
+
+				prefab.components.emplace(componentID, text);
 			}
 			else if (type == "CharacterController")
 			{
-				//CharacterController* newCharacterController = loadedObject.AddCharacterController(id, _isActive, _isCollapsed);
-				//newCharacterController->SetMaxAcceleration(CheckJsonFloat(componentJson, "maxAcceleration", objectName));
-				//newCharacterController->SetMaxSpeed(CheckJsonFloat(componentJson, "maxSpeed", objectName));
-				//newCharacterController->SetAirControl(CheckJsonFloat(componentJson, "airControl", objectName));
+				std::shared_ptr<CharacterControllerPrefabData> characterController = std::make_shared<CharacterControllerPrefabData>();			
+				characterController->maxSpeed = CheckJsonFloat(componentJson, "maxSpeed", objectName);
+				characterController->airControl = CheckJsonFloat(componentJson, "airControl", objectName);
+
+				prefab.components.emplace(componentID, characterController);
 			}
 			else if (type == "BoxCollider")
 			{
@@ -257,8 +287,8 @@ namespace FlatEngine
 				boxCollider->b_isCollapsed = b_isCollapsed;
 				boxCollider->ownerId = object.ID;
 				boxCollider->b_tileMapCollider = CheckJsonBool(componentJson, "_isTileMapCollider", objectName);
-				boxCollider->activeDimensions = Vector2(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
-				boxCollider->activeOffset = Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName));
+				boxCollider->activeDimensions =CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName);
+				boxCollider->activeOffset =CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
 				boxCollider->b_isContinuous = CheckJsonBool(componentJson, "_isContinuous", objectName);
 				boxCollider->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
 				boxCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
@@ -271,87 +301,132 @@ namespace FlatEngine
 			}
 			else if (type == "CircleCollider")
 			{
-				//CircleCollider* newCircleCollider = loadedObject.AddCircleCollider(id, _isActive, _isCollapsed);
-				//newCircleCollider->SetActiveRadiusGrid(CheckJsonFloat(componentJson, "activeRadius", objectName));
-				//newCircleCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
-				//newCircleCollider->SetIsContinuous(CheckJsonBool(componentJson, "_isContinuous", objectName));
-				//newCircleCollider->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
-				//newCircleCollider->SetIsSolid(CheckJsonBool(componentJson, "_isSolid", objectName));
-				//newCircleCollider->SetActiveLayer(CheckJsonInt(componentJson, "activeLayer", objectName));
-				//newCircleCollider->SetIsComposite(CheckJsonBool(componentJson, "_isComposite", objectName));
+				std::shared_ptr<CircleColliderPrefabData> circleCollider = std::make_shared<CircleColliderPrefabData>();
+				circleCollider->activeRadius = CheckJsonFloat(componentJson, "activeRadius", objectName);
+				circleCollider->activeOffset = CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
+				circleCollider->b_isContinuous = CheckJsonBool(componentJson, "_isContinuous", objectName);
+				circleCollider->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
+				circleCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
+				circleCollider->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
+				circleCollider->b_isComposite = CheckJsonBool(componentJson, "_isComposite", objectName);
+			
+				prefab.components.emplace(componentID, circleCollider);
 			}
 			else if (type == "RigidBody")
 			{
-				//RigidBody* newRigidBody = loadedObject.AddRigidBody(id, _isActive, _isCollapsed);
-				//newRigidBody->SetMass(CheckJsonFloat(componentJson, "mass", objectName));
-				//newRigidBody->SetAngularDrag(CheckJsonFloat(componentJson, "angularDrag", objectName));
-				//newRigidBody->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
-				//newRigidBody->SetFallingGravity(CheckJsonFloat(componentJson, "fallingGravity", objectName));
-				//newRigidBody->SetFriction(CheckJsonFloat(componentJson, "friction", objectName));
-				//newRigidBody->SetWindResistance(CheckJsonFloat(componentJson, "windResistance", objectName));
-				//newRigidBody->SetEquilibriumForce(CheckJsonFloat(componentJson, "equilibriumForce", objectName));
-				//newRigidBody->SetTerminalVelocity(CheckJsonFloat(componentJson, "terminalVelocity", objectName));
-				//newRigidBody->SetIsStatic(CheckJsonBool(componentJson, "_isStatic", objectName));
-				//newRigidBody->SetTorquesAllowed(CheckJsonBool(componentJson, "_allowTorques", objectName));
+				std::shared_ptr<RigidBodyPrefabData> rigidBody = std::make_shared<RigidBodyPrefabData>();
+				rigidBody->mass = CheckJsonFloat(componentJson, "mass", objectName);
+				rigidBody->angularDrag = CheckJsonFloat(componentJson, "angularDrag", objectName);
+				rigidBody->gravity = CheckJsonFloat(componentJson, "gravity", objectName);
+				rigidBody->fallingGravity = CheckJsonFloat(componentJson, "fallingGravity", objectName);
+				rigidBody->friction = CheckJsonFloat(componentJson, "friction", objectName);
+				rigidBody->windResistance =CheckJsonFloat(componentJson, "windResistance", objectName);
+				rigidBody->equilibriumForce =CheckJsonFloat(componentJson, "equilibriumForce", objectName);
+				rigidBody->terminalVelocity =CheckJsonFloat(componentJson, "terminalVelocity", objectName);
+				rigidBody->b_isStatic =CheckJsonBool(componentJson, "_isStatic", objectName);
+				rigidBody->b_allowTorques =CheckJsonBool(componentJson, "_allowTorques", objectName);
+
+				prefab.components.emplace(componentID, rigidBody);
 			}
 			else if (type == "TileMap")
 			{
-				//TileMap* newTileMap = loadedObject.AddTileMap(id, _isActive, _isCollapsed);
-				//newTileMap->SetWidth(CheckJsonInt(componentJson, "width", objectName));
-				//newTileMap->SetHeight(CheckJsonInt(componentJson, "height", objectName));
-				//newTileMap->SetTileWidth(CheckJsonInt(componentJson, "tileWidth", objectName));
-				//newTileMap->SetTileHeight(CheckJsonInt(componentJson, "tileHeight", objectName));
+				std::shared_ptr<TileMapPrefabData> tileMap = std::make_shared<TileMapPrefabData>();
+				tileMap->width = CheckJsonInt(componentJson, "width", objectName);
+				tileMap->height = CheckJsonInt(componentJson, "height", objectName);
+				tileMap->tileWidth = CheckJsonInt(componentJson, "tileWidth", objectName);
+				tileMap->tileHeight = CheckJsonInt(componentJson, "tileHeight", objectName);
+		
+				// Get used TileSet names
+				if (JsonContains(componentJson, "tileSets", objectName))
+				{
+					for (int tileSet = 0; tileSet < componentJson["tileSets"].size(); tileSet++)
+					{
+						json tileSetJson = componentJson["tileSets"][tileSet];
+						tileMap->tileSetNames.push_back(CheckJsonString(tileSetJson, "name", objectName));
+					}
+				}
+				// Get Tile data
+				if (JsonContains(componentJson, "tiles", objectName))
+				{
+					std::map<int, std::map<int, Tile>> tiles;
 
-				//// Get used TileSet names
-				//if (JsonContains(componentJson, "tileSets", objectName))
-				//{
-				//	for (int tileSet = 0; tileSet < componentJson["tileSets"].size(); tileSet++)
-				//	{
-				//		json tileSetJson = componentJson["tileSets"][tileSet];
-				//		newTileMap->AddTileSet(CheckJsonString(tileSetJson, "name", objectName));
-				//	}
-				//}
-				//// Get Tile data
-				//if (JsonContains(componentJson, "tiles", objectName))
-				//{
-				//	for (int tile = 0; tile < componentJson["tiles"].size(); tile++)
-				//	{
-				//		json tileJson = componentJson["tiles"][tile];
-				//		float x = CheckJsonFloat(tileJson, "tileCoordX", objectName);
-				//		float y = CheckJsonFloat(tileJson, "tileCoordY", objectName);
-				//		std::string tileSetName = CheckJsonString(tileJson, "tileSetName", objectName);
-				//		int tileSetIndex = CheckJsonInt(tileJson, "tileSetIndex", objectName);
+					for (int tile = 0; tile < componentJson["tiles"].size(); tile++)
+					{
+						json tileJson = componentJson["tiles"][tile];
+						float x = CheckJsonFloat(tileJson, "tileCoordX", objectName);
+						float y = CheckJsonFloat(tileJson, "tileCoordY", objectName);
+						std::string tileSetName = CheckJsonString(tileJson, "tileSetName", objectName);
+						int tileSetIndex = CheckJsonInt(tileJson, "tileSetIndex", objectName);
+						Vector2 coord = Vector2(x, y);
 
-				//		if (tileSetName != "" && tileSetIndex != -1)
-				//		{
-				//			newTileMap->SetTile(Vector2(x, y), GetTileSet(tileSetName), tileSetIndex);
-				//		}
-				//	}
-				//}
-				//// Get Collision Area data
-				//if (JsonContains(componentJson, "collisionAreas", objectName))
-				//{
-				//	for (int collisionArea = 0; collisionArea < componentJson["collisionAreas"].size(); collisionArea++)
-				//	{
-				//		json colliderAreaJson = componentJson["collisionAreas"][collisionArea];
-				//		json colliderDataJson = colliderAreaJson["areaData"];
-				//		std::string collisionAreaName = CheckJsonString(colliderAreaJson, "name", objectName);
-				//		std::vector<std::pair<Vector2, Vector2>> collisionCoordBuffer;
+						if (tileSetName != "" && tileSetIndex != -1)
+						{
+							TileSet* tileSet = GetTileSet(tileSetName);
+							SDL_Texture* texture = tileSet->GetTexture()->GetTexture();
+							Vector2 uvStart = tileSet->GetIndexUVs(tileSetIndex).first;
+							Vector2 uvEnd = tileSet->GetIndexUVs(tileSetIndex).second;
 
-				//		for (int colArea = 0; colArea < colliderDataJson.size(); colArea++)
-				//		{
-				//			Vector2 startCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "startCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "startCoordY", objectName));
-				//			Vector2 endCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "endCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "endCoordY", objectName));
-				//			std::pair<Vector2, Vector2> colPair = { startCoord, endCoord };
-				//			collisionCoordBuffer.push_back(colPair);
-				//		}
+							Tile newTile = Tile();
+							newTile.tileCoord = coord;
+							int x = (int)coord.x;
+							int y = (int)coord.y;
+							newTile.tileSetName = tileSet->GetName();
+							newTile.tileSetIndex = tileSetIndex;
+							newTile.tileSetTexture = texture;
+							newTile.uvStart = uvStart;
+							newTile.uvEnd = uvEnd;
 
-				//		if (collisionCoordBuffer.size() > 0)
-				//		{
-				//			newTileMap->SetCollisionAreaValues(collisionAreaName, collisionCoordBuffer);
-				//		}
-				//	}
-				//}
+							if (tiles.count(x) > 0 && tiles.at(x).count(y) > 0)
+							{
+								tiles.at(x).at(y) = newTile;
+							}
+							else if (tiles.count(x) > 0 && tiles.at(x).count(y) == 0)
+							{
+								std::pair<int, Tile> newPair = { y, newTile };
+								tiles.at(x).emplace(newPair);
+							}
+							else if (tiles.count(x) == 0)
+							{
+								std::pair<int, Tile> newPair = { y, newTile };
+								std::map<int, Tile> yCoords;
+								yCoords.emplace(newPair);
+								tiles.emplace(x, yCoords);
+							}
+						}
+					}
+
+					tileMap->tiles = tiles;
+				}
+				// Get Collision Area data
+				if (JsonContains(componentJson, "collisionAreas", objectName))
+				{
+					std::map<std::string, std::vector<std::pair<Vector2, Vector2>>> collisionAreasDataMap;
+
+					for (int collisionArea = 0; collisionArea < componentJson["collisionAreas"].size(); collisionArea++)
+					{
+						json colliderAreaJson = componentJson["collisionAreas"][collisionArea];
+						json colliderDataJson = colliderAreaJson["areaData"];
+						std::string collisionAreaName = CheckJsonString(colliderAreaJson, "name", objectName);
+						std::vector<std::pair<Vector2, Vector2>> collisionCoordBuffer;
+
+						for (int colArea = 0; colArea < colliderDataJson.size(); colArea++)
+						{
+							Vector2 startCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "startCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "startCoordY", objectName));
+							Vector2 endCoord = Vector2(CheckJsonFloat(colliderDataJson[colArea], "endCoordX", objectName), CheckJsonFloat(colliderDataJson[colArea], "endCoordY", objectName));
+							std::pair<Vector2, Vector2> colPair = { startCoord, endCoord };
+							collisionCoordBuffer.push_back(colPair);
+						}
+
+						if (collisionCoordBuffer.size() > 0)
+						{
+							collisionAreasDataMap.emplace(collisionAreaName, collisionCoordBuffer);
+						}
+					}
+
+					tileMap->collisionAreas = collisionAreasDataMap;
+				}
+				
+				prefab.components.emplace(componentID, tileMap);
 			}
 
 
@@ -380,7 +455,7 @@ namespace FlatEngine
 		// Opening file in append mode
 		file_obj.open(path, std::ios::app);
 
-		// Array that will hold our gameObject json objects
+		// Array that will hold our gameObjectCheckJson objects
 		json prefabObjectJsonArray;
 
 		gameObject.SetName(prefabName);
@@ -395,11 +470,11 @@ namespace FlatEngine
 		std::vector<long> childIDs = gameObject.GetChildren();
 		for (int i = 0; i < childIDs.size(); i++)
 		{
-			// Add the gameObject json to the prefabObjectJsonArray
+			// Add the gameObjectCheckJson to the prefabObjectJsonArray
 			prefabObjectJsonArray.push_back(CreateJsonFromObject(*GetObjectById(childIDs[i])));
 		}
 
-		// Recreate the GameObjects json object and add the array as the content
+		// Recreate the GameObjectsCheckJson object and add the array as the content
 		json prefabObject = json::object({ { "Prefab", prefabObjectJsonArray }, { "Name", prefabName } });
 
 		// Add the GameObjects object contents to the file
@@ -427,7 +502,7 @@ namespace FlatEngine
 			json prefabJson = LoadFileData(prefabPath.string());
 			if (prefabJson != NULL)
 			{
-				//Getting data from the json 
+				//Getting data from theCheckJson 
 				//std::string name = firstObjectName[0]["name"];
 
 				auto prefabObjects = prefabJson["Prefab"];
@@ -448,72 +523,202 @@ namespace FlatEngine
 
 	GameObject *PrefabManager::Instantiate(std::string prefabName, Vector2 position, long parentID, long ID)
 	{
-		GameObject* instantiatedObject = nullptr;
+		GameObject* rootObject = nullptr;
 
 		if (m_prefabs.count(prefabName) > 0)
 		{
 			Prefab prefab = m_prefabs.at(prefabName);
 			GameObjectPrefabData root = prefab.rootObject;
+			
+			rootObject = CreateGameObject(parentID, ID);
+			rootObject->SetName(prefabName);
+			rootObject->SetIsPrefab(true);
+			rootObject->SetPrefabName(prefabName);
+			rootObject->SetPrefabSpawnLocation(position);
+			rootObject->SetActive(root.b_isActive);
+			rootObject->SetTagList(root.tagList);
 
-			// Root object
-			instantiatedObject = CreateGameObject(parentID, ID);
-
-			if (ID != -1)
+			for (std::pair<long, GameObjectPrefabData> objectData : prefab.objects)
 			{
-				instantiatedObject->SetID(ID);
-			}
+				if (objectData.first != rootObject->GetID())
+				{
+					//GameObject* childObject = CreateGameObject(objectData.second.parentID, objectData.second.ID);
 
-			instantiatedObject->SetName(prefabName);
-			instantiatedObject->SetIsPrefab(true);
-			instantiatedObject->SetPrefabName(prefabName);
-			instantiatedObject->SetPrefabSpawnLocation(position);
-			instantiatedObject->SetActive(root.b_isActive);
-			instantiatedObject->SetTagList(root.tagList);
+					//instantiatedObject->SetName(prefabName);
+					//instantiatedObject->SetIsPrefab(true);
+					//instantiatedObject->SetPrefabName(prefabName);
+					//instantiatedObject->SetPrefabSpawnLocation(position);
+					//instantiatedObject->SetActive(root.b_isActive);
+					//instantiatedObject->SetTagList(root.tagList);
+				}
+			}
 
 			for (long componentID : root.componentIDs)
 			{
-				if (prefab.components.at(componentID)->type == "Transform")
+				if (prefab.components.count(componentID) > 0)
 				{
-					std::shared_ptr<TransformPrefabData> transformData = std::static_pointer_cast<TransformPrefabData>(prefab.components.at(componentID));
-					Transform* transform = instantiatedObject->GetTransform();
-					transform->SetActive(transformData->b_isActive);
-					transform->SetCollapsed(transformData->b_isCollapsed);
-					transform->SetScale(transformData->scale);
-					transform->SetRotation(transformData->rotation);
-					transform->SetOrigin(transformData->origin);
-					if (parentID != -1)
+					if (prefab.components.at(componentID)->type == "Transform")
 					{
-						transform->SetInitialPosition(transformData->position);
+						std::shared_ptr<TransformPrefabData> transformData = std::static_pointer_cast<TransformPrefabData>(prefab.components.at(componentID));
+						Transform* transform = rootObject->GetTransform();
+						transform->SetActive(transformData->b_isActive);
+						transform->SetCollapsed(transformData->b_isCollapsed);
+						transform->SetScale(transformData->scale);
+						transform->SetRotation(transformData->rotation);
+						transform->SetOrigin(transformData->origin);
+						if (parentID != -1)
+						{
+							transform->SetInitialPosition(transformData->position);
+						}
+						else
+						{
+							transform->SetInitialPosition(position);
+						}
 					}
-					else
+					else if (prefab.components.at(componentID)->type == "Sprite")
 					{
-						transform->SetInitialPosition(position);
+						std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
+						Sprite* sprite = rootObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
+						sprite->SetTexture(spriteData->path);
+						sprite->SetOffset(spriteData->offset);
+						sprite->SetPivotPoint(spriteData->pivotPoint);
+						sprite->SetRenderOrder(spriteData->renderOrder);
+						sprite->SetTintColor(spriteData->tintColor);
 					}
-				}
-				else if (prefab.components.at(componentID)->type == "Sprite")
-				{
-					std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
-					Sprite* sprite = instantiatedObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
-					sprite->SetTexture(spriteData->path);
-					sprite->SetOffset(spriteData->offset);
-					sprite->SetPivotPoint(spriteData->pivotPoint);
-					sprite->SetRenderOrder(spriteData->renderOrder);
-					sprite->SetTintColor(spriteData->tintColor);
-				}
-				else if (prefab.components.at(componentID)->type == "Sprite")
-				{
-					std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
-					Sprite* sprite = instantiatedObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
-					sprite->SetTexture(spriteData->path);
-					sprite->SetOffset(spriteData->offset);
-					sprite->SetPivotPoint(spriteData->pivotPoint);
-					sprite->SetRenderOrder(spriteData->renderOrder);
-					sprite->SetTintColor(spriteData->tintColor);
+					else if (prefab.components.at(componentID)->type == "Camera")
+					{
+						std::shared_ptr<CameraPrefabData> cameraData = std::static_pointer_cast<CameraPrefabData>(prefab.components.at(componentID));
+						Camera* camera = rootObject->AddCamera(-1, cameraData->b_isActive, cameraData->b_isCollapsed);
+						camera->SetDimensions(cameraData->width, cameraData->height);
+						camera->SetZoom(cameraData->zoom);
+						camera->SetFrustrumColor(cameraData->frustrumColor);
+						camera->SetPrimaryCamera(cameraData->b_isPrimaryCamera);
+						camera->SetToFollowID(cameraData->toFollowID);
+						camera->SetShouldFollow(cameraData->b_shouldFollow);
+						camera->SetFollowSmoothing(cameraData->followSmoothing);
+					}
+					else if (prefab.components.at(componentID)->type == "Script")
+					{
+						std::shared_ptr<ScriptPrefabData> scriptData = std::static_pointer_cast<ScriptPrefabData>(prefab.components.at(componentID));
+						Script* script = rootObject->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
+						script->SetAttachedScript(scriptData->attachedScript);
+					}
+					else if (prefab.components.at(componentID)->type == "Button")
+					{
+						std::shared_ptr<ButtonPrefabData> buttonData = std::static_pointer_cast<ButtonPrefabData>(prefab.components.at(componentID));
+						Button* button = rootObject->AddButton(-1, buttonData->b_isActive, buttonData->b_isCollapsed);
+						button->SetActiveDimensions(buttonData->activeDimensions.x, buttonData->activeDimensions.y);
+						button->SetActiveOffset(buttonData->activeOffset);
+						button->SetActiveLayer(buttonData->activeLayer);
+					}
+					else if (prefab.components.at(componentID)->type == "Canvas")
+					{
+						std::shared_ptr<CanvasPrefabData> canvasData = std::static_pointer_cast<CanvasPrefabData>(prefab.components.at(componentID));
+						Canvas* canvas = rootObject->AddCanvas(-1, canvasData->b_isActive, canvasData->b_isCollapsed);
+						canvas->SetLayerNumber(canvasData->layerNumber);
+						canvas->SetBlocksLayers(canvasData->b_blocksLayers);
+						canvas->SetDimensions(canvasData->width, canvasData->height);
+					}
+					else if (prefab.components.at(componentID)->type == "Animation")
+					{
+						std::shared_ptr<AnimationPrefabData> animationData = std::static_pointer_cast<AnimationPrefabData>(prefab.components.at(componentID));
+						Animation* animation = rootObject->AddAnimation(-1, animationData->b_isActive, animationData->b_isCollapsed);
+						animation->SetAnimationPath(animationData->animationPath);
+					}
+					else if (prefab.components.at(componentID)->type == "Audio")
+					{
+						std::shared_ptr<AudioPrefabData> audioData = std::static_pointer_cast<AudioPrefabData>(prefab.components.at(componentID));
+						Audio* audio = rootObject->AddAudio(-1, audioData->b_isActive, audioData->b_isCollapsed);
+						audio->SetSounds(audioData->sounds);
+					}
+					else if (prefab.components.at(componentID)->type == "Text")
+					{
+						std::shared_ptr<TextPrefabData> textData = std::static_pointer_cast<TextPrefabData>(prefab.components.at(componentID));
+						Text* text = rootObject->AddText(-1, textData->b_isActive, textData->b_isCollapsed);
+						text->SetFontPath(textData->fontPath);
+						text->SetFontSize(textData->fontSize);
+						text->SetColor(textData->color);
+						text->SetText(textData->text);
+						text->SetOffset(textData->offset);
+						text->SetRenderOrder(textData->renderOrder);
+						text->LoadText();
+					}
+					else if (prefab.components.at(componentID)->type == "BoxCollider")
+					{
+						std::shared_ptr<BoxColliderPrefabData> colData = std::static_pointer_cast<BoxColliderPrefabData>(prefab.components.at(componentID));
+						BoxCollider* boxCol = rootObject->AddBoxCollider(-1, colData->b_isActive, colData->b_isCollapsed);
+						boxCol->SetTileMapCollider(colData->b_tileMapCollider);
+						boxCol->SetActiveDimensions(colData->activeDimensions.x, colData->activeDimensions.y);
+						boxCol->SetActiveOffset(colData->activeOffset);
+						boxCol->SetIsContinuous(colData->b_isContinuous);
+						boxCol->SetIsStatic(colData->b_isStatic);
+						boxCol->SetIsSolid(colData->b_isSolid);
+						boxCol->SetActiveLayer(colData->activeLayer);
+						boxCol->SetRotation(colData->rotation);
+						boxCol->SetIsComposite(colData->b_isComposite);
+					}
+					else if (prefab.components.at(componentID)->type == "CircleCollider")
+					{
+						std::shared_ptr<CircleColliderPrefabData> colData = std::static_pointer_cast<CircleColliderPrefabData>(prefab.components.at(componentID));
+						CircleCollider* cirCol = rootObject->AddCircleCollider(-1, colData->b_isActive, colData->b_isCollapsed);
+						cirCol->SetActiveRadiusGrid(colData->activeRadius);
+						cirCol->SetActiveOffset(colData->activeOffset);
+						cirCol->SetIsContinuous(colData->b_isContinuous);
+						cirCol->SetIsStatic(colData->b_isStatic);
+						cirCol->SetIsSolid(colData->b_isSolid);
+						cirCol->SetActiveLayer(colData->activeLayer);
+						cirCol->SetIsComposite(colData->b_isComposite);
+					}
+					else if (prefab.components.at(componentID)->type == "CompositeCollider")
+					{
+						/*					std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
+											Sprite* sprite = rootObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);		*/
+					}
+					else if (prefab.components.at(componentID)->type == "RigidBody")
+					{
+						std::shared_ptr<RigidBodyPrefabData> rbData = std::static_pointer_cast<RigidBodyPrefabData>(prefab.components.at(componentID));
+						RigidBody* rb = rootObject->AddRigidBody(-1, rbData->b_isActive, rbData->b_isCollapsed);
+						rb->SetMass(rbData->mass);
+						rb->SetAngularDrag(rbData->angularDrag);
+						rb->SetGravity(rbData->gravity);
+						rb->SetFallingGravity(rbData->fallingGravity);
+						rb->SetFriction(rbData->friction);
+						rb->SetWindResistance(rbData->windResistance);
+						rb->SetEquilibriumForce(rbData->equilibriumForce);
+						rb->SetTerminalVelocity(rbData->terminalVelocity);
+						rb->SetIsStatic(rbData->b_isStatic);
+						rb->SetTorquesAllowed(rbData->b_allowTorques);
+					}
+					else if (prefab.components.at(componentID)->type == "CharacterController")
+					{
+						std::shared_ptr<CharacterControllerPrefabData> ccData = std::static_pointer_cast<CharacterControllerPrefabData>(prefab.components.at(componentID));
+						CharacterController* cc = rootObject->AddCharacterController(-1, ccData->b_isActive, ccData->b_isCollapsed);
+						cc->SetMaxAcceleration(ccData->maxAcceleration);
+						cc->SetMaxSpeed(ccData->maxSpeed);
+						cc->SetAirControl(ccData->airControl);
+					}
+					else if (prefab.components.at(componentID)->type == "TileMap")
+					{
+						std::shared_ptr<TileMapPrefabData> tileMapData = std::static_pointer_cast<TileMapPrefabData>(prefab.components.at(componentID));
+						TileMap* tileMap = rootObject->AddTileMap(-1, tileMapData->b_isActive, tileMapData->b_isCollapsed);
+						tileMap->SetWidth(tileMapData->width);
+						tileMap->SetHeight(tileMapData->height);
+						tileMap->SetTileWidth(tileMapData->tileWidth);
+						tileMap->SetTileHeight(tileMapData->tileHeight);
+						tileMap->SetTileSets(tileMapData->tileSetNames);
+						tileMap->SetTiles(tileMapData->tiles);
+
+						for (std::pair<std::string, std::vector<std::pair<Vector2, Vector2>>> collisionAreaPair : tileMapData->collisionAreas)
+						{
+							std::string areaName = collisionAreaPair.first;
+							tileMap->SetCollisionAreaValues(areaName, collisionAreaPair.second);
+						}
+					}
 				}
 			}
 		}
 
-		return instantiatedObject;
+		return rootObject;
 	}
 
 	std::map<std::string, Prefab> PrefabManager::GetPrefabs()

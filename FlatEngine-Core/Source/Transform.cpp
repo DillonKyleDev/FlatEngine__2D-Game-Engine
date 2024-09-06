@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "BoxCollider.h"
 #include "Project.h"
+#include "Button.h"
 
 
 namespace FlatEngine
@@ -29,6 +30,11 @@ namespace FlatEngine
 	void Transform::SetOrigin(Vector2 newOrigin)
 	{
 		m_origin = newOrigin;
+
+		if (GetParent()->HasComponent("Button"))
+		{
+			GetParent()->GetButton()->CalculateActiveEdges();
+		}
 	}
 
 	Vector2 Transform::GetOrigin()

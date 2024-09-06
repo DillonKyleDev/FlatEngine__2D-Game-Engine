@@ -109,18 +109,18 @@ public:
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
 				if (!A_GameLoop->IsGamePaused())
-					A_GameLoop->accumulator += frameTime;
+					A_GameLoop->m_accumulator += frameTime;
 
 				if (!A_GameLoop->IsGamePaused())
 				{
-					while (A_GameLoop->accumulator >= A_GameLoop->deltaTime)
+					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
 					{
 						FL::HandleEvents(_hasQuit);
 						A_GameLoop->Update();
 						A_GameLoop->SetFrameSkipped(false);
 
-						A_GameLoop->time += A_GameLoop->deltaTime;
-						A_GameLoop->accumulator -= A_GameLoop->deltaTime;
+						A_GameLoop->m_time += A_GameLoop->m_deltaTime;
+						A_GameLoop->m_accumulator -= A_GameLoop->m_deltaTime;
 					}
 				}
 
@@ -128,8 +128,8 @@ public:
 				frameStart = FL::GetEngineTime();
 
 				// Artificially slow GameLoop if frameTime is less than 
-				if (!FL::F_LoadedProject.IsVsyncEnabled() && frameTime < A_GameLoop->deltaTime)
-					SDL_Delay((Uint32)(A_GameLoop->deltaTime - frameTime) * 1000);
+				if (!FL::F_LoadedProject.IsVsyncEnabled() && frameTime < A_GameLoop->m_deltaTime)
+					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
 			}
 			else
 				FL::HandleEvents(_hasQuit);

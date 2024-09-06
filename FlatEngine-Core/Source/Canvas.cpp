@@ -1,38 +1,24 @@
 #include "Canvas.h"
 #include "FlatEngine.h"
+#include "Transform.h"
 
 
 namespace FlatEngine 
 {
-	Canvas::Canvas(long myID, long parentID, long newCanvasID)
+	Canvas::Canvas(long myID, long parentID)
 	{
 		SetType(ComponentTypes::T_Canvas);
 		SetID(myID);
 		SetParentID(parentID);
-		m_canvasID = newCanvasID;
-		m_buttons = std::vector<std::shared_ptr<FlatEngine::Button>>();
-		m_layerNumber = m_canvasID;
+		m_layerNumber = 0;
 		m_b_blocksLayers = true;
-		m_width = 50;
-		m_height = 30;
+		m_width = 20;
+		m_height = 10;
+		m_activeEdges = Vector4();
 	}
 
 	Canvas::~Canvas()
 	{
-	}
-
-	void Canvas::AddButton(std::shared_ptr<FlatEngine::Button> button)
-	{
-		m_buttons.push_back(button);
-	}
-
-	void Canvas::RemoveButton(std::shared_ptr<FlatEngine::Button> button)
-	{
-		for (int i = 0; i < m_buttons.size(); i++)
-		{
-			if (button->GetID() == m_buttons[i]->GetID())
-				m_buttons.erase(m_buttons.begin() + i);
-		}
 	}
 
 	float Canvas::GetWidth()
@@ -53,7 +39,28 @@ namespace FlatEngine
 			m_height = newHeight;
 		}
 		else
+		{
 			FlatEngine::LogString("Canvas::SetDimensions() - Canvas width and height must be positive values.");
+		}
+	}
+
+	void Canvas::CalculateActiveEdges()
+	{
+		Transform* transform = GetParent()->GetTransform();
+		Vector2 position = transform->GetTruePosition();
+		Vector2 scale = transform->GetScale();
+
+		float activeLeft = F_gameViewCenter.x + ((position.x - (m_width / 2 * scale.x)) * F_gameViewGridStep.x);
+		float activeRight = F_gameViewCenter.x + ((position.x + (m_width / 2 * scale.x)) * F_gameViewGridStep.x);
+		float activeTop = F_gameViewCenter.y - ((position.y + (m_height / 2 * scale.y)) * F_gameViewGridStep.x);
+		float activeBottom = F_gameViewCenter.y - ((position.y - (m_height / 2 * scale.y)) * F_gameViewGridStep.x);
+
+		m_activeEdges = Vector4(activeTop, activeRight, activeBottom, activeLeft);
+	}
+
+	Vector4 Canvas::GetActiveEdges()
+	{
+		return m_activeEdges;
 	}
 
 	void Canvas::SetLayerNumber(int newLayerNumber)
@@ -74,11 +81,6 @@ namespace FlatEngine
 	bool Canvas::GetBlocksLayers()
 	{
 		return m_b_blocksLayers;
-	}
-
-	std::vector<std::shared_ptr<FlatEngine::Button>> Canvas::GetButtons()
-	{
-		return std::vector<std::shared_ptr<FlatEngine::Button>>();
 	}
 
 	std::string Canvas::GetData()

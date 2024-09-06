@@ -59,10 +59,9 @@ namespace FlatEngine
 		void RemovePrimaryCamera();
 		Camera *GetPrimaryCamera();		
 		void OnPrefabInstantiated();
-		void UpdateColliderPairs(); // TODO
+		void UpdateColliderPairs();
 
 		// ECS Wrappers
-		void InitializeScriptObjects(); // May not need
 		void KeepNextComponentIDUpToDate(long id);
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);

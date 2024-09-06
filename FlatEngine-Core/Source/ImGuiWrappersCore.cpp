@@ -45,10 +45,10 @@ namespace FlatEngine
 	{
 		Vector2 titleStartPos = ImGui::GetCursorScreenPos();
 		Vector2 titleEndPos = Vector2(titleStartPos.x + ImGui::GetContentRegionAvail().x, titleStartPos.y + 24);
-		ImGui::GetWindowDrawList()->AddRectFilled(titleStartPos, titleEndPos, FL::GetColor32("componentSubTileBg"));
+		ImGui::GetWindowDrawList()->AddRectFilled(titleStartPos, titleEndPos, GetColor32("componentSubTileBg"));
 		ImGui::SetCursorScreenPos(Vector2(titleStartPos.x + 5, titleStartPos.y + 5));
 		ImGui::Text(title.c_str());
-		FL::MoveScreenCursor(0, 6);
+		MoveScreenCursor(0, 6);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 8);
 	}
@@ -390,7 +390,7 @@ namespace FlatEngine
 			pathString += ":";
 			ImGui::Text(pathString.c_str());
 			ImGui::SameLine(0, 5);
-			FL::MoveScreenCursor(0, -3);
+			MoveScreenCursor(0, -3);
 		}
 
 		if (_canOpenFiles && inputWidth == -1)

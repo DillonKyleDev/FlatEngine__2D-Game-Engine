@@ -7,7 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\FlatGui.h" />
-    <ClInclude Include="Source\WidgetsManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animator.cpp" />
@@ -23,7 +22,6 @@
     <ClCompile Include="Source\SceneView.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />
-    <ClCompile Include="Source\WidgetsManager.cpp" />
     <ClCompile Include="Source\FileExplorer.cpp" />
     <ClCompile Include="Source\ScriptEditor.cpp" />
     <ClCompile Include="Source\TileSetEditor.cpp" />

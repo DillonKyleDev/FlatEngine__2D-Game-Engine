@@ -3,6 +3,7 @@
 #include "Project.h"
 #include "TagList.h"
 #include "Scene.h"
+#include "Transform.h"
 #include "Sprite.h"
 #include "Button.h"
 #include "Camera.h"
@@ -270,7 +271,7 @@ namespace FlatGui
 				FL::Component* queuedForDelete = nullptr;
 
 				// Transform
-				FL::Transform* transform = focusedObject->GetTransform();
+				Transform* transform = focusedObject->GetTransform();
 				if (transform != nullptr)
 				{
 					BeginComponent(transform, queuedForDelete);

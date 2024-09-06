@@ -68,15 +68,27 @@ function Update()
     end
 end 
 
-function OnActiveCollision(collidedWith)
-   -- LogString("OnActiveCollision called!")
+function OnBoxCollision(collidedWith)
+--    LogString("OnActiveCollision called!")
 end
 
-function OnCollisionEnter(collidedWith)
+function OnBoxCollisionEnter(collidedWith)
     collidedName = collidedWith:GetParent():GetName()
-    --LogString("Collision started with: " .. collidedName)
+    -- LogString("Collision started with: " .. collidedName)
 end
 
-function OnCollisionLeave(collidedWith)
+function OnBoxCollisionLeave(collidedWith)
     --LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
+end
+
+function OnButtonMouseOver()
+    LogString("Mouse over")
+end
+
+function OnButtonLeftClick()
+    LogString("Left Click!")
+end
+
+function OnButtonRightClick()
+    LogString("Right Click!")
 end

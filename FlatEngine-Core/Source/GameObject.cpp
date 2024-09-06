@@ -1,6 +1,5 @@
 #include "GameObject.h"
 #include "FlatEngine.h"
-#include "UIManager.h"
 #include "TagList.h"
 #include "Transform.h"
 #include "Scene.h"
@@ -116,7 +115,7 @@ namespace FlatEngine
 		m_tagList.SetTag(tagName, b_value);
 	}
 
-	void GameObject::RemoveComponent(FL::Component* component)
+	void GameObject::RemoveComponent(Component* component)
 	{
 		if (component != nullptr)
 		{
@@ -219,7 +218,7 @@ namespace FlatEngine
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Button button = F_UIManager.CreateButton(nextID, m_ID, 0);
+		Button button = Button(nextID, m_ID);
 		button.SetActive(b_active);
 		button.SetCollapsed(b_collapsed);
 		
@@ -233,7 +232,7 @@ namespace FlatEngine
 		long nextID = id;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
-		Canvas canvas = F_UIManager.CreateCanvas(nextID, m_ID, 0);
+		Canvas canvas = Canvas(nextID, m_ID);
 		canvas.SetActive(b_active);
 		canvas.SetCollapsed(b_collapsed);
 

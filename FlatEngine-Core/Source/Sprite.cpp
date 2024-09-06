@@ -18,7 +18,7 @@ namespace FlatEngine
 		m_offset = Vector2(0, 0);
 		m_path = "";
 		m_tintColor = Vector4(1, 1, 1, 1);
-		m_renderOrder = FL::F_maxSpriteLayers / 2;
+		m_renderOrder = F_maxSpriteLayers / 2;
 	}
 
 	Sprite::~Sprite()

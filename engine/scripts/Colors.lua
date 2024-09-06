@@ -17,8 +17,9 @@ F_Colors = {
 	colliderInactive = Vector4:new(0.9, 0.2, 0.2, 1.0),
 	colliderColliding = Vector4:new(0.76, 0.42, 0.0, 1.0),
 	-- Button Components
-	buttonComponentActive = Vector4:new(0.19, 0.9, 0.2, 0.5),
-	buttonComponentInctive = Vector4:new(0.9, 0.2, 0.2, 0.5),
+	buttonComponentActive = Vector4:new(0.75, 0.06, 0.41, 1.0),
+	buttonComponentInactive = Vector4:new(0.75, 0.06, 0.41, 0.4),
+	buttonComponentHovered = Vector4:new(0.42, 0.75, 0.06, 1.0),
 	-- Canvas
 	canvasBox = Vector4:new(0.76, 0.42, 0.0, 0.5),
 	-- Camera

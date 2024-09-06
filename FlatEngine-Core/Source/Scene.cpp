@@ -297,11 +297,6 @@ namespace FlatEngine
 		m_ECSManager.UpdateColliderPairs();
 	}
 
-	void Scene::InitializeScriptObjects()
-	{
-		//m_ECSManager.InitializeScriptObjects
-	}
-
 	void Scene::KeepNextComponentIDUpToDate(long id)
 	{
 		if (id >= m_nextComponentID)

@@ -564,9 +564,6 @@
     <ClInclude Include="Source\Transform.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UIManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Vector2.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -722,9 +719,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Transform.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UIManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Vector2.cpp">

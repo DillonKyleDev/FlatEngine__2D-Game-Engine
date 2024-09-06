@@ -1,8 +1,6 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
 #include "GameLoop.h"
-#include "UIManager.h"
-#include "WidgetsManager.h"
 #include "SceneManager.h"
 #include "PrefabManager.h"
 #include "Texture.h"
@@ -17,6 +15,7 @@
 #include "Camera.h"
 #include "Sound.h"
 #include "Button.h"
+#include "Canvas.h"
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "MappingContext.h"
@@ -936,7 +935,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
 
-				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 3.0f, draw_list);
+				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 2.0f, draw_list);
 			}
 
 			// Renders Button Component
@@ -945,7 +944,19 @@ namespace FlatGui
 				float activeWidth = button->GetActiveWidth();
 				float activeHeight = button->GetActiveHeight();
 				Vector2 activeOffset = button->GetActiveOffset();
-				bool _isActive = button->IsActive();
+				bool b_isActive = button->IsActive();
+				bool b_isHovered = button->MouseIsOver();
+				std::string buttonStateColor = "buttonComponentInactive";
+
+				if (b_isActive)
+				{
+					buttonStateColor = "buttonComponentActive";
+
+					if (b_isHovered)
+					{
+						buttonStateColor = "buttonComponentHovered";
+					}
+				}
 
 				float activeLeft = FG_sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * FG_sceneViewGridStep.x);
 				float activeRight = FG_sceneViewCenter.x + ((position.x + (activeWidth * transformScale.x / 2) + activeOffset.x * transformScale.x) * FG_sceneViewGridStep.x);
@@ -979,22 +990,14 @@ namespace FlatGui
 						Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
 					};
 
-					if (_isActive)
-					{
-						FL::DrawLine(pos[0], pos[1], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
-						FL::DrawLine(pos[1], pos[2], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
-						FL::DrawLine(pos[2], pos[3], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
-						FL::DrawLine(pos[3], pos[0], FL::GetColor("buttonComponentActive"), 2.0f, draw_list);
-					}
-					else
-						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 1.0f, draw_list);
+					FL::DrawLine(pos[0], pos[1], FL::GetColor(buttonStateColor), 2.0f, draw_list);
+					FL::DrawLine(pos[1], pos[2], FL::GetColor(buttonStateColor), 2.0f, draw_list);
+					FL::DrawLine(pos[2], pos[3], FL::GetColor(buttonStateColor), 2.0f, draw_list);
+					FL::DrawLine(pos[3], pos[0], FL::GetColor(buttonStateColor), 2.0f, draw_list);
 				}
 				else
 				{
-					if (_isActive)
-						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 1.0f, draw_list);
-					else
-						FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 1.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor(buttonStateColor), 1.0f, draw_list);
 				}
 			}
 
@@ -1107,8 +1110,6 @@ namespace FlatGui
 				static std::vector<Vector2> hoveredTiles = std::vector<Vector2>();
 				static std::vector<Vector2> selectedTiles = std::vector<Vector2>();
 				
-		
-
 				// For Drawing TileMap border and background color
 				float renderXStart = FG_sceneViewCenter.x + ((position.x - (gridWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
 				float renderYStart = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);

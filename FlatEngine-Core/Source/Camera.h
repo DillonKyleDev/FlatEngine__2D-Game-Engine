@@ -1,15 +1,10 @@
 #pragma once
-#include "Vector2.h"
-#include "Transform.h"
+#include "Vector4.h"
 #include "Component.h"
-#include "json.hpp"
-#include <imgui.h>
 
 
 namespace FlatEngine 
 {
-	class Transform;
-
 	class Camera : public Component
 	{
 	public:
@@ -23,13 +18,13 @@ namespace FlatEngine
 		float GetZoom();
 		float GetWidth();
 		float GetHeight();
-		void SetFrustrumColor(ImVec4 color);
-		ImVec4 GetFrustrumColor();
+		void SetFrustrumColor(Vector4 color);
+		Vector4 GetFrustrumColor();
 		void Follow();
 		void SetShouldFollow(bool _shouldFollow);
 		bool GetShouldFollow();
-		void SetFollowing(long toFollow);
-		long GetFollowing();
+		void SetToFollowID(long toFollow);
+		long GetToFollowID();
 		void SetFollowSmoothing(float smoothing);
 		float GetFollowSmoothing();
 		std::string GetData();
@@ -38,9 +33,9 @@ namespace FlatEngine
 		float m_width;
 		float m_height;
 		float m_zoom;
-		ImVec4 m_frustrumColor;
+		Vector4 m_frustrumColor;
 		bool m_b_isPrimaryCamera;
-		bool m_b_follow;
+		bool m_b_shouldFollow;
 		long m_toFollowID;
 		float m_followSmoothing;
 	};

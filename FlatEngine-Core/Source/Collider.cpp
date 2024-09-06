@@ -22,9 +22,6 @@ namespace FlatEngine
 		SetParentID(parentID);
 		
 		_isComposite = false;
-		OnActiveCollision = nullptr;
-		OnCollisionEnter = nullptr;
-		OnCollisionLeave = nullptr;
 		activeOffset = Vector2(0, 0);
 		previousPosition = Vector2(0, 0);
 		centerGrid = Vector2(0, 0);
@@ -40,9 +37,6 @@ namespace FlatEngine
 		_isStatic = false;
 		_isSolid = true;
 		_showActiveRadius = false;
-		_onActiveCollidingSet = false;
-		_onCollisionEnterSet = false;
-		_onCollisionLeaveSet = false;
 
 		_isCollidingRight = false;
 		_isCollidingLeft = false;
@@ -87,24 +81,6 @@ namespace FlatEngine
 
 	Collider::~Collider()
 	{
-	}
-
-	void Collider::SetOnActiveCollision(std::function<void(GameObject*, GameObject*)> callback)
-	{
-		OnActiveCollision = callback;
-		_onActiveCollidingSet = true;
-	}
-
-	void Collider::SetOnCollisionEnter(std::function<void(GameObject*, GameObject*)> callback)
-	{
-		OnCollisionEnter = callback;
-		_onCollisionEnterSet = true;
-	}
-
-	void Collider::SetOnCollisionLeave(std::function<void(GameObject*, GameObject*)> callback)
-	{
-		OnCollisionLeave = callback;
-		_onCollisionLeaveSet = true;
 	}
 
 	bool Collider::CheckForCollision(Collider* collider1, Collider* collider2)
@@ -168,32 +144,26 @@ namespace FlatEngine
 			{
 				collider1->AddCollidingObject(collider2);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
-				CallLuaOnActiveCollision(collider1->GetParent(), collider2);
-				if (collider1->OnActiveCollisionSet())
-					collider1->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
+				CallLuaCollisionFunction(collider1->GetParent(), collider2, LuaEventFunction::OnBoxCollision);
 			}
 			else
 			{
 				CompositeCollider* compositeCollider = collider1->GetParent()->GetCompositeCollider();
 				compositeCollider->AddCollidingObject(collider2);
-				if (compositeCollider->OnActiveCollisionSet())
-					compositeCollider->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
+				//compositeCollider->OnActiveCollision(collider1->GetParent(), collider2->GetParent());
 			}
 
 			if (!collider2->_isComposite)
 			{
 				collider2->AddCollidingObject(collider1);
 				// For Collider events - Fire OnActiveCollision while there is a collision happening
-				CallLuaOnActiveCollision(collider2->GetParent(), collider1);
-				if (collider2->OnActiveCollisionSet())
-					collider2->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
+				CallLuaCollisionFunction(collider2->GetParent(), collider1, LuaEventFunction::OnBoxCollision);
 			}
 			else
 			{
 				CompositeCollider* compositeCollider = collider2->GetParent()->GetCompositeCollider();
 				compositeCollider->AddCollidingObject(collider1);
-				if (compositeCollider->OnActiveCollisionSet())
-					compositeCollider->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
+				//compositeCollider->OnActiveCollision(collider2->GetParent(), collider1->GetParent());
 			}
 		}
 
@@ -944,18 +914,6 @@ namespace FlatEngine
 		return (previousPosition.x != position.x || previousPosition.y != position.y);
 	}
 
-	// Don't use this for anything I don't think, safe to remove
-	void Collider::RemoveCollidingObject(GameObject object)
-	{
-		for (std::vector<GameObject*>::iterator iterator = m_collidingObjects.begin(); iterator != m_collidingObjects.end();)
-		{
-			if ((*iterator)->GetID() == object.GetID())
-				m_collidingObjects.erase(iterator);
-
-			iterator++;
-		}
-	}
-
 	void Collider::AddCollidingObject(Collider* collidedWith)
 	{
 		// Make sure we haven't already tracked it for this frame
@@ -977,9 +935,7 @@ namespace FlatEngine
 		}
 
 		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to m_collidingObjects for the first time)
-		CallLuaOnCollisionEnter(GetParent(), collidedWith);
-		if (OnCollisionEnterSet())
-			OnCollisionEnter(GetParent(), collidedWith->GetParent());
+		CallLuaCollisionFunction(GetParent(), collidedWith, LuaEventFunction::OnBoxCollisionEnter);
 	}
 
 	std::vector<GameObject*> Collider::GetCollidingObjects()
@@ -995,17 +951,21 @@ namespace FlatEngine
 			bool _objectStillColliding = false;
 
 			for (GameObject *collidedThisFrame : m_collidingObjects)
+			{
 				if (collidedLastFrame->GetID() == collidedThisFrame->GetID())
+				{
 					_objectStillColliding = true;
+				}
+			}
 
 			// Fire OnLeave if not colliding
 			if (!_objectStillColliding)
+			{
 				for (BoxCollider* boxCollider : collidedLastFrame->GetBoxColliders())
 				{
-					CallLuaOnCollisionLeave(GetParent(), boxCollider);
-					if (boxCollider->OnCollisionLeaveSet())
-						OnCollisionLeave(GetParent(), boxCollider->GetParent());
+					CallLuaCollisionFunction(GetParent(), boxCollider, LuaEventFunction::OnBoxCollisionLeave);
 				}
+			}
 		}
 
 		// Save colliding objects for next frame
@@ -1066,36 +1026,6 @@ namespace FlatEngine
 		return _showActiveRadius;
 	}
 
-	bool Collider::OnActiveCollisionSet()
-	{
-		return _onActiveCollidingSet;
-	}
-
-	bool Collider::OnCollisionEnterSet()
-	{
-		return _onCollisionEnterSet;
-	}
-
-	bool Collider::OnCollisionLeaveSet()
-	{
-		return _onCollisionLeaveSet;
-	}
-
-	void Collider::SetOnActiveCollisionSet(bool _set)
-	{
-		_onActiveCollidingSet = _set;
-	}
-
-	void Collider::SetOnCollisionEnterSet(bool _set)
-	{
-		_onCollisionEnterSet = _set;
-	}
-
-	void Collider::SetOnCollisionLeaveSet(bool _set)
-	{
-		_onCollisionLeaveSet = _set;
-	}
-
 	void Collider::ResetCollisions()
 	{
 		ClearCollidingObjects();
@@ -1140,10 +1070,6 @@ namespace FlatEngine
 		bottomRightCollidedPosition = Vector2(0, 0);
 		topLeftCollidedPosition = Vector2(0, 0);
 		bottomLeftCollidedPosition = Vector2(0, 0);
-	}
-
-	void Collider::UpdateCenter()
-	{
 	}
 
 	void Collider::SetCenterGrid(Vector2 newCenter)

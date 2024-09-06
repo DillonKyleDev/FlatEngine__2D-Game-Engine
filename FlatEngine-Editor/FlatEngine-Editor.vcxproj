@@ -148,7 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\FlatGui.h" />
-    <ClInclude Include="Source\WidgetsManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animator.cpp" />
@@ -167,7 +166,6 @@
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\TileSetEditor.cpp" />
     <ClCompile Include="Source\Toolbar.cpp" />
-    <ClCompile Include="Source\WidgetsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FlatEngine-Core\FlatEngine-Core.vcxproj">
