@@ -776,7 +776,7 @@ namespace FlatEngine
 		if (extension == ".png")
 		{
 			GameObject* newObject = CreateGameObject();
-			newObject->SetName(GetFilenameFromPath(filePath) + std::to_string(newObject->GetID()));
+			newObject->SetName(GetFilenameFromPath(filePath) + "(" + std::to_string(newObject->GetID()) + ")");
 			newObject->GetTransform()->SetPosition(position);
 			newObject->AddSprite()->SetTexture(filePath);
 			return newObject;

@@ -9,20 +9,20 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 8,
+                    "id": 16,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -94.75975036621094,
+                    "xPos": -94.99980163574219,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -1.0260000228881836,
+                    "yPos": -1.0330543518066406,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": true,
-                    "id": 9,
+                    "id": 17,
                     "path": "../assets\\images\\sprites\\owl\\idle.png",
                     "pivotPoint": "Center",
                     "renderOrder": 10,
@@ -46,7 +46,7 @@
                     "fallingGravity": 0.6000000238418579,
                     "friction": 0.8999999761581421,
                     "gravity": 0.4000000059604645,
-                    "id": 10,
+                    "id": 18,
                     "mass": 1.149999976158142,
                     "terminalVelocity": 0.4000000059604645,
                     "type": "RigidBody",
@@ -56,7 +56,7 @@
                     "_isActive": true,
                     "_isCollapsed": true,
                     "attachedScript": "PlayerController",
-                    "id": 11,
+                    "id": 19,
                     "type": "Script"
                 },
                 {
@@ -73,20 +73,20 @@
                     "activeOffsetX": 0.0,
                     "activeOffsetY": -0.4099999964237213,
                     "activeWidth": 2.0,
-                    "id": 12,
+                    "id": 20,
                     "type": "BoxCollider"
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "airControl": 0.6600000262260437,
-                    "id": 13,
+                    "id": 21,
                     "maxAcceleration": 0.20000000298023224,
                     "maxSpeed": 10.020000457763672,
                     "type": "CharacterController"
                 }
             ],
-            "id": 2,
+            "id": 4,
             "ignoreTags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -108,8 +108,8 @@
             "name": "Player",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": -94.75975036621094,
-            "spawnLocationY": -1.0260000228881836,
+            "spawnLocationX": -94.99980163574219,
+            "spawnLocationY": -1.0330543518066406,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

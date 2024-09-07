@@ -96,8 +96,7 @@ namespace FlatGui
 		{
 			ImGuiIO& inputOutput = ImGui::GetIO();
 			Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
-			std::string filePath = FL::F_selectedFiles[droppedValue - 1];
-			FL::LogString(filePath);
+			std::string filePath = FL::F_selectedFiles[droppedValue - 1];			
 			
 			FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
 		}
