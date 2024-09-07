@@ -5,6 +5,8 @@
 F_ResourceFailedToLoadImagePath = "../engine/images/resources/resourceFailedToLoad.png"
 
 F_Textures = {
+	-- Resources
+	empty = "../engine/images/resources/empty.png",
 	-- Project Hub
 	flatEngine = "../engine/images/engine/FlatEngine.png",
 	flatEngineLogo = "../engine/images/engine/FlatEngineLogo.png",

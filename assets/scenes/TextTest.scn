@@ -54,7 +54,7 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "Text(6)",
+            "name": "Text",
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.9493637084960938,

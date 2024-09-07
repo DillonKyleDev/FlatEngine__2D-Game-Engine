@@ -26,31 +26,31 @@ namespace FlatGui
 		static int offset = 0;
 
 		std::string ellapsedTime = "---";
-		std::string averageFPS = "---";
-		std::string deltaTime = "---";
+		//std::string averageFPS = "---";
+		//std::string deltaTime = "---";
 		std::string framesCounted = "---";
-		std::string sdlTicks = "---";
+		//std::string sdlTicks = "---";
 		std::string numberOfColliderPairs = "---";
 
 		if (FL::GameLoopStarted())
 		{
 			ellapsedTime = std::to_string(FL::GetEllapsedGameTimeInSec());
-			averageFPS = std::to_string(FL::GetAverageFps());
-			deltaTime = std::to_string(FL::GetDeltaTime());
+			//averageFPS = std::to_string(FL::GetAverageFps());
+			//deltaTime = std::to_string(FL::GetDeltaTime());
 			framesCounted = std::to_string(FL::F_Application->GetGameLoop()->GetFramesCounted());
-			sdlTicks = std::to_string(FL::GetEngineTime());
+			//sdlTicks = std::to_string(FL::GetEngineTime());
 			numberOfColliderPairs = std::to_string(FL::GetLoadedScene()->GetColliderPairs().size());
 		}
 
 		// Render runtime data
 		if (FL::PushTable("##RunTimeData", 2))
 		{
-			FL::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
+			//FL::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
 			FL::RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
-			FL::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
-			FL::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
+			//FL::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
+			//FL::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
 			FL::RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-			FL::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
+			//FL::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
 			FL::RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
 			FL::PopTable();
 		}

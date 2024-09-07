@@ -464,6 +464,30 @@ namespace FlatGui
 		}
 		ImGui::PopStyleColor();
 
+
+		// Render Prefab Cube if it is a prefab object
+		if (currentObject.IsPrefab())
+		{
+			std::string prefabIDImageButton = "PrefabIDImage" + std::to_string(currentObject.GetID());
+			std::string prefabIDContextMenu = "PrefabIDContext" + std::to_string(currentObject.GetID());
+			ImGui::TableSetColumnIndex(2);
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY()));
+			FL::RenderImageButton(prefabIDImageButton.c_str(), FL::GetTexture("prefabCube"), Vector2(16, 16), 0, FL::GetColor("transparent"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
+			FL::PushMenuStyles();
+			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			{
+				if (ImGui::MenuItem("Unpack prefab"))
+				{
+					currentObject.SetIsPrefab(false);
+					currentObject.SetPrefabName("");
+					currentObject.SetPrefabSpawnLocation(Vector2(0, 0));
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+			FL::PopMenuStyles();
+		}
+
 		// If the node is open, render it's children if it has any
 		if (currentObject.HasChildren() && node_open)
 		{
@@ -484,29 +508,6 @@ namespace FlatGui
 			}
 
 			ImGui::TreePop(); // TreeNode Closer
-		}
-
-		// Render Prefab Cube if it is a prefab object
-		if (currentObject.IsPrefab())
-		{
-			std::string prefabIDImageButton = "PrefabID" + std::to_string(currentObject.GetID());
-			std::string prefabIDContextMenu = "PrefabID" + std::to_string(currentObject.GetID());
-			ImGui::TableSetColumnIndex(2);
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() - 1, ImGui::GetCursorPosY()));
-			FL::RenderImageButton(prefabIDImageButton.c_str(), FL::GetTexture("prefabCube"), Vector2(16, 16), 0, FL::GetColor("transparent"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
-			FL::PushMenuStyles();
-			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
-			{
-				if (ImGui::MenuItem("Unpack prefab"))
-				{
-					currentObject.SetIsPrefab(false);
-					currentObject.SetPrefabName("");
-					currentObject.SetPrefabSpawnLocation(Vector2(0, 0));
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-			FL::PopMenuStyles();
 		}
 	}
 }

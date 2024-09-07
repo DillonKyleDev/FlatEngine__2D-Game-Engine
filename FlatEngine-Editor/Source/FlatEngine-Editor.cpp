@@ -221,8 +221,8 @@ public:
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			Window::SetScreenDimensions(1500, 850);
-			//Window::SetScreenDimensions(1900, 1000);
+			//Window::SetScreenDimensions(1500, 850);
+			Window::SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors

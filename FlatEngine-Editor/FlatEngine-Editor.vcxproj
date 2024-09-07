@@ -82,7 +82,7 @@
       <AdditionalIncludeDirectories>Source;..\FlatEngine-Core\Source;..\scripts;..\Vendor\includes\ImGui\Backends;..\Vendor\includes\ImGui\ImGui_Docking;..\Vendor\includes\ImGui\ImGui_Docking\misc\debuggers;..\Vendor\includes\SDL2\include;..\Vendor\includes\SDL2_Image\include;..\Vendor\includes\SDL2_Text\include;..\Vendor\includes\SDL2_Mixer\include;..\Vendor\includes\Json_Formatter;..\Vendor\includes\ImPlot;..\Vendor\includes\ImSequencer;..\Vendor\includes\Lua;..\Vendor\includes\Sol2\include;..\Vendor\includes\Sol2\include\sol;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalOptions>/EHsc /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>

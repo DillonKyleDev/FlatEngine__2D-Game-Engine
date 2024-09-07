@@ -553,7 +553,6 @@ namespace FlatEngine
 			for (long prefabChildID : myData.childrenIDs)
 			{
 				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab);
-				self->AddChild(child->GetID());
 			}
 
 			for (long componentID : myData.componentIDs)

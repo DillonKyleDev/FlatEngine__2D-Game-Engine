@@ -431,8 +431,8 @@ namespace FlatGui
 		ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 10, canvas_p0.y + 5));
 
 		// Draw the FL logo and header text image
-		ImGui::Image(FL::GetTexture("flatEngineLogo"), Vector2(dimensions.y));
-		ImGui::SameLine();
+		//ImGui::Image(FL::GetTexture("flatEngineLogo"), Vector2(dimensions.y));
+		//ImGui::SameLine();
 		ImGui::Image(FL::GetTexture("selectProject"), dimensions);
 
 		ImGui::Separator();

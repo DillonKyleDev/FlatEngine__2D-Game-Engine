@@ -15,47 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\BlobParticle.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\ButtonScriptTemplate.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\EnemyController.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\GameManager.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\Health.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\JumpPad.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\PauseMenu.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\PlayerController.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\QuitButton.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\RestartButton.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\ScriptTemplate.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\SettingsButton.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FlatEngine-Editor\Source\scripts\StartButton.h">
-      <Filter>FlatEngine-Editor\Source\scripts</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Source\FlatEngine-Runtime.cpp">
       <Filter>Source</Filter>
     </ClCompile>

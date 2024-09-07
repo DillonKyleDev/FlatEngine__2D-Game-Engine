@@ -40,6 +40,7 @@ namespace FlatEngine
 		Vector2 m_offset;
 		int m_renderOrder;
 		SDL_Color m_white;
+		SDL_Color m_transparent;
 	};
 }
 

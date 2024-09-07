@@ -16,11 +16,8 @@ namespace FlatEngine
 		m_text = "Sample Text";
 		m_renderOrder = 0;
 		m_texture = std::make_shared<Texture>();
-		m_white.r = (Uint8)255;
-		m_white.g = (Uint8)255;
-		m_white.b = (Uint8)255;
-		m_white.a = (Uint8)255;
-
+		m_white = { (Uint8)255, (Uint8)255, (Uint8)255, (Uint8)255 };
+		m_transparent = { (Uint8)0, (Uint8)0, (Uint8)0, (Uint8)0 };
 		m_texture->LoadFromRenderedText(m_text.c_str(), m_white, m_font);
 		m_offset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
 	}
@@ -33,8 +30,21 @@ namespace FlatEngine
 
 	void Text::LoadText()
 	{
-		m_texture->LoadFromRenderedText(m_text, m_white, m_font);
-		m_offset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
+		if (m_text != "" && m_font != nullptr)
+		{
+			m_texture->LoadFromRenderedText(m_text, m_white, m_font);
+			m_offset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
+		}
+		else 
+		{
+			if (m_font == nullptr)
+			{
+				m_font = TTF_OpenFont(GetFilePath("cinzelBlack").c_str(), 40);
+				LogError("Font not valid.");
+			}
+			m_texture->FreeTexture();
+			m_offset = Vector2(0,0);
+		}
 	}
 
 	void Text::SetRenderOrder(int order)
@@ -56,10 +66,7 @@ namespace FlatEngine
 	{
 		m_fontPath = path;
 		m_font = TTF_OpenFont(m_fontPath.c_str(), 40);
-		if (m_font != nullptr)
-		{
-			LoadText();
-		}
+		LoadText();
 	}
 
 	std::string Text::GetFontPath()

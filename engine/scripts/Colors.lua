@@ -56,7 +56,7 @@ F_Colors = {
 	-- File Explorer
 	explorerFilesPanelBg = Vector4:new(0.2, 0.2, 0.22, 1.0),
 	panelTitleBg =  Vector4:new(0.14, 0.14, 0.14, 1.0),
-	filePanelTopBar = Vector4:new(0.3, 0.3, 0.38, 1.0),
+	filePanelTopBar = Vector4:new(0.4, 0.4, 0.45, 1.0),
 	filesPanelOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	selectedFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.11),
 	selectedFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.45),

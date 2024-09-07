@@ -86,6 +86,7 @@ namespace FlatGui
 			static bool b_openSceneModal = false;
 			static bool b_openAnimationModal = false;
 			static bool b_openMappingContextModal = false;
+			static bool b_openTileSetModal = false;
 
 			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newFileName, b_openLuaModal))
 				FL::CreateNewLuaScript(newFileName, FG_currentDirectory);
@@ -95,6 +96,8 @@ namespace FlatGui
 				FL::CreateNewAnimationFile(newFileName, FG_currentDirectory);
 			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context:", newFileName, b_openMappingContextModal))
 				FL::CreateNewMappingContextFile(newFileName, FG_currentDirectory);
+			if (FL::RenderInputModal("Create TileSet", "Enter a name for the TileSet:", newFileName, b_openTileSetModal))
+				FL::CreateNewTileSetFile(newFileName, FG_currentDirectory);
 
 			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
 			// {			
@@ -145,24 +148,12 @@ namespace FlatGui
 								b_openMappingContextModal = true;
 								ImGui::CloseCurrentPopup();
 							}
+							if (ImGui::MenuItem("TileSet"))
+							{
+								b_openTileSetModal = true;
+								ImGui::CloseCurrentPopup();
+							}
 							ImGui::EndMenu();
-						}
-						ImGui::Separator();
-						if (ImGui::MenuItem("Create Prefab"))
-						{
-
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::Separator();
-						if (ImGui::MenuItem("Delete GameObject"))
-						{
-
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::Separator();
-						if (ImGui::MenuItem("Lock in view"))
-						{
-							ImGui::CloseCurrentPopup();
 						}
 						FL::PopMenuStyles();
 
@@ -299,20 +290,40 @@ namespace FlatGui
 		ImGui::GetWindowDrawList()->AddRectFilled(topBarStart, topBarEnd, FL::GetColor32("filePanelTopBar")); // Background color
 		ImGui::SetCursorScreenPos(Vector2(topBarStart.x + 5, topBarStart.y + 6)); // Top padding
 
+
+		ImGui::BeginDisabled(lastExplorerLocations.size() == 0);
 		if (FL::RenderImageButton("##BackButtonFileExplorer", FL::GetTexture("left")))
 		{
-			if (lastExplorerLocations.size() > 0)
-			{
-				// use last location
-				FG_currentDirectory = lastExplorerLocations.back();
-				SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
-				b_resetScroll = true; // Reset the scroll of the window
-				lastExplorerLocations.pop_back();
-			}
+			// use last location
+			FG_currentDirectory = lastExplorerLocations.back();
+			SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+			b_resetScroll = true; // Reset the scroll of the window
+			lastExplorerLocations.pop_back();
 		}
+		ImGui::EndDisabled();
+
 		ImGui::SameLine();
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x - 2, ImGui::GetCursorScreenPos().y + 3));
 		ImGui::Text("Back");
+		
+		ImGui::SameLine();
+
+		std::filesystem::path parentDir(FG_currentDirectory);
+		std::string parent = parentDir.stem().string();
+		ImGui::BeginDisabled(parentDir.filename().string() == "..");
+		if (FL::RenderImageButton("##UpButtonFileExplorer", FL::GetTexture("up")))
+		{
+			// Go up a directory
+			lastExplorerLocations.push_back(FG_currentDirectory);
+			FG_currentDirectory = parentDir.parent_path().string();
+			SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+			b_resetScroll = true; // Reset the scroll of the window				
+		}
+		ImGui::EndDisabled();
+
+		ImGui::SameLine();
+		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x - 2, ImGui::GetCursorScreenPos().y + 3));
+		ImGui::Text("Up directory");
 
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
 	}

@@ -12,25 +12,25 @@
             "_showInspector": true,
             "_showKeyFrameEditor": false,
             "_showLogger": true,
-            "_showMappingContextEditor": false,
+            "_showMappingContextEditor": true,
             "_showProfiler": true,
             "_showSceneView": true,
             "_showScriptEditor": false,
-            "_showTileSetEditor": true,
+            "_showTileSetEditor": false,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
-            "currentFileDirectory": "../assets\\images\\Pieces",
-            "focusedGameObjectID": -1,
+            "currentFileDirectory": "../assets",
+            "focusedGameObjectID": 6,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets\\scenes\\TextTest.scn",
             "path": "../assets/projects/OwlTower.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/MainMenu.scn",
-            "sceneViewGridStepX": 4.900012493133545,
-            "sceneViewGridStepY": 4.900012493133545,
-            "sceneViewScrollingX": 228.5,
-            "sceneViewScrollingY": 210.5
+            "sceneViewGridStepX": 9.800016403198242,
+            "sceneViewGridStepY": 9.800016403198242,
+            "sceneViewScrollingX": 304.1962890625,
+            "sceneViewScrollingY": 295.7405090332031
         }
     ]
 }
