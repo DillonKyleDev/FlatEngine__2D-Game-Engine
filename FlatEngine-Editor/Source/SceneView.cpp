@@ -25,7 +25,7 @@ namespace FlatGui
 	Vector2 FG_sceneViewScrolling = Vector2(0,0);
 	Vector2 FG_sceneViewCenter = Vector2(0, 0);
 	bool FG_b_sceneViewLockedOnObject = false;
-	GameObject * FG_sceneViewLockedObject = nullptr;
+	long FG_sceneViewLockedObjectID = -1;
 
 	bool F_b_inputFocused = false;
 
@@ -138,9 +138,10 @@ namespace FlatGui
 			RenderSceneViewTooltip();
 
 		// For centering on focused GameObject
-		if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObject != nullptr)
+		GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
+		if (FG_b_sceneViewLockedOnObject && lockedObject != nullptr)
 		{
-			Transform* transform = FG_sceneViewLockedObject->GetTransform();
+			Transform* transform = lockedObject->GetTransform();
 			Vector2 position = transform->GetTruePosition();
 			FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 		}

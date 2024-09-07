@@ -69,10 +69,13 @@ namespace FlatGui
 					}
 				}
 
-				if (ImGui::MenuItem("Button"))
+				if (!focusedObject->HasComponent("Button"))
 				{
-					focusedObject->AddButton();
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Button"))
+					{
+						focusedObject->AddButton();
+						ImGui::CloseCurrentPopup();
+					}
 				}
 
 				if (!focusedObject->HasComponent("Camera"))

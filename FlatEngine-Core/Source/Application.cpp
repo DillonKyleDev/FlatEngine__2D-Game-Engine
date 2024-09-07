@@ -31,5 +31,12 @@ namespace FlatEngine
 
 			m_b_windowResized = false;
 		}
+
+		if (F_b_loadNewScene)
+		{
+			F_b_loadNewScene = false;
+			FL::LoadScene(F_sceneToBeLoaded);
+			F_sceneToBeLoaded = "";
+		}
 	}
 }

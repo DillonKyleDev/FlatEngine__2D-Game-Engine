@@ -158,7 +158,8 @@ namespace FlatEngine
 		void CreatePrefabFromJson(json objectJson, Prefab &prefab);
 		void CreatePrefab(std::string path, GameObject gameObject);
 		void InitializePrefabs();
-		GameObject *Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
+		GameObject* InstantiateSelfAndChildren(long parentID, long myID, Prefab prefab, Vector2 spawnLocation = Vector2(0,0));
+		GameObject *Instantiate(std::string prefabName, Vector2 spawnLocation, long parentID = -1, long ID = -1);
 		std::map<std::string, Prefab> GetPrefabs();
 
 	private:

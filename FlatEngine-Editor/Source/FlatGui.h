@@ -122,7 +122,7 @@ namespace FlatGui
 	extern Vector2 FG_sceneViewScrolling;
 	extern Vector2 FG_sceneViewCenter;
 	extern bool FG_b_sceneViewLockedOnObject;
-	extern GameObject *FG_sceneViewLockedObject;
+	extern long FG_sceneViewLockedObjectID;
 
 	// TileMap
 	extern std::string FG_currentSelectedColliderArea;

@@ -17,13 +17,13 @@ namespace FlatEngine
 		void LoadText();
 		void SetRenderOrder(int order);
 		int GetRenderOrder();
-		Texture GetTexture();
+		std::shared_ptr<Texture> GetTexture();
 		void SetFontPath(std::string path);
 		std::string GetFontPath();
 		void SetFontSize(int fontSize);
 		int GetFontSize();
 		void SetColor(Vector4 newColor);
-		SDL_Color GetColor();
+		Vector4 GetColor();
 		void SetText(std::string text);
 		std::string GetText();
 		void SetOffset(Vector2 offset);
@@ -35,10 +35,11 @@ namespace FlatEngine
 		std::string m_fontPath;
 		int m_fontSize;
 		std::string m_text;
-		SDL_Color m_color;
-		Texture m_texture;
+		Vector4 m_tintColor;
+		std::shared_ptr<Texture> m_texture;
 		Vector2 m_offset;
 		int m_renderOrder;
+		SDL_Color m_white;
 	};
 }
 

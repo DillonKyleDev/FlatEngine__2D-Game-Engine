@@ -61,6 +61,12 @@ namespace FlatEngine
 		return path;
 	}
 
+	void Scene::UnloadECSManager()
+	{
+		m_sceneObjects.clear();
+		m_ECSManager.Cleanup();
+	}
+
 	GameObject* Scene::AddSceneObject(GameObject sceneObject)
 	{
 		long id = sceneObject.GetID();
@@ -162,10 +168,6 @@ namespace FlatEngine
 			GameObject *parent = FlatEngine::GetObjectById(parentID);
 			parent->RemoveChild(sceneObjectID);
 		}
-
-		// To be updated right after GameObject and its components are deleted
-		bool _hadRigidBody = false;
-		bool _hadCollider = false;
 
 		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
 		for (Component* component : objectToDelete->GetComponents())

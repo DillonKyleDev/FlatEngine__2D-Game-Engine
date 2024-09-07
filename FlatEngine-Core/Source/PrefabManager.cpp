@@ -120,8 +120,8 @@ namespace FlatEngine
 				transform->b_isCollapsed = b_isCollapsed;
 				transform->ownerId = object.ID;
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
-				transform->origin = CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName);
-				transform->scale = CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName);
+				transform->origin = Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName));
+				transform->scale = Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName));
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
 				objectRotation = transform->rotation;
 
@@ -142,8 +142,8 @@ namespace FlatEngine
 					pivotPoint = CheckJsonString(componentJson, "pivotPoint", objectName);
 				}
 				sprite->pivotPoint = pivotPoint;
-				sprite->scale = CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName);
-				sprite->offset = CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName);
+				sprite->scale = Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName));
+				sprite->offset = Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName));
 				sprite->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);
 				sprite->tintColor = Vector4(
 					CheckJsonFloat(componentJson, "tintColorX", objectName),
@@ -192,9 +192,10 @@ namespace FlatEngine
 			}
 			else if (type == "Button")
 			{
-				std::shared_ptr<ButtonPrefabData> button = std::make_shared<ButtonPrefabData>();				
-				button->activeDimensions = CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName);
-				button->activeOffset = CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
+				std::shared_ptr<ButtonPrefabData> button = std::make_shared<ButtonPrefabData>();	
+				button->type = "Button";
+				button->activeDimensions = Vector2(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
+				button->activeOffset = Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName));
 				button->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
 				
 				prefab.components.emplace(componentID, button);
@@ -202,8 +203,9 @@ namespace FlatEngine
 			else if (type == "Canvas")
 			{
 				std::shared_ptr<CanvasPrefabData> canvas = std::make_shared<CanvasPrefabData>();
-				canvas->width = CheckJsonFloat(componentJson, "canvasWidth", objectName);
-				canvas->height = CheckJsonFloat(componentJson, "canvasHeight", objectName);
+				canvas->type = "Canvas";
+				canvas->width = CheckJsonFloat(componentJson, "width", objectName);
+				canvas->height = CheckJsonFloat(componentJson, "height", objectName);
 				canvas->layerNumber = CheckJsonInt(componentJson, "layerNumber", objectName);
 				canvas->b_blocksLayers = CheckJsonBool(componentJson, "_blocksLayers", objectName);
 
@@ -211,7 +213,8 @@ namespace FlatEngine
 			}
 			else if (type == "Animation")
 			{
-				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();			
+				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();	
+				animation->type = "Animation";
 				animation->animationPath = CheckJsonString(componentJson, "path", objectName);
 
 				prefab.components.emplace(componentID, animation);
@@ -219,7 +222,7 @@ namespace FlatEngine
 			else if (type == "Audio")
 			{
 				std::shared_ptr<AudioPrefabData> audio = std::make_shared<AudioPrefabData>();
-
+				audio->type = "Audio";
 				if (JsonContains(componentJson, "soundData", objectName))
 				{
 					for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
@@ -256,24 +259,27 @@ namespace FlatEngine
 			else if (type == "Text")
 			{
 				std::shared_ptr<TextPrefabData> text = std::make_shared<TextPrefabData>();
+				text->type = "Text";
 				text->fontPath = CheckJsonString(componentJson, "fontPath", objectName);
 				text->fontSize = CheckJsonInt(componentJson, "fontSize", objectName);
 				text->color = Vector4(
-					CheckJsonFloat(componentJson, "f_red", objectName),
-					CheckJsonFloat(componentJson, "f_green", objectName),
-					CheckJsonFloat(componentJson, "f_blue", objectName),
-					CheckJsonFloat(componentJson, "f_alpha", objectName)
+					CheckJsonFloat(componentJson, "tintColorX", objectName),
+					CheckJsonFloat(componentJson, "tintColorY", objectName),
+					CheckJsonFloat(componentJson, "tintColorZ", objectName),
+					CheckJsonFloat(componentJson, "tintColorW", objectName)
 				);
 				text->text = CheckJsonString(componentJson, "text", objectName);
-				text->offset = CheckJsonFloat(componentJson, "offsetX", objectName), CheckJsonFloat(componentJson, "offsetY", objectName);
+				text->offset = Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName));
 				text->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);				
 
 				prefab.components.emplace(componentID, text);
 			}
 			else if (type == "CharacterController")
 			{
-				std::shared_ptr<CharacterControllerPrefabData> characterController = std::make_shared<CharacterControllerPrefabData>();			
+				std::shared_ptr<CharacterControllerPrefabData> characterController = std::make_shared<CharacterControllerPrefabData>();		
+				characterController->type = "CharacterController";
 				characterController->maxSpeed = CheckJsonFloat(componentJson, "maxSpeed", objectName);
+				characterController->maxAcceleration = CheckJsonFloat(componentJson, "maxAcceleration", objectName);
 				characterController->airControl = CheckJsonFloat(componentJson, "airControl", objectName);
 
 				prefab.components.emplace(componentID, characterController);
@@ -287,8 +293,8 @@ namespace FlatEngine
 				boxCollider->b_isCollapsed = b_isCollapsed;
 				boxCollider->ownerId = object.ID;
 				boxCollider->b_tileMapCollider = CheckJsonBool(componentJson, "_isTileMapCollider", objectName);
-				boxCollider->activeDimensions =CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName);
-				boxCollider->activeOffset =CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
+				boxCollider->activeDimensions = Vector2(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
+				boxCollider->activeOffset = Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName));
 				boxCollider->b_isContinuous = CheckJsonBool(componentJson, "_isContinuous", objectName);
 				boxCollider->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
 				boxCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
@@ -302,8 +308,9 @@ namespace FlatEngine
 			else if (type == "CircleCollider")
 			{
 				std::shared_ptr<CircleColliderPrefabData> circleCollider = std::make_shared<CircleColliderPrefabData>();
+				circleCollider->type = "CircleCollider";
 				circleCollider->activeRadius = CheckJsonFloat(componentJson, "activeRadius", objectName);
-				circleCollider->activeOffset = CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName);
+				circleCollider->activeOffset = Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName));
 				circleCollider->b_isContinuous = CheckJsonBool(componentJson, "_isContinuous", objectName);
 				circleCollider->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
 				circleCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
@@ -315,6 +322,7 @@ namespace FlatEngine
 			else if (type == "RigidBody")
 			{
 				std::shared_ptr<RigidBodyPrefabData> rigidBody = std::make_shared<RigidBodyPrefabData>();
+				rigidBody->type = "RigidBody";
 				rigidBody->mass = CheckJsonFloat(componentJson, "mass", objectName);
 				rigidBody->angularDrag = CheckJsonFloat(componentJson, "angularDrag", objectName);
 				rigidBody->gravity = CheckJsonFloat(componentJson, "gravity", objectName);
@@ -331,6 +339,7 @@ namespace FlatEngine
 			else if (type == "TileMap")
 			{
 				std::shared_ptr<TileMapPrefabData> tileMap = std::make_shared<TileMapPrefabData>();
+				tileMap->type = "TileMap";
 				tileMap->width = CheckJsonInt(componentJson, "width", objectName);
 				tileMap->height = CheckJsonInt(componentJson, "height", objectName);
 				tileMap->tileWidth = CheckJsonInt(componentJson, "tileWidth", objectName);
@@ -521,46 +530,40 @@ namespace FlatEngine
 		}
 	}
 
-	GameObject *PrefabManager::Instantiate(std::string prefabName, Vector2 position, long parentID, long ID)
+	GameObject* PrefabManager::InstantiateSelfAndChildren(long parentID, long childIDToFind, Prefab prefab, Vector2 spawnLocation)
 	{
-		GameObject* rootObject = nullptr;
+		GameObject* self = CreateGameObject(parentID);
 
-		if (m_prefabs.count(prefabName) > 0)
+		if (prefab.objects.count(childIDToFind) > 0)
 		{
-			Prefab prefab = m_prefabs.at(prefabName);
-			GameObjectPrefabData root = prefab.rootObject;
-			
-			rootObject = CreateGameObject(parentID, ID);
-			rootObject->SetName(prefabName);
-			rootObject->SetIsPrefab(true);
-			rootObject->SetPrefabName(prefabName);
-			rootObject->SetPrefabSpawnLocation(position);
-			rootObject->SetActive(root.b_isActive);
-			rootObject->SetTagList(root.tagList);
+			GameObjectPrefabData myData = prefab.objects.at(childIDToFind);
 
-			for (std::pair<long, GameObjectPrefabData> objectData : prefab.objects)
+			// Root object settings
+			if (parentID == -1)
 			{
-				if (objectData.first != rootObject->GetID())
-				{
-					//GameObject* childObject = CreateGameObject(objectData.second.parentID, objectData.second.ID);
-
-					//instantiatedObject->SetName(prefabName);
-					//instantiatedObject->SetIsPrefab(true);
-					//instantiatedObject->SetPrefabName(prefabName);
-					//instantiatedObject->SetPrefabSpawnLocation(position);
-					//instantiatedObject->SetActive(root.b_isActive);
-					//instantiatedObject->SetTagList(root.tagList);
-				}
+				self->SetIsPrefab(true);
+				self->SetPrefabName(prefab.name);
+				self->SetPrefabSpawnLocation(spawnLocation);
 			}
 
-			for (long componentID : root.componentIDs)
+			self->SetName(myData.name);
+			self->SetActive(myData.b_isActive);
+			self->SetTagList(myData.tagList);
+
+			for (long prefabChildID : myData.childrenIDs)
+			{
+				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab);
+				self->AddChild(child->GetID());
+			}
+
+			for (long componentID : myData.componentIDs)
 			{
 				if (prefab.components.count(componentID) > 0)
 				{
 					if (prefab.components.at(componentID)->type == "Transform")
 					{
 						std::shared_ptr<TransformPrefabData> transformData = std::static_pointer_cast<TransformPrefabData>(prefab.components.at(componentID));
-						Transform* transform = rootObject->GetTransform();
+						Transform* transform = self->GetTransform();
 						transform->SetActive(transformData->b_isActive);
 						transform->SetCollapsed(transformData->b_isCollapsed);
 						transform->SetScale(transformData->scale);
@@ -572,15 +575,16 @@ namespace FlatEngine
 						}
 						else
 						{
-							transform->SetInitialPosition(position);
+							transform->SetInitialPosition(spawnLocation);
 						}
 					}
 					else if (prefab.components.at(componentID)->type == "Sprite")
 					{
 						std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
-						Sprite* sprite = rootObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
+						Sprite* sprite = self->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
 						sprite->SetTexture(spriteData->path);
 						sprite->SetOffset(spriteData->offset);
+						sprite->SetScale(spriteData->scale);
 						sprite->SetPivotPoint(spriteData->pivotPoint);
 						sprite->SetRenderOrder(spriteData->renderOrder);
 						sprite->SetTintColor(spriteData->tintColor);
@@ -588,7 +592,7 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "Camera")
 					{
 						std::shared_ptr<CameraPrefabData> cameraData = std::static_pointer_cast<CameraPrefabData>(prefab.components.at(componentID));
-						Camera* camera = rootObject->AddCamera(-1, cameraData->b_isActive, cameraData->b_isCollapsed);
+						Camera* camera = self->AddCamera(-1, cameraData->b_isActive, cameraData->b_isCollapsed);
 						camera->SetDimensions(cameraData->width, cameraData->height);
 						camera->SetZoom(cameraData->zoom);
 						camera->SetFrustrumColor(cameraData->frustrumColor);
@@ -600,13 +604,13 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "Script")
 					{
 						std::shared_ptr<ScriptPrefabData> scriptData = std::static_pointer_cast<ScriptPrefabData>(prefab.components.at(componentID));
-						Script* script = rootObject->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
+						Script* script = self->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
 						script->SetAttachedScript(scriptData->attachedScript);
 					}
 					else if (prefab.components.at(componentID)->type == "Button")
 					{
 						std::shared_ptr<ButtonPrefabData> buttonData = std::static_pointer_cast<ButtonPrefabData>(prefab.components.at(componentID));
-						Button* button = rootObject->AddButton(-1, buttonData->b_isActive, buttonData->b_isCollapsed);
+						Button* button = self->AddButton(-1, buttonData->b_isActive, buttonData->b_isCollapsed);
 						button->SetActiveDimensions(buttonData->activeDimensions.x, buttonData->activeDimensions.y);
 						button->SetActiveOffset(buttonData->activeOffset);
 						button->SetActiveLayer(buttonData->activeLayer);
@@ -614,7 +618,7 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "Canvas")
 					{
 						std::shared_ptr<CanvasPrefabData> canvasData = std::static_pointer_cast<CanvasPrefabData>(prefab.components.at(componentID));
-						Canvas* canvas = rootObject->AddCanvas(-1, canvasData->b_isActive, canvasData->b_isCollapsed);
+						Canvas* canvas = self->AddCanvas(-1, canvasData->b_isActive, canvasData->b_isCollapsed);
 						canvas->SetLayerNumber(canvasData->layerNumber);
 						canvas->SetBlocksLayers(canvasData->b_blocksLayers);
 						canvas->SetDimensions(canvasData->width, canvasData->height);
@@ -622,19 +626,19 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "Animation")
 					{
 						std::shared_ptr<AnimationPrefabData> animationData = std::static_pointer_cast<AnimationPrefabData>(prefab.components.at(componentID));
-						Animation* animation = rootObject->AddAnimation(-1, animationData->b_isActive, animationData->b_isCollapsed);
+						Animation* animation = self->AddAnimation(-1, animationData->b_isActive, animationData->b_isCollapsed);
 						animation->SetAnimationPath(animationData->animationPath);
 					}
 					else if (prefab.components.at(componentID)->type == "Audio")
 					{
 						std::shared_ptr<AudioPrefabData> audioData = std::static_pointer_cast<AudioPrefabData>(prefab.components.at(componentID));
-						Audio* audio = rootObject->AddAudio(-1, audioData->b_isActive, audioData->b_isCollapsed);
+						Audio* audio = self->AddAudio(-1, audioData->b_isActive, audioData->b_isCollapsed);
 						audio->SetSounds(audioData->sounds);
 					}
 					else if (prefab.components.at(componentID)->type == "Text")
 					{
 						std::shared_ptr<TextPrefabData> textData = std::static_pointer_cast<TextPrefabData>(prefab.components.at(componentID));
-						Text* text = rootObject->AddText(-1, textData->b_isActive, textData->b_isCollapsed);
+						Text* text = self->AddText(-1, textData->b_isActive, textData->b_isCollapsed);
 						text->SetFontPath(textData->fontPath);
 						text->SetFontSize(textData->fontSize);
 						text->SetColor(textData->color);
@@ -646,7 +650,7 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "BoxCollider")
 					{
 						std::shared_ptr<BoxColliderPrefabData> colData = std::static_pointer_cast<BoxColliderPrefabData>(prefab.components.at(componentID));
-						BoxCollider* boxCol = rootObject->AddBoxCollider(-1, colData->b_isActive, colData->b_isCollapsed);
+						BoxCollider* boxCol = self->AddBoxCollider(-1, colData->b_isActive, colData->b_isCollapsed);
 						boxCol->SetTileMapCollider(colData->b_tileMapCollider);
 						boxCol->SetActiveDimensions(colData->activeDimensions.x, colData->activeDimensions.y);
 						boxCol->SetActiveOffset(colData->activeOffset);
@@ -660,7 +664,7 @@ namespace FlatEngine
 					else if (prefab.components.at(componentID)->type == "CircleCollider")
 					{
 						std::shared_ptr<CircleColliderPrefabData> colData = std::static_pointer_cast<CircleColliderPrefabData>(prefab.components.at(componentID));
-						CircleCollider* cirCol = rootObject->AddCircleCollider(-1, colData->b_isActive, colData->b_isCollapsed);
+						CircleCollider* cirCol = self->AddCircleCollider(-1, colData->b_isActive, colData->b_isCollapsed);
 						cirCol->SetActiveRadiusGrid(colData->activeRadius);
 						cirCol->SetActiveOffset(colData->activeOffset);
 						cirCol->SetIsContinuous(colData->b_isContinuous);
@@ -671,36 +675,36 @@ namespace FlatEngine
 					}
 					else if (prefab.components.at(componentID)->type == "CompositeCollider")
 					{
-						/*					std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
-											Sprite* sprite = rootObject->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);		*/
+						/*std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
+						Sprite* sprite = self->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);*/
 					}
 					else if (prefab.components.at(componentID)->type == "RigidBody")
 					{
-						std::shared_ptr<RigidBodyPrefabData> rbData = std::static_pointer_cast<RigidBodyPrefabData>(prefab.components.at(componentID));
-						RigidBody* rb = rootObject->AddRigidBody(-1, rbData->b_isActive, rbData->b_isCollapsed);
-						rb->SetMass(rbData->mass);
-						rb->SetAngularDrag(rbData->angularDrag);
-						rb->SetGravity(rbData->gravity);
-						rb->SetFallingGravity(rbData->fallingGravity);
-						rb->SetFriction(rbData->friction);
-						rb->SetWindResistance(rbData->windResistance);
-						rb->SetEquilibriumForce(rbData->equilibriumForce);
-						rb->SetTerminalVelocity(rbData->terminalVelocity);
-						rb->SetIsStatic(rbData->b_isStatic);
-						rb->SetTorquesAllowed(rbData->b_allowTorques);
+						std::shared_ptr<RigidBodyPrefabData> rigidBodyData = std::static_pointer_cast<RigidBodyPrefabData>(prefab.components.at(componentID));
+						RigidBody* rigidBody = self->AddRigidBody(-1, rigidBodyData->b_isActive, rigidBodyData->b_isCollapsed);
+						rigidBody->SetMass(rigidBodyData->mass);
+						rigidBody->SetAngularDrag(rigidBodyData->angularDrag);
+						rigidBody->SetGravity(rigidBodyData->gravity);
+						rigidBody->SetFallingGravity(rigidBodyData->fallingGravity);
+						rigidBody->SetFriction(rigidBodyData->friction);
+						rigidBody->SetWindResistance(rigidBodyData->windResistance);
+						rigidBody->SetEquilibriumForce(rigidBodyData->equilibriumForce);
+						rigidBody->SetTerminalVelocity(rigidBodyData->terminalVelocity);
+						rigidBody->SetIsStatic(rigidBodyData->b_isStatic);
+						rigidBody->SetTorquesAllowed(rigidBodyData->b_allowTorques);
 					}
 					else if (prefab.components.at(componentID)->type == "CharacterController")
 					{
-						std::shared_ptr<CharacterControllerPrefabData> ccData = std::static_pointer_cast<CharacterControllerPrefabData>(prefab.components.at(componentID));
-						CharacterController* cc = rootObject->AddCharacterController(-1, ccData->b_isActive, ccData->b_isCollapsed);
-						cc->SetMaxAcceleration(ccData->maxAcceleration);
-						cc->SetMaxSpeed(ccData->maxSpeed);
-						cc->SetAirControl(ccData->airControl);
+						std::shared_ptr<CharacterControllerPrefabData> characterControllerData = std::static_pointer_cast<CharacterControllerPrefabData>(prefab.components.at(componentID));
+						CharacterController* characterController = self->AddCharacterController(-1, characterControllerData->b_isActive, characterControllerData->b_isCollapsed);
+						characterController->SetMaxAcceleration(characterControllerData->maxAcceleration);
+						characterController->SetMaxSpeed(characterControllerData->maxSpeed);
+						characterController->SetAirControl(characterControllerData->airControl);
 					}
 					else if (prefab.components.at(componentID)->type == "TileMap")
 					{
 						std::shared_ptr<TileMapPrefabData> tileMapData = std::static_pointer_cast<TileMapPrefabData>(prefab.components.at(componentID));
-						TileMap* tileMap = rootObject->AddTileMap(-1, tileMapData->b_isActive, tileMapData->b_isCollapsed);
+						TileMap* tileMap = self->AddTileMap(-1, tileMapData->b_isActive, tileMapData->b_isCollapsed);
 						tileMap->SetWidth(tileMapData->width);
 						tileMap->SetHeight(tileMapData->height);
 						tileMap->SetTileWidth(tileMapData->tileWidth);
@@ -716,6 +720,21 @@ namespace FlatEngine
 					}
 				}
 			}
+		}
+
+		return self;
+	}
+
+	GameObject *PrefabManager::Instantiate(std::string prefabName, Vector2 spawnLocation, long parentID, long ID)
+	{
+		GameObject* rootObject = nullptr;
+
+		if (m_prefabs.count(prefabName) > 0)
+		{
+			Prefab prefab = m_prefabs.at(prefabName);
+			GameObjectPrefabData root = prefab.rootObject;
+
+			rootObject = InstantiateSelfAndChildren(-1, root.ID, prefab, spawnLocation);
 		}
 
 		return rootObject;

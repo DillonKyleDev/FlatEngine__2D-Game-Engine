@@ -38,6 +38,11 @@ namespace FlatEngine
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
+		F_Lua["LoadScene"] = [](std::string sceneName)
+			{
+				std::string scenePath = GetFilePathUsingFileName(GetDir("projectDir"), sceneName + ".scn");
+				QueueLoadScene(scenePath);
+			};
 		F_Lua["LogString"] = [](std::string line)
 			{
 				std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";

@@ -77,15 +77,12 @@ private:
 // Define our Application
 class EditorApplication : public FL::Application
 {
-private:
-	EditorGameLoop* A_GameLoop;
-
 public:
 	EditorApplication()
 	{
 		A_GameLoop = new EditorGameLoop();
 		m_recreateWindow = false;
-		SetDirectoriesType(FL::EditorDir);
+		SetDirectoryType(FL::EditorDir);
 	}
 	~EditorApplication()
 	{
@@ -113,10 +110,8 @@ public:
 
 
 			BeginRender();
+			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
-
-			if (FL::_isDebugMode)
-				FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
 			if (A_GameLoop->IsStarted() && !A_GameLoop->IsGamePaused() || A_GameLoop->IsGamePaused() && A_GameLoop->IsFrameSkipped())
 			{
@@ -175,7 +170,6 @@ public:
 			EndRender();
 		}
 	}
-	// For things we only want to execute once after complete initialization
 	void RunOnceAfterInitialization()
 	{
 		static bool b_initialized = false;
@@ -227,9 +221,9 @@ public:
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			//Window::SetScreenDimensions(1500, 850);
-			Window::SetScreenDimensions(1900, 1000);
-			FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
+			Window::SetScreenDimensions(1500, 850);
+			//Window::SetScreenDimensions(1900, 1000);
+			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors
 			FL::F_AssetManager.CollectTextures(); 
@@ -247,7 +241,13 @@ public:
 	void OnLoadScene(std::string sceneName)
 	{
 		if (FL::GetObjectById(FlatGui::GetFocusedGameObjectID()) != nullptr)
+		{
 			FlatGui::SetFocusedGameObjectID(-1);
+		}
+		if (GameLoopStarted())
+		{
+			FL::RunAwakeAndStart();
+		}
 	}
 	FL::GameLoop* GetGameLoop()
 	{
@@ -290,6 +290,9 @@ public:
 
 	bool m_recreateWindow;
 	std::string m_startupProject;
+
+private:
+	EditorGameLoop* A_GameLoop;
 };
 
 

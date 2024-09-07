@@ -77,11 +77,8 @@ namespace FlatEngine
 	using ComponentTypes = Component::ComponentTypes;
 
 
-	extern std::string F_RuntimeDirectoriesLuaFilepath; 
-	extern std::string F_EditorDirectoriesLuaFilepath;  
-	extern std::string F_DebugDirectoriesLuaFilepath; 
-
-
+	extern std::string F_RuntimeDirectoriesLuaFilepath;
+	extern std::string F_EditorDirectoriesLuaFilepath;
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
 
@@ -103,6 +100,9 @@ namespace FlatEngine
 
 	extern bool _isDebugMode;
 	extern bool _closeProgram;
+
+	extern bool F_b_loadNewScene;
+	extern std::string F_sceneToBeLoaded;
 
 	// Drag/Drop IDs
 	extern std::string F_fileExplorerTarget;
@@ -227,7 +227,8 @@ namespace FlatEngine
 	extern Scene* CreateNewScene();
 	extern void SaveScene(Scene* scene, std::string filepath);
 	extern void SaveCurrentScene();
-	extern void LoadScene(std::string filepath);
+	extern void QueueLoadScene(std::string scenePath);
+	extern void LoadScene(std::string filepath);	
 	std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
@@ -393,4 +394,5 @@ namespace FlatEngine
 	extern json LoadFileData(std::string filepath);
 	extern void DeleteFileUsingPath(std::string filepath);
 	extern std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension);
+	extern std::string GetFilePathUsingFileName(std::string dirPath, std::string name);
 };

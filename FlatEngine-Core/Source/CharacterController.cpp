@@ -76,15 +76,16 @@ namespace FlatEngine
 				// If velocity exceeds negative max speed but x direction is positive
 				(velocity.x <= -m_maxSpeed && direction.x * m_maxAcceleration > 0)))
 			{
-				// Handles changes in direction
-				float skidForce = 0.5f;
-				if ((velocity.x < 0 && direction.x > 0) || (velocity.x > 0 && direction.x < 0))
-				{
-					rigidBody->SetPendingForces(Vector2(pendingForces.x * skidForce, pendingForces.y));
-				}
 
 				if (rigidBody != nullptr)
 				{
+					// Handles changes in direction
+					float skidForce = 0.5f;
+					if (rigidBody->IsGrounded() && ((velocity.x < 0 && direction.x > 0) || (velocity.x > 0 && direction.x < 0)))
+					{
+						rigidBody->SetPendingForces(Vector2(pendingForces.x * skidForce, pendingForces.y));
+					}
+
 					Vector2 finalForce = direction;
 				
 					// In air

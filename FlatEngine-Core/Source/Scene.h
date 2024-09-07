@@ -40,6 +40,7 @@ namespace FlatEngine
 		std::string GetName();
 		void SetPath(std::string path);
 		std::string GetPath();
+		void UnloadECSManager();
 		GameObject* AddSceneObject(GameObject sceneObject);
 		void KeepNextGameObjectIDUpToDate(long id);
 		std::map<long, GameObject> &GetSceneObjects();

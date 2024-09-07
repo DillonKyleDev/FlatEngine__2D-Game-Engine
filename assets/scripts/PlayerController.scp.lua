@@ -31,6 +31,7 @@ end
 
 --called once per gameloop frame 
 function Update() 
+    mappingContext = GetMappingContext("MC_CharacterContext")
     if mappingContext:Fired("IA_Jump") then
         pendingXForces = rigidBody:GetPendingForces():x()
         rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0));   

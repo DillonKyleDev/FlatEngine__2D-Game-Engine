@@ -336,7 +336,7 @@ namespace FlatGui
 
 		// Tint color picker
 		std::string tintID = "##SpriteTintColor" + std::to_string(id) + "-" + std::to_string(id);
-		ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+		//ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
 		if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
 		{
 			sprite->SetTintColor(tintColor);
@@ -355,9 +355,18 @@ namespace FlatGui
 		bool _isActive = camera->IsActive();
 		long id = camera->GetID();
 		bool _follow = camera->GetShouldFollow();
-		std::string following = "";
-		if (camera->GetToFollowID() != -1)
-			following = FL::GetObjectById(camera->GetToFollowID())->GetName();
+		std::string followingName = "";
+		GameObject* followingObject = FL::GetObjectById(camera->GetToFollowID());
+
+		if (camera->GetToFollowID() != -1 && followingObject != nullptr)
+		{
+			followingName = FL::GetObjectById(camera->GetToFollowID())->GetName();
+		}
+		else if (followingObject == nullptr)
+		{
+			camera->SetToFollowID(-1);
+		}
+
 		float followSmoothing = camera->GetFollowSmoothing();
 
 		// Active Checkbox
@@ -393,7 +402,7 @@ namespace FlatGui
 		}
 
 		int droppedValue = -1;
-		if (FL::DropInput("##CameraFollowObject", "Following", following, "DND_HIERARCHY_OBJECT", droppedValue, "Drag a GameObject here from the Hierarchy"))
+		if (FL::DropInput("##CameraFollowObject", "Following", followingName, "DND_HIERARCHY_OBJECT", droppedValue, "Drag a GameObject here from the Hierarchy"))
 		{
 			if (droppedValue != -1 && FL::GetObjectById(droppedValue) != nullptr)
 			{
@@ -723,40 +732,62 @@ namespace FlatGui
 	void RenderTextComponent(Text* text)
 	{
 		bool _isActive = text->IsActive();
-		Texture texture = text->GetTexture();
-		float textureWidth = (float)texture.GetWidth();
-		float textureHeight = (float)texture.GetHeight();
+		std::shared_ptr<Texture> texture = text->GetTexture();
+		float textureWidth = (float)texture->GetWidth();
+		float textureHeight = (float)texture->GetHeight();
 		int renderOrder = text->GetRenderOrder();
-		SDL_Color color = text->GetColor();
+		Vector4 color = text->GetColor();
 		Vector2 offset = text->GetOffset();
 		float xOffset = offset.x;
 		float yOffset = offset.y;
 		long id = text->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			text->SetActive(_isActive);
+		}
 
 		std::string textText = text->GetText();
-		if (FL::RenderInput("##TextContent" + std::to_string(id), "Text: ", textText))
+		if (FL::RenderInput("##TextContent" + std::to_string(id), "Text", textText))
 		{
 			text->SetText(textText);
 			text->LoadText();
 		}
 		bool _canOpenFiles = true;
 		std::string fontPath = text->GetFontPath();
-		if (FL::RenderInput("##FontPath" + std::to_string(id), "Font path: ", fontPath, _canOpenFiles))
+		if (FL::RenderInput("##FontPath" + std::to_string(id), "Font path", fontPath, _canOpenFiles))
+		{
 			text->SetFontPath(fontPath);
+		}
 
 		if (FL::PushTable("##TextProperties" + std::to_string(id), 2))
 		{
 			FL::RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
 			FL::RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
-			FL::RenderTextTableRow("##xTextOffset" + std::to_string(id), "X offset", std::to_string(xOffset));
-			FL::RenderTextTableRow("##yTextOffset" + std::to_string(id), "Y offset", std::to_string(yOffset));
-			FL::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers);
-			text->SetRenderOrder(renderOrder);
+			if (FL::RenderFloatDragTableRow("##xTextOffset" + std::to_string(id), "X offset", xOffset, 0.01f, 0.0f, 1000.0f))
+			{
+				text->SetOffset(Vector2(xOffset, yOffset));
+			}
+			if (FL::RenderFloatDragTableRow("##yTextOffset" + std::to_string(id), "Y offset", yOffset, 0.01f, 0.0f, 1000.0f))
+			{
+				text->SetOffset(Vector2(xOffset, yOffset));
+			}
+			if (FL::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
+			{
+				text->SetRenderOrder(renderOrder);
+			}
 			FL::PopTable();
 		}
+
+		// Tint color picker
+		std::string tintID = "##TextColor" + std::to_string(id) + "-" + std::to_string(id);
+		//ImVec4 tempColor = ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f);
+		if (ImGui::ColorEdit4(tintID.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+		{
+			text->SetColor(color);
+		}
+		ImGui::SameLine(0, 5);
+		ImGui::Text("Text color");
 	}
 
 	void RenderCharacterControllerComponent(CharacterController* characterController)

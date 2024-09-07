@@ -54,15 +54,12 @@ private:
 // Define our Application
 class RuntimeApplication : public FL::Application
 {
-private:
-	RuntimeGameLoop* A_GameLoop;
-
 public:
 	RuntimeApplication()
 	{
 		A_GameLoop = new RuntimeGameLoop();
 		m_recreateWindow = false;
-		SetDirectoriesType(FL::RuntimeDir);
+		SetDirectoryType(FL::RuntimeDir);
 	}
 	~RuntimeApplication()
 	{
@@ -72,8 +69,7 @@ public:
 
 	void Init()
 	{
-		// Remove the reference to the imgui.ini file for layout since we only need that in Engine mode and
-		// we don't want to have to include it in the final release build anyway.
+		// Remove the reference to the imgui.ini file for layout since we only need that in Editor mode
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.IniFilename = NULL;
 
@@ -84,6 +80,9 @@ public:
 		bool& _hasQuit = HasQuit();
 		while (!_hasQuit)
 		{
+			RunOnceAfterInitialization();
+
+
 			Uint32 renderStartTime = 0;
 			static Uint32 frameStart = FL::GetEngineTime();
 
@@ -92,14 +91,9 @@ public:
 			_hasQuit = FL::_closeProgram;
 
 
-			// For things we only want to execute once after complete initialization
-			RunOnceAfterInitialization();
-
-
 			BeginRender();
 
 
-			//// If Release - Start the Game Loop
 			if (!A_GameLoop->IsStarted())
 				A_GameLoop->Start();
 
@@ -143,7 +137,6 @@ public:
 			EndRender();
 		}
 	}
-	// For things we only want to execute once after complete initialization
 	void RunOnceAfterInitialization()
 	{
 		static bool b_hasRunOnce = false;
@@ -185,6 +178,10 @@ public:
 	}
 	void OnLoadScene(std::string sceneName)
 	{
+		if (GameLoopStarted())
+		{
+			FL::RunAwakeAndStart();
+		}
 	}
 	FL::GameLoop* GetGameLoop()
 	{
@@ -227,6 +224,9 @@ public:
 
 	bool m_recreateWindow;
 	std::string m_startupProject;
+
+private:
+	RuntimeGameLoop* A_GameLoop;
 };
 
 

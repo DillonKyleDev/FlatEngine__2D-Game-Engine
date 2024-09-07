@@ -96,6 +96,8 @@ namespace FlatEngine
 		std::string fileName = GetFilenameFromPath(filepath, false);
 		bool b_success = true;
 
+		m_loadedScene.UnloadECSManager();
+
 		// Declare file and input stream
 		std::ofstream file_obj;
 		std::ifstream ifstream(filepath);

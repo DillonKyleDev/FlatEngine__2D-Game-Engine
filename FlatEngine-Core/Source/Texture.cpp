@@ -1,41 +1,24 @@
 #include "Texture.h"
+#include "FlatEngine.h"
 
 namespace FlatEngine
 {
-	//Initializes variables
 	Texture::Texture(std::string path)
 	{
-		//Initialize
 		m_path = path;
 		m_texture = NULL;
 		m_surface = NULL;
 		m_textureWidth = 0;
 		m_textureHeight = 0;
-		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
 		if (path != "")
 			LoadFromFile(path);
 	}
 
-	Texture::Texture(const Texture* toCopy)
-	{
-		m_path = toCopy->m_path;	
-		m_texture = NULL;
-		m_surface = NULL;
-		m_textureWidth = toCopy->m_textureWidth;
-		m_textureHeight = toCopy->m_textureHeight;
-		m_font = TTF_OpenFont("Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
-		if (m_path != "")
-		LoadFromFile(m_path);
-	}
-
-
-	//Deallocatees memory
 	Texture::~Texture()
 	{
 		FreeTexture();
 		FreeSurface();
 	}
-
 
 	bool Texture::LoadFromFile(std::string path)
 	{
@@ -43,24 +26,20 @@ namespace FlatEngine
 
 		if (path != "")
 		{
-			//Remove existing texture
 			FreeTexture();
-
-			//The final texture
 			SDL_Texture* newTexture = NULL;
-
-			//Load image at specified path
 			SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+
 			if (loadedSurface == NULL)
 			{
 				printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
 			}
 			else
 			{
-				//Color key image **Whatever color you put in here it will treat as transparent**
+				// Color key image **Whatever color you put in here it will treat as transparent**
 				SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 0));
 
-				//Create texture from surface pixels
+				// Create texture from surface pixels
 				newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), loadedSurface);
 				if (newTexture == NULL)
 				{
@@ -68,16 +47,13 @@ namespace FlatEngine
 				}
 				else
 				{
-					//Set image dimensions
 					m_textureWidth = loadedSurface->w;
 					m_textureHeight = loadedSurface->h;
 				}
 
-				//Get rid of old loaded surface
 				SDL_FreeSurface(loadedSurface);
 			}
 
-			//Return success
 			m_texture = newTexture;
 			return m_texture != NULL;
 		}
@@ -107,11 +83,9 @@ namespace FlatEngine
 				printf("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
 			}
 
-			//Get rid of old loaded surface
 			SDL_FreeSurface(loadedSurface);
 		}
 
-		//Return success
 		m_surface = optimizedSurface;
 		return m_surface != NULL;
 	}
@@ -119,11 +93,9 @@ namespace FlatEngine
 	//Creates image from font string
 	bool Texture::LoadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* font)
 	{
-		//Get rid of preexisting texture
 		FreeSurface();		
-
-		//Render text surface
 		SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
+		//TTF_RenderText_Solid_Wrapped(); For wrapped text
 
 		if (textSurface == NULL)
 		{
@@ -131,7 +103,6 @@ namespace FlatEngine
 		}
 		else
 		{
-			//Create texture from surface pixels
 			m_texture = SDL_CreateTextureFromSurface(Window::GetRenderer(), textSurface);
 
 			if (m_texture == NULL)
@@ -140,23 +111,19 @@ namespace FlatEngine
 			}
 			else
 			{
-				//Get image dimensions
 				m_textureWidth = textSurface->w;
 				m_textureHeight = textSurface->h;
 			}
 
-			//Get rid of old surface
 			SDL_FreeSurface(textSurface);
 		}
 
-		//Return success
 		return m_texture != NULL;
 	}
 
-	//Deallocates texture
+
 	void Texture::FreeTexture()
 	{			
-		//Free texture if it exists
 		if (m_texture != NULL)
 		{
 			SDL_DestroyTexture(m_texture);
@@ -171,10 +138,8 @@ namespace FlatEngine
 		return m_texture;
 	}
 
-	//Deallocates texture
 	void Texture::FreeSurface()
 	{
-		//Free texture if it exists
 		if (m_surface != NULL)
 		{
 			SDL_FreeSurface(m_surface);
@@ -182,7 +147,6 @@ namespace FlatEngine
 		}
 	}
 
-	//Gets image dimensions
 	int Texture::GetWidth()
 	{
 		return m_textureWidth;
@@ -196,10 +160,5 @@ namespace FlatEngine
 	{
 		m_textureWidth = width;
 		m_textureHeight = height;
-	}
-
-	void Texture::SetFont(std::string path)
-	{
-		m_font = TTF_OpenFont(path.c_str(), 46);
 	}
 }

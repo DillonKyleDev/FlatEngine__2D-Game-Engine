@@ -26,6 +26,7 @@ namespace FlatEngine
 	{
 		m_directories.clear();
 		m_files.clear();
+
 		std::string dirPath = "";
 
 		switch (dirType)
@@ -35,9 +36,6 @@ namespace FlatEngine
 			break;
 		case EditorDir:
 			dirPath = F_EditorDirectoriesLuaFilepath;
-			break;
-		case DebugDir:
-			dirPath = F_DebugDirectoriesLuaFilepath;
 			break;
 		default:
 			break;
@@ -63,7 +61,7 @@ namespace FlatEngine
 					m_directories.emplace(sKey, sValue);
 
 					// Create the directory if it doesn't yet exist
-					if (!DoesFileExist(sValue))
+					if (!DoesFileExist(sValue) && sKey != "root")
 						std::filesystem::create_directories(sValue);
 				}
 			}

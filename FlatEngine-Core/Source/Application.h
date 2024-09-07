@@ -9,7 +9,6 @@ namespace FlatEngine
 	enum DirectoryType {
 		RuntimeDir,
 		EditorDir,
-		DebugDir,
 		NoDir
 	};
 
@@ -24,7 +23,7 @@ namespace FlatEngine
 			m_b_windowResized = false;
 			m_windowWidth = 1920;
 			m_windowHeight = 1080;
-			m_directoriesType = NoDir;  // Tells the engine where to look for the xxxDirectories.lua file containing important paths and dir locations
+			m_directoryType = NoDir;  // Tells the engine where to look for the xxxDirectories.lua file containing important paths and dir locations
 		}
 		~Application() {};
 
@@ -37,8 +36,8 @@ namespace FlatEngine
 		void WindowResized() { m_b_windowResized = true; };
 		void BeginRender(); // Defined in Application.cpp
 		void EndRender();   // Defined in Application.cpp
-		void SetDirectoriesType(DirectoryType dirType) { m_directoriesType = dirType; };
-		DirectoryType GetDirectoriesType() { return m_directoriesType;  };
+		DirectoryType GetDirectoryType() { return m_directoryType; };
+		void SetDirectoryType(DirectoryType dirType) { m_directoryType = dirType; };
 		virtual GameLoop* GetGameLoop() { return nullptr; };
 		virtual bool GameLoopStarted() { return false; };
 		virtual bool GameLoopPaused() { return false; };
@@ -50,13 +49,13 @@ namespace FlatEngine
 
 		void Quit() { m_b_hasQuit = true; };
 		bool& HasQuit() { return m_b_hasQuit; };
-		void OnLoadScene(std::string sceneName) {};
+		virtual void OnLoadScene(std::string sceneName) {};
 		
 	private:
 		bool m_b_hasQuit;
 		bool m_b_windowResized;
 		int m_windowWidth;
 		int m_windowHeight;
-		DirectoryType m_directoriesType;
+		DirectoryType m_directoryType;
 	};
 }

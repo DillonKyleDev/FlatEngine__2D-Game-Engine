@@ -45,6 +45,27 @@ namespace FlatEngine
 	{
 	}
 
+	void ECSManager::Cleanup()
+	{
+		m_Transforms.clear();
+		m_Sprites.clear();
+		m_Cameras.clear();
+		m_Scripts.clear();
+		m_LuaScriptsByOwner.clear();
+		m_Buttons.clear();
+		m_Canvases.clear();
+		m_Animations.clear();
+		m_Audios.clear();
+		m_Texts.clear();
+		m_CompositeColliders.clear();
+		m_BoxColliders.clear();
+		m_CircleColliders.clear();
+		m_RigidBodies.clear();
+		m_CharacterControllers.clear();
+		m_TileMaps.clear();
+		m_ColliderPairs.clear();
+	}
+
 	Transform* ECSManager::AddTransform(Transform transform, long ownerID)
 	{
 		m_Transforms.emplace(ownerID, transform);
@@ -326,6 +347,10 @@ namespace FlatEngine
 		{
 			return RemoveScript(ownerID, component->GetID());
 		}
+		else if (component->GetTypeString() == "Button")
+		{
+			return RemoveButton(ownerID);
+		}
 		else if (component->GetTypeString() == "Canvas")
 		{
 			return RemoveCanvas(ownerID);
@@ -510,8 +535,13 @@ namespace FlatEngine
 
 	bool ECSManager::RemoveButton(long ownerID)
 	{
-		// TODO
-		return false;
+		bool b_success = false;
+		if (m_Buttons.count(ownerID))
+		{
+			m_Buttons.erase(ownerID);
+			b_success = true;
+		}
+		return b_success;
 	}
 
 	bool ECSManager::RemoveRigidBody(long ownerID)

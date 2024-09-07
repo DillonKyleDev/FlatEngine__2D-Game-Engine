@@ -1,0 +1,82 @@
+{
+    "Scene GameObjects": [
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 14,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.9493637084960938,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.12658309936523438,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
+                    "fontSize": 40,
+                    "id": 15,
+                    "renderOrder": 0,
+                    "text": "Sample Text",
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 0.8624999523162842,
+                    "tintColorZ": 0.0,
+                    "type": "Text",
+                    "xOffset": 99.0,
+                    "yOffset": 16.5
+                }
+            ],
+            "id": 6,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Text(6)",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.9493637084960938,
+            "spawnLocationY": 0.12658309936523438,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        }
+    ]
+}

@@ -50,10 +50,9 @@
 
 
 namespace FlatEngine
-{
-	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/DebugDirectories.lua";
-	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";;
-	std::string F_DebugDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";;
+{	
+	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";
+	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
@@ -64,6 +63,9 @@ namespace FlatEngine
 
 	bool _isDebugMode = true;
 	bool _closeProgram = false;
+
+	bool F_b_loadNewScene = false;
+	std::string F_sceneToBeLoaded = "";
 
 	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
 	int JOYSTICK_DEAD_ZONE = 4000;
@@ -295,7 +297,7 @@ namespace FlatEngine
 							InitLua();
 							LogString("Lua initialized...");
 
-							F_AssetManager.CollectDirectories(dirType);		       // Collect important directories and file paths from xxxDirectories.lua (depending on the build type, uses paths populated just above)
+							F_AssetManager.CollectDirectories(dirType);				   // Collect important directories and file paths from Directories.lua
 							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
 							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
@@ -559,9 +561,13 @@ namespace FlatEngine
 		}
 
 		if (newProject.GetLoadedScenePath() != "")
+		{
 			LoadScene(newProject.GetLoadedScenePath());
+		}
 		else
+		{
 			CreateNewScene();
+		}
 
 		// Set loaded project
 		SetLoadedProject(newProject);
@@ -628,6 +634,13 @@ namespace FlatEngine
 	void SaveCurrentScene()
 	{
 		F_SceneManager.SaveCurrentScene();
+	}
+
+	// Waits until EndImGuiRender() has been called in Application.cpp to load the next scene
+	void QueueLoadScene(std::string scenePath)
+	{
+		F_b_loadNewScene = true;
+		F_sceneToBeLoaded = scenePath;
 	}
 
 	void LoadScene(std::string filepath)
@@ -3011,6 +3024,21 @@ namespace FlatEngine
 		}
 	}
 
+	std::string GetFilePathUsingFileName(std::string dirPath, std::string name)
+	{
+		std::string file = "";
+
+		for (auto& p : std::filesystem::recursive_directory_iterator(dirPath))
+		{
+			if (p.path().stem().string() == name || p.path().string().find(name) != std::string::npos)
+			{
+				file = p.path().string();
+			}
+		}
+
+		return file;
+	}
+
 	std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension)
 	{
 		std::vector<std::string> files;
@@ -3294,12 +3322,15 @@ namespace FlatEngine
 
 				if (type == "Transform")
 				{
-					Transform* newTransform = loadedObject->AddTransform(id, _isActive, _isCollapsed);
+					Transform* transform = loadedObject->GetTransform();
 					float rotation = CheckJsonFloat(componentJson, "rotation", objectName);
-					newTransform->SetOrigin(Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName)));
-					newTransform->SetInitialPosition(Vector2(CheckJsonFloat(componentJson, "xPos", objectName), CheckJsonFloat(componentJson, "yPos", objectName)));
-					newTransform->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));
-					newTransform->SetRotation(rotation);
+					transform->SetID(id);
+					transform->SetActive(_isActive);
+					transform->SetCollapsed(_isCollapsed);
+					transform->SetOrigin(Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName)));
+					transform->SetInitialPosition(Vector2(CheckJsonFloat(componentJson, "xPos", objectName), CheckJsonFloat(componentJson, "yPos", objectName)));
+					transform->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));
+					transform->SetRotation(rotation);
 					objectRotation = rotation;
 				}
 				else if (type == "Sprite")
@@ -3352,7 +3383,7 @@ namespace FlatEngine
 				else if (type == "Canvas")
 				{
 					Canvas* newCanvas = loadedObject->AddCanvas(id, _isActive, _isCollapsed);
-					newCanvas->SetDimensions(CheckJsonFloat(componentJson, "canvasWidth", objectName), CheckJsonFloat(componentJson, "canvasHeight", objectName));
+					newCanvas->SetDimensions(CheckJsonFloat(componentJson, "width", objectName), CheckJsonFloat(componentJson, "height", objectName));
 					newCanvas->SetLayerNumber(CheckJsonInt(componentJson, "layerNumber", objectName));
 					newCanvas->SetBlocksLayers(CheckJsonBool(componentJson, "_blocksLayers", objectName));
 				}
@@ -3384,15 +3415,15 @@ namespace FlatEngine
 					newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
 					newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
 					newText->SetColor(Vector4(
-						CheckJsonFloat(componentJson, "f_red", objectName),
-						CheckJsonFloat(componentJson, "f_green", objectName),
-						CheckJsonFloat(componentJson, "f_blue", objectName),
-						CheckJsonFloat(componentJson, "f_alpha", objectName)
+						CheckJsonFloat(componentJson, "tintColorX", objectName),
+						CheckJsonFloat(componentJson, "tintColorY", objectName),
+						CheckJsonFloat(componentJson, "tintColorZ", objectName),
+						CheckJsonFloat(componentJson, "tintColorW", objectName)
 					));
 					newText->SetText(CheckJsonString(componentJson, "text", objectName));
-					newText->SetOffset(Vector2(CheckJsonFloat(componentJson, "offsetX", objectName), CheckJsonFloat(componentJson, "offsetY", objectName)));
 					newText->SetRenderOrder(CheckJsonInt(componentJson, "renderOrder", objectName));
 					newText->LoadText();
+					newText->SetOffset(Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName)));
 				}
 				else if (type == "CharacterController")
 				{
@@ -3454,7 +3485,15 @@ namespace FlatEngine
 						for (int tileSet = 0; tileSet < componentJson["tileSets"].size(); tileSet++)
 						{
 							json tileSetJson = componentJson["tileSets"][tileSet];
-							newTileMap->AddTileSet(CheckJsonString(tileSetJson, "name", objectName));
+							std::string tileSetName = CheckJsonString(tileSetJson, "name", objectName);
+							if (GetTileSet(tileSetName) != nullptr)
+							{
+								newTileMap->AddTileSet(tileSetName);
+							}
+							else
+							{
+								LogError("TileSet: \"" + tileSetName + "\" could not be found.");
+							}
 						}
 					}
 					// Get Tile data
@@ -3467,9 +3506,9 @@ namespace FlatEngine
 							float y = CheckJsonFloat(tileJson, "tileCoordY", objectName);
 							std::string tileSetName = CheckJsonString(tileJson, "tileSetName", objectName);
 							int tileSetIndex = CheckJsonInt(tileJson, "tileSetIndex", objectName);
-
-							if (tileSetName != "" && tileSetIndex != -1)
-							{
+				
+							if (tileSetName != "" && GetTileSet(tileSetName) != nullptr && tileSetIndex != -1)
+							{								
 								newTileMap->SetTile(Vector2(x, y), GetTileSet(tileSetName), tileSetIndex);
 							}
 						}
@@ -3516,12 +3555,6 @@ namespace FlatEngine
 			}
 
 			loadedObject->SetName(objectName);
-
-			// Set children after because they may not be created yet and SetActive() calls child objects
-			for (int c = 0; c < objectJson["children"].size(); c++)
-			{
-				loadedObject->AddChild(loadedChildrenIDs[c]);
-			}
 		}
 
 		return loadedObject;

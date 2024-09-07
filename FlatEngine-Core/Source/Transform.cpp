@@ -31,7 +31,7 @@ namespace FlatEngine
 	{
 		m_origin = newOrigin;
 
-		if (GetParent()->HasComponent("Button"))
+		if (GetParent() != nullptr && GetParent()->HasComponent("Button"))
 		{
 			GetParent()->GetButton()->CalculateActiveEdges();
 		}

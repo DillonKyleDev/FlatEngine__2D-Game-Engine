@@ -212,35 +212,33 @@ namespace FlatEngine
 		Button* button = self.GetButton();
 		Canvas* canvas = self.GetCanvas();
 
-
-		// Animation component handling
-		if (animation != nullptr)
-		{
-			// If animation component is playing, play the animation
-			if (animation != nullptr && animation->IsPlaying())
-				animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
-		}
-
 		// Check if each object has a Transform component
 		if (transform != nullptr)
 		{
 			Vector2 position = transform->GetTruePosition();
 			Vector2 scale = transform->GetScale();
+			float rotation = transform->GetRotation();
+			
+			if (animation != nullptr)
+			{
+				// If animation component is playing, play the animation
+				if (animation != nullptr && animation->IsPlaying())
+					animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
+			}
 
 			if (text != nullptr)
 			{
 				// Cast the component to Text shared_ptr
-				Texture textTexture = text->GetTexture();
-				text->LoadText();
-				float textWidth = (float)textTexture.GetWidth();
-				float textHeight = (float)textTexture.GetHeight();
+				std::shared_ptr<Texture> textTexture = text->GetTexture();
+				float textWidth = (float)textTexture->GetWidth();
+				float textHeight = (float)textTexture->GetHeight();
 				int renderOrder = text->GetRenderOrder();
 				Vector2 offset = text->GetOffset();
 				bool _spriteScalesWithZoom = true;
-
+				Vector4 tintColor = text->GetColor();
 
 				// If there is a valid Texture loaded into the Sprite Component
-				if (textTexture.GetTexture() != nullptr)
+				if (textTexture->GetTexture() != nullptr)
 				{
 					// Change the draw channel for the scene object
 					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
@@ -249,7 +247,7 @@ namespace FlatEngine
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 
 					// Draw the texture
-					AddImageToDrawList(textTexture.GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, F_gameViewGridStep.x, draw_list);
+					AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 
@@ -263,7 +261,6 @@ namespace FlatEngine
 				bool _scalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 				Vector4 tintColor = sprite->GetTintColor();
-				float rotation = transform->GetRotation();
 
 				// Changing the scale here because things are rendering too large and I want them to start off smaller
 				Vector2 newScale = Vector2(scale.x * spriteScale.x * F_spriteScaleMultiplier, scale.y * spriteScale.y * F_spriteScaleMultiplier);
@@ -363,15 +360,15 @@ namespace FlatEngine
 				button->CalculateActiveEdges();
 
 				// For drawing border in game view
-				Vector2 topLeft = { activeLeft, activeTop };
-				Vector2 bottomRight = { activeRight, activeBottom };
+				//Vector2 topLeft = { activeLeft, activeTop };
+				//Vector2 bottomRight = { activeRight, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
+				//drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
 
-				if (_isActive)
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 3.0f, draw_list);
-				else
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 3.0f, draw_list);
+				//if (_isActive)
+				//	FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 3.0f, draw_list);
+				//else
+				//	FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 3.0f, draw_list);
 			}
 
 			if (canvas != nullptr)

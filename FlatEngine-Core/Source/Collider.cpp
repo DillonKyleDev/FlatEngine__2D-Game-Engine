@@ -186,10 +186,10 @@ namespace FlatEngine
 		float A_BottomEdge = circleCol->nextActiveBottom;
 		float A_LeftEdge = circleCol->nextActiveLeft;
 
-		float B_TopEdge = boxCol->nextActiveTop;
-		float B_RightEdge = boxCol->nextActiveRight;
-		float B_BottomEdge = boxCol->nextActiveBottom;
-		float B_LeftEdge = boxCol->nextActiveLeft;
+		float B_TopEdge = boxCol->m_nextActiveTop;
+		float B_RightEdge = boxCol->m_nextActiveRight;
+		float B_BottomEdge = boxCol->m_nextActiveBottom;
+		float B_LeftEdge = boxCol->m_nextActiveLeft;
 
 		float yFromCol;
 		float xFromCol;
@@ -595,15 +595,15 @@ namespace FlatEngine
 		float box2HalfHeight = boxCol2->GetActiveHeight() / 2 * box2Scale.y;
 		float box2HalfWidth = boxCol2->GetActiveWidth() / 2 * box2Scale.x;
 
-		float A_TopEdge = boxCol1->nextActiveTop;
-		float A_RightEdge = boxCol1->nextActiveRight;
-		float A_BottomEdge = boxCol1->nextActiveBottom;
-		float A_LeftEdge = boxCol1->nextActiveLeft;
+		float A_TopEdge = boxCol1->m_nextActiveTop;
+		float A_RightEdge = boxCol1->m_nextActiveRight;
+		float A_BottomEdge = boxCol1->m_nextActiveBottom;
+		float A_LeftEdge = boxCol1->m_nextActiveLeft;
 
-		float B_TopEdge = boxCol2->nextActiveTop;
-		float B_RightEdge = boxCol2->nextActiveRight;
-		float B_BottomEdge = boxCol2->nextActiveBottom;
-		float B_LeftEdge = boxCol2->nextActiveLeft;
+		float B_TopEdge = boxCol2->m_nextActiveTop;
+		float B_RightEdge = boxCol2->m_nextActiveRight;
+		float B_BottomEdge = boxCol2->m_nextActiveBottom;
+		float B_LeftEdge = boxCol2->m_nextActiveLeft;
 
 		// Check for collision
 		b_colliding = ((A_LeftEdge < B_RightEdge) && (A_RightEdge > B_LeftEdge) && (A_BottomEdge < B_TopEdge) && (A_TopEdge > B_BottomEdge));

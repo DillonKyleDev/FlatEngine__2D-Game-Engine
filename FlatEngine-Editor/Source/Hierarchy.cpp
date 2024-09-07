@@ -358,17 +358,44 @@ namespace FlatGui
 		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
 		{
 			FL::PushMenuStyles();
-			if (ImGui::MenuItem("Create Child"))
+			if (currentObject.IsPrefab())
 			{
-				GameObject *childObject = FL::CreateGameObject(currentObject.GetID());
-				SetFocusedGameObjectID(childObject->GetID());
-				ImGui::CloseCurrentPopup();
+				std::string prefabName = "Prefab: " + currentObject.GetPrefabName();
+				ImGui::Text(prefabName.c_str());
+				ImGui::Separator();
+				if (ImGui::MenuItem("Save Prefab"))
+				{
+					FL::CreatePrefab(FL::GetDir("prefabs") + "/" + currentObject.GetPrefabName() + ".prf", currentObject);
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("Unpack prefab"))
+				{
+					currentObject.SetIsPrefab(false);
+					currentObject.SetPrefabName("");
+					currentObject.SetPrefabSpawnLocation(Vector2(0, 0));
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("Create New Prefab"))
+				{
+					b_openPrefabModal = true;
+					modalOpenOn = currentObject.GetID();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			else
+			{
+				if (ImGui::MenuItem("Create Prefab"))
+				{
+					b_openPrefabModal = true;
+					modalOpenOn = currentObject.GetID();
+					ImGui::CloseCurrentPopup();
+				}
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Create Prefab"))
+			if (ImGui::MenuItem("Create Child"))
 			{
-				b_openPrefabModal = true;		
-				modalOpenOn = currentObject.GetID();
+				GameObject* childObject = FL::CreateGameObject(currentObject.GetID());
+				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -380,14 +407,14 @@ namespace FlatGui
 			ImGui::Separator();
 			if (ImGui::MenuItem("Lock in view"))
 			{
-				if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObject->GetID() == currentObject.GetID())
+				if (FG_b_sceneViewLockedOnObject && FG_sceneViewLockedObjectID == currentObject.GetID())
 				{
 					FG_b_sceneViewLockedOnObject = false;
-					FG_sceneViewLockedObject = &currentObject;
+					FG_sceneViewLockedObjectID = currentObject.GetID();
 				}
 				else if (!FG_b_sceneViewLockedOnObject)
 				{
-					FG_sceneViewLockedObject = &currentObject;
+					FG_sceneViewLockedObjectID = currentObject.GetID();
 					FG_b_sceneViewLockedOnObject = true;
 				}
 
@@ -470,7 +497,7 @@ namespace FlatGui
 			FL::PushMenuStyles();
 			if (ImGui::BeginPopupContextItem(prefabIDContextMenu.c_str(), ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
 			{
-				if (ImGui::MenuItem("Disassemble prefab"))
+				if (ImGui::MenuItem("Unpack prefab"))
 				{
 					currentObject.SetIsPrefab(false);
 					currentObject.SetPrefabName("");

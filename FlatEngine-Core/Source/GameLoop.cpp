@@ -219,7 +219,7 @@ namespace FlatEngine
 					b_stillHovered = true;
 				}
 			}
-			if (!b_stillHovered)
+			if (!b_stillHovered && lastHovered.GetParent() != nullptr)
 			{
 				CallLuaButtonEventFunction(lastHovered.GetParent(), LuaEventFunction::OnButtonMouseLeave);
 			}

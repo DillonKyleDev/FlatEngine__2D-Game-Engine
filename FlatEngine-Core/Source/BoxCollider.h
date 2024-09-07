@@ -50,25 +50,25 @@ namespace FlatEngine
 
 	private:		
 		bool m_b_isTileMapCollider;
-		float activeWidth;
-		float activeHeight;
+		float m_activeWidth;
+		float m_activeHeight;
 
 		// Current
-		float activeLeft;
-		float activeRight;
-		float activeBottom;
-		float activeTop;
+		float m_activeLeft;
+		float m_activeRight;
+		float m_activeBottom;
+		float m_activeTop;
 
 		// Next
-		float nextActiveLeft;
-		float nextActiveRight;
-		float nextActiveBottom;
-		float nextActiveTop;
+		float m_nextActiveLeft;
+		float m_nextActiveRight;
+		float m_nextActiveBottom;
+		float m_nextActiveTop;
 
-		Vector4 activeEdges;
-		bool _activeEdgesSet;
-		Vector2 corners[4];
-		Vector2 nextCorners[4];
-		Vector2 normals[4];
+		Vector4 m_activeEdges;
+		bool m_b_activeEdgesSet;
+		Vector2 m_corners[4];
+		Vector2 m_nextCorners[4];
+		Vector2 m_normals[4];
 	};
 }

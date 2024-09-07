@@ -43,7 +43,7 @@ namespace FlatGui
 			{
 				// Scene to load on start
 				std::string startupScene = FL::F_LoadedProject.GetRuntimeScene();
-				if (FL::RenderInputTableRow("Scene Loaded On Start", "Scene to load on game start", startupScene, true))
+				if (FL::RenderInputTableRow("##SceneLoadedOnStart", "Scene to load on game start", startupScene, true))
 					FlatEngine::F_LoadedProject.SetRuntimeScene(startupScene);
 
 				std::string finalBuildPath = FL::F_LoadedProject.GetBuildPath();

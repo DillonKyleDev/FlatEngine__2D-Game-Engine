@@ -204,7 +204,6 @@ namespace FlatGui
 	void RunOnceAfterInitialization()
 	{
 		FL::InitializeMappingContexts();
-		//FL::InitializeTileSets();
 		SetupProfilerProcesses();
 	}
 
@@ -863,25 +862,25 @@ namespace FlatGui
 			// If it has a text component, render that text texture at the objects transform position
 			if (text != nullptr)
 			{
-				Texture textTexture = text->GetTexture();
-				text->LoadText();
-				float textWidth = (float)textTexture.GetWidth();
-				float textHeight = (float)textTexture.GetHeight();
+				std::shared_ptr<Texture> textTexture = text->GetTexture();
+				float textWidth = (float)textTexture->GetWidth();
+				float textHeight = (float)textTexture->GetHeight();
 				int renderOrder = text->GetRenderOrder();
 				Vector2 offset = text->GetOffset();
 				bool _spriteScalesWithZoom = true;
+				Vector4 tintColor = text->GetColor();
 
 				// If there is a valid Texture loaded into the Sprite Component
-				if (textTexture.GetTexture() != nullptr)
+				if (textTexture->GetTexture() != nullptr)
 				{
 					// Change the draw channel for the scene object
 					if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-
+					
 					// Draw the texture
-					FL::AddImageToDrawList(textTexture.GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation);
+					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 
@@ -1422,7 +1421,7 @@ namespace FlatGui
 				}
 
 				// Draw box around each of the collision areas in the buffer
-				if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
+				if (focusedObjectID == self.GetID() && FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW)
 				{
 					for (std::pair<Vector2, Vector2> collAreaBuffer : FG_collisionAreasBuffer)
 					{

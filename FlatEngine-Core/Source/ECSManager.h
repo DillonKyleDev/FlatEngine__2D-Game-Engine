@@ -32,6 +32,7 @@ namespace FlatEngine
 		ECSManager();
 		~ECSManager();
 
+		void Cleanup();
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
