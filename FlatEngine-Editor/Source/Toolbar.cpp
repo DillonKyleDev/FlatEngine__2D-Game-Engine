@@ -46,7 +46,9 @@ namespace FlatGui
 			ImGui::EndDisabled();
 		}
 		else if (FL::RenderImageButton(pauseID.c_str(), FL::GetTexture("pause")))
+		{
 			FL::PauseGameLoop();
+		}
 
 
 		ImGui::SameLine(0, 5);
@@ -71,7 +73,9 @@ namespace FlatGui
 			ImGui::EndDisabled();
 		}
 		else if (FL::RenderImageButton(nextFrameID.c_str(), FL::GetTexture("nextFrame")))
+		{
 			FL::F_Application->GetGameLoop()->SetFrameSkipped(true);
+		}
 
 		ImGui::PopStyleVar();
 

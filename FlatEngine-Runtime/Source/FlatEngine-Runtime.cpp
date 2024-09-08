@@ -42,7 +42,6 @@ public:
 		// Call base class GameLoop Update function
 		FL::GameLoop::Update(FL::F_gameViewGridStep.x, FL::F_gameViewCenter);
 
-
 		// Other, application specific updates here if needed
 		//
 	};
@@ -98,14 +97,14 @@ public:
 				A_GameLoop->Start();
 
 
-			if (A_GameLoop->IsStarted() && !A_GameLoop->IsGamePaused() || A_GameLoop->IsGamePaused() && A_GameLoop->IsFrameSkipped())
+			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
-				if (!A_GameLoop->IsGamePaused())
+				if (!GameLoopPaused())
 					A_GameLoop->m_accumulator += frameTime;
 
-				if (!A_GameLoop->IsGamePaused())
+				if (!GameLoopPaused())
 				{
 					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
 					{
@@ -129,7 +128,7 @@ public:
 				FL::HandleEvents(_hasQuit);
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
-			if (!A_GameLoop->IsStarted())
+			if (!GameLoopStarted())
 				frameStart = FL::GetEngineTime();
 
 
@@ -156,8 +155,6 @@ public:
 	void BeginRender()
 	{
 		Application::BeginRender();
-
-
 
 		// Application specific rendering	
 		FL::SetNextViewportToFillWindow();  // Maximize viewport
@@ -216,7 +213,7 @@ public:
 	};
 	void PauseGame()
 	{
-		if (A_GameLoop->IsGamePaused())
+		if (GameLoopPaused())
 			A_GameLoop->UnpauseGame();
 		else
 			A_GameLoop->PauseGame();

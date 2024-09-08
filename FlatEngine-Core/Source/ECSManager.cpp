@@ -594,14 +594,15 @@ namespace FlatEngine
 			colliderMap++;
 		}
 	
-		for (BoxCollider* collider1 : colliders)
+		int colliderCounter = 1;
+		for (std::vector<BoxCollider*>::iterator collider1 = colliders.begin(); collider1 != colliders.end(); collider1++)
 		{
-			for (BoxCollider* collider2 : colliders)
+			for (std::vector<BoxCollider*>::iterator collider2 = collider1 + colliderCounter; collider2 != colliders.end(); collider2++)
 			{
-				if (collider1->GetParentID() != collider2->GetParentID())
+				if ((*collider1)->GetParentID() != (*collider2)->GetParentID())
 				{
-					TagList coll1TagList = collider1->GetParent()->GetTagList();
-					TagList coll2TagList = collider2->GetParent()->GetTagList();
+					TagList coll1TagList = (*collider1)->GetParent()->GetTagList();
+					TagList coll2TagList = (*collider2)->GetParent()->GetTagList();
 
 					std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
 					std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
@@ -629,12 +630,54 @@ namespace FlatEngine
 					}
 					if (!_ignorePair)
 					{
-						std::pair<Collider*, Collider*> newPair = { &(*collider1), &(*collider2) };
+						std::pair<Collider*, Collider*> newPair = { (*collider1), (*collider2) };
 						m_ColliderPairs.push_back(newPair);
 					}
 				}
 			}
 		}
+
+		//for (BoxCollider* collider1 : colliders)
+		//{
+		//	for (BoxCollider* collider2 : colliders)
+		//	{
+		//		if (collider1->GetParentID() != collider2->GetParentID())
+		//		{
+		//			TagList coll1TagList = collider1->GetParent()->GetTagList();
+		//			TagList coll2TagList = collider2->GetParent()->GetTagList();
+
+		//			std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
+		//			std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
+
+		//			bool _ignorePair = false;
+
+		//			for (std::string ignoredTag : coll1Ignored)
+		//			{
+		//				if (coll2TagList.HasTag(ignoredTag))
+		//				{
+		//					_ignorePair = true;
+		//					break;
+		//				}
+		//			}
+		//			if (!_ignorePair)
+		//			{
+		//				for (std::string ignoredTag : coll2Ignored)
+		//				{
+		//					if (coll1TagList.HasTag(ignoredTag))
+		//					{
+		//						_ignorePair = true;
+		//						break;
+		//					}
+		//				}
+		//			}
+		//			if (!_ignorePair)
+		//			{
+		//				std::pair<Collider*, Collider*> newPair = { collider1, collider2 };
+		//				m_ColliderPairs.push_back(newPair);
+		//			}
+		//		}
+		//	}
+		//}
 	}
 
 	std::vector<std::pair<Collider*, Collider*>> ECSManager::GetColliderPairs()

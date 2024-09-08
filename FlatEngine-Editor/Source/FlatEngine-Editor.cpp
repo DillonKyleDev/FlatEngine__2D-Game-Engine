@@ -113,7 +113,7 @@ public:
 			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
 
-			if (A_GameLoop->IsStarted() && !A_GameLoop->IsGamePaused() || A_GameLoop->IsGamePaused() && A_GameLoop->IsFrameSkipped())
+			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
 				// Profiler
 				Uint32 updateLoopStart = 0;
@@ -128,16 +128,24 @@ public:
 
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
-				if (!A_GameLoop->IsGamePaused())
-					A_GameLoop->m_accumulator += frameTime;
-
-				if (!A_GameLoop->IsGamePaused())
+				// Only add accumulated time if the GameLoop is not paused, else add a fixed small, amount of time
+				if (!GameLoopPaused())
 				{
+					A_GameLoop->m_accumulator += frameTime;
+				}
+				else
+				{
+					A_GameLoop->m_accumulator += A_GameLoop->m_deltaTime;
+				}
+
+				if (!GameLoopPaused() || A_GameLoop->IsFrameSkipped())
+				{
+					A_GameLoop->SetFrameSkipped(false);
+
 					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
 					{
 						FL::HandleEvents(_hasQuit);
 						A_GameLoop->Update();
-						A_GameLoop->SetFrameSkipped(false);
 
 						A_GameLoop->m_time += A_GameLoop->m_deltaTime;
 						A_GameLoop->m_accumulator -= A_GameLoop->m_deltaTime;
@@ -149,7 +157,9 @@ public:
 
 				// Artificially slow GameLoop if frameTime is less than 
 				if (!FL::F_LoadedProject.IsVsyncEnabled() && frameTime < A_GameLoop->m_deltaTime)
+				{
 					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
+				}
 
 				// Profiler
 				// Get hang time of Update Loop for profiler
@@ -163,7 +173,9 @@ public:
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
 			if (!A_GameLoop->IsStarted())
+			{
 				frameStart = FL::GetEngineTime();
+			}
 
 			
 
@@ -221,8 +233,8 @@ public:
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			//Window::SetScreenDimensions(1500, 850);
-			Window::SetScreenDimensions(1900, 1000);
+			Window::SetScreenDimensions(1500, 850);
+			//Window::SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors
