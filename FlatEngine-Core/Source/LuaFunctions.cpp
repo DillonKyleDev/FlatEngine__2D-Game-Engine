@@ -170,7 +170,7 @@ namespace FlatEngine
 			"SetActive", &Animation::SetActive,
 			"IsActive", &Animation::IsActive,
 			"GetID", &Animation::GetID,
-			"Play", &Animation::Play,
+			"Play", &Animation::PlayFromLua,
 			"Stop", &Animation::Stop,
 			"SetAnimationPath", &Animation::SetAnimationPath			
 		);
@@ -425,6 +425,25 @@ namespace FlatEngine
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
 							CallVoidLuaFunction<GameObject*>(F_LuaEventNames[eventFunc]);
+					}
+				}
+			}
+		}
+	}
+
+	void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc)
+	{
+		if (caller->HasComponent("Script"))
+		{
+			for (Script* script : caller->GetScripts())
+			{
+				if (script->IsActive())
+				{
+					if (F_LuaScriptsMap.count(script->GetAttachedScript()) > 0)
+					{
+						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
+						if (InitLuaScript(filePath, caller))
+							CallVoidLuaFunction<GameObject*>(eventFunc);
 					}
 				}
 			}

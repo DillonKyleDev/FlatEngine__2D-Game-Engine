@@ -145,7 +145,7 @@ namespace FlatEngine
 	{
 		GameObject newObject = GameObject(parentID, myID);
 		newObject.AddTransform();
-		if (parentID != -1)
+		if (parentID != -1 && m_sceneObjects.count(parentID))
 			m_sceneObjects.at(parentID).AddChild(newObject.GetID());
 		return AddSceneObject(newObject);
 	}

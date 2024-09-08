@@ -22,7 +22,7 @@ namespace FlatGui
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 26, 0);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() -3);
 
-		// Hamburger
+		// Three dots
 		FL::RenderImageButton("##AddGameObjectHierarchy", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
 		FL::PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##InspectorMoreContext", ImGuiPopupFlags_MouseButtonLeft))

@@ -2,6 +2,7 @@
 #include "Component.h"
 #include <map>
 #include "Vector4.h"
+#include <string>
 
 
 namespace FlatEngine
@@ -12,44 +13,45 @@ namespace FlatEngine
 	{
 	public:
 		enum Properties {
-			Transform,
-			Sprite,
-			Camera,
-			Script,
-			Button,
-			Canvas,
-			Audio,
-			Text,
-			BoxCollider,
-			CircleCollider,
-			RigidBody,
-			CharacterController
+			P_Transform,
+			P_Sprite,
+			P_Camera,
+			P_Script,
+			P_Button,
+			P_Canvas,
+			P_Audio,
+			P_Text,
+			P_BoxCollider,
+			P_CircleCollider,
+			P_RigidBody,
+			P_CharacterController
 		};
 
 		enum InterpType {
-			Lerp,
-			Slerp
+			I_Lerp,
+			I_Slerp
 		};
-
-		// Property structs
 
 		struct S_Property {
 			float time = 0;
 			std::string name;
 			bool _fired;
 		};
+		struct S_Event : public S_Property {
+			std::string functionName = "";
+		};
 		struct S_Transform : public S_Property {
-			InterpType transformInterpType = Lerp;
+			InterpType transformInterpType = I_Lerp;
 			float transformSpeed = 0.1f;
-			InterpType scaleInterpType = Lerp;
+			InterpType scaleInterpType = I_Lerp;
 			float scaleSpeed = 0.1f;
-			float xMove = 0;
-			float yMove = 0;
+			float xPos = 0;
+			float yPos = 0;
 			float xScale = 0;
 			float yScale = 0;
 		};
 		struct S_Sprite : public S_Property {
-			InterpType interpType = Lerp;
+			InterpType interpType = I_Lerp;
 			float speed = 0.1f;
 			std::string path = "";
 			float xOffset = 0;
@@ -75,7 +77,8 @@ namespace FlatEngine
 		struct S_Text : public S_Property {
 			std::string path = "";
 			std::string text = "";
-			std::string color = "";
+			Vector4 tintColor = Vector4(1, 1, 1, 1);
+			bool _instantTintChange = false;
 		};
 		struct S_BoxCollider : public S_Property {
 			bool _isActive = true;
@@ -84,7 +87,7 @@ namespace FlatEngine
 			bool _isActive = true;
 		};
 		struct S_RigidBody : public S_Property {
-			InterpType interpType = Lerp;
+			InterpType interpType = I_Lerp;
 			float speed = 0.1f;
 			bool _isActive = true;
 			float gravityScale = 1;
@@ -92,97 +95,84 @@ namespace FlatEngine
 		struct S_CharacterController : public S_Property {
 			bool _isActive = true;
 		};
-		struct S_Event : public S_Property {
-			std::string functionName = "";
-		};
 
 		struct S_AnimationProperties {
 			std::string animationName = "";
 			std::string animationPath = "";
 			float animationLength = 0.0f;
-			bool _isSorted = false;
+			bool b_isSorted = false;
 			bool _loop = false;
-			std::vector<std::shared_ptr<S_Transform>> transformProperties = std::vector<std::shared_ptr<S_Transform>>();
-			std::vector<std::shared_ptr<S_Sprite>> spriteProperties = std::vector<std::shared_ptr<S_Sprite>>();
-			std::vector<std::shared_ptr<S_Camera>> cameraProperties = std::vector<std::shared_ptr<S_Camera>>();
-			std::vector<std::shared_ptr<S_Script>> scriptProperties = std::vector<std::shared_ptr<S_Script>>();
-			std::vector<std::shared_ptr<S_Button>> buttonProperties = std::vector<std::shared_ptr<S_Button>>();
-			std::vector<std::shared_ptr<S_Canvas>> canvasProperties = std::vector<std::shared_ptr<S_Canvas>>();
-			std::vector<std::shared_ptr<S_Audio>> audioProperties = std::vector<std::shared_ptr<S_Audio>>();
-			std::vector<std::shared_ptr<S_Text>> textProperties = std::vector<std::shared_ptr<S_Text>>();
-			std::vector<std::shared_ptr<S_BoxCollider>> boxColliderProperties = std::vector<std::shared_ptr<S_BoxCollider>>();
-			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProperties = std::vector<std::shared_ptr<S_CircleCollider>>();
-			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProperties = std::vector<std::shared_ptr<S_RigidBody>>();
-			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProperties = std::vector<std::shared_ptr<S_CharacterController>>();
-			std::vector<std::shared_ptr<S_Event>> eventProperties = std::vector< std::shared_ptr<S_Event>>();
 
-			void SortKeyFrames() 
+			std::vector<std::shared_ptr<S_Event>> eventProps = std::vector< std::shared_ptr<S_Event>>();
+			std::vector<std::shared_ptr<S_Transform>> transformProps = std::vector<std::shared_ptr<S_Transform>>();
+			std::vector<std::shared_ptr<S_Sprite>> spriteProps = std::vector<std::shared_ptr<S_Sprite>>();
+			std::vector<std::shared_ptr<S_Camera>> cameraProps = std::vector<std::shared_ptr<S_Camera>>();
+			std::vector<std::shared_ptr<S_Script>> scriptProps = std::vector<std::shared_ptr<S_Script>>();
+			std::vector<std::shared_ptr<S_Button>> buttonProps = std::vector<std::shared_ptr<S_Button>>();
+			std::vector<std::shared_ptr<S_Canvas>> canvasProps = std::vector<std::shared_ptr<S_Canvas>>();
+			std::vector<std::shared_ptr<S_Audio>> audioProps = std::vector<std::shared_ptr<S_Audio>>();
+			std::vector<std::shared_ptr<S_Text>> textProps = std::vector<std::shared_ptr<S_Text>>();
+			std::vector<std::shared_ptr<S_BoxCollider>> boxColliderProps = std::vector<std::shared_ptr<S_BoxCollider>>();
+			std::vector<std::shared_ptr<S_CircleCollider>> circleColliderProps = std::vector<std::shared_ptr<S_CircleCollider>>();
+			std::vector<std::shared_ptr<S_RigidBody>> rigidBodyProps = std::vector<std::shared_ptr<S_RigidBody>>();
+			std::vector<std::shared_ptr<S_CharacterController>> characterControllerProps = std::vector<std::shared_ptr<S_CharacterController>>();
+
+			static bool CompareTime(std::shared_ptr<S_Property> frame1, std::shared_ptr<S_Property> frame2)
 			{
-				float lastKeyFrameEndTime = 0.0f;
+				return frame1->time < frame2->time;
+			}
+			void SortFrames()
+			{
+				std::sort(eventProps.begin(), eventProps.end(), CompareTime);
+				std::sort(transformProps.begin(), transformProps.end(), CompareTime);
+				std::sort(spriteProps.begin(), spriteProps.end(), CompareTime);
+				std::sort(cameraProps.begin(), cameraProps.end(), CompareTime);
+				std::sort(scriptProps.begin(), scriptProps.end(), CompareTime);
+				std::sort(buttonProps.begin(), buttonProps.end(), CompareTime);
+				std::sort(canvasProps.begin(), canvasProps.end(), CompareTime);
+				std::sort(audioProps.begin(), audioProps.end(), CompareTime);
+				std::sort(textProps.begin(), textProps.end(), CompareTime);
+				std::sort(boxColliderProps.begin(), boxColliderProps.end(), CompareTime);
+				std::sort(circleColliderProps.begin(), circleColliderProps.end(), CompareTime);
+				std::sort(rigidBodyProps.begin(), rigidBodyProps.end(), CompareTime);
+				std::sort(characterControllerProps.begin(), characterControllerProps.end(), CompareTime);
 
-				bool _didntSwapTransform = false;
-				while (!_didntSwapTransform)
-				{
-					_didntSwapTransform = true;
-					for (std::vector<std::shared_ptr<S_Transform>>::iterator keyFrame = transformProperties.begin(); keyFrame != transformProperties.end(); keyFrame++)
-					{
-						std::vector<std::shared_ptr<S_Transform>>::iterator keyFrame2 = keyFrame + 1;
-						if (keyFrame2 != transformProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
-						{
-							std::swap(*keyFrame, *keyFrame2);
-							_didntSwapTransform = false;
-						}
-					}
-				}
-				if (transformProperties.size() > 0)
-					lastKeyFrameEndTime = transformProperties.back()->time;
-
-				bool _didntSwapSprite = false;
-				while (!_didntSwapSprite)
-				{
-					_didntSwapSprite = true;
-					for (std::vector<std::shared_ptr<S_Sprite>>::iterator keyFrame = spriteProperties.begin(); keyFrame != spriteProperties.end(); keyFrame++)
-					{
-						std::vector<std::shared_ptr<S_Sprite>>::iterator keyFrame2 = keyFrame + 1;
-						if (keyFrame2 != spriteProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
-						{
-							std::swap(*keyFrame, *keyFrame2);
-							_didntSwapSprite = false;
-						}
-					}
-				}
-				if (spriteProperties.size() > 0 && spriteProperties.back()->time > lastKeyFrameEndTime)
-				{
-					lastKeyFrameEndTime = spriteProperties.back()->time;
-				}
-
-				bool _didntSwapEvent = false;
-				while (!_didntSwapEvent)
-				{
-					_didntSwapEvent = true;
-					for (std::vector<std::shared_ptr<S_Event>>::iterator keyFrame = eventProperties.begin(); keyFrame != eventProperties.end(); keyFrame++)
-					{
-						std::vector<std::shared_ptr<S_Event>>::iterator keyFrame2 = keyFrame + 1;
-						if (keyFrame2 != eventProperties.end() && (*keyFrame)->time > (*keyFrame2)->time)
-						{
-							std::swap(*keyFrame, *keyFrame2);
-							_didntSwapEvent = false;
-						}
-					}
-				}
-				if (eventProperties.size() > 0 && eventProperties.back()->time > lastKeyFrameEndTime)
-					lastKeyFrameEndTime = eventProperties.back()->time;
+				b_isSorted = true;
+				FindAnimationLength();
+			}
+			void FindAnimationLength() 
+			{
+				float endTime = 0.0f;
 				
-				animationLength = lastKeyFrameEndTime;
+				if (eventProps.size() > 0 && eventProps.back()->time > endTime)
+					endTime = eventProps.back()->time;
+				if (transformProps.size() > 0 && transformProps.back()->time > endTime)
+					endTime = transformProps.back()->time;
+				if (spriteProps.size() > 0 && spriteProps.back()->time > endTime)
+					endTime = spriteProps.back()->time;
+				if (cameraProps.size() > 0 && cameraProps.back()->time > endTime)
+					endTime = cameraProps.back()->time;
+				if (scriptProps.size() > 0 && scriptProps.back()->time > endTime)
+					endTime = scriptProps.back()->time;
+				if (buttonProps.size() > 0 && buttonProps.back()->time > endTime)
+					endTime = buttonProps.back()->time;
+				if (canvasProps.size() > 0 && canvasProps.back()->time > endTime)
+					endTime = canvasProps.back()->time;
+				if (audioProps.size() > 0 && audioProps.back()->time > endTime)
+					endTime = audioProps.back()->time;
+				if (textProps.size() > 0 && textProps.back()->time > endTime)
+					endTime = textProps.back()->time;
+				if (boxColliderProps.size() > 0 && boxColliderProps.back()->time > endTime)
+					endTime = boxColliderProps.back()->time;
+				if (circleColliderProps.size() > 0 && circleColliderProps.back()->time > endTime)
+					endTime = circleColliderProps.back()->time;
+				if (rigidBodyProps.size() > 0 && rigidBodyProps.back()->time > endTime)
+					endTime = rigidBodyProps.back()->time;
+				if (characterControllerProps.size() > 0 && characterControllerProps.back()->time > endTime)
+					endTime = characterControllerProps.back()->time;
 
-				_isSorted = true;
+				animationLength = endTime;
 			};
-		};
-
-		// Inherit from this struct to create new event property structs with useful event information to pass
-		// to calling event function.
-		struct S_EventProperties {
-			// Event properties you might need to pass to calling event function
 		};
 
 		Animation(long myID = -1, long parentID = -1);
@@ -190,8 +180,8 @@ namespace FlatEngine
 
 		void AddFrame();
 		void Play(long startTime = -1);
+		void PlayFromLua();
 		void Stop();
-		
 		void PlayAnimation(long ellapsedTime);
 		bool IsPlaying();
 		std::string GetData();
@@ -199,16 +189,13 @@ namespace FlatEngine
 		std::string GetAnimationName();
 		void SetAnimationPath(std::string animationPath);
 		std::string GetAnimationPath();
-		void AddEventFunction(std::string name, std::function<void(GameObject*)> callback);
-		std::map<std::string, std::function<void(GameObject*)>> GetEventFunctions();
 	
 	private:
 		std::shared_ptr<S_AnimationProperties> m_animationProperties;
 		std::string m_animationName;
 		std::string m_animationPath;
 		bool m_b_playing;
-		long m_animationStartTime;
-		std::map<std::string, std::function<void(GameObject*)>> m_eventFunctions;
+		long m_animationStartTime;		
 	};
 }
 

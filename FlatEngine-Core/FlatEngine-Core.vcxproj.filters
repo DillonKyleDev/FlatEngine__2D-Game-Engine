@@ -561,6 +561,12 @@
     <ClInclude Include="Source\Texture.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\TileMap.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TileSet.h">
+      <Filter>Source</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Transform.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -573,8 +579,6 @@
     <ClInclude Include="Source\Window.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TileSet.h" />
-    <ClInclude Include="Source\TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp">
@@ -718,6 +722,12 @@
     <ClCompile Include="Source\Texture.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\TileMap.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TileSet.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Transform.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -730,8 +740,6 @@
     <ClCompile Include="Source\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TileSet.cpp" />
-    <ClCompile Include="Source\TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Vendor\includes\Lua\lua54.dll">

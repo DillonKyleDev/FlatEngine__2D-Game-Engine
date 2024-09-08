@@ -82,7 +82,7 @@
       <AdditionalIncludeDirectories>Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>/EHsc /Zc:preprocessor /Zc:__cplusplus /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
@@ -306,12 +306,12 @@
     <ClInclude Include="Source\TagList.h" />
     <ClInclude Include="Source\Text.h" />
     <ClInclude Include="Source\Texture.h" />
+    <ClInclude Include="Source\TileMap.h" />
     <ClInclude Include="Source\TileSet.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\Vector2.h" />
     <ClInclude Include="Source\Vector4.h" />
     <ClInclude Include="Source\Window.h" />
-    <ClInclude Include="Source\TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp" />
@@ -361,12 +361,12 @@
     <ClCompile Include="Source\TagList.cpp" />
     <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
+    <ClCompile Include="Source\TileMap.cpp" />
     <ClCompile Include="Source\TileSet.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\Vector2.cpp" />
     <ClCompile Include="Source\Vector4.cpp" />
     <ClCompile Include="Source\Window.cpp" />
-    <ClCompile Include="Source\TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Vendor\includes\Lua\lua54.dll" />

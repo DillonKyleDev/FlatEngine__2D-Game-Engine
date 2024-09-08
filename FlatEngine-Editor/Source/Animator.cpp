@@ -28,90 +28,84 @@ namespace FlatGui
 	{
 		FL::PushWindowStyles();
 		// 16 | 8 are flags for noScrollbar and noscrollwithmouse
-		ImGui::Begin("Animator", &FG_b_showAnimator, 16 | 8);
+			ImGui::Begin("Animator", &FG_b_showAnimator, 16 | 8);
 		FL::PopWindowStyles();
 
 		// Animated Properties BeginChild()
 		FL::BeginResizeWindowChild("Animated Properties");
 
+		// Border around object
+		auto propsWindowPos = ImGui::GetWindowPos();
+		auto propsWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+		ImGui::GetWindowDrawList()->AddRect({ propsWindowPos.x + 2, propsWindowPos.y + 2 }, { propsWindowPos.x + propsWindowSize.x - 2, propsWindowPos.y + propsWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
 		std::string animationName = "-No Animation Selected-";
 		if (GetFocusedAnimation() != nullptr && GetFocusedAnimation()->animationName != "")
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
 
-		ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);
-	
-		FL::RenderSectionHeader(animationName, 18);
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPos().y - 36));
+			ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);
 
 		static std::string animationFilePath;
 		if (GetFocusedAnimation() != nullptr)
+		{
 			animationFilePath = GetFocusedAnimation()->animationPath;
+		}
 
-		// Loading, saving and opening animation json files
-		if (FL::RenderImageButton("##NewAnimationFile", FL::GetTexture("newFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
+
+		// Three dots
+		FL::RenderSectionHeader(animationName);
+		ImGui::SameLine(0, propsWindowSize.x - 210);
+		FL::MoveScreenCursor(0, -4);
+		FL::RenderImageButton("##AnimationHamburgerMenu", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
+		FL::PushMenuStyles();
+		if (ImGui::BeginPopupContextItem("##AnimationHamburgerMenu", ImGuiPopupFlags_MouseButtonLeft))
 		{
-			animationFilePath = FL::OpenSaveFileExplorer();
-
-			if (animationFilePath != "")
+			if (ImGui::MenuItem("New Animation"))
 			{
-				// Create S_AnimationProperties struct to store the properties of the json file in
-				std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-				std::string animationName = FL::GetFilenameFromPath(animationFilePath);
-				animationProperties->animationName = animationName;
-				FL::CreateNewAnimationFile(animationName, animationFilePath);
-				SaveAnimationData(animationProperties, animationFilePath);
-			}
-		}
-		// Tooltip
-		if (ImGui::BeginItemTooltip())
-		{
-			ImGui::Text("Create new animation");
-			ImGui::EndTooltip();
-		}
+				animationFilePath = FL::OpenSaveFileExplorer();
 
-		ImGui::SameLine(0, 2);			
-		if (FL::RenderImageButton("#OpenAnim", FL::GetTexture("openFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
-		{
-			animationFilePath = FL::OpenLoadFileExplorer();
-			if (animationFilePath != "")
+				if (animationFilePath != "")
+				{
+					// Create S_AnimationProperties struct to store the properties of the json file in
+					std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
+					std::string animationName = FL::GetFilenameFromPath(animationFilePath);
+					animationProperties->animationName = animationName;
+					FL::CreateNewAnimationFile(animationName, animationFilePath);
+					SaveAnimationData(animationProperties, animationFilePath);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Load Animation"))
 			{
-				SetFocusedAnimation(FL::LoadAnimationFile(animationFilePath));
-				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animationFilePath);
+				animationFilePath = FL::OpenLoadFileExplorer();
+				if (animationFilePath != "")
+				{
+					SetFocusedAnimation(FL::LoadAnimationFile(animationFilePath));
+					FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animationFilePath);
+				}
+				ImGui::CloseCurrentPopup();
 			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Save Animation"))
+			{
+				if (animationFilePath != "")
+					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Save as.."))
+			{
+				animationFilePath = FL::OpenSaveFileExplorer();
+				if (animationFilePath != "")
+					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
 		}
-		// Tooltip
-		if (ImGui::BeginItemTooltip())
-		{
-			ImGui::Text("Open animation");
-			ImGui::EndTooltip();
-		}
+		FL::PopMenuStyles();
 
-		ImGui::SameLine(0, 2);		
-		if (FL::RenderImageButton("#SaveAnimationFile", FL::GetTexture("saveFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
-		{
-			if (animationFilePath != "")
-				FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
-		}
-		// Tooltip
-		if (ImGui::BeginItemTooltip())
-		{
-			ImGui::Text("Save animation");
-			ImGui::EndTooltip();
-		}
 
-		ImGui::SameLine(0, 2);
-		if (FL::RenderImageButton("#SaveAsAnimationFile", FL::GetTexture("saveAsFile"), Vector2(16, 16), 1, FL::GetColor("transparent")))
-		{
-			animationFilePath = FL::OpenSaveFileExplorer();
-			if (animationFilePath != "")
-				FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
-		}
-		// Tooltip
-		if (ImGui::BeginItemTooltip())
-		{
-			ImGui::Text("Save animation as...");
-			ImGui::EndTooltip();
-		}
 
 		std::shared_ptr<Animation::S_AnimationProperties> animProps = GetFocusedAnimation();
 
@@ -127,79 +121,79 @@ namespace FlatGui
 			{
 				std::shared_ptr<Animation::S_Event> eventProperties = std::make_shared<Animation::S_Event>();
 				eventProperties->name = "Event";
-				animProps->eventProperties.push_back(eventProperties);
+				animProps->eventProps.push_back(eventProperties);
 			}
 			else if (property == "Transform")
 			{
 				std::shared_ptr<Animation::S_Transform> transformProperties = std::make_shared<Animation::S_Transform>();
 				transformProperties->name = "Transform";
-				animProps->transformProperties.push_back(transformProperties);
+				animProps->transformProps.push_back(transformProperties);
 			}
 			else if (property == "Sprite")
 			{
 				std::shared_ptr<Animation::S_Sprite> spriteProperties = std::make_shared<Animation::S_Sprite>();
 				spriteProperties->name = "Sprite";
-				animProps->spriteProperties.push_back(spriteProperties);
+				animProps->spriteProps.push_back(spriteProperties);
 			}
 			else if (property == "Camera")
 			{
 				std::shared_ptr<Animation::S_Camera> cameraProperties = std::make_shared<Animation::S_Camera>();
 				cameraProperties->name = "Camera";
-				animProps->cameraProperties.push_back(cameraProperties);
+				animProps->cameraProps.push_back(cameraProperties);
 			}
 			else if (property == "Script")
 			{
 				std::shared_ptr<Animation::S_Script> scriptProperties = std::make_shared<Animation::S_Script>();
 				scriptProperties->name = "Script";
-				animProps->scriptProperties.push_back(scriptProperties);
+				animProps->scriptProps.push_back(scriptProperties);
 			}
 			else if (property == "Button")
 			{
 				std::shared_ptr<Animation::S_Button> buttonProperties = std::make_shared<Animation::S_Button>();
 				buttonProperties->name = "Button";
-				animProps->buttonProperties.push_back(buttonProperties);
+				animProps->buttonProps.push_back(buttonProperties);
 			}
 			else if (property == "Canvas")
 			{
 				std::shared_ptr<Animation::S_Canvas> canvasProperties = std::make_shared<Animation::S_Canvas>();
 				canvasProperties->name = "Canvas";
-				animProps->canvasProperties.push_back(canvasProperties);
+				animProps->canvasProps.push_back(canvasProperties);
 			}
 			else if (property == "Audio")
 			{
 				std::shared_ptr<Animation::S_Audio> audioProperties = std::make_shared<Animation::S_Audio>();
 				audioProperties->name = "Audio";
-				animProps->audioProperties.push_back(audioProperties);
+				animProps->audioProps.push_back(audioProperties);
 			}
 			else if (property == "Text")
 			{
 				std::shared_ptr<Animation::S_Text> textProperties = std::make_shared<Animation::S_Text>();
 				textProperties->name = "Text";
-				animProps->textProperties.push_back(textProperties);
+				animProps->textProps.push_back(textProperties);
 			}
 			else if (property == "BoxCollider")
 			{
 				std::shared_ptr<Animation::S_BoxCollider> boxColliderProperties = std::make_shared<Animation::S_BoxCollider>();
 				boxColliderProperties->name = "BoxCollider";
-				animProps->boxColliderProperties.push_back(boxColliderProperties);
+				animProps->boxColliderProps.push_back(boxColliderProperties);
 			}
 			else if (property == "CircleCollider")
 			{
 				std::shared_ptr<Animation::S_CircleCollider> circleColliderProperties = std::make_shared<Animation::S_CircleCollider>();
 				circleColliderProperties->name = "CircleCollider";
-				animProps->circleColliderProperties.push_back(circleColliderProperties);
+				animProps->circleColliderProps.push_back(circleColliderProperties);
 			}
 			else if (property == "RigidBody")
 			{
 				std::shared_ptr<Animation::S_RigidBody> rigidBodyProperties = std::make_shared<Animation::S_RigidBody>();
 				rigidBodyProperties->name = "RigidBody";
-				animProps->rigidBodyProperties.push_back(rigidBodyProperties);
+				animProps->rigidBodyProps.push_back(rigidBodyProperties);
 			}
 			else if (property == "CharacterController")
 			{
 				std::shared_ptr<Animation::S_CharacterController> characterControllerProperties = std::make_shared<Animation::S_CharacterController>();
 				characterControllerProperties->name = "CharacterController";
-				animProps->characterControllerProperties.push_back(characterControllerProperties);
+				animProps->characterControllerProps.push_back(characterControllerProperties);
 			}
 		};
 
@@ -226,19 +220,19 @@ namespace FlatGui
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(properties); n++)
 				{
-					if (animProps->eventProperties.size() == 0 && properties[n] == "Event" ||
-						animProps->transformProperties.size() == 0 && properties[n] == "Transform" ||
-						animProps->spriteProperties.size() == 0 && properties[n] == "Sprite" ||
-						animProps->cameraProperties.size() == 0 && properties[n] == "Camera" ||
-						animProps->scriptProperties.size() == 0 && properties[n] == "Script" ||
-						animProps->buttonProperties.size() == 0 && properties[n] == "Button" ||
-						animProps->canvasProperties.size() == 0 && properties[n] == "Canvas" ||
-						animProps->audioProperties.size() == 0 && properties[n] == "Audio" ||
-						animProps->textProperties.size() == 0 && properties[n] == "Text" ||
-						animProps->boxColliderProperties.size() == 0 && properties[n] == "BoxCollider" ||
-						animProps->circleColliderProperties.size() == 0 && properties[n] == "CircleCollider" ||
-						animProps->rigidBodyProperties.size() == 0 && properties[n] == "RigidBody" ||
-						animProps->characterControllerProperties.size() == 0 && properties[n] == "CharacterController"
+					if (animProps->eventProps.size() == 0 && properties[n] == "Event" ||
+						animProps->transformProps.size() == 0 && properties[n] == "Transform" ||
+						animProps->spriteProps.size() == 0 && properties[n] == "Sprite" ||
+						animProps->cameraProps.size() == 0 && properties[n] == "Camera" ||
+						animProps->scriptProps.size() == 0 && properties[n] == "Script" ||
+						animProps->buttonProps.size() == 0 && properties[n] == "Button" ||
+						animProps->canvasProps.size() == 0 && properties[n] == "Canvas" ||
+						animProps->audioProps.size() == 0 && properties[n] == "Audio" ||
+						animProps->textProps.size() == 0 && properties[n] == "Text" ||
+						animProps->boxColliderProps.size() == 0 && properties[n] == "BoxCollider" ||
+						animProps->circleColliderProps.size() == 0 && properties[n] == "CircleCollider" ||
+						animProps->rigidBodyProps.size() == 0 && properties[n] == "RigidBody" ||
+						animProps->characterControllerProps.size() == 0 && properties[n] == "CharacterController"
 						)
 					{
 						bool is_selected = (properties[current_property] == properties[n]);
@@ -258,29 +252,27 @@ namespace FlatGui
 				// Reset selector box to default
 				current_property = 0;
 			}
-			ImGui::EndChild();
-
-			// List properties on this animation
 
 
+			// List properties in this animation
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 			FL::PushMenuStyles();
 
 			// Conditionally begin the table
-			if (animProps->eventProperties.size() > 0 ||
-				animProps->transformProperties.size() > 0 ||
-				animProps->spriteProperties.size() > 0 ||
-				animProps->cameraProperties.size() > 0 ||
-				animProps->scriptProperties.size() > 0 ||
-				animProps->buttonProperties.size() > 0 ||
-				animProps->canvasProperties.size() > 0 ||
-				animProps->audioProperties.size() > 0 ||
-				animProps->textProperties.size() > 0 ||
-				animProps->boxColliderProperties.size() > 0 ||
-				animProps->circleColliderProperties.size() > 0 ||
-				animProps->rigidBodyProperties.size() > 0 || 
-				animProps->characterControllerProperties.size() > 0)
+			if (animProps->eventProps.size() > 0 ||
+				animProps->transformProps.size() > 0 ||
+				animProps->spriteProps.size() > 0 ||
+				animProps->cameraProps.size() > 0 ||
+				animProps->scriptProps.size() > 0 ||
+				animProps->buttonProps.size() > 0 ||
+				animProps->canvasProps.size() > 0 ||
+				animProps->audioProps.size() > 0 ||
+				animProps->textProps.size() > 0 ||
+				animProps->boxColliderProps.size() > 0 ||
+				animProps->circleColliderProps.size() > 0 ||
+				animProps->rigidBodyProps.size() > 0 || 
+				animProps->characterControllerProps.size() > 0)
 			if (ImGui::BeginTable("##AnimationProperties", 1, FL::F_tableFlags))
 			{
 				ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
@@ -313,19 +305,19 @@ namespace FlatGui
 				};
 
 
-				RenderPropertyButton("Event", (int)animProps->eventProperties.size(), node_clicked);
-				RenderPropertyButton("Transform", (int)animProps->transformProperties.size(), node_clicked);
-				RenderPropertyButton("Sprite", (int)animProps->spriteProperties.size(), node_clicked);
-				RenderPropertyButton("Camera", (int)animProps->cameraProperties.size(), node_clicked);
-				RenderPropertyButton("Script", (int)animProps->scriptProperties.size(), node_clicked);
-				RenderPropertyButton("Button", (int)animProps->buttonProperties.size(), node_clicked);
-				RenderPropertyButton("Canvas", (int)animProps->canvasProperties.size(), node_clicked);
-				RenderPropertyButton("Audio", (int)animProps->audioProperties.size(), node_clicked);
-				RenderPropertyButton("Text", (int)animProps->textProperties.size(), node_clicked);
-				RenderPropertyButton("BoxCollider", (int)animProps->boxColliderProperties.size(), node_clicked);
-				RenderPropertyButton("CircleCollider", (int)animProps->circleColliderProperties.size(), node_clicked);
-				RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProperties.size(), node_clicked);
-				RenderPropertyButton("CharacterController", (int)animProps->characterControllerProperties.size(), node_clicked);
+				RenderPropertyButton("Event", (int)animProps->eventProps.size(), node_clicked);
+				RenderPropertyButton("Transform", (int)animProps->transformProps.size(), node_clicked);
+				RenderPropertyButton("Sprite", (int)animProps->spriteProps.size(), node_clicked);
+				RenderPropertyButton("Camera", (int)animProps->cameraProps.size(), node_clicked);
+				RenderPropertyButton("Script", (int)animProps->scriptProps.size(), node_clicked);
+				RenderPropertyButton("Button", (int)animProps->buttonProps.size(), node_clicked);
+				RenderPropertyButton("Canvas", (int)animProps->canvasProps.size(), node_clicked);
+				RenderPropertyButton("Audio", (int)animProps->audioProps.size(), node_clicked);
+				RenderPropertyButton("Text", (int)animProps->textProps.size(), node_clicked);
+				RenderPropertyButton("BoxCollider", (int)animProps->boxColliderProps.size(), node_clicked);
+				RenderPropertyButton("CircleCollider", (int)animProps->circleColliderProps.size(), node_clicked);
+				RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProps.size(), node_clicked);
+				RenderPropertyButton("CharacterController", (int)animProps->characterControllerProps.size(), node_clicked);
 
 			
 				ImGui::EndTable();
@@ -335,18 +327,26 @@ namespace FlatGui
 			ImGui::PopStyleColor();
 		}
 
-		ImGui::EndChild(); // Animator Properties EndChild()
+			ImGui::EndChild(); // Manage Animation
+		ImGui::EndChild();
 
 		ImGui::SameLine(0, 5);
 
-		// Timeline Events
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("outerWindow"));
-		ImGui::BeginChild("##AnimationTimeline", Vector2(0, 0), FL::F_childFlags);
-		ImGui::PopStyleColor();
+			// Timeline Events
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("outerWindow"));
+			ImGui::BeginChild("Animation Timeline", Vector2(0, 0), FL::F_childFlags);
+			ImGui::PopStyleColor();
+
+			// Border around object
+			auto timelineWindowPos = ImGui::GetWindowPos();
+			auto timelineWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+			ImGui::GetWindowDrawList()->AddRect({ timelineWindowPos.x + 2, timelineWindowPos.y + 2 }, { timelineWindowPos.x + timelineWindowSize.x - 2, timelineWindowPos.y + timelineWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
 
 		FL::RenderSectionHeader("Animation Timeline");
 
-		ImGui::BeginChild("Property Header", Vector2(0,0), FL::F_headerFlags);
+			ImGui::BeginChild("Property Header", Vector2(0,0), FL::F_headerFlags);
+
 		float availableSpace = ImGui::GetContentRegionAvail().x / 2;
 		ImGui::SetNextItemWidth(availableSpace);
 		ImGui::Text("Property Selected: ");
@@ -433,7 +433,7 @@ namespace FlatGui
 			ImGui::PopStyleColor();
 		}
 
-		ImGui::EndChild();
+			ImGui::EndChild(); // Properties Header
 
 		static float animatorGridStep = 50;
 		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
@@ -443,8 +443,6 @@ namespace FlatGui
 		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
 		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 		static Vector2 scrolling = Vector2(0, 0);
-
-		// Get Input and Output
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		
 		// This will catch our interactions
@@ -466,10 +464,16 @@ namespace FlatGui
 		float weight = 0.08f;
 
 		if (is_hovered)
+		{
 			if (scrollInput > 0)
+			{
 				animatorGridStep += 10;
+			}
 			else if (scrollInput < 0 && animatorGridStep > 2)
+			{
 				animatorGridStep -= 10;
+			}
+		}
 
 		if (scrolling.x > 0)
 			scrolling.x = 0;
@@ -517,7 +521,6 @@ namespace FlatGui
 			Vector2 bottomRightCorner = Vector2(canvas_p1.x, bottomYPos);
 			draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, color);
 		};
-
 		// Lambda
 		auto L_RenderAnimationTimelineKeyFrames = [](std::shared_ptr<Animation::S_Property> keyFrame, int counter, Vector2& pipPosition, Vector2 zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
 		{
@@ -576,248 +579,234 @@ namespace FlatGui
 		// Draw colored box for transform keyframes
 		if (animProps != nullptr)
 		{
-			if (animProps->eventProperties.size() > 0)
+			if (animProps->eventProps.size() > 0)
 			{
 				rectColor = Vector4(255, 255, 255, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Event", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Event> keyFrame : animProps->eventProperties)
-				{
+				for (std::shared_ptr<Animation::S_Event> frame : animProps->eventProps)
+				{					
 					std::string ID = "Event";
 					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
-					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-					//if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+					float keyFrameX = frame->time / 1000;
+					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);					
+					L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->transformProperties.size() > 0)
+			if (animProps->transformProps.size() > 0)
 			{
 				rectColor = Vector4(214, 8, 118, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Transform", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Transform> keyFrame : animProps->transformProperties)
+				for (std::shared_ptr<Animation::S_Transform> frame : animProps->transformProps)
 				{
-					std::string ID = "Transform";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
-					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-					//if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-					L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+					std::string ID = "Transform";					
+					float keyFrameX = frame->time / 1000;
+					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);					
+					L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->spriteProperties.size() > 0)
+			if (animProps->spriteProps.size() > 0)
 			{
 				rectColor = Vector4(83, 214, 8, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Sprite", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Sprite>& keyFrame : animProps->spriteProperties)
+				for (std::shared_ptr<Animation::S_Sprite> frame : animProps->spriteProps)
 				{
-					std::string ID = "Sprite";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Sprite";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->cameraProperties.size() > 0)
+			if (animProps->cameraProps.size() > 0)
 			{
 				rectColor = Vector4(206, 108, 4, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Camera", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Camera>& keyFrame : animProps->cameraProperties)
+				for (std::shared_ptr<Animation::S_Camera> frame : animProps->cameraProps)
 				{
-					std::string ID = "Camera";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Camera";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->scriptProperties.size() > 0)
+			if (animProps->scriptProps.size() > 0)
 			{
 				rectColor = Vector4(4, 159, 206, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Script", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Script>& keyFrame : animProps->scriptProperties)
+				for (std::shared_ptr<Animation::S_Script> frame : animProps->scriptProps)
 				{
-					std::string ID = "Script";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Script";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->buttonProperties.size() > 0)
+			if (animProps->buttonProps.size() > 0)
 			{
 				rectColor = Vector4(152, 16, 198, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Button", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Button>& keyFrame : animProps->buttonProperties)
+				for (std::shared_ptr<Animation::S_Button> frame : animProps->buttonProps)
 				{
-					std::string ID = "Button";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Button";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->canvasProperties.size() > 0)
+			if (animProps->canvasProps.size() > 0)
 			{
 				rectColor = Vector4(224, 81, 15, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Canvas", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Canvas>& keyFrame : animProps->canvasProperties)
+				for (std::shared_ptr<Animation::S_Canvas> frame : animProps->canvasProps)
 				{
-					std::string ID = "Canvas";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Canvas";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->audioProperties.size() > 0)
+			if (animProps->audioProps.size() > 0)
 			{
 				rectColor = Vector4(237, 244, 14, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Audio", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Audio>& keyFrame : animProps->audioProperties)
+				for (std::shared_ptr<Animation::S_Audio> frame : animProps->audioProps)
 				{
-					std::string ID = "Audio";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Audio";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->textProperties.size() > 0)
+			if (animProps->textProps.size() > 0)
 			{
 				rectColor = Vector4(15, 224, 200, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("Text", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_Text>& keyFrame : animProps->textProperties)
+				for (std::shared_ptr<Animation::S_Text> frame : animProps->textProps)
 				{
-					std::string ID = "Text";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "Text";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->boxColliderProperties.size() > 0)
+			if (animProps->boxColliderProps.size() > 0)
 			{
 				rectColor = Vector4(224, 158, 15, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("BoxCollider", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_BoxCollider>& keyFrame : animProps->boxColliderProperties)
+				for (std::shared_ptr<Animation::S_BoxCollider> frame : animProps->boxColliderProps)
 				{
-					std::string ID = "BoxCollider";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "BoxCollider";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->circleColliderProperties.size() > 0)
+			if (animProps->circleColliderProps.size() > 0)
 			{
 				rectColor = Vector4(11, 42, 183, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("CircleCollider", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_CircleCollider>& keyFrame : animProps->circleColliderProperties)
+				for (std::shared_ptr<Animation::S_CircleCollider> frame : animProps->circleColliderProps)
 				{
-					std::string ID = "CircleCollider";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "CircleCollider";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->rigidBodyProperties.size() > 0)
+			if (animProps->rigidBodyProps.size() > 0)
 			{
 				rectColor = Vector4(166, 11, 183, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("RigidBody", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_RigidBody>& keyFrame : animProps->rigidBodyProperties)
+				for (std::shared_ptr<Animation::S_RigidBody> frame : animProps->rigidBodyProps)
 				{
-					std::string ID = "RigidBody";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "RigidBody";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
 				propertyCounter++;
 			}
-			if (animProps->characterControllerProperties.size() > 0)
+			if (animProps->characterControllerProps.size() > 0)
 			{
 				rectColor = Vector4(85, 183, 11, 100);
 				std::vector<float> keyFrameTimes = std::vector<float>();
 				L_RenderPropertyInTimeline("CharacterController", keyFrameTimes, rectColor);
 
-				for (std::shared_ptr<Animation::S_CharacterController>& keyFrame : animProps->characterControllerProperties)
+				for (std::shared_ptr<Animation::S_CharacterController> frame : animProps->characterControllerProps)
 				{
-					std::string ID = "CharacterController";
-					// Get keyFrame time and convert to seconds
-					float keyFrameX = keyFrame->time / 1000;
+					std::string ID = "CharacterController";					
+					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
 					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-						L_RenderAnimationTimelineKeyFrames(keyFrame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
@@ -825,9 +814,7 @@ namespace FlatGui
 			}
 		}
 
-		ImGui::EndChild();
-		// Timeline Events BeginChild()
-		ImGui::EndChild();
+		ImGui::EndChild(); // Animation Timeline
 		ImGui::End(); // Animator
 	}
 
@@ -951,8 +938,8 @@ namespace FlatGui
 			{
 				// Position, scale, and rotation of transform
 				std::shared_ptr<Animation::S_Transform> transform = std::static_pointer_cast<Animation::S_Transform>(selectedKeyFrameToEdit);
-				float xMove = transform->xMove;
-				float yMove = transform->yMove;
+				float xPos = transform->xPos;
+				float yPos = transform->yPos;
 				float xScale = transform->xScale;
 				float yScale = transform->yScale;
 				//float rotation = transform->rotation;
@@ -964,17 +951,17 @@ namespace FlatGui
 				// Drags for position editing
 				//
 				// Render Text for Positions + Rotation
-				ImGui::Text("xMove:");
+				ImGui::Text("xPos:");
 				ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-				ImGui::Text("yMove:");
+				ImGui::Text("yPos:");
 				//ImGui::Text("Rotation:");
 
 				// Render Drags for Positions + Rotation
-				ImGui::DragFloat("##xMove", &xMove, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+				ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 				ImGui::SameLine(0, 5);
-				ImGui::DragFloat("##yMove", &yMove, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+				ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
 				// Set cursor type
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
@@ -985,8 +972,8 @@ namespace FlatGui
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 
 				// Assign the new slider values to the transforms position
-				transform->xMove = xMove;
-				transform->yMove = yMove;
+				transform->xPos = xPos;
+				transform->yPos = yPos;
 
 				// Render Drags for scale of transform
 				// Push
@@ -1022,9 +1009,9 @@ namespace FlatGui
 				static std::string selected_property = "";
 				
 				// Get already saved interpType to show up in the combo select as default
-				if (transform->transformInterpType == Animation::Lerp)
+				if (transform->transformInterpType == Animation::I_Lerp)
 					current_type = 1;
-				else if (transform->transformInterpType == Animation::Slerp)
+				else if (transform->transformInterpType == Animation::I_Slerp)
 					current_type = 2;
 
 				ImGui::Separator();
@@ -1038,9 +1025,9 @@ namespace FlatGui
 						{
 							current_type = n;
 							if (interpType[n] == "Lerp")
-								transform->transformInterpType = Animation::Lerp;
+								transform->transformInterpType = Animation::I_Lerp;
 							else if (interpType[n] == "Slerp")
-								transform->transformInterpType = Animation::Slerp;
+								transform->transformInterpType = Animation::I_Slerp;
 						}
 							
 						if (is_selected)

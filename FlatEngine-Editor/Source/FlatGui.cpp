@@ -234,9 +234,9 @@ namespace FlatGui
 				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 				animatorObjects.clear();
 				//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
-				FL::Transform* transform = objectForFocusedAnimation->GetTransform();
-				transform->SetPosition(Vector2(0, 0));
-				animatorObjects.push_back(*objectForFocusedAnimation);
+				//FL::Transform* transform = objectForFocusedAnimation->GetTransform();
+				//transform->SetPosition(Vector2(0, 0));
+				//animatorObjects.push_back(*objectForFocusedAnimation);
 				//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
 			}
 		}

@@ -40,6 +40,11 @@ namespace FlatEngine
 			m_animationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
 	}
 
+	void Animation::PlayFromLua()
+	{	
+		Play(-1);
+	}
+
 	void Animation::Stop()
 	{
 		m_b_playing = false;
@@ -88,23 +93,12 @@ namespace FlatEngine
 		return m_animationPath;
 	}
 
-	void Animation::AddEventFunction(std::string name, std::function<void(GameObject*)> callback)
-	{
-		std::pair <std::string, std::function<void(GameObject*)>> functionPair = std::pair<std::string, std::function<void(GameObject*)>>(name, callback);
-		m_eventFunctions.emplace(functionPair);
-	}
-
-	std::map<std::string, std::function<void(GameObject*)>> Animation::GetEventFunctions()
-	{
-		return m_eventFunctions;
-	}
-
 	void Animation::PlayAnimation(long ellapsedTime)
 	{
 		std::shared_ptr<S_AnimationProperties> props = m_animationProperties;
 
-		if (!props->_isSorted)
-			props->SortKeyFrames();
+		if (!props->b_isSorted)
+			props->SortFrames();
 
 		static long lastTransformAnimationFrameEnd = 0;
 		static long lastSpriteAnimationFrameEnd = 0;
@@ -117,82 +111,91 @@ namespace FlatEngine
 		if (props->animationLength > ellapsedTime - m_animationStartTime)
 		{
 			// Event Animation Frames
-			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProperties)
+			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProps)
 			{
 				if ((eventFrame->time == 0 && !eventFrame->_fired) || (!eventFrame->_fired && (ellapsedTime >= m_animationStartTime + eventFrame->time || eventFrame->time == 0)))
 				{
-					for (std::pair<std::string, std::function<void(GameObject*)>> eventFunction : m_eventFunctions)
-					{
-						if (eventFunction.first == eventFrame->functionName)
-						{
-							eventFunction.second(GetParent());
-							eventFrame->_fired = true;
-						}
-					}
+					CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
+					eventFrame->_fired = true;
 				}
 			}
+
 			// Transform Animation Frames
-			for (std::vector<std::shared_ptr<S_Transform>>::iterator transformFrame = props->transformProperties.begin(); transformFrame != props->transformProperties.end();)
+			int transformFrameCounter = 0;
+			for (std::vector<std::shared_ptr<S_Transform>>::iterator frame = props->transformProps.begin(); frame != props->transformProps.end(); frame++)
 			{ 
-				if (ellapsedTime < m_animationStartTime + (*transformFrame)->time)
+				float keyframeTime = (*frame)->time;
+				Transform* transform = GetParent()->GetTransform();
+				std::shared_ptr<S_Transform> thisFrameProps = (*frame);
+
+				if (transformFrameCounter == 0)
 				{
-					std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = transformFrame;
-					if (transformFrame - 1 >= props->transformProperties.begin())
-						lastFrame = transformFrame - 1;
-
-					float timeLeft = (*transformFrame)->time - ellapsedTime - m_animationStartTime;
-					float percentDone = (float)(ellapsedTime - m_animationStartTime - (*lastFrame)->time) / (float)((*transformFrame)->time - (*lastFrame)->time);
-					lastFramePosition = Vector2((*lastFrame)->xMove, (*lastFrame)->yMove);
-					lastFrameScale = Vector2((*lastFrame)->xScale, (*lastFrame)->yScale);
-					FlatEngine::Transform* transform = GetParent()->GetTransform();
-
-					switch ((*transformFrame)->transformInterpType)
-					{
-						case Lerp:
-						{
-							float correctedX = (lastFramePosition.x + ((*transformFrame)->xMove - lastFramePosition.x) * percentDone);
-							float correctedY = (lastFramePosition.y + ((*transformFrame)->yMove - lastFramePosition.y) * percentDone);
-							float correctedXScale = (lastFrameScale.x + ((*transformFrame)->xScale - lastFrameScale.x) * percentDone);
-							float correctedYScale = (lastFrameScale.y + ((*transformFrame)->yScale - lastFrameScale.y) * percentDone);
-
-							transform->SetPosition(Vector2(correctedX, correctedY));
-							if (correctedXScale != 0 && correctedYScale != 0)
-								transform->SetScale(Vector2(correctedXScale, correctedYScale));
-							break;
-						}
-						case Slerp:
-						{
-							float slerpYValue = ((percentDone) * 2) - 1;
-							float slerpedPercentDone;
-
-							if (percentDone <= .50f)
-							{
-								slerpedPercentDone = sqrt(1 - slerpYValue * slerpYValue) / 2;
-							}
-							else
-							{
-								slerpedPercentDone = 1 - (sqrt(1 - slerpYValue * slerpYValue) / 2);
-							}
-
-							float correctedX = (lastFramePosition.x + ((*transformFrame)->xMove - lastFramePosition.x) * slerpedPercentDone);
-							float correctedY = (lastFramePosition.y + ((*transformFrame)->yMove - lastFramePosition.y) * slerpedPercentDone);
-
-							transform->SetPosition(Vector2(correctedX, correctedY));
-							break;
-						}
-					}
-					break;
+					transform->SetPosition(Vector2(thisFrameProps->xPos, thisFrameProps->yPos));
+					transform->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
 				}
-				transformFrame = transformFrame + 1;
+				else if (ellapsedTime < m_animationStartTime + keyframeTime)
+				{
+					std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = frame;
+					if (transformFrameCounter > 0)
+					{
+						lastFrame--;
+					}
+
+					std::shared_ptr<S_Transform> lastFrameProps = (*lastFrame);
+
+					float timeLeft = keyframeTime - ellapsedTime - m_animationStartTime;
+					float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);
+					lastFramePosition = Vector2(lastFrameProps->xPos, lastFrameProps->yPos);
+					lastFrameScale = Vector2(lastFrameProps->xScale, lastFrameProps->yScale);
+
+
+					switch (thisFrameProps->transformInterpType)
+					{
+					case I_Lerp:
+					{
+						float correctedX = (lastFramePosition.x + (thisFrameProps->xPos - lastFramePosition.x) * percentDone);
+						float correctedY = (lastFramePosition.y + (thisFrameProps->yPos - lastFramePosition.y) * percentDone);
+						float correctedXScale = (lastFrameScale.x + (thisFrameProps->xScale - lastFrameScale.x) * percentDone);
+						float correctedYScale = (lastFrameScale.y + (thisFrameProps->yScale - lastFrameScale.y) * percentDone);
+
+						transform->SetPosition(Vector2(correctedX, correctedY));
+						if (correctedXScale != 0 && correctedYScale != 0)
+							transform->SetScale(Vector2(correctedXScale, correctedYScale));
+						break;
+					}
+					case I_Slerp:
+					{
+						float slerpYValue = ((percentDone) * 2) - 1;
+						float slerpedPercentDone;
+
+						if (percentDone <= .50f)
+						{
+							slerpedPercentDone = sqrt(1 - slerpYValue * slerpYValue) / 2;
+						}
+						else
+						{
+							slerpedPercentDone = 1 - (sqrt(1 - slerpYValue * slerpYValue) / 2);
+						}
+
+						float correctedX = (lastFramePosition.x + (thisFrameProps->xPos - lastFramePosition.x) * slerpedPercentDone);
+						float correctedY = (lastFramePosition.y + (thisFrameProps->yPos - lastFramePosition.y) * slerpedPercentDone);
+
+						transform->SetPosition(Vector2(correctedX, correctedY));
+						break;
+					}
+					}
+				}	
+				transformFrameCounter++;
 			}
 			// Sprite Animation Frames
-			for (std::vector<std::shared_ptr<S_Sprite>>::iterator spriteFrame = props->spriteProperties.begin(); spriteFrame != props->spriteProperties.end();)
+			int spriteFrameCounter = 0;
+			for (std::vector<std::shared_ptr<S_Sprite>>::iterator spriteFrame = props->spriteProps.begin(); spriteFrame != props->spriteProps.end(); spriteFrame++)
 			{
 				if (ellapsedTime < m_animationStartTime + (*spriteFrame)->time)
 				{
 					FlatEngine::Sprite* sprite = GetParent()->GetSprite();
 					std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = spriteFrame;
-					if (lastFrame != props->spriteProperties.begin() && lastFrame -1 >= props->spriteProperties.begin())
+					if (lastFrame != props->spriteProps.begin() && lastFrame -1 >= props->spriteProps.begin())
 						lastFrame = lastFrame - 1;
 
 					float timeLeft = (*spriteFrame)->time - ellapsedTime - m_animationStartTime;
@@ -215,9 +218,8 @@ namespace FlatEngine
 					sprite->SetOffset(Vector2((*spriteFrame)->xOffset, (*spriteFrame)->yOffset));
 					sprite->SetTintColor(correctedTintColor);
 					break;
-				}
-
-				spriteFrame++;
+				}		
+				spriteFrameCounter++;
 			}
 		}
 		else if (props->_loop)
@@ -225,6 +227,8 @@ namespace FlatEngine
 			m_animationStartTime = ellapsedTime;
 		}
 		else
+		{
 			Stop();
+		}
 	}
 }

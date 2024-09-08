@@ -175,7 +175,7 @@ namespace FlatEngine
 		OnButtonMouseEnter,
 		OnButtonMouseLeave,
 		OnButtonLeftClick,
-		OnButtonRightClick,
+		OnButtonRightClick
 	};
 	const std::string F_LuaEventNames[11] = {
 		"OnBoxCollision",
@@ -188,7 +188,7 @@ namespace FlatEngine
 		"OnButtonMouseEnter",
 		"OnButtonMouseLeave",
 		"OnButtonLeftClick",
-		"OnButtonRightClick",
+		"OnButtonRightClick"
 	};
 	extern void InitLua();
 	extern void RegisterLuaFunctions();
@@ -205,6 +205,7 @@ namespace FlatEngine
 	extern void CallVoidLuaFunction(std::string functionName);
 	extern void CallLuaCollisionFunction(GameObject* caller, Collider* collidedWith, LuaEventFunction eventFunc);
 	extern void CallLuaButtonEventFunction(GameObject* caller, LuaEventFunction eventFunc);
+	extern void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc);
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);

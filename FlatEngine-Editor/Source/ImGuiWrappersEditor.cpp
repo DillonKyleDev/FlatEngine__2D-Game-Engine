@@ -545,7 +545,9 @@ namespace FlatGui
 		long id = canvas->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			canvas->SetActive(_isActive);
+		}
 
 		if (FL::PushTable("##CanvasProperties" + std::to_string(id), 2))
 		{
@@ -577,11 +579,15 @@ namespace FlatGui
 		long id = animation->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
+		{
 			animation->SetActive(_isActive);
+		}
 
 		bool _canOpenFiles = true;
-		FL::RenderInput("##animationPath" + std::to_string(id), "Path: ", path, _canOpenFiles);
-		animation->SetAnimationPath(path);
+		if (FL::RenderInput("##animationPath" + std::to_string(id), "Path: ", path, _canOpenFiles))
+		{
+			animation->SetAnimationPath(path);
+		}
 
 		if (FL::GameLoopStarted() && !FL::GameLoopPaused())
 		{

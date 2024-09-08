@@ -19002,7 +19002,9 @@
         {
             "_isActive": true,
             "_isPrefab": true,
-            "children": [],
+            "children": [
+                5
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -19108,6 +19110,99 @@
             "prefabName": "Player",
             "spawnLocationX": -94.07730865478516,
             "spawnLocationY": -1.0260000228881836,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 90,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": -94.07730865478516,
+                    "xPos": 2.9629554748535156,
+                    "xScale": 1.0,
+                    "yOrigin": -1.0260000228881836,
+                    "yPos": 1.6049346923828125,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 91,
+                    "path": "../assets\\images\\sprites\\player\\blob.png",
+                    "pivotPoint": "Center",
+                    "renderOrder": 27,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 5.0,
+                    "xScale": 1.0,
+                    "yOffset": 5.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 92,
+                    "path": "..\\assets\\animations\\MoveAround.anm",
+                    "type": "Animation"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "MoveObject",
+                    "id": 93,
+                    "type": "Script"
+                }
+            ],
+            "id": 5,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Navi",
+            "parent": 4,
+            "prefabName": "",
+            "spawnLocationX": 2.9629554748535156,
+            "spawnLocationY": 1.6049346923828125,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
