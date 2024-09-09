@@ -1872,36 +1872,18 @@ namespace FlatEngine
 
 	// Animations
 	void CreateNewAnimationFile(std::string filename, std::string path)
-	{
-		// Declare file and input stream
-		std::ofstream file_obj;
+	{		
 		std::string filePath = "";
-		// Delete old contents of the file
 
 		if (path == "")
 			filePath = GetDir("animations") + filename + ".anm";
 		else
 			filePath = path + "/" + filename + ".anm";
-		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
 
-		// Opening file in append mode
-		file_obj.open(filePath, std::ios::app);
-
-		// Array that will hold our gameObject json objects
-		json animationObjectsJsonArray;
-
-		// Set animationObjectsJsonArray to empty
-		animationObjectsJsonArray.push_back("NULL");
-
-		// Create the GameObjects json object and add the empty array as the content
-		json newFileObject = json::object({ {"Animation Properties", animationObjectsJsonArray } });
-
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
+		std::shared_ptr<Animation::S_AnimationProperties> propertiesObject = std::make_shared< Animation::S_AnimationProperties>();
+		propertiesObject->animationName = filename;
+		propertiesObject->animationPath = filePath;
+		SaveAnimationData(propertiesObject, filePath);
 	}
 
 	void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
@@ -2256,7 +2238,7 @@ namespace FlatEngine
 				}
 
 				// Canvas
-				json canvasProps = animationJson["animationProperties"]["sprite"];
+				json canvasProps = animationJson["animationProperties"]["canvas"];
 				for (int i = 0; i < canvasProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_Canvas> frame = std::make_shared<Animation::S_Canvas>();
@@ -2266,7 +2248,7 @@ namespace FlatEngine
 				}
 
 				// Audio
-				json audioProps = animationJson["animationProperties"]["sprite"];
+				json audioProps = animationJson["animationProperties"]["audio"];
 				for (int i = 0; i < audioProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_Audio> frame = std::make_shared<Animation::S_Audio>();
@@ -2278,7 +2260,7 @@ namespace FlatEngine
 				}
 
 				// Text
-				json textProps = animationJson["animationProperties"]["sprite"];
+				json textProps = animationJson["animationProperties"]["text"];
 				for (int i = 0; i < textProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_Text> frame = std::make_shared<Animation::S_Text>();
@@ -2296,7 +2278,7 @@ namespace FlatEngine
 				}
 
 				// BoxCollider
-				json boxColliderProps = animationJson["animationProperties"]["sprite"];
+				json boxColliderProps = animationJson["animationProperties"]["boxCollider"];
 				for (int i = 0; i < boxColliderProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_BoxCollider> frame = std::make_shared<Animation::S_BoxCollider>();
@@ -2307,7 +2289,7 @@ namespace FlatEngine
 				}
 
 				// CircleCollider
-				json circleColliderProps = animationJson["animationProperties"]["sprite"];
+				json circleColliderProps = animationJson["animationProperties"]["circleCollider"];
 				for (int i = 0; i < circleColliderProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_CircleCollider> frame = std::make_shared<Animation::S_CircleCollider>();
@@ -2318,7 +2300,7 @@ namespace FlatEngine
 				}
 
 				// RigidBody
-				json rigidBodyProps = animationJson["animationProperties"]["sprite"];
+				json rigidBodyProps = animationJson["animationProperties"]["rigidBody"];
 				for (int i = 0; i < rigidBodyProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_RigidBody> frame = std::make_shared<Animation::S_RigidBody>();
@@ -2332,7 +2314,7 @@ namespace FlatEngine
 				}
 
 				// CharacterController
-				json characterControllerProps = animationJson["animationProperties"]["sprite"];
+				json characterControllerProps = animationJson["animationProperties"]["characterController"];
 				for (int i = 0; i < characterControllerProps.size(); i++)
 				{
 					std::shared_ptr<Animation::S_CharacterController> frame = std::make_shared<Animation::S_CharacterController>();

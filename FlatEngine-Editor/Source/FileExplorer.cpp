@@ -73,15 +73,8 @@ namespace FlatGui
 
 
 
-			// New File Modals
-			bool b_openModal = false;			
-			static std::string modalLabel = "";
-			static std::string modalDescription = "";	
+			// New File Modals								
 			static std::string newFileName = "";
-
-			if (b_openModal)
-				ImGui::OpenPopup(modalLabel.c_str());
-
 			static bool b_openLuaModal = false;
 			static bool b_openSceneModal = false;
 			static bool b_openAnimationModal = false;
@@ -590,7 +583,7 @@ namespace FlatGui
 		// Animation file
 		else if (extension == ".anm")
 		{
-			SetFocusedAnimation(FL::GetFilenameFromPath(fs_filepath.string()));
+			SetFocusedAnimation(FL::LoadAnimationFile(fs_filepath.string()));			
 			FG_b_showAnimator = true;
 			FG_b_showAnimationPreview = true;
 		}

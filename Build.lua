@@ -6,7 +6,7 @@ workspace "FlatEngine"
 
    -- Workspace-wide build options for MSVC
    filter "system:windows"
-      buildoptions { "/EHsc", "/Zc:preprocessor", "/Zc:__cplusplus" }
+      buildoptions { "/EHsc", "/Zc:preprocessor", "/Zc:__cplusplus /bigobj" }
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
@@ -17,4 +17,3 @@ group ""
 
 include "FlatEngine-Editor/Build-Editor.lua"
 include "FlatEngine-Runtime/Build-Runtime.lua"
-include "FlatEngine-Hub/Build-Hub.lua"

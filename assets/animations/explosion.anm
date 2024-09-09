@@ -16,9 +16,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_1.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_1.png",
                     "speed": 0.10000000149011612,
-                    "time": 1.7881393432617188e-05,
+                    "time": 0.0,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -29,9 +29,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_2.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_2.png",
                     "speed": 0.10000000149011612,
-                    "time": 59.99998092651367,
+                    "time": 47.5862922668457,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -42,9 +42,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_3.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_3.png",
                     "speed": 0.10000000149011612,
-                    "time": 119.99990844726563,
+                    "time": 99.99996948242188,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -55,9 +55,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_4.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_4.png",
                     "speed": 0.10000000149011612,
-                    "time": 186.66673278808594,
+                    "time": 155.17239379882813,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -68,9 +68,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_5.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_5.png",
                     "speed": 0.10000000149011612,
-                    "time": 260.0,
+                    "time": 206.896484375,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -81,9 +81,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_6.png",
+                    "path": "../assets\\images\\sprites\\explosion\\explosion_6.png",
                     "speed": 0.10000000149011612,
-                    "time": 340.0002136230469,
+                    "time": 251.72410583496094,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -94,9 +94,9 @@
                 {
                     "_instantTintChange": false,
                     "interpType": 0,
-                    "path": "../assets\\images\\sprites\\explosion2\\explosion_7.png",
+                    "path": "../assets\\images\\sprites\\player\\blob.png",
                     "speed": 0.10000000149011612,
-                    "time": 396.2963562011719,
+                    "time": 296.55169677734375,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -108,7 +108,7 @@
             "text": [],
             "transform": []
         },
-        "length": 4.0,
-        "name": "Test"
+        "length": 0.0,
+        "name": "explosion"
     }
 }

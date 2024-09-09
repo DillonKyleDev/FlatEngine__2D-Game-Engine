@@ -5,8 +5,10 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "Sprite.h"
-#include "imgui.h"
 #include "Text.h"
+#include "Texture.h"
+
+#include "imgui.h"
 #include "math.h"
 #include <fstream>
 
@@ -18,10 +20,6 @@ namespace FlatGui
 	Vector4 lighter = Vector4(float(0.8), float(0.8), float(0.8), float(1));
 	Vector4 light = Vector4(float(0.7), float(0.7), float(0.7), float(1));
 	Vector4 dark = Vector4(float(0.3), float(0.3), float(0.3), float(1));
-	Vector4 white = Vector4(float(0.9), float(0.9), float(0.9), float(1));
-	Vector4 transformAnimationNode = Vector4(float(0.1), float(0.76), float(0.08), float(.8));
-	Vector4 scrubberBackground = Vector4(float(0.22), float(0.22), float(0.25), float(1));
-	Vector4 scrubberBackgroundDark = Vector4(float(0.12), float(0.02), float(0.0), float(1));
 
 
 	void RenderAnimator()
@@ -51,28 +49,25 @@ namespace FlatGui
 			animationFilePath = GetFocusedAnimation()->animationPath;
 		}
 
+		static std::string newFileName = "";
+		static bool b_openAnimationModal = false;
+
+		if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
+		{
+			FL::CreateNewAnimationFile(newFileName, FL::GetDir("animations"));
+		}
 
 		// Three dots
 		FL::RenderSectionHeader(animationName);
-		ImGui::SameLine(0, propsWindowSize.x - 210);
-		FL::MoveScreenCursor(0, -4);
+		FL::MoveScreenCursor(ImGui::GetContentRegionAvail().x - 29, -31);
 		FL::RenderImageButton("##AnimationHamburgerMenu", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
 		FL::PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##AnimationHamburgerMenu", ImGuiPopupFlags_MouseButtonLeft))
 		{
-			if (ImGui::MenuItem("New Animation"))
+			if (ImGui::MenuItem("Save Animation"))
 			{
-				animationFilePath = FL::OpenSaveFileExplorer();
-
 				if (animationFilePath != "")
-				{
-					// Create S_AnimationProperties struct to store the properties of the json file in
-					std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
-					std::string animationName = FL::GetFilenameFromPath(animationFilePath);
-					animationProperties->animationName = animationName;
-					FL::CreateNewAnimationFile(animationName, animationFilePath);
-					SaveAnimationData(animationProperties, animationFilePath);
-				}
+					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -87,18 +82,9 @@ namespace FlatGui
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Save Animation"))
+			if (ImGui::MenuItem("New Animation"))
 			{
-				if (animationFilePath != "")
-					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Save as.."))
-			{
-				animationFilePath = FL::OpenSaveFileExplorer();
-				if (animationFilePath != "")
-					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
+				b_openAnimationModal = true;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
@@ -196,6 +182,63 @@ namespace FlatGui
 				animProps->characterControllerProps.push_back(characterControllerProperties);
 			}
 		};
+		// Lambda
+		auto L_RemoveKeyFrame = [&](std::string property)
+			{
+				// Add property to animation object
+				if (property == "Event")
+				{
+					animProps->eventProps.clear();
+				}
+				else if (property == "Transform")
+				{
+					animProps->transformProps.clear();
+				}
+				else if (property == "Sprite")
+				{
+					animProps->spriteProps.clear();
+				}
+				else if (property == "Camera")
+				{
+					animProps->cameraProps.clear();
+				}
+				else if (property == "Script")
+				{
+					animProps->scriptProps.clear();
+				}
+				else if (property == "Button")
+				{
+					animProps->buttonProps.clear();
+				}
+				else if (property == "Canvas")
+				{
+					animProps->canvasProps.clear();
+				}
+				else if (property == "Audio")
+				{
+					animProps->audioProps.clear();
+				}
+				else if (property == "Text")
+				{
+					animProps->textProps.clear();
+				}
+				else if (property == "BoxCollider")
+				{
+					animProps->boxColliderProps.clear();
+				}
+				else if (property == "CircleCollider")
+				{
+					animProps->circleColliderProps.clear();
+				}
+				else if (property == "RigidBody")
+				{
+					animProps->rigidBodyProps.clear();
+				}
+				else if (property == "CharacterController")
+				{
+					animProps->characterControllerProps.clear();
+				}
+			};
 
 		if (animProps != nullptr && animProps->animationName != "")
 		{
@@ -367,11 +410,14 @@ namespace FlatGui
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 			if (FL::RenderButton("Add Keyframe"))
+			{
 				L_PushBackKeyFrame(node_clicked);
-			ImGui::SameLine(0, 5);
-			//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+			}
+			ImGui::SameLine(0, 5);			
 			if (FL::RenderButton("Remove Property"))
-				L_PushBackKeyFrame(node_clicked);
+			{
+				L_RemoveKeyFrame(node_clicked);
+			}
 		}
 
 		if (objectForFocusedAnimation != nullptr)
@@ -894,7 +940,7 @@ namespace FlatGui
 	void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(darker.x * 255, darker.y * 255, darker.z * 255, 255));
+		draw_list->AddRectFilled(canvas_p0, canvas_p1, FL::GetColor32("timelineGridBg"));
 		zeroPoint = Vector2(scrolling.x + canvas_p0.x, canvas_p0.y + scrolling.y);
 
 		// Draw vertical grid lines
@@ -926,7 +972,6 @@ namespace FlatGui
 
 		if (selectedKeyFrameToEdit != nullptr)
 		{
-			// Here we should steal code from the components rendering in Inpsector window.
 			if (selectedKeyFrameToEdit->name == "Event")
 			{
 				std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(selectedKeyFrameToEdit);
@@ -936,33 +981,25 @@ namespace FlatGui
 			}
 			else if (selectedKeyFrameToEdit->name == "Transform")
 			{
-				// Position, scale, and rotation of transform
 				std::shared_ptr<Animation::S_Transform> transform = std::static_pointer_cast<Animation::S_Transform>(selectedKeyFrameToEdit);
 				float xPos = transform->xPos;
 				float yPos = transform->yPos;
 				float xScale = transform->xScale;
 				float yScale = transform->yScale;
-				//float rotation = transform->rotation;
 				static ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 
-				// Push Item Width
 				ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
 
-				// Drags for position editing
-				//
-				// Render Text for Positions + Rotation
 				ImGui::Text("xPos:");
 				ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
 				ImGui::Text("yPos:");
-				//ImGui::Text("Rotation:");
 
-				// Render Drags for Positions + Rotation
 				ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 				ImGui::SameLine(0, 5);
 				ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-				// Set cursor type
+
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 				//ImGui::SameLine(0, 5);
@@ -971,44 +1008,33 @@ namespace FlatGui
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 
-				// Assign the new slider values to the transforms position
 				transform->xPos = xPos;
 				transform->yPos = yPos;
 
-				// Render Drags for scale of transform
-				// Push
 				ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-
-				// Render text for scales
 				ImGui::Text("Scale x:");
 				ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
 				ImGui::Text("Scale y:");
 
-				// Render Drags for scales
 				ImGui::DragFloat("##xScale", &xScale, 0.05f, 0, -FLT_MAX, "%.3f", flags);
-				// Set cursor type
+
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
 				ImGui::SameLine(0, 5);
 				ImGui::DragFloat("##yScale", &yScale, 0.05f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-				// Set cursor type
+
 				if (ImGui::IsItemHovered())
 					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-
-				// Pop Width Setting
 				ImGui::PopItemWidth();
 
-				// Assign the new slider values to the sprites pivotPoint
 				transform->xScale = xScale;
 				transform->yScale = yScale;
 
-				// Interpolation type
 				const char* interpType[] = { "- Select -", "Lerp", "Slerp" };
 				static int current_type = 0;
 				static std::string node_clicked = "";
 				static std::string selected_property = "";
 				
-				// Get already saved interpType to show up in the combo select as default
 				if (transform->transformInterpType == Animation::I_Lerp)
 					current_type = 1;
 				else if (transform->transformInterpType == Animation::I_Slerp)
@@ -1038,39 +1064,42 @@ namespace FlatGui
 			}
 			else if (selectedKeyFrameToEdit->name == "Sprite")
 			{
-				// Sprite path and texture dimension variables
 				std::shared_ptr<Animation::S_Sprite> sprite = std::static_pointer_cast<Animation::S_Sprite>(selectedKeyFrameToEdit);
 				std::string path = sprite->path;
-				char newPath[1024];
-				strcpy_s(newPath, path.c_str());
-				// Sprite offset variables
 				float xOffset = sprite->xOffset;
 				float yOffset = sprite->yOffset;
 				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 				Vector4 tintColor = sprite->tintColor;
 				bool _instantlyChangeTint = sprite->_instantTintChange;
-
-				// Sprite Path Strings
-				std::string pathString = "Path: ";
-
-				// Render Sprite Path
-				ImGui::Text(pathString.c_str());
-				ImGui::SameLine(0, 5);
-
-				std::string openFileID = "##openFileIconForAnimatorSprite";
-				if (FL::RenderImageButton(openFileID.c_str(), FL::GetTexture("openFile")))
-				{
-					std::string assetPath = FL::OpenLoadFileExplorer();
-					strcpy_s(newPath, assetPath.c_str());
-					sprite->path = newPath;
-				}
-
-				ImGui::SameLine(0, 5);
 				
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
-				if (ImGui::InputText("##spritePath", newPath, IM_ARRAYSIZE(newPath)))
-					sprite->path = newPath;
-				ImGui::PopStyleColor();
+				int droppedValue = -1;
+				std::string openedPath = "";
+				if (FL::DropInputCanOpenFiles("##spritePathKeyFrameEditor", "Path", path, FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop image files here from the File Explorer"))
+				{
+					if (openedPath != "")
+					{
+						sprite->path = openedPath;
+					}
+					else if (droppedValue != -1)
+					{
+						std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+						if (fs_path.extension() == ".png")
+						{
+							sprite->path = fs_path.string();
+							Texture texture = Texture();
+							texture.LoadFromFile(fs_path.string());
+							if (texture.GetTexture() != nullptr)
+							{
+								sprite->xOffset = (float)(texture.GetWidth() / 2);
+								sprite->yOffset = (float)(texture.GetHeight() / 2);
+							}
+						}
+						else
+						{
+							FL::LogError("File must be of type .png to drop here.");
+						}
+					}
+				}
 
 				// Render Table
 				if (FL::PushTable("##AnimatedSpriteProperties", 2))
@@ -1106,16 +1135,11 @@ namespace FlatGui
 
 	void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation)
 	{
-		FocusedAnimation = animation;
-	}
-
-	void SetFocusedAnimation(std::string animationName)
-	{
-		FG_FocusedAnimationName = animationName;
+		FG_FocusedAnimation = animation;
 	}
 
 	std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation()
 	{
-		return FocusedAnimation;
+		return FG_FocusedAnimation;
 	}
 }

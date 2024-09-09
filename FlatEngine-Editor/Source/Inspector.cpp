@@ -194,7 +194,7 @@ namespace FlatGui
 			// GameObject Active Checkbox
 			if (FL::RenderCheckbox("Active", _objectActive))
 				focusedObject->SetActive(_objectActive);
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 120, 5);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 100, 5);
 
 			if (FL::RenderImageButton("##ExpandCollapseAllComponents" + std::to_string(focusedObjectID), FL::GetTexture("expandCollapseAll")))
 			{

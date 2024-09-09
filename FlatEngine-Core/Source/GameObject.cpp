@@ -486,7 +486,19 @@ namespace FlatEngine
 	{
 		if (childID != -1)
 		{
-			m_childrenIDs.push_back(childID);
+			bool b_contains = false;
+
+			for (long ID : m_childrenIDs)
+			{
+				if (ID == childID)
+				{
+					b_contains = true;
+				}
+			}
+			if (!b_contains)
+			{
+				m_childrenIDs.push_back(childID);
+			}
 		}
 	}
 

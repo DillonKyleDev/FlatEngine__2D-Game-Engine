@@ -19,7 +19,7 @@
             "_showTileSetEditor": false,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
-            "currentFileDirectory": "../assets\\mappingContexts",
+            "currentFileDirectory": "../assets\\images\\sprites",
             "focusedGameObjectID": -1,
             "loadedAnimationPath": "..\\assets\\animations\\Test.anm",
             "loadedScenePath": "../assets\\scenes\\MainMenu.scn",
@@ -27,10 +27,10 @@
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/MainMenu.scn",
-            "sceneViewGridStepX": 16.200040817260742,
-            "sceneViewGridStepY": 16.200040817260742,
-            "sceneViewScrollingX": 604.1962890625,
-            "sceneViewScrollingY": 183.74050903320313
+            "sceneViewGridStepX": 7.200038433074951,
+            "sceneViewGridStepY": 7.200038433074951,
+            "sceneViewScrollingX": 662.0,
+            "sceneViewScrollingY": 181.0
         }
     ]
 }

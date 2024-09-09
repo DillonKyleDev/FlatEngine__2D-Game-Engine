@@ -47,13 +47,15 @@ namespace FlatEngine
 			float scaleSpeed = 0.1f;
 			float xPos = 0;
 			float yPos = 0;
-			float xScale = 0;
-			float yScale = 0;
+			float xScale = 1;
+			float yScale = 1;
 		};
 		struct S_Sprite : public S_Property {
 			InterpType interpType = I_Lerp;
 			float speed = 0.1f;
 			std::string path = "";
+			float xScale = 1;
+			float yScale = 1;
 			float xOffset = 0;
 			float yOffset = 0;
 			Vector4 tintColor = Vector4(1, 1, 1, 1);

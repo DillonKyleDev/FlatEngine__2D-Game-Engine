@@ -86,6 +86,9 @@ F_Colors = {
 	tileSetEraseModeHover = Vector4:new(1, 0, 0, 0.5);
 	tileSetEraseModeHoverBorder = Vector4:new(1, 0.1, 0.1, 1);
 	tileSelectModeClickBorder = Vector4:new(1, 1, 1, 1),
+	-- Animator
+	timelineGridBg = Vector4:new(0.2, 0.2, 0.2, 1),
+	timelineGridlinesDark = Vector4:new(0.2, 0.2, 0.2, 1),
 	-- Docking
 	dockingPreview = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	dockingPreviewEmpty = Vector4:new(0.3, 0.3, 0.65, 1.0),

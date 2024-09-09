@@ -89,24 +89,21 @@ namespace FlatGui
 
 	// File Explorer
 	extern std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails;
-	extern Vector2 maxThumbnailSize;
 	extern std::string FG_currentDirectory;
 
 	// Focused GameObject
-	extern long FocusedGameObjectID;
+	extern long FG_FocusedGameObjectID;
 	extern void SetFocusedGameObjectID(long ID);
 	extern long GetFocusedGameObjectID();
 
-	// Focused Animation
-	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FocusedAnimation;
-	extern std::string FG_FocusedAnimationName;
+	// Animator
+	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FG_FocusedAnimation;
 	extern GameObject *objectForFocusedAnimation;
 	extern std::shared_ptr<FL::Animation::S_Property> selectedKeyFrameToEdit;
 	extern long previewAnimationStartTime;
 	extern long previewAnimationTime;
 	extern bool _playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation);
-	extern void SetFocusedAnimation(std::string animationName);
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation();
 	// Global Animation Event Functions
 	extern void DestroySelf(std::shared_ptr<FL::GameObject> thisObject);

@@ -25,5 +25,6 @@
     <ClCompile Include="Source\FileExplorer.cpp" />
     <ClCompile Include="Source\ScriptEditor.cpp" />
     <ClCompile Include="Source\TileSetEditor.cpp" />
+    <ClCompile Include="Source\ProjectHub.cpp" />
   </ItemGroup>
 </Project>

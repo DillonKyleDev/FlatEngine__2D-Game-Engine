@@ -9,8 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlatEngine-Core", "FlatEngi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlatEngine-Editor", "FlatEngine-Editor\FlatEngine-Editor.vcxproj", "{F64BE7AD-6262-E543-ABD9-7065172FB6CB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlatEngine-Hub", "FlatEngine-Hub\FlatEngine-Hub.vcxproj", "{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -36,12 +34,6 @@ Global
 		{F64BE7AD-6262-E543-ABD9-7065172FB6CB}.Dist|x64.Build.0 = Dist|x64
 		{F64BE7AD-6262-E543-ABD9-7065172FB6CB}.Release|x64.ActiveCfg = Release|x64
 		{F64BE7AD-6262-E543-ABD9-7065172FB6CB}.Release|x64.Build.0 = Release|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Debug|x64.ActiveCfg = Debug|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Debug|x64.Build.0 = Debug|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Dist|x64.ActiveCfg = Dist|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Dist|x64.Build.0 = Dist|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Release|x64.ActiveCfg = Release|x64
-		{4E8E8C83-3A5C-8089-23F0-F0AF0F5D5CEE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

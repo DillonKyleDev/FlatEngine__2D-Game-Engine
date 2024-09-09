@@ -231,7 +231,7 @@ namespace FlatGui
 				}
 				else
 				{
-					FL::LogString("ERROR : File must be of type .png to drop here.");
+					FL::LogError("File must be of type .png to drop here.");
 				}
 			}
 		}
@@ -583,10 +583,26 @@ namespace FlatGui
 			animation->SetActive(_isActive);
 		}
 
-		bool _canOpenFiles = true;
-		if (FL::RenderInput("##animationPath" + std::to_string(id), "Path: ", path, _canOpenFiles))
+		int droppedValue = -1;
+		std::string openedPath = "";
+		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(id), "Path", path, FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
 		{
-			animation->SetAnimationPath(path);
+			if (openedPath != "")
+			{
+				animation->SetAnimationPath(openedPath);
+			}
+			else if (droppedValue != -1)
+			{
+				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+				if (fs_path.extension() == ".anm")
+				{
+					animation->SetAnimationPath(fs_path.string());
+				}
+				else
+				{
+					FL::LogError("File must be of type .anm to drop here.");
+				}
+			}
 		}
 
 		if (FL::GameLoopStarted() && !FL::GameLoopPaused())

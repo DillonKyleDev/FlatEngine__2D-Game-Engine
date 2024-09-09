@@ -147,6 +147,22 @@ namespace FlatEngine
 						m_loadedScene.SetPrimaryCamera(loadedObject->GetCamera());
 				}
 
+				// Just in case any parent objects had not been created at the time of children being created on scene load,
+				// loop through objects with parents and add them as children to their parent objects
+				for (std::pair<long, GameObject> sceneObject : GetLoadedScene()->GetSceneObjects())
+				{
+					long myID = sceneObject.first;
+					long parentID = sceneObject.second.GetParentID();
+
+					if (parentID != -1)
+					{
+						if (GetObjectById(parentID) != nullptr)
+						{
+							GetObjectById(parentID)->AddChild(myID);
+						}
+					}
+				}
+
 				F_Application->OnLoadScene(fileName);
 			}
 		}
