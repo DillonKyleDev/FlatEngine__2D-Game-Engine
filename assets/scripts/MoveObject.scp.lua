@@ -28,7 +28,7 @@
 	-- end
 	if playerMappingContext:Fired("IA_Jump") then
 		animation:Play()
-	-- 	F_LogString("Jumped")
+		LogString("Jumped From MoveObject")
 	-- 	rigidBody:AddForce(force, 1)
 	end
 	

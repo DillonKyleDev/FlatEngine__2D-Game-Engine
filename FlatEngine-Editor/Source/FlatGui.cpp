@@ -296,7 +296,9 @@ namespace FlatGui
 
 				// Current directory opened
 				if (currentObjectJson.contains("currentFileDirectory"))
+				{
 					FG_currentDirectory = currentObjectJson["currentFileDirectory"];
+				}
 
 				// Settings
 				if (currentObjectJson.contains("_clearLogBuffer"))
@@ -311,7 +313,9 @@ namespace FlatGui
 		}
 
 		if (FL::F_LoadedProject.GetLoadedPreviewAnimationPath() != "")
+		{
 			SetFocusedAnimation(FL::LoadAnimationFile(FL::F_LoadedProject.GetLoadedPreviewAnimationPath()));
+		}
 		Vector2 scrolling = FL::F_LoadedProject.GetSceneViewScrolling();
 		FG_sceneViewScrolling = scrolling;
 		Vector2 gridStep = FL::F_LoadedProject.GetSceneViewGridStep();
@@ -369,7 +373,7 @@ namespace FlatGui
 			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
 			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
 			{ "_vsyncEnabled", FL::F_LoadedProject.IsVsyncEnabled() },
-			});
+		});
 		projectProperties.push_back(animationName);
 
 		// Recreate the Animation Property json object and add the array as the content

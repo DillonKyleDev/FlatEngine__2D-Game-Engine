@@ -1925,7 +1925,9 @@ namespace FlatEngine
 				{ "xPos", transformProp->xPos },
 				{ "yPos", transformProp->yPos },
 				{ "xScale", transformProp->xScale },
-				{ "yScale", transformProp->yScale }
+				{ "yScale", transformProp->yScale },
+				{ "_posAnimated", transformProp->b_posAnimated },
+				{ "_scaleAnimated", transformProp->b_scaleAnimated }
 			};
 			std::string data = jsonData.dump();
 			transformProps.push_back(json::parse(data));
@@ -1946,7 +1948,11 @@ namespace FlatEngine
 				{ "tintColorY", spriteProp->tintColor.y },
 				{ "tintColorZ", spriteProp->tintColor.z },
 				{ "tintColorW", spriteProp->tintColor.w },
-				{ "_instantTintChange", spriteProp->_instantTintChange },
+				{ "_instantTintChange", spriteProp->b_instantTintChange },
+				{ "_pathAnimated", spriteProp->b_pathAnimated },
+				{ "_offsetAnimated", spriteProp->b_offsetAnimated },
+				{ "_scaleAnimated", spriteProp->b_scaleAnimated },
+				{ "_tintColorAnimated", spriteProp->b_tintColorAnimated }
 			};
 
 			std::string data = jsonData.dump();
@@ -1959,7 +1965,7 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", cameraProp->time },
-				{ "_isPrimaryCamera", cameraProp->_isPrimaryCamera }
+				{ "_isPrimaryCamera", cameraProp->b_isPrimaryCamera }
 			};
 			std::string data = jsonData.dump();
 			cameraProps.push_back(json::parse(data));
@@ -1983,7 +1989,7 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", buttonProp->time },
-				{ "_isActive", buttonProp->_isActive }
+				{ "_isActive", buttonProp->b_isActive }
 			};
 			std::string data = jsonData.dump();
 			buttonProps.push_back(json::parse(data));
@@ -2007,7 +2013,7 @@ namespace FlatEngine
 			json jsonData = {
 				{ "time", audioProp->time },
 				{ "path", audioProp->path },
-				{ "_isMusic", audioProp->_isMusic }
+				{ "_isMusic", audioProp->b_isMusic }
 			};
 			std::string data = jsonData.dump();
 			audioProps.push_back(json::parse(data));
@@ -2019,13 +2025,19 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", textProp->time },
-				{ "path", textProp->path },
+				{ "fontPath", textProp->fontPath },
 				{ "text", textProp->text },
+				{ "xOffset", textProp->xOffset },
+				{ "yOffset", textProp->yOffset },
 				{ "tintColorX", textProp->tintColor.x },
 				{ "tintColorY", textProp->tintColor.y },
 				{ "tintColorZ", textProp->tintColor.z },
 				{ "tintColorW", textProp->tintColor.w },
-				{ "_instantTintChange", textProp->_instantTintChange },
+				{ "_instantTintChange", textProp->b_instantTintChange },
+				{ "_fontPathAnimated", textProp->b_fontPathAnimated },
+				{ "_textAnimated", textProp->b_textAnimated },
+				{ "_tintColorAnimated", textProp->b_tintColorAnimated },
+				{ "_offsetAnimated", textProp->b_offsetAnimated }
 			};
 			std::string data = jsonData.dump();
 			textProps.push_back(json::parse(data));
@@ -2037,7 +2049,7 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", boxColliderProp->time },
-				{ "_isActive", boxColliderProp->_isActive }
+				{ "_isActive", boxColliderProp->b_isActive }
 			};
 			std::string data = jsonData.dump();
 			boxColliderProps.push_back(json::parse(data));
@@ -2049,7 +2061,7 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", circleColliderProp->time },
-				{ "_isActive", circleColliderProp->_isActive }
+				{ "_isActive", circleColliderProp->b_isActive }
 			};
 			std::string data = jsonData.dump();
 			circleColliderProps.push_back(json::parse(data));
@@ -2063,7 +2075,7 @@ namespace FlatEngine
 				{ "time", rigidBodyProp->time },
 				{ "interpType", rigidBodyProp->interpType },
 				{ "speed", rigidBodyProp->speed },
-				{ "_isActive", rigidBodyProp->_isActive },
+				{ "_isActive", rigidBodyProp->b_isActive },
 				{ "gravityScale", rigidBodyProp->gravityScale },
 			};
 			std::string data = jsonData.dump();
@@ -2076,7 +2088,7 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", characterControllerProp->time },
-				{ "_isActive", characterControllerProp->_isActive }
+				{ "_isActive", characterControllerProp->b_isActive }
 			};
 			std::string data = jsonData.dump();
 			characterControllerProps.push_back(json::parse(data));
@@ -2101,7 +2113,7 @@ namespace FlatEngine
 		json animationData = json::object({
 			{ "name", propertiesObject->animationName },
 			{ "length", propertiesObject->animationLength },
-			{ "_loop", propertiesObject->_loop },
+			{ "_loop", propertiesObject->b_loop },
 			{ "animationProperties", animProps }
 		});
 
@@ -2152,7 +2164,7 @@ namespace FlatEngine
 
 				animProps->animationName = animName;
 				animProps->animationLength = CheckJsonFloat(animationJson, "length", animName);
-				animProps->_loop = CheckJsonBool(animationJson, "_loop", animName);
+				animProps->b_loop = CheckJsonBool(animationJson, "_loop", animName);
 
 				// Event
 				json eventProps = animationJson["animationProperties"]["event"];
@@ -2179,6 +2191,8 @@ namespace FlatEngine
 					frame->yPos = CheckJsonFloat(transformProps[i], "yPos", animName);
 					frame->xScale = CheckJsonFloat(transformProps[i], "xScale", animName);
 					frame->yScale = CheckJsonFloat(transformProps[i], "yScale", animName);
+					frame->b_posAnimated = CheckJsonBool(transformProps[i], "_posAnimated", animName);
+					frame->b_scaleAnimated = CheckJsonBool(transformProps[i], "_scaleAnimated", animName);
 					animProps->transformProps.push_back(frame);
 				}
 
@@ -2194,14 +2208,18 @@ namespace FlatEngine
 					frame->xOffset = CheckJsonFloat(spriteProps[i], "xOffset", animName);
 					frame->yOffset = CheckJsonFloat(spriteProps[i], "yOffset", animName);
 					frame->path = CheckJsonString(spriteProps[i], "path", animName);
-					frame->_instantTintChange = CheckJsonBool(spriteProps[i], "_instantTintChange", animName);
+					frame->b_instantTintChange = CheckJsonBool(spriteProps[i], "_instantTintChange", animName);
 					frame->tintColor = Vector4(
 						CheckJsonFloat(spriteProps[i], "tintColorX", animName),
 						CheckJsonFloat(spriteProps[i], "tintColorY", animName),
 						CheckJsonFloat(spriteProps[i], "tintColorZ", animName),
 						CheckJsonFloat(spriteProps[i], "tintColorW", animName)
 					);
-					animProps->spriteProps.push_back(frame);
+					frame->b_pathAnimated = CheckJsonBool(spriteProps[i], "_pathAnimated", animName);
+					frame->b_scaleAnimated = CheckJsonBool(spriteProps[i], "_scaleAnimated", animName);
+					frame->b_offsetAnimated = CheckJsonBool(spriteProps[i], "_offsetAnimated", animName);
+					frame->b_tintColorAnimated = CheckJsonBool(spriteProps[i], "_tintColorAnimated", animName);
+					animProps->spriteProps.push_back(frame);			
 				}
 
 				// Camera
@@ -2211,7 +2229,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_Camera> frame = std::make_shared<Animation::S_Camera>();
 					frame->name = "Camera";
 					frame->time = CheckJsonFloat(cameraProps[i], "time", animName);
-					frame->_isPrimaryCamera = CheckJsonBool(cameraProps[i], "_isPrimaryCamera", animName);
+					frame->b_isPrimaryCamera = CheckJsonBool(cameraProps[i], "_isPrimaryCamera", animName);
 					animProps->cameraProps.push_back(frame);
 				}
 
@@ -2233,7 +2251,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_Button> frame = std::make_shared<Animation::S_Button>();
 					frame->name = "Button";
 					frame->time = CheckJsonFloat(buttonProps[i], "time", animName);
-					frame->_isActive = CheckJsonBool(buttonProps[i], "_isActive", animName);
+					frame->b_isActive = CheckJsonBool(buttonProps[i], "_isActive", animName);
 					animProps->buttonProps.push_back(frame);
 				}
 
@@ -2255,7 +2273,7 @@ namespace FlatEngine
 					frame->name = "Audio";
 					frame->time = CheckJsonFloat(audioProps[i], "time", animName);
 					frame->path = CheckJsonString(audioProps[i], "path", animName);
-					frame->_isMusic = CheckJsonBool(audioProps[i], "_isMusic", animName);
+					frame->b_isMusic = CheckJsonBool(audioProps[i], "_isMusic", animName);
 					animProps->audioProps.push_back(frame);
 				}
 
@@ -2266,7 +2284,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_Text> frame = std::make_shared<Animation::S_Text>();
 					frame->name = "Text";
 					frame->time = CheckJsonFloat(textProps[i], "time", animName);
-					frame->path = CheckJsonString(textProps[i], "path", frame->name);
+					frame->fontPath = CheckJsonString(textProps[i], "fontPath", frame->name);
 					frame->text = CheckJsonString(textProps[i], "text", frame->name);
 					frame->tintColor = Vector4(
 						CheckJsonFloat(textProps[i], "tintColorX", frame->name),
@@ -2274,6 +2292,10 @@ namespace FlatEngine
 						CheckJsonFloat(textProps[i], "tintColorZ", frame->name),
 						CheckJsonFloat(textProps[i], "tintColorW", frame->name)
 					);
+					frame->b_fontPathAnimated = CheckJsonBool(textProps[i], "_fontPathAnimated", animName);
+					frame->b_textAnimated = CheckJsonBool(textProps[i], "_textAnimated", animName);
+					frame->b_tintColorAnimated = CheckJsonBool(textProps[i], "_tintColorAnimated", animName);
+					frame->b_offsetAnimated = CheckJsonBool(textProps[i], "_offsetAnimated", animName);
 					animProps->textProps.push_back(frame);
 				}
 
@@ -2284,7 +2306,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_BoxCollider> frame = std::make_shared<Animation::S_BoxCollider>();
 					frame->name = "BoxCollider";
 					frame->time = CheckJsonFloat(boxColliderProps[i], "time", animName);
-					frame->_isActive = CheckJsonBool(boxColliderProps[i], "_isActive", animName);
+					frame->b_isActive = CheckJsonBool(boxColliderProps[i], "_isActive", animName);
 					animProps->boxColliderProps.push_back(frame);
 				}
 
@@ -2295,7 +2317,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_CircleCollider> frame = std::make_shared<Animation::S_CircleCollider>();
 					frame->name = "CircleCollider";
 					frame->time = CheckJsonFloat(circleColliderProps[i], "time", animName);
-					frame->_isActive = CheckJsonBool(circleColliderProps[i], "_isActive", animName);
+					frame->b_isActive = CheckJsonBool(circleColliderProps[i], "_isActive", animName);
 					animProps->circleColliderProps.push_back(frame);
 				}
 
@@ -2306,7 +2328,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_RigidBody> frame = std::make_shared<Animation::S_RigidBody>();
 					frame->name = "RigidBody";
 					frame->time = CheckJsonFloat(rigidBodyProps[i], "time", animName);
-					frame->_isActive = CheckJsonBool(rigidBodyProps[i], "_isActive", animName);
+					frame->b_isActive = CheckJsonBool(rigidBodyProps[i], "_isActive", animName);
 					frame->interpType = (Animation::InterpType)CheckJsonInt(rigidBodyProps[i], "interpType", animName);
 					frame->speed = CheckJsonFloat(rigidBodyProps[i], "speed", animName);
 					frame->gravityScale = CheckJsonFloat(rigidBodyProps[i], "gravityScale", animName);
@@ -2320,7 +2342,7 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_CharacterController> frame = std::make_shared<Animation::S_CharacterController>();
 					frame->name = "CharacterController";
 					frame->time = CheckJsonFloat(characterControllerProps[i], "time", animName);
-					frame->_isActive = CheckJsonBool(characterControllerProps[i], "_isActive", animName);
+					frame->b_isActive = CheckJsonBool(characterControllerProps[i], "_isActive", animName);
 					animProps->characterControllerProps.push_back(frame);
 				}
 			}
@@ -2897,7 +2919,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			contains = true;
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("JsonContains() - \"" + loadedName + "\" does not contain a value for \"" + checkFor + "\".");
 		return contains;
 	}
 
@@ -2907,7 +2929,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("CheckJsonFloat() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
 		return value;
 	}
 
@@ -2917,7 +2939,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("CheckJsonInt() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
 		return value;
 	}
 
@@ -2927,7 +2949,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
 		return value;
 	}
 
@@ -2937,7 +2959,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("CheckJsonBool() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
 		return value;
 	}
 
@@ -2947,7 +2969,7 @@ namespace FlatEngine
 		if (obj.contains(checkFor))
 			value = obj[checkFor];
 		else
-			FlatEngine::LogString("Load() - Saved scene json does not contain a value for " + checkFor + " in object : " + loadedName);
+			FlatEngine::LogError("CheckJsonString() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
 		return value;
 	}
 

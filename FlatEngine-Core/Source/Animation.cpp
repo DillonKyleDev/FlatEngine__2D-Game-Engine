@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "Vector2.h"
+#include "Text.h"
+
 #include <cmath>
 
 
@@ -106,10 +108,10 @@ namespace FlatEngine
 			// Event Animation Frames
 			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProps)
 			{
-				if ((eventFrame->time == 0 && !eventFrame->_fired) || (!eventFrame->_fired && (ellapsedTime >= m_animationStartTime + eventFrame->time || eventFrame->time == 0)))
+				if ((eventFrame->time == 0 && !eventFrame->b_fired) || (!eventFrame->b_fired && (ellapsedTime >= m_animationStartTime + eventFrame->time || eventFrame->time == 0)))
 				{
 					CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
-					eventFrame->_fired = true;
+					eventFrame->b_fired = true;
 				}
 			}
 
@@ -123,16 +125,24 @@ namespace FlatEngine
 				Transform* transform = GetParent()->GetTransform();
 				std::shared_ptr<S_Transform> thisFrameProps = (*frame);
 				std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = frame;
+				bool b_posAnimated = thisFrameProps->b_posAnimated;
+				bool b_scaleAnimated = thisFrameProps->b_scaleAnimated;
 				if (transformFrameCounter > 0)
 				{
 					lastFrame--;
 				}
 
-				if (keyframeTime == 0 && !(*frame)->_fired)
+				if (keyframeTime == 0 && !(*frame)->b_fired)
 				{
-					transform->SetPosition(Vector2(thisFrameProps->xPos, thisFrameProps->yPos));
-					transform->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
-					(*frame)->_fired = true;
+					if (b_posAnimated)
+					{
+						transform->SetPosition(Vector2(thisFrameProps->xPos, thisFrameProps->yPos));
+					}
+					if (b_scaleAnimated)
+					{
+						transform->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
+					}
+					(*frame)->b_fired = true;
 				}
 				else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
 				{
@@ -146,14 +156,21 @@ namespace FlatEngine
 					{
 					case I_Lerp:
 					{
-						float correctedX = (lastFramePosition.x + (thisFrameProps->xPos - lastFramePosition.x) * percentDone);
-						float correctedY = (lastFramePosition.y + (thisFrameProps->yPos - lastFramePosition.y) * percentDone);
-						float correctedXScale = (lastFrameScale.x + (thisFrameProps->xScale - lastFrameScale.x) * percentDone);
-						float correctedYScale = (lastFrameScale.y + (thisFrameProps->yScale - lastFrameScale.y) * percentDone);
-
-						transform->SetPosition(Vector2(correctedX, correctedY));
-						if (correctedXScale != 0 && correctedYScale != 0)
-							transform->SetScale(Vector2(correctedXScale, correctedYScale));
+						if (b_posAnimated)
+						{
+							float correctedX = (lastFramePosition.x + (thisFrameProps->xPos - lastFramePosition.x) * percentDone);
+							float correctedY = (lastFramePosition.y + (thisFrameProps->yPos - lastFramePosition.y) * percentDone);
+							transform->SetPosition(Vector2(correctedX, correctedY));
+						}
+						if (b_scaleAnimated)
+						{
+							float correctedXScale = (lastFrameScale.x + (thisFrameProps->xScale - lastFrameScale.x) * percentDone);
+							float correctedYScale = (lastFrameScale.y + (thisFrameProps->yScale - lastFrameScale.y) * percentDone);
+							if (correctedXScale != 0 && correctedYScale != 0)
+							{
+								transform->SetScale(Vector2(correctedXScale, correctedYScale));
+							}
+						}
 						break;
 					}
 					default:
@@ -177,100 +194,173 @@ namespace FlatEngine
 					Sprite* sprite = GetParent()->GetSprite();
 					std::shared_ptr<S_Sprite> thisFrameProps = (*frame);
 					std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = frame;
+					bool b_pathAnimated = thisFrameProps->b_pathAnimated;
+					bool b_scaleAnimated = thisFrameProps->b_scaleAnimated;				
+					bool b_offsetAnimated = thisFrameProps->b_offsetAnimated;
+					bool b_tintColorAnimated = thisFrameProps->b_tintColorAnimated;
+
 					if (spriteFrameCounter > 0)
 					{
 						lastFrame--;
 					}
 
-					if (keyframeTime == 0 && !(*frame)->_fired)
+					if (keyframeTime == 0 && !(*frame)->b_fired)
 					{
-						sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
-						sprite->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
-						sprite->SetTexture(thisFrameProps->path);
-						sprite->SetTintColor(thisFrameProps->tintColor);
-						(*frame)->_fired = true;
+						if (b_offsetAnimated)
+						{
+							sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
+						}
+						if (b_scaleAnimated)
+						{
+							sprite->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
+						}
+						if (b_pathAnimated && !thisFrameProps->b_fired)
+						{
+							sprite->SetTexture(thisFrameProps->path);
+						}
+						if (b_tintColorAnimated)
+						{
+							sprite->SetTintColor(thisFrameProps->tintColor);
+						}
+						thisFrameProps->b_fired = true;
 					}
 					else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
 					{
 						std::shared_ptr<S_Sprite> lastFrameProps = (*lastFrame);
-
 						float timeLeft = (m_animationStartTime + keyframeTime) - ellapsedTime;
-						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);
-						lastFrameOffset = Vector2(lastFrameProps->xOffset, lastFrameProps->yOffset);
-						lastFrameScale = Vector2(lastFrameProps->xScale, lastFrameProps->yScale);
+						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);						
 
+						if (b_pathAnimated && !thisFrameProps->b_fired && thisFrameProps->path != "")
+						{
+							sprite->SetTexture(thisFrameProps->path);
+							thisFrameProps->b_fired = true;
+						}
 
 						switch (thisFrameProps->interpType)
 						{
 						case I_Lerp:
 						{
-							Vector4 correctedTintColor = thisFrameProps->tintColor;
-							lastFrameSpriteTint = (*lastFrame)->tintColor;
-
-							if (!thisFrameProps->_instantTintChange)
+							if (b_tintColorAnimated)
 							{
-								correctedTintColor = Vector4(lastFrameSpriteTint.x + (thisFrameProps->tintColor.x - lastFrameSpriteTint.x) * percentDone,
-									lastFrameSpriteTint.y + (thisFrameProps->tintColor.y - lastFrameSpriteTint.y) * percentDone,
-									lastFrameSpriteTint.z + (thisFrameProps->tintColor.z - lastFrameSpriteTint.z) * percentDone,
-									lastFrameSpriteTint.w + (thisFrameProps->tintColor.w - lastFrameSpriteTint.w) * percentDone);
+								Vector4 correctedTintColor = thisFrameProps->tintColor;
+								lastFrameSpriteTint = (*lastFrame)->tintColor;
+								if (!thisFrameProps->b_instantTintChange)
+								{
+									correctedTintColor = Vector4(lastFrameSpriteTint.x + (thisFrameProps->tintColor.x - lastFrameSpriteTint.x) * percentDone,
+										lastFrameSpriteTint.y + (thisFrameProps->tintColor.y - lastFrameSpriteTint.y) * percentDone,
+										lastFrameSpriteTint.z + (thisFrameProps->tintColor.z - lastFrameSpriteTint.z) * percentDone,
+										lastFrameSpriteTint.w + (thisFrameProps->tintColor.w - lastFrameSpriteTint.w) * percentDone);
+								}
+								sprite->SetTintColor(correctedTintColor);
 							}
-
-							float correctedXScale = (lastFrameScale.x + (thisFrameProps->xScale - lastFrameScale.x) * percentDone);
-							float correctedYScale = (lastFrameScale.y + (thisFrameProps->yScale - lastFrameScale.y) * percentDone);
-
-							if (thisFrameProps->path != "")
+							if (b_scaleAnimated)
 							{
-								sprite->SetTexture(thisFrameProps->path);
+								lastFrameScale = Vector2(lastFrameProps->xScale, lastFrameProps->yScale);
+								float correctedXScale = (lastFrameScale.x + (thisFrameProps->xScale - lastFrameScale.x) * percentDone);
+								float correctedYScale = (lastFrameScale.y + (thisFrameProps->yScale - lastFrameScale.y) * percentDone);
+								if (correctedXScale != 0 && correctedYScale != 0)
+								{
+									sprite->SetScale(Vector2(correctedXScale, correctedYScale));
+								}
 							}
-							if (correctedXScale != 0 && correctedYScale != 0)
+							if (b_offsetAnimated)
 							{
-								sprite->SetScale(Vector2(correctedXScale, correctedYScale));
+								lastFrameOffset = Vector2(lastFrameProps->xOffset, lastFrameProps->yOffset);
+								sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
 							}
-							sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
-							sprite->SetTintColor(correctedTintColor);
 							break;
 						}
+						default:
+							break;
 						}
 					}
 					spriteFrameCounter++;
 				}
 			}
+			// Text Animation Frames
+			if (GetParent()->GetText() != nullptr)
+			{
+				static Vector4 lastFrameTextTint = Vector4(1, 1, 1, 1);
+				static Vector2 lastFrameOffset = Vector2(0, 0);	
+				int textFrameCounter = 0;
 
+				for (std::vector<std::shared_ptr<S_Text>>::iterator frame = props->textProps.begin(); frame != props->textProps.end(); frame++)
+				{
+					float keyframeTime = (*frame)->time;
+					Text* text = GetParent()->GetText();
+					std::shared_ptr<S_Text> thisFrameProps = (*frame);
+					std::vector<std::shared_ptr<S_Text>>::iterator lastFrame = frame;
+					bool b_fontPathAnimated = thisFrameProps->b_fontPathAnimated;
+					bool b_textAnimated = thisFrameProps->b_textAnimated;
+					bool b_tintColorAnimated = thisFrameProps->b_tintColorAnimated;
+					bool b_offsetAnimated = thisFrameProps->b_offsetAnimated;
 
-			//for (std::vector<std::shared_ptr<S_Sprite>>::iterator spriteFrame = props->spriteProps.begin(); spriteFrame != props->spriteProps.end(); spriteFrame++)
-			//{
-			//	if (ellapsedTime < m_animationStartTime + (*spriteFrame)->time)
-			//	{
-			//		FlatEngine::Sprite* sprite = GetParent()->GetSprite();
-			//		std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = spriteFrame;
-			//		if (lastFrame != props->spriteProps.begin() && lastFrame -1 >= props->spriteProps.begin())
-			//			lastFrame = lastFrame - 1;
+					if (textFrameCounter > 0)
+					{
+						lastFrame--;
+					}
 
-			//		float timeLeft = (*spriteFrame)->time - ellapsedTime - m_animationStartTime;
-			//		float percentDone = (ellapsedTime - m_animationStartTime - (*lastFrame)->time) / ((*spriteFrame)->time - (*lastFrame)->time);
-			//		
-			//		Vector4 correctedTintColor = (*spriteFrame)->tintColor;
-
-			//		if (!(*spriteFrame)->_instantTintChange)
-			//		{
-			//			lastFrameSpriteTint = (*lastFrame)->tintColor;
-			//			correctedTintColor = Vector4(lastFrameSpriteTint.x + ((*spriteFrame)->tintColor.x - lastFrameSpriteTint.x) * percentDone,
-			//				lastFrameSpriteTint.y + ((*spriteFrame)->tintColor.y - lastFrameSpriteTint.y) * percentDone,
-			//				lastFrameSpriteTint.z + ((*spriteFrame)->tintColor.z - lastFrameSpriteTint.z) * percentDone,
-			//				lastFrameSpriteTint.w + ((*spriteFrame)->tintColor.w - lastFrameSpriteTint.w) * percentDone);
-			//		}
-
-			//		if ((*spriteFrame)->path != "")
-			//			sprite->SetTexture((*spriteFrame)->path);
-			//		Vector2 spriteOffset = sprite->GetOffset();
-			//		sprite->SetOffset(Vector2((*spriteFrame)->xOffset, (*spriteFrame)->yOffset));
-			//		sprite->SetTintColor(correctedTintColor);
-			//		break;
-			//	}		
-			//	spriteFrameCounter++;
-			//}
+					if (keyframeTime == 0 && !(*frame)->b_fired)
+					{
+						if (thisFrameProps->b_textAnimated)
+						{
+							text->SetText(thisFrameProps->text);							
+						}
+						if (b_offsetAnimated)
+						{
+							text->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
+						}
+						if (b_fontPathAnimated && thisFrameProps->fontPath != "")
+						{
+							text->SetFontPath(thisFrameProps->fontPath);
+						}
+						
+						if (b_tintColorAnimated)
+						{
+							text->SetColor(thisFrameProps->tintColor);
+						}
+						thisFrameProps->b_fired = true;
+					}
+					else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
+					{
+						std::shared_ptr<S_Text> lastFrameProps = (*lastFrame);
+						float timeLeft = (m_animationStartTime + keyframeTime) - ellapsedTime;
+						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);	
+						
+						if (!thisFrameProps->b_fired && b_textAnimated)
+						{
+							text->SetText(thisFrameProps->text);
+							text->LoadText();
+							thisFrameProps->b_fired = true;
+						}
+						if (b_tintColorAnimated)
+						{
+							Vector4 correctedTintColor = thisFrameProps->tintColor;
+							lastFrameTextTint = (*lastFrame)->tintColor;
+							if (!thisFrameProps->b_instantTintChange)
+							{
+								correctedTintColor = Vector4(lastFrameTextTint.x + (thisFrameProps->tintColor.x - lastFrameTextTint.x) * percentDone,
+									lastFrameTextTint.y + (thisFrameProps->tintColor.y - lastFrameTextTint.y) * percentDone,
+									lastFrameTextTint.z + (thisFrameProps->tintColor.z - lastFrameTextTint.z) * percentDone,
+									lastFrameTextTint.w + (thisFrameProps->tintColor.w - lastFrameTextTint.w) * percentDone);
+							}
+							text->SetColor(correctedTintColor);
+						}
+						if (b_fontPathAnimated && thisFrameProps->fontPath != "")
+						{
+							text->SetFontPath(thisFrameProps->fontPath);
+						}					
+						if (b_offsetAnimated)
+						{
+							lastFrameOffset = Vector2(lastFrameProps->xOffset, lastFrameProps->yOffset);
+							text->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
+						}									
+					}
+					textFrameCounter++;
+				}
+			}
 		}
-		else if (props->_loop)
+		else if (props->b_loop)
 		{
 			m_animationStartTime = ellapsedTime;
 		}

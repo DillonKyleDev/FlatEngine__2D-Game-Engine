@@ -52,7 +52,7 @@
             "XInput_Tray": "",
             "XInput_X": "IA_Attack",
             "XInput_Y": "IA_Swap_Weapon",
-            "name": "MC_CharacterContext"    
+            "name": "MC_CharacterContext"
         }
     ]
 }

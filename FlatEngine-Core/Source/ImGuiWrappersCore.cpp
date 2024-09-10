@@ -475,6 +475,7 @@ namespace FlatEngine
 
 		if (label != "")
 		{
+			label += ":";
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text(label.c_str());
 			ImGui::SameLine(0, 5);

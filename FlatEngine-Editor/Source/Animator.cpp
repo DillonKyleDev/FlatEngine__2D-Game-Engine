@@ -247,7 +247,7 @@ namespace FlatGui
 			if (objectForFocusedAnimation != nullptr)
 				animation = objectForFocusedAnimation->GetAnimation();
 
-			if (FL::RenderCheckbox("Loop Animation", animProps->_loop) && animation != nullptr && animation->IsPlaying())
+			if (FL::RenderCheckbox("Loop Animation", animProps->b_loop) && animation != nullptr && animation->IsPlaying())
 			{
 				animation->Stop();
 				animation->Play(FL::GetEngineTime());
@@ -966,7 +966,7 @@ namespace FlatGui
 
 		std::string keyFrameProperty = "No KeyFrame Selected";
 		if (selectedKeyFrameToEdit != nullptr)
-			keyFrameProperty = selectedKeyFrameToEdit->name;
+			keyFrameProperty = selectedKeyFrameToEdit->name + " Frame";
 
 		FL::RenderSectionHeader(keyFrameProperty);
 
@@ -990,45 +990,41 @@ namespace FlatGui
 
 				ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 3 - 5);
 
-				ImGui::Text("xPos:");
-				ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-				ImGui::Text("yPos:");
+				FL::RenderCheckbox("##transformPosAnimated", transform->b_posAnimated);
+				ImGui::SameLine();
 
-				ImGui::DragFloat("##xPos", &xPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-				ImGui::SameLine(0, 5);
-				ImGui::DragFloat("##yPos", &yPos, 0.5f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
+				ImGui::BeginDisabled(!transform->b_posAnimated);
+				if (FL::PushTable("##TransformAnimationKeyframe", 2))
+				{
+					if (FL::RenderFloatDragTableRow("##xPositionKeyframeDrag", "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX))
+					{
+						transform->xPos = xPos;
+					}
+					if (FL::RenderFloatDragTableRow("##yPositionKKeyFrameDrag", "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
+					{
+						transform->yPos = yPos;
+					}
+					FL::PopTable();
+				}
+				ImGui::EndDisabled();
 
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-				//ImGui::SameLine(0, 5);
-				//ImGui::DragFloat("##rotation", &rotation, 1.0f, -360, 360, "%.3f", flags);
-				// Set cursor type
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+				FL::RenderCheckbox("##transformScaleAnimated", transform->b_scaleAnimated);
+				ImGui::SameLine();
 
-				transform->xPos = xPos;
-				transform->yPos = yPos;
-
-				ImGui::PushItemWidth(ImGui::GetContentRegionMax().x / 2 - 5);
-				ImGui::Text("Scale x:");
-				ImGui::SameLine(ImGui::GetContentRegionMax().x / 2 + 5, 0);
-				ImGui::Text("Scale y:");
-
-				ImGui::DragFloat("##xScale", &xScale, 0.05f, 0, -FLT_MAX, "%.3f", flags);
-
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-				ImGui::SameLine(0, 5);
-				ImGui::DragFloat("##yScale", &yScale, 0.05f, -FLT_MAX, -FLT_MAX, "%.3f", flags);
-
-				if (ImGui::IsItemHovered())
-					ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
-				ImGui::PopItemWidth();
-
-				transform->xScale = xScale;
-				transform->yScale = yScale;
+				ImGui::BeginDisabled(!transform->b_scaleAnimated);
+				if (FL::PushTable("##TransformAnimationKeyframe", 2))
+				{
+					if (FL::RenderFloatDragTableRow("##xScaleDragKeyframeDrag", "X Scale", xScale, 0.1f, 0.001f, 1000))
+					{
+						transform->xScale = xScale;
+					}
+					if (FL::RenderFloatDragTableRow("##yScaleDragKeyframeDrag", "Y Scale", yScale, 0.1f, 0.001f, 1000))
+					{
+						transform->yScale = yScale;
+					}
+					FL::PopTable();
+				}
+				ImGui::EndDisabled();
 
 				const char* interpType[] = { "- Select -", "Lerp", "Slerp" };
 				static int current_type = 0;
@@ -1042,6 +1038,7 @@ namespace FlatGui
 
 				ImGui::Separator();
 				ImGui::Text("Interpolation Type");
+				FL::PushComboStyles();
 				if (ImGui::BeginCombo("##interpolationType", interpType[current_type]))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(interpType); n++)
@@ -1061,6 +1058,7 @@ namespace FlatGui
 					}
 					ImGui::EndCombo();
 				}
+				FL::PopComboStyles();
 			}
 			else if (selectedKeyFrameToEdit->name == "Sprite")
 			{
@@ -1070,8 +1068,13 @@ namespace FlatGui
 				float yOffset = sprite->yOffset;
 				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
 				Vector4 tintColor = sprite->tintColor;
-				bool _instantlyChangeTint = sprite->_instantTintChange;
+				bool b_instantlyChangeTint = sprite->b_instantTintChange;
 				
+				FL::RenderCheckbox("##SpritePathAnimated", sprite->b_pathAnimated);
+				ImGui::SameLine();
+
+				// Sprite path
+				ImGui::BeginDisabled(!sprite->b_pathAnimated);
 				int droppedValue = -1;
 				std::string openedPath = "";
 				if (FL::DropInputCanOpenFiles("##spritePathKeyFrameEditor", "Path", path, FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop image files here from the File Explorer"))
@@ -1100,8 +1103,13 @@ namespace FlatGui
 						}
 					}
 				}
+				ImGui::EndDisabled();
 
-				// Render Table
+				FL::RenderCheckbox("##SpriteOffsetAnimated", sprite->b_offsetAnimated);
+				ImGui::SameLine();
+
+				// Offset
+				ImGui::BeginDisabled(!sprite->b_offsetAnimated);	
 				if (FL::PushTable("##AnimatedSpriteProperties", 2))
 				{
 					if (FL::RenderFloatDragTableRow("##AnimatedxSpriteOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
@@ -1110,8 +1118,13 @@ namespace FlatGui
 						sprite->yOffset = yOffset;
 					FL::PopTable();
 				}
+				ImGui::EndDisabled();
+
+				FL::RenderCheckbox("##SpriteTintColorAnimated", sprite->b_tintColorAnimated);
+				ImGui::SameLine();
 
 				// Tint color picker
+				ImGui::BeginDisabled(!sprite->b_tintColorAnimated);
 				std::string tintID = "##AnimationFrameSpriteTintColorPicker";
 				ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
 				if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
@@ -1120,9 +1133,107 @@ namespace FlatGui
 				}
 				ImGui::SameLine(0, 5);
 				ImGui::Text("Tint color");
+				ImGui::SameLine(0, 5);
+				if (FL::RenderCheckbox("Instantly change tint", b_instantlyChangeTint))
+				{
+					sprite->b_instantTintChange = b_instantlyChangeTint;
+				}
+				ImGui::EndDisabled();
+			}
+			else if (selectedKeyFrameToEdit->name == "Text")
+			{
+				std::shared_ptr<Animation::S_Text> text = std::static_pointer_cast<Animation::S_Text>(selectedKeyFrameToEdit);
+				std::string path = text->fontPath;
+				std::string textString = text->text;
+				float xOffset = text->xOffset;
+				float yOffset = text->yOffset;
+				ImGuiSliderFlags flags = ImGuiSliderFlags_::ImGuiSliderFlags_None;
+				Vector4 tintColor = text->tintColor;
+				bool b_instantlyChangeTint = text->b_instantTintChange;
 
-				if (FL::RenderCheckbox("Instantly change tint", _instantlyChangeTint))
-					sprite->_instantTintChange = _instantlyChangeTint;
+				FL::RenderCheckbox("##textAnimated", text->b_textAnimated);
+				ImGui::SameLine();
+
+				ImGui::BeginDisabled(!text->b_textAnimated);
+				if (FL::RenderInput("##AnimationTextStringKeyFrameEditor", "Text", textString, false))
+				{
+					text->text = textString;
+				}
+				ImGui::EndDisabled();
+
+				FL::RenderCheckbox("##fontPathAnimated", text->b_fontPathAnimated);
+				ImGui::SameLine();
+
+				ImGui::BeginDisabled(!text->b_fontPathAnimated);
+				int droppedValue = -1;
+				std::string openedPath = "";
+				if (FL::DropInputCanOpenFiles("##TextPathKeyFrameEditor", "Path", path, FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop font files here from the File Explorer"))
+				{
+					if (openedPath != "")
+					{
+						text->fontPath = openedPath;
+					}
+					else if (droppedValue != -1)
+					{
+						std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+						if (fs_path.extension() == ".ttf")
+						{
+							text->fontPath = fs_path.string();
+							Text tempText = Text();
+							tempText.SetFontPath(fs_path.string());
+							tempText.SetText(text->text);
+
+							if (tempText.GetTexture() != nullptr)
+							{
+								text->xOffset = (float)(tempText.GetTexture()->GetWidth() / 2);
+								text->yOffset = (float)(tempText.GetTexture()->GetHeight() / 2);
+							}
+						}
+						else
+						{
+							FL::LogError("File must be a font file (.ttf) to drop here.");
+						}
+					}
+				}
+				ImGui::EndDisabled();
+
+				// Render Table
+				FL::RenderCheckbox("##offsetAnimated", text->b_offsetAnimated);
+				ImGui::SameLine();
+				ImGui::BeginDisabled(!text->b_offsetAnimated);
+				if (FL::PushTable("##AnimatedTextProperties", 2))
+				{
+					if (FL::RenderFloatDragTableRow("##AnimatedxTextOffsetDrag", "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+					{
+						text->xOffset = xOffset;
+					}
+					if (FL::RenderFloatDragTableRow("##AnimatedyTextOffsetDrag", "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+					{
+						text->yOffset = yOffset;
+					}
+					FL::PopTable();
+				}
+				ImGui::EndDisabled();
+
+				// Tint color picker
+				FL::RenderCheckbox("##tintColorAnimated", text->b_tintColorAnimated);
+				ImGui::SameLine();
+
+				ImGui::BeginDisabled(!text->b_tintColorAnimated);
+				std::string tintID = "##AnimationFrameTextTintColorPicker";
+				ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+				if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+				{
+					text->tintColor = tintColor;
+				}
+				ImGui::SameLine(0, 5);
+				ImGui::Text("Tint color");
+				ImGui::SameLine();
+				if (FL::RenderCheckbox("Instantly change tint", b_instantlyChangeTint))
+				{
+					text->b_instantTintChange = b_instantlyChangeTint;
+				}
+				ImGui::EndDisabled();
 			}
 		}
 		else
@@ -1136,6 +1247,8 @@ namespace FlatGui
 	void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation)
 	{
 		FG_FocusedAnimation = animation;
+		FL::GetLoadedProject().SetLoadedPreviewAnimationPath(animation->animationPath);
+		SaveCurrentProject();
 	}
 
 	std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation()

@@ -35,7 +35,7 @@ namespace FlatEngine
 		struct S_Property {
 			float time = 0;
 			std::string name;
-			bool _fired;
+			bool b_fired;
 		};
 		struct S_Event : public S_Property {
 			std::string functionName = "";
@@ -49,6 +49,9 @@ namespace FlatEngine
 			float yPos = 0;
 			float xScale = 1;
 			float yScale = 1;
+
+			bool b_posAnimated = false;
+			bool b_scaleAnimated = false;
 		};
 		struct S_Sprite : public S_Property {
 			InterpType interpType = I_Lerp;
@@ -59,43 +62,55 @@ namespace FlatEngine
 			float xOffset = 0;
 			float yOffset = 0;
 			Vector4 tintColor = Vector4(1, 1, 1, 1);
-			bool _instantTintChange = false;
+			bool b_instantTintChange = false;
+
+			bool b_pathAnimated = false;
+			bool b_scaleAnimated = false;
+			bool b_offsetAnimated = false;
+			bool b_tintColorAnimated = false;
 		};
 		struct S_Camera : public S_Property {
-			bool _isPrimaryCamera = false;
+			bool b_isPrimaryCamera = false;
 		};
 		struct S_Script : public S_Property {
 			std::string path = "";
 		};
 		struct S_Button : public S_Property {
-			bool _isActive = true;
+			bool b_isActive = true;
 		};
 		struct S_Canvas : public S_Property {
 		};
 		struct S_Audio : public S_Property {
 			std::string path = "";
-			bool _isMusic = false;
+			bool b_isMusic = false;
 		};
 		struct S_Text : public S_Property {
-			std::string path = "";
+			std::string fontPath = "";
 			std::string text = "";
 			Vector4 tintColor = Vector4(1, 1, 1, 1);
-			bool _instantTintChange = false;
+			bool b_instantTintChange = false;
+			float xOffset = 0;
+			float yOffset = 0;
+
+			bool b_fontPathAnimated = false;
+			bool b_textAnimated = false;
+			bool b_tintColorAnimated = false;
+			bool b_offsetAnimated = false;
 		};
 		struct S_BoxCollider : public S_Property {
-			bool _isActive = true;
+			bool b_isActive = true;
 		};
 		struct S_CircleCollider : public S_Property {
-			bool _isActive = true;
+			bool b_isActive = true;
 		};
 		struct S_RigidBody : public S_Property {
 			InterpType interpType = I_Lerp;
 			float speed = 0.1f;
-			bool _isActive = true;
+			bool b_isActive = true;
 			float gravityScale = 1;
 		};
 		struct S_CharacterController : public S_Property {
-			bool _isActive = true;
+			bool b_isActive = true;
 		};
 
 		struct S_AnimationProperties {
@@ -103,7 +118,7 @@ namespace FlatEngine
 			std::string animationPath = "";
 			float animationLength = 0.0f;
 			bool b_isSorted = false;
-			bool _loop = false;
+			bool b_loop = false;
 
 			std::vector<std::shared_ptr<S_Event>> eventProps = std::vector< std::shared_ptr<S_Event>>();
 			std::vector<std::shared_ptr<S_Transform>> transformProps = std::vector<std::shared_ptr<S_Transform>>();

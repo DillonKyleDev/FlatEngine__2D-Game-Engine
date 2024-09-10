@@ -82,7 +82,7 @@ namespace FlatGui
 	extern bool _editingValue;
 	extern ImDrawList* drawList;
 
-	// Project Management
+	// Project Management 
 	extern void LoadProject(std::string path);
 	extern void SaveProject(Project project, std::string path);
 	extern void SaveCurrentProject();
