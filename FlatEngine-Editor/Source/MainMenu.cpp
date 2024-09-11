@@ -22,7 +22,6 @@ namespace FlatEngine {
 	class MappingContext;
 }
 
-using ComponentTypes = FL::Component::ComponentTypes;
 using BoxCollider = FL::BoxCollider;
 using Sprite = FL::Sprite;
 using Transform = FL::Transform;
@@ -407,7 +406,7 @@ namespace FlatGui
 			std::shared_ptr<Animation::S_AnimationProperties> animationProperties = std::make_shared<Animation::S_AnimationProperties>();
 			animationProperties->animationName = animationName;
 			FL::CreateNewAnimationFile(animationName);
-			SaveAnimationData(animationProperties, FL::GetDir("animations") + "/" + animationName + ".anm");
+			SaveAnimationFile(animationProperties, FL::GetDir("animations") + "/" + animationName + ".anm");
 			SetFocusedAnimation(animationProperties);
 			FG_b_showAnimator = true;
 			FG_b_showAnimationPreview = true;

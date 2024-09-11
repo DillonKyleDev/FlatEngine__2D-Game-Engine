@@ -81,28 +81,24 @@ public:
 		{
 			RunOnceAfterInitialization();
 
-
-			Uint32 renderStartTime = 0;
-			static Uint32 frameStart = FL::GetEngineTime();
-
-			if (FL::_isDebugMode)
-				renderStartTime = FL::GetEngineTime(); // Profiler
-			_hasQuit = FL::_closeProgram;
-
+			static Uint32 frameStart = FL::GetEngineTime();			
+			_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
 
-
 			if (!A_GameLoop->IsStarted())
+			{
 				A_GameLoop->Start();
-
+			}
 
 			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
 				if (!GameLoopPaused())
+				{
 					A_GameLoop->m_accumulator += frameTime;
+				}
 
 				if (!GameLoopPaused())
 				{
@@ -122,16 +118,20 @@ public:
 
 				// Artificially slow GameLoop if frameTime is less than 
 				if (!FL::F_LoadedProject.IsVsyncEnabled() && frameTime < A_GameLoop->m_deltaTime)
+				{
 					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
+				}
 			}
 			else
+			{
 				FL::HandleEvents(_hasQuit);
+			}
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
 			if (!GameLoopStarted())
+			{
 				frameStart = FL::GetEngineTime();
-
-
+			}
 
 			EndRender();
 		}

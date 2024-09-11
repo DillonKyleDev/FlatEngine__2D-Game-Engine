@@ -6,7 +6,7 @@ namespace FlatEngine
 {
 	CompositeCollider::CompositeCollider(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_CompositeCollider);
+		SetType(T_CompositeCollider);
 		SetID(myID);
 		SetParentID(parentID);
 		m_colliders = std::vector<std::shared_ptr<Collider>>();

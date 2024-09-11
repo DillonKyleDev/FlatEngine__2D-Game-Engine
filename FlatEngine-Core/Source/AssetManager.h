@@ -20,6 +20,7 @@ namespace FlatEngine
 		void CollectDirectories(DirectoryType dirType);
 		void CollectColors();
 		void CollectTextures();
+		std::string GetFailedToLoadImagePath();
 		std::string GetDir(std::string dirName);
 		std::string GetFilePath(std::string fileName);
 		Vector4 GetColor(std::string colorName);

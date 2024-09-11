@@ -17,6 +17,7 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "TileMap.h"
+#include "Scene.h"
 
 namespace FlatEngine
 {
@@ -363,6 +364,10 @@ namespace FlatEngine
 		{
 			return RemoveText(ownerID);
 		}
+		else if (component->GetTypeString() == "Animation")
+		{
+			return RemoveAnimation(ownerID);
+		}
 		else if (component->GetTypeString() == "CompositeCollider")
 		{
 			return RemoveCompositeCollider(ownerID);
@@ -429,6 +434,10 @@ namespace FlatEngine
 		bool b_success = false;
 		if (m_Cameras.count(ownerID))
 		{
+			if (m_Cameras.at(ownerID).IsPrimary())
+			{
+				GetLoadedScene()->RemovePrimaryCamera();
+			}
 			m_Cameras.erase(ownerID);			
 			b_success = true;
 		}

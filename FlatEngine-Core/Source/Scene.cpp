@@ -154,65 +154,44 @@ namespace FlatEngine
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject *objectToDelete = FlatEngine::GetObjectById(sceneObjectID);
-
-		// If this GameObject was the primary camera, unset it as the m_primaryCamera and set m_primaryCamera to nullptr
-		if (m_primaryCamera != nullptr && m_primaryCamera->GetParentID() == objectToDelete->GetID())
-		{
-			m_primaryCamera->SetPrimaryCamera(false);
-			m_primaryCamera = nullptr;
-		}
-
-		// Check for a parent and remove the child object reference
-		long parentID = objectToDelete->GetParentID();
-		if (parentID != -1)
-		{
-			GameObject *parent = FlatEngine::GetObjectById(parentID);
-			parent->RemoveChild(sceneObjectID);
-		}
-
-		// Remove components from gameloop flow (activeScript instances, RigidBodies, Colliders)
-		for (Component* component : objectToDelete->GetComponents())
-		{
-			m_ECSManager.RemoveComponent(component);
-		}
-
-		// Check for children and delete those as well
+		GameObject *objectToDelete = FlatEngine::GetObjectById(sceneObjectID);		
 		Scene::DeleteChildrenAndSelf(objectToDelete);
-
-		// Save the ID for use on the next created GameObject
-		m_freedGameObjectIDs.push_back(sceneObjectID);
 	}
 
 	// Recursive
 	void Scene::DeleteChildrenAndSelf(GameObject *objectToDelete)
 	{
-		long id = objectToDelete->GetID();
+		long ID = objectToDelete->GetID();
 
-		// Must remove the m_primaryCamera pointer from the loaded scene before deleting the GameObject.
-		long cameraObjectID = -1;
-		if (m_primaryCamera != nullptr)
-			cameraObjectID = m_primaryCamera->GetParentID();
+		if (m_primaryCamera != nullptr && m_primaryCamera->GetParentID() == objectToDelete->GetID())
+		{
+			m_primaryCamera->SetPrimaryCamera(false);
+			m_primaryCamera = nullptr;
+		}
+		
+		long parentID = objectToDelete->GetParentID();
+		if (parentID != -1)
+		{
+			GameObject* parent = FlatEngine::GetObjectById(parentID);
+			parent->RemoveChild(ID);
+		}
+		
+		for (Component* component : objectToDelete->GetComponents())
+		{
+			m_ECSManager.RemoveComponent(component);
+		}
 
-		// Check for children
 		if (objectToDelete->HasChildren())
 		{
-			// Call this function again on this objects children
 			for (int c = 0; c < objectToDelete->GetChildren().size(); c++)
-			{
-				LogString("Deleting children of: " + objectToDelete->GetName());
-				GameObject *child = FlatEngine::GetObjectById(objectToDelete->GetChildren()[c]);
-				LogString("Deleting child: " + child->GetName());
+			{				
+				GameObject *child = GetObjectById(objectToDelete->GetChildren()[c]);
 				Scene::DeleteChildrenAndSelf(child);
 			}
 		}
-		
-		// Remove the m_primaryCamera pointer from the loaded scene if it is attached to the deleting GameObject
-		if (objectToDelete->GetID() == cameraObjectID)
-			RemovePrimaryCamera();
 
-		// Then delete this GameObject
-		m_sceneObjects.erase(id);
+		m_sceneObjects.erase(ID);
+		m_freedGameObjectIDs.push_back(ID);
 	}
 
 	void Scene::IncrementGameObjectID()
@@ -272,7 +251,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogString("Scene::Setm_primaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
+			LogError("Scene::Setm_primaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
 		}
 	}
 
@@ -401,7 +380,9 @@ namespace FlatEngine
 	{
 		long id = component->GetID();
 		if (m_ECSManager.RemoveComponent(component))
+		{
 			m_freedComponentIDs.push_back(id);
+		}
 	}
 
 	Transform* Scene::GetTransformByOwner(long ownerID)

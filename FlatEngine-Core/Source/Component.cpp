@@ -5,7 +5,7 @@ namespace FlatEngine
 {
 	Component::Component()
 	{
-		type = Component::ComponentTypes::T_Null;
+		type = T_Null;
 		ID = -1;
 		parentID = -1;
 		_isCollapsed = false;
@@ -46,7 +46,7 @@ namespace FlatEngine
 		return ID;
 	}
 
-	Component::ComponentTypes Component::GetType()
+	ComponentTypes Component::GetType()
 	{
 		return type;
 	}
@@ -60,63 +60,63 @@ namespace FlatEngine
 	{
 		switch (type)
 		{
-		case ComponentTypes::T_Transform:
+		case T_Transform:
 			return "Transform";
 			break;
 
-		case ComponentTypes::T_Sprite:
+		case T_Sprite:
 			return "Sprite";
 			break;
 
-		case ComponentTypes::T_Camera:
+		case T_Camera:
 			return "Camera";
 			break;
 
-		case ComponentTypes::T_Script:
+		case T_Script:
 			return "Script";
 			break;
 
-		case ComponentTypes::T_Button:
+		case T_Button:
 			return "Button";
 			break;
 
-		case ComponentTypes::T_Canvas:
+		case T_Canvas:
 			return "Canvas";
 			break;
 
-		case ComponentTypes::T_Animation:
+		case T_Animation:
 			return "Animation";
 			break;
 
-		case ComponentTypes::T_Audio:
+		case T_Audio:
 			return "Audio";
 			break;
 
-		case ComponentTypes::T_Text:
+		case T_Text:
 			return "Text";
 			break;
 
-		case ComponentTypes::T_BoxCollider:
+		case T_BoxCollider:
 			return "BoxCollider";
 			break;
 
-		case ComponentTypes::T_CircleCollider:
+		case T_CircleCollider:
 			return "CircleCollider";
 			break;
 
-		case ComponentTypes::T_CompositeCollider:
+		case T_CompositeCollider:
 			return "CompositeCollider";
 			break;
 
-		case ComponentTypes::T_RigidBody:
+		case T_RigidBody:
 			return "RigidBody";
 			break;
 
-		case ComponentTypes::T_CharacterController:
+		case T_CharacterController:
 			return "CharacterController";
 			break;
 
-		case ComponentTypes::T_TileMap:
+		case T_TileMap:
 			return "TileMap";
 			break;
 

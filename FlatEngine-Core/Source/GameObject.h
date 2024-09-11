@@ -1,8 +1,9 @@
 #pragma once
-#include <string>
-#include <vector>
 #include "Component.h"
 #include "TagList.h"
+
+#include <string>
+#include <vector>
 
 namespace FlatEngine
 {
@@ -22,8 +23,6 @@ namespace FlatEngine
 	class CircleCollider;
 	class CompositeCollider;
 	class TileMap;
-
-	using ComponentTypes = Component::ComponentTypes;
 
 	class GameObject
 	{

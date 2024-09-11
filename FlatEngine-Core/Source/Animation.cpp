@@ -3,8 +3,9 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "Sprite.h"
-#include "Vector2.h"
 #include "Text.h"
+#include "Audio.h"
+#include "Vector2.h"
 
 #include <cmath>
 
@@ -13,7 +14,7 @@ namespace FlatEngine
 {
 	Animation::Animation(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Animation);
+		SetType(T_Animation);
 		SetID(myID);
 		SetParentID(parentID);
 		m_animationName = "";
@@ -35,7 +36,7 @@ namespace FlatEngine
 	{
 		m_animationProperties = LoadAnimationFile(m_animationPath);
 		m_b_playing = true;
-		// Start animation timer
+		
 		if (startTime != -1)
 			m_animationStartTime = startTime;
 		else
@@ -101,9 +102,9 @@ namespace FlatEngine
 
 		if (!props->b_isSorted)
 			props->SortFrames();
-
-		// While the animation is not over
-		if (props->animationLength > ellapsedTime - m_animationStartTime)
+		
+		// While the animation is not over (with a 1 second buffer to catch the last animation keyframes
+		if (props->animationLength + 1000 > ellapsedTime - m_animationStartTime)
 		{
 			// Event Animation Frames
 			for (const std::shared_ptr<S_Event>& eventFrame : props->eventProps)
@@ -127,10 +128,13 @@ namespace FlatEngine
 				std::vector<std::shared_ptr<S_Transform>>::iterator lastFrame = frame;
 				bool b_posAnimated = thisFrameProps->b_posAnimated;
 				bool b_scaleAnimated = thisFrameProps->b_scaleAnimated;
-				if (transformFrameCounter > 0)
+
+				float lastFrameTime = 0;
+				if (transformFrameCounter > 0 && props->transformProps.size() > 1)
 				{
 					lastFrame--;
-				}
+					lastFrameTime = (*lastFrame)->time;
+				}	
 
 				if (keyframeTime == 0 && !(*frame)->b_fired)
 				{
@@ -144,11 +148,11 @@ namespace FlatEngine
 					}
 					(*frame)->b_fired = true;
 				}
-				else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
+				else if ((ellapsedTime > lastFrameTime + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
 				{
 					std::shared_ptr<S_Transform> lastFrameProps = (*lastFrame);
 					float timeLeft = (m_animationStartTime + keyframeTime) - ellapsedTime;
-					float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);
+					float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameTime) / (keyframeTime - lastFrameTime);
 					lastFramePosition = Vector2(lastFrameProps->xPos, lastFrameProps->yPos);
 					lastFrameScale = Vector2(lastFrameProps->xScale, lastFrameProps->yScale);
 
@@ -183,6 +187,7 @@ namespace FlatEngine
 			// Sprite Animation Frames
 			if (GetParent()->GetSprite() != nullptr)
 			{
+				Sprite* sprite = GetParent()->GetSprite();
 				static Vector4 lastFrameSpriteTint = Vector4(1, 1, 1, 1);
 				static Vector2 lastFrameOffset = Vector2(0, 0);
 				static Vector2 lastFrameScale = Vector2(1, 1);
@@ -191,7 +196,6 @@ namespace FlatEngine
 				for (std::vector<std::shared_ptr<S_Sprite>>::iterator frame = props->spriteProps.begin(); frame != props->spriteProps.end(); frame++)
 				{
 					float keyframeTime = (*frame)->time;
-					Sprite* sprite = GetParent()->GetSprite();
 					std::shared_ptr<S_Sprite> thisFrameProps = (*frame);
 					std::vector<std::shared_ptr<S_Sprite>>::iterator lastFrame = frame;
 					bool b_pathAnimated = thisFrameProps->b_pathAnimated;
@@ -199,9 +203,11 @@ namespace FlatEngine
 					bool b_offsetAnimated = thisFrameProps->b_offsetAnimated;
 					bool b_tintColorAnimated = thisFrameProps->b_tintColorAnimated;
 
-					if (spriteFrameCounter > 0)
+					float lastFrameTime = 0;
+					if (spriteFrameCounter > 0 && props->spriteProps.size() > 1)
 					{
 						lastFrame--;
+						lastFrameTime = (*lastFrame)->time;
 					}
 
 					if (keyframeTime == 0 && !(*frame)->b_fired)
@@ -224,11 +230,11 @@ namespace FlatEngine
 						}
 						thisFrameProps->b_fired = true;
 					}
-					else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
+					else if ((ellapsedTime > lastFrameTime + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
 					{
 						std::shared_ptr<S_Sprite> lastFrameProps = (*lastFrame);
 						float timeLeft = (m_animationStartTime + keyframeTime) - ellapsedTime;
-						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);						
+						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameTime) / (keyframeTime - lastFrameTime);
 
 						if (b_pathAnimated && !thisFrameProps->b_fired && thisFrameProps->path != "")
 						{
@@ -277,17 +283,18 @@ namespace FlatEngine
 					spriteFrameCounter++;
 				}
 			}
+
 			// Text Animation Frames
 			if (GetParent()->GetText() != nullptr)
 			{
+				Text* text = GetParent()->GetText();
 				static Vector4 lastFrameTextTint = Vector4(1, 1, 1, 1);
 				static Vector2 lastFrameOffset = Vector2(0, 0);	
 				int textFrameCounter = 0;
 
 				for (std::vector<std::shared_ptr<S_Text>>::iterator frame = props->textProps.begin(); frame != props->textProps.end(); frame++)
 				{
-					float keyframeTime = (*frame)->time;
-					Text* text = GetParent()->GetText();
+					float keyframeTime = (*frame)->time;		
 					std::shared_ptr<S_Text> thisFrameProps = (*frame);
 					std::vector<std::shared_ptr<S_Text>>::iterator lastFrame = frame;
 					bool b_fontPathAnimated = thisFrameProps->b_fontPathAnimated;
@@ -295,9 +302,11 @@ namespace FlatEngine
 					bool b_tintColorAnimated = thisFrameProps->b_tintColorAnimated;
 					bool b_offsetAnimated = thisFrameProps->b_offsetAnimated;
 
-					if (textFrameCounter > 0)
+					float lastFrameTime = 0;
+					if (textFrameCounter > 0 && props->textProps.size() > 1)
 					{
 						lastFrame--;
+						lastFrameTime = (*lastFrame)->time;
 					}
 
 					if (keyframeTime == 0 && !(*frame)->b_fired)
@@ -321,11 +330,11 @@ namespace FlatEngine
 						}
 						thisFrameProps->b_fired = true;
 					}
-					else if ((ellapsedTime > (*lastFrame)->time + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
+					else if ((ellapsedTime > lastFrameTime + m_animationStartTime) && (ellapsedTime < m_animationStartTime + keyframeTime))
 					{
 						std::shared_ptr<S_Text> lastFrameProps = (*lastFrame);
 						float timeLeft = (m_animationStartTime + keyframeTime) - ellapsedTime;
-						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameProps->time) / (keyframeTime - lastFrameProps->time);	
+						float percentDone = (float)(ellapsedTime - m_animationStartTime - lastFrameTime) / (keyframeTime - lastFrameTime);
 						
 						if (!thisFrameProps->b_fired && b_textAnimated)
 						{
@@ -357,6 +366,52 @@ namespace FlatEngine
 						}									
 					}
 					textFrameCounter++;
+				}
+			}
+
+			// Audio Animation Frames
+			if (GetParent()->GetAudio() != nullptr)
+			{
+				Audio* audio = GetParent()->GetAudio();
+				int audioFrameCounter = 0;
+
+				for (std::vector<std::shared_ptr<S_Audio>>::iterator frame = props->audioProps.begin(); frame != props->audioProps.end(); frame++)
+				{				
+					float keyframeTime = (*frame)->time;				
+					std::shared_ptr<S_Audio> thisFrameProps = (*frame);
+					std::vector<std::shared_ptr<S_Audio>>::iterator nextFrame = frame;
+					bool b_stopsAllOtherSounds = thisFrameProps->b_stopAllOtherSounds;
+
+					float nextFrameTime = 0;
+					if (audioFrameCounter > 0 && props->audioProps.size() > 1)
+					{
+						nextFrame++;
+						if (nextFrame != props->audioProps.end())
+						{
+							nextFrameTime = (*nextFrame)->time;
+						}
+					}
+
+					if (keyframeTime == 0 && !(*frame)->b_fired)
+					{
+						if (b_stopsAllOtherSounds)
+						{							
+							audio->StopAll();
+						}
+						
+						audio->PlaySound(thisFrameProps->soundName);
+						thisFrameProps->b_fired = true;
+					}
+					else if (!thisFrameProps->b_fired && (ellapsedTime > m_animationStartTime + keyframeTime))
+					{
+						if (b_stopsAllOtherSounds)
+						{
+							audio->StopAll();
+						}
+						audio->PlaySound(thisFrameProps->soundName);
+						thisFrameProps->b_fired = true;
+					}
+					audioFrameCounter++;
 				}
 			}
 		}

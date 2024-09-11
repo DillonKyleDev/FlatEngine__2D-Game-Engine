@@ -153,6 +153,11 @@ namespace FlatEngine
 			m_errorTexture->LoadFromFile(m_resourceFailedToLoadImagePath);
 	}
 
+	std::string AssetManager::GetFailedToLoadImagePath()
+	{
+		return m_resourceFailedToLoadImagePath;
+	}
+
 	std::string AssetManager::GetDir(std::string dirName)
 	{
 		if (m_directories.count(dirName))

@@ -87,9 +87,7 @@ namespace FlatEngine
 	{
 		bool b_colliding = false;
 		Vector2 collider1Center = collider1->GetCenterGrid();
-		Vector2 collider2Center = collider2->GetCenterGrid();
-
-		//LogString("Checking Collision for " + collider1->GetParent()->GetName() + " and " + collider2->GetParent()->GetName());
+		Vector2 collider2Center = collider2->GetCenterGrid();		
 
 		// Calculate center distance with pythag
 		float rise = std::abs(collider1Center.y - collider2Center.y);
@@ -981,9 +979,13 @@ namespace FlatEngine
 	void Collider::SetActiveLayer(int layer)
 	{
 		if (layer >= 0)
+		{
 			activeLayer = layer;
+		}
 		else
-			LogString("Collider active layer must be an integer greater than 0.");
+		{
+			LogError("Collider active layer must be an integer greater than 0.");
+		}
 	}
 
 	int Collider::GetActiveLayer()

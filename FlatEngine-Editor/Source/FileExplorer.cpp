@@ -40,14 +40,13 @@ namespace FlatGui
 		// {
 			FL::BeginResizeWindowChild("Directories Panel", FL::GetColor("logBg"));
 			// {
-				Vector2 dirStartPos = ImGui::GetCursorScreenPos();
-				Vector2 dirEndPos = Vector2(dirStartPos.x + ImGui::GetContentRegionAvail().x, dirStartPos.y + 24);
-				ImGui::GetWindowDrawList()->AddRectFilled(dirStartPos, dirEndPos, FL::GetColor32("panelTitleBg"));
-				ImGui::SetCursorScreenPos(Vector2(dirStartPos.x + 5, dirStartPos.y + 5));
-				ImGui::Text("Directories");
-				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
-				ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+				// Border around object
+				auto directoriesWindowPos = ImGui::GetWindowPos();
+				auto directoriesWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+				ImGui::GetWindowDrawList()->AddRect({ directoriesWindowPos.x + 2, directoriesWindowPos.y + 2 }, { directoriesWindowPos.x + directoriesWindowSize.x - 2, directoriesWindowPos.y + directoriesWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
+				FL::RenderSectionHeader("Directories");
+
 				FL::PushMenuStyles();
 
 				if (ImGui::BeginTable("##DirectoriesTable", 1, FL::F_tableFlags))
@@ -60,8 +59,6 @@ namespace FlatGui
 					ImGui::EndTable();
 				}
 				FL::PopMenuStyles();
-				ImGui::PopStyleVar();
-				ImGui::PopStyleColor();
 			// }
 			FL::EndWindowChild();
 
@@ -94,14 +91,12 @@ namespace FlatGui
 
 			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
 			// {			
-				// Header
-				Vector2 filesStartPos = ImGui::GetCursorScreenPos();
-				Vector2 filesEndPos = Vector2(filesStartPos.x + ImGui::GetContentRegionAvail().x, filesStartPos.y + 24);
-				ImGui::GetWindowDrawList()->AddRectFilled(filesStartPos, filesEndPos, FL::GetColor32("panelTitleBg"));
-				ImGui::SetCursorScreenPos(Vector2(filesStartPos.x + 5, filesStartPos.y + 5));
-				ImGui::Text("Files");
-				ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-				RenderFilesTopBar();
+				// Border around object
+				auto filesWindowPos = ImGui::GetWindowPos();
+				auto filesWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+				ImGui::GetWindowDrawList()->AddRect({ filesWindowPos.x + 2, filesWindowPos.y + 2 }, { filesWindowSize.x + filesWindowSize.x - 2, filesWindowSize.y + filesWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
+				FL::RenderSectionHeader("Files");
 
 				// File icons + border
 				Vector2 borderStart = ImGui::GetCursorScreenPos();
@@ -584,14 +579,13 @@ namespace FlatGui
 		else if (extension == ".anm")
 		{
 			SetFocusedAnimation(FL::LoadAnimationFile(fs_filepath.string()));			
-			FG_b_showAnimator = true;
-			FG_b_showAnimationPreview = true;
+			FG_b_showAnimator = true;	
 		}
 		// Lua file
 		else if (extension == ".scp")
 		{
 			// Open script editor
-			FL::LogString("Script Editor not yet implemented.");
+			FL::LogError("Script Editor not yet implemented.");
 		}
 		// Project file
 		else if (extension == ".prj")

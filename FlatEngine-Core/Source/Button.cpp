@@ -7,7 +7,7 @@ namespace FlatEngine
 {
 	Button::Button(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Button);
+		SetType(T_Button);
 		SetID(myID);
 		SetParentID(parentID);
 		m_b_mouseIsOver = false;
@@ -31,7 +31,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			LogString("The active width and height must be larger than 0.");
+			LogError("The active width and height must be larger than 0.");
 		}
 	}
 
@@ -48,7 +48,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogString("Button active layer must be an larger than 0.");
+			FlatEngine::LogError("Button active layer must be an larger than 0.");
 		}
 	}
 

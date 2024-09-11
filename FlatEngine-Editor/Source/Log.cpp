@@ -13,6 +13,12 @@ namespace FlatGui
 	{
 		FL::BeginWindow("Logger", FG_b_showLogger);
 
+		// Border around object
+		auto windowPos = ImGui::GetWindowPos();
+		auto windowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+		ImGui::GetWindowDrawList()->AddRect({ windowPos.x + 2, windowPos.y + 2 }, { windowSize.x + windowPos.x - 2, windowPos.y + windowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
+
 		if (FL::RenderCheckbox("Clear buffer after every frame?", FG_b_clearBufferEveryFrame))
 		{
 			FL::F_Logger.ClearBuffer();

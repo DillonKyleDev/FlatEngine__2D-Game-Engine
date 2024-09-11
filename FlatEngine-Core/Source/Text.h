@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Texture.h"
+#include "Vector2.h"
 #include "Vector4.h"
 
 #include <SDL_ttf.h>
@@ -28,6 +29,13 @@ namespace FlatEngine
 		std::string GetText();
 		void SetOffset(Vector2 offset);
 		Vector2 GetOffset();
+		void SetPivotPoint(Pivot newPivot);
+		void SetPivotPoint(std::string newPivot);
+		Pivot GetPivotPoint();
+		std::string GetPivotPointString();
+		void SetPivotOffset(Vector2 newPivotOffset);
+		Vector2 GetPivotOffset();
+		void UpdatePivotOffset();
 		std::string GetData();
 		
 	private:
@@ -38,6 +46,8 @@ namespace FlatEngine
 		Vector4 m_tintColor;
 		std::shared_ptr<Texture> m_texture;
 		Vector2 m_offset;
+		Pivot m_pivotPoint;
+		Vector2 m_pivotOffset;
 		int m_renderOrder;
 		SDL_Color m_white;
 		SDL_Color m_transparent;

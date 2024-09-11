@@ -51,6 +51,8 @@
 
 namespace FlatEngine
 {	
+	bool F_b_closeProgram = false;
+
 	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";
 	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
@@ -59,16 +61,13 @@ namespace FlatEngine
 
 	F_CURSOR_MODE F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 	bool F_b_sceneViewFocused = false;
+	
 
-
-	bool _isDebugMode = true;
-	bool _closeProgram = false;
 
 	bool F_b_loadNewScene = false;
 	std::string F_sceneToBeLoaded = "";
 
-	std::vector<SDL_Joystick*> gamepads = std::vector<SDL_Joystick*>();
-	int JOYSTICK_DEAD_ZONE = 4000;
+	std::vector<SDL_Joystick*> F_gamepads = std::vector<SDL_Joystick*>();	
 
 	// For rendering sprites
 	int F_maxSpriteLayers = 55;
@@ -410,7 +409,7 @@ namespace FlatEngine
 		QuitImGui();
 
 		// Clean up old gamepads
-		for (SDL_Joystick* gamepad : gamepads)
+		for (SDL_Joystick* gamepad : F_gamepads)
 		{
 			SDL_JoystickClose(gamepad);
 			gamepad = NULL;
@@ -424,7 +423,7 @@ namespace FlatEngine
 		IMG_Quit();
 		SDL_Quit();
 	
-		FlatEngine::_closeProgram = true;
+		F_b_closeProgram = true;
 	}
 
 
@@ -434,7 +433,7 @@ namespace FlatEngine
 		if (SDL_NumJoysticks() != controllersConnected)
 		{
 			// Clean up old gamepads
-			for (SDL_Joystick* gamepad : gamepads)
+			for (SDL_Joystick* gamepad : F_gamepads)
 			{
 				SDL_JoystickClose(gamepad);
 				gamepad = NULL;
@@ -449,7 +448,7 @@ namespace FlatEngine
 				else
 				{
 					LogString("Gamepad connected...");
-					gamepads.push_back(gamepad);
+					F_gamepads.push_back(gamepad);
 				}
 			}
 		}
@@ -583,8 +582,8 @@ namespace FlatEngine
 			}
 			catch (std::exception& e)
 			{
-				LogString("ERROR : Failed to copy FlatEngine-Core : ");
-				LogString(e.what());
+				LogError("Failed to copy FlatEngine-Core : ");
+				LogError(e.what());
 			}
 			try
 			{
@@ -592,8 +591,8 @@ namespace FlatEngine
 			}
 			catch (std::exception& e)
 			{
-				LogString("ERROR : Failed to copy FlatEngine-Runtime : ");
-				LogString(e.what());
+				LogError("Failed to copy FlatEngine-Runtime : ");
+				LogError(e.what());
 			}
 			try
 			{
@@ -601,8 +600,8 @@ namespace FlatEngine
 			}
 			catch (std::exception& e)
 			{
-				LogString("ERROR : Failed to copy assets : ");
-				LogString(e.what());
+				LogError("Failed to copy assets : ");
+				LogError(e.what());
 			}
 			try
 			{
@@ -610,8 +609,8 @@ namespace FlatEngine
 			}
 			catch (std::exception& e)
 			{
-				LogString("ERROR : Failed to copy engine dependencies: ");
-				LogString(e.what());
+				LogError("Failed to copy engine dependencies: ");
+				LogError(e.what());
 			}
 			try
 			{
@@ -619,8 +618,8 @@ namespace FlatEngine
 			}
 			catch (std::exception& e)
 			{
-				LogString("ERROR : Failed to copy intermediates: ");
-				LogString(e.what());
+				LogError("Failed to copy intermediates: ");
+				LogError(e.what());
 			}
 		}
 	}
@@ -960,7 +959,6 @@ namespace FlatEngine
 		using XInputAxis = FlatEngine::XInputAxis;
 		using XInputButtons = FlatEngine::XInputButtons;
 		using XInputHats = FlatEngine::XInputHats;
-		int JOYSTICK_DEAD_ZONE = FlatEngine::JOYSTICK_DEAD_ZONE;
 
 		// Unfire all keybinds that were fired in the last frame then clear the saved keys
 		static std::vector<std::string> firedKeys = std::vector<std::string>();
@@ -1020,40 +1018,36 @@ namespace FlatEngine
 			{
 				switch (event.key.keysym.sym)
 				{
-				case SDLK_t:
+				case SDLK_1:
 					F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 					break;
 
-				case SDLK_w:
+				case SDLK_2:
 					F_CursorMode = F_CURSOR_MODE::SCALE;
 					break;
 
-				case SDLK_r:
+				case SDLK_3:
 					F_CursorMode = F_CURSOR_MODE::ROTATE;
 					break;
 
-				case SDLK_b:
+				case SDLK_4:
 					F_CursorMode = F_CURSOR_MODE::TILE_BRUSH;
 					break;
 
-				case SDLK_e:
+				case SDLK_5:
 					F_CursorMode = F_CURSOR_MODE::TILE_ERASE;
 					break;
 
-				case SDLK_c:
+				case SDLK_6:
 					F_CursorMode = F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 					break;
 
-				case SDLK_m:
+				case SDLK_7:
 					F_CursorMode = F_CURSOR_MODE::TILE_MOVE;
 					break;
 
-				case SDLK_s:
+				case SDLK_8:
 					F_CursorMode = F_CURSOR_MODE::TILE_MULTISELECT;
-					break;
-
-				case SDLK_SPACE:
-					F_CursorMode = F_CURSOR_MODE::TRANSLATE;
 					break;
 				}
 			}
@@ -1496,28 +1490,28 @@ namespace FlatEngine
 			{
 			case XInputAxis::LeftXAxis:
 				// Left of dead zone or right of dead zone
-				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
 					event.jaxis.value = 0;				
 				if (context.GetKeyBinding("XInput_LeftJoystickX") != "")
 					context.OnInputEvent("XInput_LeftJoystickX", event);
 				break;
 			case XInputAxis::LeftYAxis:
 				// Below dead zone or Above dead zone
-				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
 					event.jaxis.value = 0;				
 				if (context.GetKeyBinding("XInput_LeftJoystickY") != "")
 					context.OnInputEvent("XInput_LeftJoystickY", event);
 				break;
 			case XInputAxis::RightXAxis:
 				// Left of dead zone or Right of dead zone
-				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
 					event.jaxis.value = 0;			
 				if (context.GetKeyBinding("XInput_RightJoystick") != "")
 					context.OnInputEvent("XInput_RightJoystick", event);
 				break;
 			case XInputAxis::RightYAxis:
 				// Below dead zone or Above dead zone
-				if (event.jaxis.value > -JOYSTICK_DEAD_ZONE && event.jaxis.value < JOYSTICK_DEAD_ZONE)
+				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
 					event.jaxis.value = 0;			
 				if (context.GetKeyBinding("XInput_RightJoystick") != "")
 					context.OnInputEvent("XInput_RightJoystick", event);
@@ -1688,18 +1682,18 @@ namespace FlatEngine
 		{
 			switch (event.jhat.value)
 			{
-			case XInputHats::Up:
+			case XInputHats::Hat_Up:
 				//LogFloat(event.jhat.type, "Hat Type: ");
 				//LogFloat(event.jhat.value, "Hat Value: ");
 				//LogFloat(event.jhat.hat, "Hat hat: ");
 				break;
-			case XInputHats::Down:
+			case XInputHats::Hat_Down:
 				FlatEngine::LogString("Down");
 				break;
-			case XInputHats::Left:
+			case XInputHats::Hat_Left:
 				FlatEngine::LogString("Left");
 				break;
-			case XInputHats::Right:
+			case XInputHats::Hat_Right:
 				FlatEngine::LogString("Right");
 				break;
 			default:
@@ -1883,10 +1877,10 @@ namespace FlatEngine
 		std::shared_ptr<Animation::S_AnimationProperties> propertiesObject = std::make_shared< Animation::S_AnimationProperties>();
 		propertiesObject->animationName = filename;
 		propertiesObject->animationPath = filePath;
-		SaveAnimationData(propertiesObject, filePath);
+		SaveAnimationFile(propertiesObject, filePath);
 	}
 
-	void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
+	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
 	{
 		// Declare file and input stream
 		std::ofstream file_obj;
@@ -2012,8 +2006,8 @@ namespace FlatEngine
 		{
 			json jsonData = {
 				{ "time", audioProp->time },
-				{ "path", audioProp->path },
-				{ "_isMusic", audioProp->b_isMusic }
+				{ "soundName", audioProp->soundName },
+				{ "_stopAllOtherSounds", audioProp->b_stopAllOtherSounds }
 			};
 			std::string data = jsonData.dump();
 			audioProps.push_back(json::parse(data));
@@ -2272,8 +2266,8 @@ namespace FlatEngine
 					std::shared_ptr<Animation::S_Audio> frame = std::make_shared<Animation::S_Audio>();
 					frame->name = "Audio";
 					frame->time = CheckJsonFloat(audioProps[i], "time", animName);
-					frame->path = CheckJsonString(audioProps[i], "path", animName);
-					frame->b_isMusic = CheckJsonBool(audioProps[i], "_isMusic", animName);
+					frame->soundName = CheckJsonString(audioProps[i], "soundName", animName);
+					frame->b_stopAllOtherSounds = CheckJsonBool(audioProps[i], "_stopAllOtherSounds", animName);
 					animProps->audioProps.push_back(frame);
 				}
 
@@ -3079,11 +3073,8 @@ namespace FlatEngine
 				{
 					Sprite* newSprite = loadedObject->AddSprite(id, _isActive, _isCollapsed);
 					std::string pivotPoint = "Center";
-					if (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
-						pivotPoint = CheckJsonString(componentJson, "pivotPoint", objectName);
-					newSprite->SetPivotPoint(pivotPoint);
-					newSprite->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));
-					newSprite->SetOffset(Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName)));
+					newSprite->SetPivotPoint(CheckJsonString(componentJson, "pivotPoint", objectName));					
+					newSprite->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));				
 					newSprite->SetRenderOrder(CheckJsonInt(componentJson, "renderOrder", objectName));
 					newSprite->SetTintColor(Vector4(
 						CheckJsonFloat(componentJson, "tintColorX", objectName),
@@ -3092,6 +3083,7 @@ namespace FlatEngine
 						CheckJsonFloat(componentJson, "tintColorW", objectName)
 					));
 					newSprite->SetTexture(CheckJsonString(componentJson, "path", objectName));
+					newSprite->SetOffset(Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName)));
 				}
 				else if (type == "Camera")
 				{
@@ -3156,6 +3148,7 @@ namespace FlatEngine
 					Text* newText = loadedObject->AddText(id, _isActive, _isCollapsed);
 					newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
 					newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
+					newText->SetPivotPoint(CheckJsonString(componentJson, "pivotPoint", objectName));
 					newText->SetColor(Vector4(
 						CheckJsonFloat(componentJson, "tintColorX", objectName),
 						CheckJsonFloat(componentJson, "tintColorY", objectName),

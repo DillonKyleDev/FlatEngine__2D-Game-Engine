@@ -168,7 +168,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogString("Failed to load scene: " + fileName);
+			LogError("Failed to load scene: " + fileName);
 			b_success = false;
 		}
 

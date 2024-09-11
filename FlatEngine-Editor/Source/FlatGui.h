@@ -2,6 +2,7 @@
 #include "Vector2.h"
 #include "Vector4.h"
 #include "Animation.h"
+#include "Texture.h"
 
 #include <sstream>
 #include <memory>
@@ -75,8 +76,6 @@ using RigidBody = FL::RigidBody;
 using TileMap = FL::TileMap;
 using TileSet = FL::TileSet;
 
-using ComponentTypes = FL::Component::ComponentTypes;
-
 namespace FlatGui
 {
 	extern bool _editingValue;
@@ -99,7 +98,7 @@ namespace FlatGui
 	// Animator
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FG_FocusedAnimation;
 	extern GameObject *objectForFocusedAnimation;
-	extern std::shared_ptr<FL::Animation::S_Property> selectedKeyFrameToEdit;
+	extern std::shared_ptr<FL::Animation::S_Property> FG_SelectedKeyFrameToEdit;
 	extern long previewAnimationStartTime;
 	extern long previewAnimationTime;
 	extern bool _playPreviewAnimation;
@@ -188,9 +187,7 @@ namespace FlatGui
 	extern void OpenFileContextually(std::filesystem::path fs_filepath);
 	extern void RenderTileSetEditor();
 	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2 &scrolling, Vector2 canvas_p0, Vector2 canvas_sz, Vector2 &step, TileSet* tileSet);
-	
 	extern void RenderCursorModeButtons();
-
 	extern void RenderScriptEditor();
 
 	// *** Don't forget to add flags to the window for preventing scrolling *** ImGuiWindowFlags flags = 8 | 16 or ImGuiWindowFlags_NoScrollbar 
@@ -201,6 +198,7 @@ namespace FlatGui
 	extern void EndComponent(Component* component);
 	extern void RenderTransformComponent(Transform* transform);
 	extern void RenderSpriteComponent(Sprite* sprite);
+	extern bool RenderPivotSelectionButtons(std::string componentType, FL::Pivot& pivot);
 	extern void RenderCameraComponent(Camera* camera);
 	extern void RenderScriptComponent(Script* script);
 	extern void RenderButtonComponent(Button* button);

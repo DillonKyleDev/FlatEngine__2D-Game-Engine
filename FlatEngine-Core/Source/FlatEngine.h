@@ -74,8 +74,6 @@ namespace FlatEngine
 		TILE_MOVE,
 	};
 
-	using ComponentTypes = Component::ComponentTypes;
-
 
 	extern std::string F_RuntimeDirectoriesLuaFilepath;
 	extern std::string F_EditorDirectoriesLuaFilepath;
@@ -97,9 +95,8 @@ namespace FlatEngine
 	extern std::string F_selectedTileSetToEdit;
 	extern std::pair<std::string, int> F_tileSetAndIndexOnBrush;
 
-
-	extern bool _isDebugMode;
-	extern bool _closeProgram;
+	
+	extern bool F_b_closeProgram;
 
 	extern bool F_b_loadNewScene;
 	extern std::string F_sceneToBeLoaded;
@@ -121,8 +118,8 @@ namespace FlatEngine
 	extern bool F_b_sceneViewFocused;
 
 	// Controller Management
-	extern std::vector<SDL_Joystick*> gamepads;
-	extern int JOYSTICK_DEAD_ZONE;
+	extern std::vector<SDL_Joystick*> F_gamepads;
+	const int F_JOYSTICK_DEAD_ZONE = 4000;
 
 	// Managers
 	extern SceneManager F_SceneManager;
@@ -134,6 +131,7 @@ namespace FlatEngine
 
 	extern int F_maxSpriteLayers;
 	extern float F_spriteScaleMultiplier;
+	extern float F_pixelsPerGridSpace;
 
 	// Game view
 	extern float F_GAME_VIEWPORT_WIDTH;
@@ -143,7 +141,6 @@ namespace FlatEngine
 	extern Vector2 F_gameViewCenter;
 	extern Vector2 F_gameViewGridStep;
 
-	extern float F_pixelsPerGridSpace;
 
 	extern bool LoadFonts();
 	extern void FreeFonts();
@@ -302,11 +299,11 @@ namespace FlatEngine
 	extern void CreateNewTileSetFile(std::string fileName, std::string path);
 	extern GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position);
 
-	// Animation Manager
-	extern void SaveAnimationData(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
+	// Animation
+	extern void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path);
 	extern std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path);
 
-	// TileSet / TileMap Management
+	// TileSet / TileMap
 	extern void SaveTileSet(TileSet tileSet);
 	extern void InitializeTileSets();
 	extern TileSet* GetTileSet(std::string tileSetName);
@@ -332,6 +329,7 @@ namespace FlatEngine
 
 	extern void MoveScreenCursor(float x, float y);
 
+	extern void RenderSeparator(float topPadding, float bottomPadding);
 	extern void RenderSubTitle(std::string title);
 	extern void BeginWindow(std::string name, Vector4 bgColor = GetColor("windowBg"));
 	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = GetColor("windowBg"));
@@ -361,7 +359,7 @@ namespace FlatEngine
 	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
-	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1));
+	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1), Vector2 padding = Vector2(-1, -1));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);

@@ -6,20 +6,22 @@ namespace FlatEngine
 {
 	Text::Text(long myID, long parentID)
 	{
-		SetType(Component::ComponentTypes::T_Text);
+		SetType(T_Text);
 		SetID(myID);
 		SetParentID(parentID);
 		m_fontPath = GetFilePath("cinzelBlack");
 		m_fontSize = 40;
-		m_font = TTF_OpenFont(m_fontPath.c_str(), 40);
+		m_font = TTF_OpenFont(m_fontPath.c_str(), m_fontSize);
+		m_offset = Vector2(0, 0);
+		m_pivotPoint = PivotCenter;
+		m_pivotOffset = Vector2(0, 0); 
 		m_tintColor = Vector4(1,1,1,1);
 		m_text = "Sample Text";
 		m_renderOrder = 0;
 		m_texture = std::make_shared<Texture>();
 		m_white = { (Uint8)255, (Uint8)255, (Uint8)255, (Uint8)255 };
 		m_transparent = { (Uint8)0, (Uint8)0, (Uint8)0, (Uint8)0 };
-		m_texture->LoadFromRenderedText(m_text.c_str(), m_white, m_font);
-		m_offset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
+		LoadText();
 	}
 
 	Text::~Text()
@@ -30,21 +32,25 @@ namespace FlatEngine
 
 	void Text::LoadText()
 	{
-		if (m_text != "" && m_font != nullptr)
+		if (m_text != "" && m_font != nullptr && m_fontSize > 0)
 		{
 			m_texture->LoadFromRenderedText(m_text, m_white, m_font);
-			m_offset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
+			m_pivotOffset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
 		}
 		else 
 		{
 			if (m_font == nullptr)
 			{
-				m_font = TTF_OpenFont(GetFilePath("cinzelBlack").c_str(), 40);
+				TTF_CloseFont(m_font);
+				m_font = TTF_OpenFont(GetFilePath("cinzelBlack").c_str(), m_fontSize);
 				LogError("Font not valid.");
 			}
 			m_texture->FreeTexture();
-			m_offset = Vector2(0,0);
+			m_pivotOffset = Vector2(0,0);
+			m_offset = m_pivotOffset;
 		}
+
+		UpdatePivotOffset();
 	}
 
 	void Text::SetRenderOrder(int order)
@@ -64,24 +70,17 @@ namespace FlatEngine
 
 	void Text::SetFontPath(std::string path)
 	{
-		m_fontPath = path;
-		m_font = TTF_OpenFont(m_fontPath.c_str(), 40);
-		LoadText();
+		if (path != "" && m_fontSize > 0)
+		{
+			m_fontPath = path;
+			m_font = TTF_OpenFont(m_fontPath.c_str(), m_fontSize);
+			LoadText();
+		}
 	}
 
 	std::string Text::GetFontPath()
 	{
 		return m_fontPath;
-	}
-
-	void Text::SetFontSize(int newFontSize)
-	{
-		m_fontSize = newFontSize;
-	}
-
-	int Text::GetFontSize()
-	{
-		return m_fontSize;
 	}
 
 	void Text::SetColor(Vector4 newColor)
@@ -97,11 +96,28 @@ namespace FlatEngine
 	void Text::SetText(std::string newText)
 	{
 		m_text = newText;
+		LoadText();
 	}
 
 	std::string Text::GetText()
 	{
 		return m_text;
+	}
+
+	void Text::SetFontSize(int fontSize)
+	{
+		if (fontSize > 0 && m_fontPath != "")
+		{
+			TTF_CloseFont(m_font);
+			m_fontSize = fontSize;
+			m_font = TTF_OpenFont(m_fontPath.c_str(), m_fontSize);
+			LoadText();
+		}
+	}
+
+	int Text::GetFontSize()
+	{
+		return m_fontSize;
 	}
 
 	void Text::SetOffset(Vector2 newOffset)
@@ -114,6 +130,109 @@ namespace FlatEngine
 		return m_offset;
 	}
 
+	void Text::SetPivotPoint(Pivot newPivot)
+	{
+		m_pivotPoint = newPivot;
+		UpdatePivotOffset();
+	}
+
+	void Text::SetPivotPoint(std::string newPivot)
+	{
+		for (int i = 0; i < F_PivotStrings->size(); i++)
+		{
+			if (newPivot == F_PivotStrings[i])
+			{
+				m_pivotPoint = Pivot(i);
+				return;
+			}
+		}
+
+		m_pivotPoint = Pivot::PivotCenter;	
+		UpdatePivotOffset();
+	}
+
+	Pivot Text::GetPivotPoint()
+	{
+		return m_pivotPoint;
+	}
+
+	std::string Text::GetPivotPointString()
+	{
+		return F_PivotStrings[m_pivotPoint];
+	}
+
+	void Text::SetPivotOffset(Vector2 newPivotOffset)
+	{
+		m_pivotOffset = newPivotOffset;
+	}
+
+	Vector2 Text::GetPivotOffset()
+	{
+		return m_pivotOffset;
+	}
+
+	void Text::UpdatePivotOffset()
+	{
+		Vector2 centeredOffset = Vector2(m_texture->GetWidth() / 2, m_texture->GetHeight() / 2);
+
+		switch (m_pivotPoint)
+		{
+		case Pivot::PivotCenter:
+		{
+			m_pivotOffset = centeredOffset;
+			break;
+		}
+		case Pivot::PivotLeft:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x - (m_texture->GetWidth() / 2), centeredOffset.y);
+			break;
+		}
+		case Pivot::PivotRight:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x + (m_texture->GetWidth() / 2), centeredOffset.y);
+			break;
+		}
+		case Pivot::PivotTop:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y - (m_texture->GetHeight() / 2));
+			break;
+		}
+		case Pivot::PivotBottom:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y + (m_texture->GetHeight() / 2));
+			break;
+		}
+
+		case Pivot::PivotTopLeft:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x - (m_texture->GetWidth() / 2), centeredOffset.y - (m_texture->GetHeight() / 2));
+			break;
+		}
+		case Pivot::PivotTopRight:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x + (m_texture->GetWidth() / 2), centeredOffset.y - (m_texture->GetHeight() / 2));
+			break;
+		}
+		case Pivot::PivotBottomLeft:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x - (m_texture->GetWidth() / 2), centeredOffset.y + (m_texture->GetHeight() / 2));
+			break;
+		}
+		case Pivot::PivotBottomRight:
+		{
+			m_pivotOffset = Vector2(centeredOffset.x + (m_texture->GetWidth() / 2), centeredOffset.y + (m_texture->GetHeight() / 2));
+			break;
+		}
+		default:
+		{
+			m_pivotOffset = m_offset;
+			break;
+		}
+		}
+
+		m_offset = m_pivotOffset;
+	}
+
 	std::string Text::GetData()
 	{
 		json jsonData = {
@@ -124,6 +243,7 @@ namespace FlatEngine
 			{ "fontPath", m_fontPath },
 			{ "text", m_text },
 			{ "fontSize", m_fontSize },
+			{ "pivotPoint", GetPivotPointString() },
 			{ "tintColorX", m_tintColor.x },
 			{ "tintColorY", m_tintColor.y },
 			{ "tintColorZ", m_tintColor.z },

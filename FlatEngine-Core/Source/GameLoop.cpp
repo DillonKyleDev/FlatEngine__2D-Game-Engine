@@ -126,34 +126,28 @@ namespace FlatEngine
 
 		if (CheckForMouseOver())
 		{
-			ImGuiIO inputOutput = ImGui::GetIO();
-
 			for (Button& hovered : m_hoveredButtons)
 			{
 				if (hovered.GetActiveLayer() >= GetFirstUnblockedLayer())
 				{
 					GameObject* owner = hovered.GetParent();
-
-					// Left clicked
-					if (inputOutput.MouseDown[0] && !b_hasLeftClicked)
+					
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !b_hasLeftClicked)
 					{
 						b_hasLeftClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonLeftClick);
-					}
-					// Unclick
-					if (!inputOutput.MouseDown[0])
+					}					
+					else if (!ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 					{
 						b_hasLeftClicked = false;
-					}
+					}	
 
-					// Right clicked
-					if (inputOutput.MouseDown[1] && !b_hasRightClicked)
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && !b_hasRightClicked)
 					{
 						b_hasRightClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonRightClick);
-					}
-					// Unclick
-					if (!inputOutput.MouseDown[1])
+					}					
+					else if (!ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 					{
 						b_hasRightClicked = false;
 					}

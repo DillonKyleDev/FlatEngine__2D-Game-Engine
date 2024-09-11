@@ -12,6 +12,10 @@ F_Colors = {
 	componentSectionBorder = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	componentBorder = Vector4:new(0.2, 0.2, 0.2, 1.0),
 	componentBg = Vector4:new(0.16, 0.16, 0.17, 1.0),
+	pivotSelectionBg = Vector4:new(0.25, 0.25, 0.27, 1.0),
+	pivotButtonHovered = Vector4:new(0.1, 0.1, 0.1, 1.0),
+	openFileButtonBg = Vector4:new(0.25, 0.25, 0.26, 1.0),
+	openFileButtonHovered = Vector4:new(0.3, 0.3, 0.32, 1.0),
 	-- Colliders
 	colliderActive = Vector4:new(0.19, 0.9, 0.2, 1.0),
 	colliderInactive = Vector4:new(0.9, 0.2, 0.2, 1.0),
@@ -27,7 +31,15 @@ F_Colors = {
 	----------------------
 	-- Windows -----------
 	----------------------
-	-- Scene View --
+	-- Main
+	windowBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
+	outerWindow = Vector4:new(0.13, 0.13, 0.15, 1.0),
+	innerWindow = Vector4:new(0.1, 0.1, 0.12, 1.0),
+	singleItem = Vector4:new(0.16, 0.16, 0.17, 1.0),
+	singleItemDark = Vector4:new(0.09, 0.09, 0.13, 1.0),
+	windowTitleBg = Vector4:new(0.25, 0.25, 0.25, 1.0),
+	--- Scene View ---
+	--------------------
 	-- Buttons container
 	cursorModeSelectBg = Vector4:new(0.9, 0.9, 0.9, 0.05),
 	cursorModeSelectBorder = Vector4:new(0.9, 0.9, 0.9, 0.2),
@@ -36,12 +48,8 @@ F_Colors = {
 	cursorModeButtonHoverSelected = Vector4:new(0.4, 0.4, 0.4, 0.6),
 	cursorModeButtonSelectedBorder = Vector4:new(1, 1, 1, 1);
 	selectedCursorModeButtonBg =  Vector4:new(0.4, 0.4, 0.4, 0.8),
-	windowBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
-	outerWindow = Vector4:new(0.13, 0.13, 0.15, 1.0),
-	innerWindow = Vector4:new(0.1, 0.1, 0.12, 1.0),
-	singleItem = Vector4:new(0.16, 0.16, 0.17, 1.0),
-	singleItemDark = Vector4:new(0.09, 0.09, 0.13, 1.0),
-	windowTitleBg = Vector4:new(0.25, 0.25, 0.25, 1.0),
+	-- Modals
+	modalWindowDimBg = Vector4:new(0.1, 0.1, 0.1, 1),
 	-- Project Hub
 	selectProjectBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
 	projectHubButton = Vector4:new(0.3, 0.3, 0.55, 1.0),

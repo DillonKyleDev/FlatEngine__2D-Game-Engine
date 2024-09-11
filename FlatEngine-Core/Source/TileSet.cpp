@@ -126,8 +126,8 @@ namespace FlatEngine
         }
         catch (std::exception& e)
         {
-            LogString("ERROR : Failed to copy texture to saved tile textures");
-            LogString(e.what());
+            LogError("Failed to copy texture to saved tile textures");
+            LogError(e.what());
         }
     }
 

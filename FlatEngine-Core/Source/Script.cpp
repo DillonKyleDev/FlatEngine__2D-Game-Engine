@@ -10,7 +10,7 @@ namespace FlatEngine
 {
 	Script::Script(long myID, long parentID)
 	{
-		SetType(Component::ComponentTypes::T_Script);
+		SetType(T_Script);
 		SetID(myID);
 		SetParentID(parentID);
 		m_attachedScript = "";

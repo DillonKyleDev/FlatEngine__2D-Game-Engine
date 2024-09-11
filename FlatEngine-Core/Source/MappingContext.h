@@ -19,19 +19,19 @@ namespace FlatEngine {
 		Tray,
 	};
 	enum XInputHats {
-		Up = 1,
-		Down = 4,
-		Left = 8,
-		Right = 2,
+		Hat_Up = 1,
+		Hat_Down = 4,
+		Hat_Left = 8,
+		Hat_Right = 2,
 
 	};
 	enum XInputAxis {
-		LeftXAxis = 0,
-		LeftYAxis = 1,
-		RightXAxis = 2,
-		RightYAxis = 3,
-		LT = 4,
-		RT = 5
+		LeftXAxis,
+		LeftYAxis,
+		RightXAxis,
+		RightYAxis,
+		LT,
+		RT
 	};
 
 	class MappingContext

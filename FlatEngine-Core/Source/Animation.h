@@ -81,8 +81,8 @@ namespace FlatEngine
 		struct S_Canvas : public S_Property {
 		};
 		struct S_Audio : public S_Property {
-			std::string path = "";
-			bool b_isMusic = false;
+			std::string soundName = "";	
+			bool b_stopAllOtherSounds = false;
 		};
 		struct S_Text : public S_Property {
 			std::string fontPath = "";
@@ -190,6 +190,153 @@ namespace FlatEngine
 
 				animationLength = endTime;
 			};
+			void RemoveKeyFrame(std::shared_ptr<Animation::S_Property> property)
+			{
+				std::string type = property->name;
+				if (type == "Event")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Event>>::iterator prop = eventProps.begin(); prop != eventProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							eventProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Transform")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Transform>>::iterator prop = transformProps.begin(); prop != transformProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							transformProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Sprite")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Sprite>>::iterator prop = spriteProps.begin(); prop != spriteProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							spriteProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Camera")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Camera>>::iterator prop = cameraProps.begin(); prop != cameraProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							cameraProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Script")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Script>>::iterator prop = scriptProps.begin(); prop != scriptProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							scriptProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Button")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Button>>::iterator prop = buttonProps.begin(); prop != buttonProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							buttonProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Canvas")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Canvas>>::iterator prop = canvasProps.begin(); prop != canvasProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							canvasProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Audio")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Audio>>::iterator prop = audioProps.begin(); prop != audioProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							audioProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "Text")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_Text>>::iterator prop = textProps.begin(); prop != textProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							textProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "BoxCollider")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_BoxCollider>>::iterator prop = boxColliderProps.begin(); prop != boxColliderProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							boxColliderProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "CircleCollider")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_CircleCollider>>::iterator prop = circleColliderProps.begin(); prop != circleColliderProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							circleColliderProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "RigidBody")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_RigidBody>>::iterator prop = rigidBodyProps.begin(); prop != rigidBodyProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							rigidBodyProps.erase(prop);
+							return;
+						}
+					}
+				}
+				else if (type == "CharacterController")
+				{
+					for (std::vector<std::shared_ptr<Animation::S_CharacterController>>::iterator prop = characterControllerProps.begin(); prop != characterControllerProps.end(); prop++)
+					{
+						if ((*prop) == property)
+						{
+							characterControllerProps.erase(prop);
+							return;
+						}
+					}
+				}
+			}
 		};
 
 		Animation(long myID = -1, long parentID = -1);

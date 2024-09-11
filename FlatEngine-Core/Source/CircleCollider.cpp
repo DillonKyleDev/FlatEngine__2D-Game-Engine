@@ -14,7 +14,7 @@ namespace FlatEngine {
 
 	CircleCollider::CircleCollider(long myID, long parentID) : Collider(myID, parentID)
 	{
-		SetType(ComponentTypes::T_CircleCollider);
+		SetType(T_CircleCollider);
 		SetActiveRadiusGrid(1.5);
 
 		_activeEdgesSet = false;

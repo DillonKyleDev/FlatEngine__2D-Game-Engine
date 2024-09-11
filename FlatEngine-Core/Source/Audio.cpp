@@ -5,7 +5,7 @@ namespace FlatEngine
 {
 	Audio::Audio(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Audio);
+		SetType(T_Audio);
 		SetID(myID);
 		SetParentID(parentID);
 		m_sounds = std::vector<SoundData>();

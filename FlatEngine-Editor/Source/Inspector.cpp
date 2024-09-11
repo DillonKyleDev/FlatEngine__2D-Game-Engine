@@ -21,7 +21,6 @@
 namespace FL = FlatEngine;
 
 using Component = FL::Component;
-using ComponentTypes = FL::Component::ComponentTypes;
 using Sprite = FL::Sprite;
 using CharacterController = FL::CharacterController;
 using BoxCollider = FL::BoxCollider;
@@ -170,46 +169,68 @@ namespace FlatGui
 
 				FL::PopMenuStyles();
 			};
+	
+			std::string nameLabel = "Name";
+			std::string objectName = focusedObject->GetName();
+			if (FL::RenderInput("##GameObjectName", nameLabel, objectName))
+			{
+				focusedObject->SetName(objectName);
+			}
 
-			// Name editing
-			std::string nameLabel = "Name: ";
-			char newName[1024];
-			strcpy_s(newName, focusedObject->GetName().c_str());
-			
 
-			// Edit field
-			ImGui::Text(nameLabel.c_str());
-			ImGui::SameLine(0, 5);
-
-			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("input"));
-			if (ImGui::InputText("##GameObject Name", newName, IM_ARRAYSIZE(newName), FL::F_inputFlags))
-				focusedObject->SetName(newName);
-			ImGui::PopStyleColor();
-
-			bool _objectActive = focusedObject->IsActive();
-
-			ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 3, ImGui::GetCursorScreenPos().y + 2));
-
-			// GameObject Active Checkbox
-			if (FL::RenderCheckbox("Active", _objectActive))
-				focusedObject->SetActive(_objectActive);
+			bool b_isActive = focusedObject->IsActive();
+			FL::MoveScreenCursor(3, 2);
+			if (FL::RenderCheckbox("Active", b_isActive))
+			{
+				focusedObject->SetActive(b_isActive);
+			}
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 100, 5);
 
-			if (FL::RenderImageButton("##ExpandCollapseAllComponents" + std::to_string(focusedObjectID), FL::GetTexture("expandCollapseAll")))
+
+			static bool b_expandAll = true;
+			if (b_expandAll)
 			{
-				for (Component* component : focusedObject->GetComponents())
+				if (FL::RenderImageButton("##ExpandCollapseAllComponents" + std::to_string(focusedObjectID), FL::GetTexture("expandFlipped")))
 				{
-					component->SetCollapsed(!component->IsCollapsed());
+					for (Component* component : focusedObject->GetComponents())
+					{
+						component->SetCollapsed(b_expandAll);
+					}
+					b_expandAll = !b_expandAll;
+				}
+				if (ImGui::IsItemHovered())
+				{
+					FL::RenderTextToolTip("Collapse all");
+				}
+			}
+			else
+			{
+				if (FL::RenderImageButton("##ExpandCollapseAllComponents" + std::to_string(focusedObjectID), FL::GetTexture("expand")))
+				{
+					for (Component* component : focusedObject->GetComponents())
+					{
+						component->SetCollapsed(b_expandAll);
+					}
+					b_expandAll = !b_expandAll;
+				}
+				if (ImGui::IsItemHovered())
+				{
+					FL::RenderTextToolTip("Expand all");
 				}
 			}
 			ImGui::SameLine();
 
-			// GameObject TagList Dropdown
+
+			static bool b_tagListOpen = false;
 			TagList &tagList = focusedObject->GetTagList();			
-			FL::RenderButton("Tags");
+			if (FL::RenderButton("Tags"))
+			{
+				b_tagListOpen = !b_tagListOpen;
+			}
+
 			FL::PushMenuStyles();
-			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			ImGui::SetNextWindowPos(Vector2(ImGui::GetCursorScreenPos().x - 20, ImGui::GetCursorScreenPos().y));
+			if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft))
 			{
 				std::string labels[2] = { "Tag", "Ignore" };
 				if (FL::PushTable("TagsTable", 3, FL::F_resizeableTableFlags))
@@ -221,7 +242,7 @@ namespace FlatGui
 						std::string tableRowId = tag.first + "TagCheckboxTableRow";
 						RenderTagListTableRow(tableRowId.c_str(), tag.first, tagList);
 					}
-				
+
 					FL::PopTable();
 				}
 				ImGui::EndPopup();
@@ -416,22 +437,6 @@ namespace FlatGui
 					if (!tileMap->IsCollapsed())
 						RenderTileMapComponent(tileMap);
 					EndComponent(tileMap);
-
-					//for (std::pair<std::string, BoxCollider*> collisionArea : tileMap->GetCollisionAreas())
-					//{
-					//	BoxCollider *collider = collisionArea.second;
-
-					//	BeginComponent(collider, queuedForDelete, "Collision Area - " + collisionArea.first);
-					//	if (!collider->IsCollapsed())
-					//		RenderBoxColliderComponent(collider, tileMap, collisionArea.first);
-					//	EndComponent(collider);
-
-					//	if (queuedForDelete != nullptr && collider->GetID() == queuedForDelete->GetID())
-					//	{
-					//		//tileMap->RemoveCollisionArea(collisionArea.first);
-					//		break;
-					//	}
-					//}
 				}
 
 				if (queuedForDelete != nullptr)
@@ -446,9 +451,8 @@ namespace FlatGui
 			// Border around Components Section
 			ImGui::GetWindowDrawList()->AddRect({ wPos.x, wPos.y - 1 }, { wPos.x + wSize.x, wPos.y + wSize.y + 1}, FL::GetColor32("componentSectionBorder"), 1);
 
-			// Render the Adding Components button
 			FL::RenderButton("Add Component", Vector2(ImGui::GetContentRegionAvail().x, 0));
-			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft)) // <-- use last item id as popup id
+			if (ImGui::BeginPopupContextItem("##AddComponent", ImGuiPopupFlags_MouseButtonLeft))
 			{
 				L_ShowAddComponentsWindow();
 				ImGui::EndPopup();

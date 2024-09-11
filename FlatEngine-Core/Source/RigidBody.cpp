@@ -9,7 +9,7 @@
 namespace FlatEngine {
 	RigidBody::RigidBody(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_RigidBody);
+		SetType(T_RigidBody);
 		SetID(myID);
 		SetParentID(parentID);
 		// Linear

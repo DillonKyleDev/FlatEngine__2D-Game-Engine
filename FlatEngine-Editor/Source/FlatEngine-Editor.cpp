@@ -43,22 +43,16 @@ public:
 
 	void Start()
 	{
-		if (FL::_isDebugMode)
-		{				
-			FL::AddProfilerProcess("GameLoop (variable executions)");		
-			FL::AddProfilerProcess("Not GameLoop");
-			FL::AddProfilerProcess("Collision Testing");
-		}
+		FL::AddProfilerProcess("GameLoop (variable executions)");		
+		FL::AddProfilerProcess("Not GameLoop");
+		FL::AddProfilerProcess("Collision Testing");
 		FL::GameLoop::Start();
 	};
 	void Stop()
 	{
-		if (FL::_isDebugMode)
-		{
-			FL::RemoveProfilerProcess("GameLoop (variable executions)");
-			FL::RemoveProfilerProcess("Not GameLoop");
-			FL::RemoveProfilerProcess("Collision Testing");
-		}
+		FL::RemoveProfilerProcess("GameLoop (variable executions)");
+		FL::RemoveProfilerProcess("Not GameLoop");
+		FL::RemoveProfilerProcess("Collision Testing");
 		FL::GameLoop::Stop();
 	};
 	void Update()
@@ -100,18 +94,13 @@ public:
 		{
 			RunOnceAfterInitialization();
 
-
-			Uint32 renderStartTime = 0;
 			static Uint32 frameStart = FL::GetEngineTime();
-
-			if (FL::_isDebugMode)
-				renderStartTime = FL::GetEngineTime(); // Profiler
-			_hasQuit = FL::_closeProgram;
-
+			Uint32 renderStartTime = 0;
+			renderStartTime = FL::GetEngineTime(); // Profiler
+			_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
 			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
-
 
 			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
@@ -161,23 +150,20 @@ public:
 					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
 				}
 
-				// Profiler
-				// Get hang time of Update Loop for profiler
 				Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
-				FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);
-				// Save time after update finishes
+				FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);				
 				updateLoopEnd = FL::GetEngineTime();
 			}
 			else
+			{
 				FL::HandleEvents(_hasQuit);
+			}
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
 			if (!A_GameLoop->IsStarted())
 			{
 				frameStart = FL::GetEngineTime();
 			}
-
-			
 
 			EndRender();
 		}
@@ -252,7 +238,7 @@ public:
 	}
 	void OnLoadScene(std::string sceneName)
 	{
-		if (FL::GetObjectById(FlatGui::GetFocusedGameObjectID()) != nullptr)
+		if (FL::GetObjectById(FlatGui::GetFocusedGameObjectID()) == nullptr)
 		{
 			FlatGui::SetFocusedGameObjectID(-1);
 		}

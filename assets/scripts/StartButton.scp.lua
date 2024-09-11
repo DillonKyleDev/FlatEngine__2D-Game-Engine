@@ -19,7 +19,7 @@ end
 
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
-     LogString("StartButton : Start() called on "..this_object:GetName()) 
+     LogString("Start() called on "..this_object:GetName()) 
 
 end 
 --called once per gameloop frame 

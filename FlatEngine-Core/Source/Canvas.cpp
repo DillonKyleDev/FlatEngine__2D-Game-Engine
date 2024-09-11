@@ -7,7 +7,7 @@ namespace FlatEngine
 {
 	Canvas::Canvas(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Canvas);
+		SetType(T_Canvas);
 		SetID(myID);
 		SetParentID(parentID);
 		m_layerNumber = 0;
@@ -40,7 +40,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogString("Canvas::SetDimensions() - Canvas width and height must be positive values.");
+			FlatEngine::LogError("Canvas width and height must be positive values.");
 		}
 	}
 

@@ -1,0 +1,36 @@
+{
+    "Project Properties": [
+        {
+            "_autoSave": true,
+            "_clearLogBuffer": false,
+            "_fullscreen": false,
+            "_showAnimationPreview": false,
+            "_showAnimator": false,
+            "_showFileExplorer": true,
+            "_showGameView": true,
+            "_showHierarchy": true,
+            "_showInspector": true,
+            "_showKeyFrameEditor": false,
+            "_showLogger": true,
+            "_showMappingContextEditor": false,
+            "_showProfiler": true,
+            "_showSceneView": true,
+            "_showScriptEditor": false,
+            "_showTileSetEditor": false,
+            "_vsyncEnabled": true,
+            "buildPath": "",
+            "currentFileDirectory": "../assets\\scenes",
+            "focusedGameObjectID": 1,
+            "loadedAnimationPath": "",
+            "loadedScenePath": "../assets\\scenes\\Level1.scn",
+            "path": "../assets/projects//Sandbox.prj",
+            "resolutionHeight": 1080.0,
+            "resolutionWidth": 1920.0,
+            "sceneToLoadAtRuntime": "",
+            "sceneViewGridStepX": 48.20002746582031,
+            "sceneViewGridStepY": 48.20002746582031,
+            "sceneViewScrollingX": 322.0,
+            "sceneViewScrollingY": 498.0
+        }
+    ]
+}

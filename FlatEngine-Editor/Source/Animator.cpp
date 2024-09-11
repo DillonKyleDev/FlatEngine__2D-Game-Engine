@@ -7,6 +7,8 @@
 #include "Sprite.h"
 #include "Text.h"
 #include "Texture.h"
+#include "Scene.h"
+#include "Audio.h"
 
 #include "imgui.h"
 #include "math.h"
@@ -33,15 +35,17 @@ namespace FlatGui
 		FL::BeginResizeWindowChild("Animated Properties");
 
 		// Border around object
-		auto propsWindowPos = ImGui::GetWindowPos();
-		auto propsWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
-		ImGui::GetWindowDrawList()->AddRect({ propsWindowPos.x + 2, propsWindowPos.y + 2 }, { propsWindowPos.x + propsWindowSize.x - 2, propsWindowPos.y + propsWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+		auto propsAnimatorWindowPos = ImGui::GetWindowPos();
+		auto propsAnimatorWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+		ImGui::GetWindowDrawList()->AddRect({ propsAnimatorWindowPos.x + 2, propsAnimatorWindowPos.y + 2 }, { propsAnimatorWindowPos.x + propsAnimatorWindowSize.x - 2, propsAnimatorWindowPos.y + propsAnimatorWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
 
 		std::string animationName = "-No Animation Selected-";
 		if (GetFocusedAnimation() != nullptr && GetFocusedAnimation()->animationName != "")
+		{
 			animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
+		}
 
-			ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);
+		ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);
 
 		static std::string animationFilePath;
 		if (GetFocusedAnimation() != nullptr)
@@ -57,17 +61,17 @@ namespace FlatGui
 			FL::CreateNewAnimationFile(newFileName, FL::GetDir("animations"));
 		}
 
-		// Three dots
 		FL::RenderSectionHeader(animationName);
+		// Three dots
 		FL::MoveScreenCursor(ImGui::GetContentRegionAvail().x - 29, -31);
-		FL::RenderImageButton("##AnimationHamburgerMenu", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
+		FL::RenderImageButton("##AnimatorHamburgerMenu", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
 		FL::PushMenuStyles();
 		if (ImGui::BeginPopupContextItem("##AnimationHamburgerMenu", ImGuiPopupFlags_MouseButtonLeft))
 		{
 			if (ImGui::MenuItem("Save Animation"))
 			{
 				if (animationFilePath != "")
-					FL::SaveAnimationData(GetFocusedAnimation(), animationFilePath);
+					FL::SaveAnimationFile(GetFocusedAnimation(), animationFilePath);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
@@ -370,25 +374,24 @@ namespace FlatGui
 			ImGui::PopStyleColor();
 		}
 
-			ImGui::EndChild(); // Manage Animation
+		ImGui::EndChild(); // Manage Animation
 		ImGui::EndChild();
 
 		ImGui::SameLine(0, 5);
 
-			// Timeline Events
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("outerWindow"));
-			ImGui::BeginChild("Animation Timeline", Vector2(0, 0), FL::F_childFlags);
-			ImGui::PopStyleColor();
+		// Timeline Events
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("outerWindow"));
+		FL::BeginWindowChild("Animation Timeline");
+		ImGui::PopStyleColor();
 
-			// Border around object
-			auto timelineWindowPos = ImGui::GetWindowPos();
-			auto timelineWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
-			ImGui::GetWindowDrawList()->AddRect({ timelineWindowPos.x + 2, timelineWindowPos.y + 2 }, { timelineWindowPos.x + timelineWindowSize.x - 2, timelineWindowPos.y + timelineWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
-
+		// Border around object
+		auto propsWindowPos = ImGui::GetWindowPos();
+		auto propsWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+		ImGui::GetWindowDrawList()->AddRect({ propsWindowPos.x + 2, propsWindowPos.y + 2 }, { propsWindowPos.x + propsWindowSize.x - 2, propsWindowPos.y + propsWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
 
 		FL::RenderSectionHeader("Animation Timeline");
 
-			ImGui::BeginChild("Property Header", Vector2(0,0), FL::F_headerFlags);
+		ImGui::BeginChild("Property Header", Vector2(0,0), FL::F_headerFlags);
 
 		float availableSpace = ImGui::GetContentRegionAvail().x / 2;
 		ImGui::SetNextItemWidth(availableSpace);
@@ -404,10 +407,7 @@ namespace FlatGui
 			ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FL::GetColor("tableCellLight")), 2);
 			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
 			ImGui::Text(node_clicked.c_str());
-		}
-		
-		if (node_clicked != "")
-		{
+
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 			if (FL::RenderButton("Add Keyframe"))
 			{
@@ -479,7 +479,7 @@ namespace FlatGui
 			ImGui::PopStyleColor();
 		}
 
-			ImGui::EndChild(); // Properties Header
+		ImGui::EndChild(); // Properties Header
 
 		static float animatorGridStep = 50;
 		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
@@ -614,7 +614,7 @@ namespace FlatGui
 				if (_isClicked)
 				{
 					node_clicked = ID;
-					selectedKeyFrameToEdit = keyFrame;
+					FG_SelectedKeyFrameToEdit = keyFrame;
 				}	
 			}
 		};
@@ -637,7 +637,8 @@ namespace FlatGui
 					// Get keyFrame time and convert to seconds
 					float keyFrameX = frame->time / 1000;
 					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);					
-					L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
@@ -653,8 +654,9 @@ namespace FlatGui
 				{
 					std::string ID = "Transform";					
 					float keyFrameX = frame->time / 1000;
-					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);					
-					L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+					Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);		
+					if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
+						L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 					IDCounter++;
 				}
 				propertyYPos--;
@@ -860,7 +862,7 @@ namespace FlatGui
 			}
 		}
 
-		ImGui::EndChild(); // Animation Timeline
+		FL::EndWindowChild(); // Animation Timeline
 		ImGui::End(); // Animator
 	}
 
@@ -964,24 +966,55 @@ namespace FlatGui
 	{
 		FL::BeginWindow("Keyframe Editor", FG_b_showKeyFrameEditor);
 
+		// Border around object
+		auto propsWindowPos = ImGui::GetWindowPos();
+		auto propsWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+		ImGui::GetWindowDrawList()->AddRect({ propsWindowPos.x + 2, propsWindowPos.y + 2 }, { propsWindowPos.x + propsWindowSize.x - 2, propsWindowPos.y + propsWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
+		FL::BeginWindowChild("Animated Properties");
+
 		std::string keyFrameProperty = "No KeyFrame Selected";
-		if (selectedKeyFrameToEdit != nullptr)
-			keyFrameProperty = selectedKeyFrameToEdit->name + " Frame";
+		if (FG_SelectedKeyFrameToEdit != nullptr)
+		{
+			keyFrameProperty = FG_SelectedKeyFrameToEdit->name + " Frame";
+		}
 
 		FL::RenderSectionHeader(keyFrameProperty);
-
-		if (selectedKeyFrameToEdit != nullptr)
+		// Three dots
+		FL::MoveScreenCursor(ImGui::GetContentRegionAvail().x - 29, -31);
+		ImGui::BeginDisabled(FG_FocusedAnimation == nullptr || FG_SelectedKeyFrameToEdit == nullptr);
+		FL::RenderImageButton("##KeyframeEditorHamburgerMenu", FL::GetTexture("threeDots"), Vector2(16, 16), 1, FL::GetColor("transparent"));
+		ImGui::EndDisabled();
+		// Popup context
+		FL::PushMenuStyles();
+		if (ImGui::BeginPopupContextItem("##KeyframeEditorHamburgerMenu", ImGuiPopupFlags_MouseButtonLeft))
 		{
-			if (selectedKeyFrameToEdit->name == "Event")
+			if (ImGui::MenuItem("Delete keyframe"))
 			{
-				std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(selectedKeyFrameToEdit);
+				FG_FocusedAnimation->RemoveKeyFrame(FG_SelectedKeyFrameToEdit);
+				FG_SelectedKeyFrameToEdit = nullptr;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();		
+		}
+		FL::PopMenuStyles();
+
+		FL::RenderSeparator(3, 3);
+
+		if (FG_SelectedKeyFrameToEdit != nullptr)
+		{
+			if (FG_SelectedKeyFrameToEdit->name == "Event")
+			{
+				std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(FG_SelectedKeyFrameToEdit);
 				std::string functionName = event->functionName;
 				if (FL::RenderInput("AnimationEventName", "Function Name", functionName))
+				{
 					event->functionName = functionName;
+				}
 			}
-			else if (selectedKeyFrameToEdit->name == "Transform")
+			else if (FG_SelectedKeyFrameToEdit->name == "Transform")
 			{
-				std::shared_ptr<Animation::S_Transform> transform = std::static_pointer_cast<Animation::S_Transform>(selectedKeyFrameToEdit);
+				std::shared_ptr<Animation::S_Transform> transform = std::static_pointer_cast<Animation::S_Transform>(FG_SelectedKeyFrameToEdit);
 				float xPos = transform->xPos;
 				float yPos = transform->yPos;
 				float xScale = transform->xScale;
@@ -1025,34 +1058,32 @@ namespace FlatGui
 					FL::PopTable();
 				}
 				ImGui::EndDisabled();
-
-				const char* interpType[] = { "- Select -", "Lerp", "Slerp" };
-				static int current_type = 0;
-				static std::string node_clicked = "";
-				static std::string selected_property = "";
-				
-				if (transform->transformInterpType == Animation::I_Lerp)
-					current_type = 1;
-				else if (transform->transformInterpType == Animation::I_Slerp)
-					current_type = 2;
-
 				ImGui::Separator();
+
+
+				static int current_interp = 0;						
+				if (transform->transformInterpType == Animation::I_Lerp)
+					current_interp = 0;
+				else if (transform->transformInterpType == Animation::I_Slerp)
+					current_interp = 1;
+				
 				ImGui::Text("Interpolation Type");
+				std::vector<std::string> interpTypes = { "Lerp", "Slerp" };
 				FL::PushComboStyles();
-				if (ImGui::BeginCombo("##interpolationType", interpType[current_type]))
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+				if (ImGui::BeginCombo("##AnimationKeyframeInterpTypes", interpTypes[current_interp].c_str()))
 				{
-					for (int n = 0; n < IM_ARRAYSIZE(interpType); n++)
+					for (int n = 0; n < interpTypes.size(); n++)
 					{
-						bool is_selected = (interpType[current_type] == interpType[n]);
-						if (ImGui::Selectable(interpType[n], is_selected))
+						bool is_selected = (interpTypes[current_interp] == interpTypes[n]);
+						if (ImGui::Selectable(interpTypes[n].c_str(), is_selected))
 						{
-							current_type = n;
-							if (interpType[n] == "Lerp")
+							current_interp = n;
+							if (interpTypes[n] == "Lerp")
 								transform->transformInterpType = Animation::I_Lerp;
-							else if (interpType[n] == "Slerp")
+							else if (interpTypes[n] == "Slerp")
 								transform->transformInterpType = Animation::I_Slerp;
 						}
-							
 						if (is_selected)
 							ImGui::SetItemDefaultFocus();
 					}
@@ -1060,9 +1091,9 @@ namespace FlatGui
 				}
 				FL::PopComboStyles();
 			}
-			else if (selectedKeyFrameToEdit->name == "Sprite")
+			else if (FG_SelectedKeyFrameToEdit->name == "Sprite")
 			{
-				std::shared_ptr<Animation::S_Sprite> sprite = std::static_pointer_cast<Animation::S_Sprite>(selectedKeyFrameToEdit);
+				std::shared_ptr<Animation::S_Sprite> sprite = std::static_pointer_cast<Animation::S_Sprite>(FG_SelectedKeyFrameToEdit);
 				std::string path = sprite->path;
 				float xOffset = sprite->xOffset;
 				float yOffset = sprite->yOffset;
@@ -1140,9 +1171,9 @@ namespace FlatGui
 				}
 				ImGui::EndDisabled();
 			}
-			else if (selectedKeyFrameToEdit->name == "Text")
+			else if (FG_SelectedKeyFrameToEdit->name == "Text")
 			{
-				std::shared_ptr<Animation::S_Text> text = std::static_pointer_cast<Animation::S_Text>(selectedKeyFrameToEdit);
+				std::shared_ptr<Animation::S_Text> text = std::static_pointer_cast<Animation::S_Text>(FG_SelectedKeyFrameToEdit);
 				std::string path = text->fontPath;
 				std::string textString = text->text;
 				float xOffset = text->xOffset;
@@ -1235,12 +1266,74 @@ namespace FlatGui
 				}
 				ImGui::EndDisabled();
 			}
+			else if (FG_SelectedKeyFrameToEdit->name == "Audio")
+			{
+				std::shared_ptr<Animation::S_Audio> audio = std::static_pointer_cast<Animation::S_Audio>(FG_SelectedKeyFrameToEdit);			
+
+				FL::RenderCheckbox("Stop All Other Sounds", audio->b_stopAllOtherSounds);				
+				
+				static int current_audio = 0;
+				FL::MoveScreenCursor(0, 5);
+				ImGui::Text("Audio to play");
+				std::vector<std::string> audios = { "- None -" };				
+				for (std::pair<long, FL::Animation> animationPair : FL::GetLoadedScene()->GetAnimations())
+				{
+					if (animationPair.second.GetAnimationName() == FG_FocusedAnimation->animationName)
+					{
+						Audio* audioComponent = FL::GetLoadedScene()->GetAudioByOwner(animationPair.first);
+						if (audioComponent != nullptr && audioComponent->GetSounds().size() > 0)
+						{
+							for (int i = 0; i < audioComponent->GetSounds().size(); i++)
+							{
+								std::string componentSoundName = audioComponent->GetSounds()[i].name;
+								audios.push_back(componentSoundName);
+								if (audio->soundName == componentSoundName)
+								{
+									current_audio = i + 1;
+								}
+							}
+						}
+					}
+				}
+
+				if (current_audio + 1 > audios.size() || audio->soundName == "")
+				{
+					current_audio = 0;
+				}
+
+				FL::PushComboStyles();
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+				if (ImGui::BeginCombo("##AnimationKeyframeAudiosCombo", audios[current_audio].c_str()))
+				{
+					for (int n = 0; n < audios.size(); n++)
+					{
+						bool is_selected = (audios[current_audio] == audios[n]);
+						if (ImGui::Selectable(audios[n].c_str(), is_selected))
+						{
+							current_audio = n;
+							if (audios[current_audio] != "- None -")
+							{
+								audio->soundName = audios[current_audio];
+							}
+							else
+							{
+								audio->soundName = "";
+							}
+						}
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+				FL::PopComboStyles();
+			}
 		}
 		else
 		{	
 			ImGui::TextWrapped("Select a keyframe to edit from the Animation Timeline...");
 		}
 
+		FL::EndWindowChild();
 		FL::EndWindow();
 	}
 

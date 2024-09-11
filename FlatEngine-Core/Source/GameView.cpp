@@ -16,7 +16,6 @@
 
 namespace FL = FlatEngine;
 
-using ComponentTypes = FL::Animation::ComponentTypes;
 using Button = FL::Button;
 using Transform = FL::Transform;
 using Sprite = FL::Sprite;
@@ -24,7 +23,7 @@ using Text = FL::Text;
 using Texture = FL::Texture;
 
 
-namespace FlatEngine 
+namespace FlatEngine
 {
 	// Game view default values
 	float F_GAME_VIEWPORT_WIDTH = 600;
@@ -150,8 +149,7 @@ namespace FlatEngine
 
 		// For Profiler
 		float renderStartTime = 0;
-		if (FL::_isDebugMode)
-			renderStartTime = (float)FL::GetEngineTime();
+		renderStartTime = (float)FL::GetEngineTime();
 
 		// Render Game Objects
 		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
@@ -197,13 +195,12 @@ namespace FlatEngine
 		//	// Left frustrum
 		//	//AddImageToDrawList(frustrumTexture, Vector2(cameraWidth / 2, -cameraHeight / 2), viewportCenterPoint, v_FrustWidth, v_FrustHeight, rightFrustOffset, frustrumScale, _frustScales, gameViewGridStep.x, draw_list, frustrumColorU32);
 
-			drawSplitter->Merge(draw_list);
+		drawSplitter->Merge(draw_list);
 		//}
 	}
 
 	void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
 	{
-		// Get Components
 		FL::Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
 		TileMap* tileMap = self.GetTileMap();
@@ -212,43 +209,16 @@ namespace FlatEngine
 		Button* button = self.GetButton();
 		Canvas* canvas = self.GetCanvas();
 
-		// Check if each object has a Transform component
+
 		if (transform != nullptr)
 		{
 			Vector2 position = transform->GetTruePosition();
 			Vector2 scale = transform->GetScale();
 			float rotation = transform->GetRotation();
-			
-			if (animation != nullptr)
+
+			if (animation != nullptr && animation->IsPlaying())
 			{
-				// If animation component is playing, play the animation
-				if (animation != nullptr && animation->IsPlaying())
-					animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
-			}
-
-			if (text != nullptr)
-			{
-				// Cast the component to Text shared_ptr
-				std::shared_ptr<Texture> textTexture = text->GetTexture();
-				float textWidth = (float)textTexture->GetWidth();
-				float textHeight = (float)textTexture->GetHeight();
-				int renderOrder = text->GetRenderOrder();
-				Vector2 offset = text->GetOffset();
-				bool _spriteScalesWithZoom = true;
-				Vector4 tintColor = text->GetColor();
-
-				// If there is a valid Texture loaded into the Sprite Component
-				if (textTexture->GetTexture() != nullptr)
-				{
-					// Change the draw channel for the scene object
-					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
-						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
-					else
-						drawSplitter->SetCurrentChannel(draw_list, 0);
-
-					// Draw the texture
-					AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, _spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
-				}
+				animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
 			}
 
 			if (sprite != nullptr)
@@ -257,12 +227,10 @@ namespace FlatEngine
 				float textureWidth = sprite->GetTextureWidth();
 				float textureHeight = sprite->GetTextureHeight();
 				Vector2 spriteScale = sprite->GetScale();
-				Vector2 offset = sprite->GetPivotOffset();
+				Vector2 offset = sprite->GetOffset();
 				bool _scalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 				Vector4 tintColor = sprite->GetTintColor();
-
-				// Changing the scale here because things are rendering too large and I want them to start off smaller
 				Vector2 newScale = Vector2(scale.x * spriteScale.x * F_spriteScaleMultiplier, scale.y * spriteScale.y * F_spriteScaleMultiplier);
 
 				float spriteLeftEdge = position.x - offset.x * newScale.x;
@@ -275,19 +243,40 @@ namespace FlatEngine
 				float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
 				float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
 
-				bool _isIntersecting = false;
+				bool b_isIntersecting = false;
 
 				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge &&
 					spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
-					_isIntersecting = true;
+					b_isIntersecting = true;
 
-				if (_isIntersecting)
+				if (b_isIntersecting)
 				{
 					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
 					AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), _scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				}
+			}
+
+			if (text != nullptr)
+			{
+				std::shared_ptr<Texture> textTexture = text->GetTexture();
+				float textWidth = (float)textTexture->GetWidth();
+				float textHeight = (float)textTexture->GetHeight();
+				int renderOrder = text->GetRenderOrder();
+				Vector2 offset = text->GetOffset();
+				bool b_spriteScalesWithZoom = true;
+				Vector4 tintColor = text->GetColor();
+
+				if (textTexture->GetTexture() != nullptr)
+				{
+					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
+						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					else
+						drawSplitter->SetCurrentChannel(draw_list, 0);
+
+					AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, b_spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 
@@ -301,7 +290,7 @@ namespace FlatEngine
 				float tileHeight = (float)tileMap->GetTileHeight();
 				float gridWidth = width * tileWidth / FL::F_pixelsPerGridSpace;		// in grid tiles
 				float gridHeight = height * tileHeight / FL::F_pixelsPerGridSpace;	// in grid tiles
-				int renderOrder = tileMap->GetRenderOrder();				
+				int renderOrder = tileMap->GetRenderOrder();
 
 				std::map<int, std::map<int, Tile>> tiles = tileMap->GetTiles();
 
@@ -311,7 +300,7 @@ namespace FlatEngine
 					if (tiles.count((int)w) > 0)
 					{
 						for (int h = 0; h < height; h++)
-						{	
+						{
 							if (tiles.at((int)w).count((int)h) > 0)
 							{
 								Tile tile = tiles.at(w).at(h);

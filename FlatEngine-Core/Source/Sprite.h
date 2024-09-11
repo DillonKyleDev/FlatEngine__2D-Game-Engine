@@ -13,18 +13,6 @@ namespace FlatEngine
 	class Sprite : public Component
 	{
 	public:
-		enum PivotPoint {
-			Center,
-			Left,
-			Right,
-			Top,
-			Bottom,
-			TopLeft,
-			TopRight,
-			BottomRight,
-			BottomLeft
-		};
-
 		Sprite(long myID = -1, long parentID = -1);
 		~Sprite();
 		void SetTexture(std::string path);
@@ -39,11 +27,12 @@ namespace FlatEngine
 		void SetOffset(Vector2 offset);
 		Vector2 GetOffset();
 		void RemoveTexture();
-		void SetPivotPoint(PivotPoint newPivot);
-		PivotPoint GetPivotPoint();
+		void SetPivotPoint(Pivot newPivot);
+		Pivot GetPivotPoint();
 		std::string GetPivotPointString();
 		void SetPivotOffset(Vector2 newPivotOffset);
 		void SetPivotPoint(std::string newPivot);
+		void UpdatePivotOffset();
 		Vector2 GetPivotOffset();
 		void SetTintColor(Vector4 newTintColor);
 		Vector4 GetTintColor();
@@ -55,7 +44,7 @@ namespace FlatEngine
 		float m_textureWidth;
 		float m_textureHeight;
 		Vector2 m_scale;
-		PivotPoint m_pivotPoint;
+		Pivot m_pivotPoint;
 		Vector2 m_pivotOffset;
 		Vector2 m_offset;
 		std::string m_path;

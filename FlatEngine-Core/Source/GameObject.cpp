@@ -285,7 +285,7 @@ namespace FlatEngine
 
 	BoxCollider* GameObject::AddBoxCollider(long id, bool b_active, bool b_collapsed)
 	{
-		Vector2 dimensions = Vector2(2, 2);
+		Vector2 dimensions = Vector2(0,0);
 		if (HasComponent("Sprite"))
 		{
 			Sprite* sprite = GetSprite();
@@ -302,7 +302,10 @@ namespace FlatEngine
 
 		BoxCollider* colliderPtr;
 		colliderPtr = GetLoadedScene()->AddBoxCollider(boxCollider, m_ID);
-		colliderPtr->SetActiveDimensions(dimensions.x, dimensions.y);
+		if (dimensions.x != 0 && dimensions.y != 0)
+		{
+			colliderPtr->SetActiveDimensions(dimensions.x, dimensions.y);
+		}
 		m_components.push_back(colliderPtr);
 		return colliderPtr;
 	}
@@ -378,7 +381,7 @@ namespace FlatEngine
 	}
 
 
-	Component* GameObject::GetComponent(Component::ComponentTypes type)
+	Component* GameObject::GetComponent(ComponentTypes type)
 	{
 		for (int i = 0; i < m_components.size(); i++)
 		{

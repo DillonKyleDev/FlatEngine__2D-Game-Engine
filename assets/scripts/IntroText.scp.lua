@@ -26,8 +26,10 @@ end
 --called once per gameloop frame 
 function Update() 
      if mappingContext:Fired("IA_Jump") then
-          animation:Play()
-          LogString("Jumped from IntroText")
+          animation:Play()          
      end
 end 
 
+function AnimationEvent1()
+	LogString("Called AnimationEvent1")
+ end

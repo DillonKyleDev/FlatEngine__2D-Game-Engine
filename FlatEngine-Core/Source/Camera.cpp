@@ -6,11 +6,9 @@
 
 namespace FlatEngine 
 {
-	using ComponentTypes = Component::ComponentTypes;
-
 	Camera::Camera(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Camera);
+		SetType(T_Camera);
 		SetID(myID);
 		SetParentID(parentID);
 		m_b_isPrimaryCamera = false;

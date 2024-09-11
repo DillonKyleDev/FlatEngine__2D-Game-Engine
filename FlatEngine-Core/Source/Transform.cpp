@@ -9,7 +9,7 @@ namespace FlatEngine
 {
 	Transform::Transform(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_Transform);
+		SetType(T_Transform);
 		SetID(myID);
 		SetParentID(parentID);
 		m_origin = Vector2(0, 0);

@@ -60,7 +60,7 @@ namespace FlatGui
 		FL::RenderInvisibleButton("ComponentToolTipButton-" + std::to_string(id), { wPos.x, wPos.y }, { wSize.x, 27 });
 		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
 		{
-			FL::BeginToolTip("Component Info");
+			FL::BeginToolTip("Component Data");
 			FL::RenderToolTipLong("ID", id);
 			FL::RenderToolTipLong("ParentID", component->GetParentID());
 			FL::EndToolTip();
@@ -71,7 +71,14 @@ namespace FlatGui
 		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
 		ImGui::Text(componentType.c_str());
 
-		ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 36), 5);
+		if (component->GetType() != FL::T_Transform)
+		{
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 36), 5);
+		}
+		else
+		{
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 13), 5);
+		}
 
 		// Pushes	
 		ImGui::PushItemWidth(-1.0f);
@@ -83,30 +90,39 @@ namespace FlatGui
 		std::string trashcanID = "##trashIcon-" + std::to_string(id);
 		std::string openFileID = "##openFileIcon-" + std::to_string(id);
 
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
-		if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
-		{
-			queuedForDelete = component;
+		if (component->GetType() != FL::T_Transform)
+		{			
+			FL::MoveScreenCursor(0, -3);
+			if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
+			{
+				queuedForDelete = component;
+			}
+			ImGui::SameLine(0, 5);
 		}
 
-		ImGui::SameLine(0, 5);
-
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() - 3));
+		FL::MoveScreenCursor(0, -3);
 		if (_isCollapsed)
 		{
 			if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expand")))
+			{
 				component->SetCollapsed(!_isCollapsed);
+			}
 		}
 		else
+		{
 			if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expandFlipped")))
+			{
 				component->SetCollapsed(!_isCollapsed);
+			}
+		}
 
 		if (!_isCollapsed)
+		{
 			ImGui::Separator();
+		}
 		
 		if (!component->IsCollapsed())
-		{
-			//Component Data - Give it background color
+		{			
 			std::string componentItemID = "##ComponentItem-" + component->GetTypeString();
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
 			ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
@@ -133,11 +149,11 @@ namespace FlatGui
 
 	bool RenderIsActiveCheckbox(bool& _isActive)
 	{
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 1));
+		FL::MoveScreenCursor(1, 3);
 		bool _checked = FL::RenderCheckbox("Active", _isActive);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+		FL::MoveScreenCursor(0, 3);
 		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::MoveScreenCursor(0, 3);
 
 		return _checked;
 	}
@@ -149,8 +165,8 @@ namespace FlatGui
 		float xPos = position.x;
 		float yPos = position.y;
 		Vector2 scale = transform->GetScale();
-		float scaleX = scale.x;
-		float scaleY = scale.y;
+		float xScale = scale.x;
+		float yScale = scale.y;
 		float rotation = transform->GetRotation();
 		bool _isActive = transform->IsActive();
 		long id = transform->GetID();
@@ -176,13 +192,27 @@ namespace FlatGui
 			{
 				transform->SetRotation(rotation);
 			}
-			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", scaleX, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
 			{
-				transform->SetScale(Vector2(scaleX, scaleY));
+				if (xScale > 0)
+				{
+					transform->SetScale(Vector2(xScale, yScale));
+				}
+				else
+				{
+					FL::LogError("Scale must be greater than 0.");
+				}
 			}
-			if (FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", scaleY, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
 			{
-				transform->SetScale(Vector2(scaleX, scaleY));
+				if (yScale > 0)
+				{
+					transform->SetScale(Vector2(xScale, yScale));
+				}
+				else
+				{
+					FL::LogError("Scale must be greater than 0.");
+				}
 			}
 				
 			FL::PopTable();
@@ -195,7 +225,7 @@ namespace FlatGui
 		float textureWidth = sprite->GetTextureWidth();
 		float textureHeight = sprite->GetTextureHeight();
 		Vector2 textureScale = sprite->GetScale();
-		Sprite::PivotPoint pivotPoint = sprite->GetPivotPoint();
+		FL::Pivot pivotPoint = sprite->GetPivotPoint();
 		std::string pivotString = sprite->GetPivotPointString();
 		float xScale = textureScale.x;
 		float yScale = textureScale.y;
@@ -208,15 +238,17 @@ namespace FlatGui
 		std::string textureWidthString = std::to_string(textureWidth);
 		std::string textureHeightString = std::to_string(textureHeight);
 		Vector4 tintColor = sprite->GetTintColor();
-		long id = sprite->GetID();
-		int droppedValue = -1;
+		long id = sprite->GetID();		
 
 		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
-			sprite->SetActive(_isActive);								
+		{
+			sprite->SetActive(_isActive);
+		}
 
+		int droppedValue = -1;
 		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##InputSpritePath", "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop images here from File Explorer"))
+		if (FL::DropInputCanOpenFiles("##InputSpritePath", "File", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop images here from File Explorer"))
 		{
 			if (openedPath != "")
 			{
@@ -234,23 +266,38 @@ namespace FlatGui
 					FL::LogError("File must be of type .png to drop here.");
 				}
 			}
+			else if (droppedValue == -1)
+			{
+				sprite->RemoveTexture();
+			}
 		}
 
-		if (ImGui::IsItemHovered())
-		{
-			FL::RenderTextToolTip("Drag an image here from the File Explorer");
-		}
+		FL::RenderSeparator(2, 3);
 
 		// Render Table
 		if (FL::PushTable("##SpriteProperties" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
 			{
-				sprite->SetScale(Vector2(xScale, yScale));
+				if (xScale > 0)
+				{
+					sprite->SetScale(Vector2(xScale, yScale));
+				}
+				else
+				{
+					FL::LogError("Scale must be greater than 0.");
+				}
 			}
 			if (FL::RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
 			{
-				sprite->SetScale(Vector2(xScale, yScale));
+				if (yScale > 0)
+				{
+					sprite->SetScale(Vector2(xScale, yScale));
+				}
+				else
+				{
+					FL::LogError("Scale must be greater than 0.");
+				}
 			}
 			if (FL::RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
@@ -269,70 +316,14 @@ namespace FlatGui
 			FL::PopTable();
 		}
 
-		// Pivot Point Buttons							
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
-		Vector2 cellSize = Vector2(76, 78);
-		Vector2 cursorScreen = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+		FL::RenderSeparator(3, 3);
 
-		// TopLeft, Top, TopRight
-		ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), FL::GetColor32("logBg"));
-		ImGui::SetCursorScreenPos(Vector2(cursorScreen.x + 5, cursorScreen.y + 5));
-		if (FL::RenderImageButton("##PivotTopLeftButton", FL::GetTexture("upLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
+		if (RenderPivotSelectionButtons("Sprite", pivotPoint))
 		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::TopLeft);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotTopButton", FL::GetTexture("up"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::Top);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotTopRightButton", FL::GetTexture("upRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::TopRight);
-		}
-								
-		ImGui::SameLine(0, 17);
-		ImGui::Text("Pivot Point:");
-
-		// Left, Center, Right
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
-		if (FL::RenderImageButton("##PivotLeftButton", FL::GetTexture("left"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::Left);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotCenterButton", FL::GetTexture("center"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::Center);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotRightButton", FL::GetTexture("right"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::Right);
-		}
-								
-		ImGui::SameLine(0, 17);
-		ImGui::Text(pivotString.c_str());
-
-		// BottomLeft, Bottom, BottomRight
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + 5, ImGui::GetCursorScreenPos().y));
-		if (FL::RenderImageButton("##PivotBottomLeftButton", FL::GetTexture("downLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::BottomLeft);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotBottomButton", FL::GetTexture("down"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::Bottom);
-		}
-		ImGui::SameLine(0, 3);
-		if (FL::RenderImageButton("##PivotBottomRightButton", FL::GetTexture("downRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark")))
-		{
-			sprite->SetPivotPoint(Sprite::PivotPoint::BottomRight);
+			sprite->SetPivotPoint(pivotPoint);
 		}
 
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 10));
+		FL::RenderSeparator(6, 3);
 
 		// Tint color picker
 		std::string tintID = "##SpriteTintColor" + std::to_string(id) + "-" + std::to_string(id);
@@ -345,22 +336,98 @@ namespace FlatGui
 		ImGui::Text("Tint color");
 	}
 
+	bool RenderPivotSelectionButtons(std::string componentType, FL::Pivot& pivot)
+	{				
+		ImGui::Text("Pivot Point: ");
+		ImGui::SameLine();
+		ImGui::Text(FL::F_PivotStrings[pivot].c_str());
+		FL::MoveScreenCursor(0, 1);		
+
+		bool b_pivotChanged = false;
+		Vector2 cellSize = Vector2(ImGui::GetContentRegionAvail().x, 72);
+		Vector2 cursorScreen = ImGui::GetCursorScreenPos();
+
+		// TopLeft, Top, TopRight
+		ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + cellSize.x, cursorScreen.y + cellSize.y), FL::GetColor32("pivotSelectionBg"));
+		FL::MoveScreenCursor(5, 5);
+		if (FL::RenderImageButton("##" + componentType + "PivotTopLeftButton", FL::GetTexture("upLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotTopLeft;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotTopButton", FL::GetTexture("up"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotTop;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotTopRightButton", FL::GetTexture("upRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotTopRight;
+			b_pivotChanged = true;
+		}
+
+		// Left, Center, Right
+		FL::MoveScreenCursor(5, 0);
+		if (FL::RenderImageButton("##" + componentType + "PivotLeftButton", FL::GetTexture("left"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotLeft;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotCenterButton", FL::GetTexture("center"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotCenter;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotRightButton", FL::GetTexture("right"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotRight;
+			b_pivotChanged = true;
+		}
+
+		// BottomLeft, Bottom, BottomRight		
+		FL::MoveScreenCursor(5, 0);
+		if (FL::RenderImageButton("##" + componentType + "PivotBottomLeftButton", FL::GetTexture("downLeft"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotBottomLeft;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotBottomButton", FL::GetTexture("down"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotBottom;
+			b_pivotChanged = true;
+		}
+		ImGui::SameLine(0, 3);
+		if (FL::RenderImageButton("##" + componentType + "PivotBottomRightButton", FL::GetTexture("downRight"), Vector2(16, 16), 1, FL::GetColor("imageButtonDark"), FL::GetColor("imageButtonTint"), FL::GetColor("pivotButtonHovered")))
+		{
+			pivot = FL::Pivot::PivotBottomRight;
+			b_pivotChanged = true;
+		}
+				
+		return b_pivotChanged;
+	}
+
 	void RenderCameraComponent(Camera* camera)
 	{
 		float width = camera->GetWidth();
 		float height = camera->GetHeight();
-		bool _isPrimary = camera->IsPrimary();
+		bool b_isPrimary = camera->IsPrimary();
 		float zoom = camera->GetZoom();
 		ImVec4 frustrumColor = camera->GetFrustrumColor();
-		bool _isActive = camera->IsActive();
+		bool b_isActive = camera->IsActive();
 		long id = camera->GetID();
-		bool _follow = camera->GetShouldFollow();
+		bool b_follow = camera->GetShouldFollow();
 		std::string followingName = "";
-		GameObject* followingObject = FL::GetObjectById(camera->GetToFollowID());
+		long toFollowID = camera->GetToFollowID();
+		GameObject* followingObject = FL::GetObjectById(toFollowID);
 
-		if (camera->GetToFollowID() != -1 && followingObject != nullptr)
+		if (toFollowID != -1 && followingObject != nullptr)
 		{
-			followingName = FL::GetObjectById(camera->GetToFollowID())->GetName();
+			followingName = FL::GetObjectById(toFollowID)->GetName();
 		}
 		else if (followingObject == nullptr)
 		{
@@ -370,9 +437,9 @@ namespace FlatGui
 		float followSmoothing = camera->GetFollowSmoothing();
 
 		// Active Checkbox
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			camera->SetActive(_isActive);
+			camera->SetActive(b_isActive);
 		}
 
 		// Render Table
@@ -390,10 +457,6 @@ namespace FlatGui
 			{
 				camera->SetZoom(zoom);
 			}
-			if (FL::RenderCheckboxTableRow("##CameraShouldFollowTargetCheckbox", "Follow", _follow))
-			{
-				camera->SetShouldFollow(_follow);
-			}
 			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(id), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
 			{
 				camera->SetFollowSmoothing(followSmoothing);
@@ -401,18 +464,38 @@ namespace FlatGui
 			FL::PopTable();
 		}
 
+		FL::RenderSeparator(3, 3);
+
 		int droppedValue = -1;
 		if (FL::DropInput("##CameraFollowObject", "Following", followingName, "DND_HIERARCHY_OBJECT", droppedValue, "Drag a GameObject here from the Hierarchy"))
 		{
-			if (droppedValue != -1 && FL::GetObjectById(droppedValue) != nullptr)
+			if (FL::GetObjectById(droppedValue) != nullptr || droppedValue == -1)
 			{
 				camera->SetToFollowID(droppedValue);
 			}
+		}
+
+		ImGui::BeginDisabled(toFollowID == -1);
+		if (FL::RenderCheckbox("Follow", b_follow))
+		{
+			camera->SetShouldFollow(b_follow);
+		}
+		ImGui::EndDisabled();
+
+		FL::RenderSeparator(3, 3);
+			
+		if (FL::RenderCheckbox("Is Primary Camera", b_isPrimary))
+		{
+			camera->SetPrimaryCamera(b_isPrimary);
+			if (b_isPrimary)
+			{
+				FL::GetLoadedScene()->SetPrimaryCamera(camera);
+			}
 			else
 			{
-				FL::LogString("ERROR : Something went wrong, item must be a GameObject with a Transform component");
+				FL::GetLoadedScene()->RemovePrimaryCamera();
 			}
-		}
+		}		
 
 		// Frustrum color picker
 		std::string frustrumID = "##FrustrumColor" + std::to_string(id);
@@ -422,33 +505,6 @@ namespace FlatGui
 		ImGui::Text("Frustrum color");
 		camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
 
-		// Before allowing this camera to be set as primary, we need to ensure it has a transform component
-		if (camera->GetParent()->HasComponent(ComponentTypes::T_Transform))
-		{									
-			if (FL::RenderCheckbox("Is Primary Camera", _isPrimary))
-			{
-				if (_isPrimary)
-				{
-					FL::GetLoadedScene()->SetPrimaryCamera(camera);
-				}
-				else
-				{
-					FL::GetLoadedScene()->RemovePrimaryCamera();
-				}
-			}									
-		}
-		else
-		{
-			bool temp = false;
-			if (FL::RenderCheckbox("Is Primary Camera", temp))
-			{
-				FL::LogString("FlatGui::RenderInspector() - Attempt to set Camera component as primary failed: No Transform component found...");
-			}
-			temp = false;
-			ImGui::TextWrapped("*A Camera Component must be coupled with a Transform Component to be set as the primary camera.*");
-		}
-
-		camera->SetPrimaryCamera(_isPrimary);
 	}
 
 	void RenderScriptComponent(Script* script)
@@ -566,6 +622,8 @@ namespace FlatGui
 			FL::PopTable();
 		}
 
+		FL::RenderSeparator(3, 3);
+
 		if (FL::RenderCheckbox("Blocks Layers:", _blocksLayers))
 		{
 			canvas->SetBlocksLayers(_blocksLayers);
@@ -585,7 +643,7 @@ namespace FlatGui
 
 		int droppedValue = -1;
 		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(id), "Path", path, FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
+		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(id), "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
 		{
 			if (openedPath != "")
 			{
@@ -604,6 +662,8 @@ namespace FlatGui
 				}
 			}
 		}
+
+		FL::RenderSeparator(3, 3);
 
 		if (FL::GameLoopStarted() && !FL::GameLoopPaused())
 		{
@@ -644,18 +704,33 @@ namespace FlatGui
 
 		static std::string path = "";
 		static std::string name = "";
-		int droppedValue = -1;
 		static bool b_isNewAudioMusic = false;
 
 		FL::RenderSubTitle("Add Audio");
 
 		FL::RenderInput("##NameNewAudioDataObject", "Name", name, false);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-		if (FL::DropInput("##AddAudioFile", "Path", path, FL::F_fileExplorerTarget, droppedValue, "Drop audio files here from the Explorer window"))
+
+		FL::MoveScreenCursor(0, 3);
+
+		int droppedValue = -1;
+		std::string openedPath = "";
+		if (FL::DropInputCanOpenFiles("##AddAudioFile", "File", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop font files here from File Explorer"))
 		{
-			if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+			if (openedPath != "")
 			{
-				path = FL::F_selectedFiles[droppedValue - 1];
+				path = openedPath;
+			}
+			else if (droppedValue != -1)
+			{
+				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+				if (fs_path.extension() == ".wav" || fs_path.extension() == ".mp4")
+				{
+					path = FL::F_selectedFiles[droppedValue - 1];
+				}
+				else
+				{
+					FL::LogError("File must be of type audio to drop here.");
+				}
 			}
 		}
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -691,39 +766,46 @@ namespace FlatGui
 
 		if (sounds.size() > 0)
 		{
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-
+			FL::RenderSeparator(4, 4);
 			FL::RenderSubTitle("Attached Audio Files");
 		}
 
 		// Show existing Sounds in this Audio component
 		int IDCounter = 0;
-		for (FL::SoundData &sound : sounds)
+		for (std::vector<FL::SoundData>::iterator soundIter = sounds.begin(); soundIter != sounds.end(); soundIter++)
 		{
+			FL::SoundData &sound = (*soundIter);
 			std::string audioPath = sound.path;
 			std::string audioName = sound.name;
 			std::string newName = audioName;
 			bool b_isMusic = sound.b_isMusic;
 			int newDroppedValue = -1;
-			std::string inputId = "##audioPath_" + std::to_string(id) + sound.name;
+			std::string inputId = "##audioPath_" + std::to_string(id) + sound.name + std::to_string(IDCounter);
 
 			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", sound.name, false))
 			{				
 				sound.name = audioName;
 			}
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			FL::MoveScreenCursor(0, 4);
 
-			if (FL::DropInput(inputId, "Path", audioPath, FL::F_fileExplorerTarget, newDroppedValue, "Drop audio files here from the Explorer window"))
+			if (FL::DropInput(inputId, "File", FL::GetFilenameFromPath(audioPath, true), FL::F_fileExplorerTarget, newDroppedValue, "Drop audio files here from the Explorer window"))
 			{
-				if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+				if (newDroppedValue != -1 && FL::F_selectedFiles.size() >= newDroppedValue)
 				{
-					path = FL::F_selectedFiles[droppedValue - 1];
-					sound.path = path;
+					audioPath = FL::F_selectedFiles[newDroppedValue - 1];
+					sound.path = audioPath;
+					if (sound.b_isMusic)
+						sound.sound->LoadMusic(audioPath);
+					else
+						sound.sound->LoadEffect(audioPath);
+				}
+				else if (newDroppedValue == -1)
+				{
+					audioPath = "";
+					sound.path = "";					
 				}
 			}
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			FL::MoveScreenCursor(0, 4);
 
 			if (FL::RenderCheckbox("Is Music##" + std::to_string(IDCounter), b_isMusic))
 			{
@@ -741,11 +823,20 @@ namespace FlatGui
 			ImGui::SameLine(0, 5);
 			// Stop Audio
 			if (FL::RenderImageButton("##ImageButtonStop" + sound.name, FL::GetTexture("stop")))
-				audio->StopSound(sound.name);
+				audio->StopSound(sound.name);	
 
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-			ImGui::Separator();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 90, 0);
+
+			if (FL::RenderButton("Remove Sound##"+ sound.name))
+			{
+				sounds.erase(soundIter);
+				break;
+			}
+
+			if (sound.name != sounds.back().name)
+			{
+				FL::RenderSeparator(4, 6);
+			}
 
 			IDCounter++;
 		}
@@ -758,6 +849,8 @@ namespace FlatGui
 		float textureWidth = (float)texture->GetWidth();
 		float textureHeight = (float)texture->GetHeight();
 		int renderOrder = text->GetRenderOrder();
+		int fontSize = text->GetFontSize();
+		FL::Pivot pivotPoint = text->GetPivotPoint();
 		Vector4 color = text->GetColor();
 		Vector2 offset = text->GetOffset();
 		float xOffset = offset.x;
@@ -775,22 +868,47 @@ namespace FlatGui
 			text->SetText(textText);
 			text->LoadText();
 		}
-		bool _canOpenFiles = true;
+
+		FL::MoveScreenCursor(0, 3);
+		
 		std::string fontPath = text->GetFontPath();
-		if (FL::RenderInput("##FontPath" + std::to_string(id), "Font path", fontPath, _canOpenFiles))
+		int droppedValue = -1;
+		std::string openedPath = "";
+		if (FL::DropInputCanOpenFiles("##InputFontPath", "File", FL::GetFilenameFromPath(fontPath, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop font files here from File Explorer"))
 		{
-			text->SetFontPath(fontPath);
+			if (openedPath != "")
+			{
+				text->SetFontPath(fontPath);
+			}
+			else if (droppedValue != -1)
+			{
+				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
+				if (fs_path.extension() == ".ttf")
+				{
+					text->SetFontPath(fontPath);
+				}
+				else
+				{
+					FL::LogError("File must be of type .ttf to drop here.");
+				}
+			}
 		}
+
+		FL::RenderSeparator(3, 3);
 
 		if (FL::PushTable("##TextProperties" + std::to_string(id), 2))
 		{
 			FL::RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
 			FL::RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
-			if (FL::RenderFloatDragTableRow("##xTextOffset" + std::to_string(id), "X offset", xOffset, 0.01f, 0.0f, 1000.0f))
+			if (FL::RenderIntDragTableRow("##textFontSize" + std::to_string(id), "Font size", fontSize, 1, 0, 1000))
+			{
+				text->SetFontSize(fontSize);
+			}
+			if (FL::RenderFloatDragTableRow("##xTextOffset" + std::to_string(id), "X offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				text->SetOffset(Vector2(xOffset, yOffset));
 			}
-			if (FL::RenderFloatDragTableRow("##yTextOffset" + std::to_string(id), "Y offset", yOffset, 0.01f, 0.0f, 1000.0f))
+			if (FL::RenderFloatDragTableRow("##yTextOffset" + std::to_string(id), "Y offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				text->SetOffset(Vector2(xOffset, yOffset));
 			}
@@ -800,6 +918,15 @@ namespace FlatGui
 			}
 			FL::PopTable();
 		}
+
+		FL::RenderSeparator(3, 3);
+
+		if (RenderPivotSelectionButtons("Text", pivotPoint))
+		{
+			text->SetPivotPoint(pivotPoint);
+		}
+
+		FL::RenderSeparator(6, 3);
 
 		// Tint color picker
 		std::string tintID = "##TextColor" + std::to_string(id) + "-" + std::to_string(id);
@@ -985,13 +1112,10 @@ namespace FlatGui
 		bool _isStatic = rigidBody->IsStatic();
 		bool _isGrounded = rigidBody->IsGrounded();
 
-		// Read only
-		float inertialMass = rigidBody->GetI();
-		Vector2 velocity = rigidBody->GetVelocity();
-		Vector2 acceleration = rigidBody->GetAcceleration();
+		// Read only		
+		Vector2 velocity = rigidBody->GetVelocity();		
 		Vector2 pendingForces = rigidBody->GetPendingForces();
 		float angularVelocity = rigidBody->GetAngularVelocity();
-		float angularAcceleration = rigidBody->GetAngularAcceleration();
 		float pendingTorques = rigidBody->GetPendingTorques();
 
 		std::string isGroundedString = "false";
@@ -1004,8 +1128,7 @@ namespace FlatGui
 		if (FL::PushTable("##RigidBodyProps" + std::to_string(id), 2))
 		{
 			if (FL::RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
-				rigidBody->SetMass(mass);
-			FL::RenderTextTableRow("##InertialMass" + std::to_string(id), "Inertial Mass", std::to_string(inertialMass));
+				rigidBody->SetMass(mass);			
 			if (FL::RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
 				rigidBody->SetGravity(gravity);
 			if (FL::RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(id), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
@@ -1023,13 +1146,10 @@ namespace FlatGui
 			// Linear
 			FL::RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
 			FL::RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
-			FL::RenderTextTableRow("##AccelerationX" + std::to_string(id), "X Acceleration", std::to_string(acceleration.x));
-			FL::RenderTextTableRow("##AccelerationY" + std::to_string(id), "Y Acceleration", std::to_string(acceleration.y));
 			FL::RenderTextTableRow("##PendingForcesX" + std::to_string(id), "X Pending Forces", std::to_string(pendingForces.x));
 			FL::RenderTextTableRow("##PendingForcesY" + std::to_string(id), "Y Pending Forces", std::to_string(pendingForces.y));
 			// Rotational
 			FL::RenderTextTableRow("##AngularVelocity" + std::to_string(id), "Angular Velocity (deg)", std::to_string(angularVelocity));
-			FL::RenderTextTableRow("##AngularAcceleration" + std::to_string(id), "Angular Acceleration (deg)", std::to_string(angularAcceleration));
 			FL::RenderTextTableRow("##PendingTorques" + std::to_string(id), "Pending Torques", std::to_string(pendingTorques));
 			FL::RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
 			FL::PopTable();
@@ -1105,18 +1225,27 @@ namespace FlatGui
 			for (int j = 0; j < tileSets.size(); j++)
 			{
 				if (FL::F_TileSets[i].GetName() == tileSets[j])
+				{
 					b_alreadyInTileMap = true;
+				}
 			}
 
 			if (!b_alreadyInTileMap)
+			{
 				tileSetNames.push_back(FL::F_TileSets[i].GetName());
+			}
 		}
 		
-		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);	
-		if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
-		{			
-			if (tileSetNames.size() >= currentSelectableTileSet + 1)
-				tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
+		if (tileSetNames.size() > 0)
+		{
+			FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);
+			if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
+			{
+				if (tileSetNames.size() >= currentSelectableTileSet + 1)
+				{
+					tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
+				}
+			}
 		}
 
 
@@ -1126,40 +1255,43 @@ namespace FlatGui
 
 		FL::RenderSubTitle("Tile Palettes");
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		FL::PushMenuStyles();
-		if (ImGui::BeginTable("##TileSetsTable", 1, FL::F_tableFlags))
+		if (tileSets.size() > 0)
 		{
-			ImGui::TableSetupColumn("##TileSets", 0, ImGui::GetContentRegionAvail().x);
-
-			for (std::string tileSetName : tileSets)
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+			FL::PushMenuStyles();
+			if (ImGui::BeginTable("##TileSetsTable", 1, FL::F_tableFlags))
 			{
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
+				ImGui::TableSetupColumn("##TileSets", 0, ImGui::GetContentRegionAvail().x);
 
-				ImGuiTreeNodeFlags nodeFlags;
-				std::string treeID = "##SelectActiveTileSetTree";
-
-				// If node selected
-				if (activeTileSet == tileSetName)
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-				else
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-				
-				// render a leaf
-				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, tileSetName.c_str());
-				if (ImGui::IsItemClicked())
+				for (std::string tileSetName : tileSets)
 				{
-					tileMap->SetSelectedTileSet(tileSetName);
-				}
-			}
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
 
-			ImGui::EndTable();
+					ImGuiTreeNodeFlags nodeFlags;
+					std::string treeID = "##SelectActiveTileSetTree";
+
+					// If node selected
+					if (activeTileSet == tileSetName)
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+					else
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+					// render a leaf
+					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, tileSetName.c_str());
+					if (ImGui::IsItemClicked())
+					{
+						tileMap->SetSelectedTileSet(tileSetName);
+					}
+				}
+
+				ImGui::EndTable();
+			}
+			FL::PopMenuStyles();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
 		}
-		FL::PopMenuStyles();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
 
 		Vector2 tileSetTilesStart = ImGui::GetCursorScreenPos();
 		Vector2 regionAvailable = ImGui::GetContentRegionMax();
@@ -1220,14 +1352,14 @@ namespace FlatGui
 				{
 					iconsThisRow = 0;
 				}
-			}
-			
-			FL::MoveScreenCursor(0, iconSize + verticalSpacing + 5);
 
+				FL::MoveScreenCursor(0, iconSize + verticalSpacing + 5);
+			}
+		
 			ImGui::GetWindowDrawList()->AddRect(tileSetTilesStart, Vector2(tileSetTilesStart.x + regionAvailable.x - 5, ImGui::GetCursorScreenPos().y), FL::GetColor32("componentSectionBorder"), 0, 0, 2);
 		}
 
-		ImGui::SetCursorScreenPos(Vector2(tileSetTilesStart.x, ImGui::GetCursorScreenPos().y + 4));
+		ImGui::SetCursorScreenPos(Vector2(tileSetTilesStart.x, ImGui::GetCursorScreenPos().y + 2));
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
@@ -1245,10 +1377,12 @@ namespace FlatGui
 			areaNames.push_back(collisionArea.first);
 		}
 
-
 		// BUG INTRODUCED WHEN CLOSING THE GAME VIA Quit button (possibly) after adding this tree to the end of this section.
 		// Create new Collision Area
 		FL::RenderInput("##CollisionAreaLabel" + std::to_string(id), "Collision Area Name", collisionAreaLabel, false);
+
+		FL::RenderSeparator(3, 3);
+
 		if (FL::RenderButton("Add Collision Area"))
 		{
 			if (!tileMap->ContainsCollisionAreaLabel(collisionAreaLabel))
@@ -1263,41 +1397,44 @@ namespace FlatGui
 		}
 
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
-		FL::PushMenuStyles();
-		if (ImGui::BeginTable("#CollisionAreasTable", 1, FL::F_tableFlags))
+		if (areaNames.size() > 0)
 		{
-			ImGui::TableSetupColumn("##CollisionArea", 0, ImGui::GetContentRegionAvail().x);
-
-			for (std::string areaName : areaNames)
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
+			ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+			FL::PushMenuStyles();
+			if (ImGui::BeginTable("#CollisionAreasTable", 1, FL::F_tableFlags))
 			{
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
+				ImGui::TableSetupColumn("##CollisionArea", 0, ImGui::GetContentRegionAvail().x);
 
-				ImGuiTreeNodeFlags nodeFlags;
-				std::string treeID = "##SelectActiveTileSetTree";
-
-				// If node selected
-				if (selectedCollisionArea == areaName)
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
-				else
-					nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-				// render a leaf
-				ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, areaName.c_str());
-				if (ImGui::IsItemClicked())
+				for (std::string areaName : areaNames)
 				{
-					tileMap->SetSelectedCollisionArea(areaName);
-					selectedCollisionArea = areaName;
-				}
-			}
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
 
-			ImGui::EndTable();
+					ImGuiTreeNodeFlags nodeFlags;
+					std::string treeID = "##SelectActiveTileSetTree";
+
+					// If node selected
+					if (selectedCollisionArea == areaName)
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+					else
+						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+					// render a leaf
+					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, areaName.c_str());
+					if (ImGui::IsItemClicked())
+					{
+						tileMap->SetSelectedCollisionArea(areaName);
+						selectedCollisionArea = areaName;
+					}
+				}
+
+				ImGui::EndTable();
+			}
+			FL::PopMenuStyles();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
 		}
-		FL::PopMenuStyles();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
 
 		if (selectedCollisionArea != "")
 		{
@@ -1315,8 +1452,10 @@ namespace FlatGui
 			}
 		}
 
-		// Bottom padding
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		if (areaNames.size() > 0)
+		{			
+			FL::MoveScreenCursor(0, 5);
+		}
 	}
 
 	void BeginToolTip(std::string title)

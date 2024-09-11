@@ -39,41 +39,41 @@ namespace FlatEngine
 	void RegisterLuaFunctions()
 	{
 		F_Lua["LoadScene"] = [](std::string sceneName)
-			{
-				std::string scenePath = GetFilePathUsingFileName(GetDir("projectDir"), sceneName + ".scn");
-				QueueLoadScene(scenePath);
-			};
+		{
+			std::string scenePath = GetFilePathUsingFileName(GetDir("projectDir"), sceneName + ".scn");
+			QueueLoadScene(scenePath);
+		};
 		F_Lua["LogString"] = [](std::string line)
-			{
-				std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-				LogString(line, prefix);
-			};
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogString(line, prefix);
+		};
 		F_Lua["LogInt"] = [](int value, std::string line)
-			{
-				std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-				LogInt(value, line, prefix);
-			};
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogInt(value, line, prefix);
+		};
 		F_Lua["LogFloat"] = [](float value, std::string line)
-			{
-				std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-				LogFloat(value, line, prefix);
-			};
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogFloat(value, line, prefix);
+		};
 		F_Lua["LogVector2"] = [](float xValue, float yValue, std::string line)
-			{
-				std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-				LogVector2(Vector2(xValue, yValue), line, prefix);
-			};
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogVector2(Vector2(xValue, yValue), line, prefix);
+		};
 		F_Lua["GetMappingContext"] = [](std::string contextName)
-			{
-				return GetMappingContext(contextName);
-			};
+		{
+			return GetMappingContext(contextName);
+		};
 		F_Lua["Instantiate"] = [](std::string prefabName, Vector2 position)
-			{
-				return Instantiate(prefabName, position);
-			};
+		{
+			return Instantiate(prefabName, position);
+		};
 		F_Lua["DrawLine"] = [](Vector2 startPoint, Vector2 endPoint, Vector4 color, float thickness)
 		{
-				DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
+			DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
 		};
 	}
 
@@ -251,7 +251,7 @@ namespace FlatEngine
 							else
 							{
 								sol::error err = calledFunction;
-								LogString(err.what());
+								LogError(err.what());
 							}
 						}
 					}
@@ -289,7 +289,7 @@ namespace FlatEngine
 		{
 			if (filename == GetFilenameFromPath(scriptPath))
 			{
-				LogString("ERROR: Script name already taken.  Please enter a different name for your new lua script.");
+				LogError("Script name already taken.  Please enter a different name for your new lua script.");
 				return;
 			}
 		}
@@ -369,8 +369,8 @@ namespace FlatEngine
 			if (!result.valid())
 			{
 				sol::error err = result;
-				LogString("ERROR : Something went wrong in Lua function: " + functionName + "()");
-				LogString(err.what());
+				LogError("Something went wrong in Lua function: " + functionName + "()");
+				LogError(err.what());
 			}
 		}
 	}
@@ -385,8 +385,8 @@ namespace FlatEngine
 			if (!result.valid())
 			{
 				sol::error err = result;
-				LogString("ERROR : Something went wrong in Lua function: " + functionName + "()");
-				LogString(err.what());
+				LogError("Something went wrong in Lua function: " + functionName + "()");
+				LogError(err.what());
 			}
 		}
 	}

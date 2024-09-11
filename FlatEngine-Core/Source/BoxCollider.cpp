@@ -14,7 +14,7 @@ namespace FlatEngine
 {
 	BoxCollider::BoxCollider(long myID, long parentID) : Collider(myID, parentID)
 	{		
-		SetType(ComponentTypes::T_BoxCollider);
+		SetType(T_BoxCollider);
 		m_b_isTileMapCollider = false;
 		m_activeWidth = 2;
 		m_activeHeight = 2;
@@ -54,7 +54,9 @@ namespace FlatEngine
 			m_activeHeight = height;
 		}
 		else
-			LogString("The active width or height you tried to set to BoxCollider component was < 0. Try again.");
+		{
+			LogError("Active dimensions must be larger than 0.");
+		}
 	}
 
 	float BoxCollider::GetActiveWidth()

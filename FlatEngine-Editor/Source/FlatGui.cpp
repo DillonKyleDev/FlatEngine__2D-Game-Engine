@@ -62,7 +62,6 @@ using Text = FL::Text;
 using BoxCollider = FL::BoxCollider;
 using CircleCollider = FL::CircleCollider;
 using Sound = FL::Sound;
-using ComponentTypes = Component::ComponentTypes;
 using TileMap = FL::TileMap;
 
 namespace FlatGui 
@@ -74,7 +73,7 @@ namespace FlatGui
 	std::shared_ptr<Animation::S_AnimationProperties> FG_FocusedAnimation = nullptr;
 	std::string FG_FocusedAnimationName = "";
 	GameObject *objectForFocusedAnimation = nullptr;
-	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
+	std::shared_ptr<Animation::S_Property> FG_SelectedKeyFrameToEdit = nullptr;
 	long previewAnimationStartTime = 0;
 	long previewAnimationTime = 0;
 	bool _playPreviewAnimation = false;
@@ -225,7 +224,9 @@ namespace FlatGui
 			std::string animationPath = "";
 
 			if (animationComponent != nullptr)
+			{
 				animationPath = animationComponent->GetAnimationPath();
+			}
 
 			// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
 			if (FG_b_showAnimator && FG_FocusedAnimation != nullptr &&
@@ -239,6 +240,7 @@ namespace FlatGui
 				//animatorObjects.push_back(*objectForFocusedAnimation);
 				//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
 			}
+			SaveCurrentProject();
 		}
 	}
 
@@ -614,7 +616,6 @@ namespace FlatGui
 		TileMap* tileMap = self.GetTileMap();
 
 
-		// Check if each object has a Transform component
 		if (transform != nullptr)
 		{
 			long focusedObjectID = GetFocusedGameObjectID();
@@ -623,133 +624,87 @@ namespace FlatGui
 			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
-
-			// If it has a sprite component, render that sprite texture at the objects transform position with offsets
+			
 			if (sprite != nullptr && sprite->GetTexture() != nullptr)
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
 				float spriteTextureWidth = (float)sprite->GetTextureWidth();
 				float spriteTextureHeight = (float)sprite->GetTextureHeight();
 				Vector2 spriteScale = sprite->GetScale();
-				Vector2 pivotOffset = sprite->GetPivotOffset();
-				Vector2 spriteOffset = sprite->GetOffset();
-				bool _spriteScalesWithZoom = true;
+				Vector2 offset = sprite->GetOffset();				
+				bool b_spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 				Vector4 tintColor = sprite->GetTintColor();
 				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());
-				Vector2 spriteScaleFinal = spriteScale;
-				// Get Input and Output
+				Vector2 spriteScaleFinal = spriteScale;			
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x - canvas_p0.x + (position.x * step) - ((pivotOffset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - canvas_p0.y - (position.y * step - 20) - ((pivotOffset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
-				ImGui::SetCursorPos(positionOnScreen);
-				//// This will catch our interactions  - 4096 for overlap or keyword if it works
-				ImGui::SetNextItemAllowOverlap();
-
-				if (!scale.x == 0)
+				if (scale.x != 0)
 					spriteScaleFinal.x *= scale.x;
-				if (!scale.y == 0)
+				if (scale.y != 0)
 					spriteScaleFinal.y *= scale.y;
 
-				ImGui::InvisibleButton(invisibleButtonID.c_str(), Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y), ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-				const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-				const bool is_active = ImGui::IsItemActive();   // Held
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
+				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);							
+				ImGui::SetNextItemAllowOverlap();
+				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
+				const bool is_hovered = ImGui::IsItemHovered();			
 				const bool is_clicked = ImGui::IsItemClicked();
-
 				if (is_clicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
 				{
 					SetFocusedGameObjectID(sprite->GetParentID());
 				}
-
-				// Show cursor position in scene view when pressing Alt
 				if (is_hovered && inputOutput.KeyAlt)
 				{
 					RenderSceneViewTooltip();
 				}
-
-				// Add the same behavior as the sceneview grid so pan and zoom behaviors are not disabled when view entirely obstructed by sprite
-				////////////////////////
-				if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
-				{
-					FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
-					FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
-				}
-				// Get scroll amount for changing zoom level of scene view
-				Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-				float scrollInput = inputOutput.MouseWheel;
-				float weight = 0.01f;
-				float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-				float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-				bool _weightedScroll = true;
-				float zoomSpeed = 0.1f;
-				float zoomMultiplier = 10;
-				float finalZoomSpeed = zoomSpeed;
-
-				if (ImGui::GetIO().KeyCtrl)
-					finalZoomSpeed *= zoomMultiplier;
-
-				// Change scrolling offset based on mouse position and weight
-				if (is_hovered)
-				{
-					if (scrollInput > 0)
-					{
-						if (_weightedScroll)
-						{
-							FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-							FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
-						}
-						FG_sceneViewGridStep.x += finalZoomSpeed;
-						FG_sceneViewGridStep.y += finalZoomSpeed;
-					}
-					else if (scrollInput < 0 && FG_sceneViewGridStep.x > 2 && FG_sceneViewGridStep.y > 2)
-					{
-						if (_weightedScroll)
-						{
-							FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
-							FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
-						}
-						FG_sceneViewGridStep.x -= finalZoomSpeed;
-						FG_sceneViewGridStep.y -= finalZoomSpeed;
-					}
-				}
-				//////////////////
-
-				// Change the draw channel for the scene object
+				
 				if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 				else
 					drawSplitter->SetCurrentChannel(draw_list, 0);
-
-				// Draw the texture
-				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, pivotOffset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), _spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				
+				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
 
-			// If it has a text component, render that text texture at the objects transform position
 			if (text != nullptr)
 			{
 				std::shared_ptr<Texture> textTexture = text->GetTexture();
 				float textWidth = (float)textTexture->GetWidth();
 				float textHeight = (float)textTexture->GetHeight();
-				int renderOrder = text->GetRenderOrder();
 				Vector2 offset = text->GetOffset();
-				bool _spriteScalesWithZoom = true;
+				int renderOrder = text->GetRenderOrder();				
+				bool b_spriteScalesWithZoom = true;
 				Vector4 tintColor = text->GetColor();
-
-				// If there is a valid Texture loaded into the Sprite Component
+				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(text->GetID());
+				ImGuiIO& inputOutput = ImGui::GetIO();
+				
 				if (textTexture->GetTexture() != nullptr)
 				{
-					// Change the draw channel for the scene object
+					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y));
+					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * step * scale.x, textHeight * FL::F_spriteScaleMultiplier * step * scale.y);
+					ImGui::SetNextItemAllowOverlap();
+					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
+					const bool is_hovered = ImGui::IsItemHovered();			
+					const bool is_clicked = ImGui::IsItemClicked();
+					if (is_clicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
+					{
+						SetFocusedGameObjectID(text->GetParentID());
+					}
+					if (is_hovered && inputOutput.KeyAlt)
+					{
+						RenderSceneViewTooltip();
+					}
+					
 					if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
 					else
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					
-					// Draw the texture
-					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, _spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+									
+					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
-
-			// Renders the camera
+			
 			if (camera != nullptr)
 			{
 				float cameraWidth = camera->GetWidth();
@@ -784,7 +739,6 @@ namespace FlatGui
 				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
-			// Renders Canvas Component
 			if (canvas != nullptr)
 			{
 				float activeWidth = canvas->GetWidth();
@@ -802,7 +756,6 @@ namespace FlatGui
 				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 2.0f, draw_list);
 			}
 
-			// Renders Button Component
 			if (button != nullptr)
 			{
 				float activeWidth = button->GetActiveWidth();
@@ -865,7 +818,6 @@ namespace FlatGui
 				}
 			}
 
-			// Renders BoxCollider Component
 			for (BoxCollider *boxCollider : boxColliders)
 			{
 				float activeWidth = boxCollider->GetActiveWidth();
@@ -933,7 +885,6 @@ namespace FlatGui
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
 			}
 
-			// Renders CircleCollider Component
 			for (CircleCollider* circleCollider : circleColliders)
 			{
 				Vector2 activeOffset = circleCollider->GetActiveOffset();
@@ -957,7 +908,6 @@ namespace FlatGui
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), draw_list);
 			}
 
-			// Renders TileMap Component
 			if (tileMap != nullptr)
 			{
 				long id = tileMap->GetID();
@@ -1010,8 +960,7 @@ namespace FlatGui
 					std::string focusObjectButtonID = "##SelectThisTileMapObjectButton" + std::to_string(self.GetID()) + "-" + std::to_string(id);
 					AddSceneViewMouseControls(focusObjectButtonID, renderStart, focusObjectButtonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
 					if (ImGui::IsItemClicked())
-					{
-						FL::LogString(self.GetName());
+					{						
 						SetFocusedGameObjectID(self.GetID());
 					}
 				}
@@ -1351,7 +1300,6 @@ namespace FlatGui
 								float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * h;
 								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
 
-								//////////////////
 
 								// Change the draw channel for the scene object
 								if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
@@ -1366,9 +1314,7 @@ namespace FlatGui
 				}
 			}
 
-			// Renders Transform Arrow // 
-			//
-			// Should be last in line here to be rendered top-most -- If this obect is focused
+			// Renders Transform Arrow
 			if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE && focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
 				GameObject *focusedObject = FL::GetObjectById(focusedObjectID);
@@ -1452,7 +1398,6 @@ namespace FlatGui
 	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap)
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
-		Vector2 currentPos = ImGui::GetCursorScreenPos();
 		bool _weightedScroll = true;
 		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
 
@@ -1466,10 +1411,9 @@ namespace FlatGui
 		else
 			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
 
-		//ImGui::SetNextItemAllowOverlap();
 		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
+		const bool is_hovered = ImGui::IsItemHovered();
+		const bool is_active = ImGui::IsItemActive();
 		const bool is_clicked = ImGui::IsItemClicked();
 
 		// For panning the scene view

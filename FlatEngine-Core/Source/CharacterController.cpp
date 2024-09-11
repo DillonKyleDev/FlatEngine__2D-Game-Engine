@@ -10,7 +10,7 @@ namespace FlatEngine
 {
 	CharacterController::CharacterController(long myID, long parentID)
 	{
-		SetType(ComponentTypes::T_CharacterController);
+		SetType(T_CharacterController);
 		SetID(myID);
 		SetParentID(parentID);
 		m_maxAcceleration = 0.5f;
@@ -66,7 +66,9 @@ namespace FlatEngine
 				forceCorrection = rigidBody->m_forceCorrection;
 			}
 			else
-				LogString("CharacterController.cpp - RigidBody == nullptr");
+			{
+				LogError("No RigidBody connected to this GameObject.");
+			}
 
 			// If the object has not hit max speed in negative or positive direction
 			if ((direction.x != 0 || direction.y != 0) &&
