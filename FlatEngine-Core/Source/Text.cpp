@@ -93,12 +93,17 @@ namespace FlatEngine
 
 	void Text::SetFontPath(std::string path)
 	{
+		m_fontPath = path;
 		if (path != "" && m_fontSize > 0)
 		{
-			m_fontPath = path;
 			m_font = TTF_OpenFont(m_fontPath.c_str(), m_fontSize);
-			LoadText();
 		}
+		else
+		{
+			TTF_CloseFont(m_font);
+			m_font = nullptr;
+		}
+		LoadText();
 	}
 
 	std::string Text::GetFontPath()

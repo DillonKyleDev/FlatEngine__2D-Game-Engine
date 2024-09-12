@@ -251,11 +251,7 @@ namespace FlatGui
 		std::string openedPath = "";
 		if (FL::DropInputCanOpenFiles("##InputSpritePath", "File", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop images here from File Explorer"))
 		{
-			if (openedPath != "")
-			{
-				sprite->SetTexture(openedPath);
-			}
-			else if (droppedValue != -1)
+			if (droppedValue >= 0)
 			{
 				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
 				if (fs_path.extension() == ".png")
@@ -267,9 +263,13 @@ namespace FlatGui
 					FL::LogError("File must be of type .png to drop here.");
 				}
 			}
-			else if (droppedValue == -1)
+			else if (droppedValue == -2)
 			{
 				sprite->RemoveTexture();
+			}
+			else if (openedPath != "")
+			{
+				sprite->SetTexture(openedPath);
 			}
 		}
 
@@ -638,11 +638,7 @@ namespace FlatGui
 		std::string openedPath = "";
 		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(ID), "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
 		{
-			if (openedPath != "")
-			{
-				animation->SetAnimationPath(openedPath);
-			}
-			else if (droppedValue != -1)
+			if (droppedValue >= 0)
 			{
 				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
 				if (fs_path.extension() == ".anm")
@@ -653,6 +649,14 @@ namespace FlatGui
 				{
 					FL::LogError("File must be of type .anm to drop here.");
 				}
+			}
+			else if (droppedValue == -2)
+			{
+				animation->SetAnimationPath("");
+			}
+			else if (openedPath != "")
+			{
+				animation->SetAnimationPath(openedPath);
 			}
 		}
 
@@ -712,11 +716,7 @@ namespace FlatGui
 		std::string openedPath = "";
 		if (FL::DropInputCanOpenFiles("##AddAudioFile", "File", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop font files here from File Explorer"))
 		{
-			if (openedPath != "")
-			{
-				path = openedPath;
-			}
-			else if (droppedValue != -1)
+			if (droppedValue >= 0)
 			{
 				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
 				if (fs_path.extension() == ".wav" || fs_path.extension() == ".mp4")
@@ -728,12 +728,21 @@ namespace FlatGui
 					FL::LogError("File must be of type audio to drop here.");
 				}
 			}
+			else if (droppedValue == -2)
+			{
+				path = "";
+			}
+			else if (openedPath != "")
+			{
+				path = openedPath;
+			}
 		}
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
 		FL::RenderCheckbox("Is Music?", b_isNewAudioMusic);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 
+		ImGui::BeginDisabled(path == "" || name == "");
 		if (FL::RenderButton("Add Audio"))
 		{
 			if (name != "" && !audio->ContainsName(name) && path != "" && FL::DoesFileExist(path))
@@ -759,6 +768,7 @@ namespace FlatGui
 				}
 			}
 		}
+		ImGui::EndDisabled();
 
 		if (sounds.size() > 0)
 		{
@@ -778,7 +788,7 @@ namespace FlatGui
 			int newDroppedValue = -1;
 			std::string inputId = "##audioPath_" + std::to_string(ID) + sound.name + std::to_string(IDCounter);
 
-			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", sound.name, false))
+			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", audioName, false))
 			{				
 				sound.name = audioName;
 			}
@@ -812,18 +822,26 @@ namespace FlatGui
 				sound.b_isMusic = b_isMusic;
 				audio->LoadAudio(sound);
 			}
-
+			
+			ImGui::BeginDisabled(sound.name == "" || sound.path == "");
 			// Play Audio
 			if (FL::RenderImageButton("##ImageButtonPlay" + sound.name, FL::GetTexture("play")))
+			{
 				audio->PlaySound(sound.name);
+			}
 			ImGui::SameLine(0, 5);
 			// Pause Audio
 			if (FL::RenderImageButton("##ImageButtonPause" + sound.name, FL::GetTexture("pause")))
+			{
 				audio->PauseSound(sound.name);
+			}
 			ImGui::SameLine(0, 5);
 			// Stop Audio
 			if (FL::RenderImageButton("##ImageButtonStop" + sound.name, FL::GetTexture("stop")))
-				audio->StopSound(sound.name);	
+			{
+				audio->StopSound(sound.name);
+			}
+			ImGui::EndDisabled();
 
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 90, 0);
 
@@ -872,25 +890,28 @@ namespace FlatGui
 		FL::MoveScreenCursor(0, 3);
 		
 		std::string fontPath = text->GetFontPath();
-		int droppedValue = -1;
-		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##InputFontPath", "File", FL::GetFilenameFromPath(fontPath, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop font files here from File Explorer"))
+		int droppedValue = -1;		
+		if (FL::DropInputCanOpenFiles("##InputFontPath", "File", FL::GetFilenameFromPath(fontPath, true), FL::F_fileExplorerTarget, droppedValue, fontPath, "Drop font files here from File Explorer"))
 		{
-			if (openedPath != "")
-			{
-				text->SetFontPath(fontPath);
-			}
-			else if (droppedValue != -1)
+			if (droppedValue >= 0)
 			{
 				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
 				if (fs_path.extension() == ".ttf")
 				{
-					text->SetFontPath(fontPath);
+					text->SetFontPath(fs_path.string());
 				}
 				else
 				{
 					FL::LogError("File must be of type .ttf to drop here.");
 				}
+			}
+			else if (droppedValue == -2)
+			{
+				text->SetFontPath("");
+			}
+			else if (fontPath != "")
+			{
+				text->SetFontPath(fontPath);
 			}
 		}
 
@@ -1292,6 +1313,7 @@ namespace FlatGui
 		
 
 		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);
+		ImGui::BeginDisabled(tileSetNames.size() == 0);
 		if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
 		{
 			if (tileSetNames.size() >= currentSelectableTileSet + 1)
@@ -1299,6 +1321,7 @@ namespace FlatGui
 				tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
 			}
 		}
+		ImGui::EndDisabled();
 	
 
 		FL::RenderSeparator(4, 4);
@@ -1431,25 +1454,30 @@ namespace FlatGui
 			areaNames.push_back(collisionArea.first);
 		}
 
-		// BUG INTRODUCED WHEN CLOSING THE GAME VIA Quit button (possibly) after adding this tree to the end of this section.
 		// Create new Collision Area
-		ImGui::TextWrapped("New collision area name:");
-		FL::RenderInput("##CollisionAreaLabel" + std::to_string(ID), "", collisionAreaLabel, false);
-
-		FL::RenderSeparator(3, 3);
-
-		if (FL::RenderButton("Add Collision Area"))
+		ImGui::TextWrapped("New collision area name:");		
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 48, 0);
+		
+		FL::MoveScreenCursor(0, -3);
+		ImGui::BeginDisabled(collisionAreaLabel == "");
+		if (FL::RenderButton("Create"))
 		{
 			if (!tileMap->ContainsCollisionAreaLabel(collisionAreaLabel))
 			{
-				std::vector<FL::CollisionAreaData> newData = std::vector<FL::CollisionAreaData>();				
-				collisionAreas.emplace(collisionAreaLabel, newData);					
+				std::vector<FL::CollisionAreaData> newData = std::vector<FL::CollisionAreaData>();
+				collisionAreas.emplace(collisionAreaLabel, newData);
+				collisionAreaLabel = "";
 			}
 			else
 			{
 				FL::LogError("Collision area label already being used in this TileMap, please choose a different one.");
 			}
 		}
+		ImGui::EndDisabled();
+
+		FL::RenderInput("##CollisionAreaLabel" + std::to_string(ID), "", collisionAreaLabel, false);
+
+		FL::RenderSeparator(3, 3);
 
 
 		if (areaNames.size() > 0)
@@ -1497,18 +1525,20 @@ namespace FlatGui
 
 		if (selectedCollisionArea != "")
 		{
-			if (FL::RenderButton("Create Collisions"))
+			if (FL::RenderButton("Draw Collision Areas"))
 			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 				FG_collisionAreasBuffer.clear();
 			}
-
-			if (FL::RenderButton("Save Collisions"))
+			ImGui::SameLine(0, 5);
+			ImGui::BeginDisabled(FG_collisionAreasBuffer.size() == 0);
+			if (FL::RenderButton("Generate Colliders"))
 			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 				tileMap->SetCollisionAreaValues(selectedCollisionArea, FG_collisionAreasBuffer);
 				FG_collisionAreasBuffer.clear();
 			}
+			ImGui::EndDisabled();
 		}
 
 		if (areaNames.size() > 0)

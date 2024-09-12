@@ -648,8 +648,7 @@ namespace FlatGui
 					spriteScaleFinal.y *= scale.y;
 
 				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
-				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);							
-				ImGui::SetNextItemAllowOverlap();
+				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);											
 				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
 				const bool is_hovered = ImGui::IsItemHovered();			
 				const bool is_clicked = ImGui::IsItemClicked();
@@ -657,15 +656,15 @@ namespace FlatGui
 				{
 					SetFocusedGameObjectID(sprite->GetParentID());
 				}
-				if (is_hovered && inputOutput.KeyAlt)
-				{
-					RenderSceneViewTooltip();
-				}
 				
 				if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+				{
 					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+				}
 				else
+				{
 					drawSplitter->SetCurrentChannel(draw_list, 0);
+				}
 				
 				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
 			}
@@ -686,23 +685,21 @@ namespace FlatGui
 				{
 					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y));
 					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * step * scale.x, textHeight * FL::F_spriteScaleMultiplier * step * scale.y);
-					ImGui::SetNextItemAllowOverlap();
-					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
-					const bool is_hovered = ImGui::IsItemHovered();			
-					const bool is_clicked = ImGui::IsItemClicked();
-					if (is_clicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
+					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);						
+					const bool b_isClicked = ImGui::IsItemClicked();
+					if (b_isClicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
 					{
 						SetFocusedGameObjectID(text->GetParentID());
 					}
-					if (is_hovered && inputOutput.KeyAlt)
-					{
-						RenderSceneViewTooltip();
-					}
 					
 					if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+					{
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					}
 					else
+					{
 						drawSplitter->SetCurrentChannel(draw_list, 0);
+					}
 									
 					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 				}
@@ -1407,8 +1404,8 @@ namespace FlatGui
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
-		float maxGridStep = 400;
-		float minGridStep = 10;
+		float maxGridStep = 100;
+		float minGridStep = 5;
 
 		// For calculating scrolling mouse position and what vector to zoom to
 		DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);
@@ -1424,12 +1421,12 @@ namespace FlatGui
 		}
 
 		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered();
-		const bool is_active = ImGui::IsItemActive();
-		const bool is_clicked = ImGui::IsItemClicked();
+		const bool b_isHovered = ImGui::IsItemHovered();
+		const bool b_isActive = ImGui::IsItemActive();
+		const bool b_isClicked = ImGui::IsItemClicked();
 		
 		const float mouse_threshold_for_pan = 0.0f;
-		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+		if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{			
 			// This does not seem to work properly when resizing the window
 			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
@@ -1437,6 +1434,12 @@ namespace FlatGui
 			scrolling.y += inputOutput.MouseDelta.y;
 
 			SaveCurrentProject();
+		}
+
+		// Show cursor position in scene view when pressing Alt
+		if (b_isHovered && inputOutput.KeyAlt)
+		{
+			RenderSceneViewTooltip();
 		}
 
 		// Get scroll amount for changing zoom level of scene view
@@ -1453,7 +1456,7 @@ namespace FlatGui
 			finalZoomSpeed += zoomMultiplier;
 		}
 		
-		if (is_hovered)
+		if (b_isHovered)
 		{
 			if (scrollInput > 0)
 			{
@@ -1462,7 +1465,6 @@ namespace FlatGui
 					scrolling.x -= trunc(signedMousePosX * weight);
 					scrolling.y -= trunc(signedMousePosY * weight);
 				}
-
 				if (gridStep.x + finalZoomSpeed < maxGridStep)
 				{
 					gridStep.x += finalZoomSpeed;					

@@ -552,7 +552,6 @@ namespace FlatEngine
 				IM_ASSERT(payload->DataSize == sizeof(int));
 				droppedValue = *(const int*)payload->Data;
 				b_dragTargeted = true;
-				
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -563,7 +562,7 @@ namespace FlatEngine
 			PushMenuStyles();
 			if (ImGui::MenuItem("Remove reference"))
 			{
-				droppedValue = -1;
+				droppedValue = -2;
 				b_dragTargeted = true;
 				ImGui::CloseCurrentPopup();
 			}

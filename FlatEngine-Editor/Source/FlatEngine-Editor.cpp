@@ -213,14 +213,14 @@ public:
 		/////////////////////////////
 		////////  WARNING!  /////////
 		/////////////////////////////
-		//  After recreating the window, you need to recreate any assets that were created using that window!!!    // 
-		//  This can lead to assets not appearing even though everything seems like it should be working and fine  //
+		//  After recreating the window, you need to recreate any assets that were created using that window!!!
+		//  This can lead to assets not appearing even though everything seems like it should be working and fine
 		
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			//FL::F_Window->SetScreenDimensions(1500, 850);
-			FL::F_Window->SetScreenDimensions(1900, 1000);
+			FL::F_Window->SetScreenDimensions(1500, 850);
+			//FL::F_Window->SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors

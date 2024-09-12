@@ -71,18 +71,13 @@ namespace FlatGui
 			Vector2 centerOffset = Vector2(SCENE_VIEWPORT_WIDTH / 2, SCENE_VIEWPORT_HEIGHT / 2);
 			bool _weightedScroll = true;
 
-			// This will catch our interactions
-			ImGui::SetCursorScreenPos(currentPos);
-			ImGui::SetNextItemAllowOverlap();
-			ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);		
-			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-			const bool is_active = ImGui::IsItemActive();   // Held
-
+			AddSceneViewMouseControls("SceneViewCanvas", currentPos, canvas_sz, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep);
 
 			RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
 
-			int droppedValue = -1;
+
 			// Drop Target
+			int droppedValue = -1;
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_fileExplorerTarget.c_str()))
@@ -122,25 +117,7 @@ namespace FlatGui
 				viewObjects.push_back(iter->second);				
 			}
 
-
 			RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);		
-
-
-			// For panning the scene view
-			const float mouse_threshold_for_pan = 0.0f;
-			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-			{
-				// This does not seem to work properly when resizing the window
-				// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
-				FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
-				FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
-			}
-
-			// Show cursor position in scene view when pressing Alt
-			if (is_hovered && inputOutput.KeyAlt)
-			{
-				RenderSceneViewTooltip();
-			}
 
 			// For centering on focused GameObject
 			GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
@@ -150,78 +127,6 @@ namespace FlatGui
 				Vector2 position = transform->GetTruePosition();
 				FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 			}
-
-			Vector2 adjustedScrolling = Vector2(FG_sceneViewScrolling.x + centerOffset.x, FG_sceneViewScrolling.y + centerOffset.y);
-
-			// Get scroll amount for changing zoom level of scene view
-			Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-			float scrollInput = inputOutput.MouseWheel;
-			float weight = 0.01f;
-			float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-			float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-			float zoomSpeed = 0.1f;
-			float zoomMultiplier = 10;
-			float finalZoomSpeed = zoomSpeed;
-			float minGridStep = 0;
-			float maxGridStep = 1000;
-
-			if (inputOutput.KeyCtrl)
-			{
-				finalZoomSpeed *= zoomMultiplier;
-			}
-
-			// Change scrolling offset based on mouse position and weight
-			if (is_hovered)
-			{
-				if (scrollInput > 0)
-				{
-					if (_weightedScroll)
-					{
-						FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-						FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
-					}
-					if (FG_sceneViewGridStep.x + finalZoomSpeed > maxGridStep)
-					{
-						FG_sceneViewGridStep.x = finalZoomSpeed;
-					}
-					else
-					{
-						FG_sceneViewGridStep.x = maxGridStep;
-					}
-					if (FG_sceneViewGridStep.x += finalZoomSpeed > maxGridStep)
-					{
-						FG_sceneViewGridStep.y = finalZoomSpeed;
-					}
-					else
-					{
-						FG_sceneViewGridStep.y = maxGridStep;
-					}
-				}
-				else if (scrollInput < 0)
-				{
-					if (_weightedScroll)
-					{
-						FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
-						FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
-					}
-					if (FG_sceneViewGridStep.x - finalZoomSpeed > minGridStep)
-					{
-						FG_sceneViewGridStep.x -= finalZoomSpeed;
-					}
-					else 
-					{
-						FG_sceneViewGridStep.x = minGridStep;
-					}		
-					if (FG_sceneViewGridStep.x -= finalZoomSpeed > minGridStep)
-					{
-						FG_sceneViewGridStep.y -= finalZoomSpeed;
-					}
-					else 
-					{
-						FG_sceneViewGridStep.y = minGridStep;
-					}	
-				}
-			}
 			
 			ImGui::PopStyleVar();
 			ImGui::PopStyleVar();
@@ -230,9 +135,12 @@ namespace FlatGui
 			ImGui::SetCursorScreenPos(canvas_p0);
 			RenderCursorModeButtons();
 
-			// Game Stats
-			ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 3, canvas_p1.y - 54));
+			// Game Stats in SceneView
+			ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 3, canvas_p1.y - 80)); // was - 54 y
 			RenderGameTimeStats();
+
+			// Game Stats in GameView
+			RenderStatsOnGameView();
 
 		// }
 		ImGui::End();
@@ -462,6 +370,8 @@ namespace FlatGui
 		std::string framesCountedString =         "frames: ---";
 		std::string averageFpsString    =         "fps:    ---";
 		std::string numberOfColliderPairsString = "collider pairs: ---";
+		std::string gridstepX = "gridstep x: " + std::to_string(FG_sceneViewGridStep.x);
+		std::string gridstepY = "gridstep y: " + std::to_string(FG_sceneViewGridStep.y);
 
 		static Uint32 frameStart = FL::GetEngineTime();		
 		static long framesCountedAtStart = FL::GetFramesCounted();
@@ -501,6 +411,10 @@ namespace FlatGui
 		ImGui::Text(averageFpsString.c_str());
 		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 39));
 		ImGui::Text(numberOfColliderPairsString.c_str());
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 52));
+		ImGui::Text(gridstepX.c_str());
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 65));
+		ImGui::Text(gridstepY.c_str());
 	}
 
 	void RenderStatsOnGameView()
@@ -510,12 +424,12 @@ namespace FlatGui
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		FL::PushWindowStyles();
-		ImGui::Begin("Game View", 0);
+		ImGui::Begin("Game View", 0, 0);
 		// {
 
 			Vector2 gameViewSize = ImGui::GetWindowSize();
 			Vector2 gameViewPos = ImGui::GetWindowPos();
-			ImGui::SetCursorScreenPos(FG_sceneViewCenter);
+			ImGui::SetCursorScreenPos(Vector2(gameViewPos.x + 3, gameViewPos.y + gameViewSize.y - 54));
 			RenderGameTimeStats();
 
 		// }
