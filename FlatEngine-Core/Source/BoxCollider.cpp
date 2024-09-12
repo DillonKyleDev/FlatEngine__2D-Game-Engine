@@ -1,13 +1,9 @@
-#include "Collider.h"
 #include "BoxCollider.h"
-#include "CircleCollider.h"
 #include "RigidBody.h"
-#include "FlatEngine.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "Project.h"
+
 #include "imgui_internal.h"
-#include "Scene.h"
 #include <cmath>
 
 namespace FlatEngine
@@ -20,7 +16,6 @@ namespace FlatEngine
 		m_activeHeight = 2;
 		m_activeEdges = Vector4(0, 0, 0, 0);
 		m_b_activeEdgesSet = false;
-
 		m_activeLeft = 0;
 		m_activeRight = 0;
 		m_activeBottom = 0;
@@ -34,6 +29,31 @@ namespace FlatEngine
 
 	BoxCollider::~BoxCollider()
 	{
+	}
+
+	std::string BoxCollider::GetData()
+	{
+		json jsonData = {
+			{ "type", "BoxCollider" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "_isTileMapCollider", m_b_isTileMapCollider },
+			{ "activeWidth", m_activeWidth },
+			{ "activeHeight", m_activeHeight },
+			{ "activeOffsetX", GetActiveOffset().x},
+			{ "activeOffsetY", GetActiveOffset().y },
+			{ "_isContinuous", IsContinuous()},
+			{ "_isSolid", IsSolid() },
+			{ "_isStatic", IsStatic() },
+			{ "activeLayer", GetActiveLayer() },
+			{ "_showActiveRadius", GetShowActiveRadius()},
+			{ "_isComposite", IsComposite() },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	bool BoxCollider::IsTileMapCollider()
@@ -85,17 +105,27 @@ namespace FlatEngine
 	void BoxCollider::UpdateActiveEdges(float gridstep, Vector2 viewportCenter)
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
-		bool _shouldUpdate = false;
-
+		bool b_shouldUpdate = false;
 
 		GameObject* parent = GetParent();
 		Transform* transform = nullptr;
 		Vector2 scale = Vector2(1, 1);
 
 		if (parent != nullptr)
+		{
 			transform = parent->GetTransform();
+		}
 		if (transform != nullptr)
+		{
 			scale = transform->GetScale();
+		}
+
+		// Accounts for any scene view scrolling / panning
+		if (GetPreviousCenterPoint() != viewportCenter)
+		{
+			b_shouldUpdate = true;
+			SetPreviousCenterPoint(viewportCenter);
+		}
 
 		RigidBody* rigidBody;
 		if (GetParent() != nullptr && GetParent()->HasComponent("RigidBody"))
@@ -104,16 +134,21 @@ namespace FlatEngine
 			Vector2 velocity = rigidBody->GetVelocity();
 
 			if (velocity.x != 0 || velocity.y != 0 || !m_b_activeEdgesSet || HasMoved())
-				_shouldUpdate = true;
+			{
+				b_shouldUpdate = true;
+			}
 		}
 		else
 		{
 			if (!m_b_activeEdgesSet || HasMoved())
-				_shouldUpdate = true;
+			{
+				b_shouldUpdate = true;
+			}
 		}
 
-		if (_shouldUpdate)
+		if (b_shouldUpdate)
 		{
+			m_b_activeEdgesSet = true;
 			RigidBody* rigidBody = parent->GetRigidBody();
 			Transform* transform = GetParent()->GetTransform();
 			Vector2 scale = transform->GetScale();
@@ -131,9 +166,13 @@ namespace FlatEngine
 
 			// For collision detection ( grid space values )
 			if (rigidBody != nullptr)
+			{
 				SetNextCenterGrid(Vector2(rigidBody->GetNextPosition().x + activeOffset.x, rigidBody->GetNextPosition().y + activeOffset.y));
+			}
 			else
+			{
 				SetNextCenterGrid(GetCenterGrid());
+			}
 
 			m_nextActiveLeft = GetNextCenterGrid().x - (m_activeWidth * scale.x / 2);
 			m_nextActiveTop = GetNextCenterGrid().y + (m_activeHeight * scale.y / 2);
@@ -144,6 +183,8 @@ namespace FlatEngine
 
 			UpdateCorners(gridstep, viewportCenter);
 		}
+
+		UpdatePreviousPosition();
 	}
 
 	void BoxCollider::UpdateNormals(float gridstep, Vector2 centerPoint)
@@ -293,31 +334,6 @@ namespace FlatEngine
 	Vector2* BoxCollider::GetNormals()
 	{
 		return m_normals;
-	}
-
-	std::string BoxCollider::GetData()
-	{
-		json jsonData = {
-			{ "type", "BoxCollider" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "_isTileMapCollider", m_b_isTileMapCollider },
-			{ "activeWidth", m_activeWidth },
-			{ "activeHeight", m_activeHeight },
-			{ "activeOffsetX", GetActiveOffset().x},
-			{ "activeOffsetY", GetActiveOffset().y },
-			{ "_isContinuous", IsContinuous()},
-			{ "_isSolid", IsSolid() },
-			{ "_isStatic", IsStatic() },
-			{ "activeLayer", GetActiveLayer() },
-			{ "_showActiveRadius", GetShowActiveRadius()},
-			{ "_isComposite", IsComposite() },
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 
 	void BoxCollider::RecalculateBounds(float gridstep, Vector2 viewportCenter)

@@ -1,13 +1,13 @@
 #pragma once
 #include "Component.h"
 #include "TagList.h"
+#include "Vector2.h"
 
 #include <string>
 #include <vector>
 
 namespace FlatEngine
 {
-	class TagList;
 	class Button;
 	class Canvas;
 	class Script;
@@ -31,7 +31,7 @@ namespace FlatEngine
 		GameObject(long parentID = -1, long myID = -1);
 		~GameObject();
 
-		void SetIsPrefab(bool _newIsPrefab);
+		void SetIsPrefab(bool b_isPrefab);
 		bool IsPrefab();
 		void SetPrefabName(std::string newPrefabName);
 		std::string GetPrefabName();
@@ -44,27 +44,26 @@ namespace FlatEngine
 		TagList &GetTagList();
 		void SetTagList(TagList tagList);
 		bool HasTag(std::string tagName);
-		void SetTag(std::string tagName, bool _value);
-
+		void SetTag(std::string tagName, bool b_hasTag);
 
 		// Components
 		void RemoveComponent(Component* component);
 		void DeleteComponents();
-		Transform* AddTransform(long id = -1, bool _active = true, bool _collapsed = false);
-		Sprite* AddSprite(long id = -1, bool _active = true, bool _collapsed = false);
-		Camera* AddCamera(long id = -1, bool _active = true, bool _collapsed = false);
-		Script* AddScript(long id = -1, bool _active = true, bool _collapsed = false);
-		Button* AddButton(long id = -1, bool _active = true, bool _collapsed = false);
-		Canvas* AddCanvas(long id = -1, bool _active = true, bool _collapsed = false);
-		Animation* AddAnimation(long id = -1, bool _active = true, bool _collapsed = false);
-		Audio* AddAudio(long id = -1, bool _active = true, bool _collapsed = false);
-		Text* AddText(long id = -1, bool _active = true, bool _collapsed = false);
-		BoxCollider* AddBoxCollider(long id = -1, bool _active = true, bool _collapsed = false);
-		CircleCollider* AddCircleCollider(long id = -1, bool _active = true, bool _collapsed = false);
-		CompositeCollider* AddCompositeCollider(long id = -1, bool _active = true, bool _collapsed = false);
-		RigidBody* AddRigidBody(long id = -1, bool _active = true, bool _collapsed = false);
-		CharacterController* AddCharacterController(long id = -1, bool _active = true, bool _collapsed = false);
-		TileMap* AddTileMap(long id = -1, bool _active = true, bool _collapsed = false);
+		Transform* AddTransform(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Sprite* AddSprite(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Camera* AddCamera(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Script* AddScript(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Button* AddButton(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Canvas* AddCanvas(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Animation* AddAnimation(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Audio* AddAudio(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		Text* AddText(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		BoxCollider* AddBoxCollider(long ID = -1, bool _active = true, bool b_collapsed = false);
+		CircleCollider* AddCircleCollider(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		CompositeCollider* AddCompositeCollider(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		RigidBody* AddRigidBody(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		CharacterController* AddCharacterController(long ID = -1, bool b_active = true, bool b_collapsed = false);
+		TileMap* AddTileMap(long ID = -1, bool b_active = true, bool b_collapsed = false);
 
 		Component* GetComponent(ComponentTypes type);
 		bool HasComponent(ComponentTypes type);
@@ -95,7 +94,7 @@ namespace FlatEngine
 		GameObject *FindChildByName(std::string name);
 		std::vector<long> GetChildren();
 		bool HasChildren();
-		void SetActive(bool _active);
+		void SetActive(bool b_active);
 		bool IsActive();
 
 	private:

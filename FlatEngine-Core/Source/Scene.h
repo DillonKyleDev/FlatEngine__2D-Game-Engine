@@ -1,34 +1,28 @@
 #pragma once
 #include "ECSManager.h"
+#include "GameObject.h"
 #include "TileMap.h"
+#include "Button.h"
+#include "Transform.h"
+#include "Sprite.h"
+#include "Camera.h"
+#include "Canvas.h"
+#include "Script.h"
+#include "Audio.h"
+#include "Text.h"
+#include "CharacterController.h"
+#include "BoxCollider.h"
+#include "CircleCollider.h"
+#include "CompositeCollider.h"
+#include "RigidBody.h"
+
 #include <vector>
 #include <map>
 #include <string>
-#include <memory>
-#include <list>
-#include <utility>
 
 
 namespace FlatEngine
 {
-	class GameObject;
-	class Transform;
-	class Sprite;
-	class Script;
-	class GameScript;
-	class Canvas;
-	class Audio;
-	class Text;
-	class Camera;
-	class Collider;
-	class BoxCollider;
-	class CircleCollider;
-	class Animation;
-	class Button;
-	class RigidBody;
-	class CompositeCollider;
-	class CharacterController;	
-
 	class Scene
 	{
 		friend class SceneManager;
@@ -63,7 +57,7 @@ namespace FlatEngine
 		void UpdateColliderPairs();
 
 		// ECS Wrappers
-		void KeepNextComponentIDUpToDate(long id);
+		void KeepNextComponentIDUpToDate(long ID);
 		Transform* AddTransform(Transform transform, long ownerID);
 		Sprite* AddSprite(Sprite sprite, long ownerID);
 		Camera* AddCamera(Camera camera, long ownerID);
@@ -118,10 +112,10 @@ namespace FlatEngine
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
 
 	private:
-		std::string name;
-		std::string path;
+		std::string m_name;
+		std::string m_path;
 		std::map<long, GameObject> m_sceneObjects;
-		std::vector<GameObject*> animatorPreviewObjects;
+		std::vector<GameObject*> m_animatorPreviewObjects;
 		ECSManager m_ECSManager;
 		Camera *m_primaryCamera;
 		long m_nextGameObjectID;

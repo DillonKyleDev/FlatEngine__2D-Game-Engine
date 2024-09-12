@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "FlatGui.h"
+#include "GameObject.h"
 #include "Transform.h"
 #include "Camera.h"
 #include "SceneManager.h"
@@ -7,14 +8,15 @@
 #include "Sprite.h"
 #include "Text.h"
 #include "BoxCollider.h"
+
 #include "imgui_internal.h"
+#include <cmath> // trunc
 
 using Transform = FlatEngine::Transform;
 
 namespace FlatGui 
 {
-	// Scene view default values
-	// The multiplier for sceneViewGridStep. Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
+	// FG_sceneViewGridStep: Used to convert grid space values to pixel values. ie. 2 grid squares = 2 * 10 = 20px.
 	Vector2 FG_sceneViewGridStep = Vector2(50,50);
 	float SCENE_VIEWPORT_WIDTH = 600;
 	float SCENE_VIEWPORT_HEIGHT = 400;
@@ -26,7 +28,6 @@ namespace FlatGui
 	Vector2 FG_sceneViewCenter = Vector2(0, 0);
 	bool FG_b_sceneViewLockedOnObject = false;
 	long FG_sceneViewLockedObjectID = -1;
-
 	bool F_b_inputFocused = false;
 
 	void Scene_RenderView()
@@ -37,163 +38,203 @@ namespace FlatGui
 		FlatEngine::PushWindowStyles();
 		ImGui::Begin("Scene View", 0, 16 | 8); // Window flags 	ImGuiWindowFlags_NoScrollWithMouse
 		FlatEngine::PopWindowStyles();
+		// {
 
-		FL::F_b_sceneViewFocused = ImGui::IsWindowFocused();
+			FL::F_b_sceneViewFocused = ImGui::IsWindowFocused();
 
+			Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
+			Vector2 canvas_sz = ImGui::GetContentRegionAvail();
 
-		Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
-		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
+			if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
+			if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
+			Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 
-		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
-		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-
-		// Set initial viewport dimensions for rendering scene view grid and objects
-		if (!FG_b_firstSceneRenderPass)
-		{
-			if (!FG_b_sceneHasBeenSet)
+			// Set initial viewport dimensions for rendering scene view grid and objects
+			if (!FG_b_firstSceneRenderPass)
 			{
-				SCENE_VIEWPORT_WIDTH = canvas_sz.x;
-				SCENE_VIEWPORT_HEIGHT = canvas_sz.y;
-				FG_b_sceneHasBeenSet = true;
+				if (!FG_b_sceneHasBeenSet)
+				{
+					SCENE_VIEWPORT_WIDTH = canvas_sz.x;
+					SCENE_VIEWPORT_HEIGHT = canvas_sz.y;
+					FG_b_sceneHasBeenSet = true;
+				}
 			}
-		}
-		FG_b_firstSceneRenderPass = false;
+			FG_b_firstSceneRenderPass = false;
 
-		// For calculating scrolling mouse position and what vector to zoom to
-		DYNAMIC_VIEWPORT_WIDTH = trunc(canvas_p1.x - canvas_p0.x);
-		DYNAMIC_VIEWPORT_HEIGHT = trunc(canvas_p1.y - canvas_p0.y);
+			// For calculating scrolling mouse position and what vector to zoom to
+			DYNAMIC_VIEWPORT_WIDTH = trunc(canvas_p1.x - canvas_p0.x);
+			DYNAMIC_VIEWPORT_HEIGHT = trunc(canvas_p1.y - canvas_p0.y);
 
-		// Get Input and Output
-		ImGuiIO& inputOutput = ImGui::GetIO();
-		Vector2 currentPos = ImGui::GetCursorScreenPos();
-		Vector2 centerOffset = Vector2(SCENE_VIEWPORT_WIDTH / 2, SCENE_VIEWPORT_HEIGHT / 2);
-		bool _weightedScroll = true;
-
-		// This will catch our interactions
-		ImGui::SetCursorScreenPos(currentPos);
-		ImGui::SetNextItemAllowOverlap();
-		ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);		
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
-
-
-		RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
-
-		int droppedValue = -1;
-		// Drop Target
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_fileExplorerTarget.c_str()))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(int));
-				droppedValue = *(const int*)payload->Data;
-			}
-			ImGui::EndDragDropTarget();
-		}
-		// Create a GameObject from a file in the Explorer by dragging it into the Scene View space
-		if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
-		{
+			// Get Input and Output
 			ImGuiIO& inputOutput = ImGui::GetIO();
-			Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
-			std::string filePath = FL::F_selectedFiles[droppedValue - 1];			
+			Vector2 currentPos = ImGui::GetCursorScreenPos();
+			Vector2 centerOffset = Vector2(SCENE_VIEWPORT_WIDTH / 2, SCENE_VIEWPORT_HEIGHT / 2);
+			bool _weightedScroll = true;
+
+			// This will catch our interactions
+			ImGui::SetCursorScreenPos(currentPos);
+			ImGui::SetNextItemAllowOverlap();
+			ImGui::InvisibleButton("SceneViewCanvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);		
+			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+			const bool is_active = ImGui::IsItemActive();   // Held
+
+
+			RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
+
+			int droppedValue = -1;
+			// Drop Target
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(FL::F_fileExplorerTarget.c_str()))
+				{
+					IM_ASSERT(payload->DataSize == sizeof(int));
+					droppedValue = *(const int*)payload->Data;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			// Create a GameObject from a file in the Explorer by dragging it into the Scene View space
+			if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+			{
+				ImGuiIO& inputOutput = ImGui::GetIO();
+				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
+				std::string filePath = FL::F_selectedFiles[droppedValue - 1];			
 			
-			FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
-		}
-
-		// Get currently loaded scene objects
-		Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
-		std::map<long, GameObject> sceneObjects;
-
-		if (loadedScene != nullptr)
-			sceneObjects = loadedScene->GetSceneObjects();
-		else
-			sceneObjects = std::map<long, GameObject>();
-
-		// Temporary fix.. Add support for map of long,GameObject instead of vector of GameObject
-		std::vector<GameObject> viewObjects;
-		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
-		{
-			viewObjects.push_back(iter->second);
-			iter++;
-		}
-
-
-		RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);		
-
-
-		// For panning the scene view
-		const float mouse_threshold_for_pan = 0.0f;
-		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-		{
-			// This does not seem to work properly when resizing the window
-			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
-			FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
-			FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
-		}
-
-		// Show cursor position in scene view when pressing Alt
-		if (is_hovered && inputOutput.KeyAlt)
-			RenderSceneViewTooltip();
-
-		// For centering on focused GameObject
-		GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
-		if (FG_b_sceneViewLockedOnObject && lockedObject != nullptr)
-		{
-			Transform* transform = lockedObject->GetTransform();
-			Vector2 position = transform->GetTruePosition();
-			FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
-		}
-
-		Vector2 adjustedScrolling = Vector2(FG_sceneViewScrolling.x + centerOffset.x, FG_sceneViewScrolling.y + centerOffset.y);
-
-		// Get scroll amount for changing zoom level of scene view
-		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-		float scrollInput = inputOutput.MouseWheel;
-		float weight = 0.01f;
-		float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-		float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-		float zoomSpeed = 0.1f;
-		float zoomMultiplier = 10;
-		float finalZoomSpeed = zoomSpeed;
-		
-		if (inputOutput.KeyCtrl)
-			finalZoomSpeed *= zoomMultiplier;
-
-		// Change scrolling offset based on mouse position and weight
-		if (is_hovered)
-		{
-			if (scrollInput > 0)
-			{
-				if (_weightedScroll)
-				{
-					FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
-					FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
-				}
-				FG_sceneViewGridStep.x += finalZoomSpeed;
-				FG_sceneViewGridStep.y += finalZoomSpeed;
+				FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
 			}
-			else if (scrollInput < 0 && FG_sceneViewGridStep.x > 2 && FG_sceneViewGridStep.y > 2)
+
+			// Get currently loaded scene objects
+			Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
+			std::map<long, GameObject> sceneObjects;
+
+			if (loadedScene != nullptr)
 			{
-				if (_weightedScroll)
-				{
-					FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
-					FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
-				}
-				FG_sceneViewGridStep.x -= finalZoomSpeed;
-				FG_sceneViewGridStep.y -= finalZoomSpeed;
+				sceneObjects = loadedScene->GetSceneObjects();
 			}
-		}
+			else
+			{
+				sceneObjects = std::map<long, GameObject>();
+			}
 
-		// Reset WindowPadding
-		ImGui::PopStyleVar();
-		// Reset WindowBorder
-		ImGui::PopStyleVar();
+			// Temporary fix.. Add support for map of long,GameObject instead of vector of GameObject
+			std::vector<GameObject> viewObjects;
+			for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end(); iter++)
+			{
+				viewObjects.push_back(iter->second);				
+			}
 
-		// Cursor mode select
-		ImGui::SetCursorScreenPos(canvas_p0);
-		RenderCursorModeButtons();
 
+			RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);		
+
+
+			// For panning the scene view
+			const float mouse_threshold_for_pan = 0.0f;
+			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+			{
+				// This does not seem to work properly when resizing the window
+				// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
+				FG_sceneViewScrolling.x += inputOutput.MouseDelta.x;
+				FG_sceneViewScrolling.y += inputOutput.MouseDelta.y;
+			}
+
+			// Show cursor position in scene view when pressing Alt
+			if (is_hovered && inputOutput.KeyAlt)
+			{
+				RenderSceneViewTooltip();
+			}
+
+			// For centering on focused GameObject
+			GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
+			if (FG_b_sceneViewLockedOnObject && lockedObject != nullptr)
+			{
+				Transform* transform = lockedObject->GetTransform();
+				Vector2 position = transform->GetTruePosition();
+				FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
+			}
+
+			Vector2 adjustedScrolling = Vector2(FG_sceneViewScrolling.x + centerOffset.x, FG_sceneViewScrolling.y + centerOffset.y);
+
+			// Get scroll amount for changing zoom level of scene view
+			Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+			float scrollInput = inputOutput.MouseWheel;
+			float weight = 0.01f;
+			float signedMousePosX = mousePos.x - canvas_p0.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+			float signedMousePosY = mousePos.y - canvas_p0.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+			float zoomSpeed = 0.1f;
+			float zoomMultiplier = 10;
+			float finalZoomSpeed = zoomSpeed;
+			float minGridStep = 0;
+			float maxGridStep = 1000;
+
+			if (inputOutput.KeyCtrl)
+			{
+				finalZoomSpeed *= zoomMultiplier;
+			}
+
+			// Change scrolling offset based on mouse position and weight
+			if (is_hovered)
+			{
+				if (scrollInput > 0)
+				{
+					if (_weightedScroll)
+					{
+						FG_sceneViewScrolling.x -= trunc(signedMousePosX * weight);
+						FG_sceneViewScrolling.y -= trunc(signedMousePosY * weight);
+					}
+					if (FG_sceneViewGridStep.x + finalZoomSpeed > maxGridStep)
+					{
+						FG_sceneViewGridStep.x = finalZoomSpeed;
+					}
+					else
+					{
+						FG_sceneViewGridStep.x = maxGridStep;
+					}
+					if (FG_sceneViewGridStep.x += finalZoomSpeed > maxGridStep)
+					{
+						FG_sceneViewGridStep.y = finalZoomSpeed;
+					}
+					else
+					{
+						FG_sceneViewGridStep.y = maxGridStep;
+					}
+				}
+				else if (scrollInput < 0)
+				{
+					if (_weightedScroll)
+					{
+						FG_sceneViewScrolling.x += trunc(signedMousePosX * weight);
+						FG_sceneViewScrolling.y += trunc(signedMousePosY * weight);
+					}
+					if (FG_sceneViewGridStep.x - finalZoomSpeed > minGridStep)
+					{
+						FG_sceneViewGridStep.x -= finalZoomSpeed;
+					}
+					else 
+					{
+						FG_sceneViewGridStep.x = minGridStep;
+					}		
+					if (FG_sceneViewGridStep.x -= finalZoomSpeed > minGridStep)
+					{
+						FG_sceneViewGridStep.y -= finalZoomSpeed;
+					}
+					else 
+					{
+						FG_sceneViewGridStep.y = minGridStep;
+					}	
+				}
+			}
+			
+			ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
+
+			// Cursor mode select
+			ImGui::SetCursorScreenPos(canvas_p0);
+			RenderCursorModeButtons();
+
+			// Game Stats
+			ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 3, canvas_p1.y - 54));
+			RenderGameTimeStats();
+
+		// }
 		ImGui::End();
 	}
 
@@ -224,11 +265,11 @@ namespace FlatGui
 
 	void RenderCursorModeButtons()
 	{
-		Vector2 iconSize = Vector2(28, 28);
-		Vector2 buttonSize = Vector2(37, 35);
+		Vector2 iconSize = Vector2(18, 18);
+		Vector2 buttonSize = Vector2(27, 25);
 		Vector2 startPos = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + 360, startPos.y + 46), FL::GetColor32("cursorModeSelectBg"), 0);
-		ImGui::GetWindowDrawList()->AddRect(Vector2(startPos.x - 1, startPos.y - 1), Vector2(startPos.x + 360, startPos.y + 46), FL::GetColor32("cursorModeSelectBorder"), 0);
+		ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + 300, startPos.y + 36), FL::GetColor32("cursorModeSelectBg"), 0);
+		ImGui::GetWindowDrawList()->AddRect(Vector2(startPos.x - 1, startPos.y - 1), Vector2(startPos.x + 300, startPos.y + 36), FL::GetColor32("cursorModeSelectBorder"), 0);
 		ImGui::SetCursorScreenPos(Vector2(startPos.x + 10, startPos.y + 5));
 
 
@@ -237,15 +278,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#TranslateModeIcon", FL::GetTexture("translate"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#TranslateModeIcon", FL::GetTexture("translate"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TRANSLATE;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Translate Mode (1)");
+		}
 		ImGui::SameLine();
 
 
@@ -254,15 +301,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#ScaleModeIcon", FL::GetTexture("scale"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#ScaleModeIcon", FL::GetTexture("scale"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::SCALE;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Scale Mode (2)");
+		}
 		ImGui::SameLine();
 
 
@@ -271,15 +324,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#RotateModeIcon", FL::GetTexture("rotate"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#RotateModeIcon", FL::GetTexture("rotate"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::ROTATE;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Rotate Mode (3)");
+		}
 		ImGui::SameLine();
 
 
@@ -288,15 +347,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#TileBrushModeIcon", FL::GetTexture("tileBrush"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#TileBrushModeIcon", FL::GetTexture("tileBrush"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_BRUSH;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Tile Brush Mode (4)");
+		}
 		ImGui::SameLine();
 
 
@@ -305,15 +370,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileErase"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#TileEraseModeIcon", FL::GetTexture("tileErase"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_ERASE;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Tile Erase Mode (5)");
+		}
 		ImGui::SameLine();
 
 
@@ -322,15 +393,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("tileColliderDraw"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#BoxColliderTileDrawModeIcon", FL::GetTexture("tileColliderDraw"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("BoxCollider Draw Mode (6)");
+		}
 		ImGui::SameLine();
 
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MULTISELECT)
@@ -338,15 +415,21 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#SelectTilesModeIcon", FL::GetTexture("selectTiles"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#SelectTilesModeIcon", FL::GetTexture("selectTiles"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MULTISELECT;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Select Tiles Mode (7)");
+		}
 		ImGui::SameLine();
 
 		if (FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE)
@@ -354,14 +437,92 @@ namespace FlatGui
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			ImGui::GetWindowDrawList()->AddRect(Vector2(currentPos.x - 1, currentPos.y - 1), Vector2(currentPos.x + buttonSize.x, currentPos.y + buttonSize.y), FL::GetColor32("cursorModeButtonSelectedBorder"));
 			if (FL::RenderImageButton("#MoveTilesModeIcon", FL::GetTexture("moveTiles"), iconSize, 0, FL::GetColor("selectedCursorModeButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHoverSelected")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+			}
 		}
 		else
 		{
 			if (FL::RenderImageButton("#MoveTilesModeIcon", FL::GetTexture("moveTiles"), iconSize, 0, FL::GetColor("transparent"), FL::GetColor("imageButtonTint"), FL::GetColor("cursorModeButtonHover")))
+			{
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_MOVE;
+			}
 		}
 		if (ImGui::IsItemHovered())
+		{
 			FL::RenderTextToolTip("Move Tiles Mode (8)");
+		}
+	}
+
+	void RenderGameTimeStats()
+	{
+		Vector2 currentPos = ImGui::GetCursorScreenPos();
+
+		std::string ellapsedTimeString =          "time:   ---";
+		std::string framesCountedString =         "frames: ---";
+		std::string averageFpsString    =         "fps:    ---";
+		std::string numberOfColliderPairsString = "collider pairs: ---";
+
+		static Uint32 frameStart = FL::GetEngineTime();		
+		static long framesCountedAtStart = FL::GetFramesCounted();
+		static float fps = 60;
+		static float lastFrameFps = 60;
+		static int fpsTrackingCounter = 0;
+		float smoothing = 0.005f; // smaller = more smoothing
+
+		if (FL::GameLoopStarted())
+		{
+			// Slows down the display of fps so it is readable
+			if (fpsTrackingCounter == 5)
+			{
+				Uint32 frameTime = FL::GetEngineTime() - frameStart;
+				long frames = FL::GetFramesCounted() - framesCountedAtStart;
+
+				fpsTrackingCounter = 0;
+				float measurement = (float)frames / ((float)frameTime / 1000);
+				fps = (measurement * smoothing) + (lastFrameFps * (1.0f - smoothing));
+				lastFrameFps = measurement;
+
+				framesCountedAtStart = FL::GetFramesCounted();
+				frameStart = FL::GetEngineTime();
+			}
+			fpsTrackingCounter++;
+
+			ellapsedTimeString =          "time:   " + std::to_string((int)FL::GetEllapsedGameTimeInSec());
+			framesCountedString =         "frames: " + std::to_string(FL::GetFramesCounted());
+			averageFpsString =            "fps:    " + std::to_string((int)fps);
+			numberOfColliderPairsString = "collider pairs: " + std::to_string(FL::GetLoadedScene()->GetColliderPairs().size());
+		}
+
+		ImGui::Text(ellapsedTimeString.c_str());
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 13));
+		ImGui::Text(framesCountedString.c_str());		
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 26));
+		ImGui::Text(averageFpsString.c_str());
+		ImGui::SetCursorScreenPos(Vector2(currentPos.x, currentPos.y + 39));
+		ImGui::Text(numberOfColliderPairsString.c_str());
+	}
+
+	void RenderStatsOnGameView()
+	{
+		// Work in progress
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		FL::PushWindowStyles();
+		ImGui::Begin("Game View", 0);
+		// {
+
+			Vector2 gameViewSize = ImGui::GetWindowSize();
+			Vector2 gameViewPos = ImGui::GetWindowPos();
+			ImGui::SetCursorScreenPos(FG_sceneViewCenter);
+			RenderGameTimeStats();
+
+		// }
+		ImGui::End();
+		FL::PopWindowStyles();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 	}
 }

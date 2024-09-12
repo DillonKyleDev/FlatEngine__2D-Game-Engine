@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+
 namespace FlatEngine
 {
 	Button::Button(long myID, long parentID)
@@ -20,6 +21,25 @@ namespace FlatEngine
 
 	Button::~Button()
 	{
+	}
+
+	std::string Button::GetData()
+	{
+		json jsonData = {
+			{ "type", "Button" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "activeWidth", m_activeWidth },
+			{ "activeHeight", m_activeHeight },
+			{ "activeOffsetX", m_activeOffset.x },
+			{ "activeOffsetY", m_activeOffset.y },
+			{ "activeLayer", m_activeLayer },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	void Button::SetActiveDimensions(float width, float height)
@@ -48,7 +68,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("Button active layer must be an larger than 0.");
+			LogError("Button active layer must be an larger than 0.");
 		}
 	}
 
@@ -108,24 +128,5 @@ namespace FlatEngine
 	Vector4 Button::GetActiveEdges()
 	{
 		return m_activeEdges;
-	}
-
-	std::string Button::GetData()
-	{
-		json jsonData = {
-			{ "type", "Button" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "activeWidth", m_activeWidth },
-			{ "activeHeight", m_activeHeight },
-			{ "activeOffsetX", m_activeOffset.x },
-			{ "activeOffsetY", m_activeOffset.y },
-			{ "activeLayer", m_activeLayer },
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 }

@@ -1,5 +1,6 @@
 #include "Vector4.h"
 
+
 namespace FlatEngine
 {
 	Vector4::Vector4()

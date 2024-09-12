@@ -1,6 +1,7 @@
 #include "ECSManager.h"
-#include "FlatEngine.h"
+#include "Scene.h"
 #include "GameObject.h"
+#include "TagList.h"
 #include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
@@ -17,7 +18,6 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "TileMap.h"
-#include "Scene.h"
 
 namespace FlatEngine
 {
@@ -143,7 +143,7 @@ namespace FlatEngine
 		}
 
 		// Update m_ColliderPairs
-		if (FlatEngine::GetObjectById(ownerID) != nullptr) // If BoxCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+		if (GetObjectById(ownerID) != nullptr) // If BoxCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
 			UpdateColliderPairs();
 
 		return &m_BoxColliders.at(ownerID).at(collider.GetID());
@@ -165,7 +165,7 @@ namespace FlatEngine
 		}
 
 		// Update m_ColliderPairs
-		if (FlatEngine::GetObjectById(ownerID) != nullptr) // If CircleCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+		if (GetObjectById(ownerID) != nullptr) // If CircleCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
 			UpdateColliderPairs();
 
 		return &m_CircleColliders.at(ownerID).at(collider.GetID());
@@ -645,48 +645,6 @@ namespace FlatEngine
 				}
 			}
 		}
-
-		//for (BoxCollider* collider1 : colliders)
-		//{
-		//	for (BoxCollider* collider2 : colliders)
-		//	{
-		//		if (collider1->GetParentID() != collider2->GetParentID())
-		//		{
-		//			TagList coll1TagList = collider1->GetParent()->GetTagList();
-		//			TagList coll2TagList = collider2->GetParent()->GetTagList();
-
-		//			std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
-		//			std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
-
-		//			bool _ignorePair = false;
-
-		//			for (std::string ignoredTag : coll1Ignored)
-		//			{
-		//				if (coll2TagList.HasTag(ignoredTag))
-		//				{
-		//					_ignorePair = true;
-		//					break;
-		//				}
-		//			}
-		//			if (!_ignorePair)
-		//			{
-		//				for (std::string ignoredTag : coll2Ignored)
-		//				{
-		//					if (coll1TagList.HasTag(ignoredTag))
-		//					{
-		//						_ignorePair = true;
-		//						break;
-		//					}
-		//				}
-		//			}
-		//			if (!_ignorePair)
-		//			{
-		//				std::pair<Collider*, Collider*> newPair = { collider1, collider2 };
-		//				m_ColliderPairs.push_back(newPair);
-		//			}
-		//		}
-		//	}
-		//}
 	}
 
 	std::vector<std::pair<Collider*, Collider*>> ECSManager::GetColliderPairs()

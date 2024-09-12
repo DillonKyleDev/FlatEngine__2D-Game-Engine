@@ -1,18 +1,21 @@
 #pragma once
 #include "Component.h"
-#include <SDL.h>
-#include <string>
-#include "Window.h"
-#include "Texture.h"
 #include "Vector2.h"
-#include <functional>
-#include "GameObject.h"
-#include "Vector4.h"
-#include <imgui.h>
+
+#include <string>
+#include <vector>
+#include "json.hpp"
+
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
 
 namespace FlatEngine
 {
+	class BoxCollider;
+	class CircleCollider;
+	class GameObject;
+
 	class Collider : public Component
 	{
 		friend class RigidBody;
@@ -20,20 +23,21 @@ namespace FlatEngine
 		Collider(long myID = -1, long parentID = -1);
 		~Collider();
 
-		static bool CheckForCollisionBoxCircle(FlatEngine::BoxCollider* boxCol, FlatEngine::CircleCollider* circleCol);
-		static bool CheckForCollisionBoxBox(FlatEngine::BoxCollider* boxCol1, FlatEngine::BoxCollider* boxCol2);
-
-		virtual void RecalculateBounds();
+		static bool CheckForCollisionBoxCircle(BoxCollider* boxCol, CircleCollider* circleCol);
+		static bool CheckForCollisionBoxBox(BoxCollider* boxCol1, BoxCollider* boxCol2);
 		static bool CheckForCollision(Collider* collider1, Collider* collider2);
+
+		virtual void RecalculateBounds() {};
 		virtual void ResetCollisions();		
 
 		void AddCollidingObject(Collider* collidedWith);		
-
 		bool IsColliding();
-		void SetColliding(bool _isColliding);
+		void SetColliding(bool b_isColliding);
 		void UpdatePreviousPosition();
 		Vector2 GetPreviousPosition();
 		void SetPreviousPosition(Vector2 prevPos);
+		Vector2 GetPreviousCenterPoint();
+		void SetPreviousCenterPoint(Vector2 centerPoint);
 		bool HasMoved();
 		std::vector<GameObject*> GetCollidingObjects();
 		void ClearCollidingObjects();
@@ -45,9 +49,8 @@ namespace FlatEngine
 		float GetActiveRadiusScreen();
 		void SetActiveRadiusGrid(float radius);
 		float GetActiveRadiusGrid();
-		void SetShowActiveRadius(bool _show);
+		void SetShowActiveRadius(bool b_showActiveRadius);
 		bool GetShowActiveRadius();
-		
 		void SetCenterGrid(Vector2 newCenter);
 		Vector2 GetCenterGrid();
 		void SetCenterCoord(Vector2 newCenter);
@@ -56,79 +59,80 @@ namespace FlatEngine
 		Vector2 GetNextCenterGrid();
 		void SetNextCenterCoord(Vector2 nextCenter);
 		Vector2 GetNextCenterCoord();
-		void SetIsContinuous(bool _continuous);
+		void SetIsContinuous(bool b_continuous);
 		bool IsContinuous();
-		void SetIsStatic(bool _newStatic);
+		void SetIsStatic(bool b_isStatic);
 		bool IsStatic();
-		void SetIsSolid(bool _solid);
+		void SetIsSolid(bool b_isSolid);
 		bool IsSolid();
 		void SetRotation(float rotation);
 		void UpdateRotation();
 		float GetRotation();
-		void SetIsComposite(bool _newComposite);
+		void SetIsComposite(bool b_isComposite);
 		bool IsComposite();
 
-		Vector2 collidedPosition;
-		Vector2 leftCollidedPosition;
-		Vector2 rightCollidedPosition;
-		Vector2 bottomCollidedPosition;
-		Vector2 topCollidedPosition;
-		Vector2 topRightCollidedPosition;
-		Vector2 bottomRightCollidedPosition;
-		Vector2 topLeftCollidedPosition;
-		Vector2 bottomLeftCollidedPosition;
+		Vector2 m_collidedPosition;
+		Vector2 m_leftCollidedPosition;
+		Vector2 m_rightCollidedPosition;
+		Vector2 m_bottomCollidedPosition;
+		Vector2 m_topCollidedPosition;
+		Vector2 m_topRightCollidedPosition;
+		Vector2 m_bottomRightCollidedPosition;
+		Vector2 m_topLeftCollidedPosition;
+		Vector2 m_bottomLeftCollidedPosition;
 
-		float rightCollision;
-		float leftCollision;
-		float bottomCollision;
-		float topCollision;
+		float m_rightCollision;
+		float m_leftCollision;
+		float m_bottomCollision;
+		float m_topCollision;
 
-		bool _isCollidingRight;
-		bool _isCollidingLeft;
-		bool _isCollidingBottom;
-		bool _isCollidingTop;
+		bool m_b_isCollidingRight;
+		bool m_b_isCollidingLeft;
+		bool m_b_isCollidingBottom;
+		bool m_b_isCollidingTop;
 
-		bool _isCollidingTopRight;
-		bool _isCollidingTopLeft;
-		bool _isCollidingBottomRight;
-		bool _isCollidingBottomLeft;
+		bool m_b_isCollidingTopRight;
+		bool m_b_isCollidingTopLeft;
+		bool m_b_isCollidingBottomRight;
+		bool m_b_isCollidingBottomLeft;
 
-		bool _rightCollisionStatic;
-		bool _leftCollisionStatic;
-		bool _bottomCollisionStatic;
-		bool _topCollisionStatic;
-		bool _bottomLeftCollisionStatic;
-		bool _bottomRightCollisionStatic;
+		bool m_b_rightCollisionStatic;
+		bool m_b_leftCollisionStatic;
+		bool m_b_bottomCollisionStatic;
+		bool m_b_topCollisionStatic;
+		bool m_b_bottomLeftCollisionStatic;
+		bool m_b_bottomRightCollisionStatic;
 		//bool _topLeftCollisionStatic;
 		//bool _topRightCollisionStatic;
 
-		bool _rightCollisionSolid;
-		bool _leftCollisionSolid;
-		bool _bottomCollisionSolid;
-		bool _topCollisionSolid;
-		bool _bottomLeftCollisionSolid;
-		bool _bottomRightCollisionSolid;
-		bool _topLeftCollisionSolid;
-		bool _topRightCollisionSolid;
+		bool m_b_rightCollisionSolid;
+		bool m_b_leftCollisionSolid;
+		bool m_b_bottomCollisionSolid;
+		bool m_b_topCollisionSolid;
+		bool m_b_bottomLeftCollisionSolid;
+		bool m_b_bottomRightCollisionSolid;
+		bool m_b_topLeftCollisionSolid;
+		bool m_b_topRightCollisionSolid;
 
 	private:
 		std::vector<GameObject*> m_collidingObjects;
-		std::vector<GameObject*> collidingLastFrame;
-		Vector2 activeOffset;
-		Vector2 previousPosition;
-		Vector2 centerGrid;
-		Vector2 nextCenterGrid;
-		Vector2 centerCoord;
-		Vector2 nextCenterCoord;
-		float rotation;
-		float activeRadiusScreen;
-		float activeRadiusGrid;
-		int activeLayer;
-		bool _isColliding;
-		bool _isContinuous;
-		bool _isStatic;
-		bool _isSolid;
-		bool _showActiveRadius;
-		bool _isComposite;
+		std::vector<GameObject*> m_collidingLastFrame;
+		Vector2 m_activeOffset;
+		Vector2 m_previousPosition;
+		Vector2 m_previousCenterPoint;
+		Vector2 m_centerGrid;
+		Vector2 m_nextCenterGrid;
+		Vector2 m_centerCoord;
+		Vector2 m_nextCenterCoord;
+		float m_rotation;
+		float m_activeRadiusScreen;
+		float m_activeRadiusGrid;
+		int m_activeLayer;
+		bool m_b_isColliding;
+		bool m_b_isContinuous;
+		bool m_b_isStatic;
+		bool m_b_isSolid;
+		bool m_b_showActiveRadius;
+		bool m_b_isComposite;
 	};
 }

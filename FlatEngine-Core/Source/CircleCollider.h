@@ -1,6 +1,6 @@
 #pragma once
 #include "Collider.h"
-#include "FlatEngine.h"
+
 
 namespace FlatEngine 
 {
@@ -8,30 +8,27 @@ namespace FlatEngine
 	{
 		friend class Collider;
 		friend class BoxCollider;
-		class GameObject;
 
 	public:
 		CircleCollider(long myID = -1, long parentID = -1);
 		~CircleCollider();
+		std::string GetData();
 
 		void UpdateCenter(float step, Vector2 centerPoint);
 		void UpdateActiveEdges(float step, Vector2 centerPoint);
-		std::string GetData();
 		void RecalculateBounds(float step, Vector2 centerPoint);
 
 	private:
-		bool _activeEdgesSet;
-
+		bool m_b_activeEdgesSet;
 		// Current
-		float activeLeft;
-		float activeRight;
-		float activeBottom;
-		float activeTop;
-
+		float m_activeLeft;
+		float m_activeRight;
+		float m_activeBottom;
+		float m_activeTop;
 		// Next
-		float nextActiveLeft;
-		float nextActiveRight;
-		float nextActiveBottom;
-		float nextActiveTop;
+		float m_nextActiveLeft;
+		float m_nextActiveRight;
+		float m_nextActiveBottom;
+		float m_nextActiveTop;
 	};
 }

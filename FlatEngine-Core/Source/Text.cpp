@@ -30,6 +30,29 @@ namespace FlatEngine
 		TTF_CloseFont(m_font);
 	}
 
+	std::string Text::GetData()
+	{
+		json jsonData = {
+			{ "type", "Text" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "fontPath", m_fontPath },
+			{ "text", m_text },
+			{ "fontSize", m_fontSize },
+			{ "pivotPoint", GetPivotPointString() },
+			{ "tintColorX", m_tintColor.x },
+			{ "tintColorY", m_tintColor.y },
+			{ "tintColorZ", m_tintColor.z },
+			{ "tintColorW", m_tintColor.w },
+			{ "xOffset", m_offset.x },
+			{ "yOffset", m_offset.y },
+			{ "renderOrder", m_renderOrder },
+		};
+		std::string data = jsonData.dump();
+		return data;
+	}
+
 	void Text::LoadText()
 	{
 		if (m_text != "" && m_font != nullptr && m_fontSize > 0)
@@ -173,7 +196,7 @@ namespace FlatEngine
 
 	void Text::UpdatePivotOffset()
 	{
-		Vector2 centeredOffset = Vector2(m_texture->GetWidth() / 2, m_texture->GetHeight() / 2);
+		Vector2 centeredOffset = Vector2((float)m_texture->GetWidth() / 2, (float)m_texture->GetHeight() / 2);
 
 		switch (m_pivotPoint)
 		{
@@ -231,28 +254,5 @@ namespace FlatEngine
 		}
 
 		m_offset = m_pivotOffset;
-	}
-
-	std::string Text::GetData()
-	{
-		json jsonData = {
-			{ "type", "Text" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "fontPath", m_fontPath },
-			{ "text", m_text },
-			{ "fontSize", m_fontSize },
-			{ "pivotPoint", GetPivotPointString() },
-			{ "tintColorX", m_tintColor.x },
-			{ "tintColorY", m_tintColor.y },
-			{ "tintColorZ", m_tintColor.z },
-			{ "tintColorW", m_tintColor.w },
-			{ "xOffset", m_offset.x },
-			{ "yOffset", m_offset.y },
-			{ "renderOrder", m_renderOrder },
-		};
-		std::string data = jsonData.dump();
-		return data;
 	}
 }

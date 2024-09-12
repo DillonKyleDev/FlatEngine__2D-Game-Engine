@@ -10,8 +10,9 @@ namespace FlatEngine
 	public:
 		Camera(long myID = -1, long parentID = -1);		
 		~Camera();
+		std::string GetData();
 
-		void SetPrimaryCamera(bool _isPrimary);
+		void SetPrimaryCamera(bool b_isPrimary);
 		bool IsPrimary();
 		void SetDimensions(float width, float height);
 		void SetZoom(float zoom);
@@ -21,13 +22,12 @@ namespace FlatEngine
 		void SetFrustrumColor(Vector4 color);
 		Vector4 GetFrustrumColor();
 		void Follow();
-		void SetShouldFollow(bool _shouldFollow);
+		void SetShouldFollow(bool b_shouldFollow);
 		bool GetShouldFollow();
 		void SetToFollowID(long toFollow);
 		long GetToFollowID();
 		void SetFollowSmoothing(float smoothing);
 		float GetFollowSmoothing();
-		std::string GetData();
 
 	private:
 		float m_width;
@@ -40,4 +40,3 @@ namespace FlatEngine
 		float m_followSmoothing;
 	};
 }
-

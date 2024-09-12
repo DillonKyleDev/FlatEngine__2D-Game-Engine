@@ -1,12 +1,11 @@
 #include "TileMap.h"
-#include "TileSet.h"
-#include "BoxCollider.h"
 #include "FlatEngine.h"
 #include "Scene.h"
 
+
 namespace FlatEngine
 {
-	FlatEngine::TileMap::TileMap(long myID, long parentID)
+	TileMap::TileMap(long myID, long parentID)
 	{
 		SetType(ComponentTypes::T_TileMap);
 		SetID(myID);
@@ -294,15 +293,23 @@ namespace FlatEngine
 
 				float tileMapCenterX = (float)(m_width / 2);
 				if (m_width % 2)
+				{
 					tileMapCenterX += 1;
+				}
 				else
+				{
 					tileMapCenterX += 0.5f;
+				}
 
 				float tileMapCenterY = (float)(m_height / 2);
 				if (m_height % 2)
+				{
 					tileMapCenterY += 1;
+				}
 				else
+				{
 					tileMapCenterY += 0.5f;
+				}
 
 				float widthToAdd = colWidthInTiles / 2;
 				widthToAdd -= 0.5f;
@@ -435,7 +442,9 @@ namespace FlatEngine
 		for (std::vector<std::string>::iterator iter = m_tileSetNames.begin(); iter != m_tileSetNames.end(); iter++)
 		{
 			if (name == *iter)
+			{
 				m_tileSetNames.erase(iter);
+			}
 		}
 	}
 

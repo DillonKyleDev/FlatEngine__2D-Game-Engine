@@ -2,7 +2,10 @@
 #include "FlatEngine.h"
 
 #include <filesystem>
+#include "json.hpp"
 
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
 
 namespace FlatEngine
@@ -49,9 +52,13 @@ namespace FlatEngine
     std::pair<Vector2, Vector2> TileSet::GetIndexUVs(int index)
     {
         if (m_allTileUVs.count(index) > 0)
+        {
             return m_allTileUVs.at(index);
+        }
         else
+        {
             return std::pair<Vector2, Vector2>();
+        }
     }
 
     void TileSet::SetTexturePath(std::string texturePath)
@@ -116,21 +123,6 @@ namespace FlatEngine
         return m_tileHeight;
     }
 
-    void TileSet::SaveCopyOfTexture()
-    {
-        try
-        {
-            std::filesystem::copy(m_texturePath, GetDir("tileTextures"), std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
-            // save the new file path            
-            m_texturePath = GetDir("tileTextures") + GetFilenameFromPath(m_texturePath, true);
-        }
-        catch (std::exception& e)
-        {
-            LogError("Failed to copy texture to saved tile textures");
-            LogError(e.what());
-        }
-    }
-
     void TileSet::InitializeUVs()
     {
         m_tileSetIndices.clear();
@@ -145,9 +137,13 @@ namespace FlatEngine
 
             // if the desired tile dimensions are not aligned perfectly with the texture dimensions, add 1 more tile across or down for the overhang
             if (textureWidth % m_tileWidth != 0)
+            {
                 tilesAcross += 1;
+            }
             if (textureHeight % m_tileHeight != 0)
+            {
                 tilesDown += 1;
+            }
 
             int counter = 0;
 
@@ -160,9 +156,13 @@ namespace FlatEngine
 
                     // Make sure we're not saving a UV position that is outside the bounds of the SDL_Texture
                     if (textureWidth % m_tileWidth != 0 && h == tilesAcross - 1)
+                    {
                         uvEnd.x -= textureWidth % m_tileWidth;
+                    }
                     if (textureHeight % m_tileHeight != 0 && v == tilesDown - 1)
+                    {
                         uvEnd.x -= textureHeight % m_tileHeight;
+                    }
 
                     std::pair<Vector2, Vector2> uvs = { uvStart, uvEnd };
                     m_allTileUVs.emplace(counter, uvs);
@@ -185,6 +185,8 @@ namespace FlatEngine
         }
         
         if (m_allTileUVs.count(index) > 0)
+        {
             m_tileSetIndices.push_back(index);
+        }
     }
 }

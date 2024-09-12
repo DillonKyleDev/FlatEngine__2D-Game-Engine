@@ -1,7 +1,10 @@
 #pragma once
 #include "Component.h"
 #include "Vector2.h"
+
+#include <string>
 #include "json.hpp"
+
 using json = nlohmann::json;
 using namespace nlohmann::literals;
 
@@ -13,6 +16,7 @@ namespace FlatEngine
 	public:
 		Transform(long myID = -1, long parentID = -1);
 		~Transform();
+		std::string GetData();
 
 		void SetInitialPosition(Vector2 initialPos);
 		void SetOrigin(Vector2 newOrigin);
@@ -27,7 +31,6 @@ namespace FlatEngine
 		Vector2 GetScale();
 		float GetRotation();
 		void LookAt(Vector2 lookAt);
-		std::string GetData();
 
 	private:
 		Vector2 m_origin;

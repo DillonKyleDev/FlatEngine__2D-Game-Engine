@@ -1,6 +1,7 @@
 #include "Audio.h"
 #include "FlatEngine.h"
 
+
 namespace FlatEngine
 {
 	Audio::Audio(long myID, long parentID)
@@ -13,6 +14,33 @@ namespace FlatEngine
 
 	Audio::~Audio()
 	{
+	}
+
+	std::string Audio::GetData()
+	{
+		json soundData = json::array();
+
+		for (SoundData sound : m_sounds)
+		{
+			json soundJson = {
+				{ "path", sound.path },
+				{ "name", sound.name },
+				{ "b_isMusic", sound.b_isMusic }
+			};
+			soundData.push_back(soundJson);
+		}
+
+		json jsonData = {
+			{ "type", "Audio" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "soundData", soundData }
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	void Audio::SetPath(std::string soundName, std::string newPath)
@@ -228,32 +256,5 @@ namespace FlatEngine
 			}
 		}
 		return false;
-	}
-
-	std::string Audio::GetData()
-	{
-		json soundData = json::array();		
-
-		for (SoundData sound : m_sounds)
-		{
-			json soundJson = {
-				{ "path", sound.path },
-				{ "name", sound.name },
-				{ "b_isMusic", sound.b_isMusic }
-			};
-			soundData.push_back(soundJson);
-		}
-
-		json jsonData = {
-			{ "type", "Audio" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "soundData", soundData }
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 }

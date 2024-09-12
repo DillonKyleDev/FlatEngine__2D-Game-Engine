@@ -1,12 +1,13 @@
 #include "ProfilerProcess.h"
 
+
 namespace FlatEngine 
 {
 	Process::Process(std::string name)
 	{
-		processName = name;
-		rawHangTimeData = std::deque<float>();
-		tickCounter = 0;
+		m_processName = name;
+		m_rawHangTimeData = std::deque<float>();
+		m_tickCounter = 0;
 	}
 
 	Process::~Process()
@@ -15,68 +16,52 @@ namespace FlatEngine
 
 	std::string Process::GetProcessName()
 	{
-		return processName;
+		return m_processName;
 	}
 
 	void Process::AddHangTimeData(float hangTime)
 	{
-		if (rawHangTimeData.size() < 100)
+		if (m_rawHangTimeData.size() < 100)
 		{
-			rawHangTimeData.push_front(hangTime);
+			m_rawHangTimeData.push_front(hangTime);
 		}
-		else if (rawHangTimeData.size() >= 100)
+		else if (m_rawHangTimeData.size() >= 100)
 		{
-			rawHangTimeData.pop_front();
-			rawHangTimeData.push_back(hangTime);
+			m_rawHangTimeData.pop_front();
+			m_rawHangTimeData.push_back(hangTime);
 		}
 
-
-		//if (tickCounter < 100)
-		//{
-		//	std::vector<float>::iterator iter = snapShotData.begin();
-
-		//	if (snapShotData.size() >= 100)
-		//		snapShotData.insert(iter + tickCounter, rawHangTimeData[tickCounter]);
-		//	else
-		//		snapShotData.push_back(rawHangTimeData[tickCounter]);
-
-		//	tickCounter++;
-		//}
-		//else if (tickCounter >= 100 && tickCounter < 200)
-		//	tickCounter++;
-		//else if (tickCounter == 200)
-		//{
-		//	tickCounter = 0;
-		//}
-
-
-		if (tickCounter < 100)
+		if (m_tickCounter < 100)
 		{
-			tickCounter++;
+			m_tickCounter++;
 		}
-		else if (tickCounter == 100)
+		else if (m_tickCounter == 100)
 		{
-			snapShotData.clear();
+			m_snapShotData.clear();
 			for (int i = 0; i < 100; i++)
-				snapShotData.push_back(rawHangTimeData[i]);
-			tickCounter++;
+			{
+				m_snapShotData.push_back(m_rawHangTimeData[i]);
+			}
+			m_tickCounter++;
 		}
-		else if (tickCounter > 100 && tickCounter < 200)
-			tickCounter++;
-		else if (tickCounter == 200)
+		else if (m_tickCounter > 100 && m_tickCounter < 200)
 		{
-			tickCounter = 0;
+			m_tickCounter++;
+		}
+		else if (m_tickCounter == 200)
+		{
+			m_tickCounter = 0;
 		}
 
 	}
 
 	std::deque<float> Process::GetRawData()
 	{
-		return rawHangTimeData;
+		return m_rawHangTimeData;
 	}
 
 	std::vector<float> Process::GetHangTimeData()
 	{
-		return snapShotData;
+		return m_snapShotData;
 	}
 }

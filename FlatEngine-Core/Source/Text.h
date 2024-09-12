@@ -5,6 +5,8 @@
 #include "Vector4.h"
 
 #include <SDL_ttf.h>
+#include <string>
+#include <memory>
 
 
 namespace FlatEngine
@@ -14,6 +16,7 @@ namespace FlatEngine
 	public:
 		Text(long myID = -1, long parentID = -1);
 		~Text();
+		std::string GetData();
 
 		void LoadText();
 		void SetRenderOrder(int order);
@@ -36,7 +39,6 @@ namespace FlatEngine
 		void SetPivotOffset(Vector2 newPivotOffset);
 		Vector2 GetPivotOffset();
 		void UpdatePivotOffset();
-		std::string GetData();
 		
 	private:
 		TTF_Font* m_font;

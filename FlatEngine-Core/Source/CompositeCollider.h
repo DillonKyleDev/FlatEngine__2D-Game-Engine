@@ -2,6 +2,9 @@
 #include "Component.h"
 #include "Collider.h"
 
+#include <vector>
+#include <memory>
+
 
 namespace FlatEngine
 {

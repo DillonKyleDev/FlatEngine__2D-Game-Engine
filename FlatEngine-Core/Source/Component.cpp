@@ -1,15 +1,16 @@
 #include "Component.h"
 #include "FlatEngine.h"
 
+
 namespace FlatEngine
 {
 	Component::Component()
 	{
-		type = T_Null;
-		ID = -1;
-		parentID = -1;
-		_isCollapsed = false;
-		_isActive = true;
+		m_type = T_Null;
+		m_ID = -1;
+		m_parentID = -1;
+		m_b_isCollapsed = false;
+		m_b_isActive = true;
 	}
 
 	Component::~Component()
@@ -18,47 +19,47 @@ namespace FlatEngine
 
 	void Component::SetParentID(long newParentID)
 	{
-		parentID = newParentID;
+		m_parentID = newParentID;
 	}
 
 	long Component::GetParentID()
 	{
-		return parentID;
+		return m_parentID;
 	}
 
 	GameObject* Component::GetParent()
 	{
-		return GetObjectById(parentID);
+		return GetObjectById(m_parentID);
 	}
 
 	void Component::SetType(ComponentTypes componentType)
 	{
-		type = componentType;
+		m_type = componentType;
 	}
 
 	void Component::SetID(long newID)
 	{
-		ID = newID;
+		m_ID = newID;
 	}
 
 	long Component::GetID()
 	{
-		return ID;
+		return m_ID;
 	}
 
 	ComponentTypes Component::GetType()
 	{
-		return type;
+		return m_type;
 	}
 
 	bool Component::IsCollapsed()
 	{
-		return _isCollapsed;
+		return m_b_isCollapsed;
 	}
 
 	std::string Component::GetTypeString()
 	{
-		switch (type)
+		switch (m_type)
 		{
 		case T_Transform:
 			return "Transform";
@@ -125,23 +126,18 @@ namespace FlatEngine
 		}
 	}
 
-	void Component::SetCollapsed(bool collapsed)
+	void Component::SetCollapsed(bool b_isCollapsed)
 	{
-		_isCollapsed = collapsed;
+		m_b_isCollapsed = b_isCollapsed;
 	}
 
-	void Component::SetActive(bool _active)
+	void Component::SetActive(bool b_isActive)
 	{
-		_isActive = _active;
+		m_b_isActive = b_isActive;
 	}
 
 	bool Component::IsActive()
 	{
-		return _isActive;
-	}
-
-	std::string Component::GetData()
-	{
-		return "{}";
+		return m_b_isActive;
 	}
 }

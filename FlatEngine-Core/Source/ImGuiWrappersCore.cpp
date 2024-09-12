@@ -1,6 +1,4 @@
 #include "FlatEngine.h"
-#include "imgui.h"
-#include "imgui_internal.h"
 #include "TagList.h"
 #include "Component.h"
 #include "Transform.h"
@@ -18,6 +16,9 @@
 #include "CircleCollider.h"
 #include "RigidBody.h"
 #include "Project.h"
+
+#include "imgui.h"
+#include "imgui_internal.h"
 
 
 namespace FlatEngine 
@@ -52,7 +53,7 @@ namespace FlatEngine
 	{
 		Vector2 titleStartPos = ImGui::GetCursorScreenPos();
 		Vector2 titleEndPos = Vector2(titleStartPos.x + ImGui::GetContentRegionAvail().x, titleStartPos.y + 24);
-		ImGui::GetWindowDrawList()->AddRectFilled(titleStartPos, titleEndPos, GetColor32("componentSubTileBg"));
+		ImGui::GetWindowDrawList()->AddRectFilled(titleStartPos, titleEndPos, GetColor32("componentSubTitleBg"));
 		MoveScreenCursor(5, 5);
 		ImGui::Text(title.c_str());
 		MoveScreenCursor(0, 12);
@@ -95,7 +96,7 @@ namespace FlatEngine
 	{
 		ImGui::PushStyleColor(ImGuiCol_::ImGuiCol_ChildBg, bgColor);
 		ImGui::BeginChild(title.c_str(), Vector2(0, 0), F_childFlags, flags);
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();		
 	}
 
 	void BeginResizeWindowChild(std::string title, Vector4 bgColor, ImGuiWindowFlags flags)
@@ -381,7 +382,7 @@ namespace FlatEngine
 		PopTableStyles();
 	}
 
-	bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
+	bool RenderInput(std::string id, std::string label, std::string& value, bool b_canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
 	{
 		bool b_editedButton = false;
 		bool b_editedInput = false;
@@ -389,21 +390,25 @@ namespace FlatEngine
 		char newPath[1024];
 		strcpy_s(newPath, value.c_str());
 		std::string pathString = label;
-
-		MoveScreenCursor(0, 3);
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5,3));
 
 		if (pathString != "")
 		{
 			pathString += ":";
-			ImGui::Text(pathString.c_str());
-			ImGui::SameLine(0, 5);
-			MoveScreenCursor(0, -3); // Moves the actual input up to be level with the label
+			ImGui::AlignTextToFramePadding();
+			ImGui::TextUnformatted(pathString.c_str());
+			ImGui::SameLine(0, 5);			
 		}
 
-		if (_canOpenFiles && inputWidth == -1)
-			inputWidth = ImGui::GetContentRegionAvail().x- 31;
-		else if (_canOpenFiles)
+		if (b_canOpenFiles && inputWidth == -1)
+		{
+			inputWidth = ImGui::GetContentRegionAvail().x - 31;
+		}
+		else if (b_canOpenFiles)
+		{
 			inputWidth -= 31;
+		}
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
@@ -416,7 +421,7 @@ namespace FlatEngine
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 
-		if (_canOpenFiles)
+		if (b_canOpenFiles)
 		{
 			ImGui::SameLine(0, -1);
 
@@ -429,6 +434,8 @@ namespace FlatEngine
 			}
 		}
 
+		ImGui::PopStyleVar();
+
 		if (newPath != nullptr)
 			value = newPath;
 		return b_editedButton || b_editedInput || b_dragTargeted;
@@ -438,28 +445,29 @@ namespace FlatEngine
 	{		
 		bool b_dragTargeted = false;
 
-		MoveScreenCursor(0, 3);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 3));
 
 		if (label != "")
 		{
 			label += ":";
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text(label.c_str());
-			ImGui::SameLine(0, 5);
-			MoveScreenCursor(0, -3);
+			ImGui::SameLine(0, 5);			
 		}
 
 		if (inputWidth == -1)
 		{
-			inputWidth = ImGui::GetContentRegionAvail().x;
+			inputWidth = ImGui::GetContentRegionAvail().x - 1;
 		}
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
 		Vector2 inputStart = ImGui::GetCursorScreenPos();
-		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.7f);
+		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.65f);
 		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"), 1);
-		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
+		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 1));
 		ImGui::Text(displayValue.c_str());
 		RenderInvisibleButton("##DropInputdropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		ImGui::PopStyleVar();
 		if (tooltip != "" && ImGui::IsItemHovered())
 		{
 			RenderTextToolTip(tooltip);
@@ -492,6 +500,8 @@ namespace FlatEngine
 			ImGui::EndPopup();
 		}
 
+		ImGui::PopStyleVar();
+
 		return b_dragTargeted;
 	}
 
@@ -502,28 +512,33 @@ namespace FlatEngine
 		char newPath[1024];
 		strcpy_s(newPath, openedFileValue.c_str());
 
-		MoveScreenCursor(0, 3);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 3));
 
 		if (label != "")
 		{
 			label += ":";
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text(label.c_str());
-			ImGui::SameLine(0, 5);
-			MoveScreenCursor(0, -3);
+			ImGui::SameLine(0, 5);			
 		}
 
 		if (inputWidth == -1)
-			inputWidth = ImGui::GetContentRegionAvail().x- 31;
+		{
+			inputWidth = ImGui::GetContentRegionAvail().x - 31;
+		}
 		else
+		{
 			inputWidth -= 31;
+		}
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
 		Vector2 inputStart = ImGui::GetCursorScreenPos();
-		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.7f);
+		Vector2 inputSize = Vector2(inputWidth, ImGui::GetFontSize() * 1.65f);
 		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"), 1);
-		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 3));
+		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 1));
 		ImGui::Text(displayValue.c_str());
 		RenderInvisibleButton("##DropInputOpenFilesdropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
+		ImGui::PopStyleVar();
 		if (tooltip != "" && ImGui::IsItemHovered())
 		{
 			RenderTextToolTip(tooltip);
@@ -572,6 +587,8 @@ namespace FlatEngine
 			openedFileValue = newPath;
 		}
 
+		ImGui::PopStyleVar();
+
 		return b_editedButton || b_dragTargeted;
 	}
 
@@ -608,12 +625,18 @@ namespace FlatEngine
 				
 				std::string selectableLabel = " " + options[n];
 				if (options[n] == "")
+				{
 					selectableLabel = empty;
+				}
 					
 				if (options[n] == "")
+				{
 					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("logText"));
+				}
 				else
+				{
 					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("white"));
+				}
 
 				if (ImGui::Selectable(selectableLabel.c_str(), is_selected))
 				{
@@ -621,7 +644,9 @@ namespace FlatEngine
 					b_selectionMade = true;
 				}
 				if (is_selected)
+				{
 					ImGui::SetItemDefaultFocus();
+				}
 
 				ImGui::PopStyleColor();
 			}
@@ -629,7 +654,9 @@ namespace FlatEngine
 		}
 
 		if (b_currentSelectionEmpty)
+		{
 			ImGui::PopStyleColor();
+		}
 		PopMenuStyles();
 		PopComboStyles();
 
@@ -659,9 +686,13 @@ namespace FlatEngine
 
 		std::string treeID = name + "_node";
 		if (node_clicked == name)
+		{
 			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+		}
 		else
+		{
 			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		}
 
 		//// TreeNode Opener - No TreePop because it's a leaf
 		ImGui::TableNextRow();
@@ -686,13 +717,18 @@ namespace FlatEngine
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 3));
 
 		if (size.x != 0 || size.y != 0)
+		{
 			_isClicked = ImGui::Button(text.c_str(), size);
+		}
 		else
+		{
 			_isClicked = ImGui::Button(text.c_str());
+		}
 
-		// Set Mouse Cursor
 		if (ImGui::IsItemHovered())
+		{
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		}
 	
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
@@ -714,7 +750,7 @@ namespace FlatEngine
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, padding);
 		}
 
-		bool _isClicked = ImGui::ImageButton(id.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
+		bool b_isClicked = ImGui::ImageButton(id.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
 
 		if (ImGui::IsItemHovered())
 		{
@@ -730,7 +766,7 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 
-		return _isClicked;
+		return b_isClicked;
 	}
 
 	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
@@ -740,20 +776,26 @@ namespace FlatEngine
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
 		if (width != 0)
+		{
 			ImGui::SetNextItemWidth(width);
+		}
 		else
+		{
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		bool _sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
+		}
 
-		// Set cursor type
+		bool b_sliderChanged = ImGui::DragFloat(text.c_str(), &value, increment, min, max, "%.3f", flags);
+
 		if (ImGui::IsItemHovered())
+		{
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+		}
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 
-		return _sliderChanged;
+		return b_sliderChanged;
 	}
 
 	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags)
@@ -763,19 +805,93 @@ namespace FlatEngine
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
 		if (width != 0)
+		{
 			ImGui::SetNextItemWidth(width);
+		}
 		else
+		{
 			ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-		bool _sliderChanged = ImGui::DragInt(text.c_str(), &value, speed, min, max, "%d", flags);
-		// Set cursor type
+		}
+		
+		bool b_sliderChanged = ImGui::DragInt(text.c_str(), &value, speed, min, max, "%d", flags);
+		
 		if (ImGui::IsItemHovered())
+		{
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_ResizeEW);
+		}
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 
-		return _sliderChanged;
+		return b_sliderChanged;
+	}
+
+	void PushSliderStyles()
+	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("sliderBg"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("sliderHovered"));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("sliderActive"));
+		ImGui::PushStyleColor(ImGuiCol_SliderGrab, GetColor("sliderGrab"));
+		ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, GetColor("sliderGrabActive"));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+		ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 1);
+		ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 26);
+	}
+
+	void PopSliderStyles()
+	{
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
+	// if label starts with ## it will not be included visually
+	bool RenderSliderFloat(std::string label, float& value, float increment, float min, float max, float width, int digitsAfterDecimal)
+	{
+		std::string format = "%." + std::to_string(digitsAfterDecimal) + "f";
+		if (width == -1)
+		{
+			width = ImGui::GetContentRegionAvail().x;
+		}
+
+		ImGui::SetNextItemWidth(width);
+		PushSliderStyles();
+		bool b_sliderChanged = ImGui::SliderFloat(label.c_str(), &value, min, max, format.c_str(), 0);
+		PopSliderStyles();
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+		return b_sliderChanged;
+	}
+
+	// if label starts with ## it will not be included visually
+	bool RenderSliderInt(std::string label, int& value, int increment, int min, int max, float width)
+	{
+		if (width == -1)
+		{
+			width = ImGui::GetContentRegionAvail().x;
+		}
+
+		ImGui::SetNextItemWidth(width);
+		PushSliderStyles();
+		bool b_sliderChanged = ImGui::SliderInt(label.c_str(), &value, min, max, "%d", 0);
+		PopSliderStyles();
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+		return b_sliderChanged;
 	}
 
 	bool RenderCheckbox(std::string text, bool& _toCheck)
@@ -785,17 +901,19 @@ namespace FlatEngine
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("checkboxActive"));
 		ImGui::PushStyleColor(ImGuiCol_CheckMark, GetColor("checkboxCheck"));
 
-		bool _checked = ImGui::Checkbox(text.c_str(), &_toCheck);
+		bool b_checked = ImGui::Checkbox(text.c_str(), &_toCheck);
 
 		if (ImGui::IsItemHovered())
+		{
 			ImGui::SetMouseCursor(ImGuiMouseCursor_::ImGuiMouseCursor_Hand);
+		}
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 
-		return _checked;
+		return b_checked;
 	}
 
 	void RenderSectionHeader(std::string headerText, float height)
@@ -805,19 +923,21 @@ namespace FlatEngine
 
 		Vector2 screenCursor = ImGui::GetCursorScreenPos();
 		ImGui::GetWindowDrawList()->AddRectFilled(screenCursor, Vector2(screenCursor.x + regionAvailable.x, screenCursor.y + 30 + height), ImGui::GetColorU32(GetColor("innerWindow")), 1);
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 8, ImGui::GetCursorPosY() + 8));
-		ImGui::Text(headerText.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10 + height);
+		MoveScreenCursor(8, 8);
+		ImGui::Text(headerText.c_str());		
+		MoveScreenCursor(0, height + 10);
 		ImGui::GetWindowDrawList()->AddRect(Vector2(cursorPos.x, cursorPos.y), Vector2(cursorPos.x + regionAvailable.x, cursorPos.y + height + 30), ImGui::GetColorU32(GetColor("componentBorder")), 1);
 	}
 
 	// *** SECOND VECTOR IS THE SIZE, **NOT*** THE END POSITION. *** Sets CursorScreenPos to the starting point! *** 
-	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap, bool _showRect, ImGuiButtonFlags flags)
+	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool b_allowOverlap, bool b_showRect, ImGuiButtonFlags flags)
 	{
-		if (_showRect)
+		if (b_showRect)
+		{
 			FlatEngine::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), GetColor("white"), 1.0f, ImGui::GetWindowDrawList());
+		}
 ;
-		if (_allowOverlap)
+		if (b_allowOverlap)
 		{
 			ImGui::SetNextItemAllowOverlap();
 			flags += ImGuiButtonFlags_AllowOverlap; // 4096
@@ -919,7 +1039,9 @@ namespace FlatEngine
 
 			float inputWidth = ImGui::CalcTextSize(description.c_str()).x;
 			if (inputWidth < 250)
+			{
 				inputWidth = 250;
+			}
 
 			std::string inputLabel = "##" + label;
 			RenderInput(inputLabel.c_str(), "", inputValue, false, inputWidth);

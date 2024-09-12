@@ -1,5 +1,7 @@
 #include "Texture.h"
 #include "FlatEngine.h"
+#include "WindowManager.h"
+
 
 namespace FlatEngine
 {
@@ -11,7 +13,9 @@ namespace FlatEngine
 		m_textureWidth = 0;
 		m_textureHeight = 0;
 		if (path != "")
+		{
 			LoadFromFile(path);
+		}
 	}
 
 	Texture::~Texture()
@@ -40,7 +44,7 @@ namespace FlatEngine
 				SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 0));
 
 				// Create texture from surface pixels
-				newTexture = SDL_CreateTextureFromSurface(Window::GetRenderer(), loadedSurface);
+				newTexture = SDL_CreateTextureFromSurface(F_Window->GetRenderer(), loadedSurface);
 				if (newTexture == NULL)
 				{
 					printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -65,9 +69,7 @@ namespace FlatEngine
 		FreeSurface();
 
 		//The final optimized image
-		SDL_Surface* optimizedSurface = NULL;
-
-		//Load image at specified path
+		SDL_Surface* optimizedSurface = NULL;		
 		SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 
 		if (loadedSurface == NULL)
@@ -103,7 +105,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			m_texture = SDL_CreateTextureFromSurface(Window::GetRenderer(), textSurface);
+			m_texture = SDL_CreateTextureFromSurface(F_Window->GetRenderer(), textSurface);
 
 			if (m_texture == NULL)
 			{

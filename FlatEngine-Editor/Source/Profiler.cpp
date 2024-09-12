@@ -1,5 +1,6 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 #include "GameLoop.h"
 #include "ProfilerProcess.h"
 #include "Collider.h"
@@ -7,6 +8,7 @@
 #include "Application.h"
 #include "Scene.h"
 #include <deque>
+
 
 namespace FL = FlatEngine;
 
@@ -25,39 +27,9 @@ namespace FlatGui
 		static bool anim = false;
 		static int offset = 0;
 
-		std::string ellapsedTime = "---";
-		//std::string averageFPS = "---";
-		//std::string deltaTime = "---";
-		std::string framesCounted = "---";
-		//std::string sdlTicks = "---";
-		std::string numberOfColliderPairs = "---";
-
-		if (FL::GameLoopStarted())
-		{
-			ellapsedTime = std::to_string(FL::GetEllapsedGameTimeInSec());
-			//averageFPS = std::to_string(FL::GetAverageFps());
-			//deltaTime = std::to_string(FL::GetDeltaTime());
-			framesCounted = std::to_string(FL::F_Application->GetGameLoop()->GetFramesCounted());
-			//sdlTicks = std::to_string(FL::GetEngineTime());
-			numberOfColliderPairs = std::to_string(FL::GetLoadedScene()->GetColliderPairs().size());
-		}
-
-		// Render runtime data
-		if (FL::PushTable("##RunTimeData", 2))
-		{
-			//FL::RenderTextTableRow("##RUNTIME PROCESS", "RUNTIME PROCESS", "DATA");
-			FL::RenderTextTableRow("##EllapsedGameTimE", "Ellapsed Game Time (sec)", ellapsedTime.c_str());
-			//FL::RenderTextTableRow("##AverageFPS", "Average FPS", averageFPS.c_str());
-			//FL::RenderTextTableRow("##deltaTime", "deltaTime (ms)", deltaTime.c_str());
-			FL::RenderTextTableRow("##framesCounted", "Frames Counted", framesCounted.c_str());
-			//FL::RenderTextTableRow("##sdlTicks", "SDL Ticks", sdlTicks.c_str());
-			FL::RenderTextTableRow("##colliderPairs", "Collider Pairs", numberOfColliderPairs.c_str());
-			FL::PopTable();
-		}
-
-		static bool _showColliderPairs = true;
-		FL::RenderCheckbox("Show Collider Pairs", _showColliderPairs);
-		if (_showColliderPairs)
+		static bool b_showColliderPairs = true;
+		FL::RenderCheckbox("Show Collider Pairs", b_showColliderPairs);
+		if (b_showColliderPairs)
 		{
 			// Render runtime data
 			if (FL::PushTable("##RunTimeData", 2))
@@ -78,7 +50,9 @@ namespace FlatGui
 
 		FL::RenderCheckbox("Animate", anim);
 		if (anim)
+		{
 			offset = (offset + 1) % 100;
+		}
 
 
 		std::vector<Process>::iterator it = FL::F_ProfilerProcesses.begin();
@@ -93,6 +67,7 @@ namespace FlatGui
 			ImPlot::PushColormap(ImPlotColormap_Cool);
 
 			if (FL::F_ProfilerProcesses.size() > 0)
+			{
 				while (it != FL::F_ProfilerProcesses.end())
 				{
 					std::string processName = (*it).GetProcessName();
@@ -120,6 +95,7 @@ namespace FlatGui
 
 					processCounter++;
 				}
+			}
 
 			ImPlot::PopColormap();
 			ImGui::EndTable();
@@ -128,9 +104,11 @@ namespace FlatGui
 		FL::EndWindow();
 	}
 
-	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) {
+	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) 
+	{
 		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, Vector2(0, 0));
-		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) {
+		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) 
+		{
 			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
 			ImPlot::SetupAxesLimits(0, count - 1, min_v, max_v, ImGuiCond_Always);
 			ImPlot::SetNextLineStyle(col);

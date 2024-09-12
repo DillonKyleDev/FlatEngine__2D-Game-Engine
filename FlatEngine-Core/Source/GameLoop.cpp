@@ -1,5 +1,6 @@
 #include "GameLoop.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 #include "Scene.h"
 #include "RigidBody.h"
 #include "Collider.h"
@@ -39,7 +40,6 @@ namespace FlatEngine
 		m_deltaTime = 0.005f;
 		m_accumulator = m_deltaTime;
 		m_startedScene = "";
-
 		m_hoveredButtons = std::vector<Button>();
 	}
 
@@ -56,10 +56,10 @@ namespace FlatEngine
 		m_accumulator = 0.0f;
 
 		// Save the name of the scene we started with so we can load it back up when we stop
-		m_startedScene = FlatEngine::GetLoadedScenePath();
+		m_startedScene = GetLoadedScenePath();
 		m_b_started = true;
 		RunAwakeAndStart();
-		m_currentTime = FlatEngine::GetEngineTime();
+		m_currentTime = GetEngineTime();
 	}
 
 	void GameLoop::Update(float gridstep, Vector2 viewportCenter)
@@ -82,7 +82,7 @@ namespace FlatEngine
 		m_b_paused = false;
 		m_framesCounted = 0;
 
-		FlatEngine::LoadScene(m_startedScene);
+		LoadScene(m_startedScene);
 	}
 
 	void GameLoop::Pause()
@@ -108,7 +108,7 @@ namespace FlatEngine
 
 	void GameLoop::ResetCurrentTime()
 	{
-		m_currentTime = FlatEngine::GetEngineTime();
+		m_currentTime = GetEngineTime();
 	}
 
 	void GameLoop::HandleCamera()
@@ -171,7 +171,7 @@ namespace FlatEngine
 				Vector4 activeEdges = buttonPair.second.GetActiveEdges();
 				Vector2 mousePos = ImGui::GetIO().MousePos;
 
-				if (FlatEngine::AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+				if (AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
 				{
 					m_hoveredButtons.push_back(buttonPair.second);
 					buttonPair.second.SetMouseIsOver(true);
@@ -279,13 +279,13 @@ namespace FlatEngine
 
 	void GameLoop::CalculatePhysics()
 	{
-		float processTime = (float)FlatEngine::GetEngineTime();
+		float processTime = (float)GetEngineTime();
 		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
 				rigidBody.second.CalculatePhysics();
 		}
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "CalculatePhysics: ");
 	}
 
@@ -303,7 +303,7 @@ namespace FlatEngine
 			outerIter++;
 		}
 
-		float processTime = (float)FlatEngine::GetEngineTime();		
+		float processTime = (float)GetEngineTime();		
 		static int continuousCounter = 0;
 		for (std::pair<Collider*, Collider*>& colliderPair : GetLoadedScene()->GetColliderPairs())
 		{
@@ -325,14 +325,14 @@ namespace FlatEngine
 			continuousCounter = 0;
 		continuousCounter++;
 
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
-		FlatEngine::AddProcessData("Collision Testing", processTime);
+		processTime = (float)GetEngineTime() - processTime;
+		AddProcessData("Collision Testing", processTime);
 		//LogFloat(processTime, "Collision Detection");
 	}
 
 	void GameLoop::ApplyPhysics()
 	{
-		float processTime = (float)FlatEngine::GetEngineTime();
+		float processTime = (float)GetEngineTime();
 		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
@@ -340,15 +340,15 @@ namespace FlatEngine
 				rigidBody.second.ApplyPhysics((float)m_deltaTime);
 			}
 		}
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "Apply Physics: ");
 	}
 
 	void GameLoop::RunUpdateOnScripts()
 	{
-		float processTime = (float)FlatEngine::GetEngineTime();
+		float processTime = (float)GetEngineTime();
 		RunLuaFuncOnAllScripts("Update");
-		processTime = (float)FlatEngine::GetEngineTime() - processTime;
+		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "Update Scripts: ");
 	}
 
@@ -398,9 +398,13 @@ namespace FlatEngine
 	float GameLoop::GetAverageFps()
 	{
 		if (TimeEllapsedInSec() != 0)
+		{
 			return (float)m_framesCounted / (float)m_activeTime;
+		}
 		else
+		{
 			return 200;
+		}
 	}
 
 	long GameLoop::GetFramesCounted()

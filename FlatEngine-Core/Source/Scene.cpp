@@ -16,19 +16,19 @@
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "RigidBody.h"
-#include "CharacterController.h"
 #include "GameLoop.h"
 #include "ECSManager.h"
 #include "TileMap.h"
+
 
 namespace FlatEngine
 {
 	Scene::Scene()
 	{
-		name = "New Scene";
-		path = "";
+		m_name = "New Scene";
+		m_path = "";
 		m_sceneObjects = std::map<long, GameObject>();		
-		animatorPreviewObjects = std::vector<GameObject*>();
+		m_animatorPreviewObjects = std::vector<GameObject*>();
 		m_ECSManager = ECSManager();
 		m_primaryCamera = nullptr;
 		m_nextGameObjectID = 0;
@@ -43,22 +43,22 @@ namespace FlatEngine
 
     void Scene::SetName(std::string newName)
     {
-        name = newName;
+		m_name = newName;
     }
 
 	std::string Scene::GetName()
 	{
-		return name;
+		return m_name;
 	}
 
 	void Scene::SetPath(std::string scenePath)
 	{
-		path = scenePath;
+		m_path = scenePath;
 	}
 
 	std::string Scene::GetPath()
 	{
-		return path;
+		return m_path;
 	}
 
 	void Scene::UnloadECSManager()
@@ -75,15 +75,19 @@ namespace FlatEngine
 
 		if (sceneObject.HasComponent("BoxCollider") ||
 			(sceneObject.HasComponent("TileMap") && sceneObject.GetTileMap()->GetCollisionAreas().size() > 0))
+		{
 			UpdateColliderPairs();
+		}
 
 		return &m_sceneObjects.at(id);
 	}
 
-	void Scene::KeepNextGameObjectIDUpToDate(long id)
+	void Scene::KeepNextGameObjectIDUpToDate(long ID)
 	{
-		if (id >= m_nextGameObjectID)
-			m_nextGameObjectID = id + 1;
+		if (ID >= m_nextGameObjectID)
+		{
+			m_nextGameObjectID = ID + 1;
+		}
 	}
 
 	std::map<long, GameObject> &Scene::GetSceneObjects()
@@ -93,32 +97,37 @@ namespace FlatEngine
 
 	void Scene::SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects)
 	{
-		animatorPreviewObjects = previewObjects;
+		m_animatorPreviewObjects = previewObjects;
 	}
 
 	std::vector<GameObject*> Scene::GetAnimatorPreviewObjects()
 	{
-		return animatorPreviewObjects;
+		return m_animatorPreviewObjects;
 	}
 
 	GameObject* Scene::GetObjectById(long ID)
 	{
 		if (m_sceneObjects.count(ID) > 0)
+		{
 			return &m_sceneObjects.at(ID);
-		else return nullptr;
+		}
+		else 
+		{
+			return nullptr;
+		}
 	}
 
 	GameObject* Scene::GetObjectByName(std::string name)
 	{
-		for (std::map<long, GameObject>::iterator iter = m_sceneObjects.begin(); iter != m_sceneObjects.end();)
+		for (std::map<long, GameObject>::iterator iter = m_sceneObjects.begin(); iter != m_sceneObjects.end(); iter++)
 		{
 			if (name == iter->second.GetName())
 			{
 				return &iter->second;
 			}
-			iter++;
+		
 		}
-		for (GameObject *animPreviewObject : animatorPreviewObjects)
+		for (GameObject *animPreviewObject : m_animatorPreviewObjects)
 		{
 			if (name == animPreviewObject->GetName())
 			{
@@ -130,13 +139,12 @@ namespace FlatEngine
 
 	GameObject* Scene::GetObjectByTag(std::string tag)
 	{
-		for (std::map<long, GameObject>::iterator iter = m_sceneObjects.begin(); iter != m_sceneObjects.end();)
+		for (std::map<long, GameObject>::iterator iter = m_sceneObjects.begin(); iter != m_sceneObjects.end(); iter++)
 		{
 			if (iter->second.GetTagList().HasTag(tag))
 			{
 				return &iter->second;
 			}
-			iter++;
 		}
 		return nullptr;
 	}
@@ -154,7 +162,7 @@ namespace FlatEngine
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject *objectToDelete = FlatEngine::GetObjectById(sceneObjectID);		
+		GameObject *objectToDelete = GetObjectById(sceneObjectID);		
 		Scene::DeleteChildrenAndSelf(objectToDelete);
 	}
 
@@ -172,7 +180,7 @@ namespace FlatEngine
 		long parentID = objectToDelete->GetParentID();
 		if (parentID != -1)
 		{
-			GameObject* parent = FlatEngine::GetObjectById(parentID);
+			GameObject* parent = GetObjectById(parentID);
 			parent->RemoveChild(ID);
 		}
 		
@@ -201,18 +209,18 @@ namespace FlatEngine
 
 	long Scene::GetNextGameObjectID()
 	{
-		long id;
+		long ID;
 		if (m_freedGameObjectIDs.size() > 0)
 		{
-			id = m_freedGameObjectIDs.back();
+			ID = m_freedGameObjectIDs.back();
 			m_freedGameObjectIDs.pop_back();
 		}
 		else
 		{
-			id = m_nextGameObjectID;
+			ID = m_nextGameObjectID;
 			IncrementGameObjectID();
 		}
-		return id;
+		return ID;
 	}
 
 	void  Scene::IncrementComponentID()
@@ -222,18 +230,18 @@ namespace FlatEngine
 
 	long  Scene::GetNextComponentID()
 	{
-		long id;
+		long ID;
 		if (m_freedComponentIDs.size() > 0)
 		{
-			id = m_freedComponentIDs.back();
+			ID = m_freedComponentIDs.back();
 			m_freedComponentIDs.pop_back();
 		}
 		else
 		{
-			id = m_nextComponentID;
+			ID = m_nextComponentID;
 			IncrementComponentID();
 		}
-		return id;
+		return ID;
 	}
 
 	void Scene::SetPrimaryCamera(Camera* camera)
@@ -280,10 +288,10 @@ namespace FlatEngine
 		m_ECSManager.UpdateColliderPairs();
 	}
 
-	void Scene::KeepNextComponentIDUpToDate(long id)
+	void Scene::KeepNextComponentIDUpToDate(long ID)
 	{
-		if (id >= m_nextComponentID)
-			m_nextComponentID = id + 1;
+		if (ID >= m_nextComponentID)
+			m_nextComponentID = ID + 1;
 	}
 
 	Transform* Scene::AddTransform(Transform transform, long ownerID)
@@ -378,10 +386,10 @@ namespace FlatEngine
 
 	void Scene::RemoveComponent(Component* component)
 	{
-		long id = component->GetID();
+		long ID = component->GetID();
 		if (m_ECSManager.RemoveComponent(component))
 		{
-			m_freedComponentIDs.push_back(id);
+			m_freedComponentIDs.push_back(ID);
 		}
 	}
 

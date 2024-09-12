@@ -1,6 +1,7 @@
 #include "Vector2.h"
 #include <cmath>
 
+
 namespace FlatEngine
 {
 	Vector2::Vector2()
@@ -107,7 +108,9 @@ namespace FlatEngine
 	{
 		float hypotenuse = std::sqrt((x * x) + (y * y));
 		if (hypotenuse > 0)
+		{
 			hypotenuse *= -1;
+		}
 
 		x = x / hypotenuse;
 		y = y / hypotenuse;
@@ -121,19 +124,31 @@ namespace FlatEngine
 	{
 		// Normalize X
 		if (x > 0)
+		{
 			x = 1;
+		}
 		else if (x < 0)
+		{
 			x = -1;
+		}
 		else
+		{
 			x = 0;
+		}
 
 		// Normalize Y
 		if (y > 0)
+		{
 			y = 1;
+		}
 		else if (y < 0)
+		{
 			y = -1;
+		}
 		else
+		{
 			y = 0;
+		}
 
 		return *this;
 	}

@@ -1,5 +1,4 @@
 #pragma once
-#include "Button.h"
 #include "Component.h"
 #include "Vector4.h"
 
@@ -11,6 +10,7 @@ namespace FlatEngine
 	public:
 		Canvas(long myID = -1, long parentID = -1);
 		~Canvas();
+		std::string GetData();
 
 		float GetWidth();
 		float GetHeight();
@@ -19,9 +19,8 @@ namespace FlatEngine
 		Vector4 GetActiveEdges();
 		void SetLayerNumber(int layerNumber);
 		int GetLayerNumber();
-		void SetBlocksLayers(bool _blocksLayers);
+		void SetBlocksLayers(bool b_blocksLayers);
 		bool GetBlocksLayers();
-		std::string GetData();
 
 	private:
 		int m_layerNumber;

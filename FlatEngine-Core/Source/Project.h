@@ -2,6 +2,7 @@
 #include <string>
 #include "Vector2.h"
 
+
 namespace FlatEngine
 {
 	class Project
@@ -9,9 +10,9 @@ namespace FlatEngine
 	public:
 		Project();
 		~Project();
+		std::string GetPath();
 
 		void SetPath(std::string path);
-		std::string GetPath();
 		void SetLoadedScenePath(std::string path);
 		std::string GetLoadedScenePath();
 		void SetRuntimeScene(std::string scene);
@@ -29,12 +30,12 @@ namespace FlatEngine
 		void SetSceneViewGridStep(Vector2 gridStep);
 		Vector2 GetSceneViewGridStep();
 		bool AutoSaveOn();
-		void SetAutoSave(bool _newAutoSave);
+		void SetAutoSave(bool b_autoSave);
 		void SetResolution(Vector2 resolution);
 		Vector2 GetResolution();
-		void SetFullscreen(bool _newFullscreen);
+		void SetFullscreen(bool b_newFullscreen);
 		bool IsFullscreen();
-		void SetVsyncEnabled(bool _vsync);
+		void SetVsyncEnabled(bool b_vsync);
 		bool IsVsyncEnabled();
 
 		std::string GetData();
@@ -53,6 +54,5 @@ namespace FlatEngine
 		Vector2 m_resolution;
 		bool m_b_fullscreen;
 		bool m_b_vsyncEnabled;
-		// Add more project properties here
 	};
 }

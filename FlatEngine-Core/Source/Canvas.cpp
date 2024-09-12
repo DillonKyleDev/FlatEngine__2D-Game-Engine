@@ -1,5 +1,6 @@
 #include "Canvas.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 #include "Transform.h"
 
 
@@ -21,6 +22,24 @@ namespace FlatEngine
 	{
 	}
 
+	std::string Canvas::GetData()
+	{
+		json jsonData = {
+			{ "type", "Canvas" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "width", m_width },
+			{ "height", m_height },
+			{ "layerNumber", m_layerNumber },
+			{ "_blocksLayers", m_b_blocksLayers },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
+	}
+
 	float Canvas::GetWidth()
 	{
 		return m_width;
@@ -40,7 +59,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("Canvas width and height must be positive values.");
+			LogError("Canvas width and height must be positive values.");
 		}
 	}
 
@@ -73,31 +92,13 @@ namespace FlatEngine
 		return m_layerNumber;
 	}
 
-	void Canvas::SetBlocksLayers(bool _doesBlock)
+	void Canvas::SetBlocksLayers(bool b_blocksLayers)
 	{
-		m_b_blocksLayers = _doesBlock;
+		m_b_blocksLayers = b_blocksLayers;
 	}
 
 	bool Canvas::GetBlocksLayers()
 	{
 		return m_b_blocksLayers;
-	}
-
-	std::string Canvas::GetData()
-	{
-		json jsonData = {
-			{ "type", "Canvas" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "width", m_width },
-			{ "height", m_height },
-			{ "layerNumber", m_layerNumber },
-			{ "_blocksLayers", m_b_blocksLayers },
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 }

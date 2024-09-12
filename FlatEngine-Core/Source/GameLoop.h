@@ -1,18 +1,14 @@
 #pragma once
-#include "Application.h"
-#include "GameObject.h"
-#include "Collider.h"
+#include "Vector2.h"
+#include "Canvas.h"
+#include "Button.h"
 
+#include <string>
+#include <vector>
+#include "SDL.h" // Uint32
 
 namespace FlatEngine
 {
-	class Project;
-	class GameManager;
-	class GameObject;
-	class GameScript;
-	class RigidBody;
-	class Collider;
-
 	class GameLoop
 	{
 	public:
@@ -39,7 +35,7 @@ namespace FlatEngine
 		long GetFramesCounted();
 		void ResetCurrentTime();
 
-		// Components
+		// Component Handling
 		void HandleCamera();
 		void ResetCharacterControllers();
 		void HandleButtons();
@@ -66,7 +62,6 @@ namespace FlatEngine
 		bool m_b_gamePaused;
 		long m_framesCounted;
 		std::string m_startedScene;
-
 		std::vector<Button> m_hoveredButtons;
 	};
 }

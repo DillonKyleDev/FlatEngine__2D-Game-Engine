@@ -1,31 +1,18 @@
 #include "FlatEngine.h"
 #include "FlatGui.h"
+#include "GameObject.h"
 #include "AssetManager.h"
-#include "Component.h"
-#include "imgui.h"
-#include "Scene.h"
 #include "Sprite.h"
-#include "Transform.h"
 #include "BoxCollider.h"
-#include "MappingContext.h"
 #include "SceneManager.h"
 #include "Project.h"
 #include "Vector2.h"
 #include "PrefabManager.h"
 
+#include "imgui.h"
+
+
 namespace FL = FlatEngine;
-
-namespace FlatEngine {
-	class BoxCollider;
-	class Sprite;
-	class Transform;
-	class MappingContext;
-}
-
-using BoxCollider = FL::BoxCollider;
-using Sprite = FL::Sprite;
-using Transform = FL::Transform;
-using MappingContext = FL::MappingContext;
 
 namespace FlatGui 
 {
@@ -43,13 +30,11 @@ namespace FlatGui
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("New Project..."))
-				{
-					// First, save current project
+				{					
 					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 					std::string projectPath = FL::OpenSaveFileExplorer();
 					if (projectPath != "")
-					{
-						// Then Create New Project and open it
+					{						
 						Project newProject = Project();
 						SaveProject(newProject, projectPath);
 						LoadProject(projectPath);
@@ -57,21 +42,20 @@ namespace FlatGui
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Open Project..."))
-				{
-					// Open Project
+				{					
 					std::string projectPath = FL::OpenLoadFileExplorer();
 					if (projectPath != "")
+					{
 						LoadProject(projectPath);
+					}
 				}
 				if (ImGui::MenuItem("Save Project"))
-				{
-					// Save Project
+				{					
 					std::string projectPath = FL::F_LoadedProject.GetPath();
 					SaveProject(FL::F_LoadedProject, projectPath);
 				}
 				if (ImGui::MenuItem("Save Project As..."))
-				{
-					// Save Project As....
+				{					
 					std::string projectPath = FL::OpenSaveFileExplorer();
 					if (projectPath != "")
 					{
@@ -82,8 +66,7 @@ namespace FlatGui
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("New Scene..."))
-				{
-					// First Save Loaded scene
+				{					
 					FL::F_SceneManager.SaveCurrentScene();
 
 					std::string scenePath = FL::OpenSaveFileExplorer();
@@ -107,14 +90,14 @@ namespace FlatGui
 						SaveCurrentProject();
 					}
 				}
-
-				// Save the scene
+				
 				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+				{
 					FL::F_SceneManager.SaveCurrentScene();
+				}
 
 				if (ImGui::MenuItem("Save Scene As..."))
-				{
-					// Save the scene
+				{					
 					std::string scenePath = FL::OpenSaveFileExplorer();
 					if (scenePath != "")
 					{
@@ -125,7 +108,9 @@ namespace FlatGui
 
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", "Alt+F4"))
+				{
 					FL::CloseProgram();
+				}
 
 				ImGui::EndMenu();
 			}
@@ -311,6 +296,13 @@ namespace FlatGui
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
+					if (ImGui::MenuItem("CircleCollider"))
+					{
+						GameObject* newObject = FL::CreateGameObject(-1);
+						newObject->AddCircleCollider();
+						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
+						SetFocusedGameObjectID(newObject->GetID());
+					}
 					if (ImGui::MenuItem("TileMap"))
 					{
 						GameObject* newObject = FL::CreateGameObject(-1);
@@ -335,7 +327,9 @@ namespace FlatGui
 						}
 					}
 					else
+					{
 						ImGui::Text("Right click GameObject in hierarchy to create a Prefab");
+					}
 
 					ImGui::EndMenu();
 				}
@@ -375,19 +369,21 @@ namespace FlatGui
 				if (ImGui::BeginMenu("Widgets"))
 				{
 					if (ImGui::BeginMenu("Scene View Icon Transparency"))
-					{
-						// Icon transparency slider
-						ImGui::SliderInt("Scene View Icon Transparency", &iconTransparency, 0, 255, "%d");
-
+					{					
+						FL::RenderSliderInt("##SceneViewIconTransparency", iconTransparency, 1, 0, 255, 300);
 						ImGui::EndMenu();
 					}
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Project Settings", NULL, FG_b_showSettings))
+				{
 					FG_b_showSettings = !FG_b_showSettings;
+				}
 				if (ImGui::MenuItem("Build Project", NULL, FG_b_showSettings))
+				{
 					FL::BuildProject();
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();

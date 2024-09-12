@@ -1,12 +1,5 @@
 #pragma once
-#include "Vector2.h"
-
 #include <string>
-#include "json.hpp"
-
-using json = nlohmann::json;
-using namespace nlohmann::literals;
-
 
 
 namespace FlatEngine
@@ -37,8 +30,11 @@ namespace FlatEngine
 	public:
 		Component();
 		~Component();
+		virtual std::string GetData() { return "{}"; };
 
 		void SetType(ComponentTypes type);
+		ComponentTypes GetType();
+		std::string GetTypeString();
 		void SetID(long ID);
 		long GetID();
 		void SetParentID(long ID);
@@ -49,15 +45,11 @@ namespace FlatEngine
 		void SetActive(bool _active);
 		bool IsActive();
 
-		ComponentTypes GetType();
-		std::string GetTypeString();
-		virtual std::string GetData();
-
 	private:
-		ComponentTypes type = T_Null;
-		long ID;
-		long parentID;
-		bool _isCollapsed;
-		bool _isActive;
+		ComponentTypes m_type = T_Null;
+		long m_ID;
+		long m_parentID;
+		bool m_b_isCollapsed;
+		bool m_b_isActive;
 	};
 }

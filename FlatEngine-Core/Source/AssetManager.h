@@ -1,10 +1,12 @@
 ///////////////////////
 //// Global Assets ////
 ///////////////////////
+#include "Application.h"
+
 #include <map>
 #include <string>
-#include "Texture.h"
-#include "Application.h"
+#include <memory>
+
 
 
 namespace FlatEngine
@@ -34,5 +36,6 @@ namespace FlatEngine
 		std::map<std::string, std::shared_ptr<Texture>> m_textures;
 		std::string m_resourceFailedToLoadImagePath;
 		std::shared_ptr<Texture> m_errorTexture;
+		Vector4 m_errorColor;
 	};
 }

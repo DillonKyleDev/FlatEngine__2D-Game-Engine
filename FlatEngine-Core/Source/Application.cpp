@@ -1,7 +1,8 @@
 #include "FlatEngine.h"
 #include "Application.h"
 #include "AssetManager.h"
-#include "Window.h"
+//#include "WindowManager.h"
+
 #include "SDL.h"
 
 namespace FL = FlatEngine;
@@ -24,8 +25,8 @@ namespace FlatEngine
 
 			//int width;
 			//int height;
-			//SDL_GetWindowSize(Window::W_Window, &width, &height);
-			//Window::SetScreenDimensions(width, height);
+			//SDL_GetWindowSize(FL::F_Window->GetWindow(), &width, &height);
+			//FL::F_Window->SetScreenDimensions(width, height);
 			//FL::F_AssetManager.CollectDirectories();
 			FL::RestartImGui(); // ImGui setup relies on global colors
 

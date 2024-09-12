@@ -1,10 +1,7 @@
 #pragma once
-#include <SDL.h>
-#include <string>
-#include <sstream>
-#include <SDL_ttf.h>
 #include <SDL_image.h>
-#include "Window.h"
+#include <SDL_ttf.h>
+#include <string>
 
 
 namespace FlatEngine

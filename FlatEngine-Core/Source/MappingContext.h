@@ -1,9 +1,11 @@
 #pragma once
 #include <map>
+#include <string>
 #include "SDL.h"
 
-namespace FlatEngine {
 
+namespace FlatEngine 
+{
 	enum XInputButtons {
 		A,
 		B,
@@ -39,6 +41,7 @@ namespace FlatEngine {
 	public:
 		MappingContext();
 		~MappingContext();
+		std::string GetData();
 
 		void SetName(std::string name);
 		std::string GetName();
@@ -61,13 +64,12 @@ namespace FlatEngine {
 		bool ActionPressed(std::string actionName);
 		SDL_Event GetKeyBoundEvent(std::string keyBinding);
 		std::map<std::string, std::string> GetKeyBindings();
-		std::string GetData();
 
 	private:
-		std::string name;
-		std::string path;
-		std::map<std::string, std::string> keyBindings;
-		std::map<std::string, SDL_Event> inputActionBindings;
-		std::map<std::string, bool> actionFiredBool;
+		std::string m_name;
+		std::string m_path;
+		std::map<std::string, std::string> m_keyBindings;
+		std::map<std::string, SDL_Event> m_inputActionBindings;
+		std::map<std::string, bool> m_actionFiredBools;
 	};
 }

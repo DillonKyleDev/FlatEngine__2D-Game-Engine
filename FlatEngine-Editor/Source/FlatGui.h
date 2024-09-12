@@ -7,6 +7,7 @@
 #include <sstream>
 #include <memory>
 #include <map>
+#include <filesystem>
 #include "imgui.h"
 #include "SDL.h"
 
@@ -188,10 +189,12 @@ namespace FlatGui
 	extern void RenderTileSetEditor();
 	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2 &scrolling, Vector2 canvas_p0, Vector2 canvas_sz, Vector2 &step, TileSet* tileSet);
 	extern void RenderCursorModeButtons();
+	extern void RenderGameTimeStats();
+	extern void RenderStatsOnGameView();
 	extern void RenderScriptEditor();
 
 	// *** Don't forget to add flags to the window for preventing scrolling *** ImGuiWindowFlags flags = 8 | 16 or ImGuiWindowFlags_NoScrollbar 
-	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0, bool b_allowOverlap = true);
+	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0, bool b_allowOverlap = true, bool b_weightedScroll = false, float zoomMultiplier = 1);
 	// Component Wrappers	
 	extern bool RenderIsActiveCheckbox(bool& _isActive);
 	extern void BeginComponent(Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride = "");

@@ -1,5 +1,6 @@
 #include "FlatEngine.h"
 #include "FlatGui.h"
+#include "GameObject.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "TagList.h"
@@ -22,15 +23,18 @@
 #include "TileMap.h"
 #include "TileSet.h"
 
+#include "imgui.h"
+
 namespace FL = FlatEngine;
+
 
 namespace FlatGui 
 {
 	// ImGui Wrappers
 	void BeginComponent(FL::Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride)
 	{
-		bool _isCollapsed = component->IsCollapsed();
-		long id = component->GetID();
+		bool b_isCollapsed = component->IsCollapsed();
+		long ID = component->GetID();
 
 		std::string componentType = component->GetTypeString();
 		if (typeNameOverride != "")
@@ -50,107 +54,108 @@ namespace FlatGui
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-
-		// Border around each component
-		auto wPos = ImGui::GetWindowPos();
-		auto wSize = ImGui::GetWindowSize();		
-		ImGui::GetWindowDrawList()->AddRect({ wPos.x + 2, wPos.y + 2 }, { wPos.x + wSize.x - 2, wPos.y + wSize.y - 2 }, FL::GetColor32("componentBorder"), 2);
-
-		// Tooltip for Component meta data
-		FL::RenderInvisibleButton("ComponentToolTipButton-" + std::to_string(id), { wPos.x, wPos.y }, { wSize.x, 27 });
-		if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
-		{
-			FL::BeginToolTip("Component Data");
-			FL::RenderToolTipLong("ID", id);
-			FL::RenderToolTipLong("ParentID", component->GetParentID());
-			FL::EndToolTip();
-		}
-		ImGui::SetCursorScreenPos({ wPos.x + 5, wPos.y + 5 });
+		// {
 		
-		// Component Name
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
-		ImGui::Text(componentType.c_str());
+			// Border around each component
+			auto componentWindowPos = ImGui::GetWindowPos();
+			auto componentWindowSize = ImGui::GetWindowSize();		
+			ImGui::GetWindowDrawList()->AddRect({ componentWindowPos.x + 2, componentWindowPos.y + 2 }, { componentWindowPos.x + componentWindowSize.x - 2, componentWindowPos.y + componentWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 2);
 
-		if (component->GetType() != FL::T_Transform)
-		{
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 36), 5);
-		}
-		else
-		{
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 13), 5);
-		}
+			// Tooltip for Component meta data
+			FL::RenderInvisibleButton("ComponentToolTipButton-" + std::to_string(ID), { componentWindowPos.x, componentWindowPos.y }, { componentWindowSize.x, 27 });
+			if (ImGui::IsItemHovered() && ImGui::GetIO().KeyAlt)
+			{
+				FL::BeginToolTip("Component Data");
+				FL::RenderToolTipLong("ID", ID);
+				FL::RenderToolTipLong("ParentID", component->GetParentID());
+				FL::EndToolTip();
+			}
+			ImGui::SetCursorScreenPos({ componentWindowPos.x + 5, componentWindowPos.y + 5 });
+		
+			// Component Name
+			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+			ImGui::Text(componentType.c_str());
 
-		// Pushes	
-		ImGui::PushItemWidth(-1.0f);
-		ImGui::PushStyleColor(ImGuiCol_Border, FL::GetColor("componentBorder"));
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(1.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
+			if (component->GetType() != FL::T_Transform)
+			{
+				ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 36), 5);
+			}
+			else
+			{
+				ImGui::SameLine(ImGui::GetContentRegionAvail().x - (FL::F_childPadding + 13), 5);
+			}
 
-		std::string expandID = "##expandIcon-" + std::to_string(id);
-		std::string trashcanID = "##trashIcon-" + std::to_string(id);
-		std::string openFileID = "##openFileIcon-" + std::to_string(id);
+			ImGui::PushItemWidth(-1.0f);
+			ImGui::PushStyleColor(ImGuiCol_Border, FL::GetColor("componentBorder"));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(1.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 0));
 
-		if (component->GetType() != FL::T_Transform)
-		{			
+			std::string expandID = "##expandIcon-" + std::to_string(ID);
+			std::string trashcanID = "##trashIcon-" + std::to_string(ID);
+			std::string openFileID = "##openFileIcon-" + std::to_string(ID);
+
+			if (component->GetType() != FL::T_Transform)
+			{			
+				FL::MoveScreenCursor(0, -3);
+				if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
+				{
+					queuedForDelete = component;
+				}
+				ImGui::SameLine(0, 5);
+			}
+
 			FL::MoveScreenCursor(0, -3);
-			if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
+			if (b_isCollapsed)
 			{
-				queuedForDelete = component;
+				if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expand")))
+				{
+					component->SetCollapsed(!b_isCollapsed);
+				}
 			}
-			ImGui::SameLine(0, 5);
-		}
+			else
+			{
+				if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expandFlipped")))
+				{
+					component->SetCollapsed(!b_isCollapsed);
+				}
+			}
 
-		FL::MoveScreenCursor(0, -3);
-		if (_isCollapsed)
-		{
-			if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expand")))
+			if (!b_isCollapsed)
 			{
-				component->SetCollapsed(!_isCollapsed);
+				ImGui::Separator();
 			}
-		}
-		else
-		{
-			if (FL::RenderImageButton(expandID.c_str(), FL::GetTexture("expandFlipped")))
-			{
-				component->SetCollapsed(!_isCollapsed);
-			}
-		}
-
-		if (!_isCollapsed)
-		{
-			ImGui::Separator();
-		}
 		
-		if (!component->IsCollapsed())
-		{			
-			std::string componentItemID = "##ComponentItem-" + component->GetTypeString();
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
-			ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
-		}
+			if (!component->IsCollapsed())
+			{			
+				std::string componentItemID = "##ComponentItem-" + component->GetTypeString();
+				ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("componentBg"));
+				ImGui::BeginChild(componentItemID.c_str(), Vector2(0, 0), FL::F_autoResizeChildFlags);
+			}
 	}
 
 	void EndComponent(Component* component)
 	{
-		// Pops
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleVar();
-
-		// Add some space to the bottom of each component
-		if (!component->IsCollapsed())
-		{
+			// Pops
 			ImGui::PopStyleColor();
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-			ImGui::EndChild();
-		}
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
 
-		ImGui::EndChild();
+			// Add some space to the bottom of each component
+			if (!component->IsCollapsed())
+			{
+				ImGui::PopStyleColor();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+				ImGui::EndChild();
+			}
+
+		// }
+		ImGui::EndChild(); // Component
 	}
 
-	bool RenderIsActiveCheckbox(bool& _isActive)
+	bool RenderIsActiveCheckbox(bool& b_isActive)
 	{
 		FL::MoveScreenCursor(1, 3);
-		bool _checked = FL::RenderCheckbox("Active", _isActive);
+		bool _checked = FL::RenderCheckbox("Active", b_isActive);
 		FL::MoveScreenCursor(0, 3);
 		ImGui::Separator();
 		FL::MoveScreenCursor(0, 3);
@@ -160,7 +165,6 @@ namespace FlatGui
 
 	void RenderTransformComponent(Transform* transform)
 	{
-		// Position, scale, and rotation of transform
 		Vector2 position = transform->GetPosition();
 		float xPos = position.x;
 		float yPos = position.y;
@@ -169,30 +173,28 @@ namespace FlatGui
 		float yScale = scale.y;
 		float rotation = transform->GetRotation();
 		bool _isActive = transform->IsActive();
-		long id = transform->GetID();
+		long ID = transform->GetID();
 
-		// Active Checkbox
 		if (RenderIsActiveCheckbox(_isActive))
 		{
 			transform->SetActive(_isActive);
 		}
-
-		// Render Table
-		if (FL::PushTable("##TransformProperties" + std::to_string(id), 2))
+		
+		if (FL::PushTable("##TransformProperties" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##xPosition" + std::to_string(id), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##xPosition" + std::to_string(ID), "X Position", xPos, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				transform->SetPosition(Vector2(xPos, yPos));
 			}
-			if (FL::RenderFloatDragTableRow("##yPosition" + std::to_string(id), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##yPosition" + std::to_string(ID), "Y Position", yPos, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				transform->SetPosition(Vector2(xPos, yPos));
 			}	
-			if (FL::RenderFloatDragTableRow("##rotation" + std::to_string(id), "Rotation", rotation, 0.1f, -360, 360))
+			if (FL::RenderFloatDragTableRow("##rotation" + std::to_string(ID), "Rotation", rotation, 0.1f, -360, 360))
 			{
 				transform->SetRotation(rotation);
 			}
-			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##xScaleDrag" + std::to_string(ID), "X Scale", xScale, 0.1f, 0.001f, 1000))
 			{
 				if (xScale > 0)
 				{
@@ -203,7 +205,7 @@ namespace FlatGui
 					FL::LogError("Scale must be greater than 0.");
 				}
 			}
-			if (FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##yScaleDrag" + std::to_string(ID), "Y Scale", yScale, 0.1f, 0.001f, 1000))
 			{
 				if (yScale > 0)
 				{
@@ -238,9 +240,8 @@ namespace FlatGui
 		std::string textureWidthString = std::to_string(textureWidth);
 		std::string textureHeightString = std::to_string(textureHeight);
 		Vector4 tintColor = sprite->GetTintColor();
-		long id = sprite->GetID();		
-
-		// Active Checkbox
+		long ID = sprite->GetID();		
+		
 		if (RenderIsActiveCheckbox(_isActive))
 		{
 			sprite->SetActive(_isActive);
@@ -273,11 +274,10 @@ namespace FlatGui
 		}
 
 		FL::RenderSeparator(2, 3);
-
-		// Render Table
-		if (FL::PushTable("##SpriteProperties" + std::to_string(id), 2))
+		
+		if (FL::PushTable("##SpriteProperties" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(id), "X Scale", xScale, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##xSpriteScaleDrag" + std::to_string(ID), "X Scale", xScale, 0.1f, 0.001f, 1000))
 			{
 				if (xScale > 0)
 				{
@@ -288,7 +288,7 @@ namespace FlatGui
 					FL::LogError("Scale must be greater than 0.");
 				}
 			}
-			if (FL::RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(id), "Y Scale", yScale, 0.1f, 0.001f, 1000))
+			if (FL::RenderFloatDragTableRow("##ySpriteScaleDrag" + std::to_string(ID), "Y Scale", yScale, 0.1f, 0.001f, 1000))
 			{
 				if (yScale > 0)
 				{
@@ -299,20 +299,20 @@ namespace FlatGui
 					FL::LogError("Scale must be greater than 0.");
 				}
 			}
-			if (FL::RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(id), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##xSpriteOffsetDrag" + std::to_string(ID), "X Offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				sprite->SetOffset(Vector2(xOffset, yOffset));
 			}
-			if (FL::RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(id), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##ySpriteOffsetDrag" + std::to_string(ID), "Y Offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				sprite->SetOffset(Vector2(xOffset, yOffset));
 			}
-			if (FL::RenderIntDragTableRow("##renderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
+			if (FL::RenderIntDragTableRow("##renderOrder" + std::to_string(ID), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
 			{
 				sprite->SetRenderOrder(renderOrder);
 			}
-			FL::RenderTextTableRow("##textureWidth" + std::to_string(id), "Texture width", textureWidthString);
-			FL::RenderTextTableRow("##textureHeight" + std::to_string(id), "Texture height", textureHeightString);
+			FL::RenderTextTableRow("##textureWidth" + std::to_string(ID), "Texture width", textureWidthString);
+			FL::RenderTextTableRow("##textureHeight" + std::to_string(ID), "Texture height", textureHeightString);
 			FL::PopTable();
 		}
 
@@ -326,8 +326,7 @@ namespace FlatGui
 		FL::RenderSeparator(6, 3);
 
 		// Tint color picker
-		std::string tintID = "##SpriteTintColor" + std::to_string(id) + "-" + std::to_string(id);
-		//ImVec4 color = ImVec4(tintColor.x * 255.0f, tintColor.y * 255.0f, tintColor.z * 255.0f, tintColor.w * 255.0f);
+		std::string tintID = "##SpriteTintColor" + std::to_string(ID) + "-" + std::to_string(ID);		
 		if (ImGui::ColorEdit4(tintID.c_str(), (float*)&tintColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
 		{
 			sprite->SetTintColor(tintColor);
@@ -419,7 +418,7 @@ namespace FlatGui
 		float zoom = camera->GetZoom();
 		ImVec4 frustrumColor = camera->GetFrustrumColor();
 		bool b_isActive = camera->IsActive();
-		long id = camera->GetID();
+		long ID = camera->GetID();
 		bool b_follow = camera->GetShouldFollow();
 		std::string followingName = "";
 		long toFollowID = camera->GetToFollowID();
@@ -435,29 +434,27 @@ namespace FlatGui
 		}
 
 		float followSmoothing = camera->GetFollowSmoothing();
-
-		// Active Checkbox
+		
 		if (RenderIsActiveCheckbox(b_isActive))
 		{
 			camera->SetActive(b_isActive);
 		}
-
-		// Render Table
-		if (FL::PushTable("##CameraProperties" + std::to_string(id), 2))
+		
+		if (FL::PushTable("##CameraProperties" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##cameraWidth" + std::to_string(id), "Camera width", width, 0.1f, 0, 1000))
+			if (FL::RenderFloatDragTableRow("##cameraWidth" + std::to_string(ID), "Camera width", width, 0.1f, 0, 1000))
 			{
 				camera->SetDimensions(width, height);
 			}
-			if (FL::RenderFloatDragTableRow("##cameraHeight" + std::to_string(id), "Camera height", height, 0.1f, 0, 1000))
+			if (FL::RenderFloatDragTableRow("##cameraHeight" + std::to_string(ID), "Camera height", height, 0.1f, 0, 1000))
 			{
 				camera->SetDimensions(width, height);
 			}
-			if (FL::RenderFloatDragTableRow("##cameraZoom" + std::to_string(id), "Camera zoom", zoom, 0.1f, 1, 100))
+			if (FL::RenderFloatDragTableRow("##cameraZoom" + std::to_string(ID), "Camera zoom", zoom, 0.1f, 1, 100))
 			{
 				camera->SetZoom(zoom);
 			}
-			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(id), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
+			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(ID), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
 			{
 				camera->SetFollowSmoothing(followSmoothing);
 			}
@@ -498,13 +495,12 @@ namespace FlatGui
 		}		
 
 		// Frustrum color picker
-		std::string frustrumID = "##FrustrumColor" + std::to_string(id);
+		std::string frustrumID = "##FrustrumColor" + std::to_string(ID);
 		ImVec4 color = ImVec4(frustrumColor.x / 255.0f, frustrumColor.y / 255.0f, frustrumColor.z / 255.0f, frustrumColor.w / 255.0f);
 		ImGui::ColorEdit4(frustrumID.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
 		ImGui::SameLine(0, 5);
 		ImGui::Text("Frustrum color");
 		camera->SetFrustrumColor(ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f));
-
 	}
 
 	void RenderScriptComponent(Script* script)
@@ -512,9 +508,8 @@ namespace FlatGui
 		static int currentLuaScript = 0;
 		std::string attachedScriptName = script->GetAttachedScript();
 		bool _isActive = script->IsActive();
-		long id = script->GetID();
-
-		// Active Checkbox
+		long ID = script->GetID();
+		
 		if (RenderIsActiveCheckbox(_isActive))
 		{
 			script->SetActive(_isActive);
@@ -531,8 +526,7 @@ namespace FlatGui
 
 		std::string newScriptModalLabel = "Create Lua Script";
 		std::string newScriptName = "";
-
-		// Select which Lua script is attached to this Script
+		
 		if (FL::RenderSelectable("##SelectLuaScript", FL::F_luaScriptNames, currentLuaScript))
 		{
 			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]);
@@ -543,8 +537,7 @@ namespace FlatGui
 		{
 			b_openModal = true;
 		}
-
-		// Create new Lua script modal
+		
 		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openModal))
 		{
 			FL::CreateNewLuaScript(newScriptName);
@@ -558,32 +551,32 @@ namespace FlatGui
 		float activeHeight = button->GetActiveHeight();
 		Vector2 activeOffset = button->GetActiveOffset();
 		int activeLayer = button->GetActiveLayer();	
-		long id = button->GetID();
+		long ID = button->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
 		{
 			button->SetActive(_isActive);
 		}
 
-		if (FL::PushTable("##ButtonProperties" + std::to_string(id), 2))
+		if (FL::PushTable("##ButtonProperties" + std::to_string(ID), 2))
 		{
-			if (FL::RenderIntDragTableRow("##activeLayer" + std::to_string(id), "Active layer", activeLayer, 1, 20, 20))
+			if (FL::RenderIntDragTableRow("##activeLayer" + std::to_string(ID), "Active layer", activeLayer, 1, 20, 20))
 			{
 				button->SetActiveLayer(activeLayer);
 			}
-			if (FL::RenderFloatDragTableRow("##activeWidth" + std::to_string(id), "Active width", activeWidth, 0.1f, 0, 1000))
+			if (FL::RenderFloatDragTableRow("##activeWidth" + std::to_string(ID), "Active width", activeWidth, 0.1f, 0, 1000))
 			{
 				button->SetActiveDimensions(activeWidth, activeHeight);
 			}
-			if (FL::RenderFloatDragTableRow("##activeHeight" + std::to_string(id), "Active height", activeHeight, 0.1f, 0, 1000))
+			if (FL::RenderFloatDragTableRow("##activeHeight" + std::to_string(ID), "Active height", activeHeight, 0.1f, 0, 1000))
 			{
 				button->SetActiveDimensions(activeWidth, activeHeight);
 			}
-			if (FL::RenderFloatDragTableRow("##activeoffsetx" + std::to_string(id), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##activeoffsetx" + std::to_string(ID), "X Offset", activeOffset.x, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				button->SetActiveOffset(activeOffset);
 			}
-			if (FL::RenderFloatDragTableRow("##activeoffsety" + std::to_string(id), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##activeoffsety" + std::to_string(ID), "Y Offset", activeOffset.y, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				button->SetActiveOffset(activeOffset);
 			}
@@ -596,26 +589,26 @@ namespace FlatGui
 		float canvasWidth = canvas->GetWidth();
 		float canvasHeight = canvas->GetHeight();
 		int layerNumber = canvas->GetLayerNumber();
-		bool _blocksLayers = canvas->GetBlocksLayers();
+		bool b_blocksLayers = canvas->GetBlocksLayers();
 		bool _isActive = canvas->IsActive();
-		long id = canvas->GetID();
+		long ID = canvas->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
 		{
 			canvas->SetActive(_isActive);
 		}
 
-		if (FL::PushTable("##CanvasProperties" + std::to_string(id), 2))
+		if (FL::PushTable("##CanvasProperties" + std::to_string(ID), 2))
 		{
-			if (FL::RenderIntDragTableRow("##layerNumber" + std::to_string(id), "Canvas layer", layerNumber, 1, 20, 20))
+			if (FL::RenderIntDragTableRow("##layerNumber" + std::to_string(ID), "Canvas layer", layerNumber, 1, 20, 20))
 			{
 				canvas->SetLayerNumber(layerNumber);
 			}
-			if (FL::RenderFloatDragTableRow("##Canvas width" + std::to_string(id), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##Canvas width" + std::to_string(ID), "Width", canvasWidth, 0.1f, 0.1f, -FLT_MAX))
 			{
 				canvas->SetDimensions(canvasWidth, canvasHeight);
 			}
-			if (FL::RenderFloatDragTableRow("##Canvas height" + std::to_string(id), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##Canvas height" + std::to_string(ID), "Height", canvasHeight, 0.1f, 0.1f, -FLT_MAX))
 			{
 				canvas->SetDimensions(canvasWidth, canvasHeight);
 			}
@@ -624,26 +617,26 @@ namespace FlatGui
 
 		FL::RenderSeparator(3, 3);
 
-		if (FL::RenderCheckbox("Blocks Layers:", _blocksLayers))
+		if (FL::RenderCheckbox("Blocks Layers:", b_blocksLayers))
 		{
-			canvas->SetBlocksLayers(_blocksLayers);
+			canvas->SetBlocksLayers(b_blocksLayers);
 		}
 	}
 
 	void RenderAnimationComponent(Animation* animation)
 	{
 		std::string path = animation->GetAnimationPath();
-		bool _isActive = animation->IsActive();
-		long id = animation->GetID();
+		bool b_isActive = animation->IsActive();
+		long ID = animation->GetID();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			animation->SetActive(_isActive);
+			animation->SetActive(b_isActive);
 		}
 
 		int droppedValue = -1;
 		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(id), "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
+		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(ID), "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
 		{
 			if (openedPath != "")
 			{
@@ -663,7 +656,10 @@ namespace FlatGui
 			}
 		}
 
-		FL::RenderSeparator(3, 3);
+		if (path != "")
+		{
+			FL::RenderSeparator(3, 3);
+		}
 
 		if (FL::GameLoopStarted() && !FL::GameLoopPaused())
 		{
@@ -693,13 +689,13 @@ namespace FlatGui
 
 	void RenderAudioComponent(Audio* audio)
 	{
-		long id = audio->GetID();
-		bool _isActive = audio->IsActive();
+		long ID = audio->GetID();
+		bool b_isActive = audio->IsActive();
 		std::vector<FL::SoundData> &sounds = audio->GetSounds();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			audio->SetActive(_isActive);
+			audio->SetActive(b_isActive);
 		}
 
 		static std::string path = "";
@@ -780,7 +776,7 @@ namespace FlatGui
 			std::string newName = audioName;
 			bool b_isMusic = sound.b_isMusic;
 			int newDroppedValue = -1;
-			std::string inputId = "##audioPath_" + std::to_string(id) + sound.name + std::to_string(IDCounter);
+			std::string inputId = "##audioPath_" + std::to_string(ID) + sound.name + std::to_string(IDCounter);
 
 			if (FL::RenderInput("##NameExistingAudioDataObject" + std::to_string(IDCounter), "Name", sound.name, false))
 			{				
@@ -795,9 +791,13 @@ namespace FlatGui
 					audioPath = FL::F_selectedFiles[newDroppedValue - 1];
 					sound.path = audioPath;
 					if (sound.b_isMusic)
+					{
 						sound.sound->LoadMusic(audioPath);
+					}
 					else
+					{
 						sound.sound->LoadEffect(audioPath);
+					}
 				}
 				else if (newDroppedValue == -1)
 				{
@@ -855,7 +855,7 @@ namespace FlatGui
 		Vector2 offset = text->GetOffset();
 		float xOffset = offset.x;
 		float yOffset = offset.y;
-		long id = text->GetID();
+		long ID = text->GetID();
 
 		if (RenderIsActiveCheckbox(_isActive))
 		{
@@ -863,7 +863,7 @@ namespace FlatGui
 		}
 
 		std::string textText = text->GetText();
-		if (FL::RenderInput("##TextContent" + std::to_string(id), "Text", textText))
+		if (FL::RenderInput("##TextContent" + std::to_string(ID), "Text", textText))
 		{
 			text->SetText(textText);
 			text->LoadText();
@@ -896,23 +896,23 @@ namespace FlatGui
 
 		FL::RenderSeparator(3, 3);
 
-		if (FL::PushTable("##TextProperties" + std::to_string(id), 2))
+		if (FL::PushTable("##TextProperties" + std::to_string(ID), 2))
 		{
-			FL::RenderTextTableRow("##textWidth" + std::to_string(id), "Text width", std::to_string(textureWidth));
-			FL::RenderTextTableRow("##textHeight" + std::to_string(id), "Text height", std::to_string(textureHeight));
-			if (FL::RenderIntDragTableRow("##textFontSize" + std::to_string(id), "Font size", fontSize, 1, 0, 1000))
+			FL::RenderTextTableRow("##textWidth" + std::to_string(ID), "Text width", std::to_string(textureWidth));
+			FL::RenderTextTableRow("##textHeight" + std::to_string(ID), "Text height", std::to_string(textureHeight));
+			if (FL::RenderIntDragTableRow("##textFontSize" + std::to_string(ID), "Font size", fontSize, 1, 0, 1000))
 			{
 				text->SetFontSize(fontSize);
 			}
-			if (FL::RenderFloatDragTableRow("##xTextOffset" + std::to_string(id), "X offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##xTextOffset" + std::to_string(ID), "X offset", xOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				text->SetOffset(Vector2(xOffset, yOffset));
 			}
-			if (FL::RenderFloatDragTableRow("##yTextOffset" + std::to_string(id), "Y offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##yTextOffset" + std::to_string(ID), "Y offset", yOffset, 0.1f, -FLT_MAX, -FLT_MAX))
 			{
 				text->SetOffset(Vector2(xOffset, yOffset));
 			}
-			if (FL::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
+			if (FL::RenderIntDragTableRow("##TextRenderOrder" + std::to_string(ID), "Render Order", renderOrder, 1, 0, (int)FL::F_maxSpriteLayers))
 			{
 				text->SetRenderOrder(renderOrder);
 			}
@@ -929,8 +929,7 @@ namespace FlatGui
 		FL::RenderSeparator(6, 3);
 
 		// Tint color picker
-		std::string tintID = "##TextColor" + std::to_string(id) + "-" + std::to_string(id);
-		//ImVec4 tempColor = ImVec4(color.x * 255.0f, color.y * 255.0f, color.z * 255.0f, color.w * 255.0f);
+		std::string tintID = "##TextColor" + std::to_string(ID) + "-" + std::to_string(ID);
 		if (ImGui::ColorEdit4(tintID.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
 		{
 			text->SetColor(color);
@@ -941,53 +940,61 @@ namespace FlatGui
 
 	void RenderCharacterControllerComponent(CharacterController* characterController)
 	{
-		bool _isActive = characterController->IsActive();
+		bool b_isActive = characterController->IsActive();
 		float maxAcceleration = characterController->GetMaxAcceleration();								
 		float maxSpeed = characterController->GetMaxSpeed();
 		float airControl = characterController->GetAirControl();
-		bool _isMoving = characterController->IsMoving();	
-		long id = characterController->GetID();
-		std::string isMoving = "false";
+		bool b_isMoving = characterController->IsMoving();	
+		long ID = characterController->GetID();
+		std::string isMovingString = "false";
 		if (characterController->IsMoving())
-			isMoving = "true";
-
-		if (RenderIsActiveCheckbox(_isActive))
-			characterController->SetActive(_isActive);
-
-		if (FL::PushTable("##CharacterControllerProps" + std::to_string(id), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##MaxAccelerationDrag" + std::to_string(id), "Max Acceleration", maxAcceleration, 0.01f, 0.0f, 20.0f))
+			isMovingString = "true";
+		}
+
+		if (RenderIsActiveCheckbox(b_isActive))
+			characterController->SetActive(b_isActive);
+
+		if (FL::PushTable("##CharacterControllerProps" + std::to_string(ID), 2))
+		{
+			if (FL::RenderFloatDragTableRow("##MaxAccelerationDrag" + std::to_string(ID), "Max Acceleration", maxAcceleration, 0.01f, 0.0f, 20.0f))
+			{
 				characterController->SetMaxAcceleration(maxAcceleration);
-			if (FL::RenderFloatDragTableRow("##MaxSpeedDrag" + std::to_string(id), "Max Speed", maxSpeed, 0.01f, 0.0f, 1000.0f))
+			}
+			if (FL::RenderFloatDragTableRow("##MaxSpeedDrag" + std::to_string(ID), "Max Speed", maxSpeed, 0.01f, 0.0f, 1000.0f))
+			{
 				characterController->SetMaxSpeed(maxSpeed);
-			if (FL::RenderFloatDragTableRow("##AirControlDrag" + std::to_string(id), "Air Control", airControl, 0.01f, 0.0f, 1000.0f))
+			}
+			if (FL::RenderFloatDragTableRow("##AirControlDrag" + std::to_string(ID), "Air Control", airControl, 0.01f, 0.0f, 1000.0f))
+			{
 				characterController->SetAirControl(airControl);
-			FL::RenderTextTableRow("##IsMoving" + std::to_string(id), "Is Moving", isMoving);
+			}
+			FL::RenderTextTableRow("##IsMoving" + std::to_string(ID), "Is Moving", isMovingString);
 			FL::PopTable();
 		}
 	}
 
 	void RenderBoxColliderComponent(BoxCollider* boxCollider, TileMap* tileMap, std::string collisionAreaName)
 	{
-		bool _isActive = boxCollider->IsActive();
-		bool _isColliding = boxCollider->IsColliding();
+		bool b_isActive = boxCollider->IsActive();
+		bool b_isColliding = boxCollider->IsColliding();
 		float activeWidth = boxCollider->GetActiveWidth();
 		float activeHeight = boxCollider->GetActiveHeight();
 		ImVec4 activeEdges = boxCollider->GetActiveEdges();
 		Vector2 activeOffset = boxCollider->GetActiveOffset();
-		bool _isContinuous = boxCollider->IsContinuous();
-		bool _isStatic = boxCollider->IsStatic();
-		bool _isSolid = boxCollider->IsSolid();
-		bool _showActiveRadius = boxCollider->GetShowActiveRadius();
+		bool b_isContinuous = boxCollider->IsContinuous();
+		bool b_isStatic = boxCollider->IsStatic();
+		bool b_isSolid = boxCollider->IsSolid();
+		bool b_showActiveRadius = boxCollider->GetShowActiveRadius();
 		int activeLayer = boxCollider->GetActiveLayer();	
-		bool _isComposite = boxCollider->IsComposite();
-		long id = boxCollider->GetID();
+		bool b_isComposite = boxCollider->IsComposite();
+		long ID = boxCollider->GetID();
 		std::string isCollidingString = "false";
-		if (_isColliding)
+		if (b_isColliding)
 			isCollidingString = "true";
 
-		if (RenderIsActiveCheckbox(_isActive))
-			boxCollider->SetActive(_isActive);
+		if (RenderIsActiveCheckbox(b_isActive))
+			boxCollider->SetActive(b_isActive);
 
 		float widthIncrement = 0.01f;
 		float heightIncrement = 0.01f;
@@ -1011,95 +1018,125 @@ namespace FlatGui
 			maxHeight = tileMapWidth * tileWidth / FL::F_pixelsPerGridSpace;
 		}
 
-		if (FL::PushTable("##BoxColliderProps" + std::to_string(id), 2))
+		if (FL::PushTable("##BoxColliderProps" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(id), "Width", activeWidth, widthIncrement, 0.0f, maxWidth))
+			if (FL::RenderFloatDragTableRow("##BoxColliderWidth" + std::to_string(ID), "Width", activeWidth, widthIncrement, 0.0f, maxWidth))
+			{
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-			if (FL::RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(id), "Height", activeHeight, heightIncrement, 0.0f, maxHeight))
+			}
+			if (FL::RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(ID), "Height", activeHeight, heightIncrement, 0.0f, maxHeight))
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(id), "X Offset", activeOffset.x, offsetIncrementX, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(ID), "X Offset", activeOffset.x, offsetIncrementX, -FLT_MAX, -FLT_MAX))
 				boxCollider->SetActiveOffset(activeOffset);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(id), "Y Offset", activeOffset.y, offsetIncrementY, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(ID), "Y Offset", activeOffset.y, offsetIncrementY, -FLT_MAX, -FLT_MAX))
 				boxCollider->SetActiveOffset(activeOffset);
-			if (FL::RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+			if (FL::RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(ID), "Active layer", activeLayer, 1, 0, 100))
 				boxCollider->SetActiveLayer(activeLayer);
-			FL::RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+			FL::RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(ID), "Is Colliding", isCollidingString);
 			FL::PopTable();
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		if (FL::RenderCheckbox(" Is Continuous", _isContinuous))
-			boxCollider->SetIsContinuous(_isContinuous);
-		if (FL::RenderCheckbox(" Is Static", _isStatic))
-			boxCollider->SetIsStatic(_isStatic);
-		if (FL::RenderCheckbox(" Is Solid", _isSolid))
-			boxCollider->SetIsSolid(_isSolid);
-		if (FL::RenderCheckbox(" Show Active Radius", _showActiveRadius))
-			boxCollider->SetShowActiveRadius(_showActiveRadius);
-		if (FL::RenderCheckbox(" Is Composite", _isComposite))
-			boxCollider->SetIsComposite(_isComposite);
+		FL::MoveScreenCursor(0, 5);
+		if (FL::RenderCheckbox(" Is Continuous", b_isContinuous))
+		{
+			boxCollider->SetIsContinuous(b_isContinuous);
+		}
+		if (FL::RenderCheckbox(" Is Static", b_isStatic))
+		{
+			boxCollider->SetIsStatic(b_isStatic);
+		}
+		if (FL::RenderCheckbox(" Is Solid", b_isSolid))
+		{
+			boxCollider->SetIsSolid(b_isSolid);
+		}
+		if (FL::RenderCheckbox(" Show Active Radius", b_showActiveRadius))
+		{
+			boxCollider->SetShowActiveRadius(b_showActiveRadius);
+		}
+		if (FL::RenderCheckbox(" Is Composite", b_isComposite))
+		{
+			boxCollider->SetIsComposite(b_isComposite);
+		}
 
 		// Enter Collision Area draw mode for this BoxCollider
 		if (tileMap != nullptr && collisionAreaName != "")
 		{
-			if (FL::RenderImageButton("##DrawCollisionArea" + std::to_string(id), FL::GetTexture("tileColliderDraw")))
+			if (FL::RenderImageButton("##DrawCollisionArea" + std::to_string(ID), FL::GetTexture("tileColliderDraw")))
 			{
 				FG_currentSelectedColliderArea = collisionAreaName;
 				FL::F_CursorMode = FL::F_CURSOR_MODE::TILE_COLLIDER_DRAW;
 			}
 			if (ImGui::IsItemHovered())
+			{
 				FL::RenderTextToolTip("Draw this collision area directly in the Scene View");
+			}
 		}
 	}
 
 	void RenderCircleColliderComponent(CircleCollider* circleCollider)
 	{
-		bool _isActive = circleCollider->IsActive();
-		bool _isColliding = circleCollider->IsColliding();
+		bool b_isActive = circleCollider->IsActive();
+		bool b_isColliding = circleCollider->IsColliding();
 		float activeRadius = circleCollider->GetActiveRadiusGrid();
 		Vector2 activeOffset = circleCollider->GetActiveOffset();
-		bool _isContinuous = circleCollider->IsContinuous();
-		bool _isStatic = circleCollider->IsStatic();
-		bool _isSolid = circleCollider->IsSolid();								
+		bool b_isContinuous = circleCollider->IsContinuous();
+		bool b_isStatic = circleCollider->IsStatic();
+		bool b_isSolid = circleCollider->IsSolid();								
 		int activeLayer = circleCollider->GetActiveLayer();
-		bool _isComposite = circleCollider->IsComposite();
-		long id = circleCollider->GetID();
+		bool b_isComposite = circleCollider->IsComposite();
+		long ID = circleCollider->GetID();
 		std::string isCollidingString = "false";
-		if (_isColliding)
+		if (b_isColliding)
 			isCollidingString = "true";
 
-		if (RenderIsActiveCheckbox(_isActive))
-			circleCollider->SetActive(_isActive);
+		if (RenderIsActiveCheckbox(b_isActive))
+			circleCollider->SetActive(b_isActive);
 
-		if (FL::PushTable("##CircleColliderProps" + std::to_string(id), 2))
+		if (FL::PushTable("##CircleColliderProps" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(id), "Radius", activeRadius, 0.01f, 0.0f, 20.0f))
+			if (FL::RenderFloatDragTableRow("##CircleColliderActiveRadius" + std::to_string(ID), "Radius", activeRadius, 0.01f, 0.0f, 20.0f))
+			{
 				circleCollider->SetActiveRadiusGrid(activeRadius);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(id), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+			}
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetCircleColliderX" + std::to_string(ID), "X Offset", activeOffset.x, 0.01f, -FLT_MAX, -FLT_MAX))
+			{
 				circleCollider->SetActiveOffset(activeOffset);
-			if (FL::RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(id), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+			}
+			if (FL::RenderFloatDragTableRow("##ActiveOffsetCircleColliderY" + std::to_string(ID), "Y Offset", activeOffset.y, 0.01f, -FLT_MAX, -FLT_MAX))
+			{
 				circleCollider->SetActiveOffset(activeOffset);
-			if (FL::RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(id), "Active layer", activeLayer, 1, 0, 100))
+			}
+			if (FL::RenderIntDragTableRow("##CircleColliderActiveLayer" + std::to_string(ID), "Active layer", activeLayer, 1, 0, 100))
+			{
 				circleCollider->SetActiveLayer(activeLayer);
-			FL::RenderTextTableRow("##CircleColliderIsColliding" + std::to_string(id), "Is Colliding", isCollidingString);
+			}
+			FL::RenderTextTableRow("##CircleColliderIsColliding" + std::to_string(ID), "Is Colliding", isCollidingString);
 			FL::PopTable();
 		}
-
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		if (FL::RenderCheckbox(" Is Continuous", _isContinuous))
-			circleCollider->SetIsContinuous(_isContinuous);
-		if (FL::RenderCheckbox(" Is Static", _isStatic))
-			circleCollider->SetIsStatic(_isStatic);
-		if (FL::RenderCheckbox(" Is Solid", _isSolid))
-			circleCollider->SetIsSolid(_isSolid);
-		if (FL::RenderCheckbox(" Is Composite", _isComposite))
-			circleCollider->SetIsComposite(_isComposite);
+		
+		FL::MoveScreenCursor(0, 5);
+		if (FL::RenderCheckbox(" Is Continuous", b_isContinuous))
+		{
+			circleCollider->SetIsContinuous(b_isContinuous);
+		}
+		if (FL::RenderCheckbox(" Is Static", b_isStatic))
+		{
+			circleCollider->SetIsStatic(b_isStatic);
+		}
+		if (FL::RenderCheckbox(" Is Solid", b_isSolid))
+		{
+			circleCollider->SetIsSolid(b_isSolid);
+		}
+		if (FL::RenderCheckbox(" Is Composite", b_isComposite))
+		{
+			circleCollider->SetIsComposite(b_isComposite);
+		}
 	}
 
 	void RenderRigidBodyComponent(RigidBody* rigidBody)
 	{
-		long id = rigidBody->GetID();
-		bool _isActive = rigidBody->IsActive();
+		long ID = rigidBody->GetID();
+		bool b_isActive = rigidBody->IsActive();
 		float mass = rigidBody->GetMass();
 		float gravity = rigidBody->GetGravity();
 		float fallingGravity = rigidBody->GetFallingGravity();
@@ -1108,9 +1145,9 @@ namespace FlatGui
 		float windResistance = rigidBody->GetWindResistance();
 		float friction = rigidBody->GetFriction();
 		float equilibriumForce = rigidBody->GetEquilibriumForce();	
-		bool _allowTorques = rigidBody->TorquesAllowed();
-		bool _isStatic = rigidBody->IsStatic();
-		bool _isGrounded = rigidBody->IsGrounded();
+		bool b_allowTorques = rigidBody->TorquesAllowed();
+		bool b_isStatic = rigidBody->IsStatic();
+		bool b_isGrounded = rigidBody->IsGrounded();
 
 		// Read only		
 		Vector2 velocity = rigidBody->GetVelocity();		
@@ -1119,54 +1156,71 @@ namespace FlatGui
 		float pendingTorques = rigidBody->GetPendingTorques();
 
 		std::string isGroundedString = "false";
-		if (_isGrounded)
+		if (b_isGrounded)
 			isGroundedString = "true";
 
-		if (RenderIsActiveCheckbox(_isActive))
-			rigidBody->SetActive(_isActive);
+		if (RenderIsActiveCheckbox(b_isActive))
+			rigidBody->SetActive(b_isActive);
 
-		if (FL::PushTable("##RigidBodyProps" + std::to_string(id), 2))
+		if (FL::PushTable("##RigidBodyProps" + std::to_string(ID), 2))
 		{
-			if (FL::RenderFloatDragTableRow("##Mass" + std::to_string(id), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
-				rigidBody->SetMass(mass);			
-			if (FL::RenderFloatDragTableRow("##GravityScale" + std::to_string(id), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
+			if (FL::RenderFloatDragTableRow("##Mass" + std::to_string(ID), "Mass", mass, 0.01f, 0.0f, -FLT_MAX))
+			{
+				rigidBody->SetMass(mass);
+			}
+			if (FL::RenderFloatDragTableRow("##GravityScale" + std::to_string(ID), "Gravity Scale", gravity, 0.01f, -FLT_MAX, -FLT_MAX))
+			{
 				rigidBody->SetGravity(gravity);
-			if (FL::RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(id), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
+			}
+			if (FL::RenderFloatDragTableRow("##FallingGravityScale" + std::to_string(ID), "Falling Gravity", fallingGravity, 0.01f, -FLT_MAX, -FLT_MAX))
+			{
 				rigidBody->SetFallingGravity(fallingGravity);
-			if (FL::RenderFloatDragTableRow("##TerminalVelocity" + std::to_string(id), "Terminal Velocity", terminalVelocity, 0.01f, 0.001f, 1000))
+			}
+			if (FL::RenderFloatDragTableRow("##TerminalVelocity" + std::to_string(ID), "Terminal Velocity", terminalVelocity, 0.01f, 0.001f, 1000))
+			{
 				rigidBody->SetTerminalVelocity(terminalVelocity);
-			if (FL::RenderFloatDragTableRow("##WindResistance" + std::to_string(id), "Wind Resistance", windResistance, 0.01f, 0, 1))
+			}
+			if (FL::RenderFloatDragTableRow("##WindResistance" + std::to_string(ID), "Wind Resistance", windResistance, 0.01f, 0, 1))
+			{
 				rigidBody->SetWindResistance(windResistance);
-			if (FL::RenderFloatDragTableRow("##Friction" + std::to_string(id), "Friction", friction, 0.01f, 0, 1))
+			}
+			if (FL::RenderFloatDragTableRow("##Friction" + std::to_string(ID), "Friction", friction, 0.01f, 0, 1))
+			{
 				rigidBody->SetFriction(friction);
-			if (FL::RenderFloatDragTableRow("##AngularDrag" + std::to_string(id), "Angular Drag", angularDrag, 0.01f, 0, 1))
+			}
+			if (FL::RenderFloatDragTableRow("##AngularDrag" + std::to_string(ID), "Angular Drag", angularDrag, 0.01f, 0, 1))
+			{
 				rigidBody->SetAngularDrag(angularDrag);
-			if (FL::RenderFloatDragTableRow("##EquilibriumForce" + std::to_string(id), "Equilibrium Force", equilibriumForce, 0.01f, 0, 1000))
+			}
+			if (FL::RenderFloatDragTableRow("##EquilibriumForce" + std::to_string(ID), "Equilibrium Force", equilibriumForce, 0.01f, 0, 1000))
+			{
 				rigidBody->SetEquilibriumForce(equilibriumForce);
-			// Linear
-			FL::RenderTextTableRow("##VelocityX" + std::to_string(id), "X Velocity", std::to_string(velocity.x));
-			FL::RenderTextTableRow("##VelocityY" + std::to_string(id), "Y Velocity", std::to_string(velocity.y));
-			FL::RenderTextTableRow("##PendingForcesX" + std::to_string(id), "X Pending Forces", std::to_string(pendingForces.x));
-			FL::RenderTextTableRow("##PendingForcesY" + std::to_string(id), "Y Pending Forces", std::to_string(pendingForces.y));
-			// Rotational
-			FL::RenderTextTableRow("##AngularVelocity" + std::to_string(id), "Angular Velocity (deg)", std::to_string(angularVelocity));
-			FL::RenderTextTableRow("##PendingTorques" + std::to_string(id), "Pending Torques", std::to_string(pendingTorques));
-			FL::RenderTextTableRow("##RigidBodyGrounded" + std::to_string(id), "Is Grounded", isGroundedString);
+			}			
+			FL::RenderTextTableRow("##VelocityX" + std::to_string(ID), "X Velocity", std::to_string(velocity.x));
+			FL::RenderTextTableRow("##VelocityY" + std::to_string(ID), "Y Velocity", std::to_string(velocity.y));
+			FL::RenderTextTableRow("##PendingForcesX" + std::to_string(ID), "X Pending Forces", std::to_string(pendingForces.x));
+			FL::RenderTextTableRow("##PendingForcesY" + std::to_string(ID), "Y Pending Forces", std::to_string(pendingForces.y));
+			FL::RenderTextTableRow("##AngularVelocity" + std::to_string(ID), "Angular Velocity (deg)", std::to_string(angularVelocity));
+			FL::RenderTextTableRow("##PendingTorques" + std::to_string(ID), "Pending Torques", std::to_string(pendingTorques));
+			FL::RenderTextTableRow("##RigidBodyGrounded" + std::to_string(ID), "Is Grounded", isGroundedString);
 			FL::PopTable();
 		}								
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-
-		FL::RenderCheckbox(" Is Static", _isStatic);
-		rigidBody->SetIsStatic(_isStatic);
-		FL::RenderCheckbox(" Allow Torques", _allowTorques);
-		rigidBody->SetTorquesAllowed(_allowTorques);
+		FL::MoveScreenCursor(0, 5);
+		if (FL::RenderCheckbox(" Is Static", b_isStatic))
+		{
+			rigidBody->SetIsStatic(b_isStatic);
+		}
+		if (FL::RenderCheckbox(" Allow Torques", b_allowTorques))
+		{
+			rigidBody->SetTorquesAllowed(b_allowTorques);
+		}
 	}
 
 	void RenderTileMapComponent(TileMap* tileMap)
 	{
-		long id = tileMap->GetID();
-		bool _isActive = tileMap->IsActive();
+		long ID = tileMap->GetID();
+		bool b_isActive = tileMap->IsActive();
 		int width = tileMap->GetWidth();
 		int height = tileMap->GetHeight();
 		int tileWidth = tileMap->GetTileWidth();
@@ -1174,41 +1228,41 @@ namespace FlatGui
 		int renderOrder = tileMap->GetRenderOrder();
 		std::vector<std::string> tileSets = tileMap->GetTileSets();
 
-		if (RenderIsActiveCheckbox(_isActive))
-			tileMap->SetActive(_isActive);
-
-		if (FL::PushTable("##tileMapProps" + std::to_string(id), 2))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			if (FL::RenderIntDragTableRow("##Width" + std::to_string(id), "Width", width, 1, 1, INT_MAX))
+			tileMap->SetActive(b_isActive);
+		}
+
+		if (FL::PushTable("##tileMapProps" + std::to_string(ID), 2))
+		{
+			if (FL::RenderIntDragTableRow("##Width" + std::to_string(ID), "Width", width, 1, 1, INT_MAX))
 			{
 				tileMap->SetWidth(width);
 				//tileMap->CalculateColliderValues();
 			}
-			if (FL::RenderIntDragTableRow("##Height" + std::to_string(id), "Height", height, 1, 1, INT_MAX))
+			if (FL::RenderIntDragTableRow("##Height" + std::to_string(ID), "Height", height, 1, 1, INT_MAX))
 			{
 				tileMap->SetHeight(height);
 				//tileMap->RecalcCollisionAreaValues();
 			}
-			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(id), "Tile Width", tileWidth, 1, 1, INT_MAX))
+			if (FL::RenderIntDragTableRow("##TileWidth" + std::to_string(ID), "Tile Width", tileWidth, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileWidth(tileWidth);
 				//tileMap->RecalcCollisionAreaValues();
 			}
-			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(id), "Tile Height", tileHeight, 1, 1, INT_MAX))
+			if (FL::RenderIntDragTableRow("##TileHeight" + std::to_string(ID), "Tile Height", tileHeight, 1, 1, INT_MAX))
 			{
 				tileMap->SetTileHeight(tileHeight);
 				//tileMap->RecalcCollisionAreaValues();
 			}
-			if (FL::RenderIntDragTableRow("##RenderOrder" + std::to_string(id), "Render Order", renderOrder, 1, 0, FL::F_maxSpriteLayers))
+			if (FL::RenderIntDragTableRow("##RenderOrder" + std::to_string(ID), "Render Order", renderOrder, 1, 0, FL::F_maxSpriteLayers))
 			{
 				tileMap->SetRenderOrder(renderOrder);
 			}
 			FL::PopTable();
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::RenderSeparator(4, 4);
 
 		FL::RenderSubTitle("Add TileSets");
 
@@ -1236,22 +1290,18 @@ namespace FlatGui
 			}
 		}
 		
-		if (tileSetNames.size() > 0)
+
+		FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);
+		if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
 		{
-			FL::RenderSelectable("##SelectTileSet", tileSetNames, currentSelectableTileSet);
-			if (FL::RenderButton("Add to Palettes", Vector2(120, 20)))
+			if (tileSetNames.size() >= currentSelectableTileSet + 1)
 			{
-				if (tileSetNames.size() >= currentSelectableTileSet + 1)
-				{
-					tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
-				}
+				tileMap->AddTileSet(tileSetNames[currentSelectableTileSet]);
 			}
 		}
+	
 
-
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::RenderSeparator(4, 4);
 
 		FL::RenderSubTitle("Tile Palettes");
 
@@ -1274,9 +1324,13 @@ namespace FlatGui
 
 					// If node selected
 					if (activeTileSet == tileSetName)
+					{
 						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+					}
 					else
+					{
 						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+					}
 
 					// render a leaf
 					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, tileSetName.c_str());
@@ -1292,6 +1346,11 @@ namespace FlatGui
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
 		}
+		else
+		{
+			ImGui::TextWrapped("No TileSets attached to this TileMap.");
+			FL::MoveScreenCursor(0, 3);
+		}
 
 		Vector2 tileSetTilesStart = ImGui::GetCursorScreenPos();
 		Vector2 regionAvailable = ImGui::GetContentRegionMax();
@@ -1302,13 +1361,11 @@ namespace FlatGui
 		{
 			// Tile icon size slider
 			FL::MoveScreenCursor(10, 10);
-			ImGui::Text("Icon Size");
-			ImGui::SameLine();
+			ImGui::Text("Icon Size:");			
 			static float iconSize = 50;
-			FL::MoveScreenCursor(0, -5);
-			FL::PushComboStyles();
-			ImGui::SliderFloat("##IconSizeSlider", &iconSize, 10, 128, "%.3f");
-			FL::PopComboStyles();
+			FL::MoveScreenCursor(10, 2);
+			FL::RenderSliderFloat("##TileMapIconSizeSlider", iconSize, 0.5f, 16, 128, ImGui::GetContentRegionAvail().x - 10, 0);
+			FL::RenderSeparator(3, 3);
 
 			// Render Palette Tile Icons
 			float availableWidth = ImGui::GetWindowSize().x;
@@ -1352,21 +1409,18 @@ namespace FlatGui
 				{
 					iconsThisRow = 0;
 				}
-
-				FL::MoveScreenCursor(0, iconSize + verticalSpacing + 5);
 			}
-		
-			ImGui::GetWindowDrawList()->AddRect(tileSetTilesStart, Vector2(tileSetTilesStart.x + regionAvailable.x - 5, ImGui::GetCursorScreenPos().y), FL::GetColor32("componentSectionBorder"), 0, 0, 2);
+			FL::MoveScreenCursor(0, iconSize + verticalSpacing + 10);
+			ImGui::GetWindowDrawList()->AddRect(tileSetTilesStart, Vector2(tileSetTilesStart.x + regionAvailable.x - 5, ImGui::GetCursorScreenPos().y), FL::GetColor32("componentSectionBorder"), 0, 0, 1);
 		}
-
+		
 		ImGui::SetCursorScreenPos(Vector2(tileSetTilesStart.x, ImGui::GetCursorScreenPos().y + 2));
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::RenderSeparator(6, 3);
+
 
 
 		FL::RenderSubTitle("Collision Areas");
 
-		// Collision Areas
 		std::map<std::string, std::vector<FL::CollisionAreaData>> &collisionAreas = tileMap->GetCollisionAreas();
 		static std::string selectedCollisionArea = "";
 		static int currentSelectedColArea = 0;
@@ -1379,7 +1433,8 @@ namespace FlatGui
 
 		// BUG INTRODUCED WHEN CLOSING THE GAME VIA Quit button (possibly) after adding this tree to the end of this section.
 		// Create new Collision Area
-		FL::RenderInput("##CollisionAreaLabel" + std::to_string(id), "Collision Area Name", collisionAreaLabel, false);
+		ImGui::TextWrapped("New collision area name:");
+		FL::RenderInput("##CollisionAreaLabel" + std::to_string(ID), "", collisionAreaLabel, false);
 
 		FL::RenderSeparator(3, 3);
 
@@ -1416,9 +1471,13 @@ namespace FlatGui
 
 					// If node selected
 					if (selectedCollisionArea == areaName)
+					{
 						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+					}
 					else
+					{
 						nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+					}
 
 					// render a leaf
 					ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, areaName.c_str());
@@ -1459,19 +1518,14 @@ namespace FlatGui
 	}
 
 	void BeginToolTip(std::string title)
-	{
-		// Add ImGui styling pushes here
-		//
+	{		
 		ImGui::BeginTooltip();
 		ImGui::Text(title.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::RenderSeparator(5, 5);
 	}
 
 	void EndToolTip()
-	{
-		// Add ImGui styling pops here
+	{		
 		ImGui::EndTooltip();
 	}
 
@@ -1481,9 +1535,7 @@ namespace FlatGui
 		ImGui::Text(newLabel.c_str());
 		ImGui::SameLine();
 		ImGui::Text(text.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::RenderSeparator(5, 5);
 	}
 
 	void RenderToolTipFloat(std::string label, float data)
@@ -1492,9 +1544,7 @@ namespace FlatGui
 		ImGui::Text(newLabel.c_str());
 		ImGui::SameLine();
 		ImGui::Text(std::to_string(data).c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::RenderSeparator(5, 5);
 	}
 
 	void RenderToolTipLong(std::string label, long data)
@@ -1503,9 +1553,7 @@ namespace FlatGui
 		ImGui::Text(newLabel.c_str());
 		ImGui::SameLine();
 		ImGui::Text(std::to_string(data).c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::RenderSeparator(5, 5);
 	}
 
 	void RenderToolTipLongVector(std::string label, std::vector<long> data)
@@ -1520,6 +1568,6 @@ namespace FlatGui
 			ImGui::SameLine();
 			ImGui::Text(dataString.c_str());
 		}
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::MoveScreenCursor(0, 5);
 	}
 }

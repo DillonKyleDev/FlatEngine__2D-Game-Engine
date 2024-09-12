@@ -1,10 +1,9 @@
 #include "PrefabManager.h"
 #include "FlatEngine.h"
-#include "SceneManager.h"
 #include "GameObject.h"
-#include "transform.h"
+#include "Transform.h"
 #include "RigidBody.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "BoxCollider.h"
 #include "CharacterController.h"
 #include "Canvas.h"
@@ -12,13 +11,10 @@
 #include "Text.h"
 #include "Camera.h"
 #include "Script.h"
-#include "Scene.h"
-#include "GameLoop.h"
-#include "Audio.h"
-#include "Vector2.h"
 #include "TileSet.h"
 
 #include <fstream>
+
 
 namespace FlatEngine
 {
@@ -451,7 +447,7 @@ namespace FlatEngine
 
 	void PrefabManager::CreatePrefab(std::string path, GameObject gameObject)
 	{
-		std::string prefabName = FlatEngine::GetFilenameFromPath(path);
+		std::string prefabName = GetFilenameFromPath(path);
 
 		// Declare file and input stream
 		std::ofstream file_obj;

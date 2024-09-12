@@ -1,6 +1,7 @@
 #pragma once
 #include <imgui.h>
 
+
 namespace FlatEngine
 {
 	class Vector4 : public ImVec4
@@ -26,9 +27,6 @@ namespace FlatEngine
 		Vector4 operator*(Vector4& right);
 		bool operator==(const Vector4& right);
 		bool operator!=(const Vector4& right);
-
-	private:
-
 	};
 }
 

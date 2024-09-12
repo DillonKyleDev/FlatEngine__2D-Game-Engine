@@ -10,10 +10,14 @@
 #include "SDL.h"
 #include <SDL_syswm.h>
 #include <SDL_image.h>
-#include "json.hpp"
+#include "SDL_ttf.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
 #define SOL_ALL_SAFETIES_ON 1
 #include <sol.hpp>
@@ -39,6 +43,7 @@ class GameManager;
 
 namespace FlatEngine
 {
+	class WindowManager;
 	class Vector2;
 	class Vector4;
 	class AssetManager;
@@ -74,13 +79,15 @@ namespace FlatEngine
 		TILE_MOVE,
 	};
 
-
-	extern std::string F_RuntimeDirectoriesLuaFilepath;
-	extern std::string F_EditorDirectoriesLuaFilepath;
+	extern std::shared_ptr<WindowManager> F_Window;
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
 
+	extern std::string F_RuntimeDirectoriesLuaFilepath;
+	extern std::string F_EditorDirectoriesLuaFilepath;
+
 	extern F_CURSOR_MODE F_CursorMode;
+	extern bool F_b_closeProgram;
 
 	// Assets loaded from files on application start	
 	extern std::vector<std::string> F_luaScriptPaths;
@@ -94,9 +101,6 @@ namespace FlatEngine
 	extern std::vector<TileSet> F_TileSets;
 	extern std::string F_selectedTileSetToEdit;
 	extern std::pair<std::string, int> F_tileSetAndIndexOnBrush;
-
-	
-	extern bool F_b_closeProgram;
 
 	extern bool F_b_loadNewScene;
 	extern std::string F_sceneToBeLoaded;
@@ -289,6 +293,7 @@ namespace FlatEngine
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
 	extern float GetAverageFps();
+	extern long GetFramesCounted();
 	extern float GetDeltaTime();
 
 	// File Explorer
@@ -362,6 +367,10 @@ namespace FlatEngine
 	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1), Vector2 padding = Vector2(-1, -1));
 	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
 	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
+	extern bool RenderSliderFloat(std::string label, float& value, float increment = 0.1f, float min = 0.0f, float max = 1000, float width = -1, int digitsAfterDecimal = 3);
+	extern bool RenderSliderInt(std::string label, int& value, int increment = 1, int min = 0, int max = 1000, float width = -1);
+	extern void PushSliderStyles();
+	extern void PopSliderStyles();
 	extern bool RenderCheckbox(std::string text, bool& _toCheck);
 	extern void RenderSectionHeader(std::string headerText, float height = 0);
 	extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false, ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);

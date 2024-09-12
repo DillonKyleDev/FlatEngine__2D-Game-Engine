@@ -2,8 +2,7 @@
 #include "FlatEngine.h"
 #include "Transform.h"
 #include "RigidBody.h"
-#include "BoxCollider.h"
-#include "Vector2.h"
+#include "GameObject.h"
 
 
 namespace FlatEngine 
@@ -48,10 +47,10 @@ namespace FlatEngine
 		if (GetParent()->HasComponent("Transform") && GetParent()->HasComponent("RigidBody"))
 		{
 			Vector2 pendingForces = Vector2(0, 0);
-			FlatEngine::RigidBody* rigidBody = GetParent()->GetRigidBody();
-			FlatEngine::Transform* transform = GetParent()->GetTransform();
+			RigidBody* rigidBody = GetParent()->GetRigidBody();
+			Transform* transform = GetParent()->GetTransform();
 			float gravity = 1;
-			Vector2 velocity = 1;
+			Vector2 velocity = 0;
 			float oneOverMass = 1;
 			float mass = 1;
 			float forceCorrection = 1;
@@ -165,9 +164,9 @@ namespace FlatEngine
 		return m_airControl;
 	}
 
-	void CharacterController::SetMoving(bool _newIsMoving)
+	void CharacterController::SetMoving(bool b_isMoving)
 	{
-		m_b_isMoving = _newIsMoving;
+		m_b_isMoving = b_isMoving;
 	}
 
 	bool CharacterController::IsMoving()

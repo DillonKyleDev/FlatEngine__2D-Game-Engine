@@ -1,5 +1,6 @@
 #include "Project.h"
-#include "Window.h"
+#include "FlatEngine.h"
+#include "WindowManager.h"
 #include "json.hpp"
 #include <SDL.h>
 
@@ -24,6 +25,29 @@ namespace FlatEngine
 
 	Project::~Project()
 	{
+	}
+
+	std::string Project::GetData()
+	{
+		json jsonData = {
+			{ "path", m_path },
+			{ "loadedScenePath", m_loadedScenePath },
+			{ "sceneToLoadAtRuntime", m_sceneToLoadAtRuntime },
+			{ "buildPath", m_buildPath },
+			{ "currentFileDirectory", m_currentFileDirectory },
+			{ "loadedAnimationPath", m_loadedAnimationPath },
+			{ "sceneViewScrollingX", m_sceneViewScrolling.x },
+			{ "sceneViewScrollingY", m_sceneViewScrolling.y },
+			{ "_autoSave", m_b_autoSave },
+			{ "resolutionWidth", m_resolution.x },
+			{ "resolutionHeight", m_resolution.y },
+			{ "_fullscreen", m_b_fullscreen },
+			{ "_vsyncEnabled", m_b_vsyncEnabled },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	void Project::SetPath(std::string projectPath)
@@ -121,9 +145,9 @@ namespace FlatEngine
 		return m_b_autoSave;
 	}
 
-	void Project::SetAutoSave(bool b_newAutoSave)
+	void Project::SetAutoSave(bool b_autoSave)
 	{
-		m_b_autoSave = b_newAutoSave;
+		m_b_autoSave = b_autoSave;
 	}
 
 	void Project::SetResolution(Vector2 newResolution)
@@ -140,10 +164,10 @@ namespace FlatEngine
 		return m_resolution;
 	}
 
-	void Project::SetFullscreen(bool b_newFullscreen)
+	void Project::SetFullscreen(bool b_fullscreen)
 	{
-		m_b_fullscreen = b_newFullscreen;
-		Window::SetFullscreen(m_b_fullscreen);
+		m_b_fullscreen = b_fullscreen;
+		F_Window->SetFullscreen(m_b_fullscreen);
 	}
 
 	bool Project::IsFullscreen()
@@ -157,37 +181,16 @@ namespace FlatEngine
 		int interval = 0;
 
 		if (m_b_vsyncEnabled)
+		{
 			interval = 1;
+		}
 
-		SDL_RenderSetVSync(Window::W_Renderer, interval); // vsync disabled -- 1 to activate
+		// vsync disabled -- 1 to activate
+		SDL_RenderSetVSync(F_Window->GetRenderer(), interval);
 	}
 
 	bool Project::IsVsyncEnabled()
 	{
 		return m_b_vsyncEnabled;
-	}
-
-
-	std::string Project::GetData()
-	{
-		json jsonData = {
-			{ "path", m_path },
-			{ "loadedScenePath", m_loadedScenePath },
-			{ "sceneToLoadAtRuntime", m_sceneToLoadAtRuntime },
-			{ "buildPath", m_buildPath },
-			{ "currentFileDirectory", m_currentFileDirectory },
-			{ "loadedAnimationPath", m_loadedAnimationPath },
-			{ "sceneViewScrollingX", m_sceneViewScrolling.x },
-			{ "sceneViewScrollingY", m_sceneViewScrolling.y },
-			{ "_autoSave", m_b_autoSave },
-			{ "resolutionWidth", m_resolution.x },
-			{ "resolutionHeight", m_resolution.y },
-			{ "_fullscreen", m_b_fullscreen },
-			{ "_vsyncEnabled", m_b_vsyncEnabled },
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 }

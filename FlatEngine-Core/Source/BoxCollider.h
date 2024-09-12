@@ -2,32 +2,28 @@
 #include "Component.h"
 #include "CircleCollider.h"
 #include "FlatEngine.h"
-#include <SDL.h>
-#include <string>
-#include "Window.h"
 #include "Collider.h"
-#include "Texture.h"
 #include "Vector2.h"
-#include <functional>
 #include "Vector4.h"
-#include <imgui.h>
+
+#include <string>
 
 
 namespace FlatEngine
 {
+	class GameObject;
+	class RigidBody;
+
 	class BoxCollider : public Collider
 	{
-		using RigidBody = FlatEngine::RigidBody;
-		using GameObject = FlatEngine::GameObject;
-
 		friend class Collider;
 		friend class CircleCollider;
-		class GameObject;		
 
 	public:
 		BoxCollider(long myID = -1, long parentID = -1);
 		~BoxCollider();
-					
+		std::string GetData();
+
 		bool IsTileMapCollider();
 		void SetTileMapCollider(bool b_tileMapCollider);
 		void SetActiveDimensions(float width, float height);
@@ -45,7 +41,6 @@ namespace FlatEngine
 		Vector2* GetCorners();
 		void SetNormals(Vector2 normals[4]);
 		Vector2* GetNormals();
-		std::string GetData();
 		void RecalculateBounds(float gridstep, Vector2 viewportCenter);
 
 	private:		

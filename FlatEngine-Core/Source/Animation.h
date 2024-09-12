@@ -1,8 +1,12 @@
 #pragma once
 #include "Component.h"
-#include <map>
 #include "Vector4.h"
+
+#include <map>
+#include <memory>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 
 namespace FlatEngine
@@ -341,14 +345,13 @@ namespace FlatEngine
 
 		Animation(long myID = -1, long parentID = -1);
 		~Animation();
+		std::string GetData();
 
-		void AddFrame();
 		void Play(long startTime = -1);
 		void PlayFromLua();
 		void Stop();
 		void PlayAnimation(long ellapsedTime);
 		bool IsPlaying();
-		std::string GetData();
 		void SetAnimationName(std::string animationName);
 		std::string GetAnimationName();
 		void SetAnimationPath(std::string animationPath);

@@ -311,7 +311,7 @@
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\Vector2.h" />
     <ClInclude Include="Source\Vector4.h" />
-    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Vendor\includes\ImGui\Backends\imgui_impl_sdl2.cpp" />
@@ -366,7 +366,7 @@
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\Vector2.cpp" />
     <ClCompile Include="Source\Vector4.cpp" />
-    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Vendor\includes\Lua\lua54.dll" />

@@ -15,7 +15,8 @@ namespace FlatEngine
 		m_colors = std::map<std::string, Vector4>();
 		m_textures = std::map<std::string, std::shared_ptr<Texture>>();
 		m_errorTexture = std::make_shared<Texture>();
-		m_resourceFailedToLoadImagePath = "";
+		m_errorColor = Vector4(1, 0, 0, 1);
+		m_resourceFailedToLoadImagePath = "";	
 	}
 
 	AssetManager::~AssetManager()
@@ -62,7 +63,9 @@ namespace FlatEngine
 
 					// Create the directory if it doesn't yet exist
 					if (!DoesFileExist(sValue) && sKey != "root")
+					{
 						std::filesystem::create_directories(sValue);
+					}
 				}
 			}
 
@@ -150,7 +153,9 @@ namespace FlatEngine
 
 		// Load error texture
 		if (m_resourceFailedToLoadImagePath != "")
+		{
 			m_errorTexture->LoadFromFile(m_resourceFailedToLoadImagePath);
+		}
 	}
 
 	std::string AssetManager::GetFailedToLoadImagePath()
@@ -161,48 +166,72 @@ namespace FlatEngine
 	std::string AssetManager::GetDir(std::string dirName)
 	{
 		if (m_directories.count(dirName))
+		{
 			return m_directories.at(dirName);
+		}
 		else
+		{
 			return "";
+		}
 	}
 
 	std::string AssetManager::GetFilePath(std::string fileName)
 	{
 		if (m_files.count(fileName))
+		{
 			return m_files.at(fileName);
+		}
 		else
+		{
 			return "";
+		}
 	}
 
 	Vector4 AssetManager::GetColor(std::string colorName)
 	{
 		if (m_colors.count(colorName))
+		{
 			return m_colors.at(colorName);
+		}
 		else
-			return Vector4(0.08f, 0.08f, 0.10f, 1.0f);
+		{
+			return m_errorColor;
+		}
 	}
 
 	Uint32 AssetManager::GetColor32(std::string colorName)
 	{
 		if (m_colors.count(colorName))
+		{
 			return ImGui::GetColorU32(m_colors.at(colorName));
+		}
 		else
-			return ImGui::GetColorU32(Vector4(0.0f, 0.0f, 1.0f, 1.0f)); // Return red
+		{
+			return ImGui::GetColorU32(m_errorColor);
+		}
 	}
 
 	std::shared_ptr<Texture> AssetManager::GetTextureObject(std::string textureName)
 	{
 		if (m_textures.count(textureName))
+		{
 			return m_textures.at(textureName);
+		}
 		else
-			return nullptr; // Return "failed to load texture" texture
+		{
+			return m_errorTexture;
+		}
 	}
 
 	SDL_Texture* AssetManager::GetTexture(std::string textureName)
 	{
 		if (m_textures.count(textureName))
+		{
 			return m_textures.at(textureName)->GetTexture();
+		}
 		else
+		{
 			return m_errorTexture->GetTexture();
+		}
 	}
 }

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <map>
 
 
@@ -14,8 +15,8 @@ namespace FlatEngine
 	public:
 		TileSet();
 		~TileSet();
-
 		std::string GetData();
+
 		void SetName(std::string name);
 		std::string GetName();
 		std::pair<Vector2, Vector2> GetIndexUVs(int index);
@@ -30,8 +31,7 @@ namespace FlatEngine
 		void SetTileWidth(int width);
 		void SetTileHeight(int height);
 		int GetTileWidth();
-		int GetTileHeight();
-		void SaveCopyOfTexture();
+		int GetTileHeight();		
 		void InitializeUVs();
 		void ToggleTile(int index);
 

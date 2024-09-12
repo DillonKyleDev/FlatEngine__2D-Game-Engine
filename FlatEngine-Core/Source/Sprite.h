@@ -1,9 +1,12 @@
 #pragma once
 #include "Component.h"
 #include "Texture.h"
+#include "Vector2.h"
+#include "Vector4.h"
+
 #include <SDL.h>
 #include "json.hpp"
-#include "Vector4.h"
+
 using json = nlohmann::json;
 using namespace nlohmann::literals;
 
@@ -15,6 +18,8 @@ namespace FlatEngine
 	public:
 		Sprite(long myID = -1, long parentID = -1);
 		~Sprite();
+		std::string GetData();
+
 		void SetTexture(std::string path);
 		SDL_Texture* GetTexture();
 		void SetScale(Vector2 newScale);
@@ -36,7 +41,6 @@ namespace FlatEngine
 		Vector2 GetPivotOffset();
 		void SetTintColor(Vector4 newTintColor);
 		Vector4 GetTintColor();
-		std::string GetData();
 
 	private:
 		Texture m_texture;

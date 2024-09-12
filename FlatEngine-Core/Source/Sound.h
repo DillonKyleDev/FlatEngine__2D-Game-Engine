@@ -20,11 +20,10 @@ namespace FlatEngine
 		void PlayEffect(int channel = -1);
 		void HaultChannel(int channel = -1);
 
-		Mix_Music* music;
-		Mix_Chunk* effect;
-
 	private:
-		std::string path;
-		bool _isPaused;
+		Mix_Music* m_music;
+		Mix_Chunk* m_effect;
+		std::string m_path;
+		bool m_b_isPaused;
 	};
 }

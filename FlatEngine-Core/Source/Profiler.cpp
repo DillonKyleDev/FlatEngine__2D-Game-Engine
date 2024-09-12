@@ -2,6 +2,7 @@
 #include "ProfilerProcess.h"
 #include <vector>
 
+
 using Process = FlatEngine::Process;
 
 namespace FlatEngine
@@ -19,7 +20,9 @@ namespace FlatEngine
 		for (Process &process : F_ProfilerProcesses)
 		{
 			if (process.GetProcessName() == processName)
+			{
 				process.AddHangTimeData(data);
+			}
 		}
 	}
 

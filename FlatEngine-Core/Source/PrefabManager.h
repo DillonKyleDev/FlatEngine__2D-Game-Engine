@@ -1,17 +1,18 @@
 #pragma once
 #include "Vector2.h"
-#include "Sprite.h"
 #include "TagList.h"
 #include "Animation.h"
-#include "Audio.h"
-#include "TileMap.h"
-#include "Collider.h"
-#include "Button.h"
+#include "Audio.h"    // SoundData
+#include "TileMap.h"  // Tile
 
 #include <string>
 #include <memory>
 #include <map>
 #include <vector>
+#include "json.hpp"
+
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
 namespace FlatEngine 
 {
@@ -26,7 +27,6 @@ namespace FlatEngine
 		std::vector<long> componentIDs;
 		std::vector<long> childrenIDs;
 	};
-
 	struct ComponentPrefabData {
 		std::string type;
 		long ownerId = -1;

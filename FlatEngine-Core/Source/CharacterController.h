@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Vector2.h"
+
 #include <string>
 
 namespace FlatEngine {
@@ -9,8 +10,8 @@ namespace FlatEngine {
 	public:
 		CharacterController(long myID, long parentID);
 		~CharacterController();
-
 		std::string GetData();
+
 		void MoveToward(Vector2 direction);
 		void SetMaxAcceleration(float speed);
 		float GetMaxAcceleration();
@@ -18,7 +19,7 @@ namespace FlatEngine {
 		float GetMaxSpeed();
 		void SetAirControl(float newAirControl);
 		float GetAirControl();
-		void SetMoving(bool _isMoving);
+		void SetMoving(bool b_isMoving);
 		bool IsMoving();
 
 	private:

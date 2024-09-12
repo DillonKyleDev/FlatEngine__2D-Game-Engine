@@ -1,8 +1,6 @@
 #include "GameObject.h"
-#include "FlatEngine.h"
-#include "TagList.h"
-#include "Transform.h"
 #include "Scene.h"
+#include "Transform.h"
 #include "Sprite.h"
 #include "Camera.h"
 #include "Text.h"
@@ -17,8 +15,6 @@
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 #include "CompositeCollider.h"
-#include "ECSManager.h"
-#include "Scene.h"
 #include "TileMap.h"
 
 
@@ -27,12 +23,16 @@ namespace FlatEngine
 	GameObject::GameObject(long newParentID, long myID)
 	{
 		if (myID == -1)
+		{
 			m_ID = GetNextGameObjectID();
+		}
 		else
+		{
 			m_ID = myID;
+		}
 		m_b_isPrefab = false;
 		m_prefabName = "";
-		m_prefabSpawnLocation = Vector2(0, 0);
+		m_prefabSpawnLocation = Vector2();
 		m_tagList = TagList();
 		m_parentID = newParentID;
 		m_name = "GameObject(" + std::to_string(m_ID) + ")";
@@ -45,9 +45,9 @@ namespace FlatEngine
 	{
 	}
 
-	void GameObject::SetIsPrefab(bool b_newIsPrefab)
+	void GameObject::SetIsPrefab(bool b_isPrefab)
 	{
-		m_b_isPrefab = b_newIsPrefab;
+		m_b_isPrefab = b_isPrefab;
 	}
 
 	bool GameObject::IsPrefab()
@@ -55,9 +55,9 @@ namespace FlatEngine
 		return m_b_isPrefab;
 	}
 
-	void GameObject::SetPrefabName(std::string newPrefabName)
+	void GameObject::SetPrefabName(std::string prefabName)
 	{
-		m_prefabName = newPrefabName;
+		m_prefabName = prefabName;
 	}
 
 	std::string GameObject::GetPrefabName()
@@ -65,9 +65,9 @@ namespace FlatEngine
 		return m_prefabName;
 	}
 
-	void GameObject::SetPrefabSpawnLocation(Vector2 newSpawnLocation)
+	void GameObject::SetPrefabSpawnLocation(Vector2 spawnLocation)
 	{
-		m_prefabSpawnLocation = newSpawnLocation;
+		m_prefabSpawnLocation = spawnLocation;
 	}
 
 	Vector2 GameObject::GetPrefabSpawnLocation()
@@ -85,9 +85,9 @@ namespace FlatEngine
 		return m_ID;
 	}
 
-	void GameObject::SetName(std::string newName)
+	void GameObject::SetName(std::string name)
 	{
-		m_name = newName;
+		m_name = name;
 	}
 
 	std::string GameObject::GetName()
@@ -100,9 +100,9 @@ namespace FlatEngine
 		return m_tagList;
 	}
 
-	void GameObject::SetTagList(TagList newTagList)
+	void GameObject::SetTagList(TagList tagList)
 	{
-		m_tagList = newTagList;
+		m_tagList = tagList;
 	}
 
 	bool GameObject::HasTag(std::string tagName)
@@ -110,9 +110,9 @@ namespace FlatEngine
 		return m_tagList.HasTag(tagName);
 	}
 
-	void GameObject::SetTag(std::string tagName, bool b_value)
+	void GameObject::SetTag(std::string tagName, bool b_hasTag)
 	{
-		m_tagList.SetTag(tagName, b_value);
+		m_tagList.SetTag(tagName, b_hasTag);
 	}
 
 	void GameObject::RemoveComponent(Component* component)
@@ -170,9 +170,9 @@ namespace FlatEngine
 		return transformPtr;
 	}
 
-	Sprite* GameObject::AddSprite(long id, bool b_active, bool b_collapsed)
+	Sprite* GameObject::AddSprite(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Sprite sprite = Sprite(nextID, m_ID);
@@ -185,9 +185,9 @@ namespace FlatEngine
 		return spritePtr;
 	}
 
-	Camera* GameObject::AddCamera(long id, bool b_active, bool b_collapsed)
+	Camera* GameObject::AddCamera(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Camera camera = Camera(nextID, m_ID);
@@ -199,9 +199,9 @@ namespace FlatEngine
 		return cameraPtr;
 	}
 
-	Script* GameObject::AddScript(long id, bool b_active, bool b_collapsed)
+	Script* GameObject::AddScript(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Script script = Script(nextID, m_ID);
@@ -213,9 +213,9 @@ namespace FlatEngine
 		return scriptPtr;
 	}
 
-	Button* GameObject::AddButton(long id, bool b_active, bool b_collapsed)
+	Button* GameObject::AddButton(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Button button = Button(nextID, m_ID);
@@ -227,9 +227,9 @@ namespace FlatEngine
 		return buttonPtr;
 	}
 
-	Canvas* GameObject::AddCanvas(long id, bool b_active, bool b_collapsed)
+	Canvas* GameObject::AddCanvas(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Canvas canvas = Canvas(nextID, m_ID);
@@ -241,9 +241,9 @@ namespace FlatEngine
 		return canvasPtr;
 	}
 
-	Animation* GameObject::AddAnimation(long id, bool b_active, bool b_collapsed)
+	Animation* GameObject::AddAnimation(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Animation animation = Animation(nextID, m_ID);
@@ -255,9 +255,9 @@ namespace FlatEngine
 		return animationPtr;
 	}
 
-	Audio* GameObject::AddAudio(long id, bool b_active, bool b_collapsed)
+	Audio* GameObject::AddAudio(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Audio audio = Audio(nextID, m_ID);
@@ -269,9 +269,9 @@ namespace FlatEngine
 		return audioPtr;
 	}
 
-	Text* GameObject::AddText(long id, bool b_active, bool b_collapsed)
+	Text* GameObject::AddText(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		Text text = Text(nextID, m_ID);
@@ -283,7 +283,7 @@ namespace FlatEngine
 		return textPtr;
 	}
 
-	BoxCollider* GameObject::AddBoxCollider(long id, bool b_active, bool b_collapsed)
+	BoxCollider* GameObject::AddBoxCollider(long ID, bool b_active, bool b_collapsed)
 	{
 		Vector2 dimensions = Vector2(0,0);
 		if (HasComponent("Sprite"))
@@ -293,7 +293,7 @@ namespace FlatEngine
 			dimensions = Vector2(sprite->GetTextureWidth() / F_pixelsPerGridSpace, sprite->GetTextureHeight() / F_pixelsPerGridSpace);
 		}
 
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		BoxCollider boxCollider = BoxCollider(nextID, m_ID);
@@ -310,9 +310,9 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
-	CircleCollider* GameObject::AddCircleCollider(long id, bool b_active, bool b_collapsed)
+	CircleCollider* GameObject::AddCircleCollider(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CircleCollider circleCollider = CircleCollider(nextID, m_ID);
@@ -324,9 +324,9 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
-	CompositeCollider* GameObject::AddCompositeCollider(long id, bool b_active, bool b_collapsed)
+	CompositeCollider* GameObject::AddCompositeCollider(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CompositeCollider compositeCollider = CompositeCollider(nextID, m_ID);
@@ -338,9 +338,9 @@ namespace FlatEngine
 		return colliderPtr;
 	}
 
-	RigidBody* GameObject::AddRigidBody(long id, bool b_active, bool b_collapsed)
+	RigidBody* GameObject::AddRigidBody(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		RigidBody rigidBody = RigidBody(nextID, m_ID);
@@ -352,9 +352,9 @@ namespace FlatEngine
 		return rigidBodyPtr;
 	}
 
-	CharacterController* GameObject::AddCharacterController(long id, bool b_active, bool b_collapsed)
+	CharacterController* GameObject::AddCharacterController(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		CharacterController characterController = CharacterController(nextID, m_ID);
@@ -366,9 +366,9 @@ namespace FlatEngine
 		return characterControllerPtr;
 	}
 
-	TileMap* GameObject::AddTileMap(long id, bool b_active, bool b_collapsed)
+	TileMap* GameObject::AddTileMap(long ID, bool b_active, bool b_collapsed)
 	{
-		long nextID = id;
+		long nextID = ID;
 		if (nextID == -1)
 			nextID = GetLoadedScene()->GetNextComponentID();
 		TileMap tileMap = TileMap(nextID, m_ID);

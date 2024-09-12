@@ -28,8 +28,19 @@ namespace FlatEngine
 	{
 	}
 
-	void Animation::AddFrame()
+	std::string Animation::GetData()
 	{
+		json jsonData = {
+			{ "type", "Animation" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "path", m_animationPath }
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	void Animation::Play(long startTime)
@@ -38,9 +49,13 @@ namespace FlatEngine
 		m_b_playing = true;
 		
 		if (startTime != -1)
+		{
 			m_animationStartTime = startTime;
+		}
 		else
+		{
 			m_animationStartTime = FlatEngine::GetEllapsedGameTimeInMs();
+		}
 	}
 
 	void Animation::PlayFromLua()
@@ -58,21 +73,6 @@ namespace FlatEngine
 		return m_b_playing;
 	}
 
-	std::string Animation::GetData()
-	{
-		json jsonData = {
-			{ "type", "Animation" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "path", m_animationPath }
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
-	}
-
 	void Animation::SetAnimationName(std::string name)
 	{
 		m_animationName = name;
@@ -88,7 +88,9 @@ namespace FlatEngine
 		m_animationPath = path;
 		m_animationProperties = LoadAnimationFile(path);
 		if (path != "")
+		{
 			m_animationName = GetFilenameFromPath(path);
+		}
 	}
 
 	std::string Animation::GetAnimationPath()
@@ -101,9 +103,11 @@ namespace FlatEngine
 		std::shared_ptr<S_AnimationProperties> props = m_animationProperties;
 
 		if (!props->b_isSorted)
+		{
 			props->SortFrames();
+		}
 		
-		// While the animation is not over (with a 1 second buffer to catch the last animation keyframes
+		// While the animation is not over (with a 1 second buffer to catch the last animation keyframes)
 		if (props->animationLength + 1000 > ellapsedTime - m_animationStartTime)
 		{
 			// Event Animation Frames

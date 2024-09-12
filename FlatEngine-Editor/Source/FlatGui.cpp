@@ -1,5 +1,6 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 #include "GameLoop.h"
 #include "SceneManager.h"
 #include "PrefabManager.h"
@@ -595,7 +596,9 @@ namespace FlatGui
 		for (GameObject object : objects)
 		{
 			if (object.IsActive())
+			{
 				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
+			}
 		}
 
 		drawSplitter->Merge(draw_list);
@@ -886,26 +889,31 @@ namespace FlatGui
 			}
 
 			for (CircleCollider* circleCollider : circleColliders)
-			{
+			{				
 				Vector2 activeOffset = circleCollider->GetActiveOffset();
 				int activeLayer = circleCollider->GetActiveLayer();
-				bool _isActive = circleCollider->IsActive();
-				bool _isColliding = circleCollider->IsColliding();
+				bool b_isActive = circleCollider->IsActive();
+				bool b_isColliding = circleCollider->IsColliding();
 				float activeRadius = circleCollider->GetActiveRadiusGrid() * FG_sceneViewGridStep.x;
 				circleCollider->SetActiveRadiusScreen(activeRadius);
-				bool _showActiveRadius = circleCollider->GetShowActiveRadius();
+				bool b_showActiveRadius = circleCollider->GetShowActiveRadius();
 				Vector2 center = circleCollider->GetCenterCoord();
 
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
-
 				circleCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
-				if (_isActive && !_isColliding)
+				if (b_isActive && !b_isColliding)
+				{
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
-				else if (!_isActive)
+				}
+				else if (!b_isActive)
+				{
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderInactive"), draw_list);
-				else if (_isColliding)
+				}
+				else if (b_isColliding)
+				{
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), draw_list);
+				}
 			}
 
 			if (tileMap != nullptr)
@@ -1314,7 +1322,7 @@ namespace FlatGui
 				}
 			}
 
-			// Renders Transform Arrow
+			// Renders Transform Arrow widget
 			if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE && focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
 				GameObject *focusedObject = FL::GetObjectById(focusedObjectID);
@@ -1395,28 +1403,31 @@ namespace FlatGui
 		}
 	}
 
-	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap)
+	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap, bool b_weightedScroll, float zoomMultiplier)
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
-		bool _weightedScroll = true;
 		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
+		float maxGridStep = 400;
+		float minGridStep = 10;
 
 		// For calculating scrolling mouse position and what vector to zoom to
 		DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);
 		DYNAMIC_VIEWPORT_HEIGHT = trunc(endPos.y - startPos.y);
-
-		// Border
+		
 		if (b_filled)
+		{
 			ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+		}
 		else
+		{
 			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+		}
 
 		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 		const bool is_hovered = ImGui::IsItemHovered();
 		const bool is_active = ImGui::IsItemActive();
 		const bool is_clicked = ImGui::IsItemClicked();
-
-		// For panning the scene view
+		
 		const float mouse_threshold_for_pan = 0.0f;
 		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
 		{			
@@ -1434,35 +1445,64 @@ namespace FlatGui
 		float weight = 0.01f;
 		float signedMousePosX = mousePos.x - centerPoint.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
 		float signedMousePosY = mousePos.y - centerPoint.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-		float zoomSpeed = 0.1f;
-		float zoomMultiplier = 10;
-		float finalZoomSpeed = zoomSpeed;
+		float zoomSpeed = 1;		
+		float finalZoomSpeed = zoomSpeed * zoomMultiplier;
 
 		if (inputOutput.KeyCtrl)
-			finalZoomSpeed *= zoomMultiplier;
-
-		// Change scrolling offset based on mouse position and weight
+		{
+			finalZoomSpeed += zoomMultiplier;
+		}
+		
 		if (is_hovered)
 		{
 			if (scrollInput > 0)
 			{
-				if (_weightedScroll)
+				if (b_weightedScroll)
 				{
 					scrolling.x -= trunc(signedMousePosX * weight);
 					scrolling.y -= trunc(signedMousePosY * weight);
 				}
-				gridStep.x += finalZoomSpeed;
-				gridStep.y += finalZoomSpeed;
+
+				if (gridStep.x + finalZoomSpeed < maxGridStep)
+				{
+					gridStep.x += finalZoomSpeed;					
+				}
+				else
+				{
+					gridStep.x = maxGridStep;
+				}
+				if (gridStep.y + finalZoomSpeed < maxGridStep)
+				{
+					gridStep.y += finalZoomSpeed;
+				}
+				else
+				{
+					gridStep.y = maxGridStep;
+				}
 			}
-			else if (scrollInput < 0 && gridStep.x > 2 && gridStep.y > 2)
+			else if (scrollInput < 0)
 			{
-				if (_weightedScroll)
+				if (b_weightedScroll)
 				{
 					scrolling.x += trunc(signedMousePosX * weight);
 					scrolling.y += trunc(signedMousePosY * weight);
 				}
-				gridStep.x -= finalZoomSpeed;
-				gridStep.y -= finalZoomSpeed;
+				if (gridStep.x - finalZoomSpeed > minGridStep)
+				{
+					gridStep.x -= finalZoomSpeed;
+				}
+				else
+				{
+					gridStep.x = minGridStep;
+				}
+				if (gridStep.y - finalZoomSpeed > minGridStep)
+				{
+					gridStep.y -= finalZoomSpeed;
+				}
+				else
+				{
+					gridStep.y = minGridStep;
+				}
 			}
 		}
 	}

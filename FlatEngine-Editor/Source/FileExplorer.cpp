@@ -1,11 +1,9 @@
 #include "FlatGui.h"
 #include "FlatEngine.h"
-#include "AssetManager.h"
 #include "Project.h"
 
-#include <process.h>
-#include <Windows.h>
-#include <iostream>
+#include "imgui.h"
+
 
 namespace FL = FlatEngine;
 
@@ -13,7 +11,7 @@ namespace FlatGui
 {
 	std::map<std::string, bool> FG_fileExplorerLeafTracker = std::map<std::string, bool>();	
 	std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails = std::map<std::string, std::shared_ptr<Texture>>();
-	std::string FG_currentDirectory = "../";
+	std::string FG_currentDirectory = "..\\";
 
 	// "Local" values
 	float topThumbnailPadding = 5;
@@ -36,19 +34,20 @@ namespace FlatGui
 		std::error_code err;
 		bool b_isDirectory = std::filesystem::is_directory(rootPath, err);
 
-		FL::BeginWindow("File Explorer");
+		FL::BeginWindow("File Explorer", FG_b_showFileExplorer);
 		// {
-			FL::BeginResizeWindowChild("Directories Panel", FL::GetColor("logBg"));
-			// {
-				// Border around object
-				auto directoriesWindowPos = ImGui::GetWindowPos();
-				auto directoriesWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
-				ImGui::GetWindowDrawList()->AddRect({ directoriesWindowPos.x + 2, directoriesWindowPos.y + 2 }, { directoriesWindowPos.x + directoriesWindowSize.x - 2, directoriesWindowPos.y + directoriesWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
 
+			// Border around object
+			auto directoriesWindowPos = ImGui::GetWindowPos();
+			auto directoriesWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
+			ImGui::GetWindowDrawList()->AddRect({ directoriesWindowPos.x + 2, directoriesWindowPos.y + 2 }, { directoriesWindowPos.x + directoriesWindowSize.x - 2, directoriesWindowPos.y + directoriesWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
+
+			FL::BeginResizeWindowChild("Directories Panel", FL::GetColor("transparent"));
+			// {
+		
 				FL::RenderSectionHeader("Directories");
 
 				FL::PushMenuStyles();
-
 				if (ImGui::BeginTable("##DirectoriesTable", 1, FL::F_tableFlags))
 				{
 					ImGui::TableSetupColumn("##Directory", 0, ImGui::GetContentRegionAvail().x);
@@ -59,6 +58,7 @@ namespace FlatGui
 					ImGui::EndTable();
 				}
 				FL::PopMenuStyles();
+
 			// }
 			FL::EndWindowChild();
 
@@ -67,6 +67,7 @@ namespace FlatGui
 
 			// Vertical Division between hierarchy and view panel ------------------------------------------------
 			ImGui::SameLine(0, 5);
+
 
 
 
@@ -79,107 +80,117 @@ namespace FlatGui
 			static bool b_openTileSetModal = false;
 
 			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newFileName, b_openLuaModal))
+			{
 				FL::CreateNewLuaScript(newFileName, FG_currentDirectory);
+			}
 			if (FL::RenderInputModal("Create Scene", "Enter a name for the Scene:", newFileName, b_openSceneModal))
+			{
 				FL::CreateNewSceneFile(newFileName, FG_currentDirectory);
+			}
 			if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
+			{
 				FL::CreateNewAnimationFile(newFileName, FG_currentDirectory);
+			}
 			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context:", newFileName, b_openMappingContextModal))
+			{
 				FL::CreateNewMappingContextFile(newFileName, FG_currentDirectory);
+			}
 			if (FL::RenderInputModal("Create TileSet", "Enter a name for the TileSet:", newFileName, b_openTileSetModal))
+			{
 				FL::CreateNewTileSetFile(newFileName, FG_currentDirectory);
+			}
 
-			FL::BeginWindowChild("Files Panel", FL::GetColor("explorerFilesPanelBg"));
-			// {			
-				// Border around object
-				auto filesWindowPos = ImGui::GetWindowPos();
-				auto filesWindowSize = ImGui::GetWindowSize();  // This is the size of the current box, perfect for getting the exact dimensions for a border
-				ImGui::GetWindowDrawList()->AddRect({ filesWindowPos.x + 2, filesWindowPos.y + 2 }, { filesWindowSize.x + filesWindowSize.x - 2, filesWindowSize.y + filesWindowSize.y - 2 }, FL::GetColor32("componentBorder"), 0);
 
-				FL::RenderSectionHeader("Files");
+			FL::BeginWindowChild("Files Panel", FL::GetColor("transparent"));
+			// {		
+				
+				FL::RenderSectionHeader("Filepath:  " + FG_currentDirectory);
+
+				RenderFilesTopBar();
 
 				// File icons + border
 				Vector2 borderStart = ImGui::GetCursorScreenPos();
-				FL::BeginWindowChild("FilesScrolling");
+				FL::BeginWindowChild("Files Container", FL::GetColor("explorerFilesPanelBg"));
 				Vector2 iconsStart = ImGui::GetCursorScreenPos();
 				Vector2 rightClickAreaSize = Vector2(ImGui::GetContentRegionMax().x, ImGui::GetContentRegionMax().y + ImGui::GetScrollY());
 				Vector2 borderEnd = Vector2(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x + 5, borderStart.y + rightClickAreaSize.y + 5);
-
-				// Right clickable background button
-				if (rightClickAreaSize.x > 0 && rightClickAreaSize.y > 0)
-				{
-					FL::RenderInvisibleButton("##FilesRightClickArea", borderStart, rightClickAreaSize, true, false, ImGuiButtonFlags_MouseButtonRight);
-
-					// Right click menu
-					if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+				// {
+				
+					// Right clickable background button
+					if (rightClickAreaSize.x > 0 && rightClickAreaSize.y > 0)
 					{
-						FL::PushMenuStyles();
-						if (ImGui::BeginMenu("Add new..."))
+						FL::RenderInvisibleButton("##FilesRightClickArea", borderStart, rightClickAreaSize, true, false, ImGuiButtonFlags_MouseButtonRight);
+
+						// Right click menu
+						if (ImGui::BeginPopupContextItem())
 						{
-							if (ImGui::MenuItem("Lua Script"))
+							FL::PushMenuStyles();
+							if (ImGui::BeginMenu("Add new..."))
 							{
-								b_openLuaModal = true;														
-								ImGui::CloseCurrentPopup();
+								if (ImGui::MenuItem("Lua Script"))
+								{
+									b_openLuaModal = true;														
+									ImGui::CloseCurrentPopup();
+								}
+								if (ImGui::MenuItem("Scene"))
+								{
+									b_openSceneModal = true;
+									ImGui::CloseCurrentPopup();
+								}
+								if (ImGui::MenuItem("Animation"))
+								{
+									b_openAnimationModal = true;
+									ImGui::CloseCurrentPopup();
+								}
+								if (ImGui::MenuItem("Mapping Context"))
+								{
+									b_openMappingContextModal = true;
+									ImGui::CloseCurrentPopup();
+								}
+								if (ImGui::MenuItem("TileSet"))
+								{
+									b_openTileSetModal = true;
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndMenu();
 							}
-							if (ImGui::MenuItem("Scene"))
-							{
-								b_openSceneModal = true;
-								ImGui::CloseCurrentPopup();
-							}
-							if (ImGui::MenuItem("Animation"))
-							{
-								b_openAnimationModal = true;
-								ImGui::CloseCurrentPopup();
-							}
-							if (ImGui::MenuItem("Mapping Context"))
-							{
-								b_openMappingContextModal = true;
-								ImGui::CloseCurrentPopup();
-							}
-							if (ImGui::MenuItem("TileSet"))
-							{
-								b_openTileSetModal = true;
-								ImGui::CloseCurrentPopup();
-							}
-							ImGui::EndMenu();
+							FL::PopMenuStyles();
+
+							ImGui::EndPopup();
 						}
-						FL::PopMenuStyles();
-
-						ImGui::EndPopup();
 					}
-				}
 
-				if (b_resetScroll)
-				{
-					ImGui::SetScrollY(0);
-					b_resetScroll = false;
-				}
-				ImGui::SetCursorScreenPos(iconsStart);
-				RenderDirItems();
-
-
-				if (FL::RenderConfirmModal("Are You Sure?", "Deleting this file cannot be undone", b_openDeleteModal))
-				{
-					FL::DeleteFileUsingPath(fileToDelete);
-					b_openDeleteModal = false;
-					fileToDelete = "";
-
-					// Do specific things per file
-					// If scene deleted was currently loaded, create new scene
-					// If Animation was focused, unload it from the Animator
-					// If the Mapping Context was selected, deselect it and reload Mapping Contexts
-				}
+					if (b_resetScroll)
+					{
+						ImGui::SetScrollY(0);
+						b_resetScroll = false;
+					}
+					ImGui::SetCursorScreenPos(iconsStart);
+					RenderDirItems();
 
 
-				FL::EndWindowChild();
+					if (FL::RenderConfirmModal("Are You Sure?", "Deleting this file cannot be undone", b_openDeleteModal))
+					{
+						FL::DeleteFileUsingPath(fileToDelete);
+						b_openDeleteModal = false;
+						fileToDelete = "";
+
+						// Do specific things per file
+						// If scene deleted was currently loaded, create new scene
+						// If Animation was focused, unload it from the Animator
+						// If the Mapping Context was selected, deselect it and reload Mapping Contexts
+					}
+
+				// }
+				FL::EndWindowChild(); // Files Container
 
 				ImGui::GetWindowDrawList()->AddRect(borderStart, borderEnd, FL::GetColor32("filesPanelOutline"));
 
 			// }
-			FL::EndWindowChild();
+			FL::EndWindowChild(); // Files Panel
 
 		// }
-		FL::EndWindow();
+		FL::EndWindow(); // File Explorer
 	}
 
 	void RenderDirNodes(std::string dir)
@@ -188,7 +199,9 @@ namespace FlatGui
 		{
 			bool b_isDirectory = std::filesystem::is_directory(entry.path().string());
 			if (b_isDirectory)
+			{
 				RenderDirNode(entry.path());
+			}
 		}
 	}
 
@@ -208,33 +221,47 @@ namespace FlatGui
 		if (FG_currentDirectory == fs_filepath.string())
 		{
 			if (b_isDirectory)
+			{
 				nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			}
 			else
+			{
 				nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			}
 		}
 		// Not selected
 		else
 		{
 			if (b_isDirectory)
+			{
 				nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			}
 			else
+			{
 				nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			}
 		}
 
 		// if it is a directory
 		if (b_isDirectory)
 		{
 			if (FG_fileExplorerLeafTracker.count(treeID))
+			{
 				ImGui::SetNextItemOpen(FG_fileExplorerLeafTracker.at(treeID));
+			}
 			else
+			{
 				ImGui::SetNextItemOpen(false);
+			}
 
 			b_nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, fs_filepath.filename().string().c_str());
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
 				// save last location
 				if (lastExplorerLocations.size() >= maxStoredLocations)
+				{
 					lastExplorerLocations.pop_back();
+				}
 				lastExplorerLocations.push_back(FG_currentDirectory);
 
 				FG_currentDirectory = fs_filepath.string();
@@ -243,9 +270,13 @@ namespace FlatGui
 			}
 
 			if (FG_fileExplorerLeafTracker.count(treeID))
+			{
 				FG_fileExplorerLeafTracker.at(treeID) = b_nodeOpen;
+			}
 			else
+			{
 				FG_fileExplorerLeafTracker.emplace(treeID, b_nodeOpen);
+			}
 
 			if (b_nodeOpen)
 			{
@@ -261,7 +292,9 @@ namespace FlatGui
 			{
 				// save last location
 				if (lastExplorerLocations.size() >= maxStoredLocations)
+				{
 					lastExplorerLocations.pop_back();
+				}
 				lastExplorerLocations.push_back(FG_currentDirectory);
 
 				FG_currentDirectory = fs_filepath.string();
@@ -273,14 +306,8 @@ namespace FlatGui
 
 	void RenderFilesTopBar()
 	{		
-		Vector2 topBarStart = ImGui::GetCursorScreenPos();
-		Vector2 topBarEnd = Vector2(topBarStart.x + ImGui::GetContentRegionAvail().x, topBarStart.y + 32);
-		ImGui::GetWindowDrawList()->AddRectFilled(topBarStart, topBarEnd, FL::GetColor32("filePanelTopBar")); // Background color
-		ImGui::SetCursorScreenPos(Vector2(topBarStart.x + 5, topBarStart.y + 6)); // Top padding
-
-
 		ImGui::BeginDisabled(lastExplorerLocations.size() == 0);
-		if (FL::RenderImageButton("##BackButtonFileExplorer", FL::GetTexture("left")))
+		if (FL::RenderImageButton("##BackButtonFileExplorer", FL::GetTexture("back"), Vector2(20), 5, FL::GetColor("filesTopBarButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("filesTopBarButtonHover"), FL::GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(1)))
 		{
 			// use last location
 			FG_currentDirectory = lastExplorerLocations.back();
@@ -291,7 +318,7 @@ namespace FlatGui
 		ImGui::EndDisabled();
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x - 2, ImGui::GetCursorScreenPos().y + 3));
+		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Back");
 		
 		ImGui::SameLine();
@@ -299,9 +326,9 @@ namespace FlatGui
 		std::filesystem::path parentDir(FG_currentDirectory);
 		std::string parent = parentDir.stem().string();
 		ImGui::BeginDisabled(parentDir.filename().string() == "..");
-		if (FL::RenderImageButton("##UpButtonFileExplorer", FL::GetTexture("up")))
+		if (FL::RenderImageButton("##UpButtonFileExplorer", FL::GetTexture("upDirectory"), Vector2(20), 5, FL::GetColor("filesTopBarButtonBg"), FL::GetColor("imageButtonTint"), FL::GetColor("filesTopBarButtonHover"), FL::GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(1)))
 		{
-			// Go up a directory
+			// go up a directory
 			lastExplorerLocations.push_back(FG_currentDirectory);
 			FG_currentDirectory = parentDir.parent_path().string();
 			SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
@@ -310,10 +337,9 @@ namespace FlatGui
 		ImGui::EndDisabled();
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x - 2, ImGui::GetCursorScreenPos().y + 3));
+		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Up directory");
-
-		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + 5));
+		FL::MoveScreenCursor(0, 2);
 	}
 
 	void RenderDirItems()
@@ -330,7 +356,9 @@ namespace FlatGui
 			{				
 				// Drawing the first button in the row
 				if (iconsThisRow == 0)
+				{
 					ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x + (horizontalSpacing / 2), (ImGui::GetCursorScreenPos().y + verticalSpacing)));
+				}
 
 				Vector2 currentPos = ImGui::GetCursorScreenPos();
 
@@ -342,7 +370,9 @@ namespace FlatGui
 					iconsThisRow++;
 				}
 				else
-					iconsThisRow = 0;					
+				{
+					iconsThisRow = 0;
+				}
 			}
 		}
 	}
@@ -359,11 +389,17 @@ namespace FlatGui
 		std::filesystem::path stem = fs_filepath.stem();
 		
 		if (std::filesystem::is_directory(fs_filepath.string()))
+		{
 			icon = "folderFile";
+		}
 		else if (extension == ".cpp")
+		{
 			icon = "cppFile";
+		}
 		else if (extension == ".h")
+		{
 			icon = "hFile";
+		}
 		else if (extension == ".lua" && stem.extension() == ".scp")
 		{
 			icon = "luaFile";
@@ -390,23 +426,39 @@ namespace FlatGui
 			openIn = "in Animator";
 		}
 		else if (extension == ".wav" || extension == ".mp3")
+		{
 			icon = "audioFile";
+		}
 		else if (extension == ".scn")
+		{
 			icon = "sceneFile";
+		}
 		else if (extension == ".prj")
+		{
 			icon = "projectFile";
+		}
 		else if (extension == ".tls")
+		{
 			icon = "tileSetFile";
+		}
 		else if (extension == ".prf")
+		{
 			icon = "prefabFile";
+		}
 		else
+		{
 			icon = "unmarkedFile";
+		}
 	
 		// If it's an image we have a saved Texture for, use it
 		if  (FG_visibleThumbnails.count(fs_filepath.string()))
+		{
 			thumbnail = FG_visibleThumbnails.at(fs_filepath.string());
+		}
 		else  // Else use default PNG file icon
+		{
 			thumbnail = FL::GetTextureObject(icon);
+		}
 
 		texture = thumbnail->GetTexture();
 		dimensions = Vector2((float)thumbnail->GetWidth(), (float)thumbnail->GetHeight());
@@ -419,7 +471,9 @@ namespace FlatGui
 			dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
 		}
 		else if (dimensions.y > maxThumbnailSize.y && dimensions.x < maxThumbnailSize.x)
+		{
 			dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
+		}
 		else if (dimensions.x > maxThumbnailSize.x && dimensions.y > maxThumbnailSize.y)
 		{
 			if (dimensions.x - maxThumbnailSize.x > dimensions.y - maxThumbnailSize.y)
@@ -427,29 +481,37 @@ namespace FlatGui
 				dimensions = Vector2(maxThumbnailSize.x, maxThumbnailSize.x * yAspect);
 			}
 			else
+			{
 				dimensions = Vector2(maxThumbnailSize.y * xAspect, maxThumbnailSize.y);
+			}
 		}
 		
+		bool b_buttonSelected = false;
+		for (std::string clickedFile : FL::F_selectedFiles)
+		{
+			if (clickedFile == fs_filepath.string())
+			{
+				b_buttonSelected = true;
+			}
+		}
 
 		std::string buttonID = "FileIcon-" + fs_filepath.string();
 		int imageXOffset = (int)(((maxThumbnailSize.x - dimensions.x) / 2) + horizontalThumbnailPadding);
 		int imageYOffset = (int)(((maxThumbnailSize.y - dimensions.y) / 2) + topThumbnailPadding);
 		int textBoxXOffset = (int)(iconButtonSize.x - iconButtonTextBoxSize.x) / 2;
-		std::string truncatedName = fs_filepath.filename().string().substr(0, maxCharactersPerFile);
-		if (fs_filepath.filename().string().length() > maxCharactersPerFile)
-			truncatedName += "..";
-		float textWidth = ImGui::CalcTextSize(truncatedName.c_str()).x;
+
+		std::string fileName = fs_filepath.filename().string();
+		if (!b_buttonSelected && fs_filepath.filename().string().length() > maxCharactersPerFile)
+		{
+			fileName = fs_filepath.filename().string().substr(0, maxCharactersPerFile) + "..";
+		}
+		float textWidth = ImGui::CalcTextSize(fileName.c_str()).x;
 		int filenameXOffset = (int)(iconButtonSize.x - textWidth) / 2;
-		bool b_highlightIconButton = false;
+		
 
 
 		// Button interactions
-		//
-		for (std::string clickedFile : FL::F_selectedFiles)
-			if (clickedFile == fs_filepath.string())
-				b_highlightIconButton = true;
-
-		if (b_highlightIconButton)
+		if (b_buttonSelected)
 		{
 			ImGui::GetWindowDrawList()->AddRectFilled(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("selectedFileBg"), 2);
 			ImGui::GetWindowDrawList()->AddRect(currentPos, Vector2(currentPos.x + iconButtonSize.x, currentPos.y + iconButtonSize.y), FL::GetColor32("selectedFileOutline"), 2);
@@ -467,7 +529,7 @@ namespace FlatGui
 		bool b_doubleClicked = ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 		
 		// Right click menu
-		if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+		if (ImGui::BeginPopupContextItem())
 		{
 			FL::PushMenuStyles();
 			if (ImGui::MenuItem(std::string("Open " + openIn).c_str()))
@@ -504,7 +566,9 @@ namespace FlatGui
 		if (b_leftClicked || b_rightClicked)
 		{
 			if (!ImGui::GetIO().KeyCtrl)
+			{
 				FL::F_selectedFiles.clear();
+			}
 
 			bool b_alreadyClicked = false;
 
@@ -520,13 +584,17 @@ namespace FlatGui
 			}
 
 			if (!b_alreadyClicked)
+			{
 				FL::F_selectedFiles.push_back(fs_filepath.string());
+			}
 		}
 		if (std::filesystem::is_directory(fs_filepath.string()) && b_doubleClicked)
 		{
 			// save last location
 			if (lastExplorerLocations.size() >= maxStoredLocations)
+			{
 				lastExplorerLocations.pop_back();
+			}
 			lastExplorerLocations.push_back(FG_currentDirectory);
 
 			FG_currentDirectory = fs_filepath.string();
@@ -553,8 +621,7 @@ namespace FlatGui
 		
 		ImGui::SetCursorScreenPos(Vector2(currentPos.x + filenameXOffset, currentPos.y + maxThumbnailSize.y + thumbnailTextSpacing + topThumbnailPadding));
 		Vector2 startTextBoxPos = ImGui::GetCursorScreenPos();
-		ImGui::SetNextItemWidth(iconButtonTextBoxSize.x);
-		ImGui::Text(truncatedName.c_str());		
+		ImGui::TextWrapped(fileName.c_str());
 		ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, startTextBoxPos.y + iconButtonTextBoxSize.y));
 	}
 

@@ -1,8 +1,9 @@
 #pragma once
-#include "FlatEngine.h"
-#include "Collider.h"
 #include "Component.h"
+#include "CharacterController.h"
+#include "Collider.h"
 #include "Vector2.h"
+
 #include <string>
 
 
@@ -15,19 +16,17 @@ namespace FlatEngine
 	public:
 		RigidBody(long myID = -1, long parentID = -1);
 		~RigidBody();
-
 		std::string GetData();
 
 		void CalculatePhysics();
 		void ApplyPhysics(float deltaTime);
-
 		Vector2 AddVelocity(Vector2 vel);
 		void ApplyGravity();
 		void AddForce(Vector2 force, float multiplier = 1);
 		void AddTorque(float torque, float multiplier = 1);
 		void ApplyEquilibriumForce();
 		void ApplyCollisionForces();
-		void ApplyCollisionForce(FlatEngine::Collider* collider, float halfWidth, float halfHeight);
+		void ApplyCollisionForce(Collider* collider, float halfWidth, float halfHeight);
 
 		Vector2 GetNextPosition();
 
@@ -62,8 +61,8 @@ namespace FlatEngine
 		float GetEquilibriumForce();
 		void ApplyFriction();
 		bool IsStatic();
-		void SetIsStatic(bool _static);
-		void SetIsGrounded(bool _grounded);
+		void SetIsStatic(bool b_static);
+		void SetIsGrounded(bool b_grounded);
 		bool IsGrounded();
 
 	private:

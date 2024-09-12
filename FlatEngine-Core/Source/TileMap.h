@@ -1,11 +1,13 @@
 #pragma once
 #include "Component.h"
-#include "FlatEngine.h"
 #include "BoxCollider.h"
+#include "TileSet.h"
+#include "Vector2.h"
 
 #include <vector>
 #include <string>
 #include <map>
+
 
 namespace FlatEngine
 {
@@ -29,8 +31,8 @@ namespace FlatEngine
     public:
         TileMap(long myID = -1, long parentID = -1);
         ~TileMap();
-
         std::string GetData();
+
         int GetWidth();
         int GetHeight();
         int GetTileWidth();
@@ -59,8 +61,7 @@ namespace FlatEngine
         void RemoveTileSet(std::string name);
         void SetTileSets(std::vector<std::string> tileSets);
         std::vector<std::string> GetTileSets();
-        std::map<int, std::map<int, Tile>> GetTiles();
-        static void CreateTileForMap(Vector2 coord, TileSet* tileSet, int tileSetIndex, std::map<int, std::map<int, Tile>>& tiles);
+        std::map<int, std::map<int, Tile>> GetTiles();        
         void SetTile(Vector2 tileMapCoords, TileSet* tileSet, int tileSetIndex);
         void SetTiles(std::map<int, std::map<int, Tile>> tiles);
         void EraseTile(Vector2 tileMapCoords);
@@ -75,7 +76,6 @@ namespace FlatEngine
         std::map<int, std::map<int, Tile>> m_tempMoveTiles;
         std::string m_selectedTileSet;
         std::vector<std::string> m_tileSetNames;  
-
         std::string m_selectedCollisionArea;
         std::map<std::string, std::vector<CollisionAreaData>> m_collisionAreas;
     };

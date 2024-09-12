@@ -298,9 +298,13 @@ namespace FlatEngine
 		std::string filenameWExtention;
 
 		if (path == "")
+		{
 			filenameWExtention = GetDir("scripts") + "/" + filename + ".scp.lua";
+		}
 		else
+		{
 			filenameWExtention = path + "/" + filename + ".scp.lua";
+		}
 
 		outfile.open(filenameWExtention, std::ios_base::app);
 		outfile << 
@@ -356,7 +360,9 @@ namespace FlatEngine
 			return true;
 		}
 		else
+		{
 			return false;
+		}
 	}
 
 	template <class T>

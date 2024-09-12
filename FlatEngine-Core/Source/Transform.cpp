@@ -1,7 +1,6 @@
 #include "Transform.h"
 #include "FlatEngine.h"
-#include "BoxCollider.h"
-#include "Project.h"
+#include "GameObject.h"
 #include "Button.h"
 
 
@@ -20,6 +19,27 @@ namespace FlatEngine
 
 	Transform::~Transform()
 	{
+	}
+
+	std::string Transform::GetData()
+	{
+		json jsonData = {
+			{ "type", "Transform" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "xOrigin", m_origin.x },
+			{ "yOrigin", m_origin.y },
+			{ "xPos", m_position.x },
+			{ "yPos", m_position.y },
+			{ "rotation", m_rotation },
+			{ "xScale", m_scale.x },
+			{ "yScale", m_scale.y }
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
 	}
 
 	void Transform::SetInitialPosition(Vector2 initialPos)
@@ -47,27 +67,6 @@ namespace FlatEngine
 		return Vector2(m_origin.x + m_position.x, m_origin.y + m_position.y);
 	}
 
-	std::string Transform::GetData()
-	{
-		json jsonData = { 
-			{ "type", "Transform" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "xOrigin", m_origin.x },
-			{ "yOrigin", m_origin.y },
-			{ "xPos", m_position.x },
-			{ "yPos", m_position.y },
-			{ "rotation", m_rotation },
-			{ "xScale", m_scale.x },
-			{ "yScale", m_scale.y }
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
-	}
-
 	void Transform::SetPosition(Vector2 newPosition)
 	{
 		m_position = newPosition;
@@ -78,7 +77,9 @@ namespace FlatEngine
 			{
 				GameObject *child = GetObjectById(id);
 				if (child->HasComponent("Transform"))
+				{
 					child->GetTransform()->UpdateOrigin(GetTruePosition());
+				}
 			}
 		}
 	}
@@ -93,12 +94,12 @@ namespace FlatEngine
 	{
 		if (GetParent()->HasChildren())
 		{
-			for (long id : GetParent()->GetChildren())
+			for (long ID : GetParent()->GetChildren())
 			{
-				GameObject *child = GetObjectById(id);
+				GameObject *child = GetObjectById(ID);
 				if (child->HasComponent("Transform"))
 				{
-					FlatEngine::Transform* childTransform = child->GetTransform();
+					Transform* childTransform = child->GetTransform();
 					childTransform->SetOrigin(newOrigin);
 					childTransform->UpdateChildOrigins(childTransform->GetTruePosition());
 				}
@@ -135,7 +136,6 @@ namespace FlatEngine
 	{
 		Vector2 slope = Vector2(lookAt.x - GetTruePosition().x, lookAt.y - GetTruePosition().y);
 		float angle = atan(slope.y / slope.x) * 180.0f / (float)M_PI;
-		LogFloat(angle, "Angle: ");
 		m_rotation = angle;
 	}
 }

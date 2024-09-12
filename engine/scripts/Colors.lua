@@ -8,7 +8,8 @@ F_Colors = {
 	----------------------
 	-- Components --------
 	----------------------
-	componentSubTileBg = Vector4:new(0.1, 0.1, 0.1, 1.0),
+	componentsScrollingBg = Vector4:new(0.17, 0.17, 0.2, 1.0),
+	componentSubTitleBg = Vector4:new(0.12, 0.12, 0.14, 1.0),
 	componentSectionBorder = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	componentBorder = Vector4:new(0.2, 0.2, 0.2, 1.0),
 	componentBg = Vector4:new(0.16, 0.16, 0.17, 1.0),
@@ -59,12 +60,14 @@ F_Colors = {
 	projectHubTableOutline = Vector4:new(0.36, 0.36, 0.37, 1.0),
 	-- Log
 	logText = Vector4:new(0.75, 0.75, 0.75, 1.0),
-	logBg = Vector4:new(0.15, 0.15, 0.17, 1.0),
+	logBg = Vector4:new(0.2, 0.2, 0.21, 1.0),
 	logOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	-- File Explorer
 	explorerFilesPanelBg = Vector4:new(0.2, 0.2, 0.22, 1.0),
 	panelTitleBg =  Vector4:new(0.14, 0.14, 0.14, 1.0),
-	filePanelTopBar = Vector4:new(0.4, 0.4, 0.45, 1.0),
+	filePanelTopBar = Vector4:new(0.2, 0.2, 0.22, 0.0),
+	filesTopBarButtonBg = Vector4:new(0.25, 0.25, 0.27, 1.0),
+	filesTopBarButtonHover = Vector4:new(0.5, 0.5, 0.54, 1.0),
 	filesPanelOutline = Vector4:new(0.25, 0.25, 0.27, 1.0),
 	selectedFileBg =  Vector4:new(0.75, 0.75, 0.75, 0.11),
 	selectedFileOutline =  Vector4:new(0.75, 0.75, 0.75, 0.45),
@@ -161,12 +164,15 @@ F_Colors = {
 	imageButtonActive = Vector4:new(0.1, 0.1, 0.1, 1.0),
 	imageButtonTint = Vector4:new(1.0, 1.0, 1.0, 1.0),
 	-- Sliders/Drags
-	slider = Vector4:new(0.09, 0.09, 0.13, 1.0),
-	sliderHovered = Vector4:new(0.09, 0.09, 0.13, 1.0),
-	sliderActive = Vector4:new(0.09, 0.09, 0.13, 1.0),
+	sliderBg = Vector4:new(0.11, 0.11, 0.11, 1.0),
+	sliderHovered =  Vector4:new(0.10, 0.10, 0.10, 1.0),
+	sliderActive = Vector4:new(0.3, 0.3, 0.32, 1.0),
+	sliderGrab = Vector4:new(0.3, 0.3, 0.65, 1.0),
+	sliderGrabActive = Vector4:new(0.09, 0.09, 0.13, 1.0),
+	sliderGrabHovered = Vector4:new(0.35, 0.35, 0.75, 1.0),
 	drag = Vector4:new(0.2, 0.2, 0.2, 0.0),
-	dragHovered = Vector4:new(0.45, 0.45, 0.45, 1.0),
-	dragActive = Vector4:new(0.10, 0.10, 0.10, 1.0),
+	dragHovered = Vector4:new(0.45, 0.45, 0.45, 1.0),	
+	dragActive = Vector4:new(0.45, 0.45, 0.45, 1.0),	
 	-- Checkboxes
 	checkboxBg = Vector4:new(0.28, 0.28, 0.29, 1.0),
 	checkboxCheck = Vector4:new(0.45, 0.45, 0.9, 1.0),

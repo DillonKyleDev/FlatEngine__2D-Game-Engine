@@ -25,9 +25,34 @@ namespace FlatEngine
 	{
 	}
 
-	void Camera::SetPrimaryCamera(bool _isPrimary)
+	std::string Camera::GetData()
 	{
-		m_b_isPrimaryCamera = _isPrimary;
+		json jsonData = {
+			{ "type", "Camera" },
+			{ "id", GetID() },
+			{ "_isCollapsed", IsCollapsed() },
+			{ "_isActive", IsActive() },
+			{ "width", m_width },
+			{ "height", m_height },
+			{ "_isPrimaryCamera", m_b_isPrimaryCamera },
+			{ "zoom", m_zoom },
+			{ "frustrumRed", m_frustrumColor.x },
+			{ "frustrumGreen", m_frustrumColor.y },
+			{ "frustrumBlue", m_frustrumColor.z },
+			{ "frustrumAlpha", m_frustrumColor.w },
+			{ "_follow", m_b_shouldFollow },
+			{ "followSmoothing", m_followSmoothing },
+			{ "following", m_toFollowID },
+		};
+
+		std::string data = jsonData.dump();
+		// Return dumped json object with required data for saving
+		return data;
+	}
+
+	void Camera::SetPrimaryCamera(bool b_isPrimary)
+	{
+		m_b_isPrimaryCamera = b_isPrimary;
 	}
 
 	bool Camera::IsPrimary()
@@ -50,7 +75,7 @@ namespace FlatEngine
 		GameObject *followTarget = GetObjectById(m_toFollowID);
 		if (m_b_shouldFollow && GetParent()->HasComponent("Transform") && followTarget != nullptr && followTarget->HasComponent("Transform"))
 		{
-			FlatEngine::Transform* cameraTransform = GetParent()->GetTransform();
+			Transform* cameraTransform = GetParent()->GetTransform();
 			Vector2 followPos = followTarget->GetTransform()->GetTruePosition();
 			Vector2 currentPos = cameraTransform->GetPosition(); // Shouldn't have a parent if following so don't need GetTruePosition()
 
@@ -58,9 +83,9 @@ namespace FlatEngine
 		}
 	}
 
-	void Camera::SetShouldFollow(bool _shouldFollow)
+	void Camera::SetShouldFollow(bool b_shouldFollow)
 	{
-		m_b_shouldFollow = _shouldFollow;
+		m_b_shouldFollow = b_shouldFollow;
 	}
 
 	bool Camera::GetShouldFollow()
@@ -113,30 +138,5 @@ namespace FlatEngine
 	float Camera::GetHeight()
 	{
 		return m_height;
-	}
-
-	std::string Camera::GetData()
-	{
-		json jsonData = {
-			{ "type", "Camera" },
-			{ "id", GetID() },
-			{ "_isCollapsed", IsCollapsed() },
-			{ "_isActive", IsActive() },
-			{ "width", m_width },
-			{ "height", m_height },
-			{ "_isPrimaryCamera", m_b_isPrimaryCamera },
-			{ "zoom", m_zoom },
-			{ "frustrumRed", m_frustrumColor.x },
-			{ "frustrumGreen", m_frustrumColor.y },
-			{ "frustrumBlue", m_frustrumColor.z },
-			{ "frustrumAlpha", m_frustrumColor.w },
-			{ "_follow", m_b_shouldFollow },
-			{ "followSmoothing", m_followSmoothing },
-			{ "following", m_toFollowID },
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 }

@@ -1,5 +1,5 @@
-#include "FlatEngine.h"
 #include "Logger.h"
+#include "Vector4.h"
 
 
 namespace FlatEngine
@@ -39,7 +39,7 @@ namespace FlatEngine
 
 	void Logger::LogSeparator()
 	{
-		std::string line = "------------------------------------------------------------------------------------\n";
+		std::string line = "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
 		log.appendf(line.c_str());
 	}
 

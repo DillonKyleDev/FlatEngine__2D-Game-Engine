@@ -5,7 +5,7 @@
 #include "Application.h"
 #include "GameLoop.h"
 #include "AssetManager.h"
-#include "Window.h"
+#include "WindowManager.h"
 #include "Project.h"
 #include "Process.h"
 #include "GameObject.h"
@@ -210,17 +210,17 @@ public:
 
 		// Application specific rendering tasks
 		
-		//////////////////////////////
-		////////  WARNING!  //////////
-		//////////////////////////////
+		/////////////////////////////
+		////////  WARNING!  /////////
+		/////////////////////////////
 		//  After recreating the window, you need to recreate any assets that were created using that window!!!    // 
 		//  This can lead to assets not appearing even though everything seems like it should be working and fine  //
 		
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			//Window::SetScreenDimensions(1500, 850);
-			Window::SetScreenDimensions(1900, 1000);
+			//FL::F_Window->SetScreenDimensions(1500, 850);
+			FL::F_Window->SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors

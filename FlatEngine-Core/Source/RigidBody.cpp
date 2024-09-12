@@ -1,18 +1,18 @@
 #include "RigidBody.h"
+#include "GameObject.h"
 #include "Transform.h"
 #include "CharacterController.h"
 #include "BoxCollider.h"
-#include "Project.h"
 #include "Sprite.h"
 
 
-namespace FlatEngine {
+namespace FlatEngine 
+{
 	RigidBody::RigidBody(long myID, long parentID)
 	{
 		SetType(T_RigidBody);
 		SetID(myID);
 		SetParentID(parentID);
-		// Linear
 		m_mass = 1;
 		m_1overMass = 1 / m_mass;		
 		m_pendingForces = Vector2(0, 0);
@@ -68,7 +68,6 @@ namespace FlatEngine {
 
 	void RigidBody::CalculatePhysics()
 	{
-		// Add up forces
 		ApplyCollisionForces();
 		ApplyGravity();
 		ApplyFriction();
@@ -76,28 +75,38 @@ namespace FlatEngine {
 	
 		// Linear
 		if (m_mass == 0)
+		{
 			m_acceleration = Vector2(m_pendingForces.x, m_pendingForces.y);
+		}
 		else
+		{
 			m_acceleration = Vector2(m_pendingForces.x * m_1overMass * m_forceCorrection, m_pendingForces.y * m_1overMass * m_forceCorrection);
+		}
 
 		// Rotational - Torque = I * angularAcceleration
 		if (m_I == 0)
+		{
 			m_angularAcceleration = m_pendingTorques;
+		}
 		else
+		{
 			m_angularAcceleration = m_pendingTorques * m_1overI;
+		}
 	}
 
 	void RigidBody::ApplyPhysics(float deltaTime)
 	{
 		// In reality, we should be adding acceleration to velocity, but it is difficult to simulate opposing forces that would actually cause objects to slow down (ie. give them negative values in the opposing direction at all times)
 		m_velocity = Vector2(m_acceleration.x, m_acceleration.y);
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetPosition();
 
 		transform->SetPosition(Vector2(position.x + m_velocity.x, position.y + m_velocity.y));
 
 		if (m_b_allowTorques)
+		{
 			m_angularVelocity = m_angularAcceleration;
+		}
 
 		float rotation = transform->GetRotation();
 		transform->SetRotation((float)fmod(rotation + m_angularVelocity, 360));
@@ -106,11 +115,13 @@ namespace FlatEngine {
 	Vector2 RigidBody::AddVelocity(Vector2 vel)
 	{
 		// Make sure not colliding in that direction before adding the m_velocity
-		std::vector<FlatEngine::BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
-		for (FlatEngine::BoxCollider* boxCollider : boxColliders)
+		std::vector<BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
+		for (BoxCollider* boxCollider : boxColliders)
 		{
-			if ((vel.x > 0 && (!boxCollider->_isCollidingRight || !boxCollider->_rightCollisionStatic) || vel.x < 0 && (!boxCollider->_isCollidingLeft || !boxCollider->_leftCollisionStatic)))
+			if ((vel.x > 0 && (!boxCollider->m_b_isCollidingRight || !boxCollider->m_b_rightCollisionStatic) || vel.x < 0 && (!boxCollider->m_b_isCollidingLeft || !boxCollider->m_b_leftCollisionStatic)))
+			{
 				m_pendingForces.x += vel.x;
+			}
 		}
 
 		m_pendingForces.y += vel.y;		
@@ -124,9 +135,13 @@ namespace FlatEngine {
 			if (!m_b_isGrounded && m_velocity.y > -m_terminalVelocity)
 			{
 				if (m_velocity.y < 0)
+				{
 					m_pendingForces.y -= m_fallingGravity;
+				}
 				else
+				{
 					m_pendingForces.y -= m_gravity;
+				}
 			}
 		}
 		else if (m_gravity < 0)
@@ -134,9 +149,13 @@ namespace FlatEngine {
 			if (!m_b_isGrounded && m_velocity.y < m_terminalVelocity)
 			{
 				if (m_velocity.y > 0)
+				{
 					m_pendingForces.y -= m_fallingGravity;
+				}
 				else
+				{
 					m_pendingForces.y -= m_gravity;
+				}
 			}
 		}
 	}
@@ -152,20 +171,26 @@ namespace FlatEngine {
 
 		// Rotational drag
 		if (m_b_allowTorques)
+		{
 			m_pendingTorques *= m_angularDrag;
+		}
 
 		// Get Character Controller for _isMoving
-		FlatEngine::CharacterController* characterController = nullptr;
+		CharacterController* characterController = nullptr;
 
 		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
+		{
 			characterController = GetParent()->GetCharacterController();
+		}
 
-		bool _isMoving = false;
+		bool b_isMoving = false;
 		if (characterController != nullptr)
-			_isMoving = characterController->IsMoving();
+		{
+			b_isMoving = characterController->IsMoving();
+		}
 
 		// Ground m_friction
-		if (!_isMoving && (m_gravity != 0 && m_b_isGrounded))
+		if (!b_isMoving && (m_gravity != 0 && m_b_isGrounded))
 		{
 			Vector2 dampenedVelocity = Vector2(m_pendingForces.x * m_friction, m_pendingForces.y);
 			m_pendingForces = dampenedVelocity;
@@ -180,21 +205,29 @@ namespace FlatEngine {
 	void RigidBody::ApplyEquilibriumForce()
 	{
 		float maxSpeed = 1;
-		FlatEngine::CharacterController* characterController = nullptr;
+		CharacterController* characterController = nullptr;
 
 		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
+		{
 			characterController = GetParent()->GetCharacterController();
+		}
 
 		if (characterController != nullptr)
+		{
 			maxSpeed = characterController->GetMaxSpeed();
+		}
 
 		if (characterController != nullptr || m_friction != 1)
 		{
 			// Horizontal speed control
 			if (characterController != nullptr && m_velocity.x > maxSpeed || m_velocity.x > m_terminalVelocity)
+			{
 				m_pendingForces.x -= m_equilibriumForce;
+			}
 			else if (characterController != nullptr && m_velocity.x < -maxSpeed || m_velocity.x < -m_terminalVelocity)
+			{
 				m_pendingForces.x += m_equilibriumForce;
+			}
 			// Vertical speed control
 			//if (m_velocity.y > maxSpeed)
 			//	m_pendingForces.y -= m_equilibriumForce;
@@ -205,24 +238,24 @@ namespace FlatEngine {
 
 	void RigidBody::ApplyCollisionForces()
 	{
-		std::vector<FlatEngine::BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
-		std::vector<FlatEngine::CircleCollider*> circleColliders = GetParent()->GetCircleColliders();
-
-		// BoxColliders
-		for (FlatEngine::BoxCollider* boxCollider : boxColliders)
+		std::vector<BoxCollider*> boxColliders = GetParent()->GetBoxColliders();
+		std::vector<CircleCollider*> circleColliders = GetParent()->GetCircleColliders();
+		
+		for (BoxCollider* boxCollider : boxColliders)
 		{
 			Vector2 scale = Vector2(1, 1);
-			FlatEngine::Transform* transform = boxCollider->GetParent()->GetTransform();
+			Transform* transform = boxCollider->GetParent()->GetTransform();
 			if (transform != nullptr)
+			{
 				scale = transform->GetScale();
+			}
 
 			float halfWidth = boxCollider->GetActiveWidth() / 2 * scale.x;
 			float halfHeight = boxCollider->GetActiveHeight() / 2 * scale.y;
 
 			ApplyCollisionForce(boxCollider, halfWidth, halfHeight);
-		}
-		//CircleColliders
-		for (FlatEngine::CircleCollider* circleCollider : circleColliders)
+		}		
+		for (CircleCollider* circleCollider : circleColliders)
 		{
 			float activeRadius = circleCollider->GetActiveRadiusGrid();			
 
@@ -230,107 +263,128 @@ namespace FlatEngine {
 		}
 	}
 
-	void RigidBody::ApplyCollisionForce(FlatEngine::Collider* collider, float halfWidth, float halfHeight)
+	void RigidBody::ApplyCollisionForce(Collider* collider, float halfWidth, float halfHeight)
 	{
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 position = GetParent()->GetTransform()->GetPosition();				
 		float newYPos;
 		float newXPos;
 		float cornerm_friction = .01f;
 		float cornerLerp = 0.3f;
-
-		// Circle Colliders
+		
 		if (collider->GetTypeString() == "CircleCollider")
 		{
 			// Moving down
 			if (m_pendingForces.y < 0)
 			{
-				if (collider->_isCollidingBottom && collider->_bottomCollisionSolid && (!collider->_isCollidingBottomLeft || (collider->_isCollidingBottomLeft && !collider->_bottomLeftCollisionSolid)) && (!collider->_isCollidingBottomRight || (collider->_isCollidingBottomRight && !collider->_bottomRightCollisionSolid)))
+				if (collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid && 
+					(!collider->m_b_isCollidingBottomLeft || (collider->m_b_isCollidingBottomLeft && !collider->m_b_bottomLeftCollisionSolid)) && 
+					(!collider->m_b_isCollidingBottomRight || (collider->m_b_isCollidingBottomRight && !collider->m_b_bottomRightCollisionSolid)))
 				{
 					m_pendingForces.y = 0;
-					newYPos = collider->bottomCollidedPosition.y;
+					newYPos = collider->m_bottomCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
-				else if (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid)
+				else if (collider->m_b_isCollidingBottomLeft && collider->m_b_bottomLeftCollisionSolid)
 				{
-					newXPos = collider->bottomLeftCollidedPosition.x;
-					newYPos = collider->bottomLeftCollidedPosition.y;
+					newXPos = collider->m_bottomLeftCollidedPosition.x;
+					newYPos = collider->m_bottomLeftCollidedPosition.y;
 					transform->SetPosition(Vector2(newXPos, newYPos));
 				}
-				else if (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid)
+				else if (collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionSolid)
 				{
 					newXPos = position.x - cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
-					newYPos = collider->bottomRightCollidedPosition.y;
+					newYPos = collider->m_bottomRightCollidedPosition.y;
 					//m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}	
 
 			// Normal m_gravity
-			if (m_gravity > 0 && (collider->_isCollidingBottom && collider->_bottomCollisionSolid) || (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid))
+			if (m_gravity > 0 && (collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid) ||
+				(collider->m_b_isCollidingBottomLeft && collider->m_b_bottomLeftCollisionSolid) ||
+				(collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionSolid))
+			{
 				m_b_isGrounded = true;
+			}
 			// Inverted m_gravity
-			else if (m_gravity < 0 && (collider->_isCollidingTop && collider->_topCollisionSolid) || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid) || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid))
+			else if (m_gravity < 0 && (collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid) || 
+				(collider->m_b_isCollidingTopLeft && !collider->m_b_topLeftCollisionSolid) ||
+				(collider->m_b_isCollidingTopRight && !collider->m_b_topRightCollisionSolid))
+			{
 				m_b_isGrounded = true;
+			}
 			else
+			{
 				m_b_isGrounded = false;
+			}
 
 			// Moving up
 			if (m_pendingForces.y > 0)
 			{
-				if (collider->_isCollidingTop && collider->_topCollisionSolid && (!collider->_isCollidingTopLeft || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid)) && (!collider->_isCollidingTopRight || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid)))
+				if (collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid &&
+					(!collider->m_b_isCollidingTopLeft || (collider->m_b_isCollidingTopLeft && !collider->m_b_topLeftCollisionSolid)) &&
+					(!collider->m_b_isCollidingTopRight || (collider->m_b_isCollidingTopRight && !collider->m_b_topRightCollisionSolid)))
 				{
 					// Inverted m_gravity
 					if (m_gravity < 0)
 						m_b_isGrounded = true;
 
 					m_pendingForces.y = 0;
-					newYPos = collider->topCollidedPosition.y;
+					newYPos = collider->m_topCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
-				else if (collider->_isCollidingTopLeft && collider->_topLeftCollisionSolid)
+				else if (collider->m_b_isCollidingTopLeft && collider->m_b_topLeftCollisionSolid)
 				{
 					if (m_gravity < 0)
+					{
 						m_b_isGrounded = true;
+					}
 
 					newXPos = position.x - cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
-					newYPos = collider->topLeftCollidedPosition.y;
+					newYPos = collider->m_topLeftCollidedPosition.y;
 					m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
-				else if (collider->_isCollidingTopRight && collider->_topRightCollisionSolid)
+				else if (collider->m_b_isCollidingTopRight && collider->m_b_topRightCollisionSolid)
 				{
 					if (m_gravity < 0)
+					{
 						m_b_isGrounded = true;
+					}
 
 					newXPos = position.x + cornerm_friction * -m_pendingForces.y; // Give some slide away from the edge based on m_pendingForces
-					newYPos = collider->topRightCollidedPosition.y;
+					newYPos = collider->m_topRightCollidedPosition.y;
 					m_pendingForces.y = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 				else if (m_gravity < 0)
+				{
 					m_b_isGrounded = false;
+				}
 			}
 			// Moving left
 			if (m_pendingForces.x < 0)
 			{
-				if (collider->_isCollidingLeft && collider->_leftCollisionSolid && (!collider->_isCollidingBottomLeft || (collider->_isCollidingBottomLeft && !collider->_bottomLeftCollisionSolid)) && (!collider->_isCollidingTopLeft || (collider->_isCollidingTopLeft && !collider->_topLeftCollisionSolid)))
+				if (collider->m_b_isCollidingLeft && collider->m_b_leftCollisionSolid && 
+					(!collider->m_b_isCollidingBottomLeft || (collider->m_b_isCollidingBottomLeft && !collider->m_b_bottomLeftCollisionSolid)) &&
+					(!collider->m_b_isCollidingTopLeft || (collider->m_b_isCollidingTopLeft && !collider->m_b_topLeftCollisionSolid)))
 				{
 					m_pendingForces.x = 0;
-					newXPos = collider->leftCollidedPosition.x;
+					newXPos = collider->m_leftCollidedPosition.x;
 					transform->SetPosition(Vector2(newXPos, position.y));
 				}
-				else if (collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionSolid)
+				else if (collider->m_b_isCollidingBottomLeft && collider->m_b_bottomLeftCollisionSolid)
 				{
 					newYPos = position.y + cornerm_friction * -m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
-					newXPos = collider->bottomLeftCollidedPosition.x;
+					newXPos = collider->m_bottomLeftCollidedPosition.x;
 					m_pendingForces.x = 0;				
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
-				else if (collider->_isCollidingTopLeft && collider->_topLeftCollisionSolid)
+				else if (collider->m_b_isCollidingTopLeft && collider->m_b_topLeftCollisionSolid)
 				{
 					newYPos = position.y - cornerm_friction * -m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
-					newXPos = collider->topLeftCollidedPosition.x;
+					newXPos = collider->m_topLeftCollidedPosition.x;
 					m_pendingForces.x = 0;					
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
@@ -338,42 +392,54 @@ namespace FlatEngine {
 			// Moving right
 			if (m_pendingForces.x > 0)
 			{
-				if (collider->_isCollidingRight && collider->_rightCollisionSolid && (!collider->_isCollidingBottomRight || (collider->_isCollidingBottomRight && !collider->_bottomRightCollisionSolid)) && (!collider->_isCollidingTopRight || (collider->_isCollidingTopRight && !collider->_topRightCollisionSolid)))
+				if (collider->m_b_isCollidingRight && collider->m_b_rightCollisionSolid && 
+					(!collider->m_b_isCollidingBottomRight || (collider->m_b_isCollidingBottomRight && !collider->m_b_bottomRightCollisionSolid)) &&
+					(!collider->m_b_isCollidingTopRight || (collider->m_b_isCollidingTopRight && !collider->m_b_topRightCollisionSolid)))
 				{
 					m_pendingForces.x = 0;
-					newXPos = collider->rightCollidedPosition.x;
+					newXPos = collider->m_rightCollidedPosition.x;
 					transform->SetPosition(Vector2(newXPos, position.y));
 				}
-				else if (collider->_isCollidingBottomRight && collider->_bottomRightCollisionSolid)
+				else if (collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionSolid)
 				{
 					newYPos = position.y + cornerm_friction * m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
-					newXPos = collider->bottomRightCollidedPosition.x;
+					newXPos = collider->m_bottomRightCollidedPosition.x;
 					m_pendingForces.x = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
-				else if (collider->_isCollidingTopRight && collider->_topRightCollisionSolid)
+				else if (collider->m_b_isCollidingTopRight && collider->m_b_topRightCollisionSolid)
 				{
 					newYPos = position.y - cornerm_friction * m_pendingForces.x; // Give some slide away from the edge based on m_pendingForces
-					newXPos = collider->topRightCollidedPosition.x;
+					newXPos = collider->m_topRightCollidedPosition.x;
 					m_pendingForces.x = 0;
 					transform->SetPosition(Lerp(position, Vector2(newXPos, newYPos), cornerLerp));
 				}
 			}
-		}
-		// Box Colliders
+		}		
 		else if (collider->GetTypeString() == "BoxCollider")
 		{
 			// "Floor" Collision Forces
 			// 
 			// Check if grounded normal m_gravity
-			if (m_gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionSolid || !collider->_isCollidingBottom && ((collider->_isCollidingBottomLeft && collider->_bottomLeftCollisionStatic) || (collider->_isCollidingBottomRight && collider->_bottomRightCollisionStatic) && m_gravity > 0))
+			if (m_gravity != 0 && 
+				(collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid) || 
+				(!collider->m_b_isCollidingBottom && 
+				((collider->m_b_isCollidingBottomLeft && collider->m_b_bottomLeftCollisionStatic) || 
+				(collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionStatic))
+				&& m_gravity > 0))
 				//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && m_gravity > 0)
+			{
 				m_b_isGrounded = true;
+			}
 			// Check if grounded inverted m_gravity
-			else if (m_gravity != 0 && collider->_isCollidingBottom && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && m_gravity < 0)
+			else if (m_gravity != 0 && collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionStatic && collider->m_b_bottomCollisionSolid && m_gravity < 0)
+			{
 				m_b_isGrounded = true;
+			}
 			else
+			{
 				m_b_isGrounded = false;
+			}
 
 			if (m_b_isGrounded)
 			{
@@ -383,19 +449,19 @@ namespace FlatEngine {
 					m_pendingForces.y = 0;
 				}
 
-				if (collider->_isCollidingBottomRight)
+				if (collider->m_b_isCollidingBottomRight)
 				{
-					newYPos = collider->bottomRightCollidedPosition.y;
+					newYPos = collider->m_bottomRightCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
-				else if (collider->_isCollidingBottomLeft)
+				else if (collider->m_b_isCollidingBottomLeft)
 				{
-					newYPos = collider->bottomLeftCollidedPosition.y;
+					newYPos = collider->m_bottomLeftCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
-				else if (collider->_isCollidingBottom)
+				else if (collider->m_b_isCollidingBottom)
 				{
-					newYPos = collider->bottomCollidedPosition.y;
+					newYPos = collider->m_bottomCollidedPosition.y;
 					transform->SetPosition(Vector2(position.x, newYPos));
 				}
 			}
@@ -403,16 +469,16 @@ namespace FlatEngine {
 			// "Ceiling" Collision Forces
 			//
 			// Normal m_gravity
-			if (m_gravity > 0 && m_pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
+			if (m_gravity > 0 && m_pendingForces.y > 0 && collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid)
 			{
 				m_pendingForces.y = 0;
-				transform->SetPosition(Vector2(position.x, collider->topCollidedPosition.y));
+				transform->SetPosition(Vector2(position.x, collider->m_topCollidedPosition.y));
 			}
 			// Inverted m_gravity
-			if (m_gravity < 0 && m_pendingForces.y > 0 && collider->_isCollidingTop && collider->_topCollisionSolid)
+			if (m_gravity < 0 && m_pendingForces.y > 0 && collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid)
 			{
 				m_pendingForces.y = 0;
-				newYPos = collider->topCollision - halfHeight + 0.001f;
+				newYPos = collider->m_topCollision - halfHeight + 0.001f;
 				transform->SetPosition(Vector2(position.x, newYPos));
 			}
 
@@ -421,36 +487,36 @@ namespace FlatEngine {
 			if (collider->GetTypeString() == "BoxCollider")
 			{
 				// Collision on right side when moving to the right
-				if (collider->_isCollidingRight && collider->_rightCollisionSolid && m_velocity.x > 0)
+				if (collider->m_b_isCollidingRight && collider->m_b_rightCollisionSolid && m_velocity.x > 0)
 				{
 					m_pendingForces.x = 0;
-					transform->SetPosition(Vector2(collider->rightCollidedPosition.x, position.y));
+					transform->SetPosition(Vector2(collider->m_rightCollidedPosition.x, position.y));
 				}
 				// Collision on left side when moving to the left
-				else if (collider->_isCollidingLeft && collider->_leftCollisionSolid && m_velocity.x < 0)
+				else if (collider->m_b_isCollidingLeft && collider->m_b_leftCollisionSolid && m_velocity.x < 0)
 				{
 					m_pendingForces.x = 0;
-					transform->SetPosition(Vector2(collider->leftCollidedPosition.x, position.y));
+					transform->SetPosition(Vector2(collider->m_leftCollidedPosition.x, position.y));
 				}
 			}
 			// If not BoxCollider and moving left up a corner while not colliding on bottom
-			else if (m_velocity.x < 0 && collider->_isCollidingBottomLeft)
+			else if (m_velocity.x < 0 && collider->m_b_isCollidingBottomLeft)
 			{
 				//transform->SetPosition(Vector2(position.x, newYPos));
-				transform->SetPosition(collider->bottomLeftCollidedPosition);
+				transform->SetPosition(collider->m_bottomLeftCollidedPosition);
 			}
 			// Collision on right side when moving to the right
-			else if (collider->_isCollidingRight && collider->_rightCollisionStatic && collider->_rightCollisionSolid && m_velocity.x > 0)
+			else if (collider->m_b_isCollidingRight && collider->m_b_rightCollisionStatic && collider->m_b_rightCollisionSolid && m_velocity.x > 0)
 			{
 				m_pendingForces.x = 0;
-				newXPos = collider->rightCollidedPosition.x;
+				newXPos = collider->m_rightCollidedPosition.x;
 				transform->SetPosition(Vector2(newXPos, position.y));
 			}
 			// Collision on left side when moving to the left
-			else if (collider->_isCollidingLeft && collider->_leftCollisionStatic && collider->_leftCollisionSolid && m_velocity.x < 0)
+			else if (collider->m_b_isCollidingLeft && collider->m_b_leftCollisionStatic && collider->m_b_leftCollisionSolid && m_velocity.x < 0)
 			{
 				m_pendingForces.x = 0;
-				newXPos = collider->leftCollidedPosition.x;
+				newXPos = collider->m_leftCollidedPosition.x;
 				transform->SetPosition(Vector2(newXPos, position.y));
 			}
 		}
@@ -476,7 +542,7 @@ namespace FlatEngine {
 	Vector2 RigidBody::GetNextPosition()
 	{
 		Vector2 nextVelocity = Vector2(m_acceleration.x, m_acceleration.y);
-		FlatEngine::Transform* transform = GetParent()->GetTransform();
+		Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetTruePosition();
 		return Vector2(position.x + nextVelocity.x * 2, position.y + nextVelocity.y * 2);
 	}
@@ -515,8 +581,7 @@ namespace FlatEngine {
 	}
 
 	void RigidBody::UpdateI()
-	{
-		// Get new moment of inertia
+	{		
 		if (GetParent() != nullptr)
 		{
 			Sprite* sprite = GetParent()->GetSprite();
@@ -526,7 +591,9 @@ namespace FlatEngine {
 				float height = sprite->GetTextureHeight() / 10;
 				float radius = (width + height) / 2; // rough estimate
 				if (width != 0 && height != 0)
+				{
 					m_I = 2 * m_mass / 5 * radius * radius;
+				}
 			}
 		}
 

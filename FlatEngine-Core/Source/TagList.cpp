@@ -7,50 +7,50 @@ namespace FlatEngine
 {
 	TagList::TagList()
 	{
-		tags.emplace("Player", false);
-		tags.emplace("Enemy", false);
-		tags.emplace("Npc", false);
-		tags.emplace("Terrain", false);
-		tags.emplace("PlayerTrigger", false);
-		tags.emplace("EnemyTrigger", false);
-		tags.emplace("NpcTrigger", false);
-		tags.emplace("EnvironmentalTrigger", false);
-		tags.emplace("TerrainTrigger", false);
-		tags.emplace("PlayerDamage", false);
-		tags.emplace("EnemyDamage", false);
-		tags.emplace("EnvironmentalDamage", false);
-		tags.emplace("Projectile", false);
-		tags.emplace("InteractableItem", false);
-		tags.emplace("InteractableObject", false);
-		tags.emplace("Item", false);
+		m_tags.emplace("Player", false);
+		m_tags.emplace("Enemy", false);
+		m_tags.emplace("Npc", false);
+		m_tags.emplace("Terrain", false);
+		m_tags.emplace("PlayerTrigger", false);
+		m_tags.emplace("EnemyTrigger", false);
+		m_tags.emplace("NpcTrigger", false);
+		m_tags.emplace("EnvironmentalTrigger", false);
+		m_tags.emplace("TerrainTrigger", false);
+		m_tags.emplace("PlayerDamage", false);
+		m_tags.emplace("EnemyDamage", false);
+		m_tags.emplace("EnvironmentalDamage", false);
+		m_tags.emplace("Projectile", false);
+		m_tags.emplace("InteractableItem", false);
+		m_tags.emplace("InteractableObject", false);
+		m_tags.emplace("Item", false);
 
-		ignoreTags.emplace("Player", false);
-		ignoreTags.emplace("Enemy", false);
-		ignoreTags.emplace("Npc", false);
-		ignoreTags.emplace("Terrain", false);
-		ignoreTags.emplace("PlayerTrigger", false);
-		ignoreTags.emplace("EnemyTrigger", false);
-		ignoreTags.emplace("NpcTrigger", false);
-		ignoreTags.emplace("EnvironmentalTrigger", false);
-		ignoreTags.emplace("TerrainTrigger", false);
-		ignoreTags.emplace("PlayerDamage", false);
-		ignoreTags.emplace("EnemyDamage", false);
-		ignoreTags.emplace("EnvironmentalDamage", false);
-		ignoreTags.emplace("Projectile", false);
-		ignoreTags.emplace("InteractableItem", false);
-		ignoreTags.emplace("InteractableObject", false);
-		ignoreTags.emplace("Item", false);
+		m_ignoreTags.emplace("Player", false);
+		m_ignoreTags.emplace("Enemy", false);
+		m_ignoreTags.emplace("Npc", false);
+		m_ignoreTags.emplace("Terrain", false);
+		m_ignoreTags.emplace("PlayerTrigger", false);
+		m_ignoreTags.emplace("EnemyTrigger", false);
+		m_ignoreTags.emplace("NpcTrigger", false);
+		m_ignoreTags.emplace("EnvironmentalTrigger", false);
+		m_ignoreTags.emplace("TerrainTrigger", false);
+		m_ignoreTags.emplace("PlayerDamage", false);
+		m_ignoreTags.emplace("EnemyDamage", false);
+		m_ignoreTags.emplace("EnvironmentalDamage", false);
+		m_ignoreTags.emplace("Projectile", false);
+		m_ignoreTags.emplace("InteractableItem", false);
+		m_ignoreTags.emplace("InteractableObject", false);
+		m_ignoreTags.emplace("Item", false);
 	}
 
 	TagList::TagList(TagList* toCopy)
 	{
 		std::map<std::string, bool>::iterator iterator;
-		for (iterator = toCopy->tags.begin(); iterator != toCopy->tags.end(); iterator++)
+		for (iterator = toCopy->m_tags.begin(); iterator != toCopy->m_tags.end(); iterator++)
 		{
-			if (tags.count(iterator->first) > 0)
-				tags.at(iterator->first) = iterator->second;
+			if (m_tags.count(iterator->first) > 0)
+				m_tags.at(iterator->first) = iterator->second;
 			else
-				tags.emplace(iterator->first, iterator->second);
+				m_tags.emplace(iterator->first, iterator->second);
 		}
 	}
 
@@ -58,80 +58,106 @@ namespace FlatEngine
 	{
 	}
 
-	void TagList::SetTag(std::string tag, bool _value, bool _updateColliderPairs)
+	void TagList::SetTag(std::string tag, bool b_value, bool b_updateColliderPairs)
 	{
-		if (tags.count(tag) > 0)
-			tags.at(tag) = _value;
+		if (m_tags.count(tag) > 0)
+		{
+			m_tags.at(tag) = b_value;
+		}
 
-		if (_updateColliderPairs)
+		if (b_updateColliderPairs)
+		{
 			GetLoadedScene()->UpdateColliderPairs();
+		}
 	}
 
 	void TagList::ToggleTag(std::string tag)
 	{
-		if (tags.count(tag) > 0)
-			tags.at(tag) = !tags.at(tag);
+		if (m_tags.count(tag) > 0)
+		{
+			m_tags.at(tag) = !m_tags.at(tag);
+		}
 		GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	bool TagList::HasTag(std::string tag)
 	{
-		if (tags.count(tag) > 0)
-			return tags.at(tag);
-		else return false;
+		if (m_tags.count(tag) > 0)
+		{
+			return m_tags.at(tag);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
-	void TagList::SetIgnore(std::string tag, bool _value, bool _updateColliderPairs)
+	void TagList::SetIgnore(std::string tag, bool b_value, bool b_updateColliderPairs)
 	{
-		if (ignoreTags.count(tag) > 0)
-			ignoreTags.at(tag) = _value;
+		if (m_ignoreTags.count(tag) > 0)
+		{
+			m_ignoreTags.at(tag) = b_value;
+		}
 
-		if (_updateColliderPairs)
+		if (b_updateColliderPairs)
+		{
 			GetLoadedScene()->UpdateColliderPairs();
+		}
 	}
 
 	void TagList::ToggleIgnore(std::string tag)
 	{
-		if (ignoreTags.count(tag) > 0)
-			ignoreTags.at(tag) = !ignoreTags.at(tag);
+		if (m_ignoreTags.count(tag) > 0)
+		{
+			m_ignoreTags.at(tag) = !m_ignoreTags.at(tag);
+		}
 		GetLoadedScene()->UpdateColliderPairs();
 	}
 
 	bool TagList::IgnoresTag(std::string tag)
 	{
-		if (ignoreTags.count(tag) > 0)
-			return ignoreTags.at(tag);
-		else return false;
+		if (m_ignoreTags.count(tag) > 0)
+		{
+			return m_ignoreTags.at(tag);
+		}
+		else 
+		{
+			return false;
+		}
 	}
 
-	void TagList::CreateNewTag(std::string tagName, bool _value)
+	void TagList::CreateNewTag(std::string tagName, bool b_value)
 	{
-		tags.emplace(tagName, _value);
+		m_tags.emplace(tagName, b_value);
 	}
 
 	void TagList::RemoveTag(std::string tagName)
 	{
-		if (tags.count(tagName) > 0)
-			tags.erase(tagName);
+		if (m_tags.count(tagName) > 0)
+		{
+			m_tags.erase(tagName);
+		}
 	}
 
 	std::map<std::string, bool> TagList::GetTagsMap()
 	{
-		return tags;
+		return m_tags;
 	}
 
 	std::map<std::string, bool> TagList::GetIgnoreTagsMap()
 	{
-		return ignoreTags;
+		return m_ignoreTags;
 	}
 
 	std::vector<std::string> TagList::GetIgnoredTags()
 	{
 		std::vector<std::string> ignoredTags;
-		for (std::pair<std::string, bool> ignoreTag : ignoreTags)
+		for (std::pair<std::string, bool> ignoreTag : m_ignoreTags)
 		{
 			if (ignoreTag.second)
+			{
 				ignoredTags.push_back(ignoreTag.first);
+			}
 		}
 		return ignoredTags;
 	}

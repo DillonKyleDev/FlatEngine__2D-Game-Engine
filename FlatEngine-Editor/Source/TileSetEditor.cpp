@@ -27,7 +27,7 @@ namespace FlatGui
 		int droppedValue = -1;
 		TileSet* currentTileSet = nullptr;
 
-		FL::BeginWindow("Tileset Editor");
+		FL::BeginWindow("Tileset Editor", FG_b_showTileSetEditor);
 
 		FL::BeginResizeWindowChild("Toolbar");
 

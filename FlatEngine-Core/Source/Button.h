@@ -1,12 +1,8 @@
 #pragma once
 #include "Component.h"
-#include "Window.h"
-#include "Texture.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include <functional>
-#include <imgui.h>
-#include <SDL.h>
+
 #include <string>
 
 namespace FlatEngine
@@ -18,7 +14,8 @@ namespace FlatEngine
 	public:
 		Button(long myID = -1, long parentID = -1);
 		~Button();
-		
+		std::string GetData();
+
 		void SetActiveDimensions(float width, float height);
 		void SetActiveOffset(Vector2 offset);
 		void SetActiveLayer(int layer);
@@ -32,7 +29,6 @@ namespace FlatEngine
 		//ImVec4(activeTop, activeRight, activeBottom, activeLeft)
 		void CalculateActiveEdges();
 		Vector4 GetActiveEdges();
-		std::string GetData();
 
 	private:
 		bool m_b_mouseIsOver;

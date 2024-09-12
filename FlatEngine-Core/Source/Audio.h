@@ -1,8 +1,11 @@
 #pragma once
 #include "Sound.h"
 #include "Component.h"
+
 #include <string>
+#include <vector>
 #include <map>
+#include <memory>
 
 
 namespace FlatEngine
@@ -19,6 +22,7 @@ namespace FlatEngine
 	public:
 		Audio(long myID = -1, long parentID = -1);
 		~Audio();
+		std::string GetData();
 
 		std::vector<SoundData> &GetSounds();
 		std::string GetPath(std::string soundName);
@@ -40,8 +44,6 @@ namespace FlatEngine
 		void Play(std::string soundName, int channel = -1);
 		void Pause(std::string soundName, int channel = -1);
 		void Stop(std::string soundName, int channel = -1);
-		std::string GetData();
-
 		std::vector<SoundData> m_sounds;
 	};
 }

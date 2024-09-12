@@ -1,7 +1,9 @@
 #include "Sprite.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 #include "RigidBody.h"
 #include "AssetManager.h"
+
 
 namespace FlatEngine
 {
@@ -54,10 +56,9 @@ namespace FlatEngine
 		RemoveTexture();
 
 		if (newPath != "")
-		{
-			// Save path for referencing later if needed
+		{			
 			m_path = newPath;
-			if (m_texture.LoadFromFile(newPath))
+			if (m_texture.LoadFromFile(m_path))
 			{
 				m_textureWidth = (float)m_texture.GetWidth();
 				m_textureHeight = (float)m_texture.GetHeight();

@@ -1,11 +1,11 @@
 #include "FlatEngine.h"
+#include "WindowManager.h"
 #include "MappingContext.h"
 #include "PrefabManager.h"
 #include "Logger.h"
 #include "SceneManager.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "Window.h"
 #include "ECSManager.h"
 #include "Project.h"
 #include "AssetManager.h"
@@ -26,6 +26,7 @@
 #include "Sound.h"
 #include "Animation.h"
 #include "Canvas.h"
+#include "GameObject.h"
 
 #include <SDL_ttf.h>
 #include <SDL.h>
@@ -53,8 +54,10 @@ namespace FlatEngine
 {	
 	bool F_b_closeProgram = false;
 
-	std::string F_RuntimeDirectoriesLuaFilepath = "../engine/scripts/RuntimeDirectories.lua";
-	std::string F_EditorDirectoriesLuaFilepath = "../engine/scripts/EditorDirectories.lua";
+	std::shared_ptr<WindowManager> F_Window = std::make_shared<WindowManager>();
+
+	std::string F_RuntimeDirectoriesLuaFilepath = "..\\engine\\scripts\\RuntimeDirectories.lua";
+	std::string F_EditorDirectoriesLuaFilepath = "..\\engine\\scripts\\EditorDirectories.lua";
 	std::shared_ptr<Application> F_Application = std::make_shared<Application>();
 	AssetManager F_AssetManager = AssetManager();
 	std::vector<std::string> F_selectedFiles = std::vector<std::string>();
@@ -111,7 +114,7 @@ namespace FlatEngine
 	bool LoadFonts()
 	{
 		bool b_success = true;
-		F_fontCinzel = TTF_OpenFont("C:/Users/Dillon Kyle/source/repos/FlatEngine3D/FlatEngine-Core/Source/assets/fonts/Cinzel/Cinzel-Black.ttf", 46);
+		F_fontCinzel = TTF_OpenFont("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine3D\\FlatEngine-Core\\Source\\assets\\fonts\\Cinzel\\Cinzel-Black.ttf", 46);
 		if (F_fontCinzel == NULL)
 		{
 			printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -166,7 +169,7 @@ namespace FlatEngine
 
 	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor, Vector2 uvStart, Vector2 uvEnd)
 	{
-		// Changing the scale here because sprites are rendering too large and I want them to start off smaller and also keep the default scale value to 1.0f
+		// Changing the scale here because sprites render too large
 		Vector2 newScale = Vector2(scale.x * F_spriteScaleMultiplier, scale.y * F_spriteScaleMultiplier);
 
 		float scalingXStart = relativeCenterPoint.x + (positionInGrid.x * zoomMultiplier) - (offsetPx.x * newScale.x * zoomMultiplier);
@@ -247,21 +250,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			LogString("SDL initialized... - Video - Audio - Joystick -");
+			printf("SDL initialized... - Video - Audio - Joystick -\n");
 
 			//Set texture filtering to linear
 			if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"))
 			{
-				printf("Warning: Linear texture filtering not enabled!");
+				printf("Warning: Linear texture filtering not enabled!\n");
 			}
 
 			char t[] = "FlatEngine";
 			char* title = &(t[0]);
 
 			//Initialize Window::window
-			if (Window::Init(title, windowWidth, windowHeight))
+			if (F_Window->Init(title, windowWidth, windowHeight))
 			{
-				LogString("Window initialized...");
+				printf("Window initialized...\n");
 
 				//Initialize SDL_image for png loading
 				int imgFlags = IMG_INIT_PNG;
@@ -272,7 +275,7 @@ namespace FlatEngine
 				}
 				else
 				{
-					LogString("SDL_image initialized...");
+					printf("SDL_image initialized...\n");
 					//Initialize SDL_ttf for text rendering
 					if (TTF_Init() == -1)
 					{
@@ -281,7 +284,7 @@ namespace FlatEngine
 					}
 					else
 					{
-						LogString("TTF_Fonts initialized...");
+						printf("TTF_Fonts initialized...\n");
 						//Initialize SDL_mixer
 						if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 						{
@@ -291,12 +294,12 @@ namespace FlatEngine
 						else
 						{
 							Mix_AllocateChannels(100);							   // Sets number of individual audios that can play at once
-							LogString("SDL_mixer initialized...");
+							printf("SDL_mixer initialized...\n");
 
 							InitLua();
-							LogString("Lua initialized...");
+							printf("Lua initialized...\n");
 
-							F_AssetManager.CollectDirectories(dirType);				   // Collect important directories and file paths from Directories.lua
+							F_AssetManager.CollectDirectories(dirType);			   // Collect important directories and file paths from Directories.lua
 							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
 							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
 							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
@@ -304,9 +307,11 @@ namespace FlatEngine
 							RetrieveLuaScriptPaths();
 							InitializeTileSets();
 
-							LogString("Ready...");
+							printf("Engine Assets Initialized...\n");
+							printf("System Ready...\n");
+
 							LogSeparator();
-							LogString("Begin Logging...");
+							LogString("System ready. Begin logging...");
 							LogSeparator();
 						}
 					}
@@ -340,8 +345,8 @@ namespace FlatEngine
 		style.SeparatorTextAlign = Vector2(0.5f, 0.0f);
 		style.SeparatorTextBorderSize = 1;
 
-		ImGui_ImplSDL2_InitForSDLRenderer(Window::W_Window, Window::W_Renderer);
-		ImGui_ImplSDLRenderer2_Init(Window::W_Renderer);
+		ImGui_ImplSDL2_InitForSDLRenderer(F_Window->GetWindow(), F_Window->GetRenderer());
+		ImGui_ImplSDLRenderer2_Init(F_Window->GetRenderer());
 		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by GetColor();
 	}
 
@@ -578,7 +583,7 @@ namespace FlatEngine
 		{
 			try
 			{
-				std::filesystem::copy("../FlatEngine-Core", F_LoadedProject.GetBuildPath() + "\\Core", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\FlatEngine-Core", F_LoadedProject.GetBuildPath() + "\\Core", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -587,7 +592,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("../FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\FlatEngine-Runtime", F_LoadedProject.GetBuildPath() + "\\Runtime", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -596,7 +601,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("../assets", F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\assets", F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -605,7 +610,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("../engine", F_LoadedProject.GetBuildPath() + "\\engine", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\engine", F_LoadedProject.GetBuildPath() + "\\engine", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -614,7 +619,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("../intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -982,7 +987,7 @@ namespace FlatEngine
 				switch (event.window.event)
 				{
 				case SDL_WINDOWEVENT_CLOSE:
-					if (event.window.windowID == SDL_GetWindowID(Window::W_Window))
+					if (event.window.windowID == SDL_GetWindowID(F_Window->GetWindow()))
 						quit = true;
 						break;
 
@@ -1843,15 +1848,15 @@ namespace FlatEngine
 		Vector4 clear_color = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
 		ImGui::Render();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		SDL_RenderSetScale(Window::W_Renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-		SDL_SetRenderDrawColor(Window::W_Renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
-		SDL_RenderClear(Window::W_Renderer);
+		SDL_RenderSetScale(F_Window->GetRenderer(), io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+		SDL_SetRenderDrawColor(F_Window->GetRenderer(), (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+		SDL_RenderClear(F_Window->GetRenderer());
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 
 		// TO DO 
 		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
 		//Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
-		SDL_RenderPresent(Window::W_Renderer);
+		SDL_RenderPresent(F_Window->GetRenderer());
 		//FlatGui::AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
 	}
 
@@ -2491,6 +2496,11 @@ namespace FlatEngine
 	float GetAverageFps()
 	{
 		return F_Application->GetGameLoop()->GetAverageFps();
+	}
+
+	long GetFramesCounted()
+	{
+		return F_Application->GetGameLoop()->GetFramesCounted();
 	}
 
 	float GetDeltaTime()

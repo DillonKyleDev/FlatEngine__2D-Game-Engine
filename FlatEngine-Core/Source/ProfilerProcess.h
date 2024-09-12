@@ -18,9 +18,9 @@ namespace FlatEngine
 		std::vector<float> GetHangTimeData();
 
 	private:
-		std::string processName;
-		std::deque<float> rawHangTimeData;
-		std::vector<float> snapShotData;
-		int tickCounter;
+		std::string m_processName;
+		std::deque<float> m_rawHangTimeData;
+		std::vector<float> m_snapShotData;
+		int m_tickCounter;
 	};
 }
