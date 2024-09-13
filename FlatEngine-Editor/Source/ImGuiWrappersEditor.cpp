@@ -891,7 +891,7 @@ namespace FlatGui
 		
 		std::string fontPath = text->GetFontPath();
 		int droppedValue = -1;		
-		if (FL::DropInputCanOpenFiles("##InputFontPath", "File", FL::GetFilenameFromPath(fontPath, true), FL::F_fileExplorerTarget, droppedValue, fontPath, "Drop font files here from File Explorer"))
+		if (FL::DropInputCanOpenFiles("##InputFontPath", "Font", FL::GetFilenameFromPath(fontPath, true), FL::F_fileExplorerTarget, droppedValue, fontPath, "Drop font files here from File Explorer"))
 		{
 			if (droppedValue >= 0)
 			{

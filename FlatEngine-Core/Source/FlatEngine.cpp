@@ -307,7 +307,7 @@ namespace FlatEngine
 							RetrieveLuaScriptPaths();
 							InitializeTileSets();
 
-							printf("Engine Assets Initialized...\n");
+							printf("Engine Assets initialized...\n");
 							printf("System Ready...\n");
 
 							LogSeparator();
@@ -3003,10 +3003,12 @@ namespace FlatEngine
 		if (_isPrefab)
 		{
 			loadedObject = Instantiate(prefabName, spawnLocation, loadedParentID, loadedID);
+			loadedObject->SetName(objectName);
 		}
 		else
 		{
 			loadedObject = CreateGameObject(loadedParentID, loadedID);
+			loadedObject->SetName(objectName);
 			loadedObject->SetActive(_isActive);
 
 			// TagList
@@ -3167,7 +3169,6 @@ namespace FlatEngine
 					));
 					newText->SetText(CheckJsonString(componentJson, "text", objectName));
 					newText->SetRenderOrder(CheckJsonInt(componentJson, "renderOrder", objectName));
-					newText->LoadText();
 					newText->SetOffset(Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName)));
 				}
 				else if (type == "CharacterController")
@@ -3298,8 +3299,6 @@ namespace FlatEngine
 			{
 				loadedObject->GetButton()->CalculateActiveEdges();
 			}
-
-			loadedObject->SetName(objectName);
 		}
 
 		return loadedObject;

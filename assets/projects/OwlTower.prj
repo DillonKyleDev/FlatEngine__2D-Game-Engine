@@ -19,7 +19,7 @@
             "_showTileSetEditor": false,
             "_vsyncEnabled": true,
             "buildPath": "C:\\Users\\Dillon Kyle\\Desktop\\Game",
-            "currentFileDirectory": "..\\assets\\audio",
+            "currentFileDirectory": "..\\engine\\fonts",
             "focusedGameObjectID": 8,
             "loadedAnimationPath": "../assets\\animations\\IntroText.anm",
             "loadedScenePath": "..\\assets\\scenes\\MainMenu.scn",
@@ -27,10 +27,10 @@
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/MainMenu.scn",
-            "sceneViewGridStepX": 22.0,
-            "sceneViewGridStepY": 22.0,
-            "sceneViewScrollingX": 329.0,
-            "sceneViewScrollingY": -1.0
+            "sceneViewGridStepX": 24.0,
+            "sceneViewGridStepY": 24.0,
+            "sceneViewScrollingX": 552.0,
+            "sceneViewScrollingY": 76.0
         }
     ]
 }

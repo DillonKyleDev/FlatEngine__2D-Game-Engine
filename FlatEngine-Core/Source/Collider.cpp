@@ -919,26 +919,26 @@ namespace FlatEngine
 	}
 
 	void Collider::AddCollidingObject(Collider* collidedWith)
-	{
-		// Make sure we haven't already tracked it for this frame
+	{		
 		for (GameObject* object : m_collidingObjects)
-		{
-			// Leave function if the object is already known to be in active collision
+		{	
 			if (object->GetID() == collidedWith->GetParent()->GetID())
+			{
 				return;
-		}
-		// else add the collided object
+			}
+		}		
 		m_collidingObjects.push_back(collidedWith->GetParent());
 
-		// See if they were colliding in the last frame as well
 		for (GameObject *object : m_collidingLastFrame)
 		{
-			// Leave function if the object has already fired OnCollisionEnter();
+			// Leave function if the object has already fired OnCollisionEnter() (in the lastframe);
 			if (object->GetID() == collidedWith->GetParent()->GetID())
+			{
 				return;
+			}
 		}
 
-		// else, if OnCollisionEnter is set, fire it now. (upon initially adding the object to m_collidingObjects for the first time)
+		// else fire it now. (upon initially adding the object to m_collidingObjects for the first time)
 		CallLuaCollisionFunction(GetParent(), collidedWith, LuaEventFunction::OnBoxCollisionEnter);
 	}
 

@@ -1,5 +1,6 @@
 #include "Text.h"
 #include "FlatEngine.h"
+#include "GameObject.h"
 
 
 namespace FlatEngine
@@ -65,8 +66,7 @@ namespace FlatEngine
 			if (m_font == nullptr)
 			{
 				TTF_CloseFont(m_font);
-				m_font = TTF_OpenFont(GetFilePath("cinzelBlack").c_str(), m_fontSize);
-				LogError("Font not valid.");
+				LogError("Font not valid in \"" + GetParent()->GetName() + "\" Text component.");
 			}
 			m_texture->FreeTexture();
 			m_pivotOffset = Vector2(0,0);
@@ -97,13 +97,15 @@ namespace FlatEngine
 		if (path != "" && m_fontSize > 0)
 		{
 			m_font = TTF_OpenFont(m_fontPath.c_str(), m_fontSize);
+			LoadText();
 		}
 		else
 		{
 			TTF_CloseFont(m_font);
 			m_font = nullptr;
+			m_texture->FreeTexture();
+			LogError("Font not valid in \"" + GetParent()->GetName() + "\" Text component.");
 		}
-		LoadText();
 	}
 
 	std::string Text::GetFontPath()
@@ -124,7 +126,10 @@ namespace FlatEngine
 	void Text::SetText(std::string newText)
 	{
 		m_text = newText;
-		LoadText();
+		if (m_font != nullptr)
+		{
+			LoadText();
+		}
 	}
 
 	std::string Text::GetText()

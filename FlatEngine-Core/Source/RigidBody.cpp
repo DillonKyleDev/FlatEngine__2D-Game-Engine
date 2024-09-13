@@ -34,7 +34,7 @@ namespace FlatEngine
 		m_forceCorrection = 0.01f;
 		m_gravity = 1;
 		m_fallingGravity = m_gravity * 1.2f;
-		m_terminalVelocity = m_gravity * 0.4f;
+		m_terminalVelocity = m_gravity * 1;
 		m_windResistance = 1.0f;  // Lower value = more resistance
 	}
 

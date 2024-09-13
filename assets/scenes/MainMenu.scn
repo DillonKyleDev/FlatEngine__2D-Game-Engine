@@ -504,8 +504,8 @@
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
                     "type": "Text",
-                    "xOffset": 133.0,
-                    "yOffset": 27.0
+                    "xOffset": 99.0,
+                    "yOffset": 16.5
                 },
                 {
                     "_isActive": true,
@@ -608,7 +608,7 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "Test All Components",
+            "name": "TestAllComponents",
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": -0.3181800842285156,

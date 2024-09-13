@@ -104,7 +104,6 @@ namespace FlatEngine
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
 	void BoxCollider::UpdateActiveEdges(float gridstep, Vector2 viewportCenter)
 	{
-		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool b_shouldUpdate = false;
 
 		GameObject* parent = GetParent();
