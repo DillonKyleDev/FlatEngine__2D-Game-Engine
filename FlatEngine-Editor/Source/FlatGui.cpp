@@ -1,43 +1,14 @@
 #include "FlatGui.h"
-#include "FlatEngine.h"
-#include "GameObject.h"
-#include "GameLoop.h"
-#include "SceneManager.h"
-#include "PrefabManager.h"
-#include "Texture.h"
 #include "Project.h"
 #include "Logger.h"
-#include "Component.h"
-#include "Script.h"
-#include "Transform.h"
-#include "Sprite.h"
-#include "Text.h"
 #include "Scene.h"
-#include "Camera.h"
-#include "Sound.h"
-#include "Button.h"
-#include "Canvas.h"
-#include "BoxCollider.h"
-#include "CircleCollider.h"
-#include "MappingContext.h"
-#include "Process.h"
-#include <Windows.h>
-#include "ECSManager.h"
-#include "TileMap.h"
-#include "TileSet.h"
+#include "Vector2.h"
+#include "Vector4.h"
 
-#include "imgui.h"
-#include <math.h>
-#include <cmath>
 #include <string>
-#include <shobjidl.h> 
-#include <Commdlg.h>
-#include "implot.h"
-#include "implot_internal.h"
 #include "imgui_internal.h"
 #include <fstream>
 #include <vector>
-#include "ImSequencer.h"
 #include <filesystem>
 #include <windows.h> // For getting directory name
 
@@ -67,10 +38,8 @@ using TileMap = FL::TileMap;
 
 namespace FlatGui 
 {
-	// For window styles
 	ImDrawList* drawList = nullptr;
 
-	// FlatGui Variables
 	std::shared_ptr<Animation::S_AnimationProperties> FG_FocusedAnimation = nullptr;
 	std::string FG_FocusedAnimationName = "";
 	GameObject *objectForFocusedAnimation = nullptr;
@@ -92,9 +61,8 @@ namespace FlatGui
 	int iconTransparency = 50;
 
 	// Hierarchy	
-	std::map<long, bool> leafExpandedTracker = std::map<long, bool>();
+	std::map<long, bool> FG_leafExpandedTracker = std::map<long, bool>();
 
-	// Window Visibility
 	bool FG_b_showDemoWindow = false;
 	bool FG_b_showScriptEditor = false;
 	bool FG_b_showTileSetEditor = false;
@@ -120,82 +88,136 @@ namespace FlatGui
 	void SetupProfilerProcesses()
 	{
 		if (FG_b_showProfiler)
-		{
-			// Add Profiler Processes
-			// 						
+		{					
 			FL::AddProfilerProcess("Render");
 			FL::AddProfilerProcess("Render Present");
 
 			if (FG_b_showFileExplorer)
+			{
 				FL::AddProfilerProcess("File Explorer");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("File Explorer");
+			}
 
 
 			if (FG_b_showTileSetEditor)
+			{
 				FL::AddProfilerProcess("TileSet Editor");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("TileSet Editor");
+			}
 
 			if (FG_b_showScriptEditor)
+			{
 				FL::AddProfilerProcess("Script Editor");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Script Editor");
+			}
 
 			if (FG_b_showHierarchy)
+			{
 				FL::AddProfilerProcess("Hierarchy");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Hierarchy");
+			}
 
 			if (FG_b_showInspector)
+			{
 				FL::AddProfilerProcess("Inspector");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Inspector");
+			}
 
 			if (FG_b_showGameView)
+			{
 				FL::AddProfilerProcess("Game View");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Game View");
+			}
 
 			if (FG_b_showSceneView)
+			{
 				FL::AddProfilerProcess("Scene View");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Scene View");
+			}
 
 			if (FG_b_showAnimator)
+			{
 				FL::AddProfilerProcess("Animator");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Animator");
+			}
 
 			if (FG_b_showAnimationPreview)
+			{
 				FL::AddProfilerProcess("Animation Preview");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Animation Preview");
+			}
 
 			if (FG_b_showKeyFrameEditor)
+			{
 				FL::AddProfilerProcess("Key Frame Editor");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Key Frame Editor");
+			}
 
 			if (FG_b_showLogger)
+			{
 				FL::AddProfilerProcess("Log");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Log");
+			}
 
 			if (FG_b_showProfiler)
+			{
 				FL::AddProfilerProcess("Profiler");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Profiler");
+			}
 
 			if (FG_b_showMappingContextEditor)
+			{
 				FL::AddProfilerProcess("Mapping Context Editor");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Mapping Context Editor");
+			}
 		
 			if (FG_b_showSettings)
+			{
 				FL::AddProfilerProcess("Settings");
+			}
 			else
+			{
 				FL::RemoveProfilerProcess("Settings");
+			}
 
 			FL::AddProfilerProcess("Collision Testing");
 		}
@@ -207,10 +229,8 @@ namespace FlatGui
 		SetupProfilerProcesses();
 	}
 
-
 	void Cleanup()
-	{
-		// Remove Profiler Processes
+	{		
 		FL::RemoveProfilerProcess("Render");
 		FL::RemoveProfilerProcess("Render Present");
 	}
@@ -262,48 +282,69 @@ namespace FlatGui
 		FL::LoadGameProject(path, projectJson);
 
 		if (projectJson["Project Properties"][0] != "NULL")
-		{
-			// Loop through the saved Properties in the JSON file
+		{			
 			for (int i = 0; i < projectJson["Project Properties"].size(); i++)
 			{
-				// Get data from the loaded object
 				json currentObjectJson = projectJson["Project Properties"][i];
 
-				// Show/hide windows
 				if (currentObjectJson.contains("_showSceneView"))
+				{
 					FG_b_showSceneView = currentObjectJson["_showSceneView"];
+				}
 				if (currentObjectJson.contains("_showGameView"))
+				{
 					FG_b_showGameView = currentObjectJson["_showGameView"];
+				}
 				if (currentObjectJson.contains("_showFileExplorer"))
+				{
 					FG_b_showFileExplorer = currentObjectJson["_showFileExplorer"];
+				}
 				if (currentObjectJson.contains("_showTileSetEditor"))
+				{
 					FG_b_showTileSetEditor = currentObjectJson["_showTileSetEditor"];
+				}
 				if (currentObjectJson.contains("_showScriptEditor"))
+				{
 					FG_b_showScriptEditor = currentObjectJson["_showScriptEditor"];
+				}
 				if (currentObjectJson.contains("_showHierarchy"))
+				{
 					FG_b_showHierarchy = currentObjectJson["_showHierarchy"];
+				}
 				if (currentObjectJson.contains("_showInspector"))
+				{
 					FG_b_showInspector = currentObjectJson["_showInspector"];
+				}
 				if (currentObjectJson.contains("_showAnimator"))
+				{
 					FG_b_showAnimator = currentObjectJson["_showAnimator"];
+				}
 				if (currentObjectJson.contains("_showAnimationPreview"))
+				{
 					FG_b_showAnimationPreview = currentObjectJson["_showAnimationPreview"];
+				}
 				if (currentObjectJson.contains("_showKeyFrameEditor"))
+				{
 					FG_b_showKeyFrameEditor = currentObjectJson["_showKeyFrameEditor"];
+				}
 				if (currentObjectJson.contains("_showLogger"))
+				{
 					FG_b_showLogger = currentObjectJson["_showLogger"];
+				}
 				if (currentObjectJson.contains("_showProfiler"))
+				{
 					FG_b_showProfiler = currentObjectJson["_showProfiler"];
+				}
 				if (currentObjectJson.contains("_showMappingContextEditor"))
+				{
 					FG_b_showMappingContextEditor = currentObjectJson["_showMappingContextEditor"];
-
-				// Current directory opened
+				}
+				
 				if (currentObjectJson.contains("currentFileDirectory"))
 				{
 					FG_currentDirectory = currentObjectJson["currentFileDirectory"];
 				}
-
-				// Settings
+				
 				if (currentObjectJson.contains("_clearLogBuffer"))
 				{
 					FG_b_clearBufferEveryFrame = currentObjectJson["_clearLogBuffer"];
@@ -325,26 +366,24 @@ namespace FlatGui
 		FG_sceneViewGridStep = gridStep;
 
 		if (FL::F_LoadedProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(FL::F_LoadedProject.GetFocusedGameObjectID()) != nullptr)
+		{
 			SetFocusedGameObjectID(FL::F_LoadedProject.GetFocusedGameObjectID());
+		}
 	}
 
 	void SaveProject(Project project, std::string path)
-	{
-		// Declare file and input stream
+	{		
 		std::ofstream file_obj;
 		std::ifstream ifstream(path);
 
-		// Delete old contents of the file
+		// Delete old file contents
 		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
 		file_obj.close();
 
-		// Opening file in append mode
 		file_obj.open(path, std::ios::app);
 
-		// Array that will hold our gameObject json objects
 		json projectProperties;
-
-		// Create Animation Property Json data object
+		
 		json animationName = json::object({
 			{ "path", path },
 			{ "loadedScenePath", project.GetLoadedScenePath()},
@@ -378,14 +417,9 @@ namespace FlatGui
 			{ "_vsyncEnabled", FL::F_LoadedProject.IsVsyncEnabled() },
 		});
 		projectProperties.push_back(animationName);
-
-		// Recreate the Animation Property json object and add the array as the content
+		
 		json newFileObject = json::object({ {"Project Properties", projectProperties } });
-
-		// Add the GameObjects object contents to the file
 		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
 		file_obj.close();
 	}
 
@@ -395,14 +429,14 @@ namespace FlatGui
 	}
 
 	void AddViewports()
-	{
-		// ImGui Demo Window
+	{		
 		if (FG_b_showDemoWindow)
+		{
 			ImGui::ShowDemoWindow(&FG_b_showDemoWindow);
+		}
 
 		MainMenuBar();
 		RenderToolbar();
-
 
 		float startTime = (float)FL::GetEngineTime();
 
@@ -506,7 +540,6 @@ namespace FlatGui
 	}
 
 
-	// General in order to be used with multiple views that render objects (animation preview, scene view, etc)
 	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset, bool b_showAxis)
 	{
 		drawList = ImGui::GetWindowDrawList();
@@ -526,13 +559,16 @@ namespace FlatGui
 
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
+		{
 			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+		}
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
+		{
 			FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+		}
 
 		// Draw our x and y axis blue and green lines
-		//
 		float divX = trunc(scrolling.x / step.x);
 		float modX = fmodf(scrolling.x, step.x);
 		float offsetX = (step.x * divX) + modX;
@@ -591,8 +627,7 @@ namespace FlatGui
 
 		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
 		drawSplitter->Split(draw_list, FL::F_maxSpriteLayers + 5);
-
-		// Loop through scene objects
+		
 		for (GameObject object : objects)
 		{
 			if (object.IsActive())
@@ -643,16 +678,19 @@ namespace FlatGui
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
 				if (scale.x != 0)
+				{
 					spriteScaleFinal.x *= scale.x;
+				}
 				if (scale.y != 0)
+				{
 					spriteScaleFinal.y *= scale.y;
+				}
 
 				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
 				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);											
-				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);
-				const bool is_hovered = ImGui::IsItemHovered();			
-				const bool is_clicked = ImGui::IsItemClicked();
-				if (is_clicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
+				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);			
+				const bool b_isClicked = ImGui::IsItemClicked();
+				if (b_isClicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
 				{
 					SetFocusedGameObjectID(sprite->GetParentID());
 				}
@@ -734,8 +772,7 @@ namespace FlatGui
 				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FL::GetColor("cameraBox"), 2.0f, draw_list);
 				FL::DrawLine(topLeftCorner, bottomRightCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
 				FL::DrawLine(topRightCorner, bottomLeftCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
-
-				// Draw actual camera icon
+				
 				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
 			}
 
@@ -743,8 +780,7 @@ namespace FlatGui
 			{
 				float activeWidth = canvas->GetWidth();
 				float activeHeight = canvas->GetHeight();
-				int layerNumber = canvas->GetLayerNumber();
-				bool _blocksLayers = canvas->GetBlocksLayers();
+				int layerNumber = canvas->GetLayerNumber();				
 
 				float renderXStart = FG_sceneViewCenter.x + ((position.x - (activeWidth * transformScale.x / 2)) * FG_sceneViewGridStep.x);
 				float renderYStart = FG_sceneViewCenter.y - ((position.y + (activeHeight * transformScale.y / 2)) * FG_sceneViewGridStep.x);
@@ -791,13 +827,13 @@ namespace FlatGui
 
 				if (rotation != 0)
 				{
-					float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
-					float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+					float cosA = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+					float sinA = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
-					topLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					topRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					bottomRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
-					bottomLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cos_a, sin_a);
+					topLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cosA, sinA);
+					topRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, -activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cosA, sinA);
+					bottomRight = ImRotate(Vector2(+activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cosA, sinA);
+					bottomLeft = ImRotate(Vector2(-activeWidth * FG_sceneViewGridStep.x / 2 * transformScale.x, +activeHeight * FG_sceneViewGridStep.x / 2 * transformScale.y), cosA, sinA);
 
 					Vector2 pos[4] =
 					{
@@ -824,10 +860,10 @@ namespace FlatGui
 				float activeHeight = boxCollider->GetActiveHeight();
 				Vector2 activeOffset = boxCollider->GetActiveOffset();
 				int activeLayer = boxCollider->GetActiveLayer();
-				bool _isActive = boxCollider->IsActive();
-				bool _isColliding = boxCollider->IsColliding();
+				bool b_isActive = boxCollider->IsActive();
+				bool b_isColliding = boxCollider->IsColliding();
 				float activeRadius = boxCollider->GetActiveRadiusScreen();
-				bool _showActiveRadius = boxCollider->GetShowActiveRadius();
+				bool b_showActiveRadius = boxCollider->GetShowActiveRadius();
 				Vector2 center = boxCollider->GetCenterCoord();
 
 				boxCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
@@ -843,12 +879,18 @@ namespace FlatGui
 
 				if (transform->GetRotation() == 0)
 				{
-					if (_isActive && !_isColliding)
+					if (b_isActive && !b_isColliding)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
-					else if (!_isActive)
+					}
+					else if (!b_isActive)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
-					else if (_isColliding)
+					}
+					else if (b_isColliding)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
+					}
 				}
 				else
 				{
@@ -872,17 +914,25 @@ namespace FlatGui
 					FL::DrawLine(center, normals[2], FL::GetColor("colliderInactive"), 2.0f, draw_list);
 					FL::DrawLine(center, normals[3], FL::GetColor("colliderInactive"), 2.0f, draw_list);
 
-					if (_isActive && !_isColliding)
+					if (b_isActive && !b_isColliding)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
-					else if (!_isActive)
+					}
+					else if (!b_isActive)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
-					else if (_isColliding)
+					}
+					else if (b_isColliding)
+					{
 						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
+					}
 				}
 
 				// Draw activeRadius circle
-				if (_showActiveRadius)
+				if (b_showActiveRadius)
+				{
 					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
+				}
 			}
 
 			for (CircleCollider* circleCollider : circleColliders)
@@ -913,10 +963,9 @@ namespace FlatGui
 				}
 			}
 
-			if (tileMap != nullptr)
+			if (tileMap != nullptr && tileMap->IsActive())
 			{
-				long id = tileMap->GetID();
-				bool _isActive = tileMap->IsActive();
+				long id = tileMap->GetID();				
 				float width = (float)tileMap->GetWidth();							// in tiles
 				float height = (float)tileMap->GetHeight();							// in tiles
 				float tileWidth = (float)tileMap->GetTileWidth();
@@ -991,8 +1040,7 @@ namespace FlatGui
 					{
 						for (float h = 0; h < height; h++)
 						{
-							// TileMap interactions
-							//
+							// TileMap interactions							
 							std::string tileButtonID = "##tileMapIndexButton" + std::to_string(id) + "-" + std::to_string(w) + std::to_string(h);
 							TileSet* activeTileSet = nullptr;
 
@@ -1023,7 +1071,7 @@ namespace FlatGui
 
 								AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
 								// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
-								const bool is_hovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
+								const bool b_isHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly);
 
 
 
@@ -1057,7 +1105,7 @@ namespace FlatGui
 									}
 								}
 
-								if (is_hovered)
+								if (b_isHovered)
 								{
 									// Mouse down
 									if (ImGui::IsKeyDown(ImGuiKey_MouseLeft))
@@ -1215,11 +1263,15 @@ namespace FlatGui
 						float startPosY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.y) + (savedMultiSelectStartTile.y * tileHeightInPx);
 						float selectWidth = multiSelectEndTile.x - savedMultiSelectStartTile.x;
 						if (selectWidth < 0)
+						{
 							selectWidth *= -1;
+						}
 						selectWidth += 1;
 						float selectHeight = multiSelectEndTile.y - savedMultiSelectStartTile.y;
 						if (selectHeight < 0)
+						{
 							selectHeight *= -1;
+						}
 						selectHeight += 1;
 
 						Vector2 startTileScreenPos = Vector2(startPosX, startPosY);
@@ -1251,11 +1303,15 @@ namespace FlatGui
 						float startPosY = FG_sceneViewCenter.y - ((position.y + (gridHeight * transformScale.y / 2)) * FG_sceneViewGridStep.y) + (startCoord.y * tileHeightInPx);
 						float selectWidth = endCoord.x - startCoord.x;
 						if (selectWidth < 0)
+						{
 							selectWidth *= -1;
+						}
 						selectWidth += 1;
 						float selectHeight = endCoord.y - startCoord.y;
 						if (selectHeight < 0)
+						{
 							selectHeight *= -1;
+						}
 						selectHeight += 1;
 
 						Vector2 startTileScreenPos = Vector2(startPosX, startPosY);
@@ -1290,7 +1346,9 @@ namespace FlatGui
 								TileSet* usedTileSet = nullptr;
 								std::string tileSetName = tile.tileSetName;
 								if (tileSetName != "")
+								{
 									usedTileSet = FL::GetTileSet(tileSetName);
+								}
 
 								// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
 								float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
@@ -1308,9 +1366,13 @@ namespace FlatGui
 
 								// Change the draw channel for the scene object
 								if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+								{
 									drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+								}
 								else
+								{
 									drawSplitter->SetCurrentChannel(draw_list, 0);
+								}
 
 								FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 							}
@@ -1329,7 +1391,7 @@ namespace FlatGui
 				float arrowHeight = (float)FL::GetTextureObject("transformArrow")->GetHeight() * 3;
 				Vector2 arrowScale = { 1, 1 };
 				Vector2 arrowOffset = { 3, arrowHeight - 3 };
-				bool _scalesWithZoom = false;
+				bool b_scalesWithZoom = false;
 				float transformMoveModifier = 0.02f;
 				ImGuiIO& inputOutput = ImGui::GetIO();
 				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step), FG_sceneViewCenter.y - (position.y * step));
@@ -1337,11 +1399,11 @@ namespace FlatGui
 				// Invisible button for Transform Arrow Move X and Y
 				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
 				FL::RenderInvisibleButton("##TransformBaseArrowButton", moveAllStartPos, Vector2(28, 28), false);
-				const bool _baseHovered = ImGui::IsItemHovered();
-				const bool _baseActive = ImGui::IsItemActive();
-				const bool _baseClicked = ImGui::IsItemClicked();
+				const bool b_baseHovered = ImGui::IsItemHovered();
+				const bool b_baseActive = ImGui::IsItemActive();
+				const bool b_baseClicked = ImGui::IsItemClicked();
 
-				if (_baseHovered || _baseActive)
+				if (b_baseHovered || b_baseActive)
 				{
 					arrowToRender = FL::GetTexture("transformArrowAllWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -1350,10 +1412,11 @@ namespace FlatGui
 				// Invisible button for X arrow
 				Vector2 moveXStartPos = Vector2(positionOnScreen.x + 24, positionOnScreen.y - 30);
 				FL::RenderInvisibleButton("##TransformBaseArrowXButton", moveXStartPos, Vector2(63, 35), false);
-				const bool _xHovered = ImGui::IsItemHovered();
-				const bool _xActive = ImGui::IsItemActive();
-				const bool _xClicked = ImGui::IsItemClicked();
-				if (_xHovered || _xActive)
+				const bool b_xHovered = ImGui::IsItemHovered();
+				const bool b_xActive = ImGui::IsItemActive();
+				const bool b_xClicked = ImGui::IsItemClicked();
+
+				if (b_xHovered || b_xActive)
 				{
 					arrowToRender = FL::GetTexture("transformArrowXWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -1362,10 +1425,11 @@ namespace FlatGui
 				// Invisible button for Y arrow
 				Vector2 moveYStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 86);
 				FL::RenderInvisibleButton("TransformBaseArrowYButton", moveYStartPos, Vector2(35, 63), false);
-				const bool _yHovered = ImGui::IsItemHovered();
-				const bool _yActive = ImGui::IsItemActive();
-				const bool _yClicked = ImGui::IsItemClicked();
-				if (_yHovered || _yActive)
+				const bool b_yHovered = ImGui::IsItemHovered();
+				const bool b_yActive = ImGui::IsItemActive();
+				const bool b_yClicked = ImGui::IsItemClicked();
+
+				if (b_yHovered || b_yActive)
 				{
 					arrowToRender = FL::GetTexture("transformArrowYWhite");
 					ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -1375,7 +1439,7 @@ namespace FlatGui
 				static Vector2 cursorPosAtClick = inputOutput.MousePos;
 				Vector2 relativePosition = transform->GetPosition();
 
-				if (_baseClicked || _xClicked || _yClicked)
+				if (b_baseClicked || b_xClicked || b_yClicked)
 				{
 					cursorPosAtClick = inputOutput.MousePos;
 					transformScreenPos = Vector2(origin.x + (relativePosition.x * step), origin.y - (relativePosition.y * step));
@@ -1385,17 +1449,23 @@ namespace FlatGui
 				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - origin.x) / step, (origin.y - inputOutput.MousePos.y) / step);
 				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);				
 
-				if (_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				if (b_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
 					transform->SetPosition(newTransformPos);
-				else if (_xActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				}
+				else if (b_xActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
 					transform->SetPosition(Vector2(newTransformPos.x, relativePosition.y));
-				else if (_yActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				}
+				else if (b_yActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
 					transform->SetPosition(Vector2(relativePosition.x, newTransformPos.y));
+				}
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 3);
-				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, _scalesWithZoom, step, draw_list);
+				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, b_scalesWithZoom, step, draw_list);
 			}
 		}
 	}

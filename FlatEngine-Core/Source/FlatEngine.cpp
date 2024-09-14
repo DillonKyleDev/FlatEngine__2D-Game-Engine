@@ -1,38 +1,18 @@
 #include "FlatEngine.h"
 #include "WindowManager.h"
-#include "MappingContext.h"
 #include "PrefabManager.h"
 #include "Logger.h"
 #include "SceneManager.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "ECSManager.h"
 #include "Project.h"
 #include "AssetManager.h"
 #include "MappingContext.h"
-#include "TileSet.h"
-#include "GameLoop.h"
 #include "Scene.h"
-#include "Transform.h"
-#include "Sprite.h"
-#include "BoxCollider.h"
-#include "Script.h"
-#include "RigidBody.h"
-#include "CharacterController.h"
-#include "Text.h"
-#include "Texture.h"
-#include "Camera.h"
-#include "Audio.h"
-#include "Sound.h"
 #include "Animation.h"
-#include "Canvas.h"
-#include "GameObject.h"
 
-#include <SDL_ttf.h>
-#include <SDL.h>
 #include <fstream>
 #include <string>
-#include <iostream>
 #include <filesystem>
 #include <cmath>
 #include <shobjidl.h> 
@@ -167,7 +147,7 @@ namespace FlatEngine
 		return F_AssetManager.GetColor32(colorName);
 	}
 
-	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation, ImU32 addColor, Vector2 uvStart, Vector2 uvEnd)
+	Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offsetPx, Vector2 scale, bool b_scalesWithZoom, float zoomMultiplier, ImDrawList* drawList, float rotation, ImU32 addColor, Vector2 uvStart, Vector2 uvEnd)
 	{
 		// Changing the scale here because sprites render too large
 		Vector2 newScale = Vector2(scale.x * F_spriteScaleMultiplier, scale.y * F_spriteScaleMultiplier);
@@ -183,7 +163,7 @@ namespace FlatEngine
 		Vector2 renderStart;
 		Vector2 renderEnd;
 
-		if (_scalesWithZoom)
+		if (b_scalesWithZoom)
 		{
 			renderStart = Vector2(scalingXStart, scalingYStart);
 			renderEnd = Vector2(scalingXEnd, scalingYEnd);
@@ -199,13 +179,13 @@ namespace FlatEngine
 
 		if (rotation != 0)
 		{
-			float cos_a = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
-			float sin_a = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
+			float cosA = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+			float sinA = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
-			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
-			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cos_a, sin_a);
+			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cosA, sinA);
+			Vector2 topRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cosA, sinA);
+			Vector2 bottomRight = ImRotate(Vector2(+(renderEnd.x - renderStart.x) / 2, (renderEnd.y - renderStart.y) / 2), cosA, sinA);
+			Vector2 bottomLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, +(renderEnd.y - renderStart.y) / 2), cosA, sinA);
 
 			Vector2 center = Vector2(renderStart.x + ((renderEnd.x - renderStart.x) / 2), renderStart.y + ((renderEnd.y - renderStart.y) / 2));
 			Vector2 pos[4] =
@@ -224,12 +204,12 @@ namespace FlatEngine
 			};
 
 			// Render sprite to viewport
-			draw_list->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+			drawList->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
 		}
 		else
 		{
 			// Render sprite to viewport
-			draw_list->AddImage((void*)texture, renderStart, renderEnd, uvStart, uvEnd, addColor);
+			drawList->AddImage((void*)texture, renderStart, renderEnd, uvStart, uvEnd, addColor);
 		}
 
 		return renderStart;
@@ -239,14 +219,14 @@ namespace FlatEngine
 	bool Init(int windowWidth, int windowHeight, DirectoryType dirType)
 	{
 		//Initialization flag
-		bool success = true;
+		bool b_success = true;
 
 		//Initialize SDL
 		SDL_SetHint(SDL_HINT_JOYSTICK_THREAD, "1");
 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
 		{
 			printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-			success = false;
+			b_success = false;
 		}
 		else
 		{
@@ -258,20 +238,17 @@ namespace FlatEngine
 				printf("Warning: Linear texture filtering not enabled!\n");
 			}
 
-			char t[] = "FlatEngine";
-			char* title = &(t[0]);
-
-			//Initialize Window::window
-			if (F_Window->Init(title, windowWidth, windowHeight))
+			//Initialize Window
+			if (F_Window->Init("FlatEngine", windowWidth, windowHeight))
 			{
 				printf("Window initialized...\n");
 
 				//Initialize SDL_image for png loading
 				int imgFlags = IMG_INIT_PNG;
-				if (!(IMG_Init(imgFlags) & imgFlags))
+				if (!(IMG_Init(imgFlags) && imgFlags))
 				{
 					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-					success = false;
+					b_success = false;
 				}
 				else
 				{
@@ -280,7 +257,7 @@ namespace FlatEngine
 					if (TTF_Init() == -1)
 					{
 						printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-						success = false;
+						b_success = false;
 					}
 					else
 					{
@@ -289,7 +266,7 @@ namespace FlatEngine
 						if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 						{
 							printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-							success = false;
+							b_success = false;
 						}
 						else
 						{
@@ -319,7 +296,7 @@ namespace FlatEngine
 			}
 		}
 
-		return success;
+		return b_success;
 	}
 
 	void SetupImGui()
@@ -347,7 +324,7 @@ namespace FlatEngine
 
 		ImGui_ImplSDL2_InitForSDLRenderer(F_Window->GetWindow(), F_Window->GetRenderer());
 		ImGui_ImplSDLRenderer2_Init(F_Window->GetRenderer());
-		SetImGuiColors();  // Colors will not be loaded yet, but they will obtain the default color given by GetColor();
+		SetImGuiColors();
 	}
 
 	void SetImGuiColors()
@@ -449,7 +426,9 @@ namespace FlatEngine
 			{
 				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
 				if (gamepad == NULL)
+				{
 					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+				}
 				else
 				{
 					LogString("Gamepad connected...");
@@ -487,79 +466,49 @@ namespace FlatEngine
 	{
 		Project newProject = Project();
 		newProject.SetPath(path);
-
-		// Declare file and input stream
-		std::ofstream file_obj;
+		
+		std::ofstream fileObject;
 		std::ifstream ifstream(path);
 
 		// Open file in in mode
-		file_obj.open(path, std::ios::in);
-
-		// Variable to save the current file data into
+		fileObject.open(path, std::ios::in);		
 		std::string fileContent = "";
-
-		// Loop through the file line by line and save the data
-		if (file_obj.good())
+		
+		if (fileObject.good())
 		{
 			std::string line;
-			while (!ifstream.eof()) {
+			while (!ifstream.eof()) 
+			{
 				std::getline(ifstream, line);
 				fileContent.append(line + "\n");
 			}
 		}
+		
+		fileObject.close();
 
-		// Close the file after reading
-		file_obj.close();
-
-		if (file_obj.good())
-		{
-			// Go from string to json object
+		if (fileObject.good())
+		{		
 			projectJson = json::parse(fileContent);
 
 			if (projectJson["Project Properties"][0] != "NULL")
-			{
-				// Loop through the saved Properties in the JSON file
+			{				
 				for (int i = 0; i < projectJson["Project Properties"].size(); i++)
-				{
-					// Get data from the loaded object
-					json currentObjectJson = projectJson["Project Properties"][i];
+				{					
+					json projectData = projectJson["Project Properties"][i];
+					std::string name = GetFilenameFromPath(path);
 
-					// Open items
-					if (currentObjectJson.contains("path"))
-						newProject.SetPath(currentObjectJson["path"]);
-					if (currentObjectJson.contains("loadedScenePath"))
-						newProject.SetLoadedScenePath(currentObjectJson["loadedScenePath"]);
-					if (currentObjectJson.contains("buildPath"))
-						newProject.SetBuildPath(currentObjectJson["buildPath"]);
-					if (currentObjectJson.contains("loadedAnimationPath"))
-						newProject.SetLoadedPreviewAnimationPath(currentObjectJson["loadedAnimationPath"]);
-					if (currentObjectJson.contains("focusedGameObjectID"))
-						newProject.SetFocusedGameObjectID(currentObjectJson["focusedGameObjectID"]);
-					if (currentObjectJson.contains("sceneToLoadAtRuntime"))
-						newProject.SetRuntimeScene(currentObjectJson["sceneToLoadAtRuntime"]);
-
-					// Scene Scrolling + Grid Step
-					Vector2 sceneViewScroll = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewScrollingX"))
-						sceneViewScroll.x = currentObjectJson["sceneViewScrollingX"];
-					if (currentObjectJson.contains("sceneViewScrollingY"))
-						sceneViewScroll.y = currentObjectJson["sceneViewScrollingY"];
-					newProject.SetSceneViewScrolling(sceneViewScroll);
-					Vector2 sceneViewGridStep = Vector2(0, 0);
-					if (currentObjectJson.contains("sceneViewGridStepX"))
-						sceneViewGridStep.x = currentObjectJson["sceneViewGridStepX"];
-					if (currentObjectJson.contains("sceneViewGridStepY"))
-						sceneViewGridStep.y = currentObjectJson["sceneViewGridStepY"];
-					newProject.SetSceneViewGridStep(sceneViewGridStep);
-
-					if (currentObjectJson.contains("_autoSave"))
-						newProject.SetAutoSave(currentObjectJson["_autoSave"]);
-					if (currentObjectJson.contains("resolutionWidth") && currentObjectJson.contains("resolutionHeight"))
-						newProject.SetResolution(Vector2(currentObjectJson["resolutionWidth"], currentObjectJson["resolutionHeight"]));
-					if (currentObjectJson.contains("_fullscreen"))
-						newProject.SetFullscreen(currentObjectJson["_fullscreen"]);
-					if (currentObjectJson.contains("_vsyncEnabled"))
-						newProject.SetVsyncEnabled(currentObjectJson["_vsyncEnabled"]);
+					newProject.SetPath(CheckJsonString(projectData, "path", name));
+					newProject.SetLoadedScenePath(CheckJsonString(projectData, "loadedScenePath", name));
+					newProject.SetBuildPath(CheckJsonString(projectData, "buildPath", name));
+					newProject.SetLoadedPreviewAnimationPath(CheckJsonString(projectData, "loadedAnimationPath", name));
+					newProject.SetFocusedGameObjectID(CheckJsonLong(projectData, "focusedGameObjectID", name));
+					newProject.SetRuntimeScene(CheckJsonString(projectData, "sceneToLoadAtRuntime", name));				
+					newProject.SetSceneViewScrolling(Vector2(CheckJsonFloat(projectData, "sceneViewScrollingX", name), CheckJsonFloat(projectData, "sceneViewScrollingY", name)));					
+					newProject.SetSceneViewGridStep(Vector2(CheckJsonFloat(projectData, "sceneViewGridStepX", name), CheckJsonFloat(projectData, "sceneViewGridStepY", name)));
+					newProject.SetAutoSave(CheckJsonBool(projectData, "_autoSave", name));
+					newProject.SetResolution(Vector2(CheckJsonFloat(projectData, "resolutionWidth", name), CheckJsonFloat(projectData, "resolutionHeight", name)));
+					newProject.SetFullscreen(CheckJsonBool(projectData, "_fullscreen", name));
+					newProject.SetVsyncEnabled(CheckJsonBool(projectData, "_vsyncEnabled", name));
 				}
 			}
 		}
@@ -573,7 +522,6 @@ namespace FlatEngine
 			CreateNewScene();
 		}
 
-		// Set loaded project
 		SetLoadedProject(newProject);
 	}
 
@@ -701,9 +649,13 @@ namespace FlatEngine
 		std::string filePath = "";
 
 		if (path == "")
+		{
 			filePath = GetDir("scenes") + "\\" + filename + ".scn";
+		}
 		else
+		{
 			filePath = path + "\\" + filename + ".scn";
+		}
 
 		newScene->SetPath(filePath);
 
@@ -762,9 +714,13 @@ namespace FlatEngine
 		MappingContext newContext = MappingContext();
 
 		if (path == "")
+		{
 			filePath = GetDir("mappingContexts") + "\\" + fileName + ".mpc";
+		}
 		else
+		{
 			filePath = path + "\\" + fileName + ".mpc";
+		}
 
 		newContext.SetPath(filePath);
 		newContext.SetName(fileName);
@@ -776,7 +732,6 @@ namespace FlatEngine
 	{
 		std::string extension = std::filesystem::path(filePath).extension().string();
 
-		// Scene file
 		if (extension == ".png")
 		{
 			GameObject* newObject = CreateGameObject();
@@ -823,18 +778,16 @@ namespace FlatEngine
 	// Mapping Context Management
 	void SaveMappingContext(std::string path, MappingContext context)
 	{
-		// Declare file and input stream
-		std::ofstream file_obj;
+		std::ofstream fileObject;
 		std::ifstream ifstream(path);
 
 		// Delete old contents of the file
-		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
+		fileObject.open(path, std::ofstream::out | std::ofstream::trunc);
+		fileObject.close();
 
 		// Opening file in append mode
-		file_obj.open(path, std::ios::app);
+		fileObject.open(path, std::ios::app);
 
-		// Array that will hold our mappings json objects
 		json mappings = json::array();
 
 		if (context.GetKeyBindings().size() > 0)
@@ -843,16 +796,16 @@ namespace FlatEngine
 			mappings.push_back(json::parse(data));
 		}
 		else
+		{
 			mappings.push_back("NULL");
+		}
 
-		// Recreate the json object and add the array as the content
 		json newFileObject = json::object({ {"Mapping Context", mappings } });
 
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
+		fileObject << newFileObject.dump(4).c_str() << std::endl;
+		fileObject.close();
 
-		// Close the file
-		file_obj.close();
+		InitializeMappingContexts();
 	}
 
 	void InitializeMappingContexts()
@@ -864,81 +817,45 @@ namespace FlatEngine
 
 		for (std::string path : mappingContextFiles)
 		{
-			// Create a new context to save the loaded keybindings to
 			MappingContext newContext = MappingContext();
-
+		
 			json contextData = LoadFileData(path);
 			if (contextData != NULL)
 			{
-				//Getting data from the json 
-				//std::string name = firstObjectName[0]["name"];
-
 				auto mappings = contextData["Mapping Context"][0];
-				
-				newContext.SetName(mappings["name"]);
-				newContext.SetPath(path);
-				
-				// XInput
-				newContext.AddKeyBinding("XInput_A", mappings["XInput_A"]);
-				newContext.AddKeyBinding("XInput_B", mappings["XInput_B"]);
-				newContext.AddKeyBinding("XInput_X", mappings["XInput_X"]);
-				newContext.AddKeyBinding("XInput_Y", mappings["XInput_Y"]);
-				newContext.AddKeyBinding("XInput_LB", mappings["XInput_LB"]);
-				newContext.AddKeyBinding("XInput_RB", mappings["XInput_RB"]);
-				newContext.AddKeyBinding("XInput_ScreenShot", mappings["XInput_ScreenShot"]);
-				newContext.AddKeyBinding("XInput_Start", mappings["XInput_Start"]);
-				newContext.AddKeyBinding("XInput_LS", mappings["XInput_LS"]);
-				newContext.AddKeyBinding("XInput_RS", mappings["XInput_RS"]);
-				newContext.AddKeyBinding("XInput_Home", mappings["XInput_Home"]);
-				newContext.AddKeyBinding("XInput_Tray", mappings["XInput_Tray"]);
-				newContext.AddKeyBinding("XInput_DPadUp", mappings["XInput_DPadUp"]);
-				newContext.AddKeyBinding("XInput_DPadDown", mappings["XInput_DPadDown"]);
-				newContext.AddKeyBinding("XInput_DPadLeft", mappings["XInput_DPadLeft"]);
-				newContext.AddKeyBinding("XInput_DPadRight", mappings["XInput_DPadRight"]);
-				newContext.AddKeyBinding("XInput_LeftJoystickX", mappings["XInput_LeftJoystickX"]);
-				newContext.AddKeyBinding("XInput_LeftJoystickY", mappings["XInput_LeftJoystickY"]);
-				newContext.AddKeyBinding("XInput_RightJoystick", mappings["XInput_RightJoystick"]);
-				newContext.AddKeyBinding("XInput_LT", mappings["XInput_LT"]);
-				newContext.AddKeyBinding("XInput_RT", mappings["XInput_RT"]);
+				newContext.SetName(CheckJsonString(mappings, "name", "MappingContext"));
 
-				//// Keyboard + Mouse
-				// Directional
-				newContext.AddKeyBinding("Keyboard_up", mappings["Keyboard_up"]);
-				newContext.AddKeyBinding("Keyboard_down", mappings["Keyboard_down"]);
-				newContext.AddKeyBinding("Keyboard_left", mappings["Keyboard_left"]);
-				newContext.AddKeyBinding("Keyboard_right", mappings["Keyboard_right"]);
-				// Letters
-				newContext.AddKeyBinding("Keyboard_a", mappings["Keyboard_a"]);
-				newContext.AddKeyBinding("Keyboard_b", mappings["Keyboard_b"]);
-				newContext.AddKeyBinding("Keyboard_c", mappings["Keyboard_c"]);
-				newContext.AddKeyBinding("Keyboard_d", mappings["Keyboard_d"]);
-				newContext.AddKeyBinding("Keyboard_e", mappings["Keyboard_e"]);
-				newContext.AddKeyBinding("Keyboard_f", mappings["Keyboard_f"]);
-				newContext.AddKeyBinding("Keyboard_g", mappings["Keyboard_g"]);
-				newContext.AddKeyBinding("Keyboard_h", mappings["Keyboard_h"]);
-				newContext.AddKeyBinding("Keyboard_i", mappings["Keyboard_i"]);
-				newContext.AddKeyBinding("Keyboard_j", mappings["Keyboard_j"]);
-				newContext.AddKeyBinding("Keyboard_k", mappings["Keyboard_k"]);
-				newContext.AddKeyBinding("Keyboard_l", mappings["Keyboard_l"]);
-				newContext.AddKeyBinding("Keyboard_m", mappings["Keyboard_m"]);
-				newContext.AddKeyBinding("Keyboard_n", mappings["Keyboard_n"]);
-				newContext.AddKeyBinding("Keyboard_o", mappings["Keyboard_o"]);
-				newContext.AddKeyBinding("Keyboard_p", mappings["Keyboard_p"]);
-				newContext.AddKeyBinding("Keyboard_q", mappings["Keyboard_q"]);
-				newContext.AddKeyBinding("Keyboard_r", mappings["Keyboard_r"]);
-				newContext.AddKeyBinding("Keyboard_s", mappings["Keyboard_s"]);
-				newContext.AddKeyBinding("Keyboard_t", mappings["Keyboard_t"]);
-				newContext.AddKeyBinding("Keyboard_u", mappings["Keyboard_u"]);
-				newContext.AddKeyBinding("Keyboard_v", mappings["Keyboard_v"]);
-				newContext.AddKeyBinding("Keyboard_w", mappings["Keyboard_w"]);
-				newContext.AddKeyBinding("Keyboard_x", mappings["Keyboard_x"]);
-				newContext.AddKeyBinding("Keyboard_y", mappings["Keyboard_y"]);
-				newContext.AddKeyBinding("Keyboard_z", mappings["Keyboard_z"]);
+				if (newContext.GetName() == "")
+				{
+					newContext.SetName(GetFilenameFromPath(path));
+				}
+
+				newContext.SetPath(path);
+
+				for (std::pair<long, std::string> keyboardCode : F_MappedKeyboardCodes)
+				{
+					std::string keyString = keyboardCode.second;					
+					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
+				}
+				for (std::pair<long, std::string> xInputButtonCode : F_MappedXInputButtonCodes)
+				{
+					std::string keyString = xInputButtonCode.second;
+					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
+				}
+				for (std::pair<long, std::string> xInputDPadCode : F_MappedXInputButtonCodes)
+				{
+					std::string keyString = xInputDPadCode.second;
+					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
+				}
+				for (std::pair<long, std::string> xInputAnalogCode : F_MappedXInputButtonCodes)
+				{
+					std::string keyString = xInputAnalogCode.second;
+					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
+				}
 
 				// After all keys are set, create their Input Action bindings
 				newContext.CreateInputActionBindings();
 
-				// Add context to context managing vector
 				F_MappingContexts.push_back(newContext);
 			}
 		}
@@ -946,12 +863,12 @@ namespace FlatEngine
 
 	MappingContext* GetMappingContext(std::string contextName)
 	{
-		for (std::vector<MappingContext>::iterator iter = F_MappingContexts.begin(); iter != F_MappingContexts.end();)
+		for (std::vector<MappingContext>::iterator iter = F_MappingContexts.begin(); iter != F_MappingContexts.end(); iter++)
 		{
 			if (iter->GetName() == contextName)
+			{
 				return &(*iter);
-
-			iter++;
+			}
 		}
 
 		return nullptr;
@@ -960,16 +877,15 @@ namespace FlatEngine
 	// Events
 	void HandleEvents(bool& quit)
 	{
-		//std::vector<FlatEngine::MappingContext> *FlatEngine::F_MappingContexts = &FlatEngine::F_FlatEngine::F_MappingContexts;
-		using XInputAxis = FlatEngine::XInputAxis;
-		using XInputButtons = FlatEngine::XInputButtons;
-		using XInputHats = FlatEngine::XInputHats;
-
 		// Unfire all keybinds that were fired in the last frame then clear the saved keys
 		static std::vector<std::string> firedKeys = std::vector<std::string>();
 		for (std::string keybind : firedKeys)
-			for (MappingContext &context : F_MappingContexts)
+		{
+			for (MappingContext& context : F_MappingContexts)
+			{
 				context.UnFireEvent(keybind);
+			}
+		}
 		firedKeys.clear();
 
 
@@ -986,21 +902,28 @@ namespace FlatEngine
 			{
 				switch (event.window.event)
 				{
-				case SDL_WINDOWEVENT_CLOSE:
-					if (event.window.windowID == SDL_GetWindowID(F_Window->GetWindow()))
-						quit = true;
+					case SDL_WINDOWEVENT_CLOSE:
+					{
+						if (event.window.windowID == SDL_GetWindowID(F_Window->GetWindow()))
+						{
+							quit = true;
+						}
 						break;
-
-				case SDL_WINDOWEVENT_RESIZED:
-					F_Application->WindowResized();
-					break;
-				
-				case SDL_WINDOWEVENT_MAXIMIZED:
-					F_Application->WindowResized();
-					break;
-
-				default:
-					break;
+					}
+					case SDL_WINDOWEVENT_RESIZED:
+					{
+						F_Application->WindowResized();
+						break;
+					}				
+					case SDL_WINDOWEVENT_MAXIMIZED:
+					{
+						F_Application->WindowResized();
+						break;
+					}
+					default:
+					{
+						break;
+					}
 				}
 			}
 
@@ -1018,7 +941,7 @@ namespace FlatEngine
 		// Keyboard Keys Down
 		if (event.type == SDL_KEYDOWN)
 		{
-			// Scene View inputs
+			// Scene View keybinds
 			if (F_b_sceneViewFocused)
 			{
 				switch (event.key.keysym.sym)
@@ -1064,464 +987,27 @@ namespace FlatEngine
 		// Keyboard Keys Down
 		if (event.type == SDL_KEYDOWN)
 		{
-			// Send event to context inputAction
-			switch (event.key.keysym.sym)
+			if (F_MappedKeyboardCodes.count(event.key.keysym.sym))
 			{
-			case SDLK_SPACE:
-			{
-				if (context.GetKeyBinding("Keyboard_space") != "" && context.GetKeyBoundEvent("Keyboard_space").type == 0)
+				std::string key = F_MappedKeyboardCodes.at(event.key.keysym.sym);
+				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
 				{
-					context.OnInputEvent("Keyboard_space", event);
-					firedKeys.push_back("Keyboard_space");
+					context.OnInputEvent(key, event);
+					firedKeys.push_back(key);
 				}
-				break;
-			}
-			case SDLK_ESCAPE:
-			{
-				if (context.GetKeyBinding("Keyboard_escape") != "" && context.GetKeyBoundEvent("Keyboard_escape").type == 0)
-				{
-					context.OnInputEvent("Keyboard_escape", event);
-					firedKeys.push_back("Keyboard_escape");
-				}
-				break;
-			}
-			case SDLK_UP:			
-			{
-				if (context.GetKeyBinding("Keyboard_up") != "" && context.GetKeyBoundEvent("Keyboard_up").type == 0)
-				{
-					context.OnInputEvent("Keyboard_up", event);
-					firedKeys.push_back("Keyboard_up");
-				}
-				break;
-			}
-			case SDLK_DOWN:
-			{
-				if (context.GetKeyBinding("Keyboard_down") != "" && context.GetKeyBoundEvent("Keyboard_down").type == 0)
-				{
-					context.OnInputEvent("Keyboard_down", event);
-					firedKeys.push_back("Keyboard_down");
-				}
-				break;
-			}
-			case SDLK_LEFT:
-			{
-				if (context.GetKeyBinding("Keyboard_left") != "" && context.GetKeyBoundEvent("Keyboard_left").type == 0)
-				{
-					context.OnInputEvent("Keyboard_left", event);
-					firedKeys.push_back("Keyboard_left");
-				}
-				break;
-			}
-			case SDLK_RIGHT:				
-			{
-				if (context.GetKeyBinding("Keyboard_right") != "" && context.GetKeyBoundEvent("Keyboard_right").type == 0)
-				{
-					context.OnInputEvent("Keyboard_right", event);
-					firedKeys.push_back("Keyboard_right");
-				}
-				break;
-			}
-			case SDLK_a:				
-			{
-				if (context.GetKeyBinding("Keyboard_a") != "" && context.GetKeyBoundEvent("Keyboard_a").type == 0)
-				{
-					context.OnInputEvent("Keyboard_a", event);
-					firedKeys.push_back("Keyboard_a");
-				}
-				break;
-			}
-			case SDLK_b:				
-			{
-				if (context.GetKeyBinding("Keyboard_b") != "" && context.GetKeyBoundEvent("Keyboard_b").type == 0)
-				{
-					context.OnInputEvent("Keyboard_b", event);
-					firedKeys.push_back("Keyboard_b");
-				}
-				break;
-			}
-			case SDLK_c:				
-			{
-				if (context.GetKeyBinding("Keyboard_c") != "" && context.GetKeyBoundEvent("Keyboard_c").type == 0)
-				{
-					context.OnInputEvent("Keyboard_c", event);
-					firedKeys.push_back("Keyboard_c");
-				}
-				break;
-			}
-			case SDLK_d:				
-			{
-				if (context.GetKeyBinding("Keyboard_d") != "" && context.GetKeyBoundEvent("Keyboard_d").type == 0)
-				{
-					context.OnInputEvent("Keyboard_d", event);
-					firedKeys.push_back("Keyboard_d");
-				}
-				break;
-			}
-			case SDLK_e:				
-			{
-				if (context.GetKeyBinding("Keyboard_e") != "" && context.GetKeyBoundEvent("Keyboard_e").type == 0)
-				{
-					context.OnInputEvent("Keyboard_e", event);
-					firedKeys.push_back("Keyboard_e");
-				}
-				break;
-			}
-			case SDLK_f:				
-			{
-				if (context.GetKeyBinding("Keyboard_f") != "" && context.GetKeyBoundEvent("Keyboard_f").type == 0)
-				{
-					context.OnInputEvent("Keyboard_f", event);
-					firedKeys.push_back("Keyboard_f");
-				}
-				break;
-			}
-			case SDLK_g:				
-			{
-				if (context.GetKeyBinding("Keyboard_g") != "" && context.GetKeyBoundEvent("Keyboard_g").type == 0)
-				{
-					context.OnInputEvent("Keyboard_g", event);
-					firedKeys.push_back("Keyboard_g");
-				}
-				break;
-			}
-			case SDLK_h:				
-			{
-				if (context.GetKeyBinding("Keyboard_h") != "" && context.GetKeyBoundEvent("Keyboard_h").type == 0)
-				{
-					context.OnInputEvent("Keyboard_h", event);
-					firedKeys.push_back("Keyboard_h");
-				}
-				break;
-			}
-			case SDLK_i:				
-			{
-				if (context.GetKeyBinding("Keyboard_i") != "" && context.GetKeyBoundEvent("Keyboard_i").type == 0)
-				{
-					context.OnInputEvent("Keyboard_i", event);
-					firedKeys.push_back("Keyboard_i");
-				}
-				break;
-			}
-			case SDLK_j:				
-			{
-				if (context.GetKeyBinding("Keyboard_j") != "" && context.GetKeyBoundEvent("Keyboard_j").type == 0)
-				{
-					context.OnInputEvent("Keyboard_j", event);
-					firedKeys.push_back("Keyboard_j");
-				}
-				break;
-			}
-			case SDLK_k:				
-			{
-				if (context.GetKeyBinding("Keyboard_k") != "" && context.GetKeyBoundEvent("Keyboard_k").type == 0)
-				{
-					context.OnInputEvent("Keyboard_k", event);
-					firedKeys.push_back("Keyboard_k");
-				}
-				break;
-			}
-			case SDLK_l:				
-			{
-				if (context.GetKeyBinding("Keyboard_l") != "" && context.GetKeyBoundEvent("Keyboard_l").type == 0)
-				{
-					context.OnInputEvent("Keyboard_l", event);
-					firedKeys.push_back("Keyboard_l");
-				}
-				break;
-			}
-			case SDLK_m:				
-			{
-				if (context.GetKeyBinding("Keyboard_m") != "" && context.GetKeyBoundEvent("Keyboard_m").type == 0)
-				{
-					context.OnInputEvent("Keyboard_m", event);
-					firedKeys.push_back("Keyboard_m");
-				}
-				break;
-			}
-			case SDLK_n:
-			{
-				if (context.GetKeyBinding("Keyboard_n") != "" && context.GetKeyBoundEvent("Keyboard_n").type == 0)
-				{
-					context.OnInputEvent("Keyboard_n", event);
-					firedKeys.push_back("Keyboard_n");
-				}
-				break;
-			}
-			case SDLK_o:				
-			{
-				if (context.GetKeyBinding("Keyboard_o") != "" && context.GetKeyBoundEvent("Keyboard_o").type == 0)
-				{
-					context.OnInputEvent("Keyboard_o", event);
-					firedKeys.push_back("Keyboard_o");
-				}
-				break;
-			}
-			case SDLK_p:				
-			{
-				if (context.GetKeyBinding("Keyboard_p") != "" && context.GetKeyBoundEvent("Keyboard_p").type == 0)
-				{
-					context.OnInputEvent("Keyboard_p", event);
-					firedKeys.push_back("Keyboard_p");
-				}
-				break;
-			}
-			case SDLK_q:				
-			{
-				if (context.GetKeyBinding("Keyboard_q") != "" && context.GetKeyBoundEvent("Keyboard_q").type == 0)
-				{
-					context.OnInputEvent("Keyboard_q", event);
-					firedKeys.push_back("Keyboard_q");
-				}
-				break;
-			}
-			case SDLK_r:			
-			{
-				if (context.GetKeyBinding("Keyboard_r") != "" && context.GetKeyBoundEvent("Keyboard_r").type == 0)
-				{
-					context.OnInputEvent("Keyboard_r", event);
-					firedKeys.push_back("Keyboard_r");
-				}
-				break;
-			}
-			case SDLK_s:				
-			{
-				if (context.GetKeyBinding("Keyboard_s") != "" && context.GetKeyBoundEvent("Keyboard_s").type == 0)
-				{
-					context.OnInputEvent("Keyboard_s", event);
-					firedKeys.push_back("Keyboard_s");
-				}
-				break;
-			}
-			case SDLK_t:				
-			{
-				if (context.GetKeyBinding("Keyboard_t") != "" && context.GetKeyBoundEvent("Keyboard_t").type == 0)
-				{
-					context.OnInputEvent("Keyboard_t", event);
-					firedKeys.push_back("Keyboard_t");
-				}
-				break;
-			}
-			case SDLK_u:				
-			{
-				if (context.GetKeyBinding("Keyboard_u") != "" && context.GetKeyBoundEvent("Keyboard_u").type == 0)
-				{
-					context.OnInputEvent("Keyboard_u", event);
-					firedKeys.push_back("Keyboard_u");
-				}
-				break;
-			}
-			case SDLK_v:				
-			{
-				if (context.GetKeyBinding("Keyboard_v") != "" && context.GetKeyBoundEvent("Keyboard_v").type == 0)
-				{
-					context.OnInputEvent("Keyboard_v", event);
-					firedKeys.push_back("Keyboard_v");
-				}
-				break;
-			}
-			case SDLK_w:
-			{
-				if (context.GetKeyBinding("Keyboard_w") != "" && context.GetKeyBoundEvent("Keyboard_w").type == 0)
-				{
-					context.OnInputEvent("Keyboard_w", event);
-					firedKeys.push_back("Keyboard_w");
-				}
-				break;
-			}
-			case SDLK_x:				
-			{
-				if (context.GetKeyBinding("Keyboard_x") != "" && context.GetKeyBoundEvent("Keyboard_x").type == 0)
-				{
-					context.OnInputEvent("Keyboard_x", event);
-					firedKeys.push_back("Keyboard_x");
-				}
-				break;
-			}
-			case SDLK_y:				
-			{
-				if (context.GetKeyBinding("Keyboard_y") != "" && context.GetKeyBoundEvent("Keyboard_y").type == 0)
-				{
-					context.OnInputEvent("Keyboard_y", event);
-					firedKeys.push_back("Keyboard_y");
-				}
-				break;
-			}
-			case SDLK_z:				
-			{
-				if (context.GetKeyBinding("Keyboard_z") != "" && context.GetKeyBoundEvent("Keyboard_z").type == 0)
-				{
-					context.OnInputEvent("Keyboard_z", event);
-					firedKeys.push_back("Keyboard_z");
-				}
-				break;
-			}
-			default:
-				break;
 			}
 		}
 		// Keyboard Keys Up
 		else if (event.type == SDL_KEYUP)
 		{
 			// Clear Mapping Context Events of buttons that are released
-			switch (event.key.keysym.sym)
+			if (F_MappedKeyboardCodes.count(event.key.keysym.sym))
 			{
-			case SDLK_SPACE:				
-				if (context.GetKeyBinding("Keyboard_space") != "")
-					context.ClearInputActionEvent("Keyboard_space");
-				break;
-
-			case SDLK_UP:				
-				if (context.GetKeyBinding("Keyboard_up") != "")
-					context.ClearInputActionEvent("Keyboard_up");
-				break;
-
-			case SDLK_DOWN:				
-				if (context.GetKeyBinding("Keyboard_down") != "")
-					context.ClearInputActionEvent("Keyboard_down");
-				break;
-
-			case SDLK_LEFT:				
-				if (context.GetKeyBinding("Keyboard_left") != "")
-					context.ClearInputActionEvent("Keyboard_left");
-				break;
-
-			case SDLK_RIGHT:				
-				if (context.GetKeyBinding("Keyboard_right") != "")
-					context.ClearInputActionEvent("Keyboard_right");
-				break;
-
-			case SDLK_a:				
-				if (context.GetKeyBinding("Keyboard_a") != "")
-					context.ClearInputActionEvent("Keyboard_a");
-				break;
-
-			case SDLK_b:				
-				if (context.GetKeyBinding("Keyboard_b") != "")
-					context.ClearInputActionEvent("Keyboard_b");
-				break;
-
-			case SDLK_c:
-				if (context.GetKeyBinding("Keyboard_c") != "")
-					context.ClearInputActionEvent("Keyboard_c");
-				break;
-
-			case SDLK_d:				
-				if (context.GetKeyBinding("Keyboard_d") != "")
-					context.ClearInputActionEvent("Keyboard_d");
-				break;
-
-			case SDLK_e:				
-				if (context.GetKeyBinding("Keyboard_e") != "")
-					context.ClearInputActionEvent("Keyboard_e");
-				break;
-
-			case SDLK_f:				
-				if (context.GetKeyBinding("Keyboard_f") != "")
-					context.ClearInputActionEvent("Keyboard_f");
-				break;
-
-			case SDLK_g:				
-				if (context.GetKeyBinding("Keyboard_g") != "")
-					context.ClearInputActionEvent("Keyboard_g");
-				break;
-
-			case SDLK_h:				
-				if (context.GetKeyBinding("Keyboard_h") != "")
-					context.ClearInputActionEvent("Keyboard_h");
-				break;
-
-			case SDLK_i:				
-				if (context.GetKeyBinding("Keyboard_i") != "")
-					context.ClearInputActionEvent("Keyboard_i");
-				break;
-
-			case SDLK_j:				
-				if (context.GetKeyBinding("Keyboard_j") != "")
-					context.ClearInputActionEvent("Keyboard_j");
-				break;
-
-			case SDLK_k:				
-				if (context.GetKeyBinding("Keyboard_k") != "")
-					context.ClearInputActionEvent("Keyboard_k");
-				break;
-
-			case SDLK_l:				
-				if (context.GetKeyBinding("Keyboard_l") != "")
-					context.ClearInputActionEvent("Keyboard_l");
-				break;
-
-			case SDLK_m:				
-				if (context.GetKeyBinding("Keyboard_m") != "")
-					context.ClearInputActionEvent("Keyboard_m");
-				break;
-
-			case SDLK_n:				
-				if (context.GetKeyBinding("Keyboard_n") != "")
-					context.ClearInputActionEvent("Keyboard_n");
-				break;
-
-			case SDLK_o:				
-				if (context.GetKeyBinding("Keyboard_o") != "")
-					context.ClearInputActionEvent("Keyboard_o");
-				break;
-
-			case SDLK_p:
-				if (context.GetKeyBinding("Keyboard_p") != "")
-					context.ClearInputActionEvent("Keyboard_p");
-				break;
-
-			case SDLK_q:				
-				if (context.GetKeyBinding("Keyboard_q") != "")
-					context.ClearInputActionEvent("Keyboard_q");
-				break;
-
-			case SDLK_r:				
-				if (context.GetKeyBinding("Keyboard_r") != "")
-					context.ClearInputActionEvent("Keyboard_r");
-				break;
-
-			case SDLK_s:				
-				if (context.GetKeyBinding("Keyboard_s") != "")
-					context.ClearInputActionEvent("Keyboard_s");
-				break;
-
-			case SDLK_t:				
-				if (context.GetKeyBinding("Keyboard_t") != "")
-					context.ClearInputActionEvent("Keyboard_t");
-				break;
-
-			case SDLK_u:				
-				if (context.GetKeyBinding("Keyboard_u") != "")
-					context.ClearInputActionEvent("Keyboard_u");
-				break;
-
-			case SDLK_v:				
-				if (context.GetKeyBinding("Keyboard_v") != "")
-					context.ClearInputActionEvent("Keyboard_v");
-				break;
-
-			case SDLK_w:				
-				if (context.GetKeyBinding("Keyboard_w") != "")
-					context.ClearInputActionEvent("Keyboard_w");
-				break;
-
-			case SDLK_x:			
-				if (context.GetKeyBinding("Keyboard_x") != "")
-					context.ClearInputActionEvent("Keyboard_x");
-				break;
-
-			case SDLK_y:			
-				if (context.GetKeyBinding("Keyboard_y") != "")
-					context.ClearInputActionEvent("Keyboard_y");
-				break;
-
-			case SDLK_z:				
-				if (context.GetKeyBinding("Keyboard_z") != "")
-					context.ClearInputActionEvent("Keyboard_z");
-				break;
-
-			default:
-				break;
+				std::string key = F_MappedKeyboardCodes.at(event.key.keysym.sym);
+				if (context.GetKeyBinding(key) != "")
+				{
+					context.ClearInputActionEvent(key);
+				}
 			}
 		}
 		// Axis (analog inputs)
@@ -1529,219 +1015,58 @@ namespace FlatEngine
 		{
 			// Axis (analogs)
 			//if (event.jaxis.which == 0)
-			//{
-			switch (event.jaxis.axis)
+			//{			
+			if (F_MappedXInputAnalogCodes.count(event.jaxis.axis))
 			{
-			case XInputAxis::LeftXAxis:
-				// Left of dead zone or right of dead zone
-				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
-					event.jaxis.value = 0;				
-				if (context.GetKeyBinding("XInput_LeftJoystickX") != "")
-					context.OnInputEvent("XInput_LeftJoystickX", event);
-				break;
-			case XInputAxis::LeftYAxis:
-				// Below dead zone or Above dead zone
-				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
-					event.jaxis.value = 0;				
-				if (context.GetKeyBinding("XInput_LeftJoystickY") != "")
-					context.OnInputEvent("XInput_LeftJoystickY", event);
-				break;
-			case XInputAxis::RightXAxis:
-				// Left of dead zone or Right of dead zone
-				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
-					event.jaxis.value = 0;			
-				if (context.GetKeyBinding("XInput_RightJoystick") != "")
-					context.OnInputEvent("XInput_RightJoystick", event);
-				break;
-			case XInputAxis::RightYAxis:
-				// Below dead zone or Above dead zone
-				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
-					event.jaxis.value = 0;			
-				if (context.GetKeyBinding("XInput_RightJoystick") != "")
-					context.OnInputEvent("XInput_RightJoystick", event);
-				break;
-			case XInputAxis::LT:				
-				if (context.GetKeyBinding("XInput_LT") != "")
-					context.OnInputEvent("XInput_LT", event);
-				break;
-			case XInputAxis::RT:				
-				if (context.GetKeyBinding("XInput_RT") != "")
-					context.OnInputEvent("XInput_RT", event);
-				break;
+				std::string key = F_MappedXInputAnalogCodes.at(event.jaxis.axis);
+				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
+				{					
+					if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
+					{
+						event.jaxis.value = 0;
+					}
+					if (context.GetKeyBinding(key) != "")
+					{
+						context.OnInputEvent(key, event);
+					}
+				}
 			}
 		}
 		// Buttons Down
 		else if (event.type == SDL_JOYBUTTONDOWN)
 		{
-			switch (event.jbutton.button)
+			if (F_MappedXInputButtonCodes.count(event.jbutton.button))
 			{
-			case XInputButtons::A:			
-				if (context.GetKeyBinding("XInput_A") != "")
+				std::string key = F_MappedXInputButtonCodes.at(event.jbutton.button);
+				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
 				{
-					context.OnInputEvent("XInput_A", event);
-					firedKeys.push_back("XInput_A");
+					context.OnInputEvent(key, event);
+					firedKeys.push_back(key);
 				}
-
-				break;
-			case XInputButtons::B:				
-				if (context.GetKeyBinding("XInput_B") != "")
-				{
-					context.OnInputEvent("XInput_B", event);
-					firedKeys.push_back("XInput_B");
-				}
-				break;
-			case XInputButtons::X:				
-				if (context.GetKeyBinding("XInput_X") != "")
-				{
-					context.OnInputEvent("XInput_X", event);
-					firedKeys.push_back("XInput_X");
-				}
-				break;
-			case XInputButtons::Y:				
-				if (context.GetKeyBinding("XInput_Y") != "")
-				{
-					context.OnInputEvent("XInput_Y", event);
-					firedKeys.push_back("XInput_Y");
-				}
-				break;
-			case XInputButtons::LB:				
-				if (context.GetKeyBinding("XInput_LB") != "")
-				{
-					context.OnInputEvent("XInput_LB", event);
-					firedKeys.push_back("XInput_LB");
-				}
-				break;
-			case XInputButtons::RB:				
-				if (context.GetKeyBinding("XInput_RB") != "")
-				{
-					context.OnInputEvent("XInput_RB", event);
-					firedKeys.push_back("XInput_RB");
-				}
-				break;
-			case XInputButtons::ScreenShot:				
-				if (context.GetKeyBinding("XInput_ScreenShot") != "")
-				{
-					context.OnInputEvent("XInput_ScreenShot", event);
-					firedKeys.push_back("XInput_ScreenShot");
-				}
-				break;
-			case XInputButtons::Start:				
-				if (context.GetKeyBinding("XInput_Start") != "")
-				{
-					context.OnInputEvent("XInput_Start", event);
-					firedKeys.push_back("XInput_Start");
-				}
-				break;
-			case XInputButtons::LS:			
-				if (context.GetKeyBinding("XInput_LS") != "")
-				{
-					context.OnInputEvent("XInput_LS", event);
-					firedKeys.push_back("XInput_LS");
-				}
-				break;
-			case XInputButtons::RS:			
-				if (context.GetKeyBinding("XInput_RS") != "")
-				{
-					context.OnInputEvent("XInput_RS", event);
-					firedKeys.push_back("XInput_RS");
-				}
-				break;
-			case XInputButtons::Home:			
-				if (context.GetKeyBinding("XInput_Home") != "")
-				{
-					context.OnInputEvent("XInput_Home", event);
-					firedKeys.push_back("XInput_Home");
-				}
-				break;
-			case XInputButtons::Tray:				
-				if (context.GetKeyBinding("XInput_Tray") != "")
-				{
-					context.OnInputEvent("XInput_Tray", event);
-					firedKeys.push_back("XInput_Tray");
-				}
-				break;
-			default:
-				break;
 			}
 		}
 		// Buttons Up
 		else if (event.type == SDL_JOYBUTTONUP)
 		{
-			switch (event.jbutton.button)
+			if (F_MappedXInputButtonCodes.count(event.jbutton.button))
 			{
-			case XInputButtons::A:
-				if (context.GetKeyBinding("XInput_A") != "")
+				std::string key = F_MappedXInputButtonCodes.at(event.jbutton.button);
+				if (context.GetKeyBinding(key) != "")
+				{
 					context.ClearInputActionEvent("XInput_A");
-				break;
-			case XInputButtons::B:				
-				if (context.GetKeyBinding("XInput_B") != "")
-					context.ClearInputActionEvent("XInput_B");
-				break;
-			case XInputButtons::X:				
-				if (context.GetKeyBinding("XInput_X") != "")
-					context.ClearInputActionEvent("XInput_X");
-				break;
-			case XInputButtons::Y:				
-				if (context.GetKeyBinding("XInput_Y") != "")
-					context.ClearInputActionEvent("XInput_Y");
-				break;
-			case XInputButtons::LB:
-				if (context.GetKeyBinding("XInput_LB") != "")
-					context.ClearInputActionEvent("XInput_LB");
-				break;
-			case XInputButtons::RB:
-				if (context.GetKeyBinding("XInput_RB") != "")
-					context.ClearInputActionEvent("XInput_RB");
-				break;
-			case XInputButtons::ScreenShot:
-				if (context.GetKeyBinding("XInput_ScreenShot") != "")
-					context.ClearInputActionEvent("XInput_ScreenShot");
-				break;
-			case XInputButtons::Start:
-				if (context.GetKeyBinding("XInput_Start") != "")
-					context.ClearInputActionEvent("XInput_Start");
-				break;
-			case XInputButtons::LS:
-				if (context.GetKeyBinding("XInput_LS") != "")
-					context.ClearInputActionEvent("XInput_LS");
-				break;
-			case XInputButtons::RS:
-				if (context.GetKeyBinding("XInput_RS") != "")
-					context.ClearInputActionEvent("XInput_RS");
-				break;
-			case XInputButtons::Home:
-				if (context.GetKeyBinding("XInput_Home") != "")
-					context.ClearInputActionEvent("XInput_Home");
-				break;
-			case XInputButtons::Tray:
-				if (context.GetKeyBinding("XInput_Tray") != "")
-					context.ClearInputActionEvent("XInput_Tray");
-				break;
-			default:
-				break;
+				}
 			}
 		}
 		// Hats
 		else if (event.type == SDL_JOYHATMOTION)
 		{
-			switch (event.jhat.value)
+			if (F_MappedXInputDPadCodes.count(event.jhat.value))
 			{
-			case XInputHats::Hat_Up:
-				//LogFloat(event.jhat.type, "Hat Type: ");
-				//LogFloat(event.jhat.value, "Hat Value: ");
-				//LogFloat(event.jhat.hat, "Hat hat: ");
-				break;
-			case XInputHats::Hat_Down:
-				FlatEngine::LogString("Down");
-				break;
-			case XInputHats::Hat_Left:
-				FlatEngine::LogString("Left");
-				break;
-			case XInputHats::Hat_Right:
-				FlatEngine::LogString("Right");
-				break;
-			default:
-				break;
+				std::string key = F_MappedXInputDPadCodes.at(event.jhat.value);
+				if (context.GetKeyBinding(key) != "")
+				{
+					LogString(key);
+				}
 			}
 		}
 	}
@@ -1773,47 +1098,36 @@ namespace FlatEngine
 		std::string texturePath = tileSet.GetTexturePath();
 		std::string filepath = tileSet.GetTileSetPath();		
 
-		// Declare file and input stream
-		std::ofstream file_obj;
+		std::ofstream fileObject;
 		std::ifstream ifstream(filepath);
 
 		// Delete old contents of the file
-		file_obj.open(filepath, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
+		fileObject.open(filepath, std::ofstream::out | std::ofstream::trunc);
+		fileObject.close();
 
 		// Opening file in append mode
-		file_obj.open(filepath, std::ios::app);
+		fileObject.open(filepath, std::ios::app);
 
-		std::string data = tileSet.GetData();
-
-		// Declare array json object for Tiles
+		std::string data = tileSet.GetData();		
 		json tileArray = json::array();
 
 		for (int index : tileSet.GetTileSetIndices())
 		{
-			// Get tile data
 			json jsonData = {
 				{ "index", index }
 			};
-
-			// Dumped json object with required data for saving
+			
 			std::string tileData = jsonData.dump();
-
-			// Save to the json array
 			tileArray.push_back(json::parse(tileData));
 		}
-
-		// Create TileSet Json data object
+		
 		json tileSetJson = json::object({
 			{ "tileSetData", json::parse(data) },
 			{ "tiles", tileArray }
 		});
 
-		// Add the GameObjects object contents to the file
-		file_obj << tileSetJson.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
+		fileObject << tileSetJson.dump(4).c_str() << std::endl;
+		fileObject.close();
 	}
 
 	void InitializeTileSets()
@@ -1824,16 +1138,12 @@ namespace FlatEngine
 		tileSetFiles = FindAllFilesWithExtension(GetDir("projectDir"), ".tls");
 
 		for (std::string path : tileSetFiles)
-		{
-			// Create a new context to save the loaded keybindings to
+		{			
 			TileSet tileSet = TileSet();
-
 			json tileSetJson = LoadFileData(path);
+
 			if (tileSetJson != NULL)
 			{
-				//Getting data from the json 
-				//std::string name = firstObjectName[0]["name"];
-
 				auto tileSetData = tileSetJson["tileSetData"];
 
 				tileSet.SetName(tileSetData["name"]);
@@ -1846,15 +1156,13 @@ namespace FlatEngine
 				for (auto tile : tileSetJson["tiles"])
 				{
 					int index = CheckJsonInt(tile, "index", "TileSet tiles");
-					// Fix this later to return a bool and change the value of the int within the parameters
 					if (index != -1)
 					{
 						indices.push_back(index);
 					}
 				}
 				tileSet.SetTileSetIndices(indices);
-
-				// Add context to context managing vector
+				
 				F_TileSets.push_back(tileSet);
 			}
 		}
@@ -1862,21 +1170,21 @@ namespace FlatEngine
 
 	TileSet* GetTileSet(std::string tileSetName) 
 	{
-		for (std::vector<TileSet>::iterator iter = F_TileSets.begin(); iter != F_TileSets.end();)
+		for (std::vector<TileSet>::iterator iter = F_TileSets.begin(); iter != F_TileSets.end(); iter++)
 		{
 			if (iter->GetName() == tileSetName)
+			{
 				return &(*iter);
-
-			iter++;
+			}			
 		}
 
 		return nullptr;
 	}
 
+
 	// Rendering
 	void BeginImGuiRender()
-	{
-		// Start the Dear ImGui frame
+	{	
 		ImGui_ImplSDLRenderer2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
@@ -1886,28 +1194,22 @@ namespace FlatEngine
 	}
 	
 	void EndImGuiRender()
-	{
-		// Rendering
-		Vector4 clear_color = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
+	{		
+		Vector4 clearColor = Vector4(1.00f, 1.00f, 1.00f, 1.00f);
 		ImGui::Render();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		SDL_RenderSetScale(F_Window->GetRenderer(), io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-		SDL_SetRenderDrawColor(F_Window->GetRenderer(), (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+		SDL_SetRenderDrawColor(F_Window->GetRenderer(), (Uint8)(clearColor.x * 255), (Uint8)(clearColor.y * 255), (Uint8)(clearColor.z * 255), (Uint8)(clearColor.w * 255));
 		SDL_RenderClear(F_Window->GetRenderer());
 		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-
-		// TO DO 
-		// When vsync is off, find a way to only call renderpresent once per refresh depending on the rate of the screen
-		//Uint32 renderPresentStart = FlatEngine::GetEngineTime(); // Profiler
-		SDL_RenderPresent(F_Window->GetRenderer());
-		//FlatGui::AddProcessData("Render Present", (float)FlatEngine::GetEngineTime() - renderPresentStart); // Profiler
+		
+		SDL_RenderPresent(F_Window->GetRenderer());		
 	}
 
 	void SetNextViewportToFillWindow()
 	{
 		ImGuiIO io = ImGui::GetIO();
-		Vector2 f_displaySize = io.DisplaySize;
-		ImGui::SetNextWindowSize(f_displaySize);
+		ImGui::SetNextWindowSize(io.DisplaySize);
 		ImGui::SetNextWindowPos({ 0,0 });
 	}
 
@@ -1918,9 +1220,13 @@ namespace FlatEngine
 		std::string filePath = "";
 
 		if (path == "")
+		{
 			filePath = GetDir("animations") + filename + ".anm";
+		}
 		else
+		{
 			filePath = path + "\\" + filename + ".anm";
+		}
 
 		std::shared_ptr<Animation::S_AnimationProperties> propertiesObject = std::make_shared< Animation::S_AnimationProperties>();
 		propertiesObject->animationName = filename;
@@ -1929,20 +1235,18 @@ namespace FlatEngine
 	}
 
 	void SaveAnimationFile(std::shared_ptr<Animation::S_AnimationProperties> propertiesObject, std::string path)
-	{
-		// Declare file and input stream
-		std::ofstream file_obj;
+	{		
+		std::ofstream fileObject;
 		std::ifstream ifstream(path);
 
 		// Delete old contents of the file
-		file_obj.open(path, std::ofstream::out | std::ofstream::trunc);
-		file_obj.close();
+		fileObject.open(path, std::ofstream::out | std::ofstream::trunc);
+		fileObject.close();
 
 		// Opening file in append mode
-		file_obj.open(path, std::ios::app);
+		fileObject.open(path, std::ios::app);
 
 
-		// Event
 		json eventProps = json::array();
 		for (std::shared_ptr<Animation::S_Event> eventProp : propertiesObject->eventProps)
 		{
@@ -1953,8 +1257,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			eventProps.push_back(json::parse(data));
 		}
-		
-		// Transform
+				
 		json transformProps = json::array();
 		for (std::shared_ptr<Animation::S_Transform> transformProp : propertiesObject->transformProps)
 		{		
@@ -1974,8 +1277,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			transformProps.push_back(json::parse(data));
 		}
-
-		// Sprite
+	
 		json spriteProps = json::array();
 		for (std::shared_ptr<Animation::S_Sprite> spriteProp : propertiesObject->spriteProps)
 		{
@@ -2000,8 +1302,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			spriteProps.push_back(json::parse(data));
 		}
-
-		// Camera
+		
 		json cameraProps = json::array();
 		for (std::shared_ptr<Animation::S_Camera> cameraProp : propertiesObject->cameraProps)
 		{
@@ -2012,8 +1313,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			cameraProps.push_back(json::parse(data));
 		}
-
-		// Script
+		
 		json scriptProps = json::array();
 		for (std::shared_ptr<Animation::S_Script> scriptProp : propertiesObject->scriptProps)
 		{
@@ -2024,8 +1324,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			scriptProps.push_back(json::parse(data));
 		}
-
-		// Button
+		
 		json buttonProps = json::array();
 		for (std::shared_ptr<Animation::S_Button> buttonProp : propertiesObject->buttonProps)
 		{
@@ -2036,8 +1335,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			buttonProps.push_back(json::parse(data));
 		}
-
-		// Canvas
+		
 		json canvasProps = json::array();
 		for (std::shared_ptr<Animation::S_Canvas> canvasProp : propertiesObject->canvasProps)
 		{
@@ -2047,8 +1345,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			canvasProps.push_back(json::parse(data));
 		}
-
-		// Audio
+		
 		json audioProps = json::array();
 		for (std::shared_ptr<Animation::S_Audio> audioProp : propertiesObject->audioProps)
 		{
@@ -2060,8 +1357,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			audioProps.push_back(json::parse(data));
 		}
-
-		// Text
+		
 		json textProps = json::array();
 		for (std::shared_ptr<Animation::S_Text> textProp : propertiesObject->textProps)
 		{
@@ -2084,8 +1380,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			textProps.push_back(json::parse(data));
 		}
-
-		// BoxCollider
+		
 		json boxColliderProps = json::array();
 		for (std::shared_ptr<Animation::S_BoxCollider> boxColliderProp : propertiesObject->boxColliderProps)
 		{
@@ -2096,8 +1391,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			boxColliderProps.push_back(json::parse(data));
 		}
-
-		// CircleCollider
+		
 		json circleColliderProps = json::array();
 		for (std::shared_ptr<Animation::S_CircleCollider> circleColliderProp : propertiesObject->circleColliderProps)
 		{
@@ -2108,8 +1402,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			circleColliderProps.push_back(json::parse(data));
 		}
-
-		// RigidBody
+		
 		json rigidBodyProps = json::array();
 		for (std::shared_ptr<Animation::S_RigidBody> rigidBodyProp : propertiesObject->rigidBodyProps)
 		{
@@ -2123,8 +1416,7 @@ namespace FlatEngine
 			std::string data = jsonData.dump();
 			rigidBodyProps.push_back(json::parse(data));
 		}
-
-		// CharacterController
+	
 		json characterControllerProps = json::array();
 		for (std::shared_ptr<Animation::S_CharacterController> characterControllerProp : propertiesObject->characterControllerProps)
 		{
@@ -2158,15 +1450,10 @@ namespace FlatEngine
 			{ "_loop", propertiesObject->b_loop },
 			{ "animationProperties", animProps }
 		});
-
-		// Recreate the Animation Property json object and add the array as the content
+		
 		json newFileObject = json::object({ {"animation", animationData } });
-
-		// Add the GameObjects object contents to the file
-		file_obj << newFileObject.dump(4).c_str() << std::endl;
-
-		// Close the file
-		file_obj.close();
+		fileObject << newFileObject.dump(4).c_str() << std::endl;	
+		fileObject.close();
 	}
 
 	std::shared_ptr<Animation::S_AnimationProperties> LoadAnimationFile(std::string path)
@@ -2177,24 +1464,24 @@ namespace FlatEngine
 		std::shared_ptr<Animation::S_Sprite > spriteProperties;
 		animProps->animationPath = path;
 
-		std::ofstream file_obj;
+		std::ofstream fileObject;
 		std::ifstream ifstream(path);
-		file_obj.open(path, std::ios::in);
-
+		fileObject.open(path, std::ios::in);
 		std::string fileContent = "";
 
-		if (file_obj.good())
+		if (fileObject.good())
 		{
 			std::string line;
-			while (!ifstream.eof()) {
+			while (!ifstream.eof()) 
+			{
 				std::getline(ifstream, line);
 				fileContent.append(line + "\n");
 			}
 		}
 
-		file_obj.close();
+		fileObject.close();
 
-		if (file_obj.good())
+		if (fileObject.good())
 		{
 			json fileContentJson = json::parse(fileContent);
 
@@ -2207,8 +1494,7 @@ namespace FlatEngine
 				animProps->animationName = animName;
 				animProps->animationLength = CheckJsonFloat(animationJson, "length", animName);
 				animProps->b_loop = CheckJsonBool(animationJson, "_loop", animName);
-
-				// Event
+				
 				json eventProps = animationJson["animationProperties"]["event"];
 				for (int i = 0; i < eventProps.size(); i++)
 				{
@@ -2218,8 +1504,7 @@ namespace FlatEngine
 					frame->time = CheckJsonFloat(eventProps[i], "time", animName);
 					animProps->eventProps.push_back(frame);
 				}
-
-				// Transform
+				
 				json transformProps = animationJson["animationProperties"]["transform"];
 				for (int i = 0; i < transformProps.size(); i++)
 				{
@@ -2237,8 +1522,7 @@ namespace FlatEngine
 					frame->b_scaleAnimated = CheckJsonBool(transformProps[i], "_scaleAnimated", animName);
 					animProps->transformProps.push_back(frame);
 				}
-
-				// Sprite
+				
 				json spriteProps = animationJson["animationProperties"]["sprite"];
 				for (int i = 0; i < spriteProps.size(); i++)
 				{
@@ -2263,8 +1547,7 @@ namespace FlatEngine
 					frame->b_tintColorAnimated = CheckJsonBool(spriteProps[i], "_tintColorAnimated", animName);
 					animProps->spriteProps.push_back(frame);			
 				}
-
-				// Camera
+				
 				json cameraProps = animationJson["animationProperties"]["camera"];
 				for (int i = 0; i < cameraProps.size(); i++)
 				{
@@ -2274,8 +1557,7 @@ namespace FlatEngine
 					frame->b_isPrimaryCamera = CheckJsonBool(cameraProps[i], "_isPrimaryCamera", animName);
 					animProps->cameraProps.push_back(frame);
 				}
-
-				// Script
+				
 				json scriptProps = animationJson["animationProperties"]["script"];
 				for (int i = 0; i < scriptProps.size(); i++)
 				{
@@ -2285,8 +1567,7 @@ namespace FlatEngine
 					frame->path = CheckJsonString(scriptProps[i], "path", animName);
 					animProps->scriptProps.push_back(frame);
 				}
-
-				// Button
+				
 				json buttonProps = animationJson["animationProperties"]["button"];
 				for (int i = 0; i < buttonProps.size(); i++)
 				{
@@ -2296,8 +1577,7 @@ namespace FlatEngine
 					frame->b_isActive = CheckJsonBool(buttonProps[i], "_isActive", animName);
 					animProps->buttonProps.push_back(frame);
 				}
-
-				// Canvas
+				
 				json canvasProps = animationJson["animationProperties"]["canvas"];
 				for (int i = 0; i < canvasProps.size(); i++)
 				{
@@ -2306,8 +1586,7 @@ namespace FlatEngine
 					frame->time = CheckJsonFloat(canvasProps[i], "time", animName);
 					animProps->canvasProps.push_back(frame);
 				}
-
-				// Audio
+				
 				json audioProps = animationJson["animationProperties"]["audio"];
 				for (int i = 0; i < audioProps.size(); i++)
 				{
@@ -2318,8 +1597,7 @@ namespace FlatEngine
 					frame->b_stopAllOtherSounds = CheckJsonBool(audioProps[i], "_stopAllOtherSounds", animName);
 					animProps->audioProps.push_back(frame);
 				}
-
-				// Text
+				
 				json textProps = animationJson["animationProperties"]["text"];
 				for (int i = 0; i < textProps.size(); i++)
 				{
@@ -2340,8 +1618,7 @@ namespace FlatEngine
 					frame->b_offsetAnimated = CheckJsonBool(textProps[i], "_offsetAnimated", animName);
 					animProps->textProps.push_back(frame);
 				}
-
-				// BoxCollider
+				
 				json boxColliderProps = animationJson["animationProperties"]["boxCollider"];
 				for (int i = 0; i < boxColliderProps.size(); i++)
 				{
@@ -2351,8 +1628,7 @@ namespace FlatEngine
 					frame->b_isActive = CheckJsonBool(boxColliderProps[i], "_isActive", animName);
 					animProps->boxColliderProps.push_back(frame);
 				}
-
-				// CircleCollider
+				
 				json circleColliderProps = animationJson["animationProperties"]["circleCollider"];
 				for (int i = 0; i < circleColliderProps.size(); i++)
 				{
@@ -2362,8 +1638,7 @@ namespace FlatEngine
 					frame->b_isActive = CheckJsonBool(circleColliderProps[i], "_isActive", animName);
 					animProps->circleColliderProps.push_back(frame);
 				}
-
-				// RigidBody
+				
 				json rigidBodyProps = animationJson["animationProperties"]["rigidBody"];
 				for (int i = 0; i < rigidBodyProps.size(); i++)
 				{
@@ -2376,8 +1651,7 @@ namespace FlatEngine
 					frame->gravityScale = CheckJsonFloat(rigidBodyProps[i], "gravityScale", animName);
 					animProps->rigidBodyProps.push_back(frame);
 				}
-
-				// CharacterController
+				
 				json characterControllerProps = animationJson["animationProperties"]["characterController"];
 				for (int i = 0; i < characterControllerProps.size(); i++)
 				{
@@ -2409,11 +1683,6 @@ namespace FlatEngine
 	{
 		return F_PrefabManager->Instantiate(prefabName, position, parentID, ID);
 	}
-
-	//std::map<std::string, Prefab> GetPrefabs()
-	//{
-	//	return F_PrefabManager->GetPrefabs();
-	//}
 
 
 	// Logging
@@ -2450,13 +1719,21 @@ namespace FlatEngine
 	void DrawRectangle(Vector2 startingPoint, Vector2 endPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList)
 	{
 		if (startingPoint.x < canvas_p0.x)
+		{
 			startingPoint.x = canvas_p0.x;
+		}
 		if (endPoint.x > canvas_p0.x + canvas_sz.x)
+		{
 			endPoint.x = canvas_p0.x + canvas_sz.x;
+		}
 		if (startingPoint.y < canvas_p0.y)
+		{
 			startingPoint.y = canvas_p0.y;
+		}
 		if (endPoint.y > canvas_p0.y + canvas_sz.y)
+		{
 			endPoint.y = canvas_p0.y + canvas_sz.y;
+		}
 
 		F_Logger.DrawRectangle(startingPoint, endPoint, color, thickness, drawList);
 	}
@@ -2566,19 +1843,23 @@ namespace FlatEngine
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 		if (FAILED(f_SysHr))
+		{
 			return "";
+		}
 
 		// CREATE FileSaveDialog OBJECT
 		IFileSaveDialog* f_FileSystem = NULL;
 		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			CoUninitialize();
 			return "";
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
 		f_SysHr = f_FileSystem->Show(NULL);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_FileSystem->Release();
 			CoUninitialize();
 			return "";
@@ -2587,7 +1868,8 @@ namespace FlatEngine
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
 		IShellItem* f_Files;
 		f_SysHr = f_FileSystem->GetResult(&f_Files);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_FileSystem->Release();
 			CoUninitialize();
 			return "";
@@ -2596,7 +1878,8 @@ namespace FlatEngine
 		//  STORE AND CONVERT THE FILE NAME
 		PWSTR f_Path;
 		f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
@@ -2633,19 +1916,23 @@ namespace FlatEngine
 		//  CREATE FILE OBJECT INSTANCE
 		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 		if (FAILED(f_SysHr))
+		{
 			return "";
+		}
 
 		// CREATE FileOpenDialog OBJECT
 		IFileOpenDialog* f_FileSystem;
 		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			CoUninitialize();
 			return "";
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
 		f_SysHr = f_FileSystem->Show(NULL);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_FileSystem->Release();
 			CoUninitialize();
 			return "";
@@ -2654,7 +1941,8 @@ namespace FlatEngine
 		//  RETRIEVE FILE NAME FROM THE SELECTED ITEM
 		IShellItem* f_Files;
 		f_SysHr = f_FileSystem->GetResult(&f_Files);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_FileSystem->Release();
 			CoUninitialize();
 			return "";
@@ -2663,7 +1951,8 @@ namespace FlatEngine
 		//  STORE AND CONVERT THE FILE NAME
 		PWSTR f_Path;
 		f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
-		if (FAILED(f_SysHr)) {
+		if (FAILED(f_SysHr)) 
+		{
 			f_Files->Release();
 			f_FileSystem->Release();
 			CoUninitialize();
@@ -2691,22 +1980,21 @@ namespace FlatEngine
 		return relativePath;
 	}
 
-	std::string GetFilenameFromPath(std::string path, bool _keepExtension)
+	std::string GetFilenameFromPath(std::string path, bool b_keepExtension)
 	{
 		std::string finalName = "";
 
 		if (path != "")
 		{
-			//  FORMAT STRING
 			const size_t slash = path.find_last_of("/\\");
 			std::string wholeFilename = path.substr(slash + 1);
 			const size_t dot1 = wholeFilename.find_last_of(".");
 			std::string extension1 = wholeFilename.substr(dot1);
 
-			if (!_keepExtension)
+			if (!b_keepExtension)
 			{
 				finalName = wholeFilename.substr(0, wholeFilename.size() - extension1.size());
-				// For scripting files (.scp.lua) with two extensions
+				// For scripting files because they have (.scp.lua) two extensions
 				const size_t dot2 = finalName.find_last_of(".");
 				if (dot2 < 100)
 				{
@@ -2715,7 +2003,9 @@ namespace FlatEngine
 				}
 			}
 			else
+			{
 				finalName = wholeFilename;
+			}
 		}
 
 		return finalName;
@@ -2731,14 +2021,22 @@ namespace FlatEngine
 		if (filepath != "")
 		{
 			if (root != "")
+			{
 				rootDirIndex = filepath.find(root) + 10;
+			}
 			else
+			{
 				rootDirIndex = 0;
+			}
 
 			if (rootDirIndex < 1000 && rootDirIndex != 0)
+			{
 				relativePath = ".." + filepath.substr(rootDirIndex);
+			}
 			else
+			{
 				relativePath = filepath;
+			}
 		}
 
 		return relativePath;
@@ -2755,19 +2053,15 @@ namespace FlatEngine
 	}
 
 	json LoadFileData(std::string filepath)
-	{
-		// Declare file and input stream
-		std::ofstream file_obj;
+	{		
+		std::ofstream fileObject;
 		std::ifstream ifstream(filepath);
 
 		// Open file in in mode
-		file_obj.open(filepath, std::ios::in);
-
-		// Variable to save the current file data into
+		fileObject.open(filepath, std::ios::in);		
 		std::string fileContent = "";
 
-		// Loop through the file line by line and save the data
-		if (file_obj.good())
+		if (fileObject.good())
 		{
 			std::string line;
 			while (!ifstream.eof()) {
@@ -2775,26 +2069,23 @@ namespace FlatEngine
 				fileContent.append(line + "\n");
 			}
 		}
+		
+		fileObject.close();
 
-		// Close the file after reading
-		file_obj.close();
-
-		if (file_obj.good() && fileContent != "\n")
-		{
-			// Go from string to json object
+		if (fileObject.good() && fileContent != "\n")
+		{			
 			return json::parse(fileContent);
 		}
 		else
+		{
 			return NULL;
+		}
 	}
 
 
 	bool DoesFileExist(std::string filepath)
 	{
-		if (filepath != "" && std::filesystem::exists(filepath))
-			return true;
-		else
-			return false;
+		return (filepath != "" && std::filesystem::exists(filepath));
 	}
 
 	bool FilepathHasExtension(std::string filepath, std::string extension)
@@ -2835,7 +2126,9 @@ namespace FlatEngine
 		for (auto& p : std::filesystem::recursive_directory_iterator(dirPath))
 		{
 			if (p.path().extension() == extension || p.path().string().find(extension) != std::string::npos)
-				files.push_back(p.path().string());				
+			{
+				files.push_back(p.path().string());
+			}
 		}
 
 		return files;
@@ -2868,10 +2161,8 @@ namespace FlatEngine
 
 	// Json Parsing
 	json CreateJsonFromObject(GameObject currentObject)
-	{
-		// Declare components array json object for components
+	{		
 		json componentsArray = json::array();
-
 		std::vector<Component*> components = currentObject.GetComponents();
 
 		for (int j = 0; j < components.size(); j++)
@@ -2884,16 +2175,14 @@ namespace FlatEngine
 				componentsArray.push_back(json::parse(data));
 			}
 		}
-
-		// Declare children array json object for children
+		
 		json childrenArray = json::array();
 
 		for (int c = 0; c < currentObject.GetChildren().size(); c++)
 		{
 			childrenArray.push_back(currentObject.GetChildren()[c]);
 		}
-
-		// Declare tags object for GameObject Tags	
+		
 		std::map <std::string, bool> tagList = currentObject.GetTagList().GetTagsMap();
 		std::map <std::string, bool> ignoreTagList = currentObject.GetTagList().GetIgnoreTagsMap();
 
@@ -2933,15 +2222,15 @@ namespace FlatEngine
 			{ "InteractableItem", ignoreTagList.at("InteractableItem") },
 			{ "InteractableObject", ignoreTagList.at("InteractableObject") },
 			{ "Item", ignoreTagList.at("Item") },
-			});
-
-		// Get object name
+		});
+		
 		std::string objectName = currentObject.GetName();
 		Vector2 spawnLocation = currentObject.GetPrefabSpawnLocation();
 		if (currentObject.HasComponent("Transform"))
+		{
 			spawnLocation = currentObject.GetTransform()->GetPosition();
-
-		// Create Game Object Json data object
+		}
+		
 		json gameObjectJson = json::object({
 			{ "_isPrefab", currentObject.IsPrefab() },
 			{ "prefabName", currentObject.GetPrefabName() },
@@ -2964,9 +2253,13 @@ namespace FlatEngine
 	{
 		bool contains = false;
 		if (obj.contains(checkFor))
+		{
 			contains = true;
+		}
 		else
+		{
 			FlatEngine::LogError("JsonContains() - \"" + loadedName + "\" does not contain a value for \"" + checkFor + "\".");
+		}
 		return contains;
 	}
 
@@ -2974,9 +2267,13 @@ namespace FlatEngine
 	{
 		float value = -1;
 		if (obj.contains(checkFor))
+		{
 			value = obj[checkFor];
+		}
 		else
+		{
 			FlatEngine::LogError("CheckJsonFloat() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
 		return value;
 	}
 
@@ -2984,9 +2281,13 @@ namespace FlatEngine
 	{
 		int value = -1;
 		if (obj.contains(checkFor))
+		{
 			value = obj[checkFor];
+		}
 		else
+		{
 			FlatEngine::LogError("CheckJsonInt() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
 		return value;
 	}
 
@@ -2994,9 +2295,13 @@ namespace FlatEngine
 	{
 		long value = -1;
 		if (obj.contains(checkFor))
+		{
 			value = obj[checkFor];
+		}
 		else
+		{
 			FlatEngine::LogError("CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
 		return value;
 	}
 
@@ -3004,19 +2309,27 @@ namespace FlatEngine
 	{
 		bool value = false;
 		if (obj.contains(checkFor))
+		{
 			value = obj[checkFor];
+		}
 		else
+		{
 			FlatEngine::LogError("CheckJsonBool() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
 		return value;
 	}
 
 	std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName)
-	{
-		std::string value = "Failed to load.";
+	{		
+		std::string value = "";
 		if (obj.contains(checkFor))
+		{
 			value = obj[checkFor];
+		}
 		else
+		{
 			FlatEngine::LogError("CheckJsonString() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
 		return value;
 	}
 
@@ -3024,8 +2337,8 @@ namespace FlatEngine
 	{
 		GameObject *loadedObject;
 		std::string objectName = CheckJsonString(objectJson, "name", "Name");
-		bool _isActive = CheckJsonBool(objectJson, "_isActive", objectName);
-		bool _isPrefab = CheckJsonBool(objectJson, "_isPrefab", objectName);
+		bool b_isActive = CheckJsonBool(objectJson, "_isActive", objectName);
+		bool b_isPrefab = CheckJsonBool(objectJson, "_isPrefab", objectName);
 		std::string prefabName = CheckJsonString(objectJson, "prefabName", objectName);
 		Vector2 spawnLocation = Vector2(0, 0);
 		spawnLocation.x = CheckJsonFloat(objectJson, "spawnLocationX", objectName); // SetOrigin() is taken care of by Instantiate() using parentID
@@ -3043,7 +2356,7 @@ namespace FlatEngine
 			}
 		}
 
-		if (_isPrefab)
+		if (b_isPrefab)
 		{
 			loadedObject = Instantiate(prefabName, spawnLocation, loadedParentID, loadedID);
 			loadedObject->SetName(objectName);
@@ -3052,7 +2365,7 @@ namespace FlatEngine
 		{
 			loadedObject = CreateGameObject(loadedParentID, loadedID);
 			loadedObject->SetName(objectName);
-			loadedObject->SetActive(_isActive);
+			loadedObject->SetActive(b_isActive);
 
 			// TagList
 			bool b_updateColliderPairs = false;
@@ -3108,16 +2421,16 @@ namespace FlatEngine
 				json componentJson = objectJson["components"][j];
 				std::string type = CheckJsonString(componentJson, "type", objectName);
 				long id = CheckJsonLong(componentJson, "id", objectName);
-				bool _isCollapsed = CheckJsonBool(componentJson, "_isCollapsed", objectName);
-				bool _isActive = CheckJsonBool(componentJson, "_isActive", objectName);
+				bool b_isCollapsed = CheckJsonBool(componentJson, "_isCollapsed", objectName);
+				bool b_isActive = CheckJsonBool(componentJson, "_isActive", objectName);
 
 				if (type == "Transform")
 				{
 					Transform* transform = loadedObject->GetTransform();
 					float rotation = CheckJsonFloat(componentJson, "rotation", objectName);
 					transform->SetID(id);
-					transform->SetActive(_isActive);
-					transform->SetCollapsed(_isCollapsed);
+					transform->SetActive(b_isActive);
+					transform->SetCollapsed(b_isCollapsed);
 					transform->SetOrigin(Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName)));
 					transform->SetInitialPosition(Vector2(CheckJsonFloat(componentJson, "xPos", objectName), CheckJsonFloat(componentJson, "yPos", objectName)));
 					transform->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));
@@ -3126,7 +2439,7 @@ namespace FlatEngine
 				}
 				else if (type == "Sprite")
 				{
-					Sprite* newSprite = loadedObject->AddSprite(id, _isActive, _isCollapsed);
+					Sprite* newSprite = loadedObject->AddSprite(id, b_isActive, b_isCollapsed);
 					std::string pivotPoint = "Center";
 					newSprite->SetPivotPoint(CheckJsonString(componentJson, "pivotPoint", objectName));					
 					newSprite->SetScale(Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName)));				
@@ -3142,7 +2455,7 @@ namespace FlatEngine
 				}
 				else if (type == "Camera")
 				{
-					Camera* newCamera = loadedObject->AddCamera(id, _isActive, _isCollapsed);
+					Camera* newCamera = loadedObject->AddCamera(id, b_isActive, b_isCollapsed);
 					bool _isPrimaryCamera = CheckJsonBool(componentJson, "_isPrimaryCamera", objectName);
 					newCamera->SetDimensions(CheckJsonFloat(componentJson, "width", objectName), CheckJsonFloat(componentJson, "height", objectName));
 					newCamera->SetPrimaryCamera(_isPrimaryCamera);
@@ -3159,31 +2472,31 @@ namespace FlatEngine
 				}
 				else if (type == "Script")
 				{
-					Script* newScript = loadedObject->AddScript(id, _isActive, _isCollapsed);
+					Script* newScript = loadedObject->AddScript(id, b_isActive, b_isCollapsed);
 					newScript->SetAttachedScript(CheckJsonString(componentJson, "attachedScript", objectName));
 				}
 				else if (type == "Button")
 				{
-					Button* newButton = loadedObject->AddButton(id, _isActive, _isCollapsed);
+					Button* newButton = loadedObject->AddButton(id, b_isActive, b_isCollapsed);
 					newButton->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newButton->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newButton->SetActiveLayer(CheckJsonInt(componentJson, "activeLayer", objectName));
 				}
 				else if (type == "Canvas")
 				{
-					Canvas* newCanvas = loadedObject->AddCanvas(id, _isActive, _isCollapsed);
+					Canvas* newCanvas = loadedObject->AddCanvas(id, b_isActive, b_isCollapsed);
 					newCanvas->SetDimensions(CheckJsonFloat(componentJson, "width", objectName), CheckJsonFloat(componentJson, "height", objectName));
 					newCanvas->SetLayerNumber(CheckJsonInt(componentJson, "layerNumber", objectName));
 					newCanvas->SetBlocksLayers(CheckJsonBool(componentJson, "_blocksLayers", objectName));
 				}
 				else if (type == "Animation")
 				{
-					Animation* newAnimation = loadedObject->AddAnimation(id, _isActive, _isCollapsed);
+					Animation* newAnimation = loadedObject->AddAnimation(id, b_isActive, b_isCollapsed);
 					newAnimation->SetAnimationPath(CheckJsonString(componentJson, "path", objectName));
 				}
 				else if (type == "Audio")
 				{
-					Audio* newAudio = loadedObject->AddAudio(id, _isActive, _isCollapsed);				
+					Audio* newAudio = loadedObject->AddAudio(id, b_isActive, b_isCollapsed);				
 
 					if (JsonContains(componentJson, "soundData", objectName))
 					{
@@ -3200,7 +2513,7 @@ namespace FlatEngine
 				}
 				else if (type == "Text")
 				{
-					Text* newText = loadedObject->AddText(id, _isActive, _isCollapsed);
+					Text* newText = loadedObject->AddText(id, b_isActive, b_isCollapsed);
 					newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
 					newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
 					newText->SetPivotPoint(CheckJsonString(componentJson, "pivotPoint", objectName));
@@ -3216,14 +2529,14 @@ namespace FlatEngine
 				}
 				else if (type == "CharacterController")
 				{
-					CharacterController* newCharacterController = loadedObject->AddCharacterController(id, _isActive, _isCollapsed);
+					CharacterController* newCharacterController = loadedObject->AddCharacterController(id, b_isActive, b_isCollapsed);
 					newCharacterController->SetMaxAcceleration(CheckJsonFloat(componentJson, "maxAcceleration", objectName));
 					newCharacterController->SetMaxSpeed(CheckJsonFloat(componentJson, "maxSpeed", objectName));
 					newCharacterController->SetAirControl(CheckJsonFloat(componentJson, "airControl", objectName));
 				}
 				else if (type == "BoxCollider")
 				{
-					BoxCollider* newBoxCollider = loadedObject->AddBoxCollider(id, _isActive, _isCollapsed);
+					BoxCollider* newBoxCollider = loadedObject->AddBoxCollider(id, b_isActive, b_isCollapsed);
 					newBoxCollider->SetTileMapCollider(false);
 					newBoxCollider->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newBoxCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
@@ -3237,7 +2550,7 @@ namespace FlatEngine
 				}
 				else if (type == "CircleCollider")
 				{
-					CircleCollider* newCircleCollider = loadedObject->AddCircleCollider(id, _isActive, _isCollapsed);
+					CircleCollider* newCircleCollider = loadedObject->AddCircleCollider(id, b_isActive, b_isCollapsed);
 					newCircleCollider->SetActiveRadiusGrid(CheckJsonFloat(componentJson, "activeRadius", objectName));
 					newCircleCollider->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newCircleCollider->SetIsContinuous(CheckJsonBool(componentJson, "_isContinuous", objectName));
@@ -3248,7 +2561,7 @@ namespace FlatEngine
 				}
 				else if (type == "RigidBody")
 				{
-					RigidBody* newRigidBody = loadedObject->AddRigidBody(id, _isActive, _isCollapsed);
+					RigidBody* newRigidBody = loadedObject->AddRigidBody(id, b_isActive, b_isCollapsed);
 					newRigidBody->SetMass(CheckJsonFloat(componentJson, "mass", objectName));
 					newRigidBody->SetAngularDrag(CheckJsonFloat(componentJson, "angularDrag", objectName));
 					newRigidBody->SetGravity(CheckJsonFloat(componentJson, "gravity", objectName));
@@ -3262,7 +2575,7 @@ namespace FlatEngine
 				}
 				else if (type == "TileMap")
 				{
-					TileMap* newTileMap = loadedObject->AddTileMap(id, _isActive, _isCollapsed);
+					TileMap* newTileMap = loadedObject->AddTileMap(id, b_isActive, b_isCollapsed);
 					newTileMap->SetWidth(CheckJsonInt(componentJson, "width", objectName));
 					newTileMap->SetHeight(CheckJsonInt(componentJson, "height", objectName));
 					newTileMap->SetTileWidth(CheckJsonInt(componentJson, "tileWidth", objectName));

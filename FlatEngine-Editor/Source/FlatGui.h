@@ -130,7 +130,7 @@ namespace FlatGui
 	extern bool FG_b_clearBufferEveryFrame;
 
 	// Hierarchy
-	extern std::map<long, bool> leafExpandedTracker;
+	extern std::map<long, bool> FG_leafExpandedTracker;
 	extern std::map<std::string, bool> FG_fileExplorerLeafTracker;
 
 	// Window Visibility

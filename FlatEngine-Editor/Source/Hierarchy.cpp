@@ -323,14 +323,14 @@ namespace FlatGui
 
 		if (currentObject.HasChildren())
 		{
-			if (leafExpandedTracker.count(currentObject.GetID()) == 0)
+			if (FG_leafExpandedTracker.count(currentObject.GetID()) == 0)
 			{
-				leafExpandedTracker.emplace(currentObject.GetID(), false);
+				FG_leafExpandedTracker.emplace(currentObject.GetID(), false);
 			}
 
-			ImGui::SetNextItemOpen(leafExpandedTracker.at(currentObject.GetID()));
+			ImGui::SetNextItemOpen(FG_leafExpandedTracker.at(currentObject.GetID()));
 			node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
-			leafExpandedTracker.at(currentObject.GetID()) = node_open;
+			FG_leafExpandedTracker.at(currentObject.GetID()) = node_open;
 		}
 		else
 		{

@@ -3,7 +3,7 @@
 
  -- called on each script before Start() runs at the start of the gameloop (or upon instantiation) 
  function Awake() 
-	 playerMappingContext = GetMappingContext("MC_CharacterContext")
+	 playerMappingContext = GetMappingContext("MC_Player")
  end 
 
  -- called at the start of the gameloop after Awake() (or upon instantiation) 
@@ -27,6 +27,7 @@
 	-- 	--F_LogString("Yes")
 	-- end
 	if playerMappingContext:Fired("IA_Jump") then
+		LogString("Jumped")
 		animation:Play()
 	-- 	rigidBody:AddForce(force, 1)
 	end

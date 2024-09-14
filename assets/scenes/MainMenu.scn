@@ -479,7 +479,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 33,
                     "soundData": [
                         {
@@ -492,7 +492,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
                     "fontSize": 40,
                     "id": 34,
@@ -510,7 +510,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": true,
-                    "attachedScript": "",
+                    "attachedScript": "MoveObject",
                     "id": 35,
                     "type": "Script"
                 },
@@ -522,22 +522,6 @@
                     "maxAcceleration": 0.5,
                     "maxSpeed": 10.0,
                     "type": "CharacterController"
-                },
-                {
-                    "_allowTorques": true,
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "_isStatic": false,
-                    "angularDrag": 1.0,
-                    "equilibriumForce": 2.0399999618530273,
-                    "fallingGravity": 1.2000000476837158,
-                    "friction": 0.8600000143051147,
-                    "gravity": 1.0,
-                    "id": 37,
-                    "mass": 1.0,
-                    "terminalVelocity": 0.4000000059604645,
-                    "type": "RigidBody",
-                    "windResistance": 1.0
                 },
                 {
                     "_isActive": true,
@@ -573,7 +557,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "collisionAreas": [],
                     "height": 5,
                     "id": 40,

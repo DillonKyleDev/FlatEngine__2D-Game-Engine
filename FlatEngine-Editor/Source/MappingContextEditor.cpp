@@ -18,130 +18,27 @@ namespace FlatGui
 	{
 		FL::BeginWindow("Mapping Context Editor", FG_b_showMappingContextEditor);
 		// {
+			
+			std::vector<std::string> inputStrings;
 
-			const char* inputs[] = { 
-				// XInput
-				"XInput_A", 
-				"XInput_B", 
-				"XInput_X", 
-				"XInput_Y", 
-				"XInput_LB", 
-				"XInput_RB", 
-				"XInput_ScreenShot", 
-				"XInput_Start", 
-				"XInput_LS", 
-				"XInput_RS", 
-				"XInput_Home", 
-				"XInput_Tray",
-				"XInput_DPadUp",
-				"XInput_DPadDown",
-				"XInput_DPadLeft",
-				"XInput_DPadRight",
-				"XInput_LeftJoystickX",
-				"XInput_LeftJoystickY",
-				"XInput_RightJoystickX",
-				"XInput_RightJoystickY",
-				"XInput_LT",
-				"XInput_RT",
-				// Keyboard + Mouse
-				"Keyboard_up",
-				"Keyboard_down",
-				"Keyboard_left",
-				"Keyboard_right",
-				"Keyboard_space",
-				"Keyboard_leftCtrl",
-				"Keyboard_leftShift",
-				"Keyboard_leftAlt",
-				"Keyboard_rightCtrl",
-				"Keyboard_rightShift",
-				"Keyboard_rightAlt",
-				"Keyboard_capsLock",
-				"Keyboard_numLock",
-				"Keyboard_backspace",
-				"Keyboard_escape",
-				"Keyboard_tab",
-				"Keyboard_printScreen",
-				"Keyboard_insert",
-				"Keyboard_home",
-				"Keyboard_pageUp",
-				"Keyboard_pageDown",
-				"Keyboard_delete",
-				"Keyboard_\\",
-				"Keyboard_/",
-				"Keyboard_;",
-				"Keyboard_'",
-				"Keyboard_[",
-				"Keyboard_]",
-				"Keyboard_<",
-				"Keyboard_>",
-				"Keyboard_`",
-				 "Keyboard_1",
-				"Keyboard_2",
-				"Keyboard_3",
-				"Keyboard_4",
-				"Keyboard_5",
-				"Keyboard_6",
-				"Keyboard_7",
-				"Keyboard_8",
-				"Keyboard_9",
-				"Keyboard_0",
-				"Keyboard_-",
-				"Keyboard_+",
-				"Keyboard_f1",
-				"Keyboard_f2",
-				"Keyboard_f3",
-				"Keyboard_f4",
-				"Keyboard_f5",
-				"Keyboard_f6",
-				"Keyboard_f7",
-				"Keyboard_f8",
-				"Keyboard_f9",
-				"Keyboard_f10",
-				"Keyboard_f11",
-				"Keyboard_f12",
-				"Keyboard_numPad_1",
-				"Keyboard_numPad_2",
-				"Keyboard_numPad_3",
-				"Keyboard_numPad_4",
-				"Keyboard_numPad_5",
-				"Keyboard_numPad_6",
-				"Keyboard_numPad_7",
-				"Keyboard_numPad_8",
-				"Keyboard_numPad_9",
-				"Keyboard_numPad_0",
-				"Keyboard_numPad_*",
-				"Keyboard_numPad_/",
-				"Keyboard_numPad_+",
-				"Keyboard_numPad_-",
-				"Keyboard_numPad_.",
-				"Keyboard_numPad_enter",
-				"Keyboard_a",
-				"Keyboard_b",
-				"Keyboard_c",
-				"Keyboard_d",
-				"Keyboard_e",
-				"Keyboard_f",
-				"Keyboard_g",
-				"Keyboard_h",
-				"Keyboard_i",
-				"Keyboard_j",
-				"Keyboard_k",
-				"Keyboard_l",
-				"Keyboard_m",
-				"Keyboard_n",
-				"Keyboard_o",
-				"Keyboard_p",
-				"Keyboard_q",
-				"Keyboard_r",
-				"Keyboard_s",
-				"Keyboard_t",
-				"Keyboard_u",
-				"Keyboard_v",
-				"Keyboard_w",
-				"Keyboard_x",
-				"Keyboard_y",
-				"Keyboard_z"
-			};
+			for (std::pair<long, std::string> inputKeycode : FL::F_MappedKeyboardCodes)
+			{
+				inputStrings.push_back(inputKeycode.second);
+			}
+			for (std::pair<long, std::string> inputKeycode : FL::F_MappedXInputButtonCodes)
+			{
+				inputStrings.push_back(inputKeycode.second);
+			}
+			for (std::pair<long, std::string> inputKeycode : FL::F_MappedXInputDPadCodes)
+			{
+				inputStrings.push_back(inputKeycode.second);
+			}
+			for (std::pair<long, std::string> inputKeycode : FL::F_MappedXInputAnalogCodes)
+			{
+				inputStrings.push_back(inputKeycode.second);
+			}
+
+
 
 			float widthAvailable = ImGui::GetContentRegionAvail().x;
 			static int current_context = 0;
@@ -226,12 +123,12 @@ namespace FlatGui
 						ImGui::Text("Input Source");
 						FL::PushComboStyles();										
 						ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x / 2);
-						if (ImGui::BeginCombo("##inputs", inputs[current_input]))
+						if (ImGui::BeginCombo("##inputs", inputStrings[current_input].c_str()))
 						{
-							for (int n = 0; n < IM_ARRAYSIZE(inputs); n++)
+							for (int n = 0; n < inputStrings.size(); n++)
 							{
-								bool b_isSelected = (inputs[current_input] == inputs[n]);
-								if (ImGui::Selectable(inputs[n], b_isSelected))
+								bool b_isSelected = (inputStrings[current_input] == inputStrings[n]);
+								if (ImGui::Selectable(inputStrings[n].c_str(), b_isSelected))
 								{
 									current_input = n;
 								}
@@ -257,7 +154,7 @@ namespace FlatGui
 						ImGui::SameLine();
 						if (FL::RenderButton("Add"))
 						{
-							currentContext->AddKeyBinding(inputs[current_input], inputText);
+							currentContext->AddKeyBinding(inputStrings[current_input].c_str(), inputText);
 						}
 
 					// }
@@ -284,9 +181,9 @@ namespace FlatGui
 								if (keyBinding.second != "")
 								{
 									int selected_input = 0;
-									for (int i = 0; i < IM_ARRAYSIZE(inputs); i++)
+									for (int i = 0; i < inputStrings.size(); i++)
 									{
-										if (keyBinding.first == inputs[i])
+										if (keyBinding.first == inputStrings[i])
 										{
 											selected_input = i;
 										}
@@ -296,19 +193,19 @@ namespace FlatGui
 
 									FL::PushComboStyles();
 									ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x / 2);
-									if (ImGui::BeginCombo(comboId.c_str(), inputs[selected_input]))
+									if (ImGui::BeginCombo(comboId.c_str(), inputStrings[selected_input].c_str()))
 									{
-										for (int n = 0; n < IM_ARRAYSIZE(inputs); n++)
+										for (int n = 0; n < inputStrings.size(); n++)
 										{
-											bool is_selected = (inputs[selected_input] == inputs[n]);
+											bool is_selected = (inputStrings[selected_input] == inputStrings[n]);
 
-											if (ImGui::Selectable(inputs[n], is_selected))
+											if (ImGui::Selectable(inputStrings[n].c_str(), is_selected))
 											{
 												std::string tempInputAction = keyBinding.second;
 												selected_input = n;
 												currentContext->RemoveKeyBinding(keyBinding.first);
-												currentContext->AddKeyBinding(inputs[selected_input], tempInputAction);
-												currentContext->AddInputAction(inputs[selected_input], tempInputAction);
+												currentContext->AddKeyBinding(inputStrings[selected_input], tempInputAction);
+												currentContext->AddInputAction(inputStrings[selected_input], tempInputAction);
 											}
 											if (is_selected)
 											{
