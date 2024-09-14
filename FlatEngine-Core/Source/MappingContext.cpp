@@ -38,37 +38,37 @@ namespace FlatEngine {
 
 		//// Keyboard + Mouse
 		// Directions
-		m_keyBindings.emplace("SDLK_UP", "");
-		m_keyBindings.emplace("SDLK_DOWN", "");
-		m_keyBindings.emplace("SDLK_LEFT", "");
-		m_keyBindings.emplace("SDLK_RIGHT", "");
+		m_keyBindings.emplace("Keyboard_UP", "");
+		m_keyBindings.emplace("Keyboard_DOWN", "");
+		m_keyBindings.emplace("Keyboard_LEFT", "");
+		m_keyBindings.emplace("Keyboard_RIGHT", "");
 		// Letters
-		m_keyBindings.emplace("SDLK_a", "");
-		m_keyBindings.emplace("SDLK_b", "");
-		m_keyBindings.emplace("SDLK_c", "");
-		m_keyBindings.emplace("SDLK_d", "");
-		m_keyBindings.emplace("SDLK_e", "");
-		m_keyBindings.emplace("SDLK_f", "");
-		m_keyBindings.emplace("SDLK_g", "");
-		m_keyBindings.emplace("SDLK_h", "");
-		m_keyBindings.emplace("SDLK_i", "");
-		m_keyBindings.emplace("SDLK_j", "");
-		m_keyBindings.emplace("SDLK_k", "");
-		m_keyBindings.emplace("SDLK_l", "");
-		m_keyBindings.emplace("SDLK_m", "");
-		m_keyBindings.emplace("SDLK_n", "");
-		m_keyBindings.emplace("SDLK_o", "");
-		m_keyBindings.emplace("SDLK_p", "");
-		m_keyBindings.emplace("SDLK_q", "");
-		m_keyBindings.emplace("SDLK_r", "");
-		m_keyBindings.emplace("SDLK_s", "");
-		m_keyBindings.emplace("SDLK_t", "");
-		m_keyBindings.emplace("SDLK_u", "");
-		m_keyBindings.emplace("SDLK_v", "");
-		m_keyBindings.emplace("SDLK_w", "");
-		m_keyBindings.emplace("SDLK_x", "");
-		m_keyBindings.emplace("SDLK_y", "");
-		m_keyBindings.emplace("SDLK_z", "");
+		m_keyBindings.emplace("Keyboard_a", "");
+		m_keyBindings.emplace("Keyboard_b", "");
+		m_keyBindings.emplace("Keyboard_c", "");
+		m_keyBindings.emplace("Keyboard_d", "");
+		m_keyBindings.emplace("Keyboard_e", "");
+		m_keyBindings.emplace("Keyboard_f", "");
+		m_keyBindings.emplace("Keyboard_g", "");
+		m_keyBindings.emplace("Keyboard_h", "");
+		m_keyBindings.emplace("Keyboard_i", "");
+		m_keyBindings.emplace("Keyboard_j", "");
+		m_keyBindings.emplace("Keyboard_k", "");
+		m_keyBindings.emplace("Keyboard_l", "");
+		m_keyBindings.emplace("Keyboard_m", "");
+		m_keyBindings.emplace("Keyboard_n", "");
+		m_keyBindings.emplace("Keyboard_o", "");
+		m_keyBindings.emplace("Keyboard_p", "");
+		m_keyBindings.emplace("Keyboard_q", "");
+		m_keyBindings.emplace("Keyboard_r", "");
+		m_keyBindings.emplace("Keyboard_s", "");
+		m_keyBindings.emplace("Keyboard_t", "");
+		m_keyBindings.emplace("Keyboard_u", "");
+		m_keyBindings.emplace("Keyboard_v", "");
+		m_keyBindings.emplace("Keyboard_w", "");
+		m_keyBindings.emplace("Keyboard_x", "");
+		m_keyBindings.emplace("Keyboard_y", "");
+		m_keyBindings.emplace("Keyboard_z", "");
 
 		m_inputActionBindings = std::map<std::string, SDL_Event>();
 		m_actionFiredBools = std::map<std::string, bool>();
@@ -103,36 +103,109 @@ namespace FlatEngine {
 			{ "XInput_RightJoystick", m_keyBindings.at("XInput_RightJoystick") },
 			{ "XInput_LT", m_keyBindings.at("XInput_LT") },
 			{ "XInput_RT", m_keyBindings.at("XInput_RT") },
-			{ "SDLK_UP", m_keyBindings.at("SDLK_UP") },
-			{ "SDLK_DOWN", m_keyBindings.at("SDLK_DOWN") },
-			{ "SDLK_LEFT", m_keyBindings.at("SDLK_LEFT") },
-			{ "SDLK_RIGHT", m_keyBindings.at("SDLK_RIGHT") },
-			{ "SDLK_a", m_keyBindings.at("SDLK_a") },
-			{ "SDLK_b", m_keyBindings.at("SDLK_b") },
-			{ "SDLK_c", m_keyBindings.at("SDLK_c") },
-			{ "SDLK_d", m_keyBindings.at("SDLK_d") },
-			{ "SDLK_e", m_keyBindings.at("SDLK_e") },
-			{ "SDLK_f", m_keyBindings.at("SDLK_f") },
-			{ "SDLK_g", m_keyBindings.at("SDLK_g") },
-			{ "SDLK_h", m_keyBindings.at("SDLK_h") },
-			{ "SDLK_i", m_keyBindings.at("SDLK_i") },
-			{ "SDLK_j", m_keyBindings.at("SDLK_j") },
-			{ "SDLK_k", m_keyBindings.at("SDLK_k") },
-			{ "SDLK_l", m_keyBindings.at("SDLK_l") },
-			{ "SDLK_m", m_keyBindings.at("SDLK_m") },
-			{ "SDLK_n", m_keyBindings.at("SDLK_n") },
-			{ "SDLK_o", m_keyBindings.at("SDLK_o") },
-			{ "SDLK_p", m_keyBindings.at("SDLK_p") },
-			{ "SDLK_q", m_keyBindings.at("SDLK_q") },
-			{ "SDLK_r", m_keyBindings.at("SDLK_r") },
-			{ "SDLK_s", m_keyBindings.at("SDLK_s") },
-			{ "SDLK_t", m_keyBindings.at("SDLK_t") },
-			{ "SDLK_u", m_keyBindings.at("SDLK_u") },
-			{ "SDLK_v", m_keyBindings.at("SDLK_v") },
-			{ "SDLK_w", m_keyBindings.at("SDLK_w") },
-			{ "SDLK_x", m_keyBindings.at("SDLK_x") },
-			{ "SDLK_y", m_keyBindings.at("SDLK_y") },
-			{ "SDLK_z", m_keyBindings.at("SDLK_z") },
+
+			{ "Keyboard_up", m_keyBindings.at("Keyboard_up") },
+			{ "Keyboard_down", m_keyBindings.at("Keyboard_down") },
+			{ "Keyboard_left", m_keyBindings.at("Keyboard_left") },
+			{ "Keyboard_right", m_keyBindings.at("Keyboard_right") },
+			{ "Keyboard_space", m_keyBindings.at("Keyboard_space") },
+			{ "Keyboard_leftCtrl", m_keyBindings.at("Keyboard_leftCtrl") },
+			{ "Keyboard_leftShift", m_keyBindings.at("Keyboard_leftShift") },
+			{ "Keyboard_leftAlt", m_keyBindings.at("Keyboard_leftAlt") },
+			{ "Keyboard_rightCtrl", m_keyBindings.at("Keyboard_rightCtrl") },
+			{ "Keyboard_rightShift", m_keyBindings.at("Keyboard_rightShift") },
+			{ "Keyboard_rightAlt", m_keyBindings.at("Keyboard_rightAlt") },
+			{ "Keyboard_capsLock", m_keyBindings.at("Keyboard_capsLock") },
+			{ "Keyboard_numLock", m_keyBindings.at("Keyboard_numLock") },
+			{ "Keyboard_backspace", m_keyBindings.at("Keyboard_backspace") },
+			{ "Keyboard_escape", m_keyBindings.at("Keyboard_escape") },		
+			{ "Keyboard_tab", m_keyBindings.at("Keyboard_tab") },
+
+			{ "Keyboard_printScreen", m_keyBindings.at("Keyboard_printScreen") },
+			{ "Keyboard_insert", m_keyBindings.at("Keyboard_insert") },
+			{ "Keyboard_home", m_keyBindings.at("Keyboard_home") },
+			{ "Keyboard_pageUp", m_keyBindings.at("Keyboard_pageUp") },
+			{ "Keyboard_pageDown", m_keyBindings.at("Keyboard_pageDown") },
+			{ "Keyboard_delete", m_keyBindings.at("Keyboard_delete") },
+
+			{ "Keyboard_\\", m_keyBindings.at("Keyboard_\\") },
+			{ "Keyboard_/", m_keyBindings.at("Keyboard_/") },
+			{ "Keyboard_;", m_keyBindings.at("Keyboard_;") },
+			{ "Keyboard_'", m_keyBindings.at("Keyboard_'") },
+			{ "Keyboard_[", m_keyBindings.at("Keyboard_[") },
+			{ "Keyboard_]", m_keyBindings.at("Keyboard_]") },
+			{ "Keyboard_<", m_keyBindings.at("Keyboard_<") },
+			{ "Keyboard_>", m_keyBindings.at("Keyboard_>") },
+			{ "Keyboard_`", m_keyBindings.at("Keyboard_`") },
+			{ "Keyboard_1", m_keyBindings.at("Keyboard_1") },
+			{ "Keyboard_2", m_keyBindings.at("Keyboard_2") },
+			{ "Keyboard_3", m_keyBindings.at("Keyboard_3") },
+			{ "Keyboard_4", m_keyBindings.at("Keyboard_4") },
+			{ "Keyboard_5", m_keyBindings.at("Keyboard_5") },
+			{ "Keyboard_6", m_keyBindings.at("Keyboard_6") },
+			{ "Keyboard_7", m_keyBindings.at("Keyboard_7") },
+			{ "Keyboard_8", m_keyBindings.at("Keyboard_8") },
+			{ "Keyboard_9", m_keyBindings.at("Keyboard_9") },
+			{ "Keyboard_0", m_keyBindings.at("Keyboard_0") },
+			{ "Keyboard_-", m_keyBindings.at("Keyboard_-") },
+			{ "Keyboard_+", m_keyBindings.at("Keyboard_+") },
+
+			{ "Keyboard_f1", m_keyBindings.at("Keyboard_f1") },
+			{ "Keyboard_f2", m_keyBindings.at("Keyboard_f2") },
+			{ "Keyboard_f3", m_keyBindings.at("Keyboard_f3") },
+			{ "Keyboard_f4", m_keyBindings.at("Keyboard_f4") },
+			{ "Keyboard_f5", m_keyBindings.at("Keyboard_f5") },
+			{ "Keyboard_f6", m_keyBindings.at("Keyboard_f6") },
+			{ "Keyboard_f7", m_keyBindings.at("Keyboard_f7") },
+			{ "Keyboard_f8", m_keyBindings.at("Keyboard_f8") },
+			{ "Keyboard_f9", m_keyBindings.at("Keyboard_f9") },
+			{ "Keyboard_f10", m_keyBindings.at("Keyboard_f10") },
+			{ "Keyboard_f11", m_keyBindings.at("Keyboard_f11") },
+			{ "Keyboard_f12", m_keyBindings.at("Keyboard_f12") },
+
+			{ "Keyboard_numPad_1", m_keyBindings.at("Keyboard_numPad_1") },
+			{ "Keyboard_numPad_2", m_keyBindings.at("Keyboard_numPad_2") },
+			{ "Keyboard_numPad_3", m_keyBindings.at("Keyboard_numPad_3") },
+			{ "Keyboard_numPad_4", m_keyBindings.at("Keyboard_numPad_4") },
+			{ "Keyboard_numPad_5", m_keyBindings.at("Keyboard_numPad_5") },
+			{ "Keyboard_numPad_6", m_keyBindings.at("Keyboard_numPad_6") },
+			{ "Keyboard_numPad_7", m_keyBindings.at("Keyboard_numPad_7") },
+			{ "Keyboard_numPad_8", m_keyBindings.at("Keyboard_numPad_8") },
+			{ "Keyboard_numPad_9", m_keyBindings.at("Keyboard_numPad_9") },
+			{ "Keyboard_numPad_0", m_keyBindings.at("Keyboard_numPad_0") },
+			{ "Keyboard_numPad_*", m_keyBindings.at("Keyboard_numPad_*") },
+			{ "Keyboard_numPad_/", m_keyBindings.at("Keyboard_numPad_/") },
+			{ "Keyboard_numPad_+", m_keyBindings.at("Keyboard_numPad_+") },
+			{ "Keyboard_numPad_-", m_keyBindings.at("Keyboard_numPad_-") },
+			{ "Keyboard_numPad_.", m_keyBindings.at("Keyboard_numPad_.") },
+			{ "Keyboard_numPad_enter", m_keyBindings.at("Keyboard_numPad_enter") },
+
+			{ "Keyboard_a", m_keyBindings.at("Keyboard_a") },
+			{ "Keyboard_b", m_keyBindings.at("Keyboard_b") },
+			{ "Keyboard_c", m_keyBindings.at("Keyboard_c") },
+			{ "Keyboard_d", m_keyBindings.at("Keyboard_d") },
+			{ "Keyboard_e", m_keyBindings.at("Keyboard_e") },
+			{ "Keyboard_f", m_keyBindings.at("Keyboard_f") },
+			{ "Keyboard_g", m_keyBindings.at("Keyboard_g") },
+			{ "Keyboard_h", m_keyBindings.at("Keyboard_h") },
+			{ "Keyboard_i", m_keyBindings.at("Keyboard_i") },
+			{ "Keyboard_j", m_keyBindings.at("Keyboard_j") },
+			{ "Keyboard_k", m_keyBindings.at("Keyboard_k") },
+			{ "Keyboard_l", m_keyBindings.at("Keyboard_l") },
+			{ "Keyboard_m", m_keyBindings.at("Keyboard_m") },
+			{ "Keyboard_n", m_keyBindings.at("Keyboard_n") },
+			{ "Keyboard_o", m_keyBindings.at("Keyboard_o") },
+			{ "Keyboard_p", m_keyBindings.at("Keyboard_p") },
+			{ "Keyboard_q", m_keyBindings.at("Keyboard_q") },
+			{ "Keyboard_r", m_keyBindings.at("Keyboard_r") },
+			{ "Keyboard_s", m_keyBindings.at("Keyboard_s") },
+			{ "Keyboard_t", m_keyBindings.at("Keyboard_t") },
+			{ "Keyboard_u", m_keyBindings.at("Keyboard_u") },
+			{ "Keyboard_v", m_keyBindings.at("Keyboard_v") },
+			{ "Keyboard_w", m_keyBindings.at("Keyboard_w") },
+			{ "Keyboard_x", m_keyBindings.at("Keyboard_x") },
+			{ "Keyboard_y", m_keyBindings.at("Keyboard_y") },
+			{ "Keyboard_z", m_keyBindings.at("Keyboard_z") },
 		};
 
 		std::string data = jsonData.dump();

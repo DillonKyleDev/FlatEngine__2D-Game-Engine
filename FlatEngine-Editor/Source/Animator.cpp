@@ -279,11 +279,15 @@ namespace FlatGui
 									animProps->characterControllerProps.size() == 0 && properties[n] == "CharacterController"
 									)
 								{
-									bool is_selected = (properties[current_property] == properties[n]);
-									if (ImGui::Selectable(properties[n], is_selected))
+									bool b_isSelected = (properties[current_property] == properties[n]);
+									if (ImGui::Selectable(properties[n], b_isSelected))
+									{
 										current_property = n;
-									if (is_selected)
+									}
+									if (b_isSelected)
+									{
 										ImGui::SetItemDefaultFocus();
+									}
 								}
 							}
 							ImGui::EndCombo();
@@ -329,9 +333,13 @@ namespace FlatGui
 
 								std::string treeID = property + "_node";
 								if (node_clicked == property)
+								{
 									node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+								}
 								else
+								{
 									node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+								}
 
 								//// TreeNode Opener - No TreePop because it's a leaf
 								if (size > 0)
@@ -342,7 +350,9 @@ namespace FlatGui
 
 									ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, property.c_str());
 									if (ImGui::IsItemClicked())
+									{
 										node_clicked = property;
+									}
 
 									ImGui::PushID(treeID.c_str());
 									ImGui::PopID();
@@ -408,14 +418,14 @@ namespace FlatGui
 					if (node_clicked != "")
 					{
 						ImGui::SameLine(0, 5);
-						ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 3);
+						FL::MoveScreenCursor(0, -3);						
 						Vector2 textSize = ImGui::CalcTextSize(node_clicked.c_str());
 						Vector2 cursorScreen = ImGui::GetCursorScreenPos();
-						ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FL::GetColor("tableCellLight")), 2);
-						ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 3, ImGui::GetCursorPosY() + 3));
+						ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FL::GetColor("tableCellLight")), 2);						
+						FL::MoveScreenCursor(3, 3);
 						ImGui::Text(node_clicked.c_str());
-
-						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
+						
+						FL::MoveScreenCursor(0, 6);
 						if (FL::RenderButton("Add Keyframe"))
 						{
 							L_PushBackKeyFrame(node_clicked);
@@ -441,49 +451,34 @@ namespace FlatGui
 						}
 
 						// Play Button
-						if (b_isPreviewing)
+						ImGui::BeginDisabled(b_isPreviewing);
+						if (FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 						{
-							ImGui::BeginDisabled();
-							FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
-							ImGui::EndDisabled();
-						}
-						else
-						{
-							if (FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
+							if (animation != nullptr)
 							{
-								if (animation != nullptr)
-								{
-									previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
-									previewAnimationTime = FL::GetEllapsedGameTimeInMs();
-									animation->Play(previewAnimationStartTime);
-									b_isPreviewing = true;
-								}
+								previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
+								previewAnimationTime = FL::GetEllapsedGameTimeInMs();
+								animation->Play(previewAnimationStartTime);
+								b_isPreviewing = true;
 							}
 						}
-
+						ImGui::EndDisabled();
 						ImGui::SameLine(0, 5);
 
-						// Stop button
-						if (!b_isPreviewing)
+						// Stop button	
+						ImGui::BeginDisabled(!b_isPreviewing);
+						if (FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 						{
-							ImGui::BeginDisabled();
-							FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
-							ImGui::EndDisabled();
+							animation->Stop();
+							b_isPreviewing = false;
+							previewAnimationTime = 0;
 						}
-						else
-						{
-							if (FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
-							{
-								animation->Stop();
-								b_isPreviewing = false;
-								previewAnimationTime = 0;
-							}
-						}
-
+						ImGui::EndDisabled();			
 						ImGui::SameLine(0, 5);
+
 
 						ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor("col_1"));
-						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+						FL::MoveScreenCursor(0, 4);
 						ImGui::Text("Preview Animation");
 						ImGui::PopStyleColor();
 					}
@@ -576,13 +571,12 @@ namespace FlatGui
 					float spriteTextureWidth = 10;
 					float spriteTextureHeight = 10;
 					Vector2 spriteOffset = Vector2(5, 5);
-					bool _spriteScalesWithZoom = false;
+					bool b_spriteScalesWithZoom = false;
 					int renderOrder = 1;
-
-					// If there is a valid Icon.GetTexture() loaded into the Sprite Component
+					
 					if (FL::GetTexture("keyFrame") != nullptr)
 					{
-						Vector2 pipStartingPoint = FL::AddImageToDrawList(FL::GetTexture("keyFrame"), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), _spriteScalesWithZoom, animatorGridStep, draw_list);
+						Vector2 pipStartingPoint = FL::AddImageToDrawList(FL::GetTexture("keyFrame"), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), b_spriteScalesWithZoom, animatorGridStep, draw_list);
 
 						ImGui::SetCursorScreenPos(pipStartingPoint);
 						std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
@@ -912,31 +906,26 @@ namespace FlatGui
 			Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
 			static Vector2 scrolling = Vector2(0, 0);
 			static Vector2 viewPortDimensions = Vector2(0, 0);
-			static bool _firstRenderPassDone = false;
-			static bool _viewportSizeTaken = false;
+			static bool b_firstRenderPassDone = false;
+			static bool b_viewportSizeTaken = false;
 
 			// Set initial viewport dimensions once
-			if (_firstRenderPassDone)
+			if (b_firstRenderPassDone)
 			{
-				if (!_viewportSizeTaken)
+				if (!b_viewportSizeTaken)
 				{
 					viewPortDimensions = Vector2(canvas_sz.x, canvas_sz.y);
 				}
-				_viewportSizeTaken = true;
+				b_viewportSizeTaken = true;
 			}
-			_firstRenderPassDone = true;
-
-			// Get Input and Output
+			b_firstRenderPassDone = true;
+			
 			ImGuiIO& inputOutput = ImGui::GetIO();
-
-			// This will catch our interactions
-			ImGui::InvisibleButton("AnimationPreview", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-			const bool is_active = ImGui::IsItemActive();   // Held
-
-			// For panning the scene view
-			const float mouse_threshold_for_pan = 0.0f;
-			if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+			
+			ImGui::InvisibleButton("AnimationPreview", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);			
+			const bool b_isActive = ImGui::IsItemActive();
+						
+			if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
 			{
 				scrolling.x += inputOutput.MouseDelta.x;
 				scrolling.y += inputOutput.MouseDelta.y;
@@ -944,8 +933,8 @@ namespace FlatGui
 		
 			Vector2 centerPoint = Vector2(0, 0);
 
-			bool _weightedScroll = false;
-			RenderGridView(centerPoint, scrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
+			bool b_weightedScroll = false;
+			RenderGridView(centerPoint, scrolling, b_weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
 
 			if (objectForFocusedAnimation != nullptr)
@@ -992,7 +981,9 @@ namespace FlatGui
 		for (float y = trunc(fmodf(zeroPoint.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
 		{
 			if (y > canvas_p0.y)
+			{
 				FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), FL::GetColor("col_3"), 1.0f, draw_list);
+			}
 		}
 	}
 
@@ -1016,6 +1007,7 @@ namespace FlatGui
 				}
 
 				FL::RenderSectionHeader(keyFrameProperty);
+
 				// Three dots
 				FL::MoveScreenCursor(ImGui::GetContentRegionAvail().x - 29, -31);
 				ImGui::BeginDisabled(FG_FocusedAnimation == nullptr || FG_SelectedKeyFrameToEdit == nullptr);

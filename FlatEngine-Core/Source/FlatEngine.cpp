@@ -903,37 +903,37 @@ namespace FlatEngine
 
 				//// Keyboard + Mouse
 				// Directional
-				newContext.AddKeyBinding("SDLK_UP", mappings["SDLK_UP"]);
-				newContext.AddKeyBinding("SDLK_DOWN", mappings["SDLK_DOWN"]);
-				newContext.AddKeyBinding("SDLK_LEFT", mappings["SDLK_LEFT"]);
-				newContext.AddKeyBinding("SDLK_RIGHT", mappings["SDLK_RIGHT"]);
+				newContext.AddKeyBinding("Keyboard_up", mappings["Keyboard_up"]);
+				newContext.AddKeyBinding("Keyboard_down", mappings["Keyboard_down"]);
+				newContext.AddKeyBinding("Keyboard_left", mappings["Keyboard_left"]);
+				newContext.AddKeyBinding("Keyboard_right", mappings["Keyboard_right"]);
 				// Letters
-				newContext.AddKeyBinding("SDLK_a", mappings["SDLK_a"]);
-				newContext.AddKeyBinding("SDLK_b", mappings["SDLK_b"]);
-				newContext.AddKeyBinding("SDLK_c", mappings["SDLK_c"]);
-				newContext.AddKeyBinding("SDLK_d", mappings["SDLK_d"]);
-				newContext.AddKeyBinding("SDLK_e", mappings["SDLK_e"]);
-				newContext.AddKeyBinding("SDLK_f", mappings["SDLK_f"]);
-				newContext.AddKeyBinding("SDLK_g", mappings["SDLK_g"]);
-				newContext.AddKeyBinding("SDLK_h", mappings["SDLK_h"]);
-				newContext.AddKeyBinding("SDLK_i", mappings["SDLK_i"]);
-				newContext.AddKeyBinding("SDLK_j", mappings["SDLK_j"]);
-				newContext.AddKeyBinding("SDLK_k", mappings["SDLK_k"]);
-				newContext.AddKeyBinding("SDLK_l", mappings["SDLK_l"]);
-				newContext.AddKeyBinding("SDLK_m", mappings["SDLK_m"]);
-				newContext.AddKeyBinding("SDLK_n", mappings["SDLK_n"]);
-				newContext.AddKeyBinding("SDLK_o", mappings["SDLK_o"]);
-				newContext.AddKeyBinding("SDLK_p", mappings["SDLK_p"]);
-				newContext.AddKeyBinding("SDLK_q", mappings["SDLK_q"]);
-				newContext.AddKeyBinding("SDLK_r", mappings["SDLK_r"]);
-				newContext.AddKeyBinding("SDLK_s", mappings["SDLK_s"]);
-				newContext.AddKeyBinding("SDLK_t", mappings["SDLK_t"]);
-				newContext.AddKeyBinding("SDLK_u", mappings["SDLK_u"]);
-				newContext.AddKeyBinding("SDLK_v", mappings["SDLK_v"]);
-				newContext.AddKeyBinding("SDLK_w", mappings["SDLK_w"]);
-				newContext.AddKeyBinding("SDLK_x", mappings["SDLK_x"]);
-				newContext.AddKeyBinding("SDLK_y", mappings["SDLK_y"]);
-				newContext.AddKeyBinding("SDLK_z", mappings["SDLK_z"]);
+				newContext.AddKeyBinding("Keyboard_a", mappings["Keyboard_a"]);
+				newContext.AddKeyBinding("Keyboard_b", mappings["Keyboard_b"]);
+				newContext.AddKeyBinding("Keyboard_c", mappings["Keyboard_c"]);
+				newContext.AddKeyBinding("Keyboard_d", mappings["Keyboard_d"]);
+				newContext.AddKeyBinding("Keyboard_e", mappings["Keyboard_e"]);
+				newContext.AddKeyBinding("Keyboard_f", mappings["Keyboard_f"]);
+				newContext.AddKeyBinding("Keyboard_g", mappings["Keyboard_g"]);
+				newContext.AddKeyBinding("Keyboard_h", mappings["Keyboard_h"]);
+				newContext.AddKeyBinding("Keyboard_i", mappings["Keyboard_i"]);
+				newContext.AddKeyBinding("Keyboard_j", mappings["Keyboard_j"]);
+				newContext.AddKeyBinding("Keyboard_k", mappings["Keyboard_k"]);
+				newContext.AddKeyBinding("Keyboard_l", mappings["Keyboard_l"]);
+				newContext.AddKeyBinding("Keyboard_m", mappings["Keyboard_m"]);
+				newContext.AddKeyBinding("Keyboard_n", mappings["Keyboard_n"]);
+				newContext.AddKeyBinding("Keyboard_o", mappings["Keyboard_o"]);
+				newContext.AddKeyBinding("Keyboard_p", mappings["Keyboard_p"]);
+				newContext.AddKeyBinding("Keyboard_q", mappings["Keyboard_q"]);
+				newContext.AddKeyBinding("Keyboard_r", mappings["Keyboard_r"]);
+				newContext.AddKeyBinding("Keyboard_s", mappings["Keyboard_s"]);
+				newContext.AddKeyBinding("Keyboard_t", mappings["Keyboard_t"]);
+				newContext.AddKeyBinding("Keyboard_u", mappings["Keyboard_u"]);
+				newContext.AddKeyBinding("Keyboard_v", mappings["Keyboard_v"]);
+				newContext.AddKeyBinding("Keyboard_w", mappings["Keyboard_w"]);
+				newContext.AddKeyBinding("Keyboard_x", mappings["Keyboard_x"]);
+				newContext.AddKeyBinding("Keyboard_y", mappings["Keyboard_y"]);
+				newContext.AddKeyBinding("Keyboard_z", mappings["Keyboard_z"]);
 
 				// After all keys are set, create their Input Action bindings
 				newContext.CreateInputActionBindings();
@@ -1068,255 +1068,294 @@ namespace FlatEngine
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_SPACE:
-				if (context.GetKeyBinding("SDLK_SPACE") != "" && context.GetKeyBoundEvent("SDLK_SPACE").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_space") != "" && context.GetKeyBoundEvent("Keyboard_space").type == 0)
 				{
-					context.OnInputEvent("SDLK_SPACE", event);
-					firedKeys.push_back("SDLK_SPACE");
+					context.OnInputEvent("Keyboard_space", event);
+					firedKeys.push_back("Keyboard_space");
 				}
 				break;
-
+			}
+			case SDLK_ESCAPE:
+			{
+				if (context.GetKeyBinding("Keyboard_escape") != "" && context.GetKeyBoundEvent("Keyboard_escape").type == 0)
+				{
+					context.OnInputEvent("Keyboard_escape", event);
+					firedKeys.push_back("Keyboard_escape");
+				}
+				break;
+			}
 			case SDLK_UP:			
-				if (context.GetKeyBinding("SDLK_UP") != "" && context.GetKeyBoundEvent("SDLK_UP").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_up") != "" && context.GetKeyBoundEvent("Keyboard_up").type == 0)
 				{
-					context.OnInputEvent("SDLK_UP", event);
-					firedKeys.push_back("SDLK_UP");
+					context.OnInputEvent("Keyboard_up", event);
+					firedKeys.push_back("Keyboard_up");
 				}
 				break;
-
+			}
 			case SDLK_DOWN:
-				if (context.GetKeyBinding("SDLK_DOWN") != "" && context.GetKeyBoundEvent("SDLK_DOWN").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_down") != "" && context.GetKeyBoundEvent("Keyboard_down").type == 0)
 				{
-					context.OnInputEvent("SDLK_DOWN", event);
-					firedKeys.push_back("SDLK_DOWN");
+					context.OnInputEvent("Keyboard_down", event);
+					firedKeys.push_back("Keyboard_down");
 				}
 				break;
-
+			}
 			case SDLK_LEFT:
-				if (context.GetKeyBinding("SDLK_LEFT") != "" && context.GetKeyBoundEvent("SDLK_LEFT").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_left") != "" && context.GetKeyBoundEvent("Keyboard_left").type == 0)
 				{
-					context.OnInputEvent("SDLK_LEFT", event);
-					firedKeys.push_back("SDLK_LEFT");
+					context.OnInputEvent("Keyboard_left", event);
+					firedKeys.push_back("Keyboard_left");
 				}
 				break;
-
+			}
 			case SDLK_RIGHT:				
-				if (context.GetKeyBinding("SDLK_RIGHT") != "" && context.GetKeyBoundEvent("SDLK_RIGHT").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_right") != "" && context.GetKeyBoundEvent("Keyboard_right").type == 0)
 				{
-					context.OnInputEvent("SDLK_RIGHT", event);
-					firedKeys.push_back("SDLK_RIGHT");
+					context.OnInputEvent("Keyboard_right", event);
+					firedKeys.push_back("Keyboard_right");
 				}
 				break;
-
+			}
 			case SDLK_a:				
-				if (context.GetKeyBinding("SDLK_a") != "" && context.GetKeyBoundEvent("SDLK_a").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_a") != "" && context.GetKeyBoundEvent("Keyboard_a").type == 0)
 				{
-					context.OnInputEvent("SDLK_a", event);
-					firedKeys.push_back("SDLK_a");
+					context.OnInputEvent("Keyboard_a", event);
+					firedKeys.push_back("Keyboard_a");
 				}
 				break;
-
+			}
 			case SDLK_b:				
-				if (context.GetKeyBinding("SDLK_b") != "" && context.GetKeyBoundEvent("SDLK_b").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_b") != "" && context.GetKeyBoundEvent("Keyboard_b").type == 0)
 				{
-					context.OnInputEvent("SDLK_b", event);
-					firedKeys.push_back("SDLK_b");
+					context.OnInputEvent("Keyboard_b", event);
+					firedKeys.push_back("Keyboard_b");
 				}
 				break;
-
+			}
 			case SDLK_c:				
-				if (context.GetKeyBinding("SDLK_c") != "" && context.GetKeyBoundEvent("SDLK_c").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_c") != "" && context.GetKeyBoundEvent("Keyboard_c").type == 0)
 				{
-					context.OnInputEvent("SDLK_c", event);
-					firedKeys.push_back("SDLK_c");
+					context.OnInputEvent("Keyboard_c", event);
+					firedKeys.push_back("Keyboard_c");
 				}
 				break;
-
+			}
 			case SDLK_d:				
-				if (context.GetKeyBinding("SDLK_d") != "" && context.GetKeyBoundEvent("SDLK_d").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_d") != "" && context.GetKeyBoundEvent("Keyboard_d").type == 0)
 				{
-					context.OnInputEvent("SDLK_d", event);
-					firedKeys.push_back("SDLK_d");
+					context.OnInputEvent("Keyboard_d", event);
+					firedKeys.push_back("Keyboard_d");
 				}
 				break;
-
+			}
 			case SDLK_e:				
-				if (context.GetKeyBinding("SDLK_e") != "" && context.GetKeyBoundEvent("SDLK_e").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_e") != "" && context.GetKeyBoundEvent("Keyboard_e").type == 0)
 				{
-					context.OnInputEvent("SDLK_e", event);
-					firedKeys.push_back("SDLK_e");
+					context.OnInputEvent("Keyboard_e", event);
+					firedKeys.push_back("Keyboard_e");
 				}
 				break;
-
+			}
 			case SDLK_f:				
-				if (context.GetKeyBinding("SDLK_f") != "" && context.GetKeyBoundEvent("SDLK_f").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_f") != "" && context.GetKeyBoundEvent("Keyboard_f").type == 0)
 				{
-					context.OnInputEvent("SDLK_f", event);
-					firedKeys.push_back("SDLK_f");
+					context.OnInputEvent("Keyboard_f", event);
+					firedKeys.push_back("Keyboard_f");
 				}
 				break;
-
+			}
 			case SDLK_g:				
-				if (context.GetKeyBinding("SDLK_g") != "" && context.GetKeyBoundEvent("SDLK_g").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_g") != "" && context.GetKeyBoundEvent("Keyboard_g").type == 0)
 				{
-					context.OnInputEvent("SDLK_g", event);
-					firedKeys.push_back("SDLK_g");
+					context.OnInputEvent("Keyboard_g", event);
+					firedKeys.push_back("Keyboard_g");
 				}
 				break;
-
+			}
 			case SDLK_h:				
-				if (context.GetKeyBinding("SDLK_h") != "" && context.GetKeyBoundEvent("SDLK_h").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_h") != "" && context.GetKeyBoundEvent("Keyboard_h").type == 0)
 				{
-					context.OnInputEvent("SDLK_h", event);
-					firedKeys.push_back("SDLK_h");
+					context.OnInputEvent("Keyboard_h", event);
+					firedKeys.push_back("Keyboard_h");
 				}
 				break;
-
+			}
 			case SDLK_i:				
-				if (context.GetKeyBinding("SDLK_i") != "" && context.GetKeyBoundEvent("SDLK_i").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_i") != "" && context.GetKeyBoundEvent("Keyboard_i").type == 0)
 				{
-					context.OnInputEvent("SDLK_i", event);
-					firedKeys.push_back("SDLK_i");
+					context.OnInputEvent("Keyboard_i", event);
+					firedKeys.push_back("Keyboard_i");
 				}
 				break;
-
+			}
 			case SDLK_j:				
-				if (context.GetKeyBinding("SDLK_j") != "" && context.GetKeyBoundEvent("SDLK_j").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_j") != "" && context.GetKeyBoundEvent("Keyboard_j").type == 0)
 				{
-					context.OnInputEvent("SDLK_j", event);
-					firedKeys.push_back("SDLK_j");
+					context.OnInputEvent("Keyboard_j", event);
+					firedKeys.push_back("Keyboard_j");
 				}
 				break;
-
+			}
 			case SDLK_k:				
-				if (context.GetKeyBinding("SDLK_k") != "" && context.GetKeyBoundEvent("SDLK_k").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_k") != "" && context.GetKeyBoundEvent("Keyboard_k").type == 0)
 				{
-					context.OnInputEvent("SDLK_k", event);
-					firedKeys.push_back("SDLK_k");
+					context.OnInputEvent("Keyboard_k", event);
+					firedKeys.push_back("Keyboard_k");
 				}
 				break;
-
+			}
 			case SDLK_l:				
-				if (context.GetKeyBinding("SDLK_l") != "" && context.GetKeyBoundEvent("SDLK_l").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_l") != "" && context.GetKeyBoundEvent("Keyboard_l").type == 0)
 				{
-					context.OnInputEvent("SDLK_l", event);
-					firedKeys.push_back("SDLK_l");
+					context.OnInputEvent("Keyboard_l", event);
+					firedKeys.push_back("Keyboard_l");
 				}
 				break;
-
+			}
 			case SDLK_m:				
-				if (context.GetKeyBinding("SDLK_m") != "" && context.GetKeyBoundEvent("SDLK_m").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_m") != "" && context.GetKeyBoundEvent("Keyboard_m").type == 0)
 				{
-					context.OnInputEvent("SDLK_m", event);
-					firedKeys.push_back("SDLK_m");
+					context.OnInputEvent("Keyboard_m", event);
+					firedKeys.push_back("Keyboard_m");
 				}
 				break;
-
-			case SDLK_n:				
-				if (context.GetKeyBinding("SDLK_n") != "" && context.GetKeyBoundEvent("SDLK_n").type == 0)
+			}
+			case SDLK_n:
+			{
+				if (context.GetKeyBinding("Keyboard_n") != "" && context.GetKeyBoundEvent("Keyboard_n").type == 0)
 				{
-					context.OnInputEvent("SDLK_n", event);
-					firedKeys.push_back("SDLK_n");
+					context.OnInputEvent("Keyboard_n", event);
+					firedKeys.push_back("Keyboard_n");
 				}
 				break;
-
+			}
 			case SDLK_o:				
-				if (context.GetKeyBinding("SDLK_o") != "" && context.GetKeyBoundEvent("SDLK_o").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_o") != "" && context.GetKeyBoundEvent("Keyboard_o").type == 0)
 				{
-					context.OnInputEvent("SDLK_o", event);
-					firedKeys.push_back("SDLK_o");
+					context.OnInputEvent("Keyboard_o", event);
+					firedKeys.push_back("Keyboard_o");
 				}
 				break;
-
+			}
 			case SDLK_p:				
-				if (context.GetKeyBinding("SDLK_p") != "" && context.GetKeyBoundEvent("SDLK_p").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_p") != "" && context.GetKeyBoundEvent("Keyboard_p").type == 0)
 				{
-					context.OnInputEvent("SDLK_p", event);
-					firedKeys.push_back("SDLK_p");
+					context.OnInputEvent("Keyboard_p", event);
+					firedKeys.push_back("Keyboard_p");
 				}
 				break;
-
+			}
 			case SDLK_q:				
-				if (context.GetKeyBinding("SDLK_q") != "" && context.GetKeyBoundEvent("SDLK_q").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_q") != "" && context.GetKeyBoundEvent("Keyboard_q").type == 0)
 				{
-					context.OnInputEvent("SDLK_q", event);
-					firedKeys.push_back("SDLK_q");
+					context.OnInputEvent("Keyboard_q", event);
+					firedKeys.push_back("Keyboard_q");
 				}
 				break;
-
+			}
 			case SDLK_r:			
-				if (context.GetKeyBinding("SDLK_r") != "" && context.GetKeyBoundEvent("SDLK_r").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_r") != "" && context.GetKeyBoundEvent("Keyboard_r").type == 0)
 				{
-					context.OnInputEvent("SDLK_r", event);
-					firedKeys.push_back("SDLK_r");
+					context.OnInputEvent("Keyboard_r", event);
+					firedKeys.push_back("Keyboard_r");
 				}
 				break;
-
+			}
 			case SDLK_s:				
-				if (context.GetKeyBinding("SDLK_s") != "" && context.GetKeyBoundEvent("SDLK_s").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_s") != "" && context.GetKeyBoundEvent("Keyboard_s").type == 0)
 				{
-					context.OnInputEvent("SDLK_s", event);
-					firedKeys.push_back("SDLK_s");
+					context.OnInputEvent("Keyboard_s", event);
+					firedKeys.push_back("Keyboard_s");
 				}
 				break;
-
+			}
 			case SDLK_t:				
-				if (context.GetKeyBinding("SDLK_t") != "" && context.GetKeyBoundEvent("SDLK_t").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_t") != "" && context.GetKeyBoundEvent("Keyboard_t").type == 0)
 				{
-					context.OnInputEvent("SDLK_t", event);
-					firedKeys.push_back("SDLK_t");
+					context.OnInputEvent("Keyboard_t", event);
+					firedKeys.push_back("Keyboard_t");
 				}
 				break;
-
+			}
 			case SDLK_u:				
-				if (context.GetKeyBinding("SDLK_u") != "" && context.GetKeyBoundEvent("SDLK_u").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_u") != "" && context.GetKeyBoundEvent("Keyboard_u").type == 0)
 				{
-					context.OnInputEvent("SDLK_u", event);
-					firedKeys.push_back("SDLK_u");
+					context.OnInputEvent("Keyboard_u", event);
+					firedKeys.push_back("Keyboard_u");
 				}
 				break;
-
+			}
 			case SDLK_v:				
-				if (context.GetKeyBinding("SDLK_v") != "" && context.GetKeyBoundEvent("SDLK_v").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_v") != "" && context.GetKeyBoundEvent("Keyboard_v").type == 0)
 				{
-					context.OnInputEvent("SDLK_v", event);
-					firedKeys.push_back("SDLK_v");
+					context.OnInputEvent("Keyboard_v", event);
+					firedKeys.push_back("Keyboard_v");
 				}
 				break;
-
+			}
 			case SDLK_w:
-				if (context.GetKeyBinding("SDLK_w") != "" && context.GetKeyBoundEvent("SDLK_w").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_w") != "" && context.GetKeyBoundEvent("Keyboard_w").type == 0)
 				{
-					context.OnInputEvent("SDLK_w", event);
-					firedKeys.push_back("SDLK_w");
+					context.OnInputEvent("Keyboard_w", event);
+					firedKeys.push_back("Keyboard_w");
 				}
 				break;
-
+			}
 			case SDLK_x:				
-				if (context.GetKeyBinding("SDLK_x") != "" && context.GetKeyBoundEvent("SDLK_x").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_x") != "" && context.GetKeyBoundEvent("Keyboard_x").type == 0)
 				{
-					context.OnInputEvent("SDLK_x", event);
-					firedKeys.push_back("SDLK_x");
+					context.OnInputEvent("Keyboard_x", event);
+					firedKeys.push_back("Keyboard_x");
 				}
 				break;
-
+			}
 			case SDLK_y:				
-				if (context.GetKeyBinding("SDLK_y") != "" && context.GetKeyBoundEvent("SDLK_y").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_y") != "" && context.GetKeyBoundEvent("Keyboard_y").type == 0)
 				{
-					context.OnInputEvent("SDLK_y", event);
-					firedKeys.push_back("SDLK_y");
+					context.OnInputEvent("Keyboard_y", event);
+					firedKeys.push_back("Keyboard_y");
 				}
 				break;
-
+			}
 			case SDLK_z:				
-				if (context.GetKeyBinding("SDLK_z") != "" && context.GetKeyBoundEvent("SDLK_z").type == 0)
+			{
+				if (context.GetKeyBinding("Keyboard_z") != "" && context.GetKeyBoundEvent("Keyboard_z").type == 0)
 				{
-					context.OnInputEvent("SDLK_z", event);
-					firedKeys.push_back("SDLK_z");
+					context.OnInputEvent("Keyboard_z", event);
+					firedKeys.push_back("Keyboard_z");
 				}
 				break;
-
+			}
 			default:
-
 				break;
 			}
 		}
@@ -1327,158 +1366,158 @@ namespace FlatEngine
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_SPACE:				
-				if (context.GetKeyBinding("SDLK_SPACE") != "")
-					context.ClearInputActionEvent("SDLK_SPACE");
+				if (context.GetKeyBinding("Keyboard_space") != "")
+					context.ClearInputActionEvent("Keyboard_space");
 				break;
 
 			case SDLK_UP:				
-				if (context.GetKeyBinding("SDLK_UP") != "")
-					context.ClearInputActionEvent("SDLK_UP");
+				if (context.GetKeyBinding("Keyboard_up") != "")
+					context.ClearInputActionEvent("Keyboard_up");
 				break;
 
 			case SDLK_DOWN:				
-				if (context.GetKeyBinding("SDLK_DOWN") != "")
-					context.ClearInputActionEvent("SDLK_DOWN");
+				if (context.GetKeyBinding("Keyboard_down") != "")
+					context.ClearInputActionEvent("Keyboard_down");
 				break;
 
 			case SDLK_LEFT:				
-				if (context.GetKeyBinding("SDLK_LEFT") != "")
-					context.ClearInputActionEvent("SDLK_LEFT");
+				if (context.GetKeyBinding("Keyboard_left") != "")
+					context.ClearInputActionEvent("Keyboard_left");
 				break;
 
 			case SDLK_RIGHT:				
-				if (context.GetKeyBinding("SDLK_RIGHT") != "")
-					context.ClearInputActionEvent("SDLK_RIGHT");
+				if (context.GetKeyBinding("Keyboard_right") != "")
+					context.ClearInputActionEvent("Keyboard_right");
 				break;
 
 			case SDLK_a:				
-				if (context.GetKeyBinding("SDLK_a") != "")
-					context.ClearInputActionEvent("SDLK_a");
+				if (context.GetKeyBinding("Keyboard_a") != "")
+					context.ClearInputActionEvent("Keyboard_a");
 				break;
 
 			case SDLK_b:				
-				if (context.GetKeyBinding("SDLK_b") != "")
-					context.ClearInputActionEvent("SDLK_b");
+				if (context.GetKeyBinding("Keyboard_b") != "")
+					context.ClearInputActionEvent("Keyboard_b");
 				break;
 
 			case SDLK_c:
-				if (context.GetKeyBinding("SDLK_c") != "")
-					context.ClearInputActionEvent("SDLK_c");
+				if (context.GetKeyBinding("Keyboard_c") != "")
+					context.ClearInputActionEvent("Keyboard_c");
 				break;
 
 			case SDLK_d:				
-				if (context.GetKeyBinding("SDLK_d") != "")
-					context.ClearInputActionEvent("SDLK_d");
+				if (context.GetKeyBinding("Keyboard_d") != "")
+					context.ClearInputActionEvent("Keyboard_d");
 				break;
 
 			case SDLK_e:				
-				if (context.GetKeyBinding("SDLK_e") != "")
-					context.ClearInputActionEvent("SDLK_e");
+				if (context.GetKeyBinding("Keyboard_e") != "")
+					context.ClearInputActionEvent("Keyboard_e");
 				break;
 
 			case SDLK_f:				
-				if (context.GetKeyBinding("SDLK_f") != "")
-					context.ClearInputActionEvent("SDLK_f");
+				if (context.GetKeyBinding("Keyboard_f") != "")
+					context.ClearInputActionEvent("Keyboard_f");
 				break;
 
 			case SDLK_g:				
-				if (context.GetKeyBinding("SDLK_g") != "")
-					context.ClearInputActionEvent("SDLK_g");
+				if (context.GetKeyBinding("Keyboard_g") != "")
+					context.ClearInputActionEvent("Keyboard_g");
 				break;
 
 			case SDLK_h:				
-				if (context.GetKeyBinding("SDLK_h") != "")
-					context.ClearInputActionEvent("SDLK_h");
+				if (context.GetKeyBinding("Keyboard_h") != "")
+					context.ClearInputActionEvent("Keyboard_h");
 				break;
 
 			case SDLK_i:				
-				if (context.GetKeyBinding("SDLK_i") != "")
-					context.ClearInputActionEvent("SDLK_i");
+				if (context.GetKeyBinding("Keyboard_i") != "")
+					context.ClearInputActionEvent("Keyboard_i");
 				break;
 
 			case SDLK_j:				
-				if (context.GetKeyBinding("SDLK_j") != "")
-					context.ClearInputActionEvent("SDLK_j");
+				if (context.GetKeyBinding("Keyboard_j") != "")
+					context.ClearInputActionEvent("Keyboard_j");
 				break;
 
 			case SDLK_k:				
-				if (context.GetKeyBinding("SDLK_k") != "")
-					context.ClearInputActionEvent("SDLK_k");
+				if (context.GetKeyBinding("Keyboard_k") != "")
+					context.ClearInputActionEvent("Keyboard_k");
 				break;
 
 			case SDLK_l:				
-				if (context.GetKeyBinding("SDLK_l") != "")
-					context.ClearInputActionEvent("SDLK_l");
+				if (context.GetKeyBinding("Keyboard_l") != "")
+					context.ClearInputActionEvent("Keyboard_l");
 				break;
 
 			case SDLK_m:				
-				if (context.GetKeyBinding("SDLK_m") != "")
-					context.ClearInputActionEvent("SDLK_m");
+				if (context.GetKeyBinding("Keyboard_m") != "")
+					context.ClearInputActionEvent("Keyboard_m");
 				break;
 
 			case SDLK_n:				
-				if (context.GetKeyBinding("SDLK_n") != "")
-					context.ClearInputActionEvent("SDLK_n");
+				if (context.GetKeyBinding("Keyboard_n") != "")
+					context.ClearInputActionEvent("Keyboard_n");
 				break;
 
 			case SDLK_o:				
-				if (context.GetKeyBinding("SDLK_o") != "")
-					context.ClearInputActionEvent("SDLK_o");
+				if (context.GetKeyBinding("Keyboard_o") != "")
+					context.ClearInputActionEvent("Keyboard_o");
 				break;
 
 			case SDLK_p:
-				if (context.GetKeyBinding("SDLK_p") != "")
-					context.ClearInputActionEvent("SDLK_p");
+				if (context.GetKeyBinding("Keyboard_p") != "")
+					context.ClearInputActionEvent("Keyboard_p");
 				break;
 
 			case SDLK_q:				
-				if (context.GetKeyBinding("SDLK_q") != "")
-					context.ClearInputActionEvent("SDLK_q");
+				if (context.GetKeyBinding("Keyboard_q") != "")
+					context.ClearInputActionEvent("Keyboard_q");
 				break;
 
 			case SDLK_r:				
-				if (context.GetKeyBinding("SDLK_r") != "")
-					context.ClearInputActionEvent("SDLK_r");
+				if (context.GetKeyBinding("Keyboard_r") != "")
+					context.ClearInputActionEvent("Keyboard_r");
 				break;
 
 			case SDLK_s:				
-				if (context.GetKeyBinding("SDLK_s") != "")
-					context.ClearInputActionEvent("SDLK_s");
+				if (context.GetKeyBinding("Keyboard_s") != "")
+					context.ClearInputActionEvent("Keyboard_s");
 				break;
 
 			case SDLK_t:				
-				if (context.GetKeyBinding("SDLK_t") != "")
-					context.ClearInputActionEvent("SDLK_t");
+				if (context.GetKeyBinding("Keyboard_t") != "")
+					context.ClearInputActionEvent("Keyboard_t");
 				break;
 
 			case SDLK_u:				
-				if (context.GetKeyBinding("SDLK_u") != "")
-					context.ClearInputActionEvent("SDLK_u");
+				if (context.GetKeyBinding("Keyboard_u") != "")
+					context.ClearInputActionEvent("Keyboard_u");
 				break;
 
 			case SDLK_v:				
-				if (context.GetKeyBinding("SDLK_v") != "")
-					context.ClearInputActionEvent("SDLK_v");
+				if (context.GetKeyBinding("Keyboard_v") != "")
+					context.ClearInputActionEvent("Keyboard_v");
 				break;
 
 			case SDLK_w:				
-				if (context.GetKeyBinding("SDLK_w") != "")
-					context.ClearInputActionEvent("SDLK_w");
+				if (context.GetKeyBinding("Keyboard_w") != "")
+					context.ClearInputActionEvent("Keyboard_w");
 				break;
 
 			case SDLK_x:			
-				if (context.GetKeyBinding("SDLK_x") != "")
-					context.ClearInputActionEvent("SDLK_x");
+				if (context.GetKeyBinding("Keyboard_x") != "")
+					context.ClearInputActionEvent("Keyboard_x");
 				break;
 
 			case SDLK_y:			
-				if (context.GetKeyBinding("SDLK_y") != "")
-					context.ClearInputActionEvent("SDLK_y");
+				if (context.GetKeyBinding("Keyboard_y") != "")
+					context.ClearInputActionEvent("Keyboard_y");
 				break;
 
 			case SDLK_z:				
-				if (context.GetKeyBinding("SDLK_z") != "")
-					context.ClearInputActionEvent("SDLK_z");
+				if (context.GetKeyBinding("Keyboard_z") != "")
+					context.ClearInputActionEvent("Keyboard_z");
 				break;
 
 			default:

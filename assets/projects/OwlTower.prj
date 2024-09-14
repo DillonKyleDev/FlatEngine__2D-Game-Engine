@@ -12,7 +12,7 @@
             "_showInspector": true,
             "_showKeyFrameEditor": true,
             "_showLogger": true,
-            "_showMappingContextEditor": false,
+            "_showMappingContextEditor": true,
             "_showProfiler": true,
             "_showSceneView": true,
             "_showScriptEditor": false,
@@ -29,8 +29,8 @@
             "sceneToLoadAtRuntime": "../assets/scenes/MainMenu.scn",
             "sceneViewGridStepX": 29.0,
             "sceneViewGridStepY": 29.0,
-            "sceneViewScrollingX": 587.0,
-            "sceneViewScrollingY": 138.0
+            "sceneViewScrollingX": 382.0,
+            "sceneViewScrollingY": -4.0
         }
     ]
 }
