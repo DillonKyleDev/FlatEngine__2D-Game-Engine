@@ -5,6 +5,7 @@
 
 #include "imgui.h"
 
+
 namespace FL = FlatEngine;
 
 namespace FlatGui 
@@ -74,10 +75,10 @@ namespace FlatGui
 			FL::EndWindowChild(); // LoggerInner
 
 		// }
-		FL::EndWindow();
+		FL::EndWindow(); // Logger
 
 
-		// For keeping the log from filling up when logging continuous values
+		// For keeping the log from filling up when logging values every frame
 		if (FG_b_clearBufferEveryFrame)
 		{
 			FL::F_Logger.ClearBuffer();

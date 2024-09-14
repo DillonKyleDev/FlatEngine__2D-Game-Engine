@@ -14,16 +14,11 @@
 #include "math.h"
 #include <fstream>
 
+
 namespace FL = FlatEngine;
 
 namespace FlatGui 
-{
-	Vector4 darker = Vector4(float(0.2), float(0.2), float(0.2), float(1));
-	Vector4 lighter = Vector4(float(0.8), float(0.8), float(0.8), float(1));
-	Vector4 light = Vector4(float(0.7), float(0.7), float(0.7), float(1));
-	Vector4 dark = Vector4(float(0.3), float(0.3), float(0.3), float(1));
-
-
+{	
 	void RenderAnimator()
 	{
 		FL::PushWindowStyles();
@@ -438,15 +433,15 @@ namespace FlatGui
 						Animation* animation = objectForFocusedAnimation->GetAnimation();
 						std::string playID = "##playAnimationPreview";
 						std::string stopID = "##StopGameloopIcon";
-						bool _isPreviewing = false;
+						bool b_isPreviewing = false;
 			
 						if (animation != nullptr)
 						{
-							_isPreviewing = animation->IsPlaying();
+							b_isPreviewing = animation->IsPlaying();
 						}
 
 						// Play Button
-						if (_isPreviewing)
+						if (b_isPreviewing)
 						{
 							ImGui::BeginDisabled();
 							FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
@@ -461,7 +456,7 @@ namespace FlatGui
 									previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
 									previewAnimationTime = FL::GetEllapsedGameTimeInMs();
 									animation->Play(previewAnimationStartTime);
-									_isPreviewing = true;
+									b_isPreviewing = true;
 								}
 							}
 						}
@@ -469,7 +464,7 @@ namespace FlatGui
 						ImGui::SameLine(0, 5);
 
 						// Stop button
-						if (!_isPreviewing)
+						if (!b_isPreviewing)
 						{
 							ImGui::BeginDisabled();
 							FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive"));
@@ -480,14 +475,14 @@ namespace FlatGui
 							if (FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 							{
 								animation->Stop();
-								_isPreviewing = false;
+								b_isPreviewing = false;
 								previewAnimationTime = 0;
 							}
 						}
 
 						ImGui::SameLine(0, 5);
 
-						ImGui::PushStyleColor(ImGuiCol_Text, lighter);
+						ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor("col_1"));
 						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 						ImGui::Text("Preview Animation");
 						ImGui::PopStyleColor();
@@ -509,11 +504,17 @@ namespace FlatGui
 				AddSceneViewMouseControls("AnimatorTimelineGridButton", ImGui::GetCursorScreenPos(), canvas_sz, scrolling, Vector2(0, 0), gridStep, FL::GetColor32("transparent"), false, 0, true, false, 10);
 				animatorGridStep = gridStep.x;
 				if (scrolling.x > 0)
+				{
 					scrolling.x = 0;
+				}
 				if (scrolling.y > 0)
+				{
 					scrolling.y = 0;
+				}
 				if (scrolling.y < -1500)
+				{
 					scrolling.y = -1500;
+				}
 
 				RenderAnimationTimelineGrid(zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
 
@@ -534,6 +535,7 @@ namespace FlatGui
 					float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
 					float bottomYPos = topYPos + animatorGridStep;
 					ImU32 color;
+
 					if (node_clicked == property)
 					{
 						color = IM_COL32(rectColor.x, rectColor.y, rectColor.z, rectColor.w);
@@ -545,14 +547,22 @@ namespace FlatGui
 		
 					// prevents being drawn off screen and introducing scrollbar
 					if (topYPos < canvas_p0.y)
+					{
 						topYPos = canvas_p0.y;
+					}
 					if (bottomYPos < canvas_p0.y)
+					{
 						bottomYPos = canvas_p0.y;
+					}
 
 					if (topYPos > canvas_p1.y)
+					{
 						topYPos = canvas_p1.y;
+					}
 					if (bottomYPos > canvas_p1.y)
+					{
 						bottomYPos = canvas_p1.y;
+					}
 
 					Vector2 topLeftCorner = Vector2(canvas_p0.x, topYPos);
 					Vector2 bottomRightCorner = Vector2(canvas_p1.x, bottomYPos);
@@ -939,25 +949,25 @@ namespace FlatGui
 
 
 			if (objectForFocusedAnimation != nullptr)
-		{
-			std::vector<GameObject> focusedObjectVector;
-			focusedObjectVector.push_back(*objectForFocusedAnimation);
+			{
+				std::vector<GameObject> focusedObjectVector;
+				focusedObjectVector.push_back(*objectForFocusedAnimation);
 	
-			// Animate the focused object
-			if (_playPreviewAnimation)
-			{				
-				Animation* animation = objectForFocusedAnimation->GetAnimation();
+				// Animate the focused object
+				if (_playPreviewAnimation)
+				{				
+					Animation* animation = objectForFocusedAnimation->GetAnimation();
 
-				// If animation component is playing, play the animation
-				if (animation != nullptr && animation->IsPlaying())
-				{
-					previewAnimationTime = FL::GetEngineTime();
-					animation->PlayAnimation(previewAnimationTime);
+					// If animation component is playing, play the animation
+					if (animation != nullptr && animation->IsPlaying())
+					{
+						previewAnimationTime = FL::GetEngineTime();
+						animation->PlayAnimation(previewAnimationTime);
+					}
 				}
-			}
 
-			RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
-		}
+				RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
+			}
 
 		// }
 		FL::EndWindow(); // Animator Preview
@@ -972,17 +982,17 @@ namespace FlatGui
 		// Draw vertical grid lines
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), dark, 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), FL::GetColor("col_4"), 1.0f, draw_list);
 		}
 		for (float x = trunc(fmodf(zeroPoint.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), light, 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), FL::GetColor("col_8"), 1.0f, draw_list);
 		}
 		// Draw horizontal grid lines
 		for (float y = trunc(fmodf(zeroPoint.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
 		{
 			if (y > canvas_p0.y)
-				FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), dark, 1.0f, draw_list);
+				FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), FL::GetColor("col_3"), 1.0f, draw_list);
 		}
 	}
 

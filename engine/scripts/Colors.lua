@@ -5,6 +5,17 @@
 F_Colors = {
 	transparent = Vector4:new(0.0, 0.0, 0.0, 0.0),
 	white = Vector4:new(1.0, 1.0, 1.0, 1.0),
+	col_0 = Vector4:new(0.0, 0.0, 0.0, 1.0),
+	col_1 = Vector4:new(0.1, 0.1, 0.1, 1.0),
+	col_2 = Vector4:new(0.2, 0.2, 0.2, 1.0),
+	col_3 = Vector4:new(0.3, 0.3, 0.3, 1.0),
+	col_4 = Vector4:new(0.4, 0.4, 0.4, 1.0),
+	col_5 = Vector4:new(0.5, 0.5, 0.5, 1.0),
+	col_6 = Vector4:new(0.6, 0.6, 0.6, 1.0),
+	col_7 = Vector4:new(0.7, 0.7, 0.7, 1.0),
+	col_8 = Vector4:new(0.8, 0.8, 0.8, 1.0),
+	col_9 = Vector4:new(0.9, 0.9, 0.9, 1.0),
+	col_10 = Vector4:new(1.0, 1.0, 1.0, 1.0),
 	----------------------
 	-- Components --------
 	----------------------

@@ -493,7 +493,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "fontPath": "",
+                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
                     "fontSize": 40,
                     "id": 34,
                     "pivotPoint": "PivotCenter",

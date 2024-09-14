@@ -21,87 +21,84 @@ namespace FlatGui
 	void RenderProfiler()
 	{
 		FL::BeginWindow("Profiler", FG_b_showProfiler);
+		// {
 
-		static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
-			ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
-		static bool anim = false;
-		static int offset = 0;
+			static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable;
+			static bool b_animate = false;
+			static int offset = 0;
+			static bool b_showColliderPairs = true;
 
-		static bool b_showColliderPairs = true;
-		FL::RenderCheckbox("Show Collider Pairs", b_showColliderPairs);
-		if (b_showColliderPairs)
-		{
-			// Render runtime data
-			if (FL::PushTable("##RunTimeData", 2))
+			FL::RenderCheckbox("Show Collider Pairs", b_showColliderPairs);
+			if (b_showColliderPairs)
 			{
-				FL::RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
-
-				for (std::pair<Collider*, Collider*> pair : FL::GetLoadedScene()->GetColliderPairs())
+				if (FL::PushTable("##RunTimeData", 2))
 				{
-					std::string col1String = pair.first->GetParent()->GetName();
-					std::string col2String = pair.second->GetParent()->GetName();
-					std::string TableRowID = "##ColliderPairID-" + std::to_string(pair.first->GetParent()->GetID()) + std::to_string(pair.second->GetParent()->GetID());					
+					FL::RenderTextTableRow("##ColliderPairs", "FIRST", "SECOND");
 
-					FL::RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
-				}
-				FL::PopTable();
-			}
-		}
-
-		FL::RenderCheckbox("Animate", anim);
-		if (anim)
-		{
-			offset = (offset + 1) % 100;
-		}
-
-
-		std::vector<Process>::iterator it = FL::F_ProfilerProcesses.begin();
-		int processCounter = 1;
-
-		if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
-		{
-			ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-			ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-			ImGui::TableSetupColumn("Hang Time Visualization");
-			ImGui::TableHeadersRow();
-			ImPlot::PushColormap(ImPlotColormap_Cool);
-
-			if (FL::F_ProfilerProcesses.size() > 0)
-			{
-				while (it != FL::F_ProfilerProcesses.end())
-				{
-					std::string processName = (*it).GetProcessName();
-					std::vector<float> hangTimeVector = (*it).GetHangTimeData();
-					std::deque<float> rawDataVector = (*it).GetRawData();
-					++it;
-
-					float* dataArray;
-
-					if (hangTimeVector.size() > 0)
+					for (std::pair<Collider*, Collider*> pair : FL::GetLoadedScene()->GetColliderPairs())
 					{
-						dataArray = &hangTimeVector.front();
-						ImGui::TableNextRow();
-						ImGui::TableSetColumnIndex(0);
-						ImGui::Text(std::to_string(processCounter).c_str());
-						ImGui::SameLine(0, 5);
-						ImGui::Text(processName.c_str());
-						ImGui::TableSetColumnIndex(1);
-						ImGui::Text("%.0f ms", rawDataVector.front());
-						ImGui::TableSetColumnIndex(2);
-						ImGui::PushID(processCounter);
-						Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), Vector2(-1, 35));
-						ImGui::PopID();
-					}
+						std::string col1String = pair.first->GetParent()->GetName();
+						std::string col2String = pair.second->GetParent()->GetName();
+						std::string TableRowID = "##ColliderPairID-" + std::to_string(pair.first->GetParent()->GetID()) + std::to_string(pair.second->GetParent()->GetID());					
 
-					processCounter++;
+						FL::RenderTextTableRow(TableRowID.c_str(), col1String.c_str(), col2String.c_str());
+					}
+					FL::PopTable();
 				}
 			}
 
-			ImPlot::PopColormap();
-			ImGui::EndTable();
-		}
+			FL::RenderCheckbox("Animate", b_animate);
+			if (b_animate)
+			{
+				offset = (offset + 1) % 100;
+			}
 
-		FL::EndWindow();
+
+			int processCounter = 1;
+
+			if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
+			{
+				ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				ImGui::TableSetupColumn("Hang Time Visualization");
+				ImGui::TableHeadersRow();
+				ImPlot::PushColormap(ImPlotColormap_Cool);
+
+				if (FL::F_ProfilerProcesses.size() > 0)
+				{
+					for (std::vector<Process>::iterator iter = FL::F_ProfilerProcesses.begin(); iter != FL::F_ProfilerProcesses.end(); iter++)
+					{
+						std::string processName = (*iter).GetProcessName();
+						std::vector<float> hangTimeVector = (*iter).GetHangTimeData();
+						std::deque<float> rawDataVector = (*iter).GetRawData();
+
+						float* dataArray;
+
+						if (hangTimeVector.size() > 0)
+						{
+							dataArray = &hangTimeVector.front();
+							ImGui::TableNextRow();
+							ImGui::TableSetColumnIndex(0);
+							ImGui::Text(std::to_string(processCounter).c_str());
+							ImGui::SameLine(0, 5);
+							ImGui::Text(processName.c_str());
+							ImGui::TableSetColumnIndex(1);
+							ImGui::Text("%.0f ms", rawDataVector.front());
+							ImGui::TableSetColumnIndex(2);
+							ImGui::PushID(processCounter);
+							Sparkline("##spark", dataArray, 100, 0, 10.0f, offset, ImPlot::GetColormapColor((int)rawDataVector.front()), Vector2(-1, 35));
+							ImGui::PopID();
+						}
+
+						processCounter++;
+					}
+				}
+
+				ImPlot::PopColormap();
+				ImGui::EndTable();
+			}
+
+		FL::EndWindow(); // Profiler
 	}
 
 	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) 

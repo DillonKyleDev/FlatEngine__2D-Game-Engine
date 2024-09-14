@@ -94,7 +94,7 @@ namespace FlatEngine
 	TTF_Font* F_fontCinzel;
 	std::shared_ptr<PrefabManager> F_PrefabManager = std::make_shared<PrefabManager>();
 	std::vector<TileSet> F_TileSets = std::vector<TileSet>();
-	std::string F_selectedTileSetToEdit = "";
+	std::string F_selectedTileSetToEdit = "- none -";
 	std::pair<std::string, int> F_tileSetAndIndexOnBrush = std::pair<std::string, int>();
 
 	// Drag/Drop target IDs
@@ -701,9 +701,9 @@ namespace FlatEngine
 		std::string filePath = "";
 
 		if (path == "")
-			filePath = GetDir("scenes") + "/" + filename + ".scn";
+			filePath = GetDir("scenes") + "\\" + filename + ".scn";
 		else
-			filePath = path + "/" + filename + ".scn";
+			filePath = path + "\\" + filename + ".scn";
 
 		newScene->SetPath(filePath);
 
@@ -762,9 +762,9 @@ namespace FlatEngine
 		MappingContext newContext = MappingContext();
 
 		if (path == "")
-			filePath = GetDir("mappingContexts") + "/" + fileName + ".mpc";
+			filePath = GetDir("mappingContexts") + "\\" + fileName + ".mpc";
 		else
-			filePath = path + "/" + fileName + ".mpc";
+			filePath = path + "\\" + fileName + ".mpc";
 
 		newContext.SetPath(filePath);
 		newContext.SetName(fileName);
@@ -1715,9 +1715,13 @@ namespace FlatEngine
 		TileSet tileSet = TileSet();
 
 		if (path == "")
-			filePath = GetDir("tileSets") + "/" + fileName + ".tls";
+		{
+			filePath = GetDir("tileSets") + "\\" + fileName + ".tls";
+		}
 		else
-			filePath = path + "/" + fileName + ".tls";
+		{
+			filePath = path + "\\" + fileName + ".tls";
+		}
 
 		tileSet.SetTileSetPath(filePath);
 		tileSet.SetName(fileName);
@@ -1877,7 +1881,7 @@ namespace FlatEngine
 		if (path == "")
 			filePath = GetDir("animations") + filename + ".anm";
 		else
-			filePath = path + "/" + filename + ".anm";
+			filePath = path + "\\" + filename + ".anm";
 
 		std::shared_ptr<Animation::S_AnimationProperties> propertiesObject = std::make_shared< Animation::S_AnimationProperties>();
 		propertiesObject->animationName = filename;

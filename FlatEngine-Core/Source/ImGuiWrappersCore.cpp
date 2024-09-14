@@ -512,12 +512,12 @@ namespace FlatEngine
 		char newPath[1024];
 		strcpy_s(newPath, openedFileValue.c_str());
 
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 3));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+		ImGui::AlignTextToFramePadding();
 
 		if (label != "")
 		{
 			label += ":";
-			ImGui::AlignTextToFramePadding();
 			ImGui::Text(label.c_str());
 			ImGui::SameLine(0, 5);			
 		}

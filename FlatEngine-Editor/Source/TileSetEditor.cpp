@@ -4,15 +4,11 @@
 #include "Vector2.h"
 
 #include <string>
-#include <map>
 #include <vector>
 #include "imgui.h"
-#include "imgui_internal.h"
+
 
 namespace FL = FlatEngine;
-
-using TileSet = FL::TileSet;
-
 
 namespace FlatGui
 {
@@ -28,122 +24,124 @@ namespace FlatGui
 		TileSet* currentTileSet = nullptr;
 
 		FL::BeginWindow("Tileset Editor", FG_b_showTileSetEditor);
+		// {
 
-		FL::BeginResizeWindowChild("Toolbar");
+			FL::BeginResizeWindowChild("Toolbar");
+			// {
 
-		ImGui::Text("Toolbar");
-
-		if (FL::RenderButton("New TileSet"))
-			b_openTileSetModal = true;
-
-		ImGui::Text("Select mapping context to edit:");
-
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-
-		if (FL::F_TileSets.size() > 0)
-		{
-			currentTileSet = FL::GetTileSet(FL::F_selectedTileSetToEdit);
-
-			FL::PushComboStyles();
-			//ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 184);
-			if (ImGui::BeginCombo("##tileSets", FL::F_selectedTileSetToEdit.c_str()))
-			{
-				for (int i = 0; i < FL::F_TileSets.size(); i++)
+				if (FL::RenderButton("New TileSet"))
 				{
-
-					bool is_selected = (FL::F_TileSets.at(i).GetName() == FL::F_selectedTileSetToEdit);
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("outerWindow"));
-					if (ImGui::Selectable(FL::F_TileSets.at(i).GetName().c_str(), is_selected))
-						FL::F_selectedTileSetToEdit = FL::F_TileSets.at(i).GetName();
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-					ImGui::PopStyleColor();
-				}
-				ImGui::EndCombo();
-			}
-			FL::PopComboStyles();
-
-			if (currentTileSet != nullptr)
-			{
-				tileSetTexturePath = currentTileSet->GetTexturePath();
-
-				if (FL::DropInputCanOpenFiles("##TileSetSource", "TileSet source", tileSetTexturePath, FL::F_fileExplorerTarget, droppedValue, tileSetTexturePath, "Drop images here from the File Explorer"))
-				{
-					// If drop target, get the selected file path
-					if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
-						tileSetTexturePath = FL::F_selectedFiles[droppedValue - 1];
-
-					currentTileSet->SetTexturePath(tileSetTexturePath);
-					FL::SaveTileSet(*currentTileSet);
+					b_openTileSetModal = true;
 				}
 
-				for (int tileIndex : currentTileSet->GetTileSetIndices())
+				FL::MoveScreenCursor(0, 5);
+				ImGui::Text("Select TileSet to edit:");
+				FL::MoveScreenCursor(0, 5);
+
+				if (FL::F_TileSets.size() > 0)
 				{
-					ImGui::Text(std::to_string(tileIndex).c_str());
+					currentTileSet = FL::GetTileSet(FL::F_selectedTileSetToEdit);
+
+					ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+					FL::PushComboStyles();			
+					if (ImGui::BeginCombo("##tileSets", FL::F_selectedTileSetToEdit.c_str()))
+					{
+						for (int i = 0; i < FL::F_TileSets.size(); i++)
+						{
+							bool b_selected = (FL::F_TileSets.at(i).GetName() == FL::F_selectedTileSetToEdit);
+							ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("outerWindow"));
+							if (ImGui::Selectable(FL::F_TileSets.at(i).GetName().c_str(), b_selected))
+							{
+								FL::F_selectedTileSetToEdit = FL::F_TileSets.at(i).GetName();
+							}
+							if (b_selected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+							ImGui::PopStyleColor();
+						}
+						ImGui::EndCombo();
+					}
+					FL::PopComboStyles();
+
+					if (currentTileSet != nullptr)
+					{
+						tileSetTexturePath = currentTileSet->GetTexturePath();
+
+						if (FL::DropInputCanOpenFiles("##TileSetSource", "File", FL::GetFilenameFromPath(tileSetTexturePath, true), FL::F_fileExplorerTarget, droppedValue, tileSetTexturePath, "Drop images here from the File Explorer"))
+						{							
+							if (droppedValue != -1 && FL::F_selectedFiles.size() >= droppedValue)
+							{
+								tileSetTexturePath = FL::F_selectedFiles[droppedValue - 1];
+								currentTileSet->SetTexturePath(tileSetTexturePath);
+								FL::SaveTileSet(*currentTileSet);
+							}
+						}
+
+						ImGui::TextWrapped("Changes are automatically saved to the TileSet.");
+					}
 				}
-			}
-		}
 
 
-		// New TileSet Modal Popup
-		if (FL::RenderInputModal("Create New TileSet", "Enter a name for the TileSet", tileSetName, b_openTileSetModal))
-		{
-			FL::CreateNewTileSetFile(tileSetName, FL::GetDir("tileSets"));
-		}
+				// New TileSet Modal Popup
+				if (FL::RenderInputModal("Create New TileSet", "Enter a name for the TileSet", tileSetName, b_openTileSetModal))
+				{
+					FL::CreateNewTileSetFile(tileSetName, FL::GetDir("tileSets"));
+				}
 
-		FL::EndWindowChild();
-
-
-
-		// Vertical divider between grid space and toolbar area
-		ImGui::SameLine(0,0);
+			// }
+			FL::EndWindowChild(); // Toolbar
 
 
 
+			// Vertical divider between grid space and toolbar area -----------------------------------------------------------------------
+			ImGui::SameLine(0,0);
 
 
 
-		centerPoint = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
-		Vector2 gridStart = ImGui::GetCursorScreenPos();
-		Vector2 gridEnd = Vector2(gridStart.x + ImGui::GetContentRegionAvail().x, gridStart.y + ImGui::GetContentRegionAvail().y);
+			centerPoint = Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+			Vector2 gridStart = ImGui::GetCursorScreenPos();
+			Vector2 gridEnd = Vector2(gridStart.x + ImGui::GetContentRegionAvail().x, gridStart.y + ImGui::GetContentRegionAvail().y);
+			FL::BeginWindowChild("Gridspace", FL::GetColor("outerWindow"), 16 | 8); // No Scrolling flags 
+			// {
 
+				Vector2 canvas_sz = ImGui::GetContentRegionAvail();
+				Vector2 currentPos = ImGui::GetCursorScreenPos();
+		
+				ImGui::SetCursorScreenPos(currentPos);
+				ImGui::SetNextItemAllowOverlap();
+				if (canvas_sz.x > 0 && canvas_sz.y > 0)
+				{
+					AddSceneViewMouseControls("#TileSetEditorGrid", gridStart, canvas_sz, scrolling, centerPoint, gridStep);
+				}
 
-		FL::BeginWindowChild("Gridspace", FL::GetColor("outerWindow"), 16 | 8); // No Scrolling flags 
-		Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-		Vector2 currentPos = ImGui::GetCursorScreenPos();
+				FlatGui::RenderGridView(centerPoint, scrolling, false, gridStart, gridEnd, canvas_sz, gridStep, Vector2(0, 0), false);
 
-		// This will catch our interactions
-		ImGui::SetCursorScreenPos(currentPos);
-		ImGui::SetNextItemAllowOverlap();
-		if (canvas_sz.x > 0 && canvas_sz.y > 0)
-		{
-			AddSceneViewMouseControls("#TileSetEditorGrid", gridStart, canvas_sz, scrolling, centerPoint, gridStep);
-		}
-
-		FlatGui::RenderGridView(centerPoint, scrolling, false, gridStart, gridEnd, canvas_sz, gridStep, Vector2(0, 0), false);
-
-		if (currentTileSet != nullptr)
-		{
-			std::shared_ptr<Texture> texture = currentTileSet->GetTexture();
-			Vector2 tileSize = Vector2((float)currentTileSet->GetTileWidth(), (float)currentTileSet->GetTileHeight());
-			SDL_Texture* tileTexture = texture->GetTexture();
-			float textureWidth = (float)texture->GetWidth();
-			float textureHeight = (float)texture->GetHeight();
-			Vector2 pivotOffset = Vector2(textureWidth / 2, 0);
-			Vector2 spriteOffset = Vector2(tileSize.x / 2, tileSize.y / 2);
-			bool _spriteScalesWithZoom = true;
-			int renderOrder = 1;
-			Vector4 tintColor = FL::GetColor("white");
+				if (currentTileSet != nullptr)
+				{
+					std::shared_ptr<Texture> texture = currentTileSet->GetTexture();
+					Vector2 tileSize = Vector2((float)currentTileSet->GetTileWidth(), (float)currentTileSet->GetTileHeight());
+					SDL_Texture* tileTexture = texture->GetTexture();
+					float textureWidth = (float)texture->GetWidth();
+					float textureHeight = (float)texture->GetHeight();
+					Vector2 pivotOffset = Vector2(textureWidth / 2, 0);
+					Vector2 spriteOffset = Vector2(tileSize.x / 2, tileSize.y / 2);
+					bool b_spriteScalesWithZoom = true;
+					int renderOrder = 1;
+					Vector4 tintColor = FL::GetColor("white");
 			
-			FL::AddImageToDrawList(tileTexture, Vector2(0,0), centerPoint, textureWidth, textureHeight, Vector2(0, 0), Vector2(1, 1), true, gridStep.x, ImGui::GetWindowDrawList());
-			for (std::pair<int, std::pair<Vector2, Vector2>> tile : currentTileSet->GetTileSet())
-				RenderTileSetEditorTile(tile, tileSize, scrolling, gridStart, canvas_sz, gridStep, currentTileSet);
-		}
+					FL::AddImageToDrawList(tileTexture, Vector2(0,0), centerPoint, textureWidth, textureHeight, Vector2(0, 0), Vector2(1, 1), b_spriteScalesWithZoom, gridStep.x, ImGui::GetWindowDrawList());
+					for (std::pair<int, std::pair<Vector2, Vector2>> tile : currentTileSet->GetTileSet())
+					{
+						RenderTileSetEditorTile(tile, tileSize, scrolling, gridStart, canvas_sz, gridStep, currentTileSet);
+					}
+				}
 
-		FL::EndWindowChild();
+			// }
+			FL::EndWindowChild(); // Gridspace
 
-
-		FL::EndWindow();
+		// }
+		FL::EndWindow(); // Tileset Editor
 	}
 
 
@@ -154,8 +152,12 @@ namespace FlatGui
 
 		std::vector<int> selectedIndices = tileSet->GetTileSetIndices();
 		for (int i = 0; i < selectedIndices.size(); i++)
+		{
 			if (index == selectedIndices[i])
+			{
 				b_selected = true;
+			}
+		}
 
 		Vector2 uvStart = tile.second.first;
 		Vector2 uvEnd = tile.second.second;
@@ -171,16 +173,14 @@ namespace FlatGui
 
 		std::string invisibleButtonID = "##TileSetEditorTileToggle-" + std::to_string(index);
 		ImGuiIO& inputOutput = ImGui::GetIO();
-		Vector2 currentPos = ImGui::GetCursorScreenPos();
-		bool _weightedScroll = true;
-
-		// Mouse controls
+		Vector2 currentPos = ImGui::GetCursorScreenPos();		
+		
 		AddSceneViewMouseControls(invisibleButtonID, tileStart, Vector2(tileWidthInPx, tileHeightInPx), scrolling, gridStart, step, FL::GetColor32("tileSetTileBorder"));
-		const bool is_hovered = ImGui::IsItemHovered();
-		const bool is_active = ImGui::IsItemActive(); 
-		const bool is_clicked = ImGui::IsItemClicked();
+		const bool b_isHovered = ImGui::IsItemHovered();
+		const bool b_isActive = ImGui::IsItemActive(); 
+		const bool b_isClicked = ImGui::IsItemClicked();
 
-		if (is_hovered)
+		if (b_isHovered)
 		{
 			ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTile"));
 			ImGui::GetWindowDrawList()->AddRect(tileStart, tileEnd, FL::GetColor32("tileSetHoveredTileBorder"));
@@ -189,12 +189,14 @@ namespace FlatGui
 		{
 			ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetSelectedTile"));
 		}
-		if (is_clicked)
+		if (b_isClicked)
 		{
 			tileSet->ToggleTile(index);		
 			FL::SaveTileSet(*tileSet);
 		}
-		if (is_active)
+		if (b_isActive)
+		{
 			ImGui::GetWindowDrawList()->AddRectFilled(tileStart, tileEnd, FL::GetColor32("tileSetHoldingTile"));
+		}
 	}
 }

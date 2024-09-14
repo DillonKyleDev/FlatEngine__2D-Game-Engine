@@ -8,55 +8,49 @@
     },
     "tiles": [
         {
-            "index": 0
+            "index": 18
         },
         {
-            "index": 30
+            "index": 24
         },
         {
-            "index": 5
+            "index": 32
         },
         {
-            "index": 35
+            "index": 33
         },
         {
             "index": 6
         },
         {
-            "index": 31
+            "index": 1
         },
         {
-            "index": 11
+            "index": 2
         },
         {
-            "index": 4
-        },
-        {
-            "index": 7
-        },
-        {
-            "index": 10
-        },
-        {
-            "index": 28
-        },
-        {
-            "index": 8
+            "index": 9
         },
         {
             "index": 15
         },
         {
-            "index": 13
+            "index": 21
         },
         {
-            "index": 25
+            "index": 16
         },
         {
-            "index": 19
+            "index": 28
         },
         {
-            "index": 26
+            "index": 4
+        },
+        {
+            "index": 3
+        },
+        {
+            "index": 7
         }
     ]
 }

@@ -2,17 +2,12 @@
 #include "FlatGui.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "Camera.h"
 #include "SceneManager.h"
 #include "Scene.h"
-#include "Sprite.h"
-#include "Text.h"
-#include "BoxCollider.h"
 
 #include "imgui_internal.h"
 #include <cmath> // trunc
 
-using Transform = FlatEngine::Transform;
 
 namespace FlatGui 
 {
@@ -28,7 +23,6 @@ namespace FlatGui
 	Vector2 FG_sceneViewCenter = Vector2(0, 0);
 	bool FG_b_sceneViewLockedOnObject = false;
 	long FG_sceneViewLockedObjectID = -1;
-	bool F_b_inputFocused = false;
 
 	void Scene_RenderView()
 	{
@@ -60,20 +54,19 @@ namespace FlatGui
 				}
 			}
 			FG_b_firstSceneRenderPass = false;
-
-			// For calculating scrolling mouse position and what vector to zoom to
+			
 			DYNAMIC_VIEWPORT_WIDTH = trunc(canvas_p1.x - canvas_p0.x);
 			DYNAMIC_VIEWPORT_HEIGHT = trunc(canvas_p1.y - canvas_p0.y);
-
-			// Get Input and Output
+			
 			ImGuiIO& inputOutput = ImGui::GetIO();
 			Vector2 currentPos = ImGui::GetCursorScreenPos();
 			Vector2 centerOffset = Vector2(SCENE_VIEWPORT_WIDTH / 2, SCENE_VIEWPORT_HEIGHT / 2);
-			bool _weightedScroll = true;
+			bool b_weightedScroll = false;
 
+			
 			AddSceneViewMouseControls("SceneViewCanvas", currentPos, canvas_sz, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep);
 
-			RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, _weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
+			RenderGridView(FG_sceneViewCenter, FG_sceneViewScrolling, b_weightedScroll, canvas_p0, canvas_p1, canvas_sz, FG_sceneViewGridStep, centerOffset);
 
 
 			// Drop Target
@@ -96,8 +89,7 @@ namespace FlatGui
 			
 				FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
 			}
-
-			// Get currently loaded scene objects
+			
 			Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
 			std::map<long, GameObject> sceneObjects;
 
@@ -143,7 +135,7 @@ namespace FlatGui
 			RenderStatsOnGameView();
 
 		// }
-		ImGui::End();
+		ImGui::End(); // Scene View
 	}
 
 	// Show cursor position in scene view when pressing Alt
@@ -152,22 +144,21 @@ namespace FlatGui
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		Vector2 positionInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
 		std::string cursorXPos = "x: " + std::to_string(positionInGrid.x);
-		std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);
-		// Mouse Hover Tooltip - Scene View Tooltip			
-		ImGui::BeginTooltip();
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+		std::string cursorYPos = "y: " + std::to_string(positionInGrid.y);	
+		ImGui::BeginTooltip();	
+		FL::MoveScreenCursor(5, 5);
 		ImGui::Text("Scene View Data ");
 		ImGui::Separator();
-		ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+		FL::MoveScreenCursor(5, 5);
 		// Cursor Position
 		ImGui::Text("Cursor Position: ");
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+		FL::MoveScreenCursor(5, 0);
 		ImGui::Text(cursorXPos.c_str());
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+		FL::MoveScreenCursor(5, 0);
 		ImGui::Text(cursorYPos.c_str());
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::MoveScreenCursor(0, 5);
 		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		FL::MoveScreenCursor(0, 5);
 		ImGui::EndTooltip();
 	}
 
@@ -418,8 +409,7 @@ namespace FlatGui
 	}
 
 	void RenderStatsOnGameView()
-	{
-		// Work in progress
+	{		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
@@ -433,7 +423,7 @@ namespace FlatGui
 			RenderGameTimeStats();
 
 		// }
-		ImGui::End();
+		ImGui::End(); // Game View
 		FL::PopWindowStyles();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
