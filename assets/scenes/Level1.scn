@@ -12,7 +12,7 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0.0,
+                    "xPos": -0.6666717529296875,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
                     "yPos": 0.0,
@@ -285,126 +285,6 @@
                     "tiles": [
                         {
                             "tileCoordX": 0.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 11.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 12.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 13.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 14.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 15.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 16.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 17.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 18.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 19.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 20.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 21.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 22.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 23.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
-                            "tileCoordY": 24.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 0.0,
                             "tileCoordY": 25.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -495,121 +375,13 @@
                         },
                         {
                             "tileCoordX": 1.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 11.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 12.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 13.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 14.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 15.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
                             "tileCoordY": 16.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 1.0,
-                            "tileCoordY": 17.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 18.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 19.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
                             "tileCoordY": 20.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 21.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 22.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 23.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 1.0,
-                            "tileCoordY": 24.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -705,49 +477,7 @@
                         },
                         {
                             "tileCoordX": 2.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
                             "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 11.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 12.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -759,67 +489,7 @@
                         },
                         {
                             "tileCoordX": 2.0,
-                            "tileCoordY": 14.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 15.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 16.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 17.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
                             "tileCoordY": 18.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 19.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 20.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 21.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 22.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 23.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 2.0,
-                            "tileCoordY": 24.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -910,24 +580,6 @@
                         {
                             "tileCoordX": 2.0,
                             "tileCoordY": 39.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 3.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 3.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 3.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1125,12 +777,6 @@
                         },
                         {
                             "tileCoordX": 4.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -1233,25 +879,7 @@
                         },
                         {
                             "tileCoordX": 4.0,
-                            "tileCoordY": 23.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
                             "tileCoordY": 24.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
-                            "tileCoordY": 25.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
-                            "tileCoordY": 26.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1263,19 +891,7 @@
                         },
                         {
                             "tileCoordX": 4.0,
-                            "tileCoordY": 28.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
                             "tileCoordY": 29.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 4.0,
-                            "tileCoordY": 30.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1335,37 +951,13 @@
                         },
                         {
                             "tileCoordX": 5.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 5.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1414,12 +1006,6 @@
                         {
                             "tileCoordX": 5.0,
                             "tileCoordY": 18.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 19.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1431,18 +1017,6 @@
                         },
                         {
                             "tileCoordX": 5.0,
-                            "tileCoordY": 21.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 22.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
                             "tileCoordY": 23.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -1486,18 +1060,6 @@
                         {
                             "tileCoordX": 5.0,
                             "tileCoordY": 30.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 31.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 5.0,
-                            "tileCoordY": 32.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1557,12 +1119,6 @@
                         },
                         {
                             "tileCoordX": 6.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
                             "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -1576,24 +1132,6 @@
                         {
                             "tileCoordX": 6.0,
                             "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
-                            "tileCoordY": 11.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
-                            "tileCoordY": 12.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
-                            "tileCoordY": 13.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1618,12 +1156,6 @@
                         {
                             "tileCoordX": 6.0,
                             "tileCoordY": 17.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
-                            "tileCoordY": 18.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1713,12 +1245,6 @@
                         },
                         {
                             "tileCoordX": 6.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 6.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -1755,12 +1281,6 @@
                         },
                         {
                             "tileCoordX": 7.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 7.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -1780,12 +1300,6 @@
                         {
                             "tileCoordX": 7.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 7.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1965,19 +1479,7 @@
                         },
                         {
                             "tileCoordX": 8.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -1996,12 +1498,6 @@
                         {
                             "tileCoordX": 8.0,
                             "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
-                            "tileCoordY": 11.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2026,12 +1522,6 @@
                         {
                             "tileCoordX": 8.0,
                             "tileCoordY": 15.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
-                            "tileCoordY": 16.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2121,19 +1611,7 @@
                         },
                         {
                             "tileCoordX": 8.0,
-                            "tileCoordY": 31.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 8.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2175,12 +1653,6 @@
                         },
                         {
                             "tileCoordX": 9.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 9.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -2194,12 +1666,6 @@
                         {
                             "tileCoordX": 9.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 9.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2271,12 +1737,6 @@
                         },
                         {
                             "tileCoordX": 9.0,
-                            "tileCoordY": 21.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 9.0,
                             "tileCoordY": 22.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -2338,12 +1798,6 @@
                         {
                             "tileCoordX": 9.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 9.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2397,18 +1851,6 @@
                         },
                         {
                             "tileCoordX": 10.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
                             "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -2440,12 +1882,6 @@
                         {
                             "tileCoordX": 10.0,
                             "tileCoordY": 14.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
-                            "tileCoordY": 15.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2493,19 +1929,7 @@
                         },
                         {
                             "tileCoordX": 10.0,
-                            "tileCoordY": 23.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
                             "tileCoordY": 24.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
-                            "tileCoordY": 25.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2523,37 +1947,13 @@
                         },
                         {
                             "tileCoordX": 10.0,
-                            "tileCoordY": 28.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
                             "tileCoordY": 29.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 10.0,
-                            "tileCoordY": 30.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
                             "tileCoordY": 31.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
-                            "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 10.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2595,12 +1995,6 @@
                         },
                         {
                             "tileCoordX": 11.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -2608,18 +2002,6 @@
                         {
                             "tileCoordX": 11.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2637,19 +2019,7 @@
                         },
                         {
                             "tileCoordX": 11.0,
-                            "tileCoordY": 12.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
                             "tileCoordY": 13.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
-                            "tileCoordY": 14.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2752,18 +2122,6 @@
                         {
                             "tileCoordX": 11.0,
                             "tileCoordY": 31.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
-                            "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 11.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -2829,19 +2187,7 @@
                         },
                         {
                             "tileCoordX": 12.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 12.0,
                             "tileCoordY": 10.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 12.0,
-                            "tileCoordY": 11.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3015,37 +2361,13 @@
                         },
                         {
                             "tileCoordX": 13.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 13.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 13.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 13.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 13.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 13.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3165,12 +2487,6 @@
                         },
                         {
                             "tileCoordX": 13.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 13.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -3226,12 +2542,6 @@
                         {
                             "tileCoordX": 14.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 14.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3363,12 +2673,6 @@
                         },
                         {
                             "tileCoordX": 14.0,
-                            "tileCoordY": 34.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 14.0,
                             "tileCoordY": 35.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -3399,37 +2703,7 @@
                         },
                         {
                             "tileCoordX": 15.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 15.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 15.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 15.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 15.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 15.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3555,12 +2829,6 @@
                         },
                         {
                             "tileCoordX": 16.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 16.0,
                             "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -3621,12 +2889,6 @@
                         },
                         {
                             "tileCoordX": 16.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 16.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -3663,37 +2925,13 @@
                         },
                         {
                             "tileCoordX": 17.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 17.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 17.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 17.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 17.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 17.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3741,12 +2979,6 @@
                         },
                         {
                             "tileCoordX": 17.0,
-                            "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 17.0,
                             "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -3778,12 +3010,6 @@
                         {
                             "tileCoordX": 18.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 18.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3879,37 +3105,13 @@
                         },
                         {
                             "tileCoordX": 19.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 19.0,
                             "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 19.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 19.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 19.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 19.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -3940,12 +3142,6 @@
                         {
                             "tileCoordX": 19.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 19.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4000,12 +3196,6 @@
                         {
                             "tileCoordX": 20.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 20.0,
-                            "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4149,12 +3339,6 @@
                         },
                         {
                             "tileCoordX": 20.0,
-                            "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 20.0,
                             "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4179,18 +3363,6 @@
                         },
                         {
                             "tileCoordX": 21.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 21.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 21.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4204,12 +3376,6 @@
                         {
                             "tileCoordX": 21.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 21.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4329,12 +3495,6 @@
                         },
                         {
                             "tileCoordX": 21.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 21.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4383,12 +3543,6 @@
                         },
                         {
                             "tileCoordX": 22.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 22.0,
                             "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4396,12 +3550,6 @@
                         {
                             "tileCoordX": 22.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 22.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4479,12 +3627,6 @@
                         },
                         {
                             "tileCoordX": 22.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 22.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4503,31 +3645,7 @@
                         },
                         {
                             "tileCoordX": 23.0,
-                            "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 23.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 23.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 23.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 23.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4635,25 +3753,7 @@
                         },
                         {
                             "tileCoordX": 24.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 24.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 24.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 24.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4684,12 +3784,6 @@
                         {
                             "tileCoordX": 24.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 24.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4732,12 +3826,6 @@
                         {
                             "tileCoordX": 25.0,
                             "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 25.0,
-                            "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4815,12 +3903,6 @@
                         },
                         {
                             "tileCoordX": 25.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 25.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -4845,31 +3927,13 @@
                         },
                         {
                             "tileCoordX": 26.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 26.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
                         {
                             "tileCoordX": 26.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 26.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 26.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -4954,12 +4018,6 @@
                         {
                             "tileCoordX": 27.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 27.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5091,12 +4149,6 @@
                         },
                         {
                             "tileCoordX": 27.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 27.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5139,12 +4191,6 @@
                         },
                         {
                             "tileCoordX": 28.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 28.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5158,12 +4204,6 @@
                         {
                             "tileCoordX": 28.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 28.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5295,12 +4335,6 @@
                         },
                         {
                             "tileCoordX": 28.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 28.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5320,12 +4354,6 @@
                         {
                             "tileCoordX": 29.0,
                             "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 29.0,
-                            "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5463,12 +4491,6 @@
                         },
                         {
                             "tileCoordX": 29.0,
-                            "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 29.0,
                             "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5511,12 +4533,6 @@
                         },
                         {
                             "tileCoordX": 30.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 30.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5530,12 +4546,6 @@
                         {
                             "tileCoordX": 30.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 30.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5584,12 +4594,6 @@
                         {
                             "tileCoordX": 30.0,
                             "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 30.0,
-                            "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5727,12 +4731,6 @@
                         },
                         {
                             "tileCoordX": 32.0,
-                            "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 32.0,
                             "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5746,12 +4744,6 @@
                         {
                             "tileCoordX": 32.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 32.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5782,12 +4774,6 @@
                         {
                             "tileCoordX": 32.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 32.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5830,12 +4816,6 @@
                         {
                             "tileCoordX": 33.0,
                             "tileCoordY": 5.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 33.0,
-                            "tileCoordY": 6.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -5913,12 +4893,6 @@
                         },
                         {
                             "tileCoordX": 33.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 33.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -5962,12 +4936,6 @@
                         {
                             "tileCoordX": 34.0,
                             "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 34.0,
-                            "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6069,12 +5037,6 @@
                         },
                         {
                             "tileCoordX": 35.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 35.0,
                             "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -6106,12 +5068,6 @@
                         {
                             "tileCoordX": 35.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 35.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6160,12 +5116,6 @@
                         {
                             "tileCoordX": 36.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 36.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6237,12 +5187,6 @@
                         },
                         {
                             "tileCoordX": 36.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 36.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -6285,12 +5229,6 @@
                         },
                         {
                             "tileCoordX": 37.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 37.0,
                             "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -6322,12 +5260,6 @@
                         {
                             "tileCoordX": 37.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 37.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6513,19 +5445,7 @@
                         },
                         {
                             "tileCoordX": 39.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 39.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 39.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6639,12 +5559,6 @@
                         },
                         {
                             "tileCoordX": 39.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 39.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -6676,12 +5590,6 @@
                         {
                             "tileCoordX": 40.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 40.0,
-                            "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6796,12 +5704,6 @@
                         {
                             "tileCoordX": 40.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 40.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -6850,12 +5752,6 @@
                         {
                             "tileCoordX": 41.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 41.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7041,12 +5937,6 @@
                         },
                         {
                             "tileCoordX": 42.0,
-                            "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 42.0,
                             "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -7137,12 +6027,6 @@
                         },
                         {
                             "tileCoordX": 42.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 42.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -7174,12 +6058,6 @@
                         {
                             "tileCoordX": 43.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 43.0,
-                            "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7234,12 +6112,6 @@
                         {
                             "tileCoordX": 43.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 43.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7425,12 +6297,6 @@
                         },
                         {
                             "tileCoordX": 45.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 45.0,
                             "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -7462,12 +6328,6 @@
                         {
                             "tileCoordX": 45.0,
                             "tileCoordY": 32.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 45.0,
-                            "tileCoordY": 33.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7521,19 +6381,7 @@
                         },
                         {
                             "tileCoordX": 46.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 46.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 46.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7606,12 +6454,6 @@
                         {
                             "tileCoordX": 46.0,
                             "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 46.0,
-                            "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7833,19 +6675,7 @@
                         },
                         {
                             "tileCoordX": 48.0,
-                            "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 48.0,
                             "tileCoordY": 8.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 48.0,
-                            "tileCoordY": 9.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -7966,12 +6796,6 @@
                         {
                             "tileCoordX": 48.0,
                             "tileCoordY": 33.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 48.0,
-                            "tileCoordY": 34.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -8217,12 +7041,6 @@
                         },
                         {
                             "tileCoordX": 50.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 50.0,
                             "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -8301,12 +7119,6 @@
                         },
                         {
                             "tileCoordX": 50.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 50.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -8332,12 +7144,6 @@
                         {
                             "tileCoordX": 51.0,
                             "tileCoordY": 6.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 51.0,
-                            "tileCoordY": 7.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -8457,12 +7263,6 @@
                         },
                         {
                             "tileCoordX": 52.0,
-                            "tileCoordY": 9.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 52.0,
                             "tileCoordY": 10.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -8511,18 +7311,6 @@
                         },
                         {
                             "tileCoordX": 52.0,
-                            "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 52.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 52.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -8554,12 +7342,6 @@
                         {
                             "tileCoordX": 53.0,
                             "tileCoordY": 7.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 53.0,
-                            "tileCoordY": 8.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -8913,19 +7695,7 @@
                         },
                         {
                             "tileCoordX": 55.0,
-                            "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 55.0,
                             "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 55.0,
-                            "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -9309,12 +8079,6 @@
                         },
                         {
                             "tileCoordX": 57.0,
-                            "tileCoordY": 37.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 57.0,
                             "tileCoordY": 38.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -9405,12 +8169,6 @@
                         },
                         {
                             "tileCoordX": 58.0,
-                            "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 58.0,
                             "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -9519,12 +8277,6 @@
                         },
                         {
                             "tileCoordX": 59.0,
-                            "tileCoordY": 36.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 59.0,
                             "tileCoordY": 37.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
@@ -9616,12 +8368,6 @@
                         {
                             "tileCoordX": 60.0,
                             "tileCoordY": 34.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 60.0,
-                            "tileCoordY": 35.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -9730,12 +8476,6 @@
                         {
                             "tileCoordX": 61.0,
                             "tileCoordY": 35.0,
-                            "tileSetIndex": 15,
-                            "tileSetName": "GroundTiles"
-                        },
-                        {
-                            "tileCoordX": 61.0,
-                            "tileCoordY": 36.0,
                             "tileSetIndex": 15,
                             "tileSetName": "GroundTiles"
                         },
@@ -18820,7 +17560,7 @@
             "name": "TileMap",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": 0.0,
+            "spawnLocationX": -0.6666717529296875,
             "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
@@ -18943,7 +17683,7 @@
                     "_isCollapsed": false,
                     "id": 15,
                     "path": "../assets\\images\\colors\\rock.png",
-                    "pivotPoint": "Center",
+                    "pivotPoint": "PivotCenter",
                     "renderOrder": 0,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
@@ -19024,7 +17764,7 @@
                     "_isCollapsed": true,
                     "id": 85,
                     "path": "../assets\\images\\sprites\\owl\\idle.png",
-                    "pivotPoint": "Center",
+                    "pivotPoint": "PivotCenter",
                     "renderOrder": 10,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
@@ -19152,7 +17892,7 @@
                     "_isCollapsed": false,
                     "id": 91,
                     "path": "../assets\\images\\sprites\\player\\blob.png",
-                    "pivotPoint": "Center",
+                    "pivotPoint": "PivotCenter",
                     "renderOrder": 27,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,

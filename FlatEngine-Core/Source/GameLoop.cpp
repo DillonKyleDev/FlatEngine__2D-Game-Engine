@@ -49,7 +49,6 @@ namespace FlatEngine
 
 	void GameLoop::Start()
 	{
-		// Handle Game Time
 		m_time = 0.0f;
 		m_activeTime = m_time - m_pausedTime;
 		m_b_paused = false;
@@ -86,8 +85,7 @@ namespace FlatEngine
 	}
 
 	void GameLoop::Pause()
-	{
-		// If the timer is running and isn't already paused
+	{		
 		if (m_b_started && !m_b_paused)
 		{
 			m_b_paused = true;
@@ -96,13 +94,12 @@ namespace FlatEngine
 	}
 
 	void GameLoop::Unpause()
-	{
-		// If the timer is running and paused
+	{		
 		if (m_b_started && m_b_paused)
 		{
 			m_b_paused = false;
 			ResetCurrentTime();
-			m_pausedTime = m_time - m_activeTime;
+			m_pausedTime = m_time - m_activeTime;			
 		}
 	}
 
@@ -283,7 +280,9 @@ namespace FlatEngine
 		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedScene()->GetRigidBodies())
 		{
 			if (rigidBody.second.IsActive())
+			{
 				rigidBody.second.CalculatePhysics();
+			}
 		}
 		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "CalculatePhysics: ");
@@ -393,18 +392,6 @@ namespace FlatEngine
 	bool GameLoop::IsPaused()
 	{
 		return m_b_paused && m_b_started;
-	}
-
-	float GameLoop::GetAverageFps()
-	{
-		if (TimeEllapsedInSec() != 0)
-		{
-			return (float)m_framesCounted / (float)m_activeTime;
-		}
-		else
-		{
-			return 200;
-		}
 	}
 
 	long GameLoop::GetFramesCounted()

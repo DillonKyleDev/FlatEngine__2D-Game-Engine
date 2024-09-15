@@ -80,8 +80,7 @@ namespace FlatGui
 				}
 
 				if (ImGui::MenuItem("Load Scene...", "Ctrl+L"))
-				{
-					// Load the scene
+				{					
 					std::string scenePath = FL::OpenLoadFileExplorer();
 					if (scenePath != "")
 					{
@@ -370,7 +369,7 @@ namespace FlatGui
 				{
 					if (ImGui::BeginMenu("Scene View Icon Transparency"))
 					{					
-						FL::RenderSliderInt("##SceneViewIconTransparency", iconTransparency, 1, 0, 255, 300);
+						FL::RenderSliderInt("##SceneViewIconTransparency", FG_iconTransparency, 1, 0, 255, 300);
 						ImGui::EndMenu();
 					}
 					ImGui::EndMenu();

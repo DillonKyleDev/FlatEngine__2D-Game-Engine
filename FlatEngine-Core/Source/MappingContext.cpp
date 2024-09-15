@@ -11,28 +11,9 @@ namespace FlatEngine {
 
 	MappingContext::MappingContext()
 	{
-		m_name = "";
-		m_keyBindings = std::map<std::string, std::string>();
-
-		for (std::pair<long, std::string> inputKeycode : F_MappedKeyboardCodes)
-		{
-			m_keyBindings.emplace(inputKeycode.second, "");
-		}
-		for (std::pair<long, std::string> inputKeycode : F_MappedXInputButtonCodes)
-		{
-			m_keyBindings.emplace(inputKeycode.second, "");
-		}
-		for (std::pair<long, std::string> inputKeycode : F_MappedXInputDPadCodes)
-		{
-			m_keyBindings.emplace(inputKeycode.second, "");
-		}
-		for (std::pair<long, std::string> inputKeycode : F_MappedXInputAnalogCodes)
-		{
-			m_keyBindings.emplace(inputKeycode.second, "");
-		}
-
-		m_inputActionBindings = std::map<std::string, SDL_Event>();
-		m_actionFiredBools = std::map<std::string, bool>();
+		m_name = "";		
+		m_inputsByBinding = std::map<std::string, std::shared_ptr<InputMapping>>();
+		m_inputsByAction = std::map<std::string, std::shared_ptr<InputMapping>>();
 	}
 
 	MappingContext::~MappingContext()
@@ -44,40 +25,18 @@ namespace FlatEngine {
 		json jsonData = {
 			{ "name", m_name }
 		};
-		
-		// Keyboard
-		for (std::pair<long, std::string> keyboardCode : F_MappedKeyboardCodes)
-		{
-			std::string keyString = keyboardCode.second;
-			std::string inputAction = m_keyBindings.at(keyString);
-			jsonData.emplace(keyString, inputAction);
-		}
-		// XInput Buttons
-		for (std::pair<long, std::string> xInputButtonCode : F_MappedXInputButtonCodes)
-		{
-			std::string keyString = xInputButtonCode.second;
-			std::string inputAction = m_keyBindings.at(keyString);
-			jsonData.emplace(keyString, inputAction);
-		}
-		// XInput DPad
-		for (std::pair<long, std::string> xInputDPadCode : F_MappedXInputDPadCodes)
-		{
-			std::string keyString = xInputDPadCode.second;
-			std::string inputAction = m_keyBindings.at(keyString);
 
-			jsonData.emplace(keyString, inputAction);
-		}
-		// XInput Analogs
-		for (std::pair<long, std::string> xInputAnalogCode : F_MappedXInputAnalogCodes)
+		for (std::pair<std::string, std::shared_ptr<InputMapping>> inputMapping : m_inputsByAction)
 		{
-			std::string keyString = xInputAnalogCode.second;
-			std::string inputAction = m_keyBindings.at(keyString);
-
-			jsonData.emplace(keyString, inputAction);
+			std::string keyString = inputMapping.second->keyCode;
+			std::string inputAction = inputMapping.first;
+			if (inputAction != "")
+			{
+				jsonData.emplace(keyString, inputAction);
+			}
 		}
 
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
+		std::string data = jsonData.dump();		
 		return data;
 	}
 
@@ -103,170 +62,101 @@ namespace FlatEngine {
 
 	void MappingContext::AddKeyBinding(std::string keyBinding, std::string actionName)
 	{
-		if (m_keyBindings.count(keyBinding) == 0)
+		if (actionName != "")
 		{
-			m_keyBindings.emplace(keyBinding, actionName);
-		}
-		else
-		{
-			m_keyBindings.at(keyBinding) = actionName;
-		}
+			std::shared_ptr<InputMapping> inputMap = std::make_shared<InputMapping>();
+			inputMap->keyCode = keyBinding;
+			inputMap->actionName = actionName;
 
-		if (m_actionFiredBools.count(actionName) == 0)
-		{
-			m_actionFiredBools.emplace(actionName, false);
-		}
-		else
-		{
-			m_actionFiredBools.at(actionName) = false;
-		}
-	}
+			std::pair<std::string, std::shared_ptr<InputMapping>> bindingPair = { keyBinding, inputMap };
+			std::pair<std::string, std::shared_ptr<InputMapping>> actionPair = { actionName, inputMap };
 
-	void MappingContext::RemoveKeyBinding(std::string keyBinding)
-	{
-		m_keyBindings.at(keyBinding) = "";
-	}
-
-	void MappingContext::SetKeyBindings(std::map<std::string, std::string> newKeyBindings)
-	{
-		m_keyBindings = newKeyBindings;
-		CreateInputActionBindings();
-	}
-
-	void MappingContext::SetKeyBinding(std::string keyBinding, std::string actionName)
-	{
-		// Erase old Input Action binding
-		if (m_inputActionBindings.count(m_keyBindings.at(keyBinding)) > 0)
-		{
-			m_inputActionBindings.erase(m_keyBindings.at(keyBinding));
-		}
-
-		m_keyBindings.at(keyBinding) = actionName;
-	}
-
-	std::string MappingContext::GetKeyBinding(std::string keyBinding)
-	{
-		if (m_keyBindings.count(keyBinding) > 0)
-		{
-			return m_keyBindings.at(keyBinding);
-		}
-		else
-		{
-			return "null";
-		}
-	}
-
-	void MappingContext::CreateInputActionBindings()
-	{
-		SDL_Event emptyEvent = SDL_Event();
-		
-		for (std::map<std::string, std::string>::iterator iterator = m_keyBindings.begin(); iterator != m_keyBindings.end(); iterator++)
-		{
-			if (iterator->second != "")
+			// Add by binding
+			if (m_inputsByBinding.count(keyBinding) > 0)
 			{
-				m_inputActionBindings.emplace(iterator->second, emptyEvent);
-				m_actionFiredBools.emplace(iterator->second, false);
+				std::string oldActionName = m_inputsByBinding.at(keyBinding)->actionName;
+				m_inputsByBinding.at(keyBinding) = inputMap;
+
+				// erase old inputAction pair from m_inputsByAction if the action name has changed
+				if (oldActionName != actionName)
+				{
+					m_inputsByAction.erase(oldActionName);
+				}
+			}
+			else
+			{
+				m_inputsByBinding.emplace(bindingPair);
+			}
+			// Add by action
+			if (m_inputsByAction.count(actionName) > 0)
+			{
+				m_inputsByAction.at(actionName) = inputMap;
+			}
+			else
+			{
+				m_inputsByAction.emplace(actionPair);
 			}
 		}
-	}
-
-	void MappingContext::AddInputAction(std::string keyBinding, std::string actionName)
-	{		
-		if (m_keyBindings.at(keyBinding) != "")
+		else
 		{
-			m_inputActionBindings.erase(m_keyBindings.at(keyBinding));
-		}
-
-		SDL_Event emptyEvent = SDL_Event();	
-		m_keyBindings.at(keyBinding) = actionName;		
-		m_inputActionBindings.emplace(actionName, emptyEvent);
-	}
-
-	void MappingContext::OnInputEvent(std::string keyBinding, SDL_Event event)
-	{
-		std::string actionName = "null";
-
-		if (m_keyBindings.count(keyBinding) > 0)
-		{
-			actionName = m_keyBindings.at(keyBinding);
-		}
-		if (m_inputActionBindings.count(actionName) > 0)
-		{
-			m_inputActionBindings.at(actionName) = event;
-		}
-		if (actionName != "null")
-		{
-			FireEvent(keyBinding);
+			std::string oldActionName = m_inputsByBinding.at(keyBinding)->actionName;
+			m_inputsByBinding.erase(keyBinding);
+			m_inputsByAction.erase(oldActionName);
 		}
 	}
 
-	void MappingContext::FireEvent(std::string keyBinding)
+	bool MappingContext::FireEvent(std::string keyBinding, SDL_Event event)
 	{
 		std::string actionName = "";
 
-		if (m_keyBindings.count(keyBinding) > 0)
+		if (m_inputsByBinding.count(keyBinding) > 0)
 		{
-			actionName = m_keyBindings.at(keyBinding);
+			m_inputsByBinding.at(keyBinding)->event = event;
+			m_inputsByBinding.at(keyBinding)->b_fired = true;
+			return true;
 		}
-		if (m_actionFiredBools.count(actionName) > 0)
-		{
-			m_actionFiredBools.at(actionName) = true;
-		}
+
+		return false;
 	}
 
 	void MappingContext::UnFireEvent(std::string keyBinding)
 	{
 		std::string actionName = "null";
 
-		if (m_keyBindings.count(keyBinding) > 0)
-		{
-			actionName = m_keyBindings.at(keyBinding);
-		}
-		if (actionName != "null")
-		{
-			m_actionFiredBools.at(actionName) = false;
+		if (m_inputsByBinding.count(keyBinding) > 0)
+		{			
+			m_inputsByBinding.at(keyBinding)->b_fired = false;
 		}
 	}
 
 	bool MappingContext::Fired(std::string actionName)
 	{
-		if (m_actionFiredBools.count(actionName) > 0)
+		if (m_inputsByAction.count(actionName))
 		{
-			return m_actionFiredBools.at(actionName);
+			return m_inputsByAction.at(actionName)->b_fired;
 		}
-		else 
+		else
 		{
 			return false;
 		}
 	}
 
-	void MappingContext::ClearInputActionEvents()
-	{
-		SDL_Event emptyEvent = SDL_Event();
-		
-		for (std::map<std::string, SDL_Event>::iterator iterator = m_inputActionBindings.begin(); iterator != m_inputActionBindings.end(); iterator++)
-		{
-			iterator->second = emptyEvent;
-		}
-	}
-
 	void MappingContext::ClearInputActionEvent(std::string keyBinding)
 	{
-		SDL_Event emptyEvent = SDL_Event();
-
-		if (m_keyBindings.count(keyBinding) > 0 && m_inputActionBindings.count(m_keyBindings.at(keyBinding)) > 0)
+		if (m_inputsByBinding.count(keyBinding) > 0)
 		{
-			m_inputActionBindings.at(m_keyBindings.at(keyBinding)) = emptyEvent;
+			m_inputsByBinding.at(keyBinding)->event = SDL_Event();
 		}
 	}
 
+	// Get more detailed event information
 	SDL_Event MappingContext::GetInputAction(std::string actionName)
 	{
 		SDL_Event inputEvent = SDL_Event();
 
-		if (m_inputActionBindings.count(actionName) > 0)
+		if (m_inputsByAction.count(actionName) > 0)
 		{
-			inputEvent = m_inputActionBindings.at(actionName);
+			inputEvent = m_inputsByAction.at(actionName)->event;
 		}
 
 		return inputEvent;
@@ -277,20 +167,8 @@ namespace FlatEngine {
 		return GetInputAction(actionName).type != 0;
 	}
 
-	SDL_Event MappingContext::GetKeyBoundEvent(std::string keyBinding)
+	std::map<std::string, std::shared_ptr<InputMapping>> MappingContext::GetInputActions()
 	{
-		SDL_Event inputEvent = SDL_Event();
-
-		if (m_keyBindings.count(keyBinding) > 0 && m_inputActionBindings.count(m_keyBindings.at(keyBinding)) > 0)
-		{
-			inputEvent = m_inputActionBindings.at(m_keyBindings.at(keyBinding));
-		}
-
-		return inputEvent;
-	}
-
-	std::map<std::string, std::string> MappingContext::GetKeyBindings()
-	{
-		return m_keyBindings;
+		return m_inputsByAction;
 	}
 }

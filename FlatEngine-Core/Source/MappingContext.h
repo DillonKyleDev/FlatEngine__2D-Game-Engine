@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 #include "SDL.h"
+#include <memory>
+#include <vector>
 
 
 namespace FlatEngine 
@@ -241,14 +243,20 @@ namespace FlatEngine
 	};
 	const std::map<long, std::string> F_MappedXInputAnalogCodes =
 	{
-		{ LeftXAxis,"XInput_LeftJoystickX" },
-		{ LeftYAxis,"XInput_LeftJoystickY" },
-		{ RightXAxis,"XInput_RightJoystickX" },
-		{ RightYAxis,"XInput_RightJoystickY" },
-		{ LT,"XInput_LT" },
+		{ LeftXAxis, "XInput_LeftJoystickX" },
+		{ LeftYAxis, "XInput_LeftJoystickY" },
+		{ RightXAxis, "XInput_RightJoystickX" },
+		{ RightYAxis, "XInput_RightJoystickY" },
+		{ LT, "XInput_LT" },
 		{ RT, "XInput_RT" }
 	};
 
+	struct InputMapping {
+		SDL_Event event = SDL_Event();
+		std::string keyCode = "";
+		std::string actionName = "";
+		bool b_fired = false;
+	};
 
 	class MappingContext
 	{
@@ -261,29 +269,20 @@ namespace FlatEngine
 		std::string GetName();
 		void SetPath(std::string path);
 		std::string GetPath();
-		void AddKeyBinding(std::string keyBinding, std::string actionName);
-		void RemoveKeyBinding(std::string keyBinding);
-		void SetKeyBindings(std::map<std::string, std::string> keyBindings);
-		void SetKeyBinding(std::string keyBinding, std::string actionName);
-		std::string GetKeyBinding(std::string keyBinding);
-		void CreateInputActionBindings();
-		void AddInputAction(std::string keyBinding, std::string actionName);
-		void OnInputEvent(std::string keyBinding, SDL_Event event);
-		void FireEvent(std::string actionName);
+		void AddKeyBinding(std::string keyBinding, std::string actionName);		
+		bool FireEvent(std::string actionName, SDL_Event event);
 		void UnFireEvent(std::string actionName);
 		bool Fired(std::string actionName);
-		void ClearInputActionEvents();
 		void ClearInputActionEvent(std::string keyBinding);
 		SDL_Event GetInputAction(std::string actionName);
-		bool ActionPressed(std::string actionName);
-		SDL_Event GetKeyBoundEvent(std::string keyBinding);
-		std::map<std::string, std::string> GetKeyBindings();
+		bool ActionPressed(std::string actionName);		
+		std::map<std::string, std::shared_ptr<InputMapping>> GetInputActions();
 
 	private:
 		std::string m_name;
 		std::string m_path;
-		std::map<std::string, std::string> m_keyBindings;
-		std::map<std::string, SDL_Event> m_inputActionBindings;
-		std::map<std::string, bool> m_actionFiredBools;
+		std::map<std::string, std::shared_ptr<InputMapping>> m_inputsByBinding;
+		// Eventually: map<string, vector<shared_ptr<InputMapping>> so that the same action can be bound to more than one input, ie. Controller/Keyboard can both be used for the same actions
+		std::map<std::string, std::shared_ptr<InputMapping>> m_inputsByAction;
 	};
 }

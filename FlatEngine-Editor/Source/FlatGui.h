@@ -79,13 +79,12 @@ using TileSet = FL::TileSet;
 
 namespace FlatGui
 {
-	extern bool _editingValue;
-	extern ImDrawList* drawList;
+	extern ImDrawList* FG_DrawList;
 
 	// Project Management 
 	extern void LoadProject(std::string path);
 	extern void SaveProject(Project project, std::string path);
-	extern void SaveCurrentProject();
+	extern void SaveCurrentProject();	
 
 	// File Explorer
 	extern std::map<std::string, std::shared_ptr<Texture>> FG_visibleThumbnails;
@@ -100,9 +99,9 @@ namespace FlatGui
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> FG_FocusedAnimation;
 	extern GameObject *objectForFocusedAnimation;
 	extern std::shared_ptr<FL::Animation::S_Property> FG_SelectedKeyFrameToEdit;
-	extern long previewAnimationStartTime;
-	extern long previewAnimationTime;
-	extern bool _playPreviewAnimation;
+	extern long FG_previewAnimationStartTime;
+	extern long FG_previewAnimationTime;
+	extern bool FG_b_playPreviewAnimation;
 	extern void SetFocusedAnimation(std::shared_ptr<FL::Animation::S_AnimationProperties> animation);
 	extern std::shared_ptr<FL::Animation::S_AnimationProperties> GetFocusedAnimation();
 	// Global Animation Event Functions
@@ -126,7 +125,7 @@ namespace FlatGui
 	extern std::vector<std::pair<Vector2, Vector2>> FG_collisionAreasBuffer;
 
 	// Settings
-	extern int iconTransparency;
+	extern int FG_iconTransparency;
 	extern bool FG_b_clearBufferEveryFrame;
 
 	// Hierarchy
@@ -151,9 +150,6 @@ namespace FlatGui
 	extern bool FG_b_showSettings;
 
 	extern void Init();
-
-	// Profiler
-	extern bool _logProfilerOutput;
 
 	// Gui Rendering
 	extern void SetupProfilerProcesses();

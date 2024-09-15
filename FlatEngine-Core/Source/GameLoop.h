@@ -27,7 +27,6 @@ namespace FlatEngine
 		long TimeEllapsedInMs();
 		bool IsStarted();
 		bool IsPaused();
-		float GetAverageFps();
 		void AddFrame();
 		float GetDeltaTime();
 		void SetFrameSkipped(bool _skipped);
@@ -52,7 +51,7 @@ namespace FlatEngine
 		float m_pausedTime;
 		float m_activeTime;
 		float m_deltaTime;
-		float m_accumulator;
+		float m_accumulator;		
 		Uint32 m_currentTime;
 
 	private:

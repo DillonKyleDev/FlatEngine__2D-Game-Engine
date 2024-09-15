@@ -21,7 +21,7 @@ end
 function Start() 
      LogString("IntroText : Start() called on "..this_object:GetName()) 
      animation = this_object:GetAnimation()
-     mappingContext = GetMappingContext("MC_CharacterContext")
+     mappingContext = GetMappingContext("MC_Player")
 end 
 --called once per gameloop frame 
 function Update() 

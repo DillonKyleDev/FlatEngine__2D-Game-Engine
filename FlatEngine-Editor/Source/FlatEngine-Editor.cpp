@@ -89,40 +89,37 @@ public:
 	}
 	void Run()
 	{
-		bool& _hasQuit = HasQuit();
-		while (!_hasQuit)
+		bool& b_hasQuit = HasQuit();
+		while (!b_hasQuit)
 		{
 			RunOnceAfterInitialization();
 
 			static Uint32 frameStart = FL::GetEngineTime();
-			Uint32 renderStartTime = 0;
-			renderStartTime = FL::GetEngineTime(); // Profiler
-			_hasQuit = FL::F_b_closeProgram;
+			//Uint32 renderStartTime = 0;
+			//renderStartTime = FL::GetEngineTime(); // Profiler
+			b_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
-			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
+			//FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
 			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
 				// Profiler
-				Uint32 updateLoopStart = 0;
-				static Uint32 updateLoopEnd = 0;
-
-				// Save time before Update starts
-				updateLoopStart = FL::GetEngineTime();
-				// Get hang time of everything after Update Loop for profiler
-				Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
-				FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
-				updateLoopEnd = updateLoopStart;
+				//Uint32 updateLoopStart = 0;
+				//static Uint32 updateLoopEnd = 0;				
+				//updateLoopStart = FL::GetEngineTime();
+				//Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
+				//FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
+				//updateLoopEnd = updateLoopStart;
 
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
-				// Only add accumulated time if the GameLoop is not paused, else add a fixed small, amount of time
+				// Only add accumulated time if the GameLoop is not paused or if a frame was skipped while paused, then add a small fixed amount of time
 				if (!GameLoopPaused())
 				{
 					A_GameLoop->m_accumulator += frameTime;
 				}
-				else
+				else if (A_GameLoop->IsFrameSkipped())
 				{
 					A_GameLoop->m_accumulator += A_GameLoop->m_deltaTime;
 				}
@@ -133,7 +130,7 @@ public:
 
 					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
 					{
-						FL::HandleEvents(_hasQuit);
+						FL::HandleEvents(b_hasQuit);
 						A_GameLoop->Update();
 
 						A_GameLoop->m_time += A_GameLoop->m_deltaTime;
@@ -150,17 +147,17 @@ public:
 					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
 				}
 
-				Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
-				FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);				
-				updateLoopEnd = FL::GetEngineTime();
+				//Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
+				//FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);				
+				//updateLoopEnd = FL::GetEngineTime();
 			}
 			else
 			{
-				FL::HandleEvents(_hasQuit);
+				FL::HandleEvents(b_hasQuit);
 			}
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
-			if (!A_GameLoop->IsStarted())
+			if (!A_GameLoop->IsStarted() || A_GameLoop->IsPaused())
 			{
 				frameStart = FL::GetEngineTime();
 			}
@@ -170,17 +167,17 @@ public:
 	}
 	void RunOnceAfterInitialization()
 	{
-		static bool b_initialized = false;
+		//static bool b_initialized = false;
 		static bool b_hasRunOnce = false;
 
-		if (b_initialized && !b_hasRunOnce)
+		if (!b_hasRunOnce)
 		{
 			FlatGui::RunOnceAfterInitialization();
 
 			b_hasRunOnce = true;
 		}
 
-		b_initialized = true;
+		//b_initialized = true;
 	}
 	void BeginRender()
 	{
@@ -196,7 +193,9 @@ public:
 		{
 			FlatGui::RenderProjectHub(b_projectSelected, m_startupProject);
 			if (b_projectSelected)
+			{
 				m_recreateWindow = true;
+			}
 		}
 		else
 		{
@@ -219,8 +218,8 @@ public:
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_recreateWindow)
 		{
-			FL::F_Window->SetScreenDimensions(1500, 850);
-			//FL::F_Window->SetScreenDimensions(1900, 1000);
+			//FL::F_Window->SetScreenDimensions(1500, 850);
+			FL::F_Window->SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors
@@ -270,9 +269,13 @@ public:
 	void PauseGameLoop()
 	{
 		if (A_GameLoop->IsPaused())
+		{
 			A_GameLoop->Unpause();
+		}
 		else
+		{
 			A_GameLoop->Pause();
+		}
 	};
 	void StopGameLoop()
 	{
@@ -281,9 +284,13 @@ public:
 	void PauseGame()
 	{
 		if (A_GameLoop->IsGamePaused())
+		{
 			A_GameLoop->UnpauseGame();
+		}
 		else
+		{
 			A_GameLoop->PauseGame();
+		}
 	}
 
 	bool m_recreateWindow;

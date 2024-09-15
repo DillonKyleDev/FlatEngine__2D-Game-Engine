@@ -1,13 +1,13 @@
 #include "FlatEngine.h"
 #include "FlatGui.h"
 #include "Project.h"
+#include "Text.h"
 
 
 namespace FL = FlatEngine;
 
 namespace FlatGui
 {
-
 	std::vector<std::string> RetrieveProjectPaths()
 	{
 		std::vector<std::string> projectPaths = std::vector<std::string>();
@@ -49,16 +49,15 @@ namespace FlatGui
 			ImGui::Image(FL::GetTexture("flatEngineLogoGradient"), Vector2(canvas_sz.x, headerHeight + 10));
 			ImGui::SetCursorScreenPos(Vector2(canvas_p0.x + 10, canvas_p0.y + 5));
 
-			// Eventually make this a Text image
 			ImGui::Image(FL::GetTexture("selectProject"), dimensions);
 
 			ImGui::Separator();
 			ImGui::Separator();
 
-			FL::MoveScreenCursor(0, 5);
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 50, ImGui::GetCursorPosY()));
+			FL::MoveScreenCursor(0, 5);			
+			FL::MoveScreenCursor(50, 0);
 			ImGui::Text("Choose a project:");
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 5));
+			FL::MoveScreenCursor(0, 5);
 
 			Vector2 startProjects = ImGui::GetCursorScreenPos();
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(50, 0));

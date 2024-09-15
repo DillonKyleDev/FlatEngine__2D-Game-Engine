@@ -30,3 +30,11 @@ end
 function OnButtonLeftClick()
      LoadScene("Level1")
 end
+
+function OnButtonMouseOver()
+     -- LogString("Mouse over")
+ end
+ 
+ function OnButtonRightClick()
+     -- LogString("Right Click!")
+ end

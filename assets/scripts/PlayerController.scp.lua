@@ -20,7 +20,7 @@ end
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
      --LogString("Start() called on "..this_object:GetName()) 
-     mappingContext = GetMappingContext("MC_CharacterContext")
+     mappingContext = GetMappingContext("MC_Player")
      characterController = this_object:GetCharacterController()
      rigidBody = this_object:GetRigidBody()
      i_maxJumps = 3
@@ -30,8 +30,7 @@ function Start()
 end 
 
 --called once per gameloop frame 
-function Update() 
-    mappingContext = GetMappingContext("MC_CharacterContext")
+function Update()     
     if mappingContext:Fired("IA_Jump") then
         pendingXForces = rigidBody:GetPendingForces():x()
         rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0));   
@@ -45,8 +44,11 @@ function Update()
     moveDirection = Vector2:new(0,0)
 
     if mappingContext:ActionPressed("IA_MoveRight") then
+        LogString("Fired")
         b_movingRight = true
-        moveDirection = Vector2:new(1,0)        
+        moveDirection = Vector2:new(1,0) 
+    else 
+        LogString("Not")       
     end
     if mappingContext:ActionPressed("IA_MoveLeft") then
         b_movingLeft = true
@@ -80,16 +82,4 @@ end
 
 function OnBoxCollisionLeave(collidedWith)
     --LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
-end
-
-function OnButtonMouseOver()
-    LogString("Mouse over")
-end
-
-function OnButtonLeftClick()
-    LogString("Left Click!")
-end
-
-function OnButtonRightClick()
-    LogString("Right Click!")
 end

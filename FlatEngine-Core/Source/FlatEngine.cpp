@@ -70,6 +70,7 @@ namespace FlatEngine
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
 	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
+	std::vector<std::string> F_KeyBindingsAvailable = std::vector<std::string>();
 	std::string F_selectedMappingContextName = "";
 	TTF_Font* F_fontCinzel;
 	std::shared_ptr<PrefabManager> F_PrefabManager = std::make_shared<PrefabManager>();
@@ -169,7 +170,7 @@ namespace FlatEngine
 			renderEnd = Vector2(scalingXEnd, scalingYEnd);
 
 			// FOR DEBUGGING - draw white box around where the texture should be
-			//FlatEngine::DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), FlatEngine::F_whiteColor, 2, draw_list);
+			//DrawRectangle(renderStart, renderEnd, Vector2(0,0), Vector2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), F_whiteColor, 2, draw_list);
 		}
 		else
 		{
@@ -179,7 +180,7 @@ namespace FlatEngine
 
 		if (rotation != 0)
 		{
-			float cosA = cosf(rotation * 2.0f * (float)M_PI / 360.0f); // Convert degrees into radians
+			float cosA = cosf(rotation * 2.0f * (float)M_PI / 360.0f);
 			float sinA = sinf(rotation * 2.0f * (float)M_PI / 360.0f);
 
 			Vector2 topLeft = ImRotate(Vector2(-(renderEnd.x - renderStart.x) / 2, -(renderEnd.y - renderStart.y) / 2), cosA, sinA);
@@ -788,20 +789,13 @@ namespace FlatEngine
 		// Opening file in append mode
 		fileObject.open(path, std::ios::app);
 
-		json mappings = json::array();
 
-		if (context.GetKeyBindings().size() > 0)
-		{
-			std::string data = context.GetData();
-			mappings.push_back(json::parse(data));
-		}
-		else
-		{
-			mappings.push_back("NULL");
-		}
+		json mappings = json::array();
+		std::string data = context.GetData();
+		mappings.push_back(json::parse(data));
+
 
 		json newFileObject = json::object({ {"Mapping Context", mappings } });
-
 		fileObject << newFileObject.dump(4).c_str() << std::endl;
 		fileObject.close();
 
@@ -811,6 +805,25 @@ namespace FlatEngine
 	void InitializeMappingContexts()
 	{
 		F_MappingContexts.clear();
+
+		// Get available input keycodes from MappingContext.h
+		for (std::pair<long, std::string> inputKeycode : F_MappedKeyboardCodes)
+		{
+			F_KeyBindingsAvailable.push_back(inputKeycode.second);
+		}
+		for (std::pair<long, std::string> inputKeycode : F_MappedXInputButtonCodes)
+		{
+			F_KeyBindingsAvailable.push_back(inputKeycode.second);
+		}
+		for (std::pair<long, std::string> inputKeycode : F_MappedXInputDPadCodes)
+		{
+			F_KeyBindingsAvailable.push_back(inputKeycode.second);
+		}
+		for (std::pair<long, std::string> inputKeycode : F_MappedXInputAnalogCodes)
+		{
+			F_KeyBindingsAvailable.push_back(inputKeycode.second);
+		}
+
 
 		std::vector<std::string> mappingContextFiles = std::vector<std::string>();
 		mappingContextFiles = FindAllFilesWithExtension(GetDir("projectDir"), ".mpc");
@@ -824,37 +837,22 @@ namespace FlatEngine
 			{
 				auto mappings = contextData["Mapping Context"][0];
 				newContext.SetName(CheckJsonString(mappings, "name", "MappingContext"));
+				newContext.SetPath(path);
 
 				if (newContext.GetName() == "")
 				{
 					newContext.SetName(GetFilenameFromPath(path));
 				}
 
-				newContext.SetPath(path);
-
-				for (std::pair<long, std::string> keyboardCode : F_MappedKeyboardCodes)
+				std::string errorMessage = "";
+				for (std::string possibleBinding : F_KeyBindingsAvailable)
 				{
-					std::string keyString = keyboardCode.second;					
-					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
+					std::string inputAction = CheckJsonString(mappings, possibleBinding, newContext.GetName(), errorMessage);
+					if (inputAction != "")
+					{
+						newContext.AddKeyBinding(possibleBinding, inputAction);
+					}				
 				}
-				for (std::pair<long, std::string> xInputButtonCode : F_MappedXInputButtonCodes)
-				{
-					std::string keyString = xInputButtonCode.second;
-					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
-				}
-				for (std::pair<long, std::string> xInputDPadCode : F_MappedXInputButtonCodes)
-				{
-					std::string keyString = xInputDPadCode.second;
-					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
-				}
-				for (std::pair<long, std::string> xInputAnalogCode : F_MappedXInputButtonCodes)
-				{
-					std::string keyString = xInputAnalogCode.second;
-					newContext.AddKeyBinding(keyString, CheckJsonString(mappings, keyString, newContext.GetName()));
-				}
-
-				// After all keys are set, create their Input Action bindings
-				newContext.CreateInputActionBindings();
 
 				F_MappingContexts.push_back(newContext);
 			}
@@ -929,9 +927,12 @@ namespace FlatEngine
 
 			HandleEngineEvents(event);
 
-			for (MappingContext &context : F_MappingContexts)
+			if (GameLoopStarted())
 			{
-				HandleContextEvents(context, event, firedKeys);
+				for (MappingContext& context : F_MappingContexts)
+				{
+					HandleContextEvents(context, event, firedKeys);
+				}
 			}
 		}
 	}
@@ -990,9 +991,8 @@ namespace FlatEngine
 			if (F_MappedKeyboardCodes.count(event.key.keysym.sym))
 			{
 				std::string key = F_MappedKeyboardCodes.at(event.key.keysym.sym);
-				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
+				if (context.FireEvent(key, event))
 				{
-					context.OnInputEvent(key, event);
 					firedKeys.push_back(key);
 				}
 			}
@@ -1004,10 +1004,7 @@ namespace FlatEngine
 			if (F_MappedKeyboardCodes.count(event.key.keysym.sym))
 			{
 				std::string key = F_MappedKeyboardCodes.at(event.key.keysym.sym);
-				if (context.GetKeyBinding(key) != "")
-				{
-					context.ClearInputActionEvent(key);
-				}
+				context.ClearInputActionEvent(key);
 			}
 		}
 		// Axis (analog inputs)
@@ -1018,18 +1015,12 @@ namespace FlatEngine
 			//{			
 			if (F_MappedXInputAnalogCodes.count(event.jaxis.axis))
 			{
-				std::string key = F_MappedXInputAnalogCodes.at(event.jaxis.axis);
-				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
-				{					
-					if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
-					{
-						event.jaxis.value = 0;
-					}
-					if (context.GetKeyBinding(key) != "")
-					{
-						context.OnInputEvent(key, event);
-					}
-				}
+				std::string key = F_MappedXInputAnalogCodes.at(event.jaxis.axis);			
+				if (event.jaxis.value > -F_JOYSTICK_DEAD_ZONE && event.jaxis.value < F_JOYSTICK_DEAD_ZONE)
+				{
+					event.jaxis.value = 0;
+				}					
+				context.FireEvent(key, event);
 			}
 		}
 		// Buttons Down
@@ -1038,9 +1029,8 @@ namespace FlatEngine
 			if (F_MappedXInputButtonCodes.count(event.jbutton.button))
 			{
 				std::string key = F_MappedXInputButtonCodes.at(event.jbutton.button);
-				if (context.GetKeyBinding(key) != "" && context.GetKeyBoundEvent(key).type == 0)
-				{
-					context.OnInputEvent(key, event);
+				if (context.FireEvent(key, event))
+				{					
 					firedKeys.push_back(key);
 				}
 			}
@@ -1051,10 +1041,7 @@ namespace FlatEngine
 			if (F_MappedXInputButtonCodes.count(event.jbutton.button))
 			{
 				std::string key = F_MappedXInputButtonCodes.at(event.jbutton.button);
-				if (context.GetKeyBinding(key) != "")
-				{
-					context.ClearInputActionEvent("XInput_A");
-				}
+				context.ClearInputActionEvent(key);
 			}
 		}
 		// Hats
@@ -1063,10 +1050,7 @@ namespace FlatEngine
 			if (F_MappedXInputDPadCodes.count(event.jhat.value))
 			{
 				std::string key = F_MappedXInputDPadCodes.at(event.jhat.value);
-				if (context.GetKeyBinding(key) != "")
-				{
-					LogString(key);
-				}
+				LogString(key);
 			}
 		}
 	}
@@ -1813,11 +1797,6 @@ namespace FlatEngine
 		return F_Application->GetGameLoop()->IsPaused();
 	}
 
-	float GetAverageFps()
-	{
-		return F_Application->GetGameLoop()->GetAverageFps();
-	}
-
 	long GetFramesCounted()
 	{
 		return F_Application->GetGameLoop()->GetFramesCounted();
@@ -2258,7 +2237,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("JsonContains() - \"" + loadedName + "\" does not contain a value for \"" + checkFor + "\".");
+			LogError("JsonContains() - \"" + loadedName + "\" does not contain a value for \"" + checkFor + "\".");
 		}
 		return contains;
 	}
@@ -2272,7 +2251,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("CheckJsonFloat() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+			LogError("CheckJsonFloat() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		float value = -1;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonFloat() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
 		}
 		return value;
 	}
@@ -2286,7 +2279,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("CheckJsonInt() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+			LogError("CheckJsonInt() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	int CheckJsonInt(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		int value = -1;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonInt() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
 		}
 		return value;
 	}
@@ -2300,7 +2307,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+			LogError("CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	long CheckJsonLong(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		long value = -1;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
 		}
 		return value;
 	}
@@ -2314,7 +2335,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("CheckJsonBool() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+			LogError("CheckJsonBool() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		bool value = false;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonBool() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
 		}
 		return value;
 	}
@@ -2328,7 +2363,21 @@ namespace FlatEngine
 		}
 		else
 		{
-			FlatEngine::LogError("CheckJsonString() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+			LogError("CheckJsonString() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		std::string value = "";
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonString() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
 		}
 		return value;
 	}

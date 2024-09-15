@@ -38,15 +38,15 @@ using TileMap = FL::TileMap;
 
 namespace FlatGui 
 {
-	ImDrawList* drawList = nullptr;
+	ImDrawList* FG_DrawList = nullptr;
 
 	std::shared_ptr<Animation::S_AnimationProperties> FG_FocusedAnimation = nullptr;
 	std::string FG_FocusedAnimationName = "";
 	GameObject *objectForFocusedAnimation = nullptr;
 	std::shared_ptr<Animation::S_Property> FG_SelectedKeyFrameToEdit = nullptr;
-	long previewAnimationStartTime = 0;
-	long previewAnimationTime = 0;
-	bool _playPreviewAnimation = false;
+	long FG_previewAnimationStartTime = 0;
+	long FG_previewAnimationTime = 0;
+	bool FG_b_playPreviewAnimation = false;
 	long FG_FocusedGameObjectID = -1;
 	std::shared_ptr<GameObject> playerObject = nullptr;
 
@@ -58,7 +58,7 @@ namespace FlatGui
 	int framesDrawn = 0;
 
 	// Settings
-	int iconTransparency = 50;
+	int FG_iconTransparency = 50;
 
 	// Hierarchy	
 	std::map<long, bool> FG_leafExpandedTracker = std::map<long, bool>();
@@ -542,8 +542,8 @@ namespace FlatGui
 
 	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset, bool b_showAxis)
 	{
-		drawList = ImGui::GetWindowDrawList();
-		drawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+		FG_DrawList = ImGui::GetWindowDrawList();
+		FG_DrawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
 
 		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
 		// one of those step locations. We get the total grid steps that will render given the current viewport
@@ -560,12 +560,12 @@ namespace FlatGui
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
 		{
-			FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, drawList);
+			FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 
 		// Draw our x and y axis blue and green lines
@@ -613,35 +613,35 @@ namespace FlatGui
 
 
 			// Draw the axis and center point
-			FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, drawList);
-			FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, drawList);
-			FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, drawList);
+			FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, FG_DrawList);
+			FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, FG_DrawList);
 		}
 	}
 
 	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 
 		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
-		drawSplitter->Split(draw_list, FL::F_maxSpriteLayers + 5);
+		drawSplitter->Split(drawList, FL::F_maxSpriteLayers + 5);
 		
 		for (GameObject object : objects)
 		{
 			if (object.IsActive())
 			{
-				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, draw_list, drawSplitter);
+				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, drawList, drawSplitter);
 			}
 		}
 
-		drawSplitter->Merge(draw_list);
+		drawSplitter->Merge(drawList);
 		delete drawSplitter;
 		drawSplitter = nullptr;
 	}
 
-	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter)
+	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
 	{
 		Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
@@ -697,14 +697,14 @@ namespace FlatGui
 				
 				if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 				{
-					drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					drawSplitter->SetCurrentChannel(drawList, renderOrder);
 				}
 				else
 				{
-					drawSplitter->SetCurrentChannel(draw_list, 0);
+					drawSplitter->SetCurrentChannel(drawList, 0);
 				}
 				
-				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, step, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, step, drawList, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			if (text != nullptr)
@@ -732,14 +732,14 @@ namespace FlatGui
 					
 					if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
 					{
-						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+						drawSplitter->SetCurrentChannel(drawList, renderOrder);
 					}
 					else
 					{
-						drawSplitter->SetCurrentChannel(draw_list, 0);
+						drawSplitter->SetCurrentChannel(drawList, 0);
 					}
 									
-					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 			
@@ -760,20 +760,20 @@ namespace FlatGui
 
 				float cameraTextureWidth = (float)FL::GetTextureObject("camera")->GetWidth() / 4;
 				float cameraTextureHeight = (float)FL::GetTextureObject("camera")->GetHeight() / 4;
-				bool _scalesWithZoom = false;
+				bool b_scalesWithZoom = false;
 				Vector2 cameraTextureOffset = { cameraTextureWidth / 2, cameraTextureHeight / 2 };
 				Vector2 cameraTextureScale = { 1, 1 };
 				Vector2 offsetPosition = Vector2(position.x - cameraTextureWidth / 2, position.y + cameraTextureHeight / 2);
 
 				// Draw channel 2 for Lower UI
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FL::GetColor("cameraBox"), 2.0f, draw_list);
-				FL::DrawLine(topLeftCorner, bottomRightCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
-				FL::DrawLine(topRightCorner, bottomLeftCorner, FL::GetColor("cameraBox"), 2.0f, draw_list);
+				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FL::GetColor("cameraBox"), 2.0f, drawList);
+				FL::DrawLine(topLeftCorner, bottomRightCorner, FL::GetColor("cameraBox"), 2.0f, drawList);
+				FL::DrawLine(topRightCorner, bottomLeftCorner, FL::GetColor("cameraBox"), 2.0f, drawList);
 				
-				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, _scalesWithZoom, step, draw_list, 0, IM_COL32(255, 255, 255, iconTransparency));
+				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, b_scalesWithZoom, step, drawList, 0, IM_COL32(255, 255, 255, FG_iconTransparency));
 			}
 
 			if (canvas != nullptr)
@@ -787,9 +787,9 @@ namespace FlatGui
 				Vector2 renderStart = Vector2(renderXStart, renderYStart);
 				Vector2 renderEnd = Vector2(renderXStart + ((activeWidth * transformScale.x) * FG_sceneViewGridStep.x), renderYStart + ((activeHeight * transformScale.y) * FG_sceneViewGridStep.x));
 
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
-				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 2.0f, draw_list);
+				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 2.0f, drawList);
 			}
 
 			if (button != nullptr)
@@ -823,7 +823,7 @@ namespace FlatGui
 				Vector2 topRight = { activeRight, activeTop };
 				Vector2 bottomLeft = { activeLeft, activeBottom };
 
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
 				if (rotation != 0)
 				{
@@ -843,14 +843,14 @@ namespace FlatGui
 						Vector2(center.x + bottomLeft.x, center.y + bottomLeft.y),
 					};
 
-					FL::DrawLine(pos[0], pos[1], FL::GetColor(buttonStateColor), 2.0f, draw_list);
-					FL::DrawLine(pos[1], pos[2], FL::GetColor(buttonStateColor), 2.0f, draw_list);
-					FL::DrawLine(pos[2], pos[3], FL::GetColor(buttonStateColor), 2.0f, draw_list);
-					FL::DrawLine(pos[3], pos[0], FL::GetColor(buttonStateColor), 2.0f, draw_list);
+					FL::DrawLine(pos[0], pos[1], FL::GetColor(buttonStateColor), 2.0f, drawList);
+					FL::DrawLine(pos[1], pos[2], FL::GetColor(buttonStateColor), 2.0f, drawList);
+					FL::DrawLine(pos[2], pos[3], FL::GetColor(buttonStateColor), 2.0f, drawList);
+					FL::DrawLine(pos[3], pos[0], FL::GetColor(buttonStateColor), 2.0f, drawList);
 				}
 				else
 				{
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor(buttonStateColor), 1.0f, draw_list);
+					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor(buttonStateColor), 1.0f, drawList);
 				}
 			}
 
@@ -875,21 +875,21 @@ namespace FlatGui
 					boxCollider->GetCorners()[3],
 				};
 
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
 				if (transform->GetRotation() == 0)
 				{
 					if (b_isActive && !b_isColliding)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, drawList);
 					}
 					else if (!b_isActive)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, drawList);
 					}
 					else if (b_isColliding)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, drawList);
 					}
 				}
 				else
@@ -909,29 +909,29 @@ namespace FlatGui
 					};
 
 					// Draw Normals
-					FL::DrawLine(center, normals[0], FL::GetColor("colliderInactive"), 2.0f, draw_list);
-					FL::DrawLine(center, normals[1], FL::GetColor("colliderInactive"), 2.0f, draw_list);
-					FL::DrawLine(center, normals[2], FL::GetColor("colliderInactive"), 2.0f, draw_list);
-					FL::DrawLine(center, normals[3], FL::GetColor("colliderInactive"), 2.0f, draw_list);
+					FL::DrawLine(center, normals[0], FL::GetColor("colliderInactive"), 2.0f, drawList);
+					FL::DrawLine(center, normals[1], FL::GetColor("colliderInactive"), 2.0f, drawList);
+					FL::DrawLine(center, normals[2], FL::GetColor("colliderInactive"), 2.0f, drawList);
+					FL::DrawLine(center, normals[3], FL::GetColor("colliderInactive"), 2.0f, drawList);
 
 					if (b_isActive && !b_isColliding)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderActive"), 1.0f, drawList);
 					}
 					else if (!b_isActive)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderInactive"), 1.0f, drawList);
 					}
 					else if (b_isColliding)
 					{
-						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, draw_list);
+						FL::DrawRectangleFromLines(corners, FL::GetColor("colliderColliding"), 1.0f, drawList);
 					}
 				}
 
 				// Draw activeRadius circle
 				if (b_showActiveRadius)
 				{
-					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), drawList);
 				}
 			}
 
@@ -946,20 +946,20 @@ namespace FlatGui
 				bool b_showActiveRadius = circleCollider->GetShowActiveRadius();
 				Vector2 center = circleCollider->GetCenterCoord();
 
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 				circleCollider->UpdateActiveEdges(FG_sceneViewGridStep.x, FG_sceneViewCenter);
 
 				if (b_isActive && !b_isColliding)
 				{
-					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderActive"), drawList);
 				}
 				else if (!b_isActive)
 				{
-					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderInactive"), draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderInactive"), drawList);
 				}
 				else if (b_isColliding)
 				{
-					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), draw_list);
+					FL::DrawCircle(center, activeRadius, FL::GetColor("colliderColliding"), drawList);
 				}
 			}
 
@@ -1019,18 +1019,18 @@ namespace FlatGui
 					}
 				}
 
-				drawSplitter->SetCurrentChannel(draw_list, 0);
+				drawSplitter->SetCurrentChannel(drawList, 0);
 
 				// TileMap background color and border
 				if (focusedObjectID == self.GetID())
 				{
 					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgFocused"));
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, draw_list);
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, drawList);
 				}
 				else
 				{
 					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgUnfocused"));
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, draw_list);
+					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, drawList);
 				}
 
 				if (focusedObjectID == self.GetID())
@@ -1067,7 +1067,7 @@ namespace FlatGui
 								(FL::F_CursorMode == FL::F_CURSOR_MODE::TILE_MOVE))
 							{
 								// Set Draw Channel to 2 for lower level UI
-								drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 2);
+								drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
 								AddSceneViewMouseControls(tileButtonID, tileStart, tileSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("tileMapGridLines"));
 								// _RectOnly flag enables the buttons to work when dragging the mouse over them in a clicked state // https://github.com/ocornut/imgui/commit/564ff2dfd379d40568879a5bc89e8cfea7e51d2f
@@ -1332,51 +1332,47 @@ namespace FlatGui
 				}
 
 				// Draw TileMap indice Textures
-				for (int w = 0; w < width; w++)
+				for (std::pair<int, std::map<int, FL::Tile>> xPair : tiles)
 				{
-					if (tiles.count((int)w) > 0)
+					float x = xPair.first;
+
+					for (std::pair<int, FL::Tile> yPair : xPair.second)
 					{
-						for (int h = 0; h < height; h++)
+						float y = yPair.first;
+						FL::Tile tile = yPair.second;
+						TileSet* usedTileSet = nullptr;
+						std::string tileSetName = tile.tileSetName;
+
+						if (tileSetName != "")
 						{
-							if (tiles.at((int)w).count((int)h) > 0)
-							{
-								FL::Tile tile = tiles.at((int)w).at((int)h);
-
-								// Get TileSet for this tiles texture data
-								TileSet* usedTileSet = nullptr;
-								std::string tileSetName = tile.tileSetName;
-								if (tileSetName != "")
-								{
-									usedTileSet = FL::GetTileSet(tileSetName);
-								}
-
-								// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
-								float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
-								float gridHeightsInATile = tileHeight / FL::F_pixelsPerGridSpace;
-
-								SDL_Texture* texture = tile.tileSetTexture;
-								float textureWidth = (float)usedTileSet->GetTexture()->GetWidth();
-								float textureHeight = (float)usedTileSet->GetTexture()->GetHeight();
-								Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
-								Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
-								float gridXPosition = (position.x - (gridWidth / 2)) + gridWidthsInATile * w;
-								float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * h;
-								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
-
-
-								// Change the draw channel for the scene object
-								if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
-								{
-									drawSplitter->SetCurrentChannel(draw_list, renderOrder);
-								}
-								else
-								{
-									drawSplitter->SetCurrentChannel(draw_list, 0);
-								}
-
-								FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
-							}
+							usedTileSet = FL::GetTileSet(tileSetName);
 						}
+
+						// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
+						float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
+						float gridHeightsInATile = tileHeight / FL::F_pixelsPerGridSpace;
+
+						SDL_Texture* texture = tile.tileSetTexture;
+						float textureWidth = (float)usedTileSet->GetTexture()->GetWidth();
+						float textureHeight = (float)usedTileSet->GetTexture()->GetHeight();
+						Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
+						Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
+						float gridXPosition = (position.x - (gridWidth / 2)) + gridWidthsInATile * x;
+						float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * y;
+						Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+
+
+						// Change the draw channel for the scene object
+						if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+						{
+							drawSplitter->SetCurrentChannel(drawList, renderOrder);
+						}
+						else
+						{
+							drawSplitter->SetCurrentChannel(drawList, 0);
+						}
+
+						FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, drawList, 0, FL::GetColor32("white"), uvStart, uvEnd);
 					}
 				}
 			}
@@ -1464,8 +1460,8 @@ namespace FlatGui
 
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
-				drawSplitter->SetCurrentChannel(draw_list, FL::F_maxSpriteLayers + 3);
-				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, b_scalesWithZoom, step, draw_list);
+				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 3);
+				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, b_scalesWithZoom, step, drawList);
 			}
 		}
 	}

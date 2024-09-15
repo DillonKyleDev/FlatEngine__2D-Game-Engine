@@ -96,11 +96,13 @@ namespace FlatEngine
 	extern AssetManager F_AssetManager;
 	extern std::vector<std::string> F_selectedFiles;
 	extern std::vector<MappingContext> F_MappingContexts;
-	extern std::shared_ptr<PrefabManager> F_PrefabManager;
 	extern std::string F_selectedMappingContextName;
+	extern std::shared_ptr<PrefabManager> F_PrefabManager;
 	extern std::vector<TileSet> F_TileSets;
 	extern std::string F_selectedTileSetToEdit;
 	extern std::pair<std::string, int> F_tileSetAndIndexOnBrush;
+
+	extern std::vector<std::string> F_KeyBindingsAvailable;
 
 	extern bool F_b_loadNewScene;
 	extern std::string F_sceneToBeLoaded;
@@ -244,7 +246,7 @@ namespace FlatEngine
 	extern long GetNextGameObjectID();
 
 	// SDL
-	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 position, Vector2 centerPoint, float textureWidth, float textureHeight, Vector2 pivotPoint, Vector2 scale, bool _scalesWithZoom, float zoomMultiplier, ImDrawList* draw_list, float rotation = 0, ImU32 addColor = (((ImU32)(255) << 24) | ((ImU32)(255) << 16) | ((ImU32)(255) << 8) | ((ImU32)(255) << 0)), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1,1));
+	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offset, Vector2 scale, bool b_scalesWithZoom, float zoomMultiplier, ImDrawList* drawList, float rotation = 0, ImU32 addColor = GetColor32("white"), Vector2 uvStart = Vector2(0, 0), Vector2 uvEnd = Vector2(1, 1));
 
 	// Engine
 	extern bool Init(int windowWidth, int windowHeight, DirectoryType dirType);
@@ -292,7 +294,6 @@ namespace FlatEngine
 	extern long GetEllapsedGameTimeInMs();
 	extern bool GameLoopStarted();
 	extern bool GameLoopPaused();
-	extern float GetAverageFps();
 	extern long GetFramesCounted();
 	extern float GetDeltaTime();
 
@@ -320,12 +321,17 @@ namespace FlatEngine
 	// Json parsing
 	extern json CreateJsonFromObject(GameObject gameObject);
 	extern GameObject *CreateObjectFromJson(json objectJson);
-	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName);
-	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName);
-	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName);
-	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName);
-	extern bool JsonContains(json obj, std::string checkFor, std::string loadedName);
 	extern std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName);
+	extern std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName);
+	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName);
+	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName);
+	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName);
+	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern bool JsonContains(json obj, std::string checkFor, std::string loadedName);
 
 	// ImGui Wrappers
 	extern void BeginImGuiRender();

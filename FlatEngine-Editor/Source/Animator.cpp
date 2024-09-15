@@ -456,9 +456,9 @@ namespace FlatGui
 						{
 							if (animation != nullptr)
 							{
-								previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
-								previewAnimationTime = FL::GetEllapsedGameTimeInMs();
-								animation->Play(previewAnimationStartTime);
+								FG_previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
+								FG_previewAnimationTime = FL::GetEllapsedGameTimeInMs();
+								animation->Play(FG_previewAnimationStartTime);
 								b_isPreviewing = true;
 							}
 						}
@@ -471,7 +471,7 @@ namespace FlatGui
 						{
 							animation->Stop();
 							b_isPreviewing = false;
-							previewAnimationTime = 0;
+							FG_previewAnimationTime = 0;
 						}
 						ImGui::EndDisabled();			
 						ImGui::SameLine(0, 5);
@@ -943,15 +943,15 @@ namespace FlatGui
 				focusedObjectVector.push_back(*objectForFocusedAnimation);
 	
 				// Animate the focused object
-				if (_playPreviewAnimation)
+				if (FG_b_playPreviewAnimation)
 				{				
 					Animation* animation = objectForFocusedAnimation->GetAnimation();
 
 					// If animation component is playing, play the animation
 					if (animation != nullptr && animation->IsPlaying())
 					{
-						previewAnimationTime = FL::GetEngineTime();
-						animation->PlayAnimation(previewAnimationTime);
+						FG_previewAnimationTime = FL::GetEngineTime();
+						animation->PlayAnimation(FG_previewAnimationTime);
 					}
 				}
 

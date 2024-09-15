@@ -254,8 +254,11 @@ namespace FlatEngine
 								// Get TileSet for this tiles texture data
 								TileSet* usedTileSet = nullptr;
 								std::string tileSetName = tile.tileSetName;
+
 								if (tileSetName != "")
+								{
 									usedTileSet = FL::GetTileSet(tileSetName);
+								}
 
 								SDL_Texture* texture = tile.tileSetTexture;
 								int textureWidth = usedTileSet->GetTexture()->GetWidth();
@@ -267,9 +270,13 @@ namespace FlatEngine
 								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
 
 								if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
+								{
 									drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+								}
 								else
+								{
 									drawSplitter->SetCurrentChannel(draw_list, 0);
+								}
 
 								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
 							}

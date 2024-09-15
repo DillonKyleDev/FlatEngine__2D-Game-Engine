@@ -572,7 +572,7 @@ namespace FlatGui
 
 			bool b_alreadyClicked = false;
 
-			for (std::vector<std::string>::iterator clickedFile = FL::F_selectedFiles.begin(); clickedFile != FL::F_selectedFiles.end();)
+			for (std::vector<std::string>::iterator clickedFile = FL::F_selectedFiles.begin(); clickedFile != FL::F_selectedFiles.end(); clickedFile++)
 			{
 				if (*clickedFile == fs_filepath.string())
 				{
@@ -580,7 +580,6 @@ namespace FlatGui
 					b_alreadyClicked = true;
 					break;
 				}
-				clickedFile++;
 			}
 
 			if (!b_alreadyClicked)
@@ -588,6 +587,7 @@ namespace FlatGui
 				FL::F_selectedFiles.push_back(fs_filepath.string());
 			}
 		}
+
 		if (std::filesystem::is_directory(fs_filepath.string()) && b_doubleClicked)
 		{
 			// save last location

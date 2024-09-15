@@ -414,12 +414,12 @@ namespace FlatGui
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		FL::PushWindowStyles();
-		ImGui::Begin("Game View", 0, 0);
+		ImGui::Begin("Game View", 0, 16 | 8);
 		// {
 
 			Vector2 gameViewSize = ImGui::GetWindowSize();
 			Vector2 gameViewPos = ImGui::GetWindowPos();
-			ImGui::SetCursorScreenPos(Vector2(gameViewPos.x + 3, gameViewPos.y + gameViewSize.y - 54));
+			ImGui::SetCursorScreenPos(Vector2(gameViewPos.x + 3, gameViewPos.y + gameViewSize.y - 80));
 			RenderGameTimeStats();
 
 		// }
