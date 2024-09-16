@@ -404,7 +404,7 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 27,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -417,7 +417,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 28,
                     "path": "",
                     "pivotPoint": "PivotCenter",
@@ -434,7 +434,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "activeHeight": 3.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
@@ -446,7 +446,7 @@
                 {
                     "_follow": false,
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "_isPrimaryCamera": false,
                     "followSmoothing": 0.8999999761581421,
                     "following": -1,
@@ -463,7 +463,7 @@
                 {
                     "_blocksLayers": true,
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "height": 10.0,
                     "id": 31,
                     "layerNumber": 0,
@@ -472,14 +472,14 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 32,
                     "path": "",
                     "type": "Animation"
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 33,
                     "soundData": [
                         {
@@ -492,7 +492,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
                     "fontSize": 40,
                     "id": 34,
@@ -509,14 +509,14 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "attachedScript": "MoveObject",
                     "id": 35,
                     "type": "Script"
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "airControl": 0.20000000298023224,
                     "id": 36,
                     "maxAcceleration": 0.5,
@@ -525,7 +525,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "_isComposite": false,
                     "_isContinuous": true,
                     "_isSolid": true,
@@ -542,7 +542,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "_isComposite": false,
                     "_isContinuous": true,
                     "_isSolid": true,
@@ -557,7 +557,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "collisionAreas": [],
                     "height": 5,
                     "id": 40,

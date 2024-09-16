@@ -20,17 +20,17 @@
             "_vsyncEnabled": true,
             "buildPath": "",
             "currentFileDirectory": "../assets\\scenes",
-            "focusedGameObjectID": 1,
+            "focusedGameObjectID": 3,
             "loadedAnimationPath": "",
             "loadedScenePath": "../assets\\scenes\\Level1.scn",
             "path": "../assets/projects//Sandbox.prj",
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "",
-            "sceneViewGridStepX": 48.20002746582031,
-            "sceneViewGridStepY": 48.20002746582031,
-            "sceneViewScrollingX": 322.0,
-            "sceneViewScrollingY": 498.0
+            "sceneViewGridStepX": 12.200027465820313,
+            "sceneViewGridStepY": 12.200027465820313,
+            "sceneViewScrollingX": 1438.0,
+            "sceneViewScrollingY": 247.0
         }
     ]
 }

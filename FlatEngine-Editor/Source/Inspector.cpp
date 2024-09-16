@@ -206,17 +206,16 @@ namespace FlatGui
 				}
 				ImGui::SameLine();
 
+				static Vector2 mousePos = ImGui::GetCursorScreenPos();
 
-				static bool b_tagListOpen = false;
 				TagList &tagList = focusedObject->GetTagList();			
 				if (FL::RenderButton("Tags"))
 				{
-					b_tagListOpen = !b_tagListOpen;
+					mousePos = Vector2(ImGui::GetIO().MousePos.x - 200, ImGui::GetIO().MousePos.y);
+					ImGui::SetNextWindowPos(mousePos);
 				}
 
-
 				FL::PushMenuStyles();
-				ImGui::SetNextWindowPos(Vector2(ImGui::GetCursorScreenPos().x - 20, ImGui::GetCursorScreenPos().y));
 				if (ImGui::BeginPopupContextItem("TagsPopup", ImGuiPopupFlags_MouseButtonLeft))
 				{
 					std::string labels[2] = { "Tag", "Ignore" };

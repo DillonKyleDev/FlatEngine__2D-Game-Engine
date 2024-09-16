@@ -1335,44 +1335,51 @@ namespace FlatGui
 				for (std::pair<int, std::map<int, FL::Tile>> xPair : tiles)
 				{
 					float x = xPair.first;
-
-					for (std::pair<int, FL::Tile> yPair : xPair.second)
+					
+					if (x <= width)
 					{
-						float y = yPair.first;
-						FL::Tile tile = yPair.second;
-						TileSet* usedTileSet = nullptr;
-						std::string tileSetName = tile.tileSetName;
-
-						if (tileSetName != "")
+						for (std::pair<int, FL::Tile> yPair : xPair.second)
 						{
-							usedTileSet = FL::GetTileSet(tileSetName);
+							float y = yPair.first;
+
+							if (y <= height)
+							{
+								FL::Tile tile = yPair.second;
+								TileSet* usedTileSet = nullptr;
+								std::string tileSetName = tile.tileSetName;
+
+								if (tileSetName != "")
+								{
+									usedTileSet = FL::GetTileSet(tileSetName);
+								}
+
+								// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
+								float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
+								float gridHeightsInATile = tileHeight / FL::F_pixelsPerGridSpace;
+
+								SDL_Texture* texture = tile.tileSetTexture;
+								float textureWidth = (float)usedTileSet->GetTexture()->GetWidth();
+								float textureHeight = (float)usedTileSet->GetTexture()->GetHeight();
+								Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
+								Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
+								float gridXPosition = (position.x - (gridWidth / 2)) + gridWidthsInATile * x;
+								float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * y;
+								Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
+
+
+								// Change the draw channel for the scene object
+								if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
+								{
+									drawSplitter->SetCurrentChannel(drawList, renderOrder);
+								}
+								else
+								{
+									drawSplitter->SetCurrentChannel(drawList, 0);
+								}
+
+								FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, drawList, 0, FL::GetColor32("white"), uvStart, uvEnd);
+							}
 						}
-
-						// this many grid spaces fit into a single tiles width (if tileWidth is 16: 16 / 8 is 2 grid spaces in for a single tile 
-						float gridWidthsInATile = tileWidth / FL::F_pixelsPerGridSpace;
-						float gridHeightsInATile = tileHeight / FL::F_pixelsPerGridSpace;
-
-						SDL_Texture* texture = tile.tileSetTexture;
-						float textureWidth = (float)usedTileSet->GetTexture()->GetWidth();
-						float textureHeight = (float)usedTileSet->GetTexture()->GetHeight();
-						Vector2 uvStart = Vector2(tile.uvStart.x / textureWidth, tile.uvStart.y / textureHeight);
-						Vector2 uvEnd = Vector2(tile.uvEnd.x / textureWidth, tile.uvEnd.y / textureHeight);
-						float gridXPosition = (position.x - (gridWidth / 2)) + gridWidthsInATile * x;
-						float gridYPosition = (position.y + (gridHeight / 2)) - gridHeightsInATile * y;
-						Vector2 tilePosition = Vector2(gridXPosition, gridYPosition);
-
-
-						// Change the draw channel for the scene object
-						if (renderOrder <= FL::F_maxSpriteLayers && renderOrder >= 0)
-						{
-							drawSplitter->SetCurrentChannel(drawList, renderOrder);
-						}
-						else
-						{
-							drawSplitter->SetCurrentChannel(drawList, 0);
-						}
-
-						FL::AddImageToDrawList(texture, tilePosition, FG_sceneViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, FG_sceneViewGridStep.x, drawList, 0, FL::GetColor32("white"), uvStart, uvEnd);
 					}
 				}
 			}
