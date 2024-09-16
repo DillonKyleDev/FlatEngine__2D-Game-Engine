@@ -52,7 +52,6 @@ namespace FlatEngine
 	class Scene;
 	class Process;
 	class Logger;
-	class Process;
 	class SceneManager;
 	class PrefabManager;
 	class MappingContext;
@@ -64,6 +63,7 @@ namespace FlatEngine
 	class ScriptComponent;
 	class Sound;
 	class RigidBody;
+	class Script;
 	class CharacterController;	
 	class ECSManager;
 	class TileSet;
@@ -197,6 +197,7 @@ namespace FlatEngine
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
 	extern void RunLuaFuncOnAllScripts(std::string functionName);
+	extern void RunLuaFuncOnSingleScript(Script* script, std::string functionName);
 	extern void RunAwakeAndStart();	
 	extern void RetrieveLuaScriptPaths();
 	extern bool CheckLuaScriptFile(std::string filePath);

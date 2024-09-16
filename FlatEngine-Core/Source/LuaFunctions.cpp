@@ -71,9 +71,49 @@ namespace FlatEngine
 		{
 			return Instantiate(prefabName, position);
 		};
-		F_Lua["DrawLine"] = [](Vector2 startPoint, Vector2 endPoint, Vector4 color, float thickness)
+		F_Lua["SceneDrawLine"] = [](Vector2 startPoint, Vector2 endPoint, Vector4 color, float thickness)
 		{
-			DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+			PushWindowStyles();
+			ImGui::Begin("Scene View", 0, 16 | 8);
+			PopWindowStyles();
+			// {
+
+				DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
+
+			// }
+			ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
+			ImGui::End(); // Scene View
+		};
+		F_Lua["GameDrawLine"] = [](Vector2 startPoint, Vector2 endPoint, Vector4 color, float thickness)
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+				PushWindowStyles();
+				ImGui::Begin("Scene View", 0, 16 | 8);
+				PopWindowStyles();
+				// {
+
+				DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
+
+				// }
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+				ImGui::End(); // Scene View
+			};
+		F_Lua["GetTime"] = []()
+		{
+			return GetEllapsedGameTimeInMs();
+		};
+		F_Lua["Destroy"] = [](long ID)
+		{
+			DeleteGameObject(ID);
+		};
+		F_Lua["GetColor"] = [](std::string color)
+		{
+			return GetColor(color);
 		};
 	}
 
@@ -196,6 +236,7 @@ namespace FlatEngine
 			"TorquesAllowed", &RigidBody::TorquesAllowed,
 			"AddForce", &RigidBody::AddForce,
 			"AddTorque", &RigidBody::AddTorque,
+			"GetVelocity", &RigidBody::GetVelocity,
 			"SetPendingForces", &RigidBody::SetPendingForces,
 			"GetPendingForces", &RigidBody::GetPendingForces,
 			"SetTerminalVelocity", &RigidBody::SetTerminalVelocity,
@@ -254,6 +295,36 @@ namespace FlatEngine
 								LogError(err.what());
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+	void RunLuaFuncOnSingleScript(Script* script, std::string functionName)
+	{
+		if (script->IsActive() && script->GetAttachedScript() != "")
+		{
+			std::string filepath = "";
+			if (F_LuaScriptsMap.count(script->GetAttachedScript()))
+				filepath = F_LuaScriptsMap.at(script->GetAttachedScript());
+
+			if (DoesFileExist(filepath))
+			{
+				GameObject* caller = script->GetParent();
+				if (InitLuaScript(filepath, caller))
+				{
+					sol::protected_function func = F_Lua[functionName];
+					auto calledFunction = func();
+
+					if (calledFunction.valid())
+					{
+						// Great!
+					}
+					else
+					{
+						sol::error err = calledFunction;
+						LogError(err.what());
 					}
 				}
 			}

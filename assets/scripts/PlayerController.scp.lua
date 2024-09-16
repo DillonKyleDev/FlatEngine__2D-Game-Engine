@@ -19,60 +19,79 @@ end
 
 -- called at the start of the gameloop after Awake() (or upon instantiation) 
 function Start() 
-     --LogString("Start() called on "..this_object:GetName()) 
-     mappingContext = GetMappingContext("MC_Player")
-     characterController = this_object:GetCharacterController()
-     rigidBody = this_object:GetRigidBody()
-     i_maxJumps = 3
-     i_totalJumps = 0
-     --LogInt(3, "Here is an int: ");
-     --LogString("Here is a string.");
+    --LogString("Start() called on "..this_object:GetName()) 
+    mappingContext = GetMappingContext("MC_Player")
+    characterController = this_object:GetCharacterController()
+    transform = this_object:GetTransform()
+    sprite = this_object:GetSprite()
+    rigidBody = this_object:GetRigidBody()
 end 
 
 --called once per gameloop frame 
 function Update()     
-    if mappingContext:Fired("IA_Jump") then
-        pendingXForces = rigidBody:GetPendingForces():x()
-        rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0));   
-        rigidBody:AddForce(Vector2:new(0, 1), 20);
-    end
+    handleMovement();
+    handleAttacks();
+end 
 
+function handleAttacks()
+    if mappingContext:Fired("IA_Shoot") then
+        blasterRound = Instantiate("BlasterRound", transform:GetPosition())
+        blasterRound:GetRigidBody():AddForce(Vector2:new(0,1), 10)
+    end
+end
+
+function handleMovement()
     b_hasLanded = false
     b_movingLeft = false
     b_movingRight = false
+    b_movingForward = false
+    b_movingBackward = false
 
     moveDirection = Vector2:new(0,0)
 
-    if mappingContext:ActionPressed("IA_MoveRight") then
-        LogString("Fired")
-        b_movingRight = true
-        moveDirection = Vector2:new(1,0) 
-    else 
-        LogString("Not")       
+    if mappingContext:ActionPressed("IA_MoveForward") then
+        b_movingForward = true 
+        moveDirection:_y(1)
     end
+
+    if mappingContext:ActionPressed("IA_MoveBackward") then
+        b_movingBackward = true
+        moveDirection:_y(-1)
+    end
+
+    if mappingContext:ActionPressed("IA_MoveRight") then        
+        b_movingRight = true
+        moveDirection:_x(1)    
+    end
+
     if mappingContext:ActionPressed("IA_MoveLeft") then
         b_movingLeft = true
-        moveDirection = Vector2:new(-1,0)
+        moveDirection:_x(-1)
     end
 
     if b_movingLeft and b_movingRight then
-        moveDirection = Vector2:new(0,0)
+        moveDirection = Vector2:new(0, moveDirection:y())
+    end
+    if b_movingBackward and b_movingForward then
+        moveDirection = Vector2:new(moveDirection:x(), 0)
+    end 
+
+    if b_movingLeft or b_movingRight or b_movingBackward or b_movingForward then
+        characterController:MoveToward(moveDirection)
+
     end
     
-    if b_movingLeft or b_movingRight then
-        characterController:MoveToward(moveDirection)
+    xVel = rigidBody:GetVelocity():x()
+    if xVel < 0 then
+        xVel = xVel * -1
     end
+    LogFloat(xVel, "")
 
-    if mappingContext:Fired("IA_Fire") then
-        iceShard = Instantiate("iceShard", Vector2:new(0,0))
-        iceShard:GetRigidBody():AddForce(Vector2:new(1,0), 10)
-        rigidBody:SetPendingForces(Vector2:new(pendingXForces, 0))   
-        rigidBody:AddForce(Vector2:new(0, 1), 20);
-    end
-end 
+    sprite:SetScale(Vector2:new(1 - (xVel * 4), 1))
+end
 
 function OnBoxCollision(collidedWith)
---    LogString("OnActiveCollision called!")
+    -- LogString("OnActiveCollision called!")
 end
 
 function OnBoxCollisionEnter(collidedWith)

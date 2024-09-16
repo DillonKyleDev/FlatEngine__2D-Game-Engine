@@ -160,6 +160,7 @@ namespace FlatEngine
 			{
 				Transform* parentTransform = parent->GetTransform();
 				Vector2 parentTruePosition = parentTransform->GetTruePosition();
+				//transform.SetBaseScale(parentTransform->GetTotalScale());
 				transform.SetOrigin(parentTruePosition);
 			}
 		}

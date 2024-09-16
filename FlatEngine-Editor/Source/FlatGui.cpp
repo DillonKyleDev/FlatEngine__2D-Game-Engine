@@ -663,6 +663,7 @@ namespace FlatGui
 			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
+			//Vector2 baseScale = transform->GetBaseScale();
 			
 			if (sprite != nullptr && sprite->GetTexture() != nullptr)
 			{
@@ -687,8 +688,9 @@ namespace FlatGui
 					spriteScaleFinal.y *= scale.y;
 				}
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + ((origin.x + (relativePosition.x * scale.x)) * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.x), FG_sceneViewCenter.y - ((origin.y + (relativePosition.y * scale.y)) * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.y));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.y));
 				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);											
+				
 				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);			
 				const bool b_isClicked = ImGui::IsItemClicked();
 				if (b_isClicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
@@ -722,8 +724,10 @@ namespace FlatGui
 				
 				if (textTexture->GetTexture() != nullptr)
 				{
+					//Vector2 scaledPosition = Vector2(origin.x + (relativePosition.x * baseScale.x), origin.y + (relativePosition.y * baseScale.y));
 					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y));
 					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * step * scale.x, textHeight * FL::F_spriteScaleMultiplier * step * scale.y);
+					
 					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);						
 					const bool b_isClicked = ImGui::IsItemClicked();
 					if (b_isClicked && (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE || FL::F_CursorMode == FL::F_CURSOR_MODE::SCALE || FL::F_CursorMode == FL::F_CURSOR_MODE::ROTATE))
@@ -740,7 +744,7 @@ namespace FlatGui
 						drawSplitter->SetCurrentChannel(drawList, 0);
 					}
 									
-					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, transformScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
+					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, scale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 			

@@ -27,10 +27,10 @@
             "resolutionHeight": 1080.0,
             "resolutionWidth": 1920.0,
             "sceneToLoadAtRuntime": "../assets/scenes/MainMenu.scn",
-            "sceneViewGridStepX": 18.0,
-            "sceneViewGridStepY": 18.0,
-            "sceneViewScrollingX": 434.0,
-            "sceneViewScrollingY": 182.0
+            "sceneViewGridStepX": 5.0,
+            "sceneViewGridStepY": 5.0,
+            "sceneViewScrollingX": 455.0,
+            "sceneViewScrollingY": 222.0
         }
     ]
 }

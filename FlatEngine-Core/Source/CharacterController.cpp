@@ -77,7 +77,6 @@ namespace FlatEngine
 				// If velocity exceeds negative max speed but x direction is positive
 				(velocity.x <= -m_maxSpeed && direction.x * m_maxAcceleration > 0)))
 			{
-
 				if (rigidBody != nullptr)
 				{
 					// Handles changes in direction
@@ -107,7 +106,7 @@ namespace FlatEngine
 						finalForce.x *= m_maxAcceleration * m_airControl;
 					}
 					// On the ground
-					else if (gravity != 0)
+					else
 					{
 						Vector2 groundedForce = Vector2(pendingForces.x + (direction.x * m_maxAcceleration), pendingForces.y + (direction.y * m_maxAcceleration));
 						float modifiers = 1 / m_maxAcceleration;
@@ -121,6 +120,20 @@ namespace FlatEngine
 							finalForce.x = (-m_maxSpeed - pendingForces.x) * modifiers;
 						}
 
+						if (gravity == 0)
+						{
+							if (velocity.y + groundedForce.y > m_maxSpeed) // maxSpeed = pendingForces.x + (groundedForce.x * m_maxAcceleration)
+							{
+								finalForce.y = (m_maxSpeed - pendingForces.y) * modifiers;
+							}
+							else if (velocity.y + groundedForce.y < -m_maxSpeed)
+							{
+								finalForce.y = (-m_maxSpeed - pendingForces.y) * modifiers;
+							}
+
+							finalForce.y *= m_maxAcceleration;
+						}
+
 						finalForce.x *= m_maxAcceleration;
 					}
 
@@ -129,8 +142,10 @@ namespace FlatEngine
 				}
 			}
 
-			if (direction.x == 0)
+			if (direction.x == 0 && ((gravity == 0 && direction.y == 0) || gravity != 0))
+			{
 				m_b_isMoving = false;
+			}
 		}
 	}
 

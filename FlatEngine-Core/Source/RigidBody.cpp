@@ -123,8 +123,8 @@ namespace FlatEngine
 				m_pendingForces.x += vel.x;
 			}
 		}
-
-		m_pendingForces.y += vel.y;		
+			
+		m_pendingForces.y += vel.y;
 		return m_pendingForces;
 	}
 
@@ -175,7 +175,7 @@ namespace FlatEngine
 			m_pendingTorques *= m_angularDrag;
 		}
 
-		// Get Character Controller for _isMoving
+		// Get Character Controller for b_isMoving
 		CharacterController* characterController = nullptr;
 
 		if (GetParent() != nullptr && GetParent()->HasComponent("CharacterController"))
@@ -421,15 +421,21 @@ namespace FlatEngine
 			// "Floor" Collision Forces
 			// 
 			// Check if grounded normal m_gravity
-			if (m_gravity != 0 && 
-				(collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid) || 
+			if ((collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid) || 
 				(!collider->m_b_isCollidingBottom && 
 				((collider->m_b_isCollidingBottomLeft && collider->m_b_bottomLeftCollisionStatic) || 
-				(collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionStatic))
-				&& m_gravity > 0))
-				//if ((collider->_isCollidingBottom || collider->_isCollidingBottomLeft || collider->_isCollidingBottomRight) && collider->_bottomCollisionStatic && collider->_bottomCollisionSolid && m_gravity > 0)
+				(collider->m_b_isCollidingBottomRight && collider->m_b_bottomRightCollisionStatic))))				
 			{
-				m_b_isGrounded = true;
+				if (m_gravity > 0)
+				{
+					m_b_isGrounded = true;
+				}
+				//else if (m_gravity == 0 && m_pendingForces.y < 0)
+				//{
+				//	m_pendingForces.y = 0;
+				//	newYPos = collider->m_bottomCollision + halfHeight + 0.001f;
+				//	transform->SetPosition(Vector2(position.x, newYPos));
+				//}
 			}
 			// Check if grounded inverted m_gravity
 			else if (m_gravity != 0 && collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionStatic && collider->m_b_bottomCollisionSolid && m_gravity < 0)
@@ -466,37 +472,61 @@ namespace FlatEngine
 				}
 			}
 
-			// "Ceiling" Collision Forces
-			//
-			// Normal m_gravity
-			if (m_gravity > 0 && m_pendingForces.y > 0 && collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid)
+			// zero gravity collisions
+			if (m_pendingForces.y < 0 && collider->m_b_isCollidingBottom && collider->m_b_bottomCollisionSolid)
 			{
+				Vector2 currentPos = transform->GetPosition();
 				m_pendingForces.y = 0;
-				transform->SetPosition(Vector2(position.x, collider->m_topCollidedPosition.y));
+				newYPos = collider->m_bottomCollision + halfHeight - 0.001f;
+				transform->SetPosition(Vector2(currentPos.x, newYPos));
 			}
-			// Inverted m_gravity
-			if (m_gravity < 0 && m_pendingForces.y > 0 && collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid)
+			// "Ceiling" Collision Forces
+			if (m_pendingForces.y > 0 && collider->m_b_isCollidingTop && collider->m_b_topCollisionSolid)
 			{
+				Vector2 currentPos = transform->GetPosition();
 				m_pendingForces.y = 0;
 				newYPos = collider->m_topCollision - halfHeight + 0.001f;
-				transform->SetPosition(Vector2(position.x, newYPos));
+				transform->SetPosition(Vector2(currentPos.x, newYPos));
+
+				/*if (m_gravity > 0)
+				{
+					transform->SetPosition(Vector2(position.x, collider->m_topCollidedPosition.y));
+				}
+				else if (m_gravity < 0)
+				{
+					newYPos = collider->m_topCollision - halfHeight + 0.001f;
+					transform->SetPosition(Vector2(position.x, newYPos));
+				}*/
+			}
+			if (m_pendingForces.x > 0 && collider->m_b_isCollidingRight && collider->m_b_rightCollisionSolid)
+			{
+				Vector2 currentPos = transform->GetPosition();
+				m_pendingForces.x = 0;
+				newXPos = collider->m_rightCollision - halfWidth + 0.001f;
+				transform->SetPosition(Vector2(newXPos, currentPos.y));
+			}
+			if (m_pendingForces.x < 0 && collider->m_b_isCollidingLeft && collider->m_b_leftCollisionSolid)
+			{
+				Vector2 currentPos = transform->GetPosition();
+				m_pendingForces.x = 0;
+				newXPos = collider->m_leftCollision + halfWidth - 0.001f;
+				transform->SetPosition(Vector2(newXPos, currentPos.y));
 			}
 
 			// Horizontal Collision Forces
-			// 
 			if (collider->GetTypeString() == "BoxCollider")
 			{
 				// Collision on right side when moving to the right
 				if (collider->m_b_isCollidingRight && collider->m_b_rightCollisionSolid && m_velocity.x > 0)
 				{
 					m_pendingForces.x = 0;
-					transform->SetPosition(Vector2(collider->m_rightCollidedPosition.x, position.y));
+					transform->SetPosition(Vector2(collider->m_rightCollidedPosition.x + 0.001f, position.y));
 				}
 				// Collision on left side when moving to the left
 				else if (collider->m_b_isCollidingLeft && collider->m_b_leftCollisionSolid && m_velocity.x < 0)
 				{
 					m_pendingForces.x = 0;
-					transform->SetPosition(Vector2(collider->m_leftCollidedPosition.x, position.y));
+					transform->SetPosition(Vector2(collider->m_leftCollidedPosition.x - 0.001f, position.y));
 				}
 			}
 			// If not BoxCollider and moving left up a corner while not colliding on bottom

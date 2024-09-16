@@ -51,7 +51,7 @@ namespace FlatEngine
 
 	void Transform::SetOrigin(Vector2 newOrigin)
 	{
-		m_origin = newOrigin;
+		m_origin = Vector2(newOrigin.x * m_baseScale.x, newOrigin.y * m_baseScale.y);
 
 		if (GetParent() != nullptr && GetParent()->HasComponent("Button"))
 		{
@@ -89,7 +89,7 @@ namespace FlatEngine
 
 	void Transform::UpdateOrigin(Vector2 newOrigin)
 	{
-		m_origin = newOrigin;
+		m_origin = Vector2(newOrigin.x * m_baseScale.x, newOrigin.y * m_baseScale.y);
 		UpdateChildOrigins(GetTruePosition());
 	}
 
@@ -112,29 +112,40 @@ namespace FlatEngine
 
 	void Transform::UpdateChildBaseScale(Vector2 baseScale)
 	{
-		if (GetParent()->HasChildren())
+		if (baseScale.x != 0 && baseScale.y != 0)
 		{
-			for (long ID : GetParent()->GetChildren())
+			if (GetParent()->HasChildren())
 			{
-				GameObject* child = GetObjectById(ID);
-				if (child->HasComponent("Transform"))
+				for (long ID : GetParent()->GetChildren())
 				{
-					Transform* childTransform = child->GetTransform();
-					childTransform->SetBaseScale(baseScale);
-					childTransform->UpdateChildBaseScale(childTransform->GetTotalScale());
+					GameObject* child = GetObjectById(ID);
+					if (child->HasComponent("Transform"))
+					{						
+						Transform* childTransform = child->GetTransform();
+						childTransform->SetBaseScale(baseScale);
+						childTransform->UpdateChildBaseScale(childTransform->GetTotalScale());
+					}
 				}
 			}
 		}
 	}
 
+	Vector2 Transform::GetBaseScale()
+	{
+		return m_baseScale;
+	}
+
 	void Transform::SetBaseScale(Vector2 scale)
 	{
-		m_baseScale = scale;
+		if (scale.x != 0 && scale.y != 0)
+		{
+			m_baseScale = scale;
+		}
 	}
 
 	Vector2 Transform::GetTotalScale()
 	{
-		return m_baseScale * m_scale;
+		return Vector2(m_baseScale.x * m_scale.x, m_baseScale.y * m_scale.y);
 	}
 
 	void Transform::SetScale(Vector2 newScale)

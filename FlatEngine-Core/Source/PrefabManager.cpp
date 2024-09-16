@@ -601,6 +601,11 @@ namespace FlatEngine
 						std::shared_ptr<ScriptPrefabData> scriptData = std::static_pointer_cast<ScriptPrefabData>(prefab.components.at(componentID));
 						Script* script = self->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
 						script->SetAttachedScript(scriptData->attachedScript);
+						if (GameLoopStarted())
+						{
+							RunLuaFuncOnSingleScript(script, "Awake");
+							RunLuaFuncOnSingleScript(script, "Start");
+						}
 					}
 					else if (prefab.components.at(componentID)->type == "Button")
 					{

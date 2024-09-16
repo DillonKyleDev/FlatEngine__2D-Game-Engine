@@ -27,6 +27,7 @@ namespace FlatEngine
 		void SetPosition(Vector2 position);
 		void SetBaseScale(Vector2 scale);
 		void UpdateChildBaseScale(Vector2 scale);
+		Vector2 GetBaseScale();
 		Vector2 GetTotalScale();
 		void SetScale(Vector2 scale);
 		void SetRotation(float rotation);

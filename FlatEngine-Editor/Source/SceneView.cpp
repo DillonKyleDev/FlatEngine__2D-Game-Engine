@@ -119,9 +119,6 @@ namespace FlatGui
 				Vector2 position = transform->GetTruePosition();
 				FG_sceneViewScrolling = Vector2(position.x * -FG_sceneViewGridStep.x + (ImGui::GetWindowWidth() / 2), position.y * FG_sceneViewGridStep.y + (ImGui::GetWindowHeight() / 2));
 			}
-			
-			ImGui::PopStyleVar();
-			ImGui::PopStyleVar();
 
 			// Cursor mode select
 			ImGui::SetCursorScreenPos(canvas_p0);
@@ -135,6 +132,8 @@ namespace FlatGui
 			RenderStatsOnGameView();
 
 		// }
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 		ImGui::End(); // Scene View
 	}
 

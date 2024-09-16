@@ -172,12 +172,12 @@ namespace FlatGui
 		float xScale = scale.x;
 		float yScale = scale.y;
 		float rotation = transform->GetRotation();
-		bool _isActive = transform->IsActive();
+		bool b_isActive = transform->IsActive();
 		long ID = transform->GetID();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			transform->SetActive(_isActive);
+			transform->SetActive(b_isActive);
 		}
 		
 		if (FL::PushTable("##TransformProperties" + std::to_string(ID), 2))
@@ -216,7 +216,6 @@ namespace FlatGui
 					FL::LogError("Scale must be greater than 0.");
 				}
 			}
-				
 			FL::PopTable();
 		}
 	}
