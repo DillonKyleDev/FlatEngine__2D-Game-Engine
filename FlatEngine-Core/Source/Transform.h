@@ -25,6 +25,9 @@ namespace FlatEngine
 		void UpdateChildOrigins(Vector2 newOrigin);
 		Vector2 GetTruePosition();
 		void SetPosition(Vector2 position);
+		void SetBaseScale(Vector2 scale);
+		void UpdateChildBaseScale(Vector2 scale);
+		Vector2 GetTotalScale();
 		void SetScale(Vector2 scale);
 		void SetRotation(float rotation);
 		Vector2 GetPosition();
@@ -35,7 +38,9 @@ namespace FlatEngine
 	private:
 		Vector2 m_origin;
 		Vector2 m_position;
+		Vector2 m_baseScale;
 		Vector2 m_scale;
+		float m_baseRotation;
 		float m_rotation;
 	};
 }

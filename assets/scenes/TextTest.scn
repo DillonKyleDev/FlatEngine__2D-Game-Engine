@@ -3,7 +3,9 @@
         {
             "_isActive": true,
             "_isPrefab": false,
-            "children": [],
+            "children": [
+                7
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -87,48 +89,32 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 16,
+                    "id": 19,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": 0.0,
+                    "xOrigin": 0.9493637084960938,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 0.0,
+                    "yOrigin": 0.12658309936523438,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "_isComposite": false,
-                    "_isContinuous": true,
-                    "_isSolid": true,
-                    "_isStatic": false,
-                    "_isTileMapCollider": false,
-                    "_showActiveRadius": false,
-                    "activeHeight": 2.0,
-                    "activeLayer": 0,
-                    "activeOffsetX": 0.0,
-                    "activeOffsetY": 0.0,
-                    "activeWidth": 2.0,
-                    "id": 17,
-                    "type": "BoxCollider"
-                },
-                {
-                    "_allowTorques": true,
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "_isStatic": false,
-                    "angularDrag": 1.0,
-                    "equilibriumForce": 2.0,
-                    "fallingGravity": 1.2000000476837158,
-                    "friction": 0.8600000143051147,
-                    "gravity": 1.0,
-                    "id": 18,
-                    "mass": 1.0,
-                    "terminalVelocity": 0.4000000059604645,
-                    "type": "RigidBody",
-                    "windResistance": 1.0
+                    "fontPath": "..\\engine\\fonts\\Cinzel\\Cinzel-Black.ttf",
+                    "fontSize": 40,
+                    "id": 20,
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 0,
+                    "text": "Sample Text",
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Text",
+                    "xOffset": 133.0,
+                    "yOffset": 27.0
                 }
             ],
             "id": 7,
@@ -150,8 +136,8 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "BoxCollider(7)",
-            "parent": -1,
+            "name": "TextChild",
+            "parent": 6,
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,

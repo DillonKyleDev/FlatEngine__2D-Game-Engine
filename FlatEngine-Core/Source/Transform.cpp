@@ -13,7 +13,9 @@ namespace FlatEngine
 		SetParentID(parentID);
 		m_origin = Vector2(0, 0);
 		m_position = Vector2(0, 0);
+		m_baseScale = Vector2(1, 1);
 		m_scale = Vector2(1, 1);
+		m_baseRotation = 0;
 		m_rotation = 0;
 	}
 
@@ -84,6 +86,7 @@ namespace FlatEngine
 		}
 	}
 
+
 	void Transform::UpdateOrigin(Vector2 newOrigin)
 	{
 		m_origin = newOrigin;
@@ -107,9 +110,37 @@ namespace FlatEngine
 		}
 	}
 
+	void Transform::UpdateChildBaseScale(Vector2 baseScale)
+	{
+		if (GetParent()->HasChildren())
+		{
+			for (long ID : GetParent()->GetChildren())
+			{
+				GameObject* child = GetObjectById(ID);
+				if (child->HasComponent("Transform"))
+				{
+					Transform* childTransform = child->GetTransform();
+					childTransform->SetBaseScale(baseScale);
+					childTransform->UpdateChildBaseScale(childTransform->GetTotalScale());
+				}
+			}
+		}
+	}
+
+	void Transform::SetBaseScale(Vector2 scale)
+	{
+		m_baseScale = scale;
+	}
+
+	Vector2 Transform::GetTotalScale()
+	{
+		return m_baseScale * m_scale;
+	}
+
 	void Transform::SetScale(Vector2 newScale)
 	{
 		m_scale = newScale;
+		//UpdateChildBaseScale(m_scale);
 	}
 
 	void Transform::SetRotation(float newRotation)

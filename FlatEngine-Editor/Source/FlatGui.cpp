@@ -658,6 +658,7 @@ namespace FlatGui
 		{
 			long focusedObjectID = GetFocusedGameObjectID();
 			Vector2 position = transform->GetTruePosition();
+			Vector2 relativePosition = transform->GetPosition();
 			Vector2 origin = transform->GetOrigin();
 			Vector2 transformScale = transform->GetScale();
 			float rotation = transform->GetRotation();
@@ -686,7 +687,7 @@ namespace FlatGui
 					spriteScaleFinal.y *= scale.y;
 				}
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x * spriteScale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y * spriteScale.y));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + ((origin.x + (relativePosition.x * scale.x)) * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.x), FG_sceneViewCenter.y - ((origin.y + (relativePosition.y * scale.y)) * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.y));
 				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);											
 				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);			
 				const bool b_isClicked = ImGui::IsItemClicked();
@@ -1334,13 +1335,13 @@ namespace FlatGui
 				// Draw TileMap indice Textures
 				for (std::pair<int, std::map<int, FL::Tile>> xPair : tiles)
 				{
-					float x = xPair.first;
+					float x = (float)xPair.first;
 					
 					if (x <= width)
 					{
 						for (std::pair<int, FL::Tile> yPair : xPair.second)
 						{
-							float y = yPair.first;
+							float y = (float)yPair.first;
 
 							if (y <= height)
 							{
