@@ -25,6 +25,18 @@ namespace FlatEngine
 		log.appendf(line.c_str());
 	}
 
+	void Logger::LogDouble(double variable, std::string line, std::string from)
+	{
+		line = from + " " + line + std::to_string(variable) + "\n";
+		log.appendf(line.c_str());
+	}
+
+	void Logger::LogLong(long variable, std::string line, std::string from)
+	{
+		line = from + " " + line + std::to_string(variable) + "\n";
+		log.appendf(line.c_str());
+	}
+
 	void Logger::LogInt(int variable, std::string line, std::string from)
 	{
 		line = from + " " + line + std::to_string(variable) + "\n";

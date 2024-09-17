@@ -15,6 +15,8 @@ namespace FlatEngine
 
 		void LogString(std::string line, std::string from);
 		void LogFloat(float variable, std::string line = "", std::string from = "[C++]");
+		void LogDouble(double variable, std::string line = "", std::string from = "[C++]");
+		void LogLong(long variable, std::string line = "", std::string from = "[C++]");
 		void LogInt(int variable, std::string line = "", std::string from = "[C++]");
 		void LogVector2(Vector2 vector, std::string line = "", std::string from = "[C++]");
 		void LogSeparator();

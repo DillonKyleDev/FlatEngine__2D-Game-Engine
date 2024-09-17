@@ -173,8 +173,8 @@ namespace FlatGui
 	extern void RenderSettings();
 	extern void Cleanup();
 	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset, bool b_showAxis = true);
-	extern void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
-	extern void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+	extern void RenderViewObjects(std::map<long, GameObject> &objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
+	extern void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
 	extern void RenderFileExplorer();
 	extern void RenderFilesTopBar();
 	extern void RenderDirNodes(std::string dir);

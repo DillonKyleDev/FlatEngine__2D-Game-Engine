@@ -537,7 +537,7 @@ namespace FlatGui
 			b_openModal = true;
 		}
 		
-		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script:", newScriptName, b_openModal))
+		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script", newScriptName, b_openModal))
 		{
 			FL::CreateNewLuaScript(newScriptName);
 		}

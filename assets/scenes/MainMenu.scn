@@ -217,6 +217,13 @@
                     "activeWidth": 10.0,
                     "id": 8,
                     "type": "Button"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "StartButton",
+                    "id": 27,
+                    "type": "Script"
                 }
             ],
             "id": 3,

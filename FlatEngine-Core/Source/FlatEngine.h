@@ -210,6 +210,7 @@ namespace FlatEngine
 	extern void CallLuaCollisionFunction(GameObject* caller, Collider* collidedWith, LuaEventFunction eventFunc);
 	extern void CallLuaButtonEventFunction(GameObject* caller, LuaEventFunction eventFunc);
 	extern void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc);
+	extern void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc, Animation::S_EventFunctionParam param1, Animation::S_EventFunctionParam param2 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param3 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param4 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param5 = Animation::S_EventFunctionParam());
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -270,6 +271,8 @@ namespace FlatEngine
 	extern void LogError(std::string line = "", std::string from = "[C++]");
 	extern void LogString(std::string line = "", std::string from = "[C++]");
 	extern void LogFloat(float var, std::string line = "", std::string from = "[C++]");
+	extern void LogDouble(double var, std::string line = "", std::string from = "[C++]");
+	extern void LogLong(long var, std::string line = "", std::string from = "[C++]");
 	extern void LogInt(int var, std::string line = "", std::string from = "[C++]");
 	extern void LogVector2(Vector2 vector, std::string line = "", std::string from = "[C++]");
 	extern void LogSeparator();
@@ -330,6 +333,8 @@ namespace FlatEngine
 	extern int CheckJsonInt(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
 	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName);
 	extern long CheckJsonLong(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
+	extern double CheckJsonDouble(json obj, std::string checkFor, std::string loadedName);
+	extern double CheckJsonDouble(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
 	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName);
 	extern bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
 	extern bool JsonContains(json obj, std::string checkFor, std::string loadedName);

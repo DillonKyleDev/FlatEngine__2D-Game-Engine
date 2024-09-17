@@ -33,7 +33,7 @@ namespace FlatGui
 		ImGui::Begin("Scene View", 0, 16 | 8); // Window flags 	ImGuiWindowFlags_NoScrollWithMouse
 		FlatEngine::PopWindowStyles();
 		// {
-
+		
 			FL::F_b_sceneViewFocused = ImGui::IsWindowFocused();
 
 			Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
@@ -102,14 +102,9 @@ namespace FlatGui
 				sceneObjects = std::map<long, GameObject>();
 			}
 
-			// Temporary fix.. Add support for map of long,GameObject instead of vector of GameObject
-			std::vector<GameObject> viewObjects;
-			for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end(); iter++)
-			{
-				viewObjects.push_back(iter->second);				
-			}
 
-			RenderViewObjects(viewObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);		
+			RenderViewObjects(sceneObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);
+
 
 			// For centering on focused GameObject
 			GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
@@ -130,7 +125,7 @@ namespace FlatGui
 
 			// Game Stats in GameView
 			RenderStatsOnGameView();
-
+		
 		// }
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();

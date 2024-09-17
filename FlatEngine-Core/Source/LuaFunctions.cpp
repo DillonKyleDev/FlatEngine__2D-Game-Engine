@@ -18,6 +18,7 @@
 #include "MappingContext.h"
 
 #include <fstream>
+#include <random>
 
 
 // Lua helpers + Functions that Lua can call
@@ -57,6 +58,16 @@ namespace FlatEngine
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
 			LogFloat(value, line, prefix);
+		};
+		F_Lua["LogDouble"] = [](double value, std::string line)
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogDouble(value, line, prefix);
+		};
+		F_Lua["LogLong"] = [](long value, std::string line)
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogLong(value, line, prefix);
 		};
 		F_Lua["LogVector2"] = [](float xValue, float yValue, std::string line)
 		{
@@ -109,36 +120,44 @@ namespace FlatEngine
 		};
 		F_Lua["Destroy"] = [](long ID)
 		{
-			DeleteGameObject(ID);
+			F_Application->GetGameLoop()->AddObjectToDeleteQueue(ID);
 		};
 		F_Lua["GetColor"] = [](std::string color)
 		{
 			return GetColor(color);
 		};
+		F_Lua["RandomNumber"] = [](unsigned int min, unsigned int max)
+		{
+			std::random_device dev;
+			std::mt19937 rng(dev());
+			std::uniform_int_distribution<std::mt19937::result_type> dist6(min, max);
+
+			return dist6(rng);
+		};
 	}
 
-	// Map C++ types to Lua "Types"
+	// Map C++ types to Lua "Types" -- https://sol2.readthedocs.io/en/latest/api/usertype.html
 	void RegisterLuaTypes()
 	{
 		F_Lua.new_usertype<Vector2>("Vector2",
 			sol::constructors<Vector2(), Vector2(float x,float y)>(),
-			"_x", &Vector2::SetX,
+			"SetX", &Vector2::SetX,
 			"x", &Vector2::GetX,
-			"_y", &Vector2::SetY,
+			"SetY", &Vector2::SetY,
 			"y", &Vector2::GetY,
-			"_xy", &Vector2::_xy
+			"SetXY", &Vector2::_xy
 		);
 		F_Lua.new_usertype<Vector4>("Vector4",
 			sol::constructors<Vector4(), Vector4(float x, float y, float z, float w)>(),
-			"_x", &Vector4::SetX,
+			"SetX", &Vector4::SetX,
 			"x", &Vector4::GetX,
-			"_y", &Vector4::SetY,
+			"SetY", &Vector4::SetY,
 			"y", &Vector4::GetY,
-			"_z", &Vector4::SetZ,
+			"SetZ", &Vector4::SetZ,
 			"z", &Vector4::GetZ,
-			"_w", &Vector4::SetW,
+			"SetW", &Vector4::SetW,
 			"w", &Vector4::GetW,
-			"_xyzw", &Vector4::_xyzw
+			"SetXYZW", &Vector4::_xyzw
 		);
 
 		F_Lua.new_usertype<GameObject>("GameObject",
@@ -199,9 +218,9 @@ namespace FlatEngine
 			"IsActive", &Audio::IsActive,
 			"GetID", &Audio::GetID,
 			"IsMusicPlaying", &Audio::IsMusicPlaying,
-			"PlaySound", &Audio::PlaySound,
-			"PauseSound", &Audio::PauseSound,
-			"StopSound", &Audio::PauseSound,
+			"Play", &Audio::PlaySound,
+			"Pause", &Audio::PauseSound,
+			"Stop", &Audio::PauseSound,
 			"StopAll", &Audio::StopAll
 		);
 
@@ -213,6 +232,16 @@ namespace FlatEngine
 			"Play", &Animation::PlayFromLua,
 			"Stop", &Animation::Stop,
 			"SetAnimationPath", &Animation::SetAnimationPath			
+		);
+
+		F_Lua.new_usertype<Animation::S_EventFunctionParam>("EventParameter",
+			"type",&Animation::S_EventFunctionParam::GetType,
+			"string", &Animation::S_EventFunctionParam::GetString,
+			"int", &Animation::S_EventFunctionParam::GetInt,
+			"float", &Animation::S_EventFunctionParam::GetFloat,
+			"double", &Animation::S_EventFunctionParam::GetDouble,
+			"long", &Animation::S_EventFunctionParam::GetLong,
+			"bool", &Animation::S_EventFunctionParam::GetBool
 		);
 
 		F_Lua.new_usertype<RigidBody>("RigidBody",
@@ -451,7 +480,6 @@ namespace FlatEngine
 			}
 		}
 	}
-
 	template <class T>
 	void CallVoidLuaFunction(std::string functionName)
 	{
@@ -481,7 +509,9 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
+						{
 							CallVoidLuaFunction<Collider*>(F_LuaEventNames[eventFunc], collidedWith);
+						}
 					}
 				}
 			}
@@ -501,12 +531,15 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
+						{
 							CallVoidLuaFunction<GameObject*>(F_LuaEventNames[eventFunc]);
+						}
 					}
 				}
 			}
 		}
 	}
+
 
 	void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc)
 	{
@@ -520,7 +553,61 @@ namespace FlatEngine
 					{
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
+						{
 							CallVoidLuaFunction<GameObject*>(eventFunc);
+						}
+					}
+				}
+			}
+		}
+	}
+	void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc, Animation::S_EventFunctionParam param1, Animation::S_EventFunctionParam param2, Animation::S_EventFunctionParam param3, Animation::S_EventFunctionParam param4, Animation::S_EventFunctionParam param5)
+	{
+		if (caller->HasComponent("Script"))
+		{
+			for (Script* script : caller->GetScripts())
+			{
+				if (script->IsActive())
+				{
+					if (F_LuaScriptsMap.count(script->GetAttachedScript()) > 0)
+					{
+						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
+						if (InitLuaScript(filePath, caller))
+						{
+							sol::protected_function protectedFunc = F_Lua[eventFunc];
+							if (protectedFunc)
+							{
+								auto result = sol::function_result();
+
+								if (param2.type == "empty")
+								{
+									result = protectedFunc(param1);
+								}
+								else if (param3.type == "empty")
+								{
+									result = protectedFunc(param1, param2);
+								}
+								else if(param4.type == "empty")
+								{
+									result = protectedFunc(param1, param2, param3);
+								}
+								else if (param5.type == "empty")
+								{
+									result = protectedFunc(param1, param2, param3, param4);
+								}
+								else
+								{
+									result = protectedFunc(param1, param2, param3, param4, param5);
+								}
+
+								if (!result.valid())
+								{
+									sol::error err = result;
+									LogError("Something went wrong in Lua function: " + eventFunc + "()");
+									LogError(err.what());
+								}
+							}
+						}
 					}
 				}
 			}

@@ -31,6 +31,7 @@ end
 function Update()     
     handleMovement();
     handleAttacks();
+    -- LogInt(RandomNumber(0,4), "Random: ")
 end 
 
 function handleAttacks()
@@ -51,22 +52,22 @@ function handleMovement()
 
     if mappingContext:ActionPressed("IA_MoveForward") then
         b_movingForward = true 
-        moveDirection:_y(1)
+        moveDirection:SetY(1)
     end
 
     if mappingContext:ActionPressed("IA_MoveBackward") then
         b_movingBackward = true
-        moveDirection:_y(-1)
+        moveDirection:SetY(-1)
     end
 
     if mappingContext:ActionPressed("IA_MoveRight") then        
         b_movingRight = true
-        moveDirection:_x(1)    
+        moveDirection:SetX(1)    
     end
 
     if mappingContext:ActionPressed("IA_MoveLeft") then
         b_movingLeft = true
-        moveDirection:_x(-1)
+        moveDirection:SetX(-1)
     end
 
     if b_movingLeft and b_movingRight then
@@ -85,7 +86,6 @@ function handleMovement()
     if xVel < 0 then
         xVel = xVel * -1
     end
-    LogFloat(xVel, "")
 
     sprite:SetScale(Vector2:new(1 - (xVel * 4), 1))
 end

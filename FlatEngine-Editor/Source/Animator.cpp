@@ -52,7 +52,7 @@ namespace FlatGui
 
 					static std::string newFileName = "";
 					static bool b_openAnimationModal = false;
-					if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
+					if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation", newFileName, b_openAnimationModal))
 					{
 						FL::CreateNewAnimationFile(newFileName, FL::GetDir("animations"));
 					}
@@ -955,7 +955,7 @@ namespace FlatGui
 					}
 				}
 
-				RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
+				//RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
 			}
 
 		// }
@@ -1038,6 +1038,145 @@ namespace FlatGui
 						if (FL::RenderInput("AnimationEventName", "Function Name", functionName))
 						{
 							event->functionName = functionName;
+						}
+
+						FL::MoveScreenCursor(0, 10);
+
+						if (FL::RenderButton("Add parameter"))
+						{
+							Animation::S_EventFunctionParam param = Animation::S_EventFunctionParam();
+							param.type = "string";
+							event->parameters.push_back(param);
+						}
+
+						FL::MoveScreenCursor(0, 5);
+
+						if (event->parameters.size() > 0)
+						{
+							ImGui::Text("Type:");
+							ImGui::SameLine(0, 75);
+							ImGui::Text("Value:");
+						}
+
+						int paramCounter = 0;
+						for (Animation::S_EventFunctionParam &param : event->parameters)
+						{
+							int currentType = 0;
+
+							std::vector<std::string> types = { "int", "float", "double", "long", "bool", "string" };
+
+							if (param.type == "int")
+							{
+								currentType = 0;
+							}
+							else if (param.type == "float")
+							{
+								currentType = 1;
+							}
+							else if (param.type == "double")
+							{
+								currentType = 2;
+							}
+							else if (param.type == "long")
+							{
+								currentType = 3;
+							}
+							else if (param.type == "bool")
+							{
+								currentType = 4;
+							}
+							else if (param.type == "string")
+							{
+								currentType = 5;
+							}
+							FL::PushComboStyles();
+							ImGui::SetNextItemWidth(100);
+							std::string comboID = "##EventFunctionParameterType" + std::to_string(paramCounter);
+							if (ImGui::BeginCombo(comboID.c_str(), types[currentType].c_str()))
+							{
+								for (int n = 0; n < types.size(); n++)
+								{
+									bool b_isSelected = (types[currentType] == types[n]);
+									if (ImGui::Selectable(types[n].c_str(), b_isSelected))
+									{
+										currentType = n;
+										param.type = types[currentType];
+									}
+								}
+								ImGui::EndCombo();
+							}
+							FL::PopComboStyles();
+
+							ImGui::SameLine();
+
+							std::string parameter = "";
+							if (types[currentType] == "string")
+							{
+								parameter = param.e_string;
+							}
+							else if (types[currentType] == "int")
+							{
+								parameter = std::to_string(param.e_int);
+							}
+							else if (types[currentType] == "float")
+							{
+								parameter = std::to_string(param.e_float);
+							}
+							else if (types[currentType] == "double")
+							{
+								parameter = std::to_string(param.e_double);
+							}
+							else if (types[currentType] == "long")
+							{
+								parameter = std::to_string(param.e_long);
+							}
+							else if (types[currentType] == "bool")
+							{
+								if (param.e_boolean)
+								{
+									parameter = "true";
+								}
+								else
+								{
+									parameter = "false";
+								}
+							}
+
+							if (FL::RenderInput("EventParameter" + std::to_string(paramCounter), "", parameter))
+							{
+								if (types[currentType] == "string")
+								{
+									param.e_string = parameter;
+								}
+								else if (types[currentType] == "int")
+								{
+									param.e_int = std::stoi(parameter);
+								}
+								else if (types[currentType] == "float")
+								{
+									param.e_float = std::stof(parameter);
+								}
+								else if (types[currentType] == "double")
+								{
+									param.e_double = std::stod(parameter);
+								}
+								else if (types[currentType] == "long")
+								{
+									param.e_long = std::stol(parameter);
+								}
+								else if (types[currentType] == "bool")
+								{
+									if (parameter == "true")
+									{
+										param.e_boolean = true;
+									}
+									else
+									{
+										param.e_boolean = false;
+									}
+								}
+							}
+							paramCounter++;
 						}
 					}
 					else if (FG_SelectedKeyFrameToEdit->name == "Transform")

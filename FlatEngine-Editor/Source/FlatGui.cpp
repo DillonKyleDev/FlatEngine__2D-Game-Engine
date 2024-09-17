@@ -619,7 +619,7 @@ namespace FlatGui
 		}
 	}
 
-	void RenderViewObjects(std::vector<GameObject> objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
+	void RenderViewObjects(std::map<long, GameObject>& objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -628,20 +628,22 @@ namespace FlatGui
 		// 4 channels for now in this scene view. 0 = scene objects, 1 & 2 = other UI (camera icon, etc), 4 = transform arrow
 		drawSplitter->Split(drawList, FL::F_maxSpriteLayers + 5);
 		
-		for (GameObject object : objects)
+
+		for (std::pair<long, GameObject> object : objects)
 		{
-			if (object.IsActive())
+			if (object.second.IsActive())
 			{
-				RenderViewObject(object, centerPoint, canvas_p0, canvas_sz, step, drawList, drawSplitter);
+				RenderViewObject(object.second, centerPoint, canvas_p0, canvas_sz, step, drawList, drawSplitter);
 			}
 		}
+
 
 		drawSplitter->Merge(drawList);
 		delete drawSplitter;
 		drawSplitter = nullptr;
 	}
 
-	void RenderViewObject(GameObject self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
+	void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
 	{
 		Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
@@ -882,7 +884,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
-				if (transform->GetRotation() == 0)
+				if (/*transform->GetRotation() == 0*/ true)
 				{
 					if (b_isActive && !b_isColliding)
 					{

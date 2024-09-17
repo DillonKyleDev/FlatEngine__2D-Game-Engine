@@ -46,6 +46,8 @@ namespace FlatEngine
 		void HandleCollisions(float gridstep, Vector2 viewportCenter);
 		void ApplyPhysics();
 		void RunUpdateOnScripts();
+		void AddObjectToDeleteQueue(long objectID);
+		void DeleteObjectsInDeleteQueue();
 		
 		float m_time; // Total time in deltaTime increments
 		float m_pausedTime;
@@ -62,5 +64,6 @@ namespace FlatEngine
 		long m_framesCounted;
 		std::string m_startedScene;
 		std::vector<Button> m_hoveredButtons;
+		std::vector<long> m_objectsQueuedForDelete;
 	};
 }

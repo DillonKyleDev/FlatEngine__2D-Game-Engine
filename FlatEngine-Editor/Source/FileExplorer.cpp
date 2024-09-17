@@ -79,23 +79,23 @@ namespace FlatGui
 			static bool b_openMappingContextModal = false;
 			static bool b_openTileSetModal = false;
 
-			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script:", newFileName, b_openLuaModal))
+			if (FL::RenderInputModal("Create Lua Script", "Enter a name for the Lua script", newFileName, b_openLuaModal))
 			{
 				FL::CreateNewLuaScript(newFileName, FG_currentDirectory);
 			}
-			if (FL::RenderInputModal("Create Scene", "Enter a name for the Scene:", newFileName, b_openSceneModal))
+			if (FL::RenderInputModal("Create Scene", "Enter a name for the Scene", newFileName, b_openSceneModal))
 			{
 				FL::CreateNewSceneFile(newFileName, FG_currentDirectory);
 			}
-			if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation:", newFileName, b_openAnimationModal))
+			if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation", newFileName, b_openAnimationModal))
 			{
 				FL::CreateNewAnimationFile(newFileName, FG_currentDirectory);
 			}
-			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context:", newFileName, b_openMappingContextModal))
+			if (FL::RenderInputModal("Create Mapping Context", "Enter a name for the Mapping Context", newFileName, b_openMappingContextModal))
 			{
 				FL::CreateNewMappingContextFile(newFileName, FG_currentDirectory);
 			}
-			if (FL::RenderInputModal("Create TileSet", "Enter a name for the TileSet:", newFileName, b_openTileSetModal))
+			if (FL::RenderInputModal("Create TileSet", "Enter a name for the TileSet", newFileName, b_openTileSetModal))
 			{
 				FL::CreateNewTileSetFile(newFileName, FG_currentDirectory);
 			}

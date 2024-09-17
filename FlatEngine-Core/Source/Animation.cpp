@@ -115,7 +115,31 @@ namespace FlatEngine
 			{
 				if ((eventFrame->time == 0 && !eventFrame->b_fired) || (!eventFrame->b_fired && (ellapsedTime >= m_animationStartTime + eventFrame->time || eventFrame->time == 0)))
 				{
-					CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
+					if (eventFrame->parameters.size() == 0)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
+					}
+					else if (eventFrame->parameters.size() == 1)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0]);
+					}
+					else if (eventFrame->parameters.size() == 2)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1]);
+					}
+					else if (eventFrame->parameters.size() == 3)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2]);
+					}
+					else if (eventFrame->parameters.size() == 4)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3]);
+					}
+					else if (eventFrame->parameters.size() == 5)
+					{
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[4], eventFrame->parameters[5]);
+					}
+
 					eventFrame->b_fired = true;
 				}
 			}

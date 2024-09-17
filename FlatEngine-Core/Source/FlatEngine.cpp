@@ -205,7 +205,7 @@ namespace FlatEngine
 			};
 
 			// Render sprite to viewport
-			drawList->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+			drawList->AddImageQuad(texture, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], addColor);
 		}
 		else
 		{
@@ -1238,6 +1238,22 @@ namespace FlatEngine
 				{ "functionName", eventProp->functionName },
 				{ "time", eventProp->time },
 			};
+
+			json parameters = json::array();
+			for (Animation::S_EventFunctionParam parameter : eventProp->parameters)
+			{
+				parameters.push_back({
+					{ "type", parameter.type },
+					{ "string", parameter.e_string },
+					{ "int", parameter.e_int },
+					{ "float", parameter.e_float },
+					{ "double", parameter.e_double },
+					{ "long", parameter.e_long },
+					{ "bool", parameter.e_boolean }
+				});
+			}
+			jsonData.push_back({ "parameters", parameters });
+
 			std::string data = jsonData.dump();
 			eventProps.push_back(json::parse(data));
 		}
@@ -1486,7 +1502,23 @@ namespace FlatEngine
 					frame->name = "Event";
 					frame->functionName = CheckJsonString(eventProps[i], "functionName", animName);
 					frame->time = CheckJsonFloat(eventProps[i], "time", animName);
-					animProps->eventProps.push_back(frame);
+
+					for (int p = 0; p < eventProps[i]["parameters"].size(); p++)
+					{
+						json param = eventProps[i]["parameters"][p];						
+						Animation::S_EventFunctionParam parameter;
+						parameter.type = CheckJsonString(param, "type", animName);
+						parameter.e_string = CheckJsonString(param, "string", animName);
+						parameter.e_int = CheckJsonInt(param, "int", animName);
+						parameter.e_float = CheckJsonFloat(param, "float", animName);
+						parameter.e_long = CheckJsonLong(param, "long", animName);
+						parameter.e_double = CheckJsonDouble(param, "double", animName);
+						parameter.e_boolean = CheckJsonBool(param, "bool", animName);
+
+						frame->parameters.push_back(parameter);
+					}
+
+					animProps->eventProps.push_back(frame);				
 				}
 				
 				json transformProps = animationJson["animationProperties"]["transform"];
@@ -1683,6 +1715,16 @@ namespace FlatEngine
 	void LogFloat(float var, std::string line, std::string from)
 	{
 		F_Logger.LogFloat(var, line, from);
+	}
+
+	void LogDouble(double var, std::string line, std::string from)
+	{
+		F_Logger.LogDouble(var, line, from);
+	}
+
+	void LogLong(long var, std::string line, std::string from)
+	{
+		F_Logger.LogLong(var, line, from);
 	}
 
 	void LogInt(int var, std::string line, std::string from)
@@ -2326,6 +2368,33 @@ namespace FlatEngine
 		return value;
 	}
 
+	double CheckJsonDouble(json obj, std::string checkFor, std::string loadedName)
+	{
+		double value = -1;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			LogError("CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".");
+		}
+		return value;
+	}
+
+	double CheckJsonDouble(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage)
+	{
+		double value = -1;
+		if (obj.contains(checkFor))
+		{
+			value = obj[checkFor];
+		}
+		else
+		{
+			errorMessage = "CheckJsonLong() - \"" + loadedName + "\" object does not contain a value for \"" + checkFor + "\".";
+		}
+		return value;
+	}
 	bool CheckJsonBool(json obj, std::string checkFor, std::string loadedName)
 	{
 		bool value = false;

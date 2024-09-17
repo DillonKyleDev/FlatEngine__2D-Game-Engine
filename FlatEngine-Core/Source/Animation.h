@@ -41,8 +41,25 @@ namespace FlatEngine
 			std::string name;
 			bool b_fired;
 		};
+		struct S_EventFunctionParam {
+			std::string type = "empty";
+			int e_int = 0;
+			float e_float = 0.0f;
+			double e_double = 0;
+			long e_long = 0;
+			bool e_boolean = false;
+			std::string e_string = "";
+			std::string GetType() { return type; };
+			std::string GetString() { return e_string; };
+			int GetInt() { return e_int; };
+			float GetFloat() { return e_float; };
+			double GetDouble() { return e_double; };
+			long GetLong() { return e_long; };
+			bool GetBool() { return e_boolean; };
+		};
 		struct S_Event : public S_Property {
 			std::string functionName = "";
+			std::vector<S_EventFunctionParam> parameters = std::vector<S_EventFunctionParam>();
 		};
 		struct S_Transform : public S_Property {
 			InterpType transformInterpType = I_Lerp;

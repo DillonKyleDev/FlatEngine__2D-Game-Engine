@@ -41,6 +41,7 @@ namespace FlatEngine
 		m_accumulator = m_deltaTime;
 		m_startedScene = "";
 		m_hoveredButtons = std::vector<Button>();
+		m_objectsQueuedForDelete = std::vector<long>();
 	}
 
 	GameLoop::~GameLoop()
@@ -73,6 +74,7 @@ namespace FlatEngine
 		CalculatePhysics();
 		HandleCollisions(gridstep, viewportCenter);
 		ApplyPhysics();
+		DeleteObjectsInDeleteQueue();
 	}
 
 	void GameLoop::Stop()
@@ -349,6 +351,20 @@ namespace FlatEngine
 		RunLuaFuncOnAllScripts("Update");
 		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "Update Scripts: ");
+	}
+
+	void GameLoop::AddObjectToDeleteQueue(long objectID)
+	{
+		m_objectsQueuedForDelete.push_back(objectID);
+	}
+
+	void GameLoop::DeleteObjectsInDeleteQueue()
+	{
+		for (long objectID : m_objectsQueuedForDelete)
+		{
+			DeleteGameObject(objectID);
+		}
+		m_objectsQueuedForDelete.clear();
 	}
 
 	bool GameLoop::IsGamePaused()

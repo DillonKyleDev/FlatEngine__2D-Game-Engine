@@ -601,11 +601,6 @@ namespace FlatEngine
 						std::shared_ptr<ScriptPrefabData> scriptData = std::static_pointer_cast<ScriptPrefabData>(prefab.components.at(componentID));
 						Script* script = self->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
 						script->SetAttachedScript(scriptData->attachedScript);
-						if (GameLoopStarted())
-						{
-							RunLuaFuncOnSingleScript(script, "Awake");
-							RunLuaFuncOnSingleScript(script, "Start");
-						}
 					}
 					else if (prefab.components.at(componentID)->type == "Button")
 					{
@@ -718,6 +713,19 @@ namespace FlatEngine
 							tileMap->SetCollisionAreaValues(areaName, collisionAreaPair.second);
 						}
 					}
+				}
+			}
+
+			// After all components are initialized, activate the script components if there are any
+			if (GameLoopStarted())
+			{
+				for (Script* script : self->GetScripts())
+				{
+					RunLuaFuncOnSingleScript(script, "Awake");
+				}
+				for (Script* script : self->GetScripts())
+				{
+					RunLuaFuncOnSingleScript(script, "Start");
 				}
 			}
 		}
