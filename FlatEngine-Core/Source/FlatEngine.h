@@ -201,6 +201,7 @@ namespace FlatEngine
 	extern void RunAwakeAndStart();	
 	extern void RetrieveLuaScriptPaths();
 	extern bool CheckLuaScriptFile(std::string filePath);
+	extern void LoadLuaGameObject(GameObject* object);
 	extern 	bool InitLuaScript(std::string filePath, GameObject* caller);
 	// Lua/Sol Events
 	template <class T>
@@ -238,7 +239,7 @@ namespace FlatEngine
 	std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
-	extern void DeleteGameObject(int sceneObjectID);
+	extern void DeleteGameObject(long sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectById(long objectID);
 	extern GameObject* GetObjectByName(std::string name);

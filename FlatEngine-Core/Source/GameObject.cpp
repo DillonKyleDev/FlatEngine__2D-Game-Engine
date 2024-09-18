@@ -115,6 +115,21 @@ namespace FlatEngine
 		m_tagList.SetTag(tagName, b_hasTag);
 	}
 
+	bool GameObject::HasScript(std::string scriptName)
+	{
+		bool b_hasScript = false;
+
+		for (Script* script : GetScripts())
+		{
+			if (script->GetAttachedScript() == scriptName)
+			{
+				b_hasScript = true;
+			}
+		}
+
+		return b_hasScript;
+	}
+
 	void GameObject::RemoveComponent(Component* component)
 	{
 		if (component != nullptr)
@@ -175,7 +190,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Sprite sprite = Sprite(nextID, m_ID);
 		sprite.SetActive(b_active);
 		sprite.SetCollapsed(b_collapsed);
@@ -190,7 +208,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Camera camera = Camera(nextID, m_ID);
 		camera.SetActive(b_active);
 		camera.SetCollapsed(b_collapsed);
@@ -204,7 +225,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Script script = Script(nextID, m_ID);
 		script.SetActive(b_active);
 		script.SetCollapsed(b_collapsed);
@@ -218,7 +242,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Button button = Button(nextID, m_ID);
 		button.SetActive(b_active);
 		button.SetCollapsed(b_collapsed);
@@ -232,7 +259,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Canvas canvas = Canvas(nextID, m_ID);
 		canvas.SetActive(b_active);
 		canvas.SetCollapsed(b_collapsed);
@@ -246,7 +276,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Animation animation = Animation(nextID, m_ID);
 		animation.SetActive(b_active);
 		animation.SetCollapsed(b_collapsed);
@@ -260,7 +293,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Audio audio = Audio(nextID, m_ID);
 		audio.SetActive(b_active);
 		audio.SetCollapsed(b_collapsed);
@@ -274,7 +310,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		Text text = Text(nextID, m_ID);
 		text.SetActive(b_active);
 		text.SetCollapsed(b_collapsed);
@@ -296,7 +335,10 @@ namespace FlatEngine
 
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		BoxCollider boxCollider = BoxCollider(nextID, m_ID);
 		boxCollider.SetActive(b_active);
 		boxCollider.SetCollapsed(b_collapsed);
@@ -315,7 +357,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		CircleCollider circleCollider = CircleCollider(nextID, m_ID);
 		circleCollider.SetActive(b_active);
 		circleCollider.SetCollapsed(b_collapsed);
@@ -329,7 +374,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		CompositeCollider compositeCollider = CompositeCollider(nextID, m_ID);
 		compositeCollider.SetActive(b_active);
 		compositeCollider.SetCollapsed(b_collapsed);
@@ -343,7 +391,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		RigidBody rigidBody = RigidBody(nextID, m_ID);
 		rigidBody.SetActive(b_active);
 		rigidBody.SetCollapsed(b_collapsed);
@@ -357,7 +408,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		CharacterController characterController = CharacterController(nextID, m_ID);
 		characterController.SetActive(b_active);
 		characterController.SetCollapsed(b_collapsed);
@@ -371,7 +425,10 @@ namespace FlatEngine
 	{
 		long nextID = ID;
 		if (nextID == -1)
+		{
 			nextID = GetLoadedScene()->GetNextComponentID();
+		}
+
 		TileMap tileMap = TileMap(nextID, m_ID);
 		tileMap.SetActive(b_active);
 		tileMap.SetCollapsed(b_collapsed);
@@ -405,7 +462,9 @@ namespace FlatEngine
 		for (Component* component : m_components)
 		{
 			if (component->GetTypeString() == type)
+			{
 				return true;
+			}
 		}
 		return false;
 	}
@@ -457,6 +516,19 @@ namespace FlatEngine
 	std::vector<BoxCollider*> GameObject::GetBoxColliders()
 	{
 		return GetLoadedScene()->GetBoxCollidersByOwner(m_ID);
+	}
+	BoxCollider* GameObject::GetBoxCollider()
+	{
+		std::vector<BoxCollider*> colliders = GetBoxColliders();
+		
+		if (colliders.size() > 0)
+		{
+			return colliders[0];
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 	std::vector<CircleCollider*> GameObject::GetCircleColliders()
 	{

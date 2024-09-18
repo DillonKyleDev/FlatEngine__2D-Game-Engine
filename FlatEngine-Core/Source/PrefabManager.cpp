@@ -116,7 +116,7 @@ namespace FlatEngine
 				transform->b_isCollapsed = b_isCollapsed;
 				transform->ownerId = object.ID;
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
-				transform->origin = Vector2(CheckJsonFloat(componentJson, "xOrigin", objectName), CheckJsonFloat(componentJson, "yOrigin", objectName));
+				transform->position = Vector2(CheckJsonFloat(componentJson, "xPos", objectName), CheckJsonFloat(componentJson, "yPos", objectName));
 				transform->scale = Vector2(CheckJsonFloat(componentJson, "xScale", objectName), CheckJsonFloat(componentJson, "yScale", objectName));
 				transform->rotation = CheckJsonFloat(componentJson, "rotation", objectName);
 				objectRotation = transform->rotation;
@@ -433,8 +433,6 @@ namespace FlatEngine
 				
 				prefab.components.emplace(componentID, tileMap);
 			}
-
-
 		}
 
 		// Save copy of the root object
@@ -507,9 +505,6 @@ namespace FlatEngine
 			json prefabJson = LoadFileData(prefabPath.string());
 			if (prefabJson != NULL)
 			{
-				//Getting data from theCheckJson 
-				//std::string name = firstObjectName[0]["name"];
-
 				auto prefabObjects = prefabJson["Prefab"];
 											
 				if (prefabObjects != "NULL")
@@ -546,11 +541,6 @@ namespace FlatEngine
 			self->SetActive(myData.b_isActive);
 			self->SetTagList(myData.tagList);
 
-			for (long prefabChildID : myData.childrenIDs)
-			{
-				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab);
-			}
-
 			for (long componentID : myData.componentIDs)
 			{
 				if (prefab.components.count(componentID) > 0)
@@ -562,14 +552,17 @@ namespace FlatEngine
 						transform->SetActive(transformData->b_isActive);
 						transform->SetCollapsed(transformData->b_isCollapsed);
 						transform->SetScale(transformData->scale);
-						transform->SetRotation(transformData->rotation);
-						transform->SetOrigin(transformData->origin);
+						transform->SetRotation(transformData->rotation);						
+
 						if (parentID != -1)
 						{
+							Vector2 parentPosition = GetObjectById(parentID)->GetTransform()->GetTruePosition();
+							transform->SetOrigin(parentPosition);
 							transform->SetInitialPosition(transformData->position);
 						}
 						else
 						{
+							transform->SetOrigin(Vector2(0, 0));
 							transform->SetInitialPosition(spawnLocation);
 						}
 					}
@@ -714,6 +707,11 @@ namespace FlatEngine
 						}
 					}
 				}
+			}
+
+			for (long prefabChildID : myData.childrenIDs)
+			{
+				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab);
 			}
 
 			// After all components are initialized, activate the script components if there are any

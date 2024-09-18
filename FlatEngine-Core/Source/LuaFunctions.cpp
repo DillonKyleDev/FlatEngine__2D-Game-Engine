@@ -20,6 +20,7 @@
 #include <fstream>
 #include <random>
 
+// https://github.com/ThePhD/sol2/issues/354
 
 // Lua helpers + Functions that Lua can call
 namespace FlatEngine
@@ -39,6 +40,10 @@ namespace FlatEngine
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
+		F_Lua["LoadGameObject"] = [](long ID)
+		{
+			LoadLuaGameObject(GetObjectById(ID));
+		};
 		F_Lua["GetObjectByID"] = [](long ID)
 		{
 			return GetObjectById(ID);
@@ -174,6 +179,8 @@ namespace FlatEngine
 			"SetName", &GameObject::SetName,
 			"IsActive", &GameObject::IsActive,
 			"SetActive", &GameObject::SetActive,
+			"GetParent", &GameObject::GetParent,
+			"GetParentID", &GameObject::GetParentID,
 			"HasTag", &GameObject::HasTag,
 			"GetTransform", &GameObject::GetTransform,
 			"AddSprite", &GameObject::AddTransform,
@@ -186,14 +193,18 @@ namespace FlatEngine
 			"GetText", &GameObject::GetText,
 			"GetCharacterController", &GameObject::GetCharacterController,
 			"GetRigidBody", &GameObject::GetRigidBody,
-			"GetBoxCollider", &GameObject::GetBoxColliders,
+			"GetBoxColliders", &GameObject::GetBoxColliders,
+			"GetBoxCollider", &GameObject::GetBoxCollider,
 			"GetFirstChild", &GameObject::GetFirstChild,
 			"HasChildren", &GameObject::HasChildren,
-			"GetChildren", &GameObject::GetChildren
+			"GetChildren", &GameObject::GetChildren,
+			"HasScript", &GameObject::HasScript,
+			"FindChildByName", &GameObject::FindChildByName
 		);
 
 		F_Lua.new_usertype<Transform>("Transform",
 			"GetParent", &Transform::GetParent,
+			"GetParentID", &Transform::GetParentID,
 			"GetID", &Transform::GetID,
 			"SetPosition", &Transform::SetPosition,
 			"GetPosition", &Transform::GetPosition,
@@ -209,6 +220,7 @@ namespace FlatEngine
 			"SetActive", &Sprite::SetActive,
 			"IsActive", &Sprite::IsActive,
 			"GetParent", &Sprite::GetParent,
+			"GetParentID", &Sprite::GetParentID,
 			"GetID", &Sprite::GetID,
 			"SetTexture", &Sprite::SetTexture,
 			"GetPath", &Sprite::GetPath,
@@ -222,6 +234,7 @@ namespace FlatEngine
 
 		F_Lua.new_usertype<Audio>("Audio",
 			"GetParent", &Audio::GetParent,
+			"GetParentID", &Audio::GetParentID,
 			"SetActive", &Audio::SetActive,
 			"IsActive", &Audio::IsActive,
 			"GetID", &Audio::GetID,
@@ -234,6 +247,7 @@ namespace FlatEngine
 
 		F_Lua.new_usertype<Animation>("Animation",
 			"GetParent", &Animation::GetParent,
+			"GetParentID", &Animation::GetParentID,
 			"SetActive", &Animation::SetActive,
 			"IsActive", &Animation::IsActive,
 			"GetID", &Animation::GetID,
@@ -257,6 +271,7 @@ namespace FlatEngine
 			"SetActive", &RigidBody::SetActive,
 			"IsActive", &RigidBody::IsActive,
 			"GetParent", &RigidBody::GetParent,
+			"GetParentID", &RigidBody::GetParentID,
 			"GetID", &RigidBody::GetID,
 			"SetMass", &RigidBody::SetMass,
 			"GetMass", &RigidBody::GetMass,
@@ -283,14 +298,24 @@ namespace FlatEngine
 
 		F_Lua.new_usertype<Collider>("Collider",
 			"GetParent", &Collider::GetParent,
+			"GetParentID", &Collider::GetParentID,
 			"SetActive", &Collider::SetActive,
 			"IsActive", &Collider::IsActive,
 			"GetID", &Collider::GetID
 		);
 
+		F_Lua.new_usertype<BoxCollider>("BoxCollider",
+			"GetParent", &BoxCollider::GetParent,
+			"GetParentID", &BoxCollider::GetParentID,
+			"SetActive", &BoxCollider::SetActive,
+			"IsActive", &BoxCollider::IsActive,
+			"GetID", &BoxCollider::GetID
+		);
+
 		F_Lua.new_usertype<CharacterController>("CharacterController",
 			"MoveToward", &CharacterController::MoveToward,
 			"GetParent", &CharacterController::GetParent,
+			"GetParentID", &CharacterController::GetParentID,
 			"SetActive", &CharacterController::SetActive,
 			"IsActive", &CharacterController::IsActive,
 			"GetID", &CharacterController::GetID
@@ -424,17 +449,16 @@ namespace FlatEngine
 		}
 
 		outfile.open(fileNameWExtention, std::ios_base::app);
-		outfile << 
+		outfile <<
 			"-- " + fileName + ".scp.lua\n\n" +
 			"-- Use \"this_object\" to reference the object that owns this script\n\n\n" +
 
 			"function Awake() \n" +
-			"     " + fileName + " = {}\n" +
-			"     "+ fileName + "[my_id] =\n" +
+			"     " + fileName + "[my_id] =\n" +
 			"     {\n" +
-			"	      -- Key value pairs here\n" +
+			"		-- Key value pairs here\n" +
 			"     }\n" +
-			"     local data = " + fileName + "[my_id]\n\n" +
+			"     local data = " + fileName + "[my_id]\n" +
 			"end\n\n" +
 
 			"function Start()\n" +
@@ -442,9 +466,43 @@ namespace FlatEngine
 			"     local data = " + fileName + "[my_id]\n\n" +
 			"     LogString(\"" + fileName + " : Start() called on \"..this_object:GetName())\n" +
 			"end\n\n" +
-						
+
 			"function Update()\n" +
 			"     local data = " + fileName + "[my_id]\n" +
+			"end\n\n"+
+
+			"-- each of these functions must be present in each file otherwise other files copies will be used with this object instead\n" +
+			"function OnBoxCollision()\n" +
+			"end\n\n" +
+
+			"function OnBoxCollisionEnter()\n" +
+			"end\n\n" +
+
+			"function OnBoxCollisionLeave()\n" +
+			"end\n\n" +
+
+			"function OnCircleCollision()\n" +
+			"end\n\n" +
+
+			"function OnCircleCollisionEnter()\n" +
+			"end\n\n" +
+
+			"function OnCircleCollisionLeave()\n" +
+			"end\n\n" +
+
+			"function OnButtonMouseOver()\n" +
+			"end\n\n" +
+
+			"function OnButtonMouseEnter()\n" +
+			"end\n\n" +
+
+			"function OnButtonMouseLeave()\n" +
+			"end\n\n" +
+
+			"function OnButtonLeftClick()\n" +
+			"end\n\n" +
+
+			"function OnButtonRightClick()\n" +
 			"end";
 
 		RetrieveLuaScriptPaths();
@@ -465,17 +523,25 @@ namespace FlatEngine
 		}
 	}
 
+	void LoadLuaGameObject(GameObject* object)
+	{
+		if (object != nullptr)
+		{
+			// Store this object object the Lua state to be accessed by the next Lua function calls
+			F_Lua["this_object"] = object;
+			// Store object id
+			F_Lua["my_id"] = object->GetID();
+		}
+	}
+
 	// Checks that the script filepath is good and sends the Lua state contextual data
 	bool InitLuaScript(std::string filePath, GameObject* caller)
 	{
 		if (CheckLuaScriptFile(filePath))
 		{
-			// Store this object inside the Lua state to be accessed by the next Lua function calls
-			F_Lua["this_object"] = caller;
+			LoadLuaGameObject(caller);
 			// Store the name of the script being called in the Lua state (for hands-off named logging from Lua)
 			F_Lua["calling_script_name"] = GetFilenameFromPath(filePath);
-			// Store object id
-			F_Lua["my_id"] = caller->GetID();
 			
 			return true;
 		}
@@ -530,6 +596,7 @@ namespace FlatEngine
 						std::string filePath = F_LuaScriptsMap.at(script->GetAttachedScript());
 						if (InitLuaScript(filePath, caller))
 						{
+							std::string functionName = GetFilenameFromPath(filePath) + F_LuaEventNames[eventFunc];
 							CallVoidLuaFunction<Collider*>(F_LuaEventNames[eventFunc], collidedWith);
 						}
 					}

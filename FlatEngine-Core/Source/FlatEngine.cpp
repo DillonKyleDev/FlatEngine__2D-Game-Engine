@@ -683,7 +683,7 @@ namespace FlatEngine
 		return GetLoadedScene()->CreateGameObject(parentID, myID);
 	}
 
-	void DeleteGameObject(int sceneObjectID)
+	void DeleteGameObject(long sceneObjectID)
 	{
 		GetLoadedScene()->DeleteGameObject(sceneObjectID);
 	}

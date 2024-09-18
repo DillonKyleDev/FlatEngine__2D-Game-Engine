@@ -48,6 +48,7 @@ namespace FlatGui
 				FL::RenderSectionHeader("Directories");
 
 				FL::PushMenuStyles();
+				ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0));
 				if (ImGui::BeginTable("##DirectoriesTable", 1, FL::F_tableFlags))
 				{
 					ImGui::TableSetupColumn("##Directory", 0, ImGui::GetContentRegionAvail().x);
@@ -58,6 +59,7 @@ namespace FlatGui
 					ImGui::EndTable();
 				}
 				FL::PopMenuStyles();
+				ImGui::PopStyleVar();
 
 			// }
 			FL::EndWindowChild();

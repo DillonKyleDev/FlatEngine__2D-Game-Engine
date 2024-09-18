@@ -45,6 +45,8 @@ namespace FlatEngine
 		void SetTagList(TagList tagList);
 		bool HasTag(std::string tagName);
 		void SetTag(std::string tagName, bool b_hasTag);
+		bool HasScript(std::string scriptName);
+
 
 		// Components
 		void RemoveComponent(Component* component);
@@ -79,7 +81,8 @@ namespace FlatEngine
 		Text* GetText();
 		CharacterController* GetCharacterController();
 		RigidBody* GetRigidBody();
-		std::vector<BoxCollider*> GetBoxColliders();		
+		std::vector<BoxCollider*> GetBoxColliders();	
+		BoxCollider* GetBoxCollider();
 		std::vector<CircleCollider*> GetCircleColliders();
 		CompositeCollider* GetCompositeCollider();	
 		TileMap* GetTileMap();

@@ -486,18 +486,20 @@ namespace FlatGui
 				// }
 				ImGui::EndChild(); // Properties Header
 
-				static float animatorGridStep = 50;				
-				Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
-				Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-				if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
-				if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-				Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+				static float animatorGridgridStep = 50;				
+				Vector2 canvasP0 = ImGui::GetCursorScreenPos();
+				Vector2 canvasSize = ImGui::GetContentRegionAvail();
+				if (canvasSize.x < 50.0f) canvasSize.x = 50.0f;
+				if (canvasSize.y < 50.0f) canvasSize.y = 50.0f;
+				Vector2 canvasP1 = Vector2(canvasP0.x + canvasSize.x, canvasP0.y + canvasSize.y);
 				static Vector2 scrolling = Vector2(0, 0);
-				Vector2 gridStep = Vector2(animatorGridStep);
+				Vector2 gridgridStep = Vector2(animatorGridgridStep);
 				Vector2 zeroPoint = Vector2(0, 0);
+				float maxGridStep = 500;
+				float minGridStep = 5;
 
-				AddSceneViewMouseControls("AnimatorTimelineGridButton", ImGui::GetCursorScreenPos(), canvas_sz, scrolling, Vector2(0, 0), gridStep, FL::GetColor32("transparent"), false, 0, true, false, 10);
-				animatorGridStep = gridStep.x;
+				AddSceneViewMouseControls("##AnimatorTimelineGridButton", ImGui::GetCursorScreenPos(), canvasSize, scrolling, Vector2(0, 0), gridgridStep, FL::GetColor32("transparent"), false, 0, true, false, 10, minGridStep, maxGridStep);
+				animatorGridgridStep = gridgridStep.x;
 				if (scrolling.x > 0)
 				{
 					scrolling.x = 0;
@@ -511,7 +513,7 @@ namespace FlatGui
 					scrolling.y = -1500;
 				}
 
-				RenderAnimationTimelineGrid(zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+				RenderAnimationTimelineGrid(zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 
 				// Get all keyFramePip positions
 				float propertyYPos = -0.5f; // Value in grid space
@@ -527,8 +529,8 @@ namespace FlatGui
 				// Lambda
 				auto L_RenderPropertyInTimeline = [&](std::string property, std::vector<float> keyFrameTimes, Vector4 rectColor)
 				{
-					float topYPos = canvas_p0.y + scrolling.y + (propertyCounter * animatorGridStep);
-					float bottomYPos = topYPos + animatorGridStep;
+					float topYPos = canvasP0.y + scrolling.y + (propertyCounter * animatorGridgridStep);
+					float bottomYPos = topYPos + animatorGridgridStep;
 					ImU32 color;
 
 					if (node_clicked == property)
@@ -541,30 +543,30 @@ namespace FlatGui
 					}
 		
 					// prevents being drawn off screen and introducing scrollbar
-					if (topYPos < canvas_p0.y)
+					if (topYPos < canvasP0.y)
 					{
-						topYPos = canvas_p0.y;
+						topYPos = canvasP0.y;
 					}
-					if (bottomYPos < canvas_p0.y)
+					if (bottomYPos < canvasP0.y)
 					{
-						bottomYPos = canvas_p0.y;
-					}
-
-					if (topYPos > canvas_p1.y)
-					{
-						topYPos = canvas_p1.y;
-					}
-					if (bottomYPos > canvas_p1.y)
-					{
-						bottomYPos = canvas_p1.y;
+						bottomYPos = canvasP0.y;
 					}
 
-					Vector2 topLeftCorner = Vector2(canvas_p0.x, topYPos);
-					Vector2 bottomRightCorner = Vector2(canvas_p1.x, bottomYPos);
+					if (topYPos > canvasP1.y)
+					{
+						topYPos = canvasP1.y;
+					}
+					if (bottomYPos > canvasP1.y)
+					{
+						bottomYPos = canvasP1.y;
+					}
+
+					Vector2 topLeftCorner = Vector2(canvasP0.x, topYPos);
+					Vector2 bottomRightCorner = Vector2(canvasP1.x, bottomYPos);
 					draw_list->AddRectFilled(topLeftCorner, bottomRightCorner, color);
 				};
 				// Lambda
-				auto L_RenderAnimationTimelineKeyFrames = [](std::shared_ptr<Animation::S_Property> keyFrame, int counter, Vector2& pipPosition, Vector2 zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
+				auto L_RenderAnimationTimelineKeyFrames = [](std::shared_ptr<Animation::S_Property> keyFrame, int counter, Vector2& pipPosition, Vector2 zeroPoint, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasP1, Vector2 canvasSize, float gridgridStep)
 				{
 					std::string ID = keyFrame->name;
 					ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -576,7 +578,7 @@ namespace FlatGui
 					
 					if (FL::GetTexture("keyFrame") != nullptr)
 					{
-						Vector2 pipStartingPoint = FL::AddImageToDrawList(FL::GetTexture("keyFrame"), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), b_spriteScalesWithZoom, animatorGridStep, draw_list);
+						Vector2 pipStartingPoint = FL::AddImageToDrawList(FL::GetTexture("keyFrame"), pipPosition, zeroPoint, 12, 12, Vector2(6, 6), Vector2(1, 1), b_spriteScalesWithZoom, animatorGridgridStep, draw_list);
 
 						ImGui::SetCursorScreenPos(pipStartingPoint);
 						std::string pipID = ID + std::to_string(counter) + "-KeyFramePip";
@@ -605,9 +607,9 @@ namespace FlatGui
 						if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0))
 						{
 							ImGuiIO& inputOutput = ImGui::GetIO();
-							if (keyFrame->time + inputOutput.MouseDelta.x / animatorGridStep * 1000 >= 0)
+							if (keyFrame->time + inputOutput.MouseDelta.x / animatorGridgridStep * 1000 >= 0)
 							{
-								keyFrame->time += inputOutput.MouseDelta.x / animatorGridStep * 1000;
+								keyFrame->time += inputOutput.MouseDelta.x / animatorGridgridStep * 1000;
 							}
 						}
 
@@ -651,8 +653,8 @@ namespace FlatGui
 							// Get keyFrame time and convert to seconds
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);					
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -669,8 +671,8 @@ namespace FlatGui
 							std::string ID = "Transform";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);		
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -687,8 +689,8 @@ namespace FlatGui
 							std::string ID = "Sprite";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -705,8 +707,8 @@ namespace FlatGui
 							std::string ID = "Camera";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -723,8 +725,8 @@ namespace FlatGui
 							std::string ID = "Script";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -741,8 +743,8 @@ namespace FlatGui
 							std::string ID = "Button";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -759,8 +761,8 @@ namespace FlatGui
 							std::string ID = "Canvas";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -777,8 +779,8 @@ namespace FlatGui
 							std::string ID = "Audio";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -795,8 +797,8 @@ namespace FlatGui
 							std::string ID = "Text";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -813,8 +815,8 @@ namespace FlatGui
 							std::string ID = "BoxCollider";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -831,8 +833,8 @@ namespace FlatGui
 							std::string ID = "CircleCollider";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -849,8 +851,8 @@ namespace FlatGui
 							std::string ID = "RigidBody";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -867,8 +869,8 @@ namespace FlatGui
 							std::string ID = "CharacterController";					
 							float keyFrameX = frame->time / 1000;
 							Vector2 keyFramePos = Vector2(keyFrameX, propertyYPos);
-							if (zeroPoint.y + (propertyYPos * animatorGridStep * -1) < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) + 6 < canvas_p1.y && zeroPoint.y + (propertyYPos * animatorGridStep * -1) > canvas_p0.y)
-								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvas_p0, canvas_p1, canvas_sz, animatorGridStep);
+							if (zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) + 6 < canvasP1.y && zeroPoint.y + (propertyYPos * animatorGridgridStep * -1) > canvasP0.y)
+								L_RenderAnimationTimelineKeyFrames(frame, IDCounter, keyFramePos, zeroPoint, scrolling, canvasP0, canvasP1, canvasSize, animatorGridgridStep);
 							IDCounter++;
 						}
 						propertyYPos--;
@@ -894,16 +896,16 @@ namespace FlatGui
 
 	void RenderAnimationPreview()
 	{
-		static Vector2 step = Vector2(50, 50);
+		static Vector2 gridStep = Vector2(50, 50);
 
 		FL::BeginWindow("Animator Preview", FG_b_showAnimationPreview);
 		// {
 		
-			Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
-			Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-			if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
-			if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-			Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+			Vector2 canvasP0 = ImGui::GetCursorScreenPos();
+			Vector2 canvasSize = ImGui::GetContentRegionAvail();
+			if (canvasSize.x < 50.0f) canvasSize.x = 50.0f;
+			if (canvasSize.y < 50.0f) canvasSize.y = 50.0f;
+			Vector2 canvasP1 = Vector2(canvasP0.x + canvasSize.x, canvasP0.y + canvasSize.y);
 			static Vector2 scrolling = Vector2(0, 0);
 			static Vector2 viewPortDimensions = Vector2(0, 0);
 			static bool b_firstRenderPassDone = false;
@@ -914,7 +916,7 @@ namespace FlatGui
 			{
 				if (!b_viewportSizeTaken)
 				{
-					viewPortDimensions = Vector2(canvas_sz.x, canvas_sz.y);
+					viewPortDimensions = Vector2(canvasSize.x, canvasSize.y);
 				}
 				b_viewportSizeTaken = true;
 			}
@@ -922,7 +924,7 @@ namespace FlatGui
 			
 			ImGuiIO& inputOutput = ImGui::GetIO();
 			
-			ImGui::InvisibleButton("AnimationPreview", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);			
+			ImGui::InvisibleButton("AnimationPreview", canvasSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);			
 			const bool b_isActive = ImGui::IsItemActive();
 						
 			if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Right))
@@ -934,7 +936,7 @@ namespace FlatGui
 			Vector2 centerPoint = Vector2(0, 0);
 
 			bool b_weightedScroll = false;
-			RenderGridView(centerPoint, scrolling, b_weightedScroll, canvas_p0, canvas_p1, canvas_sz, step, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
+			RenderGridView(centerPoint, scrolling, b_weightedScroll, canvasP0, canvasP1, canvasSize, gridStep, Vector2(viewPortDimensions.x / 2, viewPortDimensions.y / 2));
 
 
 			if (objectForFocusedAnimation != nullptr)
@@ -955,34 +957,34 @@ namespace FlatGui
 					}
 				}
 
-				//RenderViewObjects(focusedObjectVector, centerPoint, canvas_p0, canvas_sz, step.x);
+				//RenderViewObjects(focusedObjectVector, centerPoint, canvasP0, canvasSize, gridStep.x);
 			}
 
 		// }
 		FL::EndWindow(); // Animator Preview
 	}
 
-	void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep)
+	void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasP1, Vector2 canvasSize, float gridgridStep)
 	{
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, FL::GetColor32("timelineGridBg"));
-		zeroPoint = Vector2(scrolling.x + canvas_p0.x, canvas_p0.y + scrolling.y);
+		draw_list->AddRectFilled(canvasP0, canvasP1, FL::GetColor32("timelineGridBg"));
+		zeroPoint = Vector2(scrolling.x + canvasP0.x, canvasP0.y + scrolling.y);
 
 		// Draw vertical grid lines
-		for (float x = trunc(fmodf(zeroPoint.x, gridStep)); x < canvas_p0.x + canvas_sz.x; x += gridStep)
+		for (float x = trunc(fmodf(zeroPoint.x, gridgridStep)); x < canvasP0.x + canvasSize.x; x += gridgridStep)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), FL::GetColor("col_4"), 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvasP0.y), Vector2(x, canvasP1.y), FL::GetColor("col_4"), 1.0f, draw_list);
 		}
-		for (float x = trunc(fmodf(zeroPoint.x, gridStep * 2)); x < canvas_p0.x + canvas_sz.x; x += gridStep * 2)
+		for (float x = trunc(fmodf(zeroPoint.x, gridgridStep * 2)); x < canvasP0.x + canvasSize.x; x += gridgridStep * 2)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), FL::GetColor("col_8"), 1.0f, draw_list);
+			FL::DrawLine(Vector2(x, canvasP0.y), Vector2(x, canvasP1.y), FL::GetColor("col_8"), 1.0f, draw_list);
 		}
 		// Draw horizontal grid lines
-		for (float y = trunc(fmodf(zeroPoint.y, gridStep)); y < canvas_p0.y + canvas_sz.y; y += gridStep / 2)
+		for (float y = trunc(fmodf(zeroPoint.y, gridgridStep)); y < canvasP0.y + canvasSize.y; y += gridgridStep / 2)
 		{
-			if (y > canvas_p0.y)
+			if (y > canvasP0.y)
 			{
-				FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), FL::GetColor("col_3"), 1.0f, draw_list);
+				FL::DrawLine(Vector2(canvasP0.x, y), Vector2(canvasP1.x, y), FL::GetColor("col_3"), 1.0f, draw_list);
 			}
 		}
 	}

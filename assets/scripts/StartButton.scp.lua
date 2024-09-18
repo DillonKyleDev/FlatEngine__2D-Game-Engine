@@ -32,9 +32,16 @@ function OnButtonLeftClick()
 end
 
 function OnButtonMouseOver()
-     -- LogString("Mouse over")
  end
  
  function OnButtonRightClick()
-     -- LogString("Right Click!")
+ end
+
+ function OnBoxCollision(collidedWith)
+ end
+  
+ function BlasterRoundOnBoxCollisionEnter(collidedWith) 
+ end
+  
+ function OnBoxCollisionLeave(collidedWith)     
  end

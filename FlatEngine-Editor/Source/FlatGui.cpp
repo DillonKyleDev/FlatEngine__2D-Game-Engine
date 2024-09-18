@@ -1480,12 +1480,10 @@ namespace FlatGui
 		}
 	}
 
-	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap, bool b_weightedScroll, float zoomMultiplier)
+	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap, bool b_weightedScroll, float zoomMultiplier, float minGridStep, float maxGridStep)
 	{
 		ImGuiIO& inputOutput = ImGui::GetIO();
 		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
-		float maxGridStep = 100;
-		float minGridStep = 5;
 
 		// For calculating scrolling mouse position and what vector to zoom to
 		DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);

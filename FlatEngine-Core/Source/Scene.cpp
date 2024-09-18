@@ -177,13 +177,6 @@ namespace FlatEngine
 			m_primaryCamera = nullptr;
 		}
 		
-		long parentID = objectToDelete->GetParentID();
-		if (parentID != -1)
-		{
-			GameObject* parent = GetObjectById(parentID);
-			parent->RemoveChild(ID);
-		}
-		
 		for (Component* component : objectToDelete->GetComponents())
 		{
 			m_ECSManager.RemoveComponent(component);
@@ -191,10 +184,16 @@ namespace FlatEngine
 
 		if (objectToDelete->HasChildren())
 		{
-			for (int c = 0; c < objectToDelete->GetChildren().size(); c++)
+			std::vector<long> childrenIDs = objectToDelete->GetChildren();
+
+			for (int i = 0; i < objectToDelete->GetChildren().size(); i++)
 			{				
-				GameObject *child = GetObjectById(objectToDelete->GetChildren()[c]);
-				Scene::DeleteChildrenAndSelf(child);
+				GameObject *child = GetObjectById(childrenIDs[i]);
+				if (child != nullptr)
+				{
+					Scene::DeleteChildrenAndSelf(child);
+				}
+				objectToDelete->RemoveChild(childrenIDs[i]);
 			}
 		}
 
