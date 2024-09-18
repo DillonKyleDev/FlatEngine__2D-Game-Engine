@@ -85,8 +85,7 @@ function OnBoxCollision(collidedWith)
 end
 
 function OnBoxCollisionEnter(collidedWith)
-    local collidedName = collidedWith:GetParent():GetName()   
-    LogString("From Player") 
+    local collidedName = collidedWith:GetParent():GetName()       
 end
 
 function OnBoxCollisionLeave(collidedWith)    

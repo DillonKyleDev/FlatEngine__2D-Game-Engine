@@ -19,6 +19,9 @@
 
 #include <fstream>
 #include <random>
+#include <vector>
+#include <map>
+
 
 // https://github.com/ThePhD/sol2/issues/354
 
@@ -37,9 +40,73 @@ namespace FlatEngine
 		RegisterLuaTypes();
 	}
 
+	std::vector<std::string> CreateStringVector()
+	{
+		std::vector<std::string> newVec = std::vector<std::string>();
+		return newVec;
+	}
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
+		F_Lua["CreateStringVector"] = []()
+		{
+				return CreateStringVector();
+		};/*
+		F_Lua["CreateIntVector"] = []()
+		{
+			std::vector<int> newVec = std::vector<int>();
+			return newVec;
+		};
+		F_Lua["CreateFloatVector"] = []()
+		{
+			std::vector<float> newVec = std::vector<float>();
+			return newVec;
+		};
+		F_Lua["CreateLongVector"] = []()
+		{
+			std::vector<long> newVec = std::vector<long>();
+			return newVec;
+		};
+		F_Lua["CreateStringStringMap"] = []()
+		{
+			std::map<std::string, std::string> newMap = std::map<std::string, std::string>();
+			return newMap;			
+		};
+		F_Lua["CreateStringIntMap"] = []()
+		{
+			std::map<std::string, int> newMap = std::map<std::string, int>();
+			return newMap;
+		};
+		F_Lua["CreateStringFloatMap"] = []()
+		{
+			std::map<std::string, float> newMap = std::map<std::string, float>();
+			return newMap;
+		};
+		F_Lua["CreateStringBoolMap"] = []()
+		{
+			std::map<std::string, bool> newMap = std::map<std::string, bool>();
+			return newMap;
+		};
+		F_Lua["CreateIntStringMap"] = []()
+		{
+			std::map<int, std::string> newMap = std::map<int, std::string>();
+			return newMap;
+		};
+		F_Lua["CreateIntIntMap"] = []()
+		{
+			std::map<int, int> newMap = std::map<int, int>();
+			return newMap;
+		};
+		F_Lua["CreateIntFloatMap"] = []()
+		{
+			std::map<int, float> newMap = std::map<int, float>();
+			return newMap;
+		};
+		F_Lua["CreateIntBoolMap"] = []()
+		{
+			std::map<int, bool> newMap = std::map<int, bool>();
+			return newMap;
+		};*/
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
 			LoadLuaGameObject(GetObjectById(ID));
