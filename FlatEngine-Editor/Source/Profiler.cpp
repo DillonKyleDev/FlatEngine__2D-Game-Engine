@@ -102,16 +102,16 @@ namespace FlatGui
 		FL::EndWindow(); // Profiler
 	}
 
-	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size) 
+	void Sparkline(const char* ID, const float* values, int count, float min, float max, int offset, const Vector4& color, const Vector2& size) 
 	{
 		ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, Vector2(0, 0));
-		if (ImPlot::BeginPlot(id, size, ImPlotFlags_CanvasOnly)) 
+		if (ImPlot::BeginPlot(ID, size, ImPlotFlags_CanvasOnly)) 
 		{
 			ImPlot::SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
-			ImPlot::SetupAxesLimits(0, count - 1, min_v, max_v, ImGuiCond_Always);
-			ImPlot::SetNextLineStyle(col);
-			ImPlot::SetNextFillStyle(col, 0.25);
-			ImPlot::PlotLine(id, values, count, 1, 0, ImPlotLineFlags_Shaded, offset);
+			ImPlot::SetupAxesLimits(0, count - 1, min, max, ImGuiCond_Always);
+			ImPlot::SetNextLineStyle(color);
+			ImPlot::SetNextFillStyle(color, 0.25);
+			ImPlot::PlotLine(ID, values, count, 1, 0, ImPlotLineFlags_Shaded, offset);
 			ImPlot::EndPlot();
 		}
 		ImPlot::PopStyleVar();

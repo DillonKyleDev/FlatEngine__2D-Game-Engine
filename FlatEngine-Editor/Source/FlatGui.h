@@ -156,7 +156,7 @@ namespace FlatGui
 	extern void RunOnceAfterInitialization();
 
 	// Viewports
-	extern void RenderProjectHub(bool & b_projectSelected, std::string &projectPath);
+	extern void RenderProjectHub(bool& b_projectSelected, std::string& projectPath);
 	extern void MainMenuBar();
 	extern void AddViewports();
 	extern void RenderToolbar();
@@ -165,25 +165,25 @@ namespace FlatGui
 	extern void Scene_RenderView();
 	extern void RenderAnimator();
 	extern void RenderAnimationPreview();
-	extern void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, float gridStep);
+	extern void RenderAnimationTimelineGrid(Vector2& zeroPoint, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasP1, Vector2 canvasSize, float gridStep);
 	extern void RenderKeyFrameEditor();
 	extern void RenderLog();
 	extern void RenderProfiler();
 	extern void RenderMappingContextEditor();
 	extern void RenderSettings();
 	extern void Cleanup();
-	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2& step, Vector2 centerOffset, bool b_showAxis = true);
-	extern void RenderViewObjects(std::map<long, GameObject> &objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step);
-	extern void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter);
+	extern void RenderGridView(Vector2& centerPoint, Vector2& scrolling, bool b_weightedScroll, Vector2 canvasP0, Vector2 canvasP1, Vector2 canvasSize, Vector2& gridStep, Vector2 centerOffset, bool b_showAxis = true);
+	extern void RenderViewObjects(std::map<long, GameObject>& objects, Vector2 centerPoint, Vector2 canvasP0, Vector2 canvasSize, float gridStep);
+	extern void RenderViewObject(GameObject& self, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasSize, float gridStep, ImDrawList* drawList, ImDrawListSplitter* drawSplitter);
 	extern void RenderFileExplorer();
 	extern void RenderFilesTopBar();
 	extern void RenderDirNodes(std::string dir);
-	extern void RenderDirNode(std::filesystem::path fs_filepath);
+	extern void RenderDirNode(std::filesystem::path fsPath);
 	extern void RenderDirItems();
-	extern void RenderFileIcon(std::filesystem::path fs_filepath, Vector2 currentPos);
-	extern void OpenFileContextually(std::filesystem::path fs_filepath);
+	extern void RenderFileIcon(std::filesystem::path fsPath, Vector2 currentPos);
+	extern void OpenFileContextually(std::filesystem::path fsPath);
 	extern void RenderTileSetEditor();
-	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2 &scrolling, Vector2 canvas_p0, Vector2 canvas_sz, Vector2 &step, TileSet* tileSet);
+	extern void RenderTileSetEditorTile(std::pair<int, std::pair<Vector2, Vector2>> tile, Vector2 tileSize, Vector2& scrolling, Vector2 canvasP0, Vector2 canvasSize, Vector2& step, TileSet* tileSet);
 	extern void RenderCursorModeButtons();
 	extern void RenderGameTimeStats();
 	extern void RenderStatsOnGameView();
@@ -192,8 +192,8 @@ namespace FlatGui
 	// *** Don't forget to add flags to the window for preventing scrolling *** ImGuiWindowFlags flags = 8 | 16 or ImGuiWindowFlags_NoScrollbar 
 	extern void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2& scrolling, Vector2 centerPoint, Vector2& gridStep, Uint32 rectColor = ImGui::GetColorU32(Vector4(0,0,0,0)), bool b_filled = false, ImGuiButtonFlags buttonFlags = 0, bool b_allowOverlap = true, bool b_weightedScroll = false, float zoomMultiplier = 1);
 	// Component Wrappers	
-	extern bool RenderIsActiveCheckbox(bool& _isActive);
-	extern void BeginComponent(Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride = "");
+	extern bool RenderIsActiveCheckbox(bool& b_isActive);
+	extern void BeginComponent(Component* component, FL::Component*& queuedForDelete, std::string typeNameOverride = "");
 	extern void EndComponent(Component* component);
 	extern void RenderTransformComponent(Transform* transform);
 	extern void RenderSpriteComponent(Sprite* sprite);
@@ -214,7 +214,7 @@ namespace FlatGui
 	// SceneView
 	extern void RenderSceneViewTooltip();
 	// Hierarchy
-	extern void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent);
+	extern void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& nodeClicked, long& queuedForDelete, float indent);
 	// Profiler
-	void Sparkline(const char* id, const float* values, int count, float min_v, float max_v, int offset, const Vector4& col, const Vector2& size);
+	void Sparkline(const char* ID, const float* values, int count, float min, float max, int offset, const Vector4& color, const Vector2& size);
 }

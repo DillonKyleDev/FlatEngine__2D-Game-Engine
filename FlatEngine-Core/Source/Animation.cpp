@@ -137,7 +137,7 @@ namespace FlatEngine
 					}
 					else if (eventFrame->parameters.size() == 5)
 					{
-						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[4], eventFrame->parameters[5]);
+						CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3], eventFrame->parameters[4]);
 					}
 
 					eventFrame->b_fired = true;

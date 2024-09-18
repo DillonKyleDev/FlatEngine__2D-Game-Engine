@@ -540,16 +540,16 @@ namespace FlatGui
 	}
 
 
-	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool _weightedScroll, Vector2 canvas_p0, Vector2 canvas_p1, Vector2 canvas_sz, Vector2 &step, Vector2 centerOffset, bool b_showAxis)
+	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool b_weightedScroll, Vector2 canvasP0, Vector2 canvas_p1, Vector2 canvasSize, Vector2& gridStep, Vector2 centerOffset, bool b_showAxis)
 	{
 		FG_DrawList = ImGui::GetWindowDrawList();
-		FG_DrawList->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+		FG_DrawList->AddRectFilled(canvasP0, canvas_p1, IM_COL32(50, 50, 50, 255));
 
-		// Our grid step determines the largest gap between each grid point so our centerpoints must fall on
-		// one of those step locations. We get the total grid steps that will render given the current viewport
+		// Our grid gridStep determines the largest gap between each grid point so our centerpoints must fall on
+		// one of those gridStep locations. We get the total grid gridSteps that will render given the current viewport
 		// size and divide that by two to get the closest spot to the center of the viewport. It's okay that this
 		// is not exactly center at all, the viewport width will never be the perfect size, we just need a starting
-		// point and for that point. We need to update this value every pass of the scene view because the step
+		// point and for that point. We need to update this value every pass of the scene view because the gridStep
 		// value will change over time and we need to keep these in sync.          
 		// 
 		//                   V
@@ -558,25 +558,25 @@ namespace FlatGui
 		// X = 0 starts the drawing at the left most edge of the entire app window.
 
 		// Draw horizontal grid lines
-		for (float x = trunc(fmodf(scrolling.x + canvas_p0.x, step.y)); x < canvas_p0.x + canvas_sz.x; x += step.y)
+		for (float x = trunc(fmodf(scrolling.x + canvasP0.x, gridStep.y)); x < canvasP0.x + canvasSize.x; x += gridStep.y)
 		{
-			FL::DrawLine(Vector2(x, canvas_p0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(x, canvasP0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 		// Draw vertical grid lines
-		for (float y = trunc(fmodf(scrolling.y + canvas_p0.y, step.y)); y < canvas_p0.y + canvas_sz.y; y += step.y)
+		for (float y = trunc(fmodf(scrolling.y + canvasP0.y, gridStep.y)); y < canvasP0.y + canvasSize.y; y += gridStep.y)
 		{
-			FL::DrawLine(Vector2(canvas_p0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(canvasP0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 
 		// Draw our x and y axis blue and green lines
-		float divX = trunc(scrolling.x / step.x);
-		float modX = fmodf(scrolling.x, step.x);
-		float offsetX = (step.x * divX) + modX;
-		float divY = trunc(scrolling.y / step.y);
-		float modY = fmodf(scrolling.y, step.y);
-		float offsetY = (step.y * divY) + modY;
+		float divX = trunc(scrolling.x / gridStep.x);
+		float modX = fmodf(scrolling.x, gridStep.x);
+		float offsetX = (gridStep.x * divX) + modX;
+		float divY = trunc(scrolling.y / gridStep.y);
+		float modY = fmodf(scrolling.y, gridStep.y);
+		float offsetY = (gridStep.y * divY) + modY;
 
-		centerPoint = Vector2(offsetX + canvas_p0.x, offsetY + canvas_p0.y);
+		centerPoint = Vector2(offsetX + canvasP0.x, offsetY + canvasP0.y);
 
 		if (b_showAxis)
 		{
@@ -594,9 +594,9 @@ namespace FlatGui
 				drawYAxisAt = canvas_p1.x - 1;
 				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 			}
-			else if (centerPoint.x < canvas_p0.x)
+			else if (centerPoint.x < canvasP0.x)
 			{
-				drawYAxisAt = canvas_p0.x;
+				drawYAxisAt = canvasP0.x;
 				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 			}
 			// y axis bounds check + color change (lighten) if out of bounds
@@ -605,21 +605,21 @@ namespace FlatGui
 				drawXAxisAt = canvas_p1.y - 1;
 				xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
 			}
-			else if (centerPoint.y < canvas_p0.y)
+			else if (centerPoint.y < canvasP0.y)
 			{
-				drawXAxisAt = canvas_p0.y;
+				drawXAxisAt = canvasP0.y;
 				xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
 			}
 
 
 			// Draw the axis and center point
-			FL::DrawLine(Vector2(drawYAxisAt, canvas_p0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, FG_DrawList);
-			FL::DrawLine(Vector2(canvas_p0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(drawYAxisAt, canvasP0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(canvasP0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, FG_DrawList);
 			FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, FG_DrawList);
 		}
 	}
 
-	void RenderViewObjects(std::map<long, GameObject>& objects, Vector2 centerPoint, Vector2 canvas_p0, Vector2 canvas_sz, float step)
+	void RenderViewObjects(std::map<long, GameObject>& objects, Vector2 centerPoint, Vector2 canvasP0, Vector2 canvasSize, float gridStep)
 	{
 		// Split our drawlist into multiple channels for different rendering orders
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -633,7 +633,7 @@ namespace FlatGui
 		{
 			if (object.second.IsActive())
 			{
-				RenderViewObject(object.second, centerPoint, canvas_p0, canvas_sz, step, drawList, drawSplitter);
+				RenderViewObject(object.second, centerPoint, canvasP0, canvasSize, gridStep, drawList, drawSplitter);
 			}
 		}
 
@@ -643,7 +643,7 @@ namespace FlatGui
 		drawSplitter = nullptr;
 	}
 
-	void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvas_p0, Vector2 canvas_sz, float step, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
+	void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasSize, float gridStep, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
 	{
 		Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
@@ -690,8 +690,8 @@ namespace FlatGui
 					spriteScaleFinal.y *= scale.y;
 				}
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * spriteScaleFinal.y));
-				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * step * spriteScaleFinal.y);											
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * spriteScaleFinal.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * spriteScaleFinal.y));
+				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * gridStep * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * gridStep * spriteScaleFinal.y);											
 				
 				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);			
 				const bool b_isClicked = ImGui::IsItemClicked();
@@ -709,7 +709,7 @@ namespace FlatGui
 					drawSplitter->SetCurrentChannel(drawList, 0);
 				}
 				
-				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, step, drawList, rotation, ImGui::GetColorU32(tintColor));
+				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, gridStep, drawList, rotation, ImGui::GetColorU32(tintColor));
 			}
 
 			if (text != nullptr)
@@ -727,8 +727,8 @@ namespace FlatGui
 				if (textTexture->GetTexture() != nullptr)
 				{
 					//Vector2 scaledPosition = Vector2(origin.x + (relativePosition.x * baseScale.x), origin.y + (relativePosition.y * baseScale.y));
-					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step) - ((offset.x * FL::F_spriteScaleMultiplier * step) * scale.x), FG_sceneViewCenter.y - (position.y * step) - ((offset.y * FL::F_spriteScaleMultiplier * step) * scale.y));
-					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * step * scale.x, textHeight * FL::F_spriteScaleMultiplier * step * scale.y);
+					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * scale.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * scale.y));
+					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * gridStep * scale.x, textHeight * FL::F_spriteScaleMultiplier * gridStep * scale.y);
 					
 					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);						
 					const bool b_isClicked = ImGui::IsItemClicked();
@@ -776,11 +776,11 @@ namespace FlatGui
 				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
 				// Draw a rectangle to the scene view to represent the camera frustrum
-				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvas_p0, canvas_sz, FL::GetColor("cameraBox"), 2.0f, drawList);
+				FL::DrawRectangle(topLeftCorner, bottomRightCorner, canvasP0, canvasSize, FL::GetColor("cameraBox"), 2.0f, drawList);
 				FL::DrawLine(topLeftCorner, bottomRightCorner, FL::GetColor("cameraBox"), 2.0f, drawList);
 				FL::DrawLine(topRightCorner, bottomLeftCorner, FL::GetColor("cameraBox"), 2.0f, drawList);
 				
-				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, b_scalesWithZoom, step, drawList, 0, IM_COL32(255, 255, 255, FG_iconTransparency));
+				FL::AddImageToDrawList(FL::GetTexture("camera"), position, scrolling, cameraTextureWidth, cameraTextureHeight, cameraTextureOffset, cameraTextureScale, b_scalesWithZoom, gridStep, drawList, 0, IM_COL32(255, 255, 255, FG_iconTransparency));
 			}
 
 			if (canvas != nullptr)
@@ -796,7 +796,7 @@ namespace FlatGui
 
 				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 2);
 
-				FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("canvasBox"), 2.0f, drawList);
+				FL::DrawRectangle(renderStart, renderEnd, canvasP0, canvasSize, FL::GetColor("canvasBox"), 2.0f, drawList);
 			}
 
 			if (button != nullptr)
@@ -857,7 +857,7 @@ namespace FlatGui
 				}
 				else
 				{
-					FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor(buttonStateColor), 1.0f, drawList);
+					FL::DrawRectangle(topLeft, bottomRight, canvasP0, canvasSize, FL::GetColor(buttonStateColor), 1.0f, drawList);
 				}
 			}
 
@@ -1032,12 +1032,12 @@ namespace FlatGui
 				if (focusedObjectID == self.GetID())
 				{
 					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgFocused"));
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxFocused"), 2.0f, drawList);
+					FL::DrawRectangle(renderStart, renderEnd, canvasP0, canvasSize, FL::GetColor("tileMapBoxFocused"), 2.0f, drawList);
 				}
 				else
 				{
 					ImGui::GetWindowDrawList()->AddRectFilled(renderStart, renderEnd, FL::GetColor32("tileMapGridBgUnfocused"));
-					FL::DrawRectangle(renderStart, renderEnd, canvas_p0, canvas_sz, FL::GetColor("tileMapBoxUnfocused"), 2.0f, drawList);
+					FL::DrawRectangle(renderStart, renderEnd, canvasP0, canvasSize, FL::GetColor("tileMapBoxUnfocused"), 2.0f, drawList);
 				}
 
 				if (focusedObjectID == self.GetID())
@@ -1404,7 +1404,7 @@ namespace FlatGui
 				bool b_scalesWithZoom = false;
 				float transformMoveModifier = 0.02f;
 				ImGuiIO& inputOutput = ImGui::GetIO();
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * step), FG_sceneViewCenter.y - (position.y * step));
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep), FG_sceneViewCenter.y - (position.y * gridStep));
 			
 				// Invisible button for Transform Arrow Move X and Y
 				Vector2 moveAllStartPos = Vector2(positionOnScreen.x - 4, positionOnScreen.y - 23);
@@ -1452,11 +1452,11 @@ namespace FlatGui
 				if (b_baseClicked || b_xClicked || b_yClicked)
 				{
 					cursorPosAtClick = inputOutput.MousePos;
-					transformScreenPos = Vector2(origin.x + (relativePosition.x * step), origin.y - (relativePosition.y * step));
+					transformScreenPos = Vector2(origin.x + (relativePosition.x * gridStep), origin.y - (relativePosition.y * gridStep));
 				}
 
-				Vector2 transformPosOffsetFromMouse = Vector2((cursorPosAtClick.x - transformScreenPos.x) / step, (cursorPosAtClick.y - transformScreenPos.y) / step);
-				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - origin.x) / step, (origin.y - inputOutput.MousePos.y) / step);
+				Vector2 transformPosOffsetFromMouse = Vector2((cursorPosAtClick.x - transformScreenPos.x) / gridStep, (cursorPosAtClick.y - transformScreenPos.y) / gridStep);
+				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - origin.x) / gridStep, (origin.y - inputOutput.MousePos.y) / gridStep);
 				Vector2 newTransformPos = Vector2(mousePosInGrid.x - transformPosOffsetFromMouse.x, mousePosInGrid.y + transformPosOffsetFromMouse.y);				
 
 				if (b_baseActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
@@ -1475,7 +1475,7 @@ namespace FlatGui
 
 				// Draw channel maxSpriteLayers + 3 for Upper UI Transform Arrow
 				drawSplitter->SetCurrentChannel(drawList, FL::F_maxSpriteLayers + 3);
-				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, b_scalesWithZoom, step, drawList);
+				FL::AddImageToDrawList(arrowToRender, position, scrolling, arrowWidth, arrowHeight, arrowOffset, arrowScale, b_scalesWithZoom, gridStep, drawList);
 			}
 		}
 	}

@@ -1023,7 +1023,7 @@ namespace FlatGui
 						FG_SelectedKeyFrameToEdit = nullptr;
 						ImGui::CloseCurrentPopup();
 					}
-					ImGui::EndPopup();		
+					ImGui::EndPopup();
 				}
 				FL::PopMenuStyles();
 
@@ -1042,141 +1042,179 @@ namespace FlatGui
 
 						FL::MoveScreenCursor(0, 10);
 
+						ImGui::BeginDisabled(event->parameters.size() >= 5);
 						if (FL::RenderButton("Add parameter"))
 						{
 							Animation::S_EventFunctionParam param = Animation::S_EventFunctionParam();
 							param.type = "string";
 							event->parameters.push_back(param);
 						}
+						ImGui::EndDisabled();
+
+						ImGui::SameLine(0, 5);
+
+						if (event->parameters.size() >= 5)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, FL::GetColor32("col_5"));
+						}
+						std::string paramCountString = std::to_string(event->parameters.size()) + " / 5";
+						ImGui::Text(paramCountString.c_str());
+						if (event->parameters.size() >= 5)
+						{
+							ImGui::PopStyleColor();
+						}
 
 						FL::MoveScreenCursor(0, 5);
 
 						if (event->parameters.size() > 0)
 						{
+							//FL::MoveScreenCursor(30, 0);
 							ImGui::Text("Type:");
 							ImGui::SameLine(0, 75);
 							ImGui::Text("Value:");
 						}
 
+						FL::MoveScreenCursor(0, 5);
+
 						int paramCounter = 0;
-						for (Animation::S_EventFunctionParam &param : event->parameters)
+						int paramQueuedForDelete = -1;
+						for (Animation::S_EventFunctionParam& param : event->parameters)
 						{
 							int currentType = 0;
+							std::vector<std::string> types = { "string", "int", "float", "double", "long", "bool", "Vector2" };
 
-							std::vector<std::string> types = { "int", "float", "double", "long", "bool", "string" };
-
-							if (param.type == "int")
+							for (int i = 0; i < types.size(); i++)
 							{
-								currentType = 0;
-							}
-							else if (param.type == "float")
-							{
-								currentType = 1;
-							}
-							else if (param.type == "double")
-							{
-								currentType = 2;
-							}
-							else if (param.type == "long")
-							{
-								currentType = 3;
-							}
-							else if (param.type == "bool")
-							{
-								currentType = 4;
-							}
-							else if (param.type == "string")
-							{
-								currentType = 5;
-							}
-							FL::PushComboStyles();
-							ImGui::SetNextItemWidth(100);
-							std::string comboID = "##EventFunctionParameterType" + std::to_string(paramCounter);
-							if (ImGui::BeginCombo(comboID.c_str(), types[currentType].c_str()))
-							{
-								for (int n = 0; n < types.size(); n++)
+								if (param.type == types[i])
 								{
-									bool b_isSelected = (types[currentType] == types[n]);
-									if (ImGui::Selectable(types[n].c_str(), b_isSelected))
-									{
-										currentType = n;
-										param.type = types[currentType];
-									}
+									currentType = i;
 								}
-								ImGui::EndCombo();
 							}
-							FL::PopComboStyles();
+
+							std::string comboID = "##EventFunctionParameterType" + std::to_string(paramCounter);
+							if (FL::RenderCombo(comboID, types[currentType], types, currentType, 85))
+							{
+								param.type = types[currentType];
+							}
 
 							ImGui::SameLine();
 
-							std::string parameter = "";
-							if (types[currentType] == "string")
+							float inputWidth = ImGui::GetContentRegionAvail().x - 36;
+
+							if (param.type == "string")
 							{
-								parameter = param.e_string;
+								std::string stringValue = param.e_string;
+								if (FL::RenderInput("##EventParamString" + std::to_string(paramCounter), "", stringValue, false, inputWidth))
+								{
+									param.e_string = stringValue;
+								}
 							}
-							else if (types[currentType] == "int")
+											
+							if (param.type == "int")
 							{
-								parameter = std::to_string(param.e_int);
+								int intValue = param.e_int;
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragInt("##EventParamInt" + std::to_string(paramCounter), inputWidth, intValue, 1, INT_MIN, INT_MAX, 0, "input"))
+								{
+									param.e_int = intValue;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
 							}
-							else if (types[currentType] == "float")
+							if (param.type == "long")
 							{
-								parameter = std::to_string(param.e_float);
+								int longValue = (int)param.e_long;
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragInt("##EventParamLong" + std::to_string(paramCounter), inputWidth, longValue, 1, INT_MIN, INT_MAX, 0, "input"))
+								{
+									param.e_long = longValue;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
 							}
-							else if (types[currentType] == "double")
+							if (param.type == "float")
 							{
-								parameter = std::to_string(param.e_double);
+								float floatValue = param.e_float;
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragFloat("##EventParamFloat" + std::to_string(paramCounter), inputWidth, floatValue, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+								{
+									param.e_float = floatValue;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
 							}
-							else if (types[currentType] == "long")
+							if (param.type == "double")
 							{
-								parameter = std::to_string(param.e_long);
+								float doubleValue = (float)param.e_double;
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragFloat("##EventParamFloat" + std::to_string(paramCounter), inputWidth, doubleValue, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+								{
+									param.e_double = doubleValue;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
 							}
-							else if (types[currentType] == "bool")
+							if (param.type == "bool")
 							{
+								std::vector<std::string> trueFalse = { "true", "false" };
+								int currentBool = 0;
 								if (param.e_boolean)
 								{
-									parameter = "true";
+									currentBool = 0;
 								}
 								else
 								{
-									parameter = "false";
+									currentBool = 1;
 								}
+								if (FL::RenderCombo("##EventParamBooleanDropdown" + std::to_string(paramCounter), param.e_boolean ? "true" : "false", trueFalse, currentBool, inputWidth))
+								{
+									param.e_boolean = trueFalse[currentBool] == "true";
+								}
+							}
+							if (param.type == "Vector2")
+							{
+								inputWidth = (inputWidth / 2) - 3;
+								Vector2 vector2Value = param.e_Vector2;
+
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragFloat("##EventParamVector2X" + std::to_string(paramCounter), inputWidth, vector2Value.x, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+								{
+									param.e_Vector2.x = vector2Value.x;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
+
+								ImGui::SameLine(0, 6);
+
+								ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+								ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+								if (FL::RenderDragFloat("##EventParamVector2Y" + std::to_string(paramCounter), inputWidth, vector2Value.y, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+								{
+									param.e_Vector2.y = vector2Value.y;
+								}
+								ImGui::PopStyleVar();
+								ImGui::PopStyleVar();
+							}							
+
+							ImGui::SameLine(0, 5);
+
+							std::string trashcanID = "##EventParamtrashIcon-" + std::to_string(paramCounter);						
+							if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
+							{
+								paramQueuedForDelete = paramCounter;
 							}
 
-							if (FL::RenderInput("EventParameter" + std::to_string(paramCounter), "", parameter))
-							{
-								if (types[currentType] == "string")
-								{
-									param.e_string = parameter;
-								}
-								else if (types[currentType] == "int")
-								{
-									param.e_int = std::stoi(parameter);
-								}
-								else if (types[currentType] == "float")
-								{
-									param.e_float = std::stof(parameter);
-								}
-								else if (types[currentType] == "double")
-								{
-									param.e_double = std::stod(parameter);
-								}
-								else if (types[currentType] == "long")
-								{
-									param.e_long = std::stol(parameter);
-								}
-								else if (types[currentType] == "bool")
-								{
-									if (parameter == "true")
-									{
-										param.e_boolean = true;
-									}
-									else
-									{
-										param.e_boolean = false;
-									}
-								}
-							}
 							paramCounter++;
+						}
+
+						if (paramQueuedForDelete != -1)
+						{
+							event->parameters.erase(std::next(event->parameters.begin(), paramQueuedForDelete));
 						}
 					}
 					else if (FG_SelectedKeyFrameToEdit->name == "Transform")

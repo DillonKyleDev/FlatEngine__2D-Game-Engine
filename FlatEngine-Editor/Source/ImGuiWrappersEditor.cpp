@@ -31,7 +31,7 @@ namespace FL = FlatEngine;
 namespace FlatGui 
 {
 	// ImGui Wrappers
-	void BeginComponent(FL::Component* component, FL::Component* &queuedForDelete, std::string typeNameOverride)
+	void BeginComponent(FL::Component* component, FL::Component*& queuedForDelete, std::string typeNameOverride)
 	{
 		bool b_isCollapsed = component->IsCollapsed();
 		long ID = component->GetID();
@@ -43,7 +43,7 @@ namespace FlatGui
 		}
 		std::string componentID = component->GetTypeString() + std::to_string(component->GetID());
 
-		// Begin Component Child
+		// Begin Component
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, FL::GetColor("innerWindow"));
 		ImGui::PushStyleColor(ImGuiCol_Border, FL::GetColor("componentBorder"));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
@@ -72,8 +72,8 @@ namespace FlatGui
 			}
 			ImGui::SetCursorScreenPos({ componentWindowPos.x + 5, componentWindowPos.y + 5 });
 		
-			// Component Name
-			ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX() + 5, ImGui::GetCursorPosY() + 5));
+			// Component Name			
+			FL::MoveScreenCursor(5, 5);
 			ImGui::Text(componentType.c_str());
 
 			if (component->GetType() != FL::T_Transform)
@@ -135,7 +135,6 @@ namespace FlatGui
 
 	void EndComponent(Component* component)
 	{
-			// Pops
 			ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
@@ -155,12 +154,12 @@ namespace FlatGui
 	bool RenderIsActiveCheckbox(bool& b_isActive)
 	{
 		FL::MoveScreenCursor(1, 3);
-		bool _checked = FL::RenderCheckbox("Active", b_isActive);
+		bool b_checked = FL::RenderCheckbox("Active", b_isActive);
 		FL::MoveScreenCursor(0, 3);
 		ImGui::Separator();
 		FL::MoveScreenCursor(0, 3);
 
-		return _checked;
+		return b_checked;
 	}
 
 	void RenderTransformComponent(Transform* transform)
@@ -231,7 +230,7 @@ namespace FlatGui
 		float xScale = textureScale.x;
 		float yScale = textureScale.y;
 		int renderOrder = sprite->GetRenderOrder();
-		bool _isActive = sprite->IsActive();
+		bool b_isActive = sprite->IsActive();
 		Vector2 offset = sprite->GetOffset();
 		float xOffset = offset.x;
 		float yOffset = offset.y;
@@ -241,9 +240,9 @@ namespace FlatGui
 		Vector4 tintColor = sprite->GetTintColor();
 		long ID = sprite->GetID();		
 		
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			sprite->SetActive(_isActive);
+			sprite->SetActive(b_isActive);
 		}
 
 		int droppedValue = -1;
@@ -252,10 +251,10 @@ namespace FlatGui
 		{
 			if (droppedValue >= 0)
 			{
-				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
-				if (fs_path.extension() == ".png")
+				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
+				if (fsPath.extension() == ".png")
 				{
-					sprite->SetTexture(fs_path.string());
+					sprite->SetTexture(fsPath.string());
 				}
 				else
 				{
@@ -506,12 +505,12 @@ namespace FlatGui
 	{		
 		static int currentLuaScript = 0;
 		std::string attachedScriptName = script->GetAttachedScript();
-		bool _isActive = script->IsActive();
+		bool b_isActive = script->IsActive();
 		long ID = script->GetID();
 		
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			script->SetActive(_isActive);
+			script->SetActive(b_isActive);
 		}
 
 		for (int i = 0; i < FL::F_luaScriptNames.size(); i++)
@@ -545,16 +544,16 @@ namespace FlatGui
 
 	void RenderButtonComponent(Button* button)
 	{
-		bool _isActive = button->IsActive();
+		bool b_isActive = button->IsActive();
 		float activeWidth = button->GetActiveWidth();
 		float activeHeight = button->GetActiveHeight();
 		Vector2 activeOffset = button->GetActiveOffset();
 		int activeLayer = button->GetActiveLayer();	
 		long ID = button->GetID();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			button->SetActive(_isActive);
+			button->SetActive(b_isActive);
 		}
 
 		if (FL::PushTable("##ButtonProperties" + std::to_string(ID), 2))
@@ -589,12 +588,12 @@ namespace FlatGui
 		float canvasHeight = canvas->GetHeight();
 		int layerNumber = canvas->GetLayerNumber();
 		bool b_blocksLayers = canvas->GetBlocksLayers();
-		bool _isActive = canvas->IsActive();
+		bool b_isActive = canvas->IsActive();
 		long ID = canvas->GetID();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			canvas->SetActive(_isActive);
+			canvas->SetActive(b_isActive);
 		}
 
 		if (FL::PushTable("##CanvasProperties" + std::to_string(ID), 2))
@@ -639,10 +638,10 @@ namespace FlatGui
 		{
 			if (droppedValue >= 0)
 			{
-				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
-				if (fs_path.extension() == ".anm")
+				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
+				if (fsPath.extension() == ".anm")
 				{
-					animation->SetAnimationPath(fs_path.string());
+					animation->SetAnimationPath(fsPath.string());
 				}
 				else
 				{
@@ -694,7 +693,7 @@ namespace FlatGui
 	{
 		long ID = audio->GetID();
 		bool b_isActive = audio->IsActive();
-		std::vector<FL::SoundData> &sounds = audio->GetSounds();
+		std::vector<FL::SoundData>& sounds = audio->GetSounds();
 
 		if (RenderIsActiveCheckbox(b_isActive))
 		{
@@ -717,8 +716,8 @@ namespace FlatGui
 		{
 			if (droppedValue >= 0)
 			{
-				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
-				if (fs_path.extension() == ".wav" || fs_path.extension() == ".mp4")
+				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
+				if (fsPath.extension() == ".wav" || fsPath.extension() == ".mp4")
 				{
 					path = FL::F_selectedFiles[droppedValue - 1];
 				}
@@ -736,10 +735,10 @@ namespace FlatGui
 				path = openedPath;
 			}
 		}
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::MoveScreenCursor(0, 4);
 
 		FL::RenderCheckbox("Is Music?", b_isNewAudioMusic);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+		FL::MoveScreenCursor(0, 4);
 
 		ImGui::BeginDisabled(path == "" || name == "");
 		if (FL::RenderButton("Add Audio"))
@@ -779,7 +778,7 @@ namespace FlatGui
 		int IDCounter = 0;
 		for (std::vector<FL::SoundData>::iterator soundIter = sounds.begin(); soundIter != sounds.end(); soundIter++)
 		{
-			FL::SoundData &sound = (*soundIter);
+			FL::SoundData& sound = (*soundIter);
 			std::string audioPath = sound.path;
 			std::string audioName = sound.name;
 			std::string newName = audioName;
@@ -861,7 +860,7 @@ namespace FlatGui
 
 	void RenderTextComponent(Text* text)
 	{
-		bool _isActive = text->IsActive();
+		bool b_isActive = text->IsActive();
 		std::shared_ptr<Texture> texture = text->GetTexture();
 		float textureWidth = (float)texture->GetWidth();
 		float textureHeight = (float)texture->GetHeight();
@@ -874,9 +873,9 @@ namespace FlatGui
 		float yOffset = offset.y;
 		long ID = text->GetID();
 
-		if (RenderIsActiveCheckbox(_isActive))
+		if (RenderIsActiveCheckbox(b_isActive))
 		{
-			text->SetActive(_isActive);
+			text->SetActive(b_isActive);
 		}
 
 		std::string textText = text->GetText();
@@ -894,10 +893,10 @@ namespace FlatGui
 		{
 			if (droppedValue >= 0)
 			{
-				std::filesystem::path fs_path(FL::F_selectedFiles[droppedValue - 1]);
-				if (fs_path.extension() == ".ttf")
+				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
+				if (fsPath.extension() == ".ttf")
 				{
-					text->SetFontPath(fs_path.string());
+					text->SetFontPath(fsPath.string());
 				}
 				else
 				{
@@ -996,25 +995,30 @@ namespace FlatGui
 
 	void RenderBoxColliderComponent(BoxCollider* boxCollider, TileMap* tileMap, std::string collisionAreaName)
 	{
+		long ID = boxCollider->GetID();
 		bool b_isActive = boxCollider->IsActive();
 		bool b_isColliding = boxCollider->IsColliding();
-		float activeWidth = boxCollider->GetActiveWidth();
-		float activeHeight = boxCollider->GetActiveHeight();
-		ImVec4 activeEdges = boxCollider->GetActiveEdges();
-		Vector2 activeOffset = boxCollider->GetActiveOffset();
 		bool b_isContinuous = boxCollider->IsContinuous();
 		bool b_isStatic = boxCollider->IsStatic();
 		bool b_isSolid = boxCollider->IsSolid();
 		bool b_showActiveRadius = boxCollider->GetShowActiveRadius();
-		int activeLayer = boxCollider->GetActiveLayer();	
 		bool b_isComposite = boxCollider->IsComposite();
-		long ID = boxCollider->GetID();
+		float activeWidth = boxCollider->GetActiveWidth();
+		float activeHeight = boxCollider->GetActiveHeight();
+		ImVec4 activeEdges = boxCollider->GetActiveEdges();
+		Vector2 activeOffset = boxCollider->GetActiveOffset();
+		int activeLayer = boxCollider->GetActiveLayer();	
 		std::string isCollidingString = "false";
+
 		if (b_isColliding)
+		{
 			isCollidingString = "true";
+		}
 
 		if (RenderIsActiveCheckbox(b_isActive))
+		{
 			boxCollider->SetActive(b_isActive);
+		}
 
 		float widthIncrement = 0.01f;
 		float heightIncrement = 0.01f;
@@ -1045,13 +1049,21 @@ namespace FlatGui
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
 			}
 			if (FL::RenderFloatDragTableRow("##BoxColliderHeight" + std::to_string(ID), "Height", activeHeight, heightIncrement, 0.0f, maxHeight))
+			{
 				boxCollider->SetActiveDimensions(activeWidth, activeHeight);
+			}
 			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderX" + std::to_string(ID), "X Offset", activeOffset.x, offsetIncrementX, -FLT_MAX, -FLT_MAX))
+			{
 				boxCollider->SetActiveOffset(activeOffset);
+			}
 			if (FL::RenderFloatDragTableRow("##ActiveOffsetBoxColliderY" + std::to_string(ID), "Y Offset", activeOffset.y, offsetIncrementY, -FLT_MAX, -FLT_MAX))
+			{
 				boxCollider->SetActiveOffset(activeOffset);
+			}
 			if (FL::RenderIntDragTableRow("##BoxColliderActiveLayer" + std::to_string(ID), "Active layer", activeLayer, 1, 0, 100))
+			{
 				boxCollider->SetActiveLayer(activeLayer);
+			}
 			FL::RenderTextTableRow("##BoxColliderIsColliding" + std::to_string(ID), "Is Colliding", isCollidingString);
 			FL::PopTable();
 		}
@@ -1095,22 +1107,27 @@ namespace FlatGui
 
 	void RenderCircleColliderComponent(CircleCollider* circleCollider)
 	{
+		long ID = circleCollider->GetID();
 		bool b_isActive = circleCollider->IsActive();
 		bool b_isColliding = circleCollider->IsColliding();
-		float activeRadius = circleCollider->GetActiveRadiusGrid();
-		Vector2 activeOffset = circleCollider->GetActiveOffset();
 		bool b_isContinuous = circleCollider->IsContinuous();
 		bool b_isStatic = circleCollider->IsStatic();
-		bool b_isSolid = circleCollider->IsSolid();								
-		int activeLayer = circleCollider->GetActiveLayer();
+		bool b_isSolid = circleCollider->IsSolid();			
 		bool b_isComposite = circleCollider->IsComposite();
-		long ID = circleCollider->GetID();
+		float activeRadius = circleCollider->GetActiveRadiusGrid();
+		Vector2 activeOffset = circleCollider->GetActiveOffset();
+		int activeLayer = circleCollider->GetActiveLayer();
 		std::string isCollidingString = "false";
+
 		if (b_isColliding)
+		{
 			isCollidingString = "true";
+		}
 
 		if (RenderIsActiveCheckbox(b_isActive))
+		{
 			circleCollider->SetActive(b_isActive);
+		}
 
 		if (FL::PushTable("##CircleColliderProps" + std::to_string(ID), 2))
 		{
@@ -1157,6 +1174,9 @@ namespace FlatGui
 	{
 		long ID = rigidBody->GetID();
 		bool b_isActive = rigidBody->IsActive();
+		bool b_allowTorques = rigidBody->TorquesAllowed();
+		bool b_isStatic = rigidBody->IsStatic();
+		bool b_isGrounded = rigidBody->IsGrounded();
 		float mass = rigidBody->GetMass();
 		float gravity = rigidBody->GetGravity();
 		float fallingGravity = rigidBody->GetFallingGravity();
@@ -1164,10 +1184,13 @@ namespace FlatGui
 		float angularDrag = rigidBody->GetAngularDrag();
 		float windResistance = rigidBody->GetWindResistance();
 		float friction = rigidBody->GetFriction();
-		float equilibriumForce = rigidBody->GetEquilibriumForce();	
-		bool b_allowTorques = rigidBody->TorquesAllowed();
-		bool b_isStatic = rigidBody->IsStatic();
-		bool b_isGrounded = rigidBody->IsGrounded();
+		float equilibriumForce = rigidBody->GetEquilibriumForce();
+		std::string isGroundedString = "false";
+
+		if (b_isGrounded)
+		{
+			isGroundedString = "true";
+		}
 
 		// Read only		
 		Vector2 velocity = rigidBody->GetVelocity();		
@@ -1175,12 +1198,10 @@ namespace FlatGui
 		float angularVelocity = rigidBody->GetAngularVelocity();
 		float pendingTorques = rigidBody->GetPendingTorques();
 
-		std::string isGroundedString = "false";
-		if (b_isGrounded)
-			isGroundedString = "true";
-
 		if (RenderIsActiveCheckbox(b_isActive))
+		{
 			rigidBody->SetActive(b_isActive);
+		}
 
 		if (FL::PushTable("##RigidBodyProps" + std::to_string(ID), 2))
 		{
@@ -1475,6 +1496,7 @@ namespace FlatGui
 		ImGui::EndDisabled();
 
 		FL::RenderInput("##CollisionAreaLabel" + std::to_string(ID), "", collisionAreaLabel, false);
+
 
 		FL::RenderSeparator(3, 3);
 

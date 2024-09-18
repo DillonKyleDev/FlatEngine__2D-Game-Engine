@@ -1,71 +1,62 @@
--- PlayerController
+-- PlayerController.scp.lua
 
 
--- using Lua in FlatEngine: 
-
--- ### please visit RegisterLuaTypes() in "FlatEngine-Core/Source/LuaFunctions.cpp" to see the classes, class methods, and variables exposed to Lua scripts ### 
--- ### please visit RegisterLuaFunctions() in "FlatEngine-Core/Source/LuaFunctions.cpp" to see the FlatEngine functions exposed to Lua scripts              ### 
-
--- use "this_object" to reference the object that is attached to this script 
--- use ":" to access member variables and functions of objects: object:member_variable ..or.. object::member_function() 
--- to concatinate two or more strings, use two periods: ".."  LogString("Just add two periods between arguments like"..string_variable_name) 
--- to create new objects of type Type with construction parameters, use: Type:new(parameters,...)  
-
-
--- called on each script before Start() runs at the start of the gameloop (or upon instantiation) 
 function Awake() 
-
+    PlayerController[my_id] = 
+    {
+        mappingContext = GetMappingContext("MC_Player"),
+        characterController = this_object:GetCharacterController(),
+        transform = this_object:GetTransform(),
+        sprite = this_object:GetSprite(),
+        rigidBody = this_object:GetRigidBody()
+    }        
 end 
 
--- called at the start of the gameloop after Awake() (or upon instantiation) 
-function Start() 
-    --LogString("Start() called on "..this_object:GetName()) 
-    mappingContext = GetMappingContext("MC_Player")
-    characterController = this_object:GetCharacterController()
-    transform = this_object:GetTransform()
-    sprite = this_object:GetSprite()
-    rigidBody = this_object:GetRigidBody()
+function Start()     
+    local data = PlayerController[my_id]
 end 
 
---called once per gameloop frame 
 function Update()     
     handleMovement();
-    handleAttacks();
-    -- LogInt(RandomNumber(0,4), "Random: ")
+    handleAttacks();    
 end 
 
 function handleAttacks()
-    if mappingContext:Fired("IA_Shoot") then
-        blasterRound = Instantiate("BlasterRound", transform:GetPosition())
+    local data = PlayerController[my_id]
+    
+    if data.mappingContext:Fired("IA_Shoot") then
+        local blasterRound = Instantiate("BlasterRound", data.transform:GetPosition())
         blasterRound:GetRigidBody():AddForce(Vector2:new(0,1), 10)
     end
 end
 
 function handleMovement()
-    b_hasLanded = false
-    b_movingLeft = false
-    b_movingRight = false
-    b_movingForward = false
-    b_movingBackward = false
+    local data = PlayerController[my_id]
 
-    moveDirection = Vector2:new(0,0)
+    local b_hasLanded = false
+    local b_movingLeft = false
+    local b_movingRight = false
+    local b_movingForward = false
+    local b_movingBackward = false
 
-    if mappingContext:ActionPressed("IA_MoveForward") then
+    local moveDirection = Vector2:new(0,0)
+
+    if data.mappingContext:ActionPressed("IA_MoveForward") then
         b_movingForward = true 
         moveDirection:SetY(1)
     end
 
-    if mappingContext:ActionPressed("IA_MoveBackward") then
+    if data.mappingContext:ActionPressed("IA_MoveBackward") then
         b_movingBackward = true
         moveDirection:SetY(-1)
     end
 
-    if mappingContext:ActionPressed("IA_MoveRight") then        
+    if data.mappingContext:ActionPressed("IA_MoveRight") then        
         b_movingRight = true
         moveDirection:SetX(1)    
     end
 
-    if mappingContext:ActionPressed("IA_MoveLeft") then
+    if data.mappingContext:ActionPressed("IA_MoveLeft") then
         b_movingLeft = true
         moveDirection:SetX(-1)
     end
@@ -78,27 +69,24 @@ function handleMovement()
     end 
 
     if b_movingLeft or b_movingRight or b_movingBackward or b_movingForward then
-        characterController:MoveToward(moveDirection)
+        data.characterController:MoveToward(moveDirection)
 
     end
     
-    xVel = rigidBody:GetVelocity():x()
+    local xVel = data.rigidBody:GetVelocity():x()
     if xVel < 0 then
         xVel = xVel * -1
     end
 
-    sprite:SetScale(Vector2:new(1 - (xVel * 4), 1))
+    data.sprite:SetScale(Vector2:new(1 - (xVel * 4), 1))
 end
 
-function OnBoxCollision(collidedWith)
-    -- LogString("OnActiveCollision called!")
+function OnBoxCollision(collidedWith)    
 end
 
 function OnBoxCollisionEnter(collidedWith)
-    collidedName = collidedWith:GetParent():GetName()
-    -- LogString("Collision started with: " .. collidedName)
+    local collidedName = collidedWith:GetParent():GetName()    
 end
 
-function OnBoxCollisionLeave(collidedWith)
-    --LogString("Collision ended with: " .. collidedWith:GetParent():GetName())
+function OnBoxCollisionLeave(collidedWith)    
 end

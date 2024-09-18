@@ -144,7 +144,7 @@ F_Colors = {
 	--- Custom Colors ---
 	---------------------
 	-- Inputs
-	input = Vector4:new(0.3, 0.3, 0.32, 1.0),
+	input = Vector4:new(0.28, 0.28, 0.3, 1.0),
 	-- Tables
 	noEditTableText = Vector4:new(0.75, 0.75, 0.81, 1.0),
 	noEditTableRowFieldBg = Vector4:new(0.1, 0.1, 0.5, 0.2),
@@ -169,7 +169,7 @@ F_Colors = {
 	button = Vector4:new(0.3, 0.3, 0.65, 1.0),
 	buttonHovered = Vector4:new(0.35, 0.35, 0.75, 1.0),
 	buttonActive = Vector4:new(0.2, 0.2, 0.5, 0.8),
-	imageButton = Vector4:new(0.18, 0.18, 0.18, 1.0),
+	imageButton = Vector4:new(0.18, 0.18, 0.2, 1.0),
 	imageButtonDark = Vector4:new(0.15, 0.15, 0.15, 1.0),
 	imageButtonHovered = Vector4:new(0.3, 0.3, 0.3, 1.0),
 	imageButtonActive = Vector4:new(0.1, 0.1, 0.1, 1.0),

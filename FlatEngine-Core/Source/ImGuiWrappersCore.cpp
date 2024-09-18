@@ -213,6 +213,7 @@ namespace FlatEngine
 
 	void PushTableStyles()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
 		ImGui::PushStyleColor(ImGuiCol_TableRowBg, GetColor("tableCellDark"));
 		ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, GetColor("tableCellLight"));
 	}
@@ -221,133 +222,143 @@ namespace FlatEngine
 	{
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 	}
 
-	bool PushTable(std::string id, int columns, ImGuiTableFlags flags)
+	bool PushTable(std::string ID, int columns, ImGuiTableFlags flags)
 	{
-		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
 		PushTableStyles();
-		bool _beginTable = ImGui::BeginTable(id.c_str(), columns, flags);
-		if (_beginTable)
+		float columnWidth = ImGui::GetContentRegionAvail().x / columns;
+		bool b_beginTable = ImGui::BeginTable(ID.c_str(), columns, flags);
+		if (b_beginTable)
 		{
 			for (int i = 0; i < columns; i++)
 			{
-				std::string columnLabel = id + std::to_string(i);
+				std::string columnLabel = ID + std::to_string(i);
 				ImGui::TableSetupColumn(columnLabel.c_str());
 			}
 		}
 		else
+		{
 			PopTableStyles();
+		}
 
-		return _beginTable;
+		return b_beginTable;
 	}
 
-	bool RenderFloatDragTableRow(std::string id, std::string fieldName, float& value, float increment, float min, float max)
+	bool RenderFloatDragTableRow(std::string ID, std::string fieldName, float& value, float increment, float min, float max)
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(4, 4);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		bool _isChanged = RenderDragFloat(id.c_str(), 0, value, increment, min, max);
-		ImGui::PushID(id.c_str());
+		ImGui::PopStyleVar();
+		bool b_isChanged = RenderDragFloat(ID.c_str(), 0, value, increment, min, max);
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
-		return _isChanged;
+		return b_isChanged;
 	}
 
-	bool RenderTagListTableRow(std::string id, std::string fieldName, FlatEngine::TagList &tagList)
+	bool RenderTagListTableRow(std::string ID, std::string fieldName, FlatEngine::TagList &tagList)
 	{
-		bool _changed = false;
-		bool _hasTag = tagList.HasTag(fieldName);
-		bool _ignoreTag = tagList.IgnoresTag(fieldName);
+		bool b_changed = false;
+		bool b_hasTag = tagList.HasTag(fieldName);
+		bool b_ignoreTag = tagList.IgnoresTag(fieldName);
 		std::string hasTagID = "##" + fieldName + "CheckboxHasTagID";
 		std::string ignoreTagID = "##" + fieldName + "CheckboxIgnoreTagID";
 
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
 
 		ImGui::TableSetColumnIndex(1);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		if (RenderCheckbox(hasTagID.c_str(), _hasTag))
+		MoveScreenCursor(0, 2);
+		if (RenderCheckbox(hasTagID.c_str(), b_hasTag))
 		{
 			tagList.ToggleTag(fieldName);
-			_changed = true;
+			b_changed = true;
 		}
 
 		ImGui::TableSetColumnIndex(2);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		if (RenderCheckbox(ignoreTagID.c_str(), _ignoreTag))
+		MoveScreenCursor(0, 2);
+		if (RenderCheckbox(ignoreTagID.c_str(), b_ignoreTag))
 		{
 			tagList.ToggleIgnore(fieldName);
-			_changed = true;
+			b_changed = true;
 		}
 
-		ImGui::PushID(id.c_str());
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
-		return _changed;
+		return b_changed;
 	}
 
-	bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max)
+	bool RenderIntDragTableRow(std::string ID, std::string fieldName, int& value, float speed, int min, int max)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		MoveScreenCursor(4, 4);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		ImGui::PopStyleVar();
+		ImGui::SetNextItemWidth(-1);
+		bool b_isChanged = RenderDragInt(ID.c_str(), 0, value, speed, min, max);
+		ImGui::PushID(ID.c_str());
+		ImGui::PopID();
+
+		return b_isChanged;
+	}
+
+	bool RenderCheckboxTableRow(std::string ID, std::string fieldName, bool& b_value)
 	{
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		bool _isChanged = RenderDragInt(id.c_str(), 0, value, speed, min, max);
-		ImGui::PushID(id.c_str());
+		bool b_checked = RenderCheckbox("", b_value);
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
-		return _isChanged;
+		return b_checked;
 	}
 
-	bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool& _value)
+	void RenderSelectableTableRow(std::string ID, std::string fieldName, std::vector<std::string> options, int& currentOption)
 	{
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		ImGui::TableSetColumnIndex(1);
-		bool _checked = RenderCheckbox("", _value);
-		ImGui::PushID(id.c_str());
-		ImGui::PopID();
-
-		return _checked;
-	}
-
-	void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option)
-	{
-		ImGui::TableNextRow();
-		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
-		ImGui::Text(fieldName.c_str());
-		ImGui::TableSetColumnIndex(1);
-		RenderSelectable(id, options, current_option);
-		ImGui::PushID(id.c_str());
+		ImGui::PopStyleVar();
+		RenderSelectable(ID, options, currentOption);
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 	}
 
 
-	bool RenderInputTableRow(std::string id, std::string fieldName, std::string &value, bool b_canOpenFiles)
+	bool RenderInputTableRow(std::string ID, std::string fieldName, std::string& value, bool b_canOpenFiles)
 	{
 		bool b_edited = false;
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		b_edited = RenderInput(id, "", value, b_canOpenFiles);
-		ImGui::PushID(id.c_str());
+		b_edited = RenderInput(ID, "", value, b_canOpenFiles);
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
 		return b_edited;
 	}
 
-	void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2)
+	void RenderTextTableRow(std::string ID, std::string fieldName, std::string value1, std::string value2)
 	{
 		// Push uneditableTableTextColor text color
 		ImGui::PushStyleColor(ImGuiCol_Text, GetColor("noEditTableText"));
@@ -356,12 +367,13 @@ namespace FlatEngine
 		ImGui::TableSetColumnIndex(0);
 		// Set table cell bg color
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowFieldBg")));
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2);
+		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
 		// Set table cell bg color
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowValueBg")));
-		ImGui::Text(value.c_str());
+		ImGui::Text(value1.c_str());
+
 		if (value2 != "")
 		{
 			ImGui::TableSetColumnIndex(2);
@@ -369,7 +381,8 @@ namespace FlatEngine
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(GetColor("noEditTableRowValueBg")));
 			ImGui::Text(value2.c_str());
 		}
-		ImGui::PushID(id.c_str());
+
+		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
 		// Pop text color
@@ -382,7 +395,7 @@ namespace FlatEngine
 		PopTableStyles();
 	}
 
-	bool RenderInput(std::string id, std::string label, std::string& value, bool b_canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
+	bool RenderInput(std::string ID, std::string label, std::string& value, bool b_canOpenFiles, float inputWidth, ImGuiInputTextFlags flags)
 	{
 		bool b_editedButton = false;
 		bool b_editedInput = false;
@@ -415,7 +428,7 @@ namespace FlatEngine
 		Vector2 inputStart = ImGui::GetCursorScreenPos();
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("input"));
 		ImGui::SetNextItemWidth(inputWidth);
-		b_editedInput = ImGui::InputText(id.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
+		b_editedInput = ImGui::InputText(ID.c_str(), newPath, IM_ARRAYSIZE(newPath), flags);
 		ImGui::PopStyleColor();
 		Vector2 inputSize = Vector2(inputWidth, ImGui::GetCursorScreenPos().y - inputStart.y);
 		ImGui::PopStyleVar();
@@ -425,7 +438,7 @@ namespace FlatEngine
 		{
 			ImGui::SameLine(0, -1);
 
-			std::string buttonId = id + "openFileButton";
+			std::string buttonId = ID + "openFileButton";
 			if (RenderImageButton(buttonId.c_str(), GetTexture("openFile"), Vector2(16), 1, GetColor("openFileButtonBg"), GetColor("imageButtonTint"), GetColor("openFileButtonHovered"), GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(3)))
 			{
 				std::string assetPath = FlatEngine::OpenLoadFileExplorer();
@@ -437,11 +450,13 @@ namespace FlatEngine
 		ImGui::PopStyleVar();
 
 		if (newPath != nullptr)
+		{
 			value = newPath;
+		}
 		return b_editedButton || b_editedInput || b_dragTargeted;
 	}
 
-	bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int &droppedValue, std::string tooltip, float inputWidth)
+	bool DropInput(std::string ID, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string toolTip, float inputWidth)
 	{		
 		bool b_dragTargeted = false;
 
@@ -466,11 +481,12 @@ namespace FlatEngine
 		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"), 1);
 		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 1));
 		ImGui::Text(displayValue.c_str());
+
 		RenderInvisibleButton("##DropInputdropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
 		ImGui::PopStyleVar();
-		if (tooltip != "" && ImGui::IsItemHovered())
+		if (toolTip != "" && ImGui::IsItemHovered())
 		{
-			RenderTextToolTip(tooltip);
+			RenderTextToolTip(toolTip);
 		}
 
 		// Drop Target
@@ -505,7 +521,7 @@ namespace FlatEngine
 		return b_dragTargeted;
 	}
 
-	bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip, float inputWidth)
+	bool DropInputCanOpenFiles(std::string ID, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string toolTip, float inputWidth)
 	{
 		bool b_editedButton = false;
 		bool b_dragTargeted = false;
@@ -537,11 +553,12 @@ namespace FlatEngine
 		ImGui::GetWindowDrawList()->AddRectFilled(inputStart, Vector2(inputStart.x + inputSize.x, inputStart.y + inputSize.y), GetColor32("input"), 1);
 		ImGui::SetCursorScreenPos(Vector2(inputStart.x + 3, inputStart.y + 1));
 		ImGui::Text(displayValue.c_str());
+
 		RenderInvisibleButton("##DropInputOpenFilesdropTarget", inputStart, inputSize, true, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | 4096);
 		ImGui::PopStyleVar();
-		if (tooltip != "" && ImGui::IsItemHovered())
+		if (toolTip != "" && ImGui::IsItemHovered())
 		{
-			RenderTextToolTip(tooltip);
+			RenderTextToolTip(toolTip);
 		}
 
 		// Drop Target
@@ -573,7 +590,7 @@ namespace FlatEngine
 
 		ImGui::SameLine();
 
-		std::string buttonId = id + "openFileButton";		
+		std::string buttonId = ID + "openFileButton";		
 		if (RenderImageButton(buttonId.c_str(), GetTexture("openFile"), Vector2(16), 1, GetColor("openFileButtonBg"), GetColor("imageButtonTint"), GetColor("openFileButtonHovered"), GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(3)))
 		{
 			std::string assetPath = FlatEngine::OpenLoadFileExplorer();
@@ -591,44 +608,76 @@ namespace FlatEngine
 		return b_editedButton || b_dragTargeted;
 	}
 
-	bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option)
+	bool RenderCombo(std::string ID, std::string displayedValue, std::vector<std::string> options, int& currentOption, float width)
+	{
+		bool b_interactedWith = false;
+
+		if (width != -1)
+		{
+			ImGui::SetNextItemWidth(width);
+		}
+
+		PushComboStyles();
+		if (ImGui::BeginCombo(ID.c_str(), options[currentOption].c_str()))
+		{
+			for (int i = 0; i < options.size(); i++)
+			{
+				bool b_isSelected = (options[currentOption] == options[i]);
+				if (ImGui::Selectable(options[i].c_str(), b_isSelected))
+				{
+					currentOption = i;
+					b_interactedWith = true;
+				}
+			}
+			ImGui::EndCombo();
+		}
+		PopComboStyles();
+
+		return b_interactedWith;
+	}
+
+	bool RenderSelectable(std::string ID, std::vector<std::string> options, int& currentOption)
 	{
 		bool b_selectionMade = false;
 		bool b_currentSelectionEmpty = false;
 		std::string empty = " - empty -";
 		std::string currentlySelected = empty;
-		if (options.size() == 0)
-			options.push_back(empty);
 
-		if (options.size() <= current_option)
-			current_option = 0;
+		if (options.size() == 0)
+		{
+			options.push_back(empty);
+		}
+		if (options.size() <= currentOption)
+		{
+			currentOption = 0;
+		}
 
 		PushComboStyles();
 		PushMenuStyles();
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 
-		currentlySelected = " " + options[current_option];
+		currentlySelected = " " + options[currentOption];
 
-		if (options[current_option] == "")
+		if (options[currentOption] == "")
 		{
 			currentlySelected = empty;
 			ImGui::PushStyleColor(ImGuiCol_Text, GetColor("logText"));
 			b_currentSelectionEmpty = true;
 		}
 
-		if (ImGui::BeginCombo(id.c_str(), currentlySelected.c_str()))
+		if (ImGui::BeginCombo(ID.c_str(), currentlySelected.c_str()))
 		{
-			for (int n = 0; n < options.size(); n++)
+			for (int i = 0; i < options.size(); i++)
 			{
-				bool is_selected = (options[current_option] == options[n]);
+				bool b_isSelected = (options[currentOption] == options[i]);
 				
-				std::string selectableLabel = " " + options[n];
-				if (options[n] == "")
+				std::string selectableLabel = " " + options[i];
+				if (options[i] == "")
 				{
 					selectableLabel = empty;
 				}
 					
-				if (options[n] == "")
+				if (options[i] == "")
 				{
 					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("logText"));
 				}
@@ -637,12 +686,12 @@ namespace FlatEngine
 					ImGui::PushStyleColor(ImGuiCol_Text, GetColor("white"));
 				}
 
-				if (ImGui::Selectable(selectableLabel.c_str(), is_selected))
+				if (ImGui::Selectable(selectableLabel.c_str(), b_isSelected))
 				{
-					current_option = n;
+					currentOption = i;
 					b_selectionMade = true;
 				}
-				if (is_selected)
+				if (b_isSelected)
 				{
 					ImGui::SetItemDefaultFocus();
 				}
@@ -662,12 +711,12 @@ namespace FlatEngine
 		return b_selectionMade;
 	}
 
-	void PushTreeList(std::string id)
+	void PushTreeList(std::string ID)
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("innerWindow"));
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		PushMenuStyles();
-		ImGui::BeginTable(id.c_str(), 1, F_tableFlags);
+		ImGui::BeginTable(ID.c_str(), 1, F_tableFlags);
 		ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
 	}
 
@@ -679,27 +728,29 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 	}
 
-	void RenderTreeLeaf(std::string name, std::string& node_clicked)
+	void RenderTreeLeaf(std::string name, std::string& nodeClicked)
 	{
-		ImGuiTreeNodeFlags node_flags;
+		ImGuiTreeNodeFlags nodeFlags;
 
 		std::string treeID = name + "_node";
-		if (node_clicked == name)
+		if (nodeClicked == name)
 		{
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+			nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 		}
 		else
 		{
-			node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+			nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		}
 
 		//// TreeNode Opener - No TreePop because it's a leaf
 		ImGui::TableNextRow();
 		ImGui::TableSetColumnIndex(0);
 
-		ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, name.c_str());
+		ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), nodeFlags, name.c_str());
 		if (ImGui::IsItemClicked())
-			node_clicked = name;
+		{
+			nodeClicked = name;
+		}
 
 		ImGui::PushID(treeID.c_str());
 		ImGui::PopID();
@@ -707,7 +758,7 @@ namespace FlatEngine
 
 	bool RenderButton(std::string text, Vector2 size, float rounding, Vector4 color, Vector4 hoverColor, Vector4 activeColor)
 	{
-		bool _isClicked;
+		bool b_isClicked;
 
 		ImGui::PushStyleColor(ImGuiCol_Button, color);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
@@ -717,11 +768,11 @@ namespace FlatEngine
 
 		if (size.x != 0 || size.y != 0)
 		{
-			_isClicked = ImGui::Button(text.c_str(), size);
+			b_isClicked = ImGui::Button(text.c_str(), size);
 		}
 		else
 		{
-			_isClicked = ImGui::Button(text.c_str());
+			b_isClicked = ImGui::Button(text.c_str());
 		}
 
 		if (ImGui::IsItemHovered())
@@ -735,10 +786,10 @@ namespace FlatEngine
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 
-		return _isClicked;
+		return b_isClicked;
 	}
 
-	bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor, Vector2 uvStart, Vector2 uvEnd, Vector2 padding)
+	bool RenderImageButton(std::string ID, SDL_Texture* texture, Vector2 size, float rounding, Vector4 bgColor, Vector4 tint, Vector4 hoverColor, Vector4 activeColor, Vector2 uvStart, Vector2 uvEnd, Vector2 padding)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, bgColor);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
@@ -749,7 +800,7 @@ namespace FlatEngine
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, padding);
 		}
 
-		bool b_isClicked = ImGui::ImageButton(id.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
+		bool b_isClicked = ImGui::ImageButton(ID.c_str(), texture, size, uvStart, uvEnd, GetColor("transparent"), tint);
 
 		if (ImGui::IsItemHovered())
 		{
@@ -768,9 +819,16 @@ namespace FlatEngine
 		return b_isClicked;
 	}
 
-	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags)
+	bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags, std::string bgColor)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		if (bgColor != "")
+		{
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor(bgColor));
+		}
+		else
+		{
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		}
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("dragHovered"));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
@@ -797,9 +855,16 @@ namespace FlatEngine
 		return b_sliderChanged;
 	}
 
-	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags)
+	bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags, std::string bgColor)
 	{
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		if (bgColor != "")
+		{
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor(bgColor));
+		}
+		else
+		{
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("drag"));
+		}		
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("dragHovered"));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("dragActive"));
 
@@ -821,7 +886,7 @@ namespace FlatEngine
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();		
 
 		return b_sliderChanged;
 	}
@@ -893,14 +958,14 @@ namespace FlatEngine
 		return b_sliderChanged;
 	}
 
-	bool RenderCheckbox(std::string text, bool& _toCheck)
+	bool RenderCheckbox(std::string text, bool& b_toCheck)
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("checkboxBg"));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, GetColor("checkboxHovered"));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, GetColor("checkboxActive"));
 		ImGui::PushStyleColor(ImGuiCol_CheckMark, GetColor("checkboxCheck"));
 
-		bool b_checked = ImGui::Checkbox(text.c_str(), &_toCheck);
+		bool b_checked = ImGui::Checkbox(text.c_str(), &b_toCheck);
 
 		if (ImGui::IsItemHovered())
 		{
@@ -929,7 +994,7 @@ namespace FlatEngine
 	}
 
 	// *** SECOND VECTOR IS THE SIZE, **NOT*** THE END POSITION. *** Sets CursorScreenPos to the starting point! *** 
-	bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool b_allowOverlap, bool b_showRect, ImGuiButtonFlags flags)
+	bool RenderInvisibleButton(std::string ID, Vector2 startingPoint, Vector2 size, bool b_allowOverlap, bool b_showRect, ImGuiButtonFlags flags)
 	{
 		if (b_showRect)
 		{
@@ -943,7 +1008,7 @@ namespace FlatEngine
 		}
 
 		ImGui::SetCursorScreenPos(startingPoint);
-		return ImGui::InvisibleButton(id.c_str(), size, flags);
+		return ImGui::InvisibleButton(ID.c_str(), size, flags);
 	}
 
 	void RenderTextToolTip(std::string text)
@@ -1003,15 +1068,17 @@ namespace FlatEngine
 		{
 			std::string dataString = std::to_string(data[i]);
 			if (i < data.size() - 1)
+			{
 				dataString += ",";
+			}
 			ImGui::SameLine();
 			ImGui::Text(dataString.c_str());
-		}
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		}		
+		MoveScreenCursor(0, 5);
 	}
 
 	// Returns true if a valid input was retrieved. ***Remember to use static std::strings for inputValue***
-	bool RenderInputModal(std::string label, std::string description, std::string &inputValue, bool &b_openModal)
+	bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool& b_openModal)
 	{		
 		if (b_openModal)
 		{
@@ -1104,7 +1171,9 @@ namespace FlatEngine
 
 			float inputWidth = ImGui::CalcTextSize(description.c_str()).x;
 			if (inputWidth < 250)
+			{
 				inputWidth = 250;
+			}
 
 			if (ImGui::IsKeyPressed(ImGuiKey_Enter))
 			{

@@ -39,6 +39,14 @@ namespace FlatEngine
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
+		F_Lua["GetObjectByID"] = [](long ID)
+		{
+			return GetObjectById(ID);
+		};
+		F_Lua["GetObjectByName"] = [](std::string objectName)
+		{
+			return GetObjectByName(objectName);
+		};
 		F_Lua["LoadScene"] = [](std::string sceneName)
 		{
 			std::string scenePath = GetFilePathUsingFileName(GetDir("projectDir"), sceneName + ".scn");
@@ -238,10 +246,11 @@ namespace FlatEngine
 			"type",&Animation::S_EventFunctionParam::GetType,
 			"string", &Animation::S_EventFunctionParam::GetString,
 			"int", &Animation::S_EventFunctionParam::GetInt,
+			"long", &Animation::S_EventFunctionParam::GetLong,
 			"float", &Animation::S_EventFunctionParam::GetFloat,
 			"double", &Animation::S_EventFunctionParam::GetDouble,
-			"long", &Animation::S_EventFunctionParam::GetLong,
-			"bool", &Animation::S_EventFunctionParam::GetBool
+			"bool", &Animation::S_EventFunctionParam::GetBool,
+			"Vector2", &Animation::S_EventFunctionParam::GetVector2
 		);
 
 		F_Lua.new_usertype<RigidBody>("RigidBody",
@@ -304,13 +313,15 @@ namespace FlatEngine
 				{
 					std::string filepath = "";
 					if (F_LuaScriptsMap.count(script.second.GetAttachedScript()))
+					{
 						filepath = F_LuaScriptsMap.at(script.second.GetAttachedScript());
+					}
 
 					if (DoesFileExist(filepath))
 					{
 						GameObject* caller = GetObjectById(object.first);
 						if (InitLuaScript(filepath, caller))
-						{
+						{							
 							sol::protected_function func = F_Lua[functionName];
 							auto calledFunction = func();
 
@@ -336,7 +347,9 @@ namespace FlatEngine
 		{
 			std::string filepath = "";
 			if (F_LuaScriptsMap.count(script->GetAttachedScript()))
+			{
 				filepath = F_LuaScriptsMap.at(script->GetAttachedScript());
+			}
 
 			if (DoesFileExist(filepath))
 			{
@@ -373,21 +386,25 @@ namespace FlatEngine
 		F_LuaScriptsMap.clear();
 
 		F_luaScriptNames.push_back(""); // Empty string for when Scripts don't have any selected script attached in RenderScriptComponent()
-	
+
 		std::vector<std::string> scriptPaths = FindAllFilesWithExtension(GetDir("projectDir"), ".scp.lua");
 		for (std::string path : scriptPaths)
 		{			
 			F_luaScriptPaths.push_back(path);
 			F_luaScriptNames.push_back(GetFilenameFromPath(path));
 			F_LuaScriptsMap.emplace(GetFilenameFromPath(path), path);
+
+			F_Lua.script({
+				GetFilenameFromPath(path) + " = {} "
+			});
 		}
 	}
 
-	void CreateNewLuaScript(std::string filename, std::string path)
+	void CreateNewLuaScript(std::string fileName, std::string path)
 	{
 		for (std::string scriptPath : F_luaScriptPaths)
 		{
-			if (filename == GetFilenameFromPath(scriptPath))
+			if (fileName == GetFilenameFromPath(scriptPath))
 			{
 				LogError("Script name already taken.  Please enter a different name for your new lua script.");
 				return;
@@ -395,40 +412,40 @@ namespace FlatEngine
 		}
 
 		std::ofstream outfile;
-		std::string filenameWExtention;
+		std::string fileNameWExtention;
 
 		if (path == "")
 		{
-			filenameWExtention = GetDir("scripts") + "/" + filename + ".scp.lua";
+			fileNameWExtention = GetDir("scripts") + "/" + fileName + ".scp.lua";
 		}
 		else
 		{
-			filenameWExtention = path + "/" + filename + ".scp.lua";
+			fileNameWExtention = path + "/" + fileName + ".scp.lua";
 		}
 
-		outfile.open(filenameWExtention, std::ios_base::app);
+		outfile.open(fileNameWExtention, std::ios_base::app);
 		outfile << 
-			"-- " + filename + "\n\n\n" +
-			"-- using Lua in FlatEngine: \n\n" +
-			"-- ### please visit RegisterLuaTypes() in \"FlatEngine-Core/Source/LuaFunctions.cpp\" to see the classes, class methods, and variables exposed to Lua scripts ### \n" +
-			"-- ### please visit RegisterLuaFunctions() in \"FlatEngine-Core/Source/LuaFunctions.cpp\" to see the FlatEngine functions exposed to Lua scripts              ### \n\n" +
-			"-- use \"this_object\" to reference the object that is attached to this script \n" +
-			"-- use \":\" to access member variables and functions of objects: object:member_variable ..or.. object::member_function() \n" +
-			"-- to concatinate two or more strings, use two periods: \"..\"  LogString(\"Just add two periods between arguments like\"..string_variable_name) \n" +
-			"-- to create new objects of type Type with construction parameters, use: Type:new(parameters,...)  \n\n\n" +
+			"-- " + fileName + ".scp.lua\n\n" +
+			"-- Use \"this_object\" to reference the object that owns this script\n\n\n" +
 
-			"-- called on each script before Start() runs at the start of the gameloop (or upon instantiation) \n" +
-			"function Awake() \n\n" +
-			"end \n\n" +
+			"function Awake() \n" +
+			"     " + fileName + " = {}\n" +
+			"     "+ fileName + "[my_id] =\n" +
+			"     {\n" +
+			"	      -- Key value pairs here\n" +
+			"     }\n" +
+			"     local data = " + fileName + "[my_id]\n\n" +
+			"end\n\n" +
 
-			"-- called at the start of the gameloop after Awake() (or upon instantiation) \n" +
-			"function Start() \n" +
-			"     LogString(\"" + filename + " : Start() called on \"..this_object:GetName()) \n\n" +
-			"end \n" +
-			
-			"--called once per gameloop frame \n" +
-			"function Update() \n\n" +
-			"end \n\n";
+			"function Start()\n" +
+			"     -- required to access instance data\n" +
+			"     local data = " + fileName + "[my_id]\n\n" +
+			"     LogString(\"" + fileName + " : Start() called on \"..this_object:GetName())\n" +
+			"end\n\n" +
+						
+			"function Update()\n" +
+			"     local data = " + fileName + "[my_id]\n" +
+			"end";
 
 		RetrieveLuaScriptPaths();
 	}
@@ -457,6 +474,9 @@ namespace FlatEngine
 			F_Lua["this_object"] = caller;
 			// Store the name of the script being called in the Lua state (for hands-off named logging from Lua)
 			F_Lua["calling_script_name"] = GetFilenameFromPath(filePath);
+			// Store object id
+			F_Lua["my_id"] = caller->GetID();
+			
 			return true;
 		}
 		else

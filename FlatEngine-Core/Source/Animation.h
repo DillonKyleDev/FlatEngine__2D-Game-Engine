@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Vector2.h"
 #include "Vector4.h"
 
 #include <map>
@@ -40,22 +41,24 @@ namespace FlatEngine
 			float time = 0;
 			std::string name;
 			bool b_fired;
-		};
+		};	
 		struct S_EventFunctionParam {
 			std::string type = "empty";
 			int e_int = 0;
-			float e_float = 0.0f;
-			double e_double = 0;
 			long e_long = 0;
+			float e_float = 0.0f;
+			double e_double = 0;		
 			bool e_boolean = false;
+			Vector2 e_Vector2 = Vector2(0, 0);
 			std::string e_string = "";
 			std::string GetType() { return type; };
 			std::string GetString() { return e_string; };
 			int GetInt() { return e_int; };
+			long GetLong() { return e_long; };
 			float GetFloat() { return e_float; };
 			double GetDouble() { return e_double; };
-			long GetLong() { return e_long; };
 			bool GetBool() { return e_boolean; };
+			Vector2 GetVector2() { return e_Vector2; };
 		};
 		struct S_Event : public S_Property {
 			std::string functionName = "";

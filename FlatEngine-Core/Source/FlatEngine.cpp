@@ -1249,7 +1249,9 @@ namespace FlatEngine
 					{ "float", parameter.e_float },
 					{ "double", parameter.e_double },
 					{ "long", parameter.e_long },
-					{ "bool", parameter.e_boolean }
+					{ "bool", parameter.e_boolean },
+					{ "vector2X", parameter.e_Vector2.x },
+					{ "vector2Y", parameter.e_Vector2.y },
 				});
 			}
 			jsonData.push_back({ "parameters", parameters });
@@ -1514,6 +1516,7 @@ namespace FlatEngine
 						parameter.e_long = CheckJsonLong(param, "long", animName);
 						parameter.e_double = CheckJsonDouble(param, "double", animName);
 						parameter.e_boolean = CheckJsonBool(param, "bool", animName);
+						parameter.e_Vector2 = Vector2(CheckJsonFloat(param, "vector2X", animName), CheckJsonFloat(param, "vector2Y", animName));
 
 						frame->parameters.push_back(parameter);
 					}

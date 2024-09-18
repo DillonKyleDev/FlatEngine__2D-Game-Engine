@@ -162,9 +162,9 @@ namespace FlatEngine
 	extern void RestartImGui();
 	extern void QuitImGui();
 	extern void SetImGuiColors();
-	extern void HandleEvents(bool& quit);
+	extern void HandleEvents(bool& b_quit);
 	extern void HandleEngineEvents(SDL_Event event);
-	extern void HandleContextEvents(FlatEngine::MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
+	extern void HandleContextEvents(MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
 
 	// Lua / Sol
 	enum LuaEventFunction {
@@ -231,10 +231,10 @@ namespace FlatEngine
 	// Scene Management
 	extern Scene* GetLoadedScene();
 	extern Scene* CreateNewScene();
-	extern void SaveScene(Scene* scene, std::string filepath);
+	extern void SaveScene(Scene* scene, std::string filePath);
 	extern void SaveCurrentScene();
 	extern void QueueLoadScene(std::string scenePath);
-	extern void LoadScene(std::string filepath);	
+	extern void LoadScene(std::string filePath);	
 	std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
@@ -262,7 +262,7 @@ namespace FlatEngine
 	extern MappingContext* GetMappingContext(std::string contextName);
 
 	// Prefabs
-	extern void CreatePrefab(std::string path, GameObject &gameObject);
+	extern void CreatePrefab(std::string path, GameObject& gameObject);
 	extern void InitializePrefabs();
 	extern GameObject *Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
 	//extern std::map<std::string, Prefab> GetPrefabs();
@@ -276,7 +276,7 @@ namespace FlatEngine
 	extern void LogInt(int var, std::string line = "", std::string from = "[C++]");
 	extern void LogVector2(Vector2 vector, std::string line = "", std::string from = "[C++]");
 	extern void LogSeparator();
-	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvas_p0, Vector2 canvas_sz, Vector4 color, float thickness, ImDrawList* drawList);
+	extern void DrawRectangle(Vector2 startingPoint, Vector2 endingPoint, Vector2 canvasP0, Vector2 canvasSize, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawLine(Vector2 startingPoint, Vector2 endingPoint, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawRectangleFromLines(Vector2* corners, Vector4 color, float thickness, ImDrawList* drawList);
 	extern void DrawCircle(Vector2 center, float radius, Vector4 color, ImDrawList* drawList, float thickness = 1, int segments = 0);
@@ -285,8 +285,8 @@ namespace FlatEngine
 
 	// Game View
 	extern void Game_RenderView(bool b_inRuntime = false);
-	extern void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz);
-	extern void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
+	extern void Game_RenderObjects(Vector2 canvasP0, Vector2 canvasSize);
+	extern void Game_RenderObject(GameObject self, Vector2 canvasP0, Vector2 canvasSize, ImDrawList* drawList, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight);
 
 	// Game Loop Prettification
 	extern void StartGameLoop();
@@ -302,9 +302,9 @@ namespace FlatEngine
 	extern float GetDeltaTime();
 
 	// File Explorer
-	extern void CreateNewLuaScript(std::string filename, std::string path = "");
-	extern void CreateNewSceneFile(std::string filename, std::string path = "");
-	extern void CreateNewAnimationFile(std::string filename, std::string path = "");
+	extern void CreateNewLuaScript(std::string fileName, std::string path = "");
+	extern void CreateNewSceneFile(std::string fileName, std::string path = "");
+	extern void CreateNewAnimationFile(std::string fileName, std::string path = "");
 	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
 	extern void CreateNewTileSetFile(std::string fileName, std::string path);
 	extern GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position);
@@ -349,7 +349,7 @@ namespace FlatEngine
 	extern void RenderSeparator(float topPadding, float bottomPadding);
 	extern void RenderSubTitle(std::string title);
 	extern void BeginWindow(std::string name, Vector4 bgColor = GetColor("windowBg"));
-	extern void BeginWindow(std::string name, bool& _isOpen, Vector4 bgColor = GetColor("windowBg"));
+	extern void BeginWindow(std::string name, bool& b_isOpen, Vector4 bgColor = GetColor("windowBg"));
 	extern void BeginWindow(std::string name, bool& b_isOpen, ImGuiWindowFlags flags, Vector4 bgColor = GetColor("windowBg"));
 	extern void EndWindow();
 	extern void BeginWindowChild(std::string title, Vector4 bgColor = GetColor("outerWindow"), ImGuiWindowFlags flags = 0);
@@ -363,32 +363,33 @@ namespace FlatEngine
 	extern void PopMenuStyles();
 	extern void PushTableStyles();
 	extern void PopTableStyles();
-	extern bool PushTable(std::string id, int columns, ImGuiTableFlags flags = F_tableFlags);
-	extern bool RenderFloatDragTableRow(std::string id, std::string fieldName, float& value, float increment, float min, float max);
-	extern bool RenderTagListTableRow(std::string id, std::string fieldName, TagList& tagList);
-	extern bool RenderIntDragTableRow(std::string id, std::string fieldName, int& value, float speed, int min, int max);
-	extern bool RenderCheckboxTableRow(std::string id, std::string fieldName, bool& _value);
-	extern void RenderSelectableTableRow(std::string id, std::string fieldName, std::vector<std::string> options, int& current_option);
-	extern bool RenderInputTableRow(std::string id, std::string fieldName, std::string& value, bool b_canOpenFiles = false);
-	extern void RenderTextTableRow(std::string id, std::string fieldName, std::string value, std::string value2 = "");
+	extern bool PushTable(std::string ID, int columns, ImGuiTableFlags flags = F_tableFlags);
+	extern bool RenderFloatDragTableRow(std::string ID, std::string fieldName, float& value, float increment, float min, float max);
+	extern bool RenderTagListTableRow(std::string ID, std::string fieldName, TagList& tagList);
+	extern bool RenderIntDragTableRow(std::string ID, std::string fieldName, int& value, float speed, int min, int max);
+	extern bool RenderCheckboxTableRow(std::string ID, std::string fieldName, bool& _value);
+	extern void RenderSelectableTableRow(std::string ID, std::string fieldName, std::vector<std::string> options, int& currentOption);
+	extern bool RenderInputTableRow(std::string ID, std::string fieldName, std::string& value, bool b_canOpenFiles = false);
+	extern void RenderTextTableRow(std::string ID, std::string fieldName, std::string value, std::string value2 = "");
 	extern void PopTable();
-	extern bool RenderInput(std::string id, std::string label, std::string& value, bool _canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
-	extern bool DropInput(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string tooltip = "", float inputWidth = -1);
-	extern bool DropInputCanOpenFiles(std::string id, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip = "", float inputWidth = -1);
+	extern bool RenderInput(std::string ID, std::string label, std::string& value, bool b_canOpenFiles = false, float inputWidth = -1, ImGuiInputTextFlags flags = 0);
+	extern bool DropInput(std::string ID, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string tooltip = "", float inputWidth = -1);
+	extern bool DropInputCanOpenFiles(std::string ID, std::string label, std::string displayValue, std::string dropTargetID, int& droppedValue, std::string& openedFileValue, std::string tooltip = "", float inputWidth = -1);
 	extern bool RenderButton(std::string text, Vector2 size = Vector2(0, 0), float rounding = 1, Vector4 color = GetColor("button"), Vector4 hoverColor = GetColor("buttonHovered"), Vector4 activeColor = GetColor("buttonActive"));
-	extern bool RenderImageButton(std::string id, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1), Vector2 padding = Vector2(-1, -1));
-	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0);
-	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0);
+	extern bool RenderImageButton(std::string ID, SDL_Texture* texture, Vector2 size = Vector2(16, 16), float rounding = 1, Vector4 bgColor = GetColor("imageButton"), Vector4 tint = GetColor("imageButtonTint"), Vector4 hoverColor = GetColor("imageButtonHovered"), Vector4 activeColor = GetColor("imageButtonActive"), Vector2 uvStart = Vector2(0,0), Vector2 uvEnd = Vector2(1, 1), Vector2 padding = Vector2(-1, -1));
+	extern bool RenderDragFloat(std::string text, float width, float& value, float increment, float min, float max, ImGuiSliderFlags flags = 0, std::string bgColor = "");
+	extern bool RenderDragInt(std::string text, float width, int& value, float speed, int min, int max, ImGuiSliderFlags flags = 0, std::string bgColor = "");
 	extern bool RenderSliderFloat(std::string label, float& value, float increment = 0.1f, float min = 0.0f, float max = 1000, float width = -1, int digitsAfterDecimal = 3);
 	extern bool RenderSliderInt(std::string label, int& value, int increment = 1, int min = 0, int max = 1000, float width = -1);
 	extern void PushSliderStyles();
 	extern void PopSliderStyles();
-	extern bool RenderCheckbox(std::string text, bool& _toCheck);
+	extern bool RenderCheckbox(std::string text, bool& b_toCheck);
 	extern void RenderSectionHeader(std::string headerText, float height = 0);
-	extern bool RenderInvisibleButton(std::string id, Vector2 startingPoint, Vector2 size, bool _allowOverlap = true, bool _showRect = false, ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-	extern bool RenderSelectable(std::string id, std::vector<std::string> options, int& current_option);
-	extern void PushTreeList(std::string id);
-	extern void RenderTreeLeaf(std::string name, std::string& node_clicked);
+	extern bool RenderInvisibleButton(std::string ID, Vector2 startingPoint, Vector2 size, bool b_allowOverlap = true, bool b_showRect = false, ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+	extern bool RenderCombo(std::string ID, std::string displayedValue, std::vector<std::string> options, int& currentOption, float width = -1);
+	extern bool RenderSelectable(std::string ID, std::vector<std::string> options, int& currentOption);
+	extern void PushTreeList(std::string ID);
+	extern void RenderTreeLeaf(std::string name, std::string& nodeClicked);
 	extern void PopTreeList();
 	extern void RenderTextToolTip(std::string text);
 	extern void BeginToolTip(std::string title);
@@ -397,7 +398,7 @@ namespace FlatEngine
 	extern void RenderToolTipFloat(std::string label, float data);
 	extern void RenderToolTipLong(std::string label, long data);
 	extern void RenderToolTipLongVector(std::string label, std::vector<long> data);
-	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool &b_openModal);
+	extern bool RenderInputModal(std::string label, std::string description, std::string& inputValue, bool& b_openModal);
 	extern bool RenderConfirmModal(std::string label, std::string description, bool& b_openModal);
 
 	extern bool AreCollidingViewport(Vector4 ObjectA, Vector4 ObjectB);
@@ -406,13 +407,13 @@ namespace FlatEngine
 	// File managing
 	extern std::string OpenSaveFileExplorer();
 	extern std::string OpenLoadFileExplorer();
-	extern std::string GetFilenameFromPath(std::string path, bool _keepExtension = false);
-	extern std::string MakePathRelative(std::string filepath);
+	extern std::string GetFilenameFromPath(std::string path, bool b_keepExtension = false);
+	extern std::string MakePathRelative(std::string filePath);
 	extern std::string GetCurrentDir();
-	extern bool DoesFileExist(std::string filepath);
-	extern bool FilepathHasExtension(std::string filepath, std::string extension);
-	extern json LoadFileData(std::string filepath);
-	extern void DeleteFileUsingPath(std::string filepath);
+	extern bool DoesFileExist(std::string filePath);
+	extern bool FilepathHasExtension(std::string filePath, std::string extension);
+	extern json LoadFileData(std::string filePath);
+	extern void DeleteFileUsingPath(std::string filePath);
 	extern std::vector<std::string> FindAllFilesWithExtension(std::string dirPath, std::string extension);
 	extern std::string GetFilePathUsingFileName(std::string dirPath, std::string name);
 };
