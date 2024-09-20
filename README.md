@@ -459,7 +459,7 @@ Now we have to attach the Animation to a GameObject.  Create a new GameObject wi
 
 To call this animation and play it using scripts we can use:
 
-`GameObject:GetAnimation():Play("nameOfAnimation")`
+<br/>`GameObject:GetAnimation():Play("nameOfAnimation")`<br/>
 
 Where `nameOfAnimation` is the name we gave it in the Animation component of the GameObject.
 
@@ -552,16 +552,16 @@ There is a lot going on here so let's break it down:
 
 This function, `OnBoxCollisionEnter()`, is one of many functions that are called during specific events by FlatEngine.  It is called whenever this object collides with another GameObject.  Because it is a function that is called by the engine, it is guaranteed that the `my_id` and `this_object` variables will contain the data associated with this scripts instance so we can freely use `my_id` to access its data.  However, because we need to communicate with another script to tell it to do damage, we have to get ahold of that objects ID.  To do that we can use the `GetParentID()` function.  This function is a function of the Component class and can be used on any component to get the ID of the GameObject that owns it. Convenient!  Let's continue:
 
-`local data = BlasterRound[my_id]`
+`local data = BlasterRound[my_id]`<br/>
 We saw this earlier. We are using the `my_id` variable to gain access to the script instances data and storing it in the local data variable.
 
-`local collidedID = collidedWith:GetParentID()`
+`local collidedID = collidedWith:GetParentID()`<br/>
 collidedWith is a of type BoxCollider, which like all components, has a `GetParentID()` function. We assign the BoxColliders parent ID to a local variable collidedID.
 
-`if collidedWith:GetParent():HasTag("Enemy") then`
+`if collidedWith:GetParent():HasTag("Enemy") then`<br/>
 `GetParent()` is a Component function that gets the actual GameObject that owns this component.  `HasTag()` is a boolean function that checks for a specific Tag on a GameObject (not as important to this demonstration).
 
-`Damage(collidedID, 5)`
+`Damage(collidedID, 5)`<br/>
 This is a call to a function in another Script file.  The Damage function lives in the Health script file we saw above.  It takes two parameters: id and amount.  Because this function is intended to be called by other script files, we require an ID be passed to it to specify which script instance we are doing damage to.  From the BlasterRound script, we call the `Damage()` function using the ID of the GameObject that we want to do damage to along with the damage amount, 5.  This way the Health script knows the data it is operating on is the intended data.  If we were to have used the `my_id` variable inside the `Damage()` function like this (DON'T DO THIS):
 
 
@@ -608,72 +608,73 @@ Any Animation Event function that is called during an Animation
 This is list of all functions that can be called using Lua to interact with the engine and with GameObjects and components:
 
 
-`GetObjectByName(std::string objectName)`
+`GetObjectByName(std::string objectName)`<br/>
 Action: Gets a GameObject in the loaded scene by name.
 Parameters: objectName - name of the object you want.
 Returns: GameObject*
 
-`LoadScene(std::string sceneName)`
+`LoadScene(std::string sceneName)`<br/>
 Action: Loads a scene
 Parameters: sceneName - name of the scene to load.
 Returns: void
 
-`LogString(std::string line)`
+`LogString(std::string line)`<br/>
 Action: Log a string to the console.
 Parameters: line - string to log
 Returns: void
 
-`LogInt(int value, std::string line = "")`
+`LogInt(int value, std::string line = "")`<br/>
 Action: Log an int to the console and a string that will be prefixed to the value.
 Parameters: value - value to log, line - (optional) string that will be prefixed to the value
 Returns: void
 
-`LogFloat(float value, std::string line = "")`
+`LogFloat(float value, std::string line = "")`<br/>
 Action: Log an int to the console and a string that will be prefixed to the value.
 Parameters: value - value to log, line - (optional) string that will be prefixed to the value
 Returns: void
 
-`LogDouble(double value, std::string line = "")`
+`LogDouble(double value, std::string line = "")`<br/>
 Action: Log an int to the console and a string that will be prefixed to the value.
 Parameters: value - value to log, line - (optional) string that will be prefixed to the value
 Returns: void
 
-`LogLong(long value, std::string line = "")`
+`LogLong(long value, std::string line = "")`<br/>
 Action: Log an int to the console and a string that will be prefixed to the value.
 Parameters: value - value to log, line - (optional) string that will be prefixed to the value
 Returns: void
 
-`GetMappingContext(std::string contextName)`
+`GetMappingContext(std::string contextName)`<br/>
 Action: Get a copy of a Mapping Context object by name.
 Parameters: contextName - name of the Mapping Context
 Returns: MappingContext*
 
-`Instantiate(std::string prefabName, Vector2 position)`
+`Instantiate(std::string prefabName, Vector2 position)`<br/>
 Action: Instantiate a Prefab at a specific location
 Parameters: prefabName - name of the Prefab to spawn, position - the position in the game world to spawn the Prefab.
 Returns: GameObject*
 
-`GetTime()`
+`GetTime()`<br/>
 Action: Get the time in milliseconds the gameloop has been active (started and unpaused).
 Parameters: none
 Returns: Uint32
 
-`Destroy(long ID)`
+`Destroy(long ID)`<br/>
 Action: Delete a GameObject by ID
 Parameters: ID - ID of the GameObject to delete
 Returns: void
 
-`GetColor(std::string color)`
+`GetColor(std::string color)`<br/>
 Action: Gets the Vector4 that represents a color in the Colors.lua file in the project directory
 Parameters: color - name of the color in the Colors.lua file in FlatEngine -> engine -> scripts -> Colors.lua
 Returns: Vector4
 
 `RandomNumber(unsigned int min, unsigned int max)`
+<br/>
 Action: Generates a random number within specified range.
 Parameters: min - the lowest value (inclusive), max - the highest value (inclusive)
 Returns: int
 
-<h1>UNDDER CONSTRUCTION</h1>
+<h1>UNDER CONSTRUCTION</h1>
 ### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
 
 F_Lua.new_usertype<Vector2>("Vector2",
