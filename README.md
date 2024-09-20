@@ -364,48 +364,49 @@ With the warning out of the way... FlatEngine is intended to be vary straightfor
 
 In FlatEngine, the general flow is:
 
-- Project Creation -
+<h3>Project Creation</h3>
 Create a project using the Project Hub
 
 
-- Scene Creation -
+<h3>Scene Creation</h3>
 Create a scene and open it.  You can do this in two ways:
 
-1. File -> New Scene
-2. 
-a. Open the File Explorer viewport: Viewports -> File Explorer
-b. Right click empty space, (preferably in the scenes folder), -> Add New -> Scene
-   Then double click the new scene to open it.
+1. `File > New Scene`
+2. Open the File Explorer viewport:
+
+`Viewports > File Explorer`
+
+Then, in an empty space in the File Explorer, (preferably in the scenes folder), `Right click > Add New > Scene`  ... Then double click the new scene to open it.
 
 
-- Add GameObjects to the Scene -
+<h3>Add GameObjects to the Scene</h3>
 You can add GameObjects to the Scene using the top menu bar in several ways:
 
-Create -> GameObject
-Create -> Components  (allows for quick creation of GameObject with a default component)
-Create -> Prefabs     (once you have created a Prefab by right clicking on an existing GameObject, you can instantiate them from here)
+`Create > GameObject`
+`Create > Components`  (allows for quick creation of GameObject with a default component)
+`Create > Prefabs`     (once you have created a Prefab by right clicking on an existing GameObject, you can instantiate them from here)
 
 
-- Add Components to the GameObjects -
+<h3>Add Components to the GameObjects</h3>
 If the Inspector window is open, (Viewports -> Inspector) you can click on a GameObject to focus on it and view its components in the Inspecor viewport.  Here you have two options to add components:
 
-1. Hamburger button under the GameObjects name -> Add Component
+1. Hamburger button under the GameObjects name then click "Add Component"
 2. The purple Add Component button at the bottom of the Inspector viewport
 
 
-- Add Controls -
+<h3>Add Controls</h3>
 Create a Mapping Context in one of two ways:
 
-1. Create -> Asset files -> Mapping Context
-2. Right click in empty space in the File Explorer viewport -> Add new -> Mapping Context
+1. `Create > Asset files > Mapping Context`
+2. In empty space in the File Explorer viewport, `Right click > Add new > Mapping Context`
 
-After you've created a new Mapping Context, you can double click it in the File Explorer to open the Mapping Context Editor or open the editor using:
+After you have created a new Mapping Context, you can double click it in the File Explorer to open the Mapping Context Editor or open the editor using:
 
-Viewports -> Mapping Context Editor
+`Viewports > Mapping Context Editor`
 
 Select the Mapping Context you'd like to edit and add an input action name along with the button you'd like to associate it with.  Click "Add" and don't forget to "Save" in the top right of the viewport.
 
-In order to access these newly created bindings, you will need to add a Script component to the GameObject you want to have access to it.  In the Inspector window for the GameObject, Add a new Script component.  In the Script component click "New Script" and give it a name, then select the newly created script file in the Script components dropdown menu.  Now open up the Script in your favorite text editor and in Awake() (inside the data variable) add a mapping context variable and assign it to the mapping context you just created.  This can be done like so:
+In order to access these newly created bindings, you will need to add a Script component to the GameObject you want to have access to it.  In the Inspector window for the GameObject, Add a new Script component.  In the Script component click "New Script" and give it a name, then select the newly created script file in the Script components dropdown menu.  Now open up the Script in your favorite text editor and in `Awake()` (inside the data variable) add a mapping context variable and assign it to the mapping context you just created.  This can be done like so:
 
 NOTE: Please see "Lua Scripting in FlatEngine" below for a more detailed explanation of scripting in FlatEngine.
 
@@ -442,19 +443,19 @@ end
 `bool Fired()` - returns true only on the initial press of the button
 
 
-- Add Animations -
+<h3>Add Animations</h3>
 Animations can be used to do nearly everything sequencial you need to accomplish in your game, you just need a little creativity.  You can create an Animation in two ways:
 
-1. Create -> Asset files -> Animation
-2. In the File Explorer, right click an empty space -> Add new -> Animation
+1. `Create > Asset files > Animation`
+2. In the File Explorer in empty space `Right click > Add new > Animation`
 
-Open the newly created Animation by double clicking the file in the File Explorer or by opening the Animator window (Viewports -> Animator) along with the Keyframe Editor (Viewports -> Keyframe Editor).
+Open the newly created Animation by double clicking the file in the File Explorer or by opening the Animator window (`Viewports > Animator`) along with the Keyframe Editor (`Viewports > Keyframe Editor`).
 
 From here you can open your Animation file using the hamburger menu in the Animator window. (If you double clicked it should be opened in the Animator by default).  Add properties to the new Animation using the dropdown menu.  Select Transform from the dropdown and click "Add".  To add keyframes, click on the new Transform button that appeared and click "Add Keyframe" just above the Animator Timeline.  To edit the new keyframe, be sure you have the Keyframe Editor open and click on the keyframe diamond pip in the Animation timeline.  You are free to drag each animation keyframe along the timeline grid to change the time the keyframe is played.  You can also zoom in and out in the timeline window for more precision.
 
 In the Keyframe Editor, the properties you can animate for any component are listed with a checkbox next to them.  If you would like to animate a property you must check the box next to it to enable it.  Change the scale property from x = 1, y = 1 to x = 2, y = 2 and save the animation using the same hamburger menu you used to load the Animation.
 
-Now we have to attach the Animation to a GameObject.  Create a new GameObject with a Sprite component and add an image path to the Sprite by dragging one from the File Explorer viewport or by using the folder button next to the input.  Now add an Animation component to the GameObject and drag our new Animation into the input or click the folder button next to the input and give the Animation a name that we can use to reference it, then click "Add Animation" to officially add the animation to our GameObject.  Don't forget to save the scene using File -> Save Scene... or click on the hamburger menu in the top right of the Hierarchy viewport and click Quick Save.  When you Play a scene and then Stop the scene, it reverts to the previous saved state of the Scene, so be sure to save often, especially right before you Play a scene (This will be changed to autosave the scene whenever you Play it).  Now that our GameObject has the Animation attached to it we can click "Play Animation" in the Animation component to preview the Animation on our GameObject.  Do keep in mind though that if you Play Animation while the gameloop is not running, the `Awake` and `Start` functions will not have been run on any scripts yet, so if you are using Event functions in your Animations, be mindful of that.
+Now we have to attach the Animation to a GameObject.  Create a new GameObject with a Sprite component and add an image path to the Sprite by dragging one from the File Explorer viewport or by using the folder button next to the input.  Now add an Animation component to the GameObject and drag our new Animation into the input or click the folder button next to the input and give the Animation a name that we can use to reference it, then click "Add Animation" to officially add the animation to our GameObject.  Don't forget to save the scene using `File > Save Scene` ... or click on the hamburger menu in the top right of the Hierarchy viewport and click "Quick Save".  Now that our GameObject has the Animation attached to it we can click "Play Animation" in the Animation component to preview the Animation on our GameObject in the SceneView.  Do keep in mind though that if you Play Animation while the gameloop is not running, the `Awake()` and `Start()` functions will not have been run on any scripts yet, so if you are using Event functions in your Animations, be mindful of that.
 
 To call this animation and play it using scripts we can use:
 
@@ -478,16 +479,13 @@ Your results and the usefulness of FlatEngine may vary.
 
 ### Lua Scripting in FlatEngine
 
-Please see the section at the very bottom "Lua Functions Available" where every function exposed to Lua will eventually be listed along with a description of what it does.
+Please see the section at the very bottom where every function exposed to Lua will eventually be listed along with a description of what it does.
 
+Scripting in FlatEngine is done in a specific way due to how Lua is implemented in it.  Before each script is run, a Lua table is created for each Lua Script that exists.  These tables will be used by each script of the same name to keep track of and access each instance of the GameObject that "owns" a copy, using the GameObjects ID.  For example:
 
-Scripting in FlatEngine is done in a specific way due to how Lua is implemented in it.  
+A Script named "Health" is created.  At time of creation, a new Lua table is made called Health.  Then, in the `Awake()` function of the `PlayerController.scp.lua` script file, a new index in the Health table is created using the ID of the GameObject.  This means that each GameObject can only have ONE script component for each script that exists.  You cannot have two script components that have the same Script attached in one GameObject (I am not sure why you would want to anyway).  IMPORTANT: All data that is specific to this script that needs to be tracked and accessed on a per-object basis MUST be put inside this table if you want to access it later in the script and from other script files.
 
-Before each script is run, a Lua table is created for each Lua Script that exists.  These tables will be used by each script of the same name to keep track of and access each instance of the GameObject that "owns" a copy, using the GameObjects ID.  For example:
-
-A Script named "Health" is created.  At time of creation, a new Lua table is made called Health.  Then, in the Awake() function of the PlayerController.scp.lua script file, a new index in the Health table is created using the ID of the GameObject.  This means that each GameObject can only have ONE script component for each script that exists.  You cannot have two script components that have the same Script attached in one GameObject (I am not sure why you would want to anyway).  IMPORTANT: All data that is specific to this script that needs to be tracked and accessed on a per-object basis MUST be put inside this table if you want to access it later in the script and from other script files.
-
-Let us say that you want to track the health of whatever GameObject that is using this script.  In the Awake() function of this script you would add your health variables like so:
+Let us say that you want to track the health of whatever GameObject that is using this script.  In the `Awake()` function of this script you would add your health variables like so:
 
 
 ```
@@ -508,7 +506,7 @@ If you then needed to access these values for the specific GameObject, you need 
 1. Through the engine, either via the main script functions: Awake, Start, and Update, or through an Animation Event call.
 2. From other scripts
 
-When a script is called in the first way, the script is "initialized" by FlatEngine, which just means it sets some variables that you can access with Lua to specific values.  It sets the variable "this_object" to the GameObject that is calling the function, and it sets the variable "my_id" to the ID of the GameObject that is being called.  If the Script is called via the engine you can use the my_id variable in conjunction with the script table to access the data of the specific script instance (in the Update() function of the Health script, for example) like so:
+When a script is called in the first way, the script is "initialized" by FlatEngine, which just means it sets some variables that you can access with Lua to specific values.  It sets the variable `this_object` to the GameObject that is calling the function, and it sets the variable `my_id` to the ID of the GameObject that is being called.  If the Script is called via the engine you can use the my_id variable in conjunction with the script table to access the data of the specific script instance (in the `Update()` function of the Health script, for example) like so:
 
 
 ```
@@ -530,10 +528,10 @@ end
 ```
 
 
-The data variable is a convenient way to not have to type Health[my_id].currentHealth every time and it is local because the default for Lua variables is global and we want to keep this variable only accessable to this Update function.
+The data variable is a convenient way to not have to type `Health[my_id].currentHealth` every time and it is local because the default for Lua variables is global and we want to keep this variable only accessable to this Update function.
 
 
-For the second way a script can be called, through another script, you must ensure that the ID you are referencing belongs to the script you actually want to perform actions on before you do so.  Let's say you have a Blaster script that when OnBoxCollisionEnter is called it needs to tell whoever it collided with that it has done damage:
+For the second way a script can be called, through another script, you must ensure that the ID you are referencing belongs to the script you actually want to perform actions on before you do so.  Let's say you have a BlasterRound script that when `OnBoxCollisionEnter` is called it needs to tell whoever it collided with that it has done damage:
 
 
 ```
@@ -552,19 +550,19 @@ end
 
 There is a lot going on here so let's break it down:
 
-This function, OnBoxCollisionEnter(), is one of many functions that are called during specific events by FlatEngine.  It is called whenever this object collides with another GameObject.  Because it is a function that is called by the engine, it is guaranteed that the my_id and this_object variables will contain the data associated with this scripts instance so we can freely use my_id to access its data.  However, because we need to communicate with another script to tell it to do damage, we have to get ahold of that objects ID.  To do that we can use the GetParentID() function.  This function is a function of the Component class and can be used on any component to get the ID of the GameObject that owns it. Convenient!  Let's continue:
+This function, `OnBoxCollisionEnter()`, is one of many functions that are called during specific events by FlatEngine.  It is called whenever this object collides with another GameObject.  Because it is a function that is called by the engine, it is guaranteed that the `my_id` and `this_object` variables will contain the data associated with this scripts instance so we can freely use `my_id` to access its data.  However, because we need to communicate with another script to tell it to do damage, we have to get ahold of that objects ID.  To do that we can use the `GetParentID()` function.  This function is a function of the Component class and can be used on any component to get the ID of the GameObject that owns it. Convenient!  Let's continue:
 
-local data = BlasterRound[my_id]
-We saw this earlier. We are using the my_id variable to gain access to the script instances data and storing it in the local data variable.
+`local data = BlasterRound[my_id]`
+We saw this earlier. We are using the `my_id` variable to gain access to the script instances data and storing it in the local data variable.
 
-local collidedID = collidedWith:GetParentID()
-collidedWith is a of type BoxCollider, which like all components, has a GetParentID() function. We assign the BoxColliders parent ID to a local variable collidedID.
+`local collidedID = collidedWith:GetParentID()`
+collidedWith is a of type BoxCollider, which like all components, has a `GetParentID()` function. We assign the BoxColliders parent ID to a local variable collidedID.
 
-if collidedWith:GetParent():HasTag("Enemy") then
-GetParent() is a Component function that gets the actual GameObject that owns this component.  HasTag() is a boolean function that checks for a specific Tag on a GameObject (not as important to this demonstration).
+`if collidedWith:GetParent():HasTag("Enemy") then`
+`GetParent()` is a Component function that gets the actual GameObject that owns this component.  `HasTag()` is a boolean function that checks for a specific Tag on a GameObject (not as important to this demonstration).
 
-Damage(collidedID, 5)
-This is a call to a function in another Script file.  The Damage function lives in the Health script file we saw above.  It takes two parameters: id and amount.  Because this function is intended to be called by other script files, we require an ID be passed to it to specify which script instance we are doing damage to.  From the BlasterRound script, we call the Damage() function using the ID of the GameObject that we want to do damage to along with the damage amount, 5.  This way the Health script knows the data it is operating on is the intended data.  If we were to have used the my_id variable inside the Damage() function like this (DON'T DO THIS):
+`Damage(collidedID, 5)`
+This is a call to a function in another Script file.  The Damage function lives in the Health script file we saw above.  It takes two parameters: id and amount.  Because this function is intended to be called by other script files, we require an ID be passed to it to specify which script instance we are doing damage to.  From the BlasterRound script, we call the `Damage()` function using the ID of the GameObject that we want to do damage to along with the damage amount, 5.  This way the Health script knows the data it is operating on is the intended data.  If we were to have used the `my_id` variable inside the `Damage()` function like this (DON'T DO THIS):
 
 
 ```
@@ -576,7 +574,7 @@ end
 ```
 
 
-Then when the Damage function is called from BlasterRound in the OnBoxCollisionEnter() function, the engine will have assigned the variables my_id and this_object with references to the BlasterRound object (in this case), the Damage() function would be doing damage to the BlasterRound GameObject because it is accessing the table using its ID.  That is also assuming there is any data to access in the first place, as the BlasterRound GameObject may not even have a Health script with data to access.
+Then when the Damage function is called from BlasterRound in the `OnBoxCollisionEnter()` function, the engine will have assigned the variables `my_id` and `this_object` with references to the BlasterRound object (in this case), the `Damage()` function would be doing damage to the BlasterRound GameObject because it is accessing the table using its ID.  That is also assuming there is any data to access in the first place, as the BlasterRound GameObject may not even have a Health script with data to access.
 
 Hopefully this distinction makes sense because it is essential in understanding how Lua operates on GameObjects within FlatEngine.
 
@@ -675,7 +673,7 @@ Action: Generates a random number within specified range.
 Parameters: min - the lowest value (inclusive), max - the highest value (inclusive)
 Returns: int
 
-
+<h1>UNDDER CONSTRUCTION</h1>
 ### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
 
 F_Lua.new_usertype<Vector2>("Vector2",
