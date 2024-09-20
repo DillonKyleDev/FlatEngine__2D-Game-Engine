@@ -382,7 +382,7 @@ Then, in an empty space in the File Explorer, (preferably in the scenes folder),
 <h3>Add GameObjects to the Scene</h3>
 You can add GameObjects to the Scene using the top menu bar in several ways:
 
-`Create > GameObject`
+<br/>`Create > GameObject`<br/>
 `Create > Components`  (allows for quick creation of GameObject with a default component)
 `Create > Prefabs`     (once you have created a Prefab by right clicking on an existing GameObject, you can instantiate them from here)
 
@@ -397,12 +397,12 @@ If the Inspector window is open, (Viewports -> Inspector) you can click on a Gam
 <h3>Add Controls</h3>
 Create a Mapping Context in one of two ways:
 
-1. `Create > Asset files > Mapping Context`
+1. `Create > Asset files > Mapping Context`<br/>
 2. In empty space in the File Explorer viewport, `Right click > Add new > Mapping Context`
 
 After you have created a new Mapping Context, you can double click it in the File Explorer to open the Mapping Context Editor or open the editor using:
 
-`Viewports > Mapping Context Editor`
+<br/>`Viewports > Mapping Context Editor`<br/>
 
 Select the Mapping Context you'd like to edit and add an input action name along with the button you'd like to associate it with.  Click "Add" and don't forget to "Save" in the top right of the viewport.
 
