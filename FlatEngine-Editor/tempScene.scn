@@ -105,9 +105,9 @@
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 0,
                     "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
+                    "tintColorX": 0.0,
+                    "tintColorY": 0.0,
+                    "tintColorZ": 0.0,
                     "type": "Sprite",
                     "xOffset": 8.0,
                     "xScale": 1.0,
@@ -241,6 +241,13 @@
                     "activeWidth": 2.0,
                     "id": 20,
                     "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "animationData": [],
+                    "id": 118,
+                    "type": "Animation"
                 }
             ],
             "id": 4,
@@ -2516,97 +2523,6 @@
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": 10.0,
-            "tags": {
-                "Enemy": false,
-                "EnemyDamage": false,
-                "EnemyTrigger": false,
-                "EnvironmentalDamage": false,
-                "EnvironmentalTrigger": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "NpcTrigger": false,
-                "Player": false,
-                "PlayerDamage": false,
-                "PlayerTrigger": false,
-                "Projectile": false,
-                "Terrain": false,
-                "TerrainTrigger": false
-            }
-        },
-        {
-            "_isActive": true,
-            "_isPrefab": false,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 148,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "animationData": [
-                        {
-                            "name": "test",
-                            "path": "..\\assets\\animations\\Boss1Attacks.anm"
-                        }
-                    ],
-                    "id": 149,
-                    "type": "Animation"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "id": 150,
-                    "path": "assets/images/resources/block.png",
-                    "pivotPoint": "PivotCenter",
-                    "renderOrder": 27,
-                    "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
-                    "type": "Sprite",
-                    "xOffset": 25.0,
-                    "xScale": 1.0,
-                    "yOffset": 25.0,
-                    "yScale": 1.0
-                }
-            ],
-            "id": 38,
-            "ignoreTags": {
-                "Enemy": false,
-                "EnemyDamage": false,
-                "EnemyTrigger": false,
-                "EnvironmentalDamage": false,
-                "EnvironmentalTrigger": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "NpcTrigger": false,
-                "Player": false,
-                "PlayerDamage": false,
-                "PlayerTrigger": false,
-                "Projectile": false,
-                "Terrain": false,
-                "TerrainTrigger": false
-            },
-            "name": "Animation(38)",
-            "parent": -1,
-            "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

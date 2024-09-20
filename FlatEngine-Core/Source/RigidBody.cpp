@@ -589,8 +589,8 @@ namespace FlatEngine
 			Sprite* sprite = GetParent()->GetSprite();
 			if (sprite != nullptr)
 			{
-				float width = sprite->GetTextureWidth() / 10;
-				float height = sprite->GetTextureHeight() / 10;
+				float width = (float)sprite->GetTextureWidth() / 10;
+				float height = (float)sprite->GetTextureHeight() / 10;
 				float radius = (width + height) / 2; // rough estimate
 				if (width != 0 && height != 0)
 					m_I = 2 * m_mass / 5 * radius * radius;
@@ -617,8 +617,8 @@ namespace FlatEngine
 			Sprite* sprite = GetParent()->GetSprite();
 			if (sprite != nullptr)
 			{
-				float width = sprite->GetTextureWidth() / 10;
-				float height = sprite->GetTextureHeight() / 10;
+				float width = (float)sprite->GetTextureWidth() / 10;
+				float height = (float)sprite->GetTextureHeight() / 10;
 				float radius = (width + height) / 2; // rough estimate
 				if (width != 0 && height != 0)
 				{

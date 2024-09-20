@@ -60,11 +60,11 @@ namespace FlatEngine
 			m_path = newPath;
 			if (m_texture.LoadFromFile(m_path))
 			{
-				m_textureWidth = (float)m_texture.GetWidth();
-				m_textureHeight = (float)m_texture.GetHeight();
+				m_textureWidth = m_texture.GetWidth();
+				m_textureHeight = m_texture.GetHeight();
 
 				// Set pivot point to the center of the texture by default
-				m_offset = { m_textureWidth / 2, m_textureHeight / 2 };
+				m_offset = { (float)m_textureWidth / 2, (float)m_textureHeight / 2 };
 				m_pivotOffset = m_offset;
 			}
 			else
@@ -119,12 +119,12 @@ namespace FlatEngine
 		return m_scale;
 	}
 
-	float Sprite::GetTextureWidth()
+	int Sprite::GetTextureWidth()
 	{
 		return m_textureWidth;
 	}
 
-	float Sprite::GetTextureHeight()
+	int Sprite::GetTextureHeight()
 	{
 		return m_textureHeight;
 	}
@@ -174,7 +174,7 @@ namespace FlatEngine
 
 	void Sprite::UpdatePivotOffset()
 	{
-		Vector2 centeredOffset = Vector2(m_textureWidth / 2, m_textureHeight / 2);
+		Vector2 centeredOffset = Vector2((float)m_textureWidth / 2, (float)m_textureHeight / 2);
 
 		switch (m_pivotPoint)
 		{
@@ -185,43 +185,43 @@ namespace FlatEngine
 		}
 		case Pivot::PivotLeft:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x - (m_textureWidth / 2), centeredOffset.y);
+			m_pivotOffset = Vector2(centeredOffset.x - ((float)m_textureWidth / 2), centeredOffset.y);
 			break;
 		}
 		case Pivot::PivotRight:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x + (m_textureWidth / 2), centeredOffset.y);
+			m_pivotOffset = Vector2(centeredOffset.x + ((float)m_textureWidth / 2), centeredOffset.y);
 			break;
 		}
 		case Pivot::PivotTop:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y - (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y - ((float)m_textureHeight / 2));
 			break;
 		}
 		case Pivot::PivotBottom:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y + (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x, centeredOffset.y + ((float)m_textureHeight / 2));
 			break;
 		}
 
 		case Pivot::PivotTopLeft:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x - (m_textureWidth / 2), centeredOffset.y - (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x - ((float)m_textureWidth / 2), centeredOffset.y - ((float)m_textureHeight / 2));
 			break;
 		}
 		case Pivot::PivotTopRight:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x + (m_textureWidth / 2), centeredOffset.y - (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x + ((float)m_textureWidth / 2), centeredOffset.y - ((float)m_textureHeight / 2));
 			break;
 		}
 		case Pivot::PivotBottomLeft:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x - (m_textureWidth / 2), centeredOffset.y + (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x - ((float)m_textureWidth / 2), centeredOffset.y + ((float)m_textureHeight / 2));
 			break;
 		}
 		case Pivot::PivotBottomRight:
 		{
-			m_pivotOffset = Vector2(centeredOffset.x + (m_textureWidth / 2), centeredOffset.y + (m_textureHeight / 2));
+			m_pivotOffset = Vector2(centeredOffset.x + ((float)m_textureWidth / 2), centeredOffset.y + ((float)m_textureHeight / 2));
 			break;
 		}
 		default:

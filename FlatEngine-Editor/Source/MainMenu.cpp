@@ -247,8 +247,7 @@ namespace FlatGui
 					{
 						GameObject *newObject = FL::CreateGameObject(-1);						
 						newObject->AddAnimation();
-						Sprite* sprite = newObject->AddSprite();
-						sprite->SetTexture("assets/images/resources/block.png");
+						Sprite* sprite = newObject->AddSprite();						
 						newObject->SetName("Animation(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
@@ -295,13 +294,13 @@ namespace FlatGui
 						newObject->SetName("BoxCollider(" + std::to_string(newObject->GetID()) + ")");
 						SetFocusedGameObjectID(newObject->GetID());
 					}
-					if (ImGui::MenuItem("CircleCollider"))
-					{
-						GameObject* newObject = FL::CreateGameObject(-1);
-						newObject->AddCircleCollider();
-						newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
-						SetFocusedGameObjectID(newObject->GetID());
-					}
+					//if (ImGui::MenuItem("CircleCollider"))
+					//{
+					//	GameObject* newObject = FL::CreateGameObject(-1);
+					//	newObject->AddCircleCollider();
+					//	newObject->SetName("CircleCollider(" + std::to_string(newObject->GetID()) + ")");
+					//	SetFocusedGameObjectID(newObject->GetID());
+					//}
 					if (ImGui::MenuItem("TileMap"))
 					{
 						GameObject* newObject = FL::CreateGameObject(-1);

@@ -1747,6 +1747,7 @@ namespace FlatEngine
 	// Logging
 	void LogError(std::string line, std::string from)
 	{
+		ImGui::SetWindowFocus("Logger");
 		F_Logger.LogString("ERROR : " + line, from);
 	}
 

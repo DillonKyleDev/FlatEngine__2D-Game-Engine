@@ -38,7 +38,7 @@ namespace FlatGui
 				std::string animationName = "-No Animation Selected-";
 				if (GetFocusedAnimation() != nullptr && GetFocusedAnimation()->animationName != "")
 				{
-					animationName = "Loaded Animation: " + GetFocusedAnimation()->animationName;
+					animationName = GetFocusedAnimation()->animationName;
 				}
 
 				ImGui::BeginChild("Manage Animation", Vector2(0, 0), FL::F_autoResizeChildFlags);

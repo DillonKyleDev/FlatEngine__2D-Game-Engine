@@ -71,6 +71,18 @@ namespace FlatEngine
 		m_animations.push_back(animationData);
 	}
 
+	bool Animation::ContainsName(std::string name)
+	{
+		for (AnimationData animData : m_animations)
+		{
+			if (animData.name == name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	std::vector<Animation::AnimationData>& Animation::GetAnimations()
 	{
 		return m_animations;
@@ -104,7 +116,7 @@ namespace FlatEngine
 
 	void Animation::StopAll()
 	{
-		for (Animation::AnimationData animData : m_animations)
+		for (Animation::AnimationData &animData : m_animations)
 		{
 			animData.b_playing = false;
 		}
@@ -112,7 +124,7 @@ namespace FlatEngine
 
 	void Animation::Stop(std::string animationName)
 	{
-		for (Animation::AnimationData animData : m_animations)
+		for (Animation::AnimationData &animData : m_animations)
 		{
 			if (animData.name == animationName)
 			{

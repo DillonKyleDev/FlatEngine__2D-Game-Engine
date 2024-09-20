@@ -377,6 +377,7 @@ namespace FlatEngine
 		std::string GetData();
 
 		void AddAnimation(std::string name, std::string filePath);
+		bool ContainsName(std::string name);
 		std::vector<AnimationData> &GetAnimations();
 		void Play(std::string animationName, Uint32 startTime = 0);
 		void PlayFromLua(std::string animationName);

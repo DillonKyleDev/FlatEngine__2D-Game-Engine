@@ -178,8 +178,8 @@ namespace FlatEngine
 			if (sprite != nullptr && sprite->IsActive())
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
-				float textureWidth = sprite->GetTextureWidth();
-				float textureHeight = sprite->GetTextureHeight();
+				float textureWidth = (float)sprite->GetTextureWidth();
+				float textureHeight = (float)sprite->GetTextureHeight();
 				Vector2 spriteScale = sprite->GetScale();
 				Vector2 offset = sprite->GetOffset();
 				bool b_scalesWithZoom = true;

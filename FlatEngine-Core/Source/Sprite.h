@@ -24,8 +24,8 @@ namespace FlatEngine
 		SDL_Texture* GetTexture();
 		void SetScale(Vector2 newScale);
 		Vector2 GetScale();
-		float GetTextureWidth();
-		float GetTextureHeight();
+		int GetTextureWidth();
+		int GetTextureHeight();
 		std::string GetPath();
 		void SetRenderOrder(int order);
 		int GetRenderOrder();
@@ -45,8 +45,8 @@ namespace FlatEngine
 	private:
 		Texture m_texture;
 		int m_renderOrder;
-		float m_textureWidth;
-		float m_textureHeight;
+		int m_textureWidth;
+		int m_textureHeight;
 		Vector2 m_scale;
 		Pivot m_pivotPoint;
 		Vector2 m_pivotOffset;

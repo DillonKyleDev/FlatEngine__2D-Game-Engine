@@ -211,7 +211,7 @@ Falling Gravity: Falling gravity is used if you would like your GameObject to ha
 |Equilibrium Force|I believe this will be removed in a future update.  I am unsure if this value should be exposed to the end user.|
 
 
-### CharacerController
+### CharacterController
 
 Note: This component is due for a rework.  The exposed variables don't make much sense and are not intuitive to use.  Max Acceleration is essentially the max speed, or the maximum amount of velocity that is added each frame.
 
@@ -455,7 +455,7 @@ From here you can open your Animation file using the hamburger menu in the Anima
 
 In the Keyframe Editor, the properties you can animate for any component are listed with a checkbox next to them.  If you would like to animate a property you must check the box next to it to enable it.  Change the scale property from x = 1, y = 1 to x = 2, y = 2 and save the animation using the same hamburger menu you used to load the Animation.
 
-Now we have to attach the Animation to a GameObject.  Create a new GameObject with a Sprite component and add an image path to the Sprite by dragging one from the File Explorer viewport or by using the folder button next to the input.  Now add an Animation component to the GameObject and drag our new Animation into the input or click the folder button next to the input and give the Animation a name that we can use to reference it, then click "Add Animation" to officially add the animation to our GameObject.  Don't forget to save the scene using `File > Save Scene` ... or click on the hamburger menu in the top right of the Hierarchy viewport and click "Quick Save".  Now that our GameObject has the Animation attached to it we can click "Play Animation" in the Animation component to preview the Animation on our GameObject in the SceneView.  Do keep in mind though that if you Play Animation while the gameloop is not running, the `Awake()` and `Start()` functions will not have been run on any scripts yet, so if you are using Event functions in your Animations, be mindful of that.
+Now we have to attach the Animation to a GameObject.  Create a new GameObject with a Sprite component and add an image path to the Sprite by dragging one from the File Explorer viewport or by using the folder button next to the input.  Now add an Animation component to the GameObject and drag our new Animation into the input or click the folder button next to the input and give the Animation a name that we can use to reference it, then click "Add Animation" to officially add the animation to our GameObject.  Don't forget to save the scene using `File > Save Scene` ... or click on the hamburger menu in the top right of the Hierarchy viewport and click "Quick Save".  Now that our GameObject has the Animation attached to it we can click "Preview" in the Animation component to preview the Animation on our GameObject in the SceneView.  Do keep in mind though that if you Play Animation while the gameloop is not running, the `Awake()` and `Start()` functions will not have been run on any scripts yet, so if you are using Event functions in your Animations, be mindful of that.  Also keep in mind that when you preview an animation, it changes the GameObjects properties and there is currently nothing built in to revert its properties to before you previewed it, so please make sure to save your changes before previewing animations, that way you can easily reload the scene to revert back to the original object properties.
 
 To call this animation and play it using scripts we can use:
 
@@ -609,250 +609,238 @@ This is list of all functions that can be called using Lua to interact with the 
 
 
 `GetObjectByName(std::string objectName)`<br/>
-Action: Gets a GameObject in the loaded scene by name.
-Parameters: objectName - name of the object you want.
-Returns: GameObject*
+Action: Gets a GameObject in the loaded scene by name.<br/>
+Parameters: objectName - name of the object you want.<br/>
+Returns: GameObject*<br/>
 
 `LoadScene(std::string sceneName)`<br/>
-Action: Loads a scene
-Parameters: sceneName - name of the scene to load.
-Returns: void
+Action: Loads a scene<br/>
+Parameters: sceneName - name of the scene to load.<br/>
+Returns: void<br/>
 
 `LogString(std::string line)`<br/>
-Action: Log a string to the console.
-Parameters: line - string to log
-Returns: void
+Action: Log a string to the console.<br/>
+Parameters: line - string to log<br/>
+Returns: void<br/>
 
 `LogInt(int value, std::string line = "")`<br/>
-Action: Log an int to the console and a string that will be prefixed to the value.
-Parameters: value - value to log, line - (optional) string that will be prefixed to the value
-Returns: void
+Action: Log an int to the console and a string that will be prefixed to the value.<br/>
+Parameters: value - value to log, line - (optional) string that will be prefixed to the value<br/>
+Returns: void<br/>
 
 `LogFloat(float value, std::string line = "")`<br/>
-Action: Log an int to the console and a string that will be prefixed to the value.
-Parameters: value - value to log, line - (optional) string that will be prefixed to the value
-Returns: void
+Action: Log an int to the console and a string that will be prefixed to the value.<br/>
+Parameters: value - value to log, line - (optional) string that will be prefixed to the value<br/>
+Returns: void<br/>
 
 `LogDouble(double value, std::string line = "")`<br/>
-Action: Log an int to the console and a string that will be prefixed to the value.
-Parameters: value - value to log, line - (optional) string that will be prefixed to the value
-Returns: void
+Action: Log an int to the console and a string that will be prefixed to the value.<br/>
+Parameters: value - value to log, line - (optional) string that will be prefixed to the value<br/>
+Returns: void<br/>
 
 `LogLong(long value, std::string line = "")`<br/>
-Action: Log an int to the console and a string that will be prefixed to the value.
-Parameters: value - value to log, line - (optional) string that will be prefixed to the value
-Returns: void
+Action: Log an int to the console and a string that will be prefixed to the value.<br/>
+Parameters: value - value to log, line - (optional) string that will be prefixed to the value<br/>
+Returns: void<br/>
 
 `GetMappingContext(std::string contextName)`<br/>
-Action: Get a copy of a Mapping Context object by name.
-Parameters: contextName - name of the Mapping Context
-Returns: MappingContext*
+Action: Get a copy of a Mapping Context object by name.<br/>
+Parameters: contextName - name of the Mapping Context<br/>
+Returns: MappingContext*<br/>
 
 `Instantiate(std::string prefabName, Vector2 position)`<br/>
-Action: Instantiate a Prefab at a specific location
-Parameters: prefabName - name of the Prefab to spawn, position - the position in the game world to spawn the Prefab.
-Returns: GameObject*
+Action: Instantiate a Prefab at a specific location<br/>
+Parameters: prefabName - name of the Prefab to spawn, position - the position in the game world to spawn the Prefab.<br/>
+Returns: GameObject*<br/>
 
 `GetTime()`<br/>
-Action: Get the time in milliseconds the gameloop has been active (started and unpaused).
-Parameters: none
-Returns: Uint32
+Action: Get the time in milliseconds the gameloop has been active (started and unpaused).<br/>
+Parameters: none<br/>
+Returns: Uint32<br/>
 
 `Destroy(long ID)`<br/>
-Action: Delete a GameObject by ID
-Parameters: ID - ID of the GameObject to delete
-Returns: void
+Action: Delete a GameObject by ID<br/>
+Parameters: ID - ID of the GameObject to delete<br/>
+Returns: void<br/>
 
 `GetColor(std::string color)`<br/>
-Action: Gets the Vector4 that represents a color in the Colors.lua file in the project directory
-Parameters: color - name of the color in the Colors.lua file in FlatEngine -> engine -> scripts -> Colors.lua
-Returns: Vector4
+Action: Gets the Vector4 that represents a color in the Colors.lua file in the project directory<br/>
+Parameters: color - name of the color in the Colors.lua file in FlatEngine -> engine -> scripts -> Colors.lua<br/>
+Returns: Vector4<br/>
 
-`RandomNumber(unsigned int min, unsigned int max)`
-<br/>
-Action: Generates a random number within specified range.
-Parameters: min - the lowest value (inclusive), max - the highest value (inclusive)
-Returns: int
+`RandomNumber(unsigned int min, unsigned int max)`<br/>
+Action: Generates a random number within specified range.<br/>
+Parameters: min - the lowest value (inclusive), max - the highest value (inclusive)<br/>
+Returns: int<br/>
 
 <h1>UNDER CONSTRUCTION</h1>
 ### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
+<br/>
 
-F_Lua.new_usertype<Vector2>("Vector2",
-    sol::constructors<Vector2(), Vector2(float x,float y)>(),
-    "SetX", &Vector2::SetX,
-    "x", &Vector2::GetX,
-    "SetY", &Vector2::SetY,
-    "y", &Vector2::GetY,
-    "SetXY", &Vector2::_xy
-);
-F_Lua.new_usertype<Vector4>("Vector4",
+Vector2<br/>
+    constructors<Vector2(), Vector2(float x,float y)>(),
+    |SetX|
+    |x|
+    |SetY|
+    |y|
+    |SetXY|
+
+Vector4<br/>
     sol::constructors<Vector4(), Vector4(float x, float y, float z, float w)>(),
-    "SetX", &Vector4::SetX,
-    "x", &Vector4::GetX,
-    "SetY", &Vector4::SetY,
-    "y", &Vector4::GetY,
-    "SetZ", &Vector4::SetZ,
-    "z", &Vector4::GetZ,
-    "SetW", &Vector4::SetW,
-    "w", &Vector4::GetW,
-    "SetXYZW", &Vector4::_xyzw
-);
+    |SetX|
+    |x|
+    |SetY|
+    |y|
+    |SetZ|
+    |z|
+    |SetW|
+    |w|
+    |SetXYZW|
 
-F_Lua.new_usertype<GameObject>("GameObject",
-    "GetID", &GameObject::GetID,
-    "GetName", &GameObject::GetName,
-    "SetName", &GameObject::SetName,
-    "IsActive", &GameObject::IsActive,
-    "SetActive", &GameObject::SetActive,
-    "GetParent", &GameObject::GetParent,
-    "GetParentID", &GameObject::GetParentID,
-    "HasTag", &GameObject::HasTag,
-    "GetTransform", &GameObject::GetTransform,
-    "AddSprite", &GameObject::AddTransform,
-    "GetSprite", &GameObject::GetSprite,
-    "GetCamera", &GameObject::GetCamera,
-    "GetAnimation", &GameObject::GetAnimation,
-    "GetAudio", &GameObject::GetAudio,
-    "GetButton", &GameObject::GetButton,
-    "GetCanvas", &GameObject::GetCanvas,
-    "GetText", &GameObject::GetText,
-    "GetCharacterController", &GameObject::GetCharacterController,
-    "GetRigidBody", &GameObject::GetRigidBody,
-    "GetBoxColliders", &GameObject::GetBoxColliders,
-    "GetBoxCollider", &GameObject::GetBoxCollider,
-    "GetFirstChild", &GameObject::GetFirstChild,
-    "HasChildren", &GameObject::HasChildren,
-    "GetChildren", &GameObject::GetChildren,
-    "HasScript", &GameObject::HasScript,
-    "FindChildByName", &GameObject::FindChildByName
-);
 
-F_Lua.new_usertype<Transform>("Transform",
-    "GetParent", &Transform::GetParent,
-    "GetParentID", &Transform::GetParentID,
-    "GetID", &Transform::GetID,
-    "SetPosition", &Transform::SetPosition,
-    "GetPosition", &Transform::GetPosition,
-    "GetTruePosition", &Transform::GetTruePosition,
-    "SetRotation", &Transform::SetRotation,
-    "GetRotation", &Transform::GetRotation,
-    "SetScale", &Transform::SetScale,
-    "GetScale", &Transform::GetScale,
-    "LookAt", &Transform::LookAt
-);
+GameObject<br/>
+    |GetID|
+    |GetName|
+    |SetName|
+    |IsActive|
+    |SetActive|
+    |GetParent|
+    |GetParentID|
+    |HasTag|
+    |GetTransform|
+    |AddSprite|
+    |GetSprite|
+    |GetCamera|
+    |GetAnimation|
+    |GetAudio|
+    |GetButton|
+    |GetCanvas|
+    |GetText|
+    |GetCharacterController|
+    |GetRigidBody|
+    |GetBoxColliders|
+    |GetBoxCollider|
+    |GetFirstChild|
+    |HasChildren|
+    |GetChildren|
+    |HasScript|
+    |FindChildByName|
 
-F_Lua.new_usertype<Sprite>("Sprite",
-    "SetActive", &Sprite::SetActive,
-    "IsActive", &Sprite::IsActive,
-    "GetParent", &Sprite::GetParent,
-    "GetParentID", &Sprite::GetParentID,
-    "GetID", &Sprite::GetID,
-    "SetTexture", &Sprite::SetTexture,
-    "GetPath", &Sprite::GetPath,
-    "SetScale", &Sprite::SetScale,
-    "GetScale", &Sprite::GetScale,
-    "GetTextureWidth", &Sprite::GetTextureWidth,
-    "GetTextureHeight", &Sprite::GetTextureHeight,			
-    "SetTintColor", &Sprite::SetTintColor,
-    "GetTintColor", &Sprite::GetTintColor
-);
+Transform<br/>
+    |GetParent|
+    |GetParentID|
+    |GetID|
+    |SetPosition|
+    |GetPosition|
+    |GetTruePosition|
+    |SetRotation|
+    |GetRotation|
+    |SetScale|
+    |GetScale|
+    |LookAt|
 
-F_Lua.new_usertype<Audio>("Audio",
-    "GetParent", &Audio::GetParent,
-    "GetParentID", &Audio::GetParentID,
-    "SetActive", &Audio::SetActive,
-    "IsActive", &Audio::IsActive,
-    "GetID", &Audio::GetID,
-    "IsMusicPlaying", &Audio::IsMusicPlaying,
-    "Play", &Audio::PlaySound,
-    "Pause", &Audio::PauseSound,
-    "Stop", &Audio::PauseSound,
-    "StopAll", &Audio::StopAll
-);
+Sprite<br/>
+    |SetActive|
+    |IsActive|
+    |GetParent|
+    |GetParentID|
+    |GetID|
+    |SetTexture|
+    |GetPath|
+    |SetScale|
+    |GetScale|
+    |GetTextureWidth|
+    |GetTextureHeight|	
+    |SetTintColor|
+    |GetTintColor|
 
-F_Lua.new_usertype<Animation>("Animation",
-    "GetParent", &Animation::GetParent,
-    "GetParentID", &Animation::GetParentID,
-    "SetActive", &Animation::SetActive,
-    "IsActive", &Animation::IsActive,
-    "GetID", &Animation::GetID,
-    "Play", &Animation::PlayFromLua,
-    "Stop", &Animation::Stop,
-    "StopAll", &Animation::StopAll,
-    "IsPlaying", &Animation::IsPlaying,
-    "HasAnimation", &Animation::HasAnimation
-);
+Audio<br/>
+    |GetParent|
+    |GetParentID|
+    |SetActive|
+    |IsActive|
+    |GetID|
+    |IsMusicPlaying|
+    |Play|
+    |Pause|
+    |Stop|
+    |StopAll|
 
-F_Lua.new_usertype<Animation::S_EventFunctionParam>("EventParameter",
-    "type",&Animation::S_EventFunctionParam::GetType,
-    "string", &Animation::S_EventFunctionParam::GetString,
-    "int", &Animation::S_EventFunctionParam::GetInt,
-    "long", &Animation::S_EventFunctionParam::GetLong,
-    "float", &Animation::S_EventFunctionParam::GetFloat,
-    "double", &Animation::S_EventFunctionParam::GetDouble,
-    "bool", &Animation::S_EventFunctionParam::GetBool,
-    "Vector2", &Animation::S_EventFunctionParam::GetVector2
-);
+Animation<br/>
+    |GetParent|
+    |GetParentID|
+    |SetActive|
+    |IsActive|
+    |GetID|
+    |Play|
+    |Stop|
+    |StopAll|
+    |IsPlaying|
+    |HasAnimation|
 
-F_Lua.new_usertype<RigidBody>("RigidBody",
-    "SetActive", &RigidBody::SetActive,
-    "IsActive", &RigidBody::IsActive,
-    "GetParent", &RigidBody::GetParent,
-    "GetParentID", &RigidBody::GetParentID,
-    "GetID", &RigidBody::GetID,
-    "SetMass", &RigidBody::SetMass,
-    "GetMass", &RigidBody::GetMass,
-    "SetGravity", &RigidBody::SetGravity,
-    "GetGravity", &RigidBody::GetGravity,
-    "SetFallingGravity", &RigidBody::SetFallingGravity,
-    "GetFallingGravity", &RigidBody::GetFallingGravity,
-    "SetFriction", &RigidBody::SetFriction,
-    "GetFriction", &RigidBody::GetFriction,
-    "SetAngularDrag", &RigidBody::SetAngularDrag,
-    "GetAngularDrag", &RigidBody::GetAngularDrag,
-    "SetAngularVelocity", &RigidBody::SetAngularVelocity,
-    "GetAngularVelocity", &RigidBody::GetAngularVelocity,
-    "SetTorquesAllowed", &RigidBody::SetTorquesAllowed,
-    "TorquesAllowed", &RigidBody::TorquesAllowed,
-    "AddForce", &RigidBody::AddForce,
-    "AddTorque", &RigidBody::AddTorque,
-    "GetVelocity", &RigidBody::GetVelocity,
-    "SetPendingForces", &RigidBody::SetPendingForces,
-    "GetPendingForces", &RigidBody::GetPendingForces,
-    "SetTerminalVelocity", &RigidBody::SetTerminalVelocity,
-    "GetTerminalVelocity", &RigidBody::GetTerminalVelocity
-);
+EventParameter<br/>
+    |type|
+    |string|
+    |int|
+    |long|
+    |float|
+    |double|
+    |bool|
+    |Vector2|
 
-F_Lua.new_usertype<Collider>("Collider",
-    "GetParent", &Collider::GetParent,
-    "GetParentID", &Collider::GetParentID,
-    "SetActive", &Collider::SetActive,
-    "IsActive", &Collider::IsActive,
-    "GetID", &Collider::GetID
-);
 
-F_Lua.new_usertype<BoxCollider>("BoxCollider",
-    "GetParent", &BoxCollider::GetParent,
-    "GetParentID", &BoxCollider::GetParentID,
-    "SetActive", &BoxCollider::SetActive,
-    "IsActive", &BoxCollider::IsActive,
-    "GetID", &BoxCollider::GetID
-);
+RigidBody<br/>
+    |SetActive|
+    |IsActive|
+    |GetParent|
+    |GetParentID|
+    |GetID|
+    |SetMass|
+    |GetMass|
+    |SetGravity|
+    |GetGravity|
+    |SetFallingGravity|
+    |GetFallingGravity|
+    |SetFriction|
+    |GetFriction|
+    |SetAngularDrag|
+    |GetAngularDrag|
+    |SetAngularVelocity|
+    |GetAngularVelocity|
+    |SetTorquesAllowed|
+    |TorquesAllowed|
+    |AddForce|
+    |AddTorque|
+    |GetVelocity|
+    |SetPendingForces|
+    |GetPendingForces|
+    |SetTerminalVelocity|
+    |GetTerminalVelocity|
 
-F_Lua.new_usertype<CharacterController>("CharacterController",
-    "MoveToward", &CharacterController::MoveToward,
-    "GetParent", &CharacterController::GetParent,
-    "GetParentID", &CharacterController::GetParentID,
-    "SetActive", &CharacterController::SetActive,
-    "IsActive", &CharacterController::IsActive,
-    "GetID", &CharacterController::GetID
-);
 
-F_Lua.new_usertype<MappingContext>("MappingContext",
-    "Fired", &MappingContext::Fired,
-    "ActionPressed", &MappingContext::ActionPressed,
-    "GetName", &MappingContext::GetName
-);
+
+BoxCollider<br/>
+    |GetParent|
+    |GetParentID|
+    |SetActive|
+    |IsActive|
+    |GetID|
+
+
+CharacterController<br/>
+    |MoveToward|
+    |GetParent|
+    |GetParentID|
+    |SetActive|
+    |IsActive|
+    |GetID|
+
+
+MappingContext<br/>
+    |Fired|
+    |ActionPressed|
+    |GetName|
+
 
 
 

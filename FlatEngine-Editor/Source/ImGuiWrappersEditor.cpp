@@ -222,8 +222,8 @@ namespace FlatGui
 	void RenderSpriteComponent(Sprite* sprite)
 	{
 		std::string path = FL::GetFilenameFromPath(sprite->GetPath(), true);
-		float textureWidth = sprite->GetTextureWidth();
-		float textureHeight = sprite->GetTextureHeight();
+		int textureWidth = sprite->GetTextureWidth();
+		int textureHeight = sprite->GetTextureHeight();
 		Vector2 textureScale = sprite->GetScale();
 		FL::Pivot pivotPoint = sprite->GetPivotPoint();
 		std::string pivotString = sprite->GetPivotPointString();
@@ -235,8 +235,8 @@ namespace FlatGui
 		float xOffset = offset.x;
 		float yOffset = offset.y;
 		std::string pathString = "Path: ";
-		std::string textureWidthString = std::to_string(textureWidth);
-		std::string textureHeightString = std::to_string(textureHeight);
+		std::string textureWidthString = std::to_string(textureWidth) + "px";
+		std::string textureHeightString = std::to_string(textureHeight) + "px";
 		Vector4 tintColor = sprite->GetTintColor();
 		long ID = sprite->GetID();		
 		
@@ -615,7 +615,7 @@ namespace FlatGui
 
 		FL::RenderSeparator(3, 3);
 
-		if (FL::RenderCheckbox("Blocks Layers:", b_blocksLayers))
+		if (FL::RenderCheckbox("Blocks Layers", b_blocksLayers))
 		{
 			canvas->SetBlocksLayers(b_blocksLayers);
 		}
@@ -637,7 +637,11 @@ namespace FlatGui
 		static std::string newAnimationName = "";
 		static std::string newAnimationPath = "";
 
+		FL::RenderSubTitle("Add Animation");
+
 		FL::RenderInput("##NewAnimationName", "Name", newAnimationName, false);
+
+		FL::MoveScreenCursor(0, 3);
 
 		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(ID), "File", FL::GetFilenameFromPath(newAnimationPath, true), FL::F_fileExplorerTarget, droppedAnimValue, openedAnimPath, "Drop animation files here from the File Explorer"))
 		{
@@ -663,12 +667,24 @@ namespace FlatGui
 			}
 		}
 
+		FL::MoveScreenCursor(0, 3);
+
 		ImGui::BeginDisabled(newAnimationPath == "" || newAnimationName == "");
 		if (FL::RenderButton("Add Animation"))
 		{
-			animation->AddAnimation(newAnimationName, newAnimationPath);
-			newAnimationName = "";
-			newAnimationPath = "";
+			if (!animation->ContainsName(newAnimationName) && FL::DoesFileExist(newAnimationPath))
+			{
+				animation->AddAnimation(newAnimationName, newAnimationPath);
+				newAnimationName = "";
+				newAnimationPath = "";
+			}
+			else
+			{
+				if (animation->ContainsName(newAnimationName))
+				{
+					FL::LogError("Name already taken in this Animation component, please choose a different one.");
+				}
+			}
 		}
 		ImGui::EndDisabled();
 
@@ -688,6 +704,8 @@ namespace FlatGui
 			{
 				animData.name = currentAnimationName;
 			}
+
+			FL::MoveScreenCursor(0, 3);
 
 			int droppedAnimDataValue = -1;
 			std::string openedAnimDataPath = animData.path;
@@ -715,13 +733,10 @@ namespace FlatGui
 				}
 			}
 
-			if (animData.path != "")
-			{
-				FL::RenderSeparator(3, 3);
-			}
+			FL::MoveScreenCursor(0, 4);
 
 			ImGui::BeginDisabled(animData.path == "");
-			if (FL::RenderButton("Play Animation##" + std::to_string(IDCounter)))
+			if (FL::RenderButton("Preview##" + std::to_string(IDCounter)))
 			{
 				animation->Play(animData.name);
 			}
@@ -732,16 +747,27 @@ namespace FlatGui
 				ImGui::SameLine(0, 5);
 			}
 
+			ImGui::BeginDisabled(animData.path == "" || !animData.b_playing);
+			if (FL::RenderButton("Stop##" + std::to_string(IDCounter)))
+			{
+				animation->Stop(animData.name);
+			}
+			ImGui::EndDisabled();
+
 			if (animData.path != "")
 			{
-				if (FL::RenderButton("Edit Animation"))
-				{
-					FG_b_showAnimator = true;					
-
-					SetFocusedAnimation(FL::LoadAnimationFile(animData.path));
-					FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animData.path);
-				}
+				ImGui::SameLine(0, 5);
 			}
+
+			ImGui::BeginDisabled(animData.path == "");
+			if (FL::RenderButton("Edit##" + std::to_string(IDCounter)))
+			{
+				FG_b_showAnimator = true;					
+
+				SetFocusedAnimation(FL::LoadAnimationFile(animData.path));
+				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animData.path);
+			}
+			ImGui::EndDisabled();
 
 			if (animData.name != animations.back().name)
 			{
@@ -806,7 +832,7 @@ namespace FlatGui
 		ImGui::BeginDisabled(path == "" || name == "");
 		if (FL::RenderButton("Add Audio"))
 		{
-			if (name != "" && !audio->ContainsName(name) && path != "" && FL::DoesFileExist(path))
+			if (!audio->ContainsName(name) && FL::DoesFileExist(path))
 			{
 				audio->AddSound(name, path, b_isNewAudioMusic);
 				path = "";
@@ -818,14 +844,6 @@ namespace FlatGui
 				if (audio->ContainsName(name))
 				{
 					FL::LogError("Name already taken in this Audio component, please choose a different one.");
-				}
-				if (name == "")
-				{
-					FL::LogError("Please enter a valid name for the sound object.");
-				}
-				if (path == "")
-				{
-					FL::LogError("Please enter a valid path for the sound object.");
 				}
 			}
 		}
@@ -1148,10 +1166,10 @@ namespace FlatGui
 		{
 			boxCollider->SetShowActiveRadius(b_showActiveRadius);
 		}
-		if (FL::RenderCheckbox(" Is Composite", b_isComposite))
-		{
-			boxCollider->SetIsComposite(b_isComposite);
-		}
+		//if (FL::RenderCheckbox(" Is Composite", b_isComposite))
+		//{
+		//	boxCollider->SetIsComposite(b_isComposite);
+		//}
 
 		// Enter Collision Area draw mode for this BoxCollider
 		if (tileMap != nullptr && collisionAreaName != "")
