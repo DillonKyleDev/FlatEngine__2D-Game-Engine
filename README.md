@@ -56,11 +56,11 @@ See "Using FlatEngine" below for a detailed walkthrough of how to use Lua in Fla
 
 ### Tags
 
-Tags are a list of properties that a GameObject can have that can be used to query using 
+Tags are a list of properties that a GameObject can have that can be queried using 
 
 `GameObject::HasTag("tagName")` 
 
-and is also used in the collision detection system to prevent objects that should not interact from interacting, based on the tags each GameObject is set to Ignore.  I would eventually like to extend this system to use a Lua script file for the available tags, that way they are editable by the user, but for now they are hard-coded into the engine.
+The Tags system is also used in the collision detection system to prevent objects that should not interact from interacting, based on the tags each GameObject is set to Ignore.  I would eventually like to extend this system to use a Lua script file for the available tags, that way they are editable by the user, but for now they are hard-coded into the engine.
 
 ## Components
 
@@ -118,10 +118,6 @@ Buttons are simple UI elements for enabling mouse interaction in a scene.  Butto
 | Property        | Description |
 |:--------------------|:---------------|
 |Active Layer| The layer that the Button is active on.  If another Button is on the layer above this one and you hover over it, the Button on the lower level will not be activatable.  Similarly, if you use a Canvas component and set the Button to be on the layer of or above the Canvas, the Canvas will completely block, (if enabled), all Button interactions below the Canvas layer.|
-
-
-| Property        | Description |
-|:--------------------|:---------------|
 |Active Dimensions| The width and height of the button in grid spaces.|
 |Active Offset| The position of the Button relative to the Transforms position.|
 
@@ -132,7 +128,7 @@ Canvases are meant to support the use of Buttons when making UIs.  Canvases, (if
 
 | Property        | Description |
 |:--------------------|:---------------|
-|Active Layer| A|s discussed, Buttons below this layer and within the bounds (width and height) of the Canvas will be blocked from interaction.
+|Active Layer| As discussed, Buttons below this layer and within the bounds (width and height) of the Canvas will be blocked from interaction.|
 |Dimensions| The width and height of the Canvas.|
 
 ### Camera
