@@ -88,27 +88,24 @@ FlatEngines GameObjects require components be attached for their functionality. 
 
 All GameObjects MUST have a Transform and are created with one that cannot be removed.  Transforms handle:
 
-Origin: The reference point for all position changes.
-
-Position: An (x,y) Vector2 that holds position relative to the Origin point.
-
-Scale: The Scale of the entire object and its components (seperate from any additional component scale parameters, ie.. Sprite scale). Children are not yet affected by the scale of their parent. I am still working out how I want this aspect of scaling to be handled.
-
-Rotation: The rotation in degrees of the object.  Currently the collision system does not account for rotations of objects so Sprites are all that are affected by this.
+| Property        | Description |
+|:--------------------|:---------------|
+|Origin| The reference point for all position changes.|
+|Position| An (x,y) Vector2 that holds position relative to the Origin point.|
+|Scale| The Scale of the entire object and its components (seperate from any additional component scale parameters, ie.. Sprite scale). Children are not yet affected by the scale of their parent. I am still working out how I want this aspect of scaling to be handled.|
+|Rotation| The rotation in degrees of the object.  Currently the collision system does not account for rotations of objects so Sprites are all that are affected by this.|
 
 ### Sprite
 
-Sprites are the visual representation of GameObjects in the scene.  Currently only PNG is supported.  Sprites have the followiing properties:
+Sprites are the visual representation of GameObjects in the scene.  Currently only PNG is supported.  Sprites have the followiing properties
 
-Scale: The scale of the image (separate from the scale of the Transform)
-
-Offset: The position of the Sprite relative to the Transforms position, usually just (0,0)
-
-Render Order: Determines what other images the image will be rendererd in front of or behind. The lower the render order, the farther back it will be rendered in the scene.
-
-Tint color: The tint color that will be applied to the texture
-
-Pivot Point: The point at which all scaling and positioning of the texture is relative to.  If you manually change the Offset of the Sprite, that value will override the Pivot Point offset.
+| Property        | Description |
+|:--------------------|:---------------|
+|Scale| The scale of the image (separate from the scale of the Transform).|
+|Offset| The position of the Sprite relative to the Transforms position, usually just (0,0).|
+|Render Order| Determines what other images the image will be rendererd in front of or behind. The lower the render order, the farther back it will be rendered in the scene.|
+|Tint color| The tint color that will be applied to the texture.|
+|Pivot Point| The point at which all scaling and positioning of the texture is relative to.  If you manually change the Offset of the Sprite, that value will override the Pivot Point offset.|
 
 ### Script
 
@@ -116,37 +113,40 @@ Scripts in FlatEngine are written in Lua in ".scp.lua" files.  The Script compon
 
 ### Button
 
-Buttons are simple UI elements for enabling mouse interaction in a scene.  Buttons are meant to be used in combination with Canvas components in order to block Buttons underneath them, but it is not strictly necessary.  Currently they are only natively supported with mouse controls, but it shouldn't be too difficult to enable gamepad support through Lua scripting.  Buttons have the following properties:
+Buttons are simple UI elements for enabling mouse interaction in a scene.  Buttons are meant to be used in combination with Canvas components in order to block Buttons underneath them, but it is not strictly necessary.  Currently they are only natively supported with mouse controls, but it shouldn't be too difficult to enable gamepad support through Lua scripting.  Buttons have the following properties
 
-Active Layer:  The layer that the Button is active on.  If another Button is on the layer above this one and you hover over it, the Button on the lower level will not be activatable.  Similarly, if you use a Canvas component and set the Button to be on the layer of or above the Canvas, the Canvas will completely block, (if enabled), all Button interactions below the Canvas layer.
+| Property        | Description |
+|:--------------------|:---------------|
+|Active Layer| The layer that the Button is active on.  If another Button is on the layer above this one and you hover over it, the Button on the lower level will not be activatable.  Similarly, if you use a Canvas component and set the Button to be on the layer of or above the Canvas, the Canvas will completely block, (if enabled), all Button interactions below the Canvas layer.|
 
-Active Dimensions: The width and height of the button in grid spaces.
 
-Active Offset: The position of the Button relative to the Transforms position.
+| Property        | Description |
+|:--------------------|:---------------|
+|Active Dimensions| The width and height of the button in grid spaces.|
+|Active Offset| The position of the Button relative to the Transforms position.|
 
 ### Canvas
 
-Canvases are meant to support the use of Buttons when making UIs.  Canvases, (if enabled), block all Button interactions of Buttons that are below the layer of the Canvas.  Canvases have the following properties:
+Canvases are meant to support the use of Buttons when making UIs.  Canvases, (if enabled), block all Button interactions of Buttons that are below the layer of the Canvas.  Canvases have the following properties
 
-Active Layer: As discussed, Buttons below this layer and within the bounds (width and height) of the Canvas will be blocked from interaction.
 
-Dimensions: The width and height of the Canvas.
+| Property        | Description |
+|:--------------------|:---------------|
+|Active Layer| A|s discussed, Buttons below this layer and within the bounds (width and height) of the Canvas will be blocked from interaction.
+|Dimensions| The width and height of the Canvas.|
 
 ### Camera
 
-The Camera component is how the scene is viewed in the GameView.  Even without a Camera, the GameView is still viewable, but it will be locked to the center (0,0) of the world at a fixed zoom level.  You can have multiple Cameras per scene and switch between them freely using the b_isPrimaryCamera check.  Objects that are outside the viewing width and height of the primary scene Camera are not rendered.  Cameras have the following properties:
+The Camera component is how the scene is viewed in the GameView.  Even without a Camera, the GameView is still viewable, but it will be locked to the center (0,0) of the world at a fixed zoom level.  You can have multiple Cameras per scene and switch between them freely using the b_isPrimaryCamera check.  Objects that are outside the viewing width and height of the primary scene Camera are not rendered.  Cameras have the following properties
 
-Dimensions: The with and height of the Camera, determines where the cutoff is for objects being rendered.
-
-Is Primary Camera?: Determines which Camera the GameView will be rendered through.
-
-Zoom: Determines how zoomed in the Camera is.
-
-Follow Smoothing: Determines how quickly the camera snaps to its follow target.
-
-Follow Target: The GameObject, if any, this Camera will follow, if enabled.
-
-Should Follow?: Toggles whether the Camera should follow the Follow Target or stay where it is.
+| Property        | Description |
+|:--------------------|:---------------|
+|Dimensions| The with and height of the Camera, determines where the cutoff is for objects being rendered.|
+|Is Primary Camera?| Determines which Camera the GameView will be rendered through.|
+|Zoom| Determines how zoomed in the Camera is.|
+|Follow Smoothing| Determines how quickly the camera snaps to its follow target.|
+|Follow Target| The GameObject, if any, this Camera will follow, if enabled.|
+|Should Follow?| Toggles whether the Camera should follow the Follow Target or stay where it is.|
 
 ### Animation
 
@@ -156,49 +156,46 @@ Animation components are one of the most powerful components that can be attache
 
 The Audio component allows you to attach several different audio clips and music files to a single GameObject and call them by name in Lua, or play them from the Animation component.  Each sound clip in an Audio component has the following properties:
 
-Name: The name used to play the Audio clip
+| Property        | Description |
+|:--------------------|:---------------|
+|Name| The name used to play the Audio clip.|
+|Filepath| The path of the audio file to be played.|
+|Is Music?| This may be removed in the future because I am not sure the end user should care about whether the Audio is music or a sound clip.. This is more of a backend option, but each are handled differently by SDL_Mixer so that will have to be sorted out eventually.|
 
-Filepath: The path of the audio file to be played
-
-Is Music?: This may be removed in the future because I am not sure the end user should care about whether the Audio is music or a sound clip.. This is more of a backend option, but each are handled differently by SDL_Mixer so that will have to be sorted out eventually.
 
 ### Text
 
 Text components function very similarly to Sprite components except they render text.  Text components have the following properties:
 
-Text: The actual text to be rendered
 
-Font: The font that will be used
+| Property        | Description |
+|:--------------------|:---------------|
+Text|The actual text to be rendered.|
+|Font| The font that will be used|
+|Scale| The scale of the text (separate from the scale of the Transform).|
+|Offset| The position of the Text relative to the Transforms position, usually just (0,0).|
+|Render Order| Determines what other images the image will be rendererd in front of or behind. The lower the render order, the farther back it will be rendered in the scene.|
+|Color| The color that will be applied to the texture.|
+|Pivot Point| The point at which all scaling and positioning of the texture is relative to.  If you manually change the Offset of the Text, that value will override the Pivot Point offset.|
 
-Scale: The scale of the text (separate from the scale of the Transform)
-
-Offset: The position of the Text relative to the Transforms position, usually just (0,0)
-
-Render Order: Determines what other images the image will be rendererd in front of or behind. The lower the render order, the farther back it will be rendered in the scene.
-
-Color: The color that will be applied to the texture
-
-Pivot Point: The point at which all scaling and positioning of the texture is relative to.  If you manually change the Offset of the Text, that value will override the Pivot Point offset.
 
 ### Collision Components
 
 The Collision components are not all complete.  The BoxCollider component is complete but it does not take rotation into account.  This is a feature I will be working on in the near future.  The CircleCollider can detect collisions, but it does not yet know how to handle positioning based on collisions.  The CompositeCollider I am waiting until the other Collision components are finished to continue work on it.  As a result, I have disabled the use of Circle and Composite colliders from the engine temporarily.  The BoxCollider uses a simple AABB collision detection approach, but it is rather expensive.  The collision system is connected to the Tags system and will not check collisions between GameObjects that are ignoring each other based on the Tags they pocess.  The BoxCollider component has the following properties:
 
-Dimensions:  The width and height of the collision box
 
-Offset: The position relative to the Transforms position
+| Property        | Description |
+|:--------------------|:---------------|
+|Dimensions|The width and height of the collision box.|
+|Offset|The position relative to the Transforms position|
+|Active Layer|This feature is neglected due to the Tags system being in place, but it will be updated when I do the necessary overhaul of the collision system as a whole.
+  Colliders should only interact with other colliders on the same layer.|
+|Is Continuous?|Determines how often this collider needs to be checked for collision. Currently it is set to every 10 frames for non continuous colliders, this is subject to change.|
+|Is Static?|If a collider is static it may not need to be checked or updated as often as non static colliders, this saves on performance.|
+|Is Solid?|Determines whether other collisiders should pass through this collider or if it is just a trigger.|
+|Is Composite?|For adding this Collider to the CompositeCollider component on the GameObject (work in progress).|
+|Show Active Radius?|Before the AABB testing occurs, each tested collision is tested using a less expensive radius check, this enables you to see that radius for each particular collider.|
 
-Active Layer: This feature is neglected due to the Tags system being in place, but it will be updated when I do the necessary overhaul of the collision system as a whole.  Colliders should only interact with other colliders on the same layer.
-
-IsContinuous: Determines how often this collider needs to be checked for collision. Currently it is set to every 10 frames for non continuous colliders, this is subject to change.
-
-IsStatic: If a collider is static it may not need to be checked or updated as often as non static colliders, this saves on performance.
-
-IsSolid: Determines whether other collisiders should pass through this collider or if it is just a trigger.
-
-IsComposite: For adding this Collider to the CompositeCollider component on the GameObject (work in progress).
-
-ShowActiveRadius: Before the AABB testing occurs, each tested collision is tested using a less expensive radius check, this enables you to see that radius for each particular collider.
 
 ### RigidBody
 
@@ -208,15 +205,15 @@ Mass:  Determines how difficult it is to change the velocity of the object.
 Gravity Scale: Determines how much gravity the GameObject experiences
 Falling Gravity: Falling gravity is used if you would like your GameObject to have a different gravity going down than it has going down.  This is useful for fine tuning the feeling of a jump or could be used to add a glide or hover mechanic.  Both this and regular Gravity Scale can be freely changed.
 
-Terminal Velocity: The maximum speed a GameObject can fall due to gravity.
 
-Wind Resistance: The amount that a GameObject is slowed while not grounded.
+| Property        | Description |
+|:--------------------|:---------------|
+|Terminal Velocity|The maximum speed a GameObject can fall due to gravity.|
+|Wind Resistance|The amount that a GameObject is slowed while not grounded.|
+|Friction|The amount that a GameObejct is slowed while grounded.|
+|Angular Drag|The amount that a GameObject is slowed while rotating.|
+|Equilibrium Force|I believe this will be removed in a future update.  I am unsure if this value should be exposed to the end user.|
 
-Friction: The amount that a GameObejct is slowed while grounded.
-
-Angular Drag: The amount that a GameObject is slowed while rotating
-
-Equilibrium Force: I believe this will be removed in a future update.  I am unsure if this value should be exposed to the end user.
 
 ### CharacerController
 
@@ -224,11 +221,12 @@ Note: This component is due for a rework.  The exposed variables don't make much
 
 The CharacterController is a bundle of functionallity that is meant to make it easier to manipulate a character GameObjects RigidBody component.  The CharacterController has the following properties:
 
-Max Speed: Determines the maximum speed a GameObject can move.
 
-Max Acceleration: Determines how fast the GameObject gets to its Max Speed (not really, see note above)
-
-Air Control: Determines how freely this GameObject can move while not grounded.
+| Property        | Description |
+|:--------------------|:---------------|
+|Max Speed|Determines the maximum speed a GameObject can move.|
+|Max Acceleration|Determines how fast the GameObject gets to its Max Speed (not really, see note above)|
+|Air Control|Determines how freely this GameObject can move while not grounded.|
 
 ### TileMap
 
@@ -236,8 +234,9 @@ Note: The TileMap component is in working condition but it does need some improv
 
 The TileMap component allows the user to quickly draw scenes using TileSets created in the engine.  Each TileMap can have multiple TileSets (palettes) that it can use to draw in the scene.  Eventually I would like to add layers to each TileMap, but for now, in order to have layered tiles you must create another GameObject with a TileMap and place them on top of each other.  I recommend having one parent object and then as many child GameObjects as needed for the layers needed.  The TileMap currently supports a rudimentary BoxCollider drawing system that can be used to add collisions to the TileMap.  It is surely in need of a user experience overhaul but it is functional.  As noted above, there are several optimizations that still need to be made to this system to be considered complete.  The TileMap component contains the following properties:
 
-| Property        | Description                                                                                                                                     |
-|----------------:|-------------------------------------------------------------------------------------------------------------------------------------------------|
+
+| Property        | Description |
+|:--------------------|:---------------|
 | Dimensions      | The width and height of the TileMap drawing canvas.|
 | Tile Dimensions | The dimensions of the actual texture tiles you are drawing with in pixels. (default 16px)|
 | Render Order    | Just like with the Sprite and Text component, this determines what other textures will be drawn over and under the TileMap.|
