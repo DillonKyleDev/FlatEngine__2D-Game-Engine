@@ -22,7 +22,7 @@ namespace FlatEngine
 		Scene* CreateNewScene();
 		void SaveScene(Scene* scene, std::string filepath);
 		void SaveCurrentScene();
-		bool LoadScene(std::string filepath);
+		bool LoadScene(std::string filepath);		
 		Scene* GetLoadedScene();
 		std::string GetLoadedScenePath();
 		void SaveAnimationPreviewObjects();

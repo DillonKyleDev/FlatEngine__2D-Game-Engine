@@ -638,8 +638,7 @@ namespace FlatEngine
 	}
 
 	void LoadScene(std::string filepath)
-	{
-		// Stop any playing music
+	{		
 		F_SoundController.StopMusic();
 
 		if (F_SceneManager.LoadScene(filepath))

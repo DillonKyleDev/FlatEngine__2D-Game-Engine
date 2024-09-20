@@ -236,7 +236,7 @@ namespace FlatEngine
 	extern void SaveCurrentScene();
 	extern void QueueLoadScene(std::string scenePath);
 	extern void LoadScene(std::string filePath);	
-	std::string GetLoadedScenePath();
+	extern std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
 	extern void DeleteGameObject(long sceneObjectID);

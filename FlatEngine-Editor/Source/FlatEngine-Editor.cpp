@@ -12,6 +12,7 @@
 #include "Component.h"
 #include "Script.h"
 #include "PrefabManager.h"
+#include "Scene.h"
 
 #include <vector>
 #include <SDL_mixer.h>
@@ -19,12 +20,12 @@
 #include <memory>
 #include "implot.h"
 
+
 namespace FL = FlatEngine;
 
 using GameObject = FL::GameObject;
 using Component = FL::Component;
 using Script = FL::Script;
-
 
 
 int main(int argc, char* args[])
@@ -38,14 +39,18 @@ int main(int argc, char* args[])
 class EditorGameLoop : public FL::GameLoop
 {
 public:
-	EditorGameLoop() {};
+	EditorGameLoop() 
+	{
+		m_tempSaveSceneFilePath = FL::GetDir("tempFiles") + "tempScene.scn";
+	};
 	~EditorGameLoop() {};
 
 	void Start()
 	{
 		FL::AddProfilerProcess("GameLoop (variable executions)");		
 		FL::AddProfilerProcess("Not GameLoop");
-		FL::AddProfilerProcess("Collision Testing");
+		FL::AddProfilerProcess("Collision Testing");		
+		FL::SaveScene(FL::GetLoadedScene(), m_tempSaveSceneFilePath);
 		FL::GameLoop::Start();
 	};
 	void Stop()
@@ -53,6 +58,7 @@ public:
 		FL::RemoveProfilerProcess("GameLoop (variable executions)");
 		FL::RemoveProfilerProcess("Not GameLoop");
 		FL::RemoveProfilerProcess("Collision Testing");
+		FL::LoadScene(m_tempSaveSceneFilePath);
 		FL::GameLoop::Stop();
 	};
 	void Update()
@@ -64,6 +70,7 @@ public:
 		//
 	};
 private:
+	std::string m_tempSaveSceneFilePath;
 };
 
 
@@ -75,7 +82,7 @@ public:
 	EditorApplication()
 	{
 		A_GameLoop = new EditorGameLoop();
-		m_recreateWindow = false;
+		m_b_recreateWindow = false;
 		SetDirectoryType(FL::EditorDir);
 	}
 	~EditorApplication()
@@ -167,7 +174,6 @@ public:
 	}
 	void RunOnceAfterInitialization()
 	{
-		//static bool b_initialized = false;
 		static bool b_hasRunOnce = false;
 
 		if (!b_hasRunOnce)
@@ -176,8 +182,6 @@ public:
 
 			b_hasRunOnce = true;
 		}
-
-		//b_initialized = true;
 	}
 	void BeginRender()
 	{
@@ -194,7 +198,7 @@ public:
 			FlatGui::RenderProjectHub(b_projectSelected, m_startupProject);
 			if (b_projectSelected)
 			{
-				m_recreateWindow = true;
+				m_b_recreateWindow = true;
 			}
 		}
 		else
@@ -216,7 +220,7 @@ public:
 		//  This can lead to assets not appearing even though everything seems like it should be working and fine
 		
 		// If window was recreated this frame ( for after selecting a project )
-		if (m_recreateWindow)
+		if (m_b_recreateWindow)
 		{
 			//FL::F_Window->SetScreenDimensions(1500, 850);
 			FL::F_Window->SetScreenDimensions(1900, 1000);
@@ -224,7 +228,7 @@ public:
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors
 			FL::F_AssetManager.CollectTextures(); 
-			m_recreateWindow = false;
+			m_b_recreateWindow = false;
 			FL::InitializeTileSets();
 			FL::F_PrefabManager->InitializePrefabs();
 			FlatGui::LoadProject(m_startupProject);
@@ -293,7 +297,7 @@ public:
 		}
 	}
 
-	bool m_recreateWindow;
+	bool m_b_recreateWindow;
 	std::string m_startupProject;
 
 private:

@@ -56,11 +56,15 @@ See "Using FlatEngine" below for a detailed walkthrough of how to use Lua in Fla
 
 ### Tags
 
-Tags are a list of properties that a GameObject can have that can be used to query using GameObject::HasTag("tagName") and is also used in the collision detection system to prevent objects that should not interact from interacting, based on the tags each GameObject is set to Ignore.  I would eventually like to extend this system to use a Lua script file for the available tags, that way they are editable by the user, but for now they are hard-coded into the engine.
+Tags are a list of properties that a GameObject can have that can be used to query using 
+
+`GameObject::HasTag("tagName")` 
+
+and is also used in the collision detection system to prevent objects that should not interact from interacting, based on the tags each GameObject is set to Ignore.  I would eventually like to extend this system to use a Lua script file for the available tags, that way they are editable by the user, but for now they are hard-coded into the engine.
 
 ## Components
 
-Mirroring Unitys design, FlatEngines GameObjects require components be attached for their functionality.  The current list of components included in FlatEngine are:
+FlatEngines GameObjects require components be attached for their functionality.  The current list of components included in FlatEngine are:
 
 1. Transform
 2. Sprite
@@ -86,7 +90,7 @@ All GameObjects MUST have a Transform and are created with one that cannot be re
 
 Origin: The reference point for all position changes.
 
-Position: An xy Vector2 that holds position relative to the Origin point.
+Position: An (x,y) Vector2 that holds position relative to the Origin point.
 
 Scale: The Scale of the entire object and its components (seperate from any additional component scale parameters, ie.. Sprite scale). Children are not yet affected by the scale of their parent. I am still working out how I want this aspect of scaling to be handled.
 
@@ -232,15 +236,13 @@ Note: The TileMap component is in working condition but it does need some improv
 
 The TileMap component allows the user to quickly draw scenes using TileSets created in the engine.  Each TileMap can have multiple TileSets (palettes) that it can use to draw in the scene.  Eventually I would like to add layers to each TileMap, but for now, in order to have layered tiles you must create another GameObject with a TileMap and place them on top of each other.  I recommend having one parent object and then as many child GameObjects as needed for the layers needed.  The TileMap currently supports a rudimentary BoxCollider drawing system that can be used to add collisions to the TileMap.  It is surely in need of a user experience overhaul but it is functional.  As noted above, there are several optimizations that still need to be made to this system to be considered complete.  The TileMap component contains the following properties:
 
-Dimensions: The width and height of the TileMap drawing canvas.
-
-Tile Dimensions: The dimensions of the actual texture tiles you are drawing with in pixels. (default 16px)
-
-Render Order: Just like with the Sprite and Text component, this determines what other textures will be drawn over and under the TileMap.
-
-TileSets: The list of available TileSets you can use to draw with for this TileMap.
-
-Collision Areas: Sets of colliders that the user can draw in the TileMap that function identically to the BoxCollider components (because they are under the hood).
+| Property        | Description                                                                                                                                     |
+|----------------:|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dimensions      | The width and height of the TileMap drawing canvas.|
+| Tile Dimensions | The dimensions of the actual texture tiles you are drawing with in pixels. (default 16px)|
+| Render Order    | Just like with the Sprite and Text component, this determines what other textures will be drawn over and under the TileMap.|
+| TileSets        | The list of available TileSets you can use to draw with for this TileMap.
+| Collision Areas | Sets of colliders that the user can draw in the TileMap that function identically to the BoxCollider components (because they are under the hood).|
 
 
 --------------------------------------------------------------------------------------
