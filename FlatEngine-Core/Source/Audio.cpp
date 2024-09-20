@@ -131,7 +131,6 @@ namespace FlatEngine
 		soundData.b_isMusic = b_isMusic;
 		soundData.path = soundPath;
 		soundData.sound = std::make_shared<Sound>();
-		bool b_containsSound = false;
 
 		for (std::vector<SoundData>::iterator iter = m_sounds.begin(); iter != m_sounds.end(); iter++)
 		{

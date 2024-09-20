@@ -98,7 +98,7 @@ namespace FlatGui
 
 					const char* properties[] = { "- select property -", "Event", "Transform", "Sprite", "Camera", "Script", "Button", "Canvas", "Audio", "Text", "BoxCollider", "CircleCollider", "RigidBody", "CharacterController" };
 					static int current_property = 0;
-					static std::string node_clicked = "";
+					static std::string nodeClicked = "";
 
 					// Lambda
 					auto L_PushBackKeyFrame = [&](std::string property)
@@ -245,13 +245,18 @@ namespace FlatGui
 					{						
 						Animation* animation = nullptr;
 						if (objectForFocusedAnimation != nullptr)
-							animation = objectForFocusedAnimation->GetAnimation();
-
-						if (FL::RenderCheckbox("Loop Animation", animProps->b_loop) && animation != nullptr && animation->IsPlaying())
 						{
-							animation->Stop();
-							animation->Play(FL::GetEngineTime());
+							animation = objectForFocusedAnimation->GetAnimation();
 						}
+
+						FL::RenderCheckbox("Loop Animation", animProps->b_loop);
+
+						// Copy of above
+						//if (FL::RenderCheckbox("Loop Animation", animProps->b_loop) && animation != nullptr && animation->IsPlaying())
+						//{
+						//	//animation->Stop();
+						//	//animation->Play(FL::GetEngineTime());
+						//}
 
 						static std::string selected_property = "";			
 						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -327,12 +332,12 @@ namespace FlatGui
 							ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
 		
 
-							auto RenderPropertyButton = [&](std::string property, int size, std::string& node_clicked)
+							auto RenderPropertyButton = [&](std::string property, int size, std::string& nodeClicked)
 							{
 								ImGuiTreeNodeFlags node_flags;
 
 								std::string treeID = property + "_node";
-								if (node_clicked == property)
+								if (nodeClicked == property)
 								{
 									node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 								}
@@ -351,7 +356,7 @@ namespace FlatGui
 									ImGui::TreeNodeEx((void*)(intptr_t)treeID.c_str(), node_flags, property.c_str());
 									if (ImGui::IsItemClicked())
 									{
-										node_clicked = property;
+										nodeClicked = property;
 									}
 
 									ImGui::PushID(treeID.c_str());
@@ -360,19 +365,19 @@ namespace FlatGui
 							};
 
 
-							RenderPropertyButton("Event", (int)animProps->eventProps.size(), node_clicked);
-							RenderPropertyButton("Transform", (int)animProps->transformProps.size(), node_clicked);
-							RenderPropertyButton("Sprite", (int)animProps->spriteProps.size(), node_clicked);
-							RenderPropertyButton("Camera", (int)animProps->cameraProps.size(), node_clicked);
-							RenderPropertyButton("Script", (int)animProps->scriptProps.size(), node_clicked);
-							RenderPropertyButton("Button", (int)animProps->buttonProps.size(), node_clicked);
-							RenderPropertyButton("Canvas", (int)animProps->canvasProps.size(), node_clicked);
-							RenderPropertyButton("Audio", (int)animProps->audioProps.size(), node_clicked);
-							RenderPropertyButton("Text", (int)animProps->textProps.size(), node_clicked);
-							RenderPropertyButton("BoxCollider", (int)animProps->boxColliderProps.size(), node_clicked);
-							RenderPropertyButton("CircleCollider", (int)animProps->circleColliderProps.size(), node_clicked);
-							RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProps.size(), node_clicked);
-							RenderPropertyButton("CharacterController", (int)animProps->characterControllerProps.size(), node_clicked);
+							RenderPropertyButton("Event", (int)animProps->eventProps.size(), nodeClicked);
+							RenderPropertyButton("Transform", (int)animProps->transformProps.size(), nodeClicked);
+							RenderPropertyButton("Sprite", (int)animProps->spriteProps.size(), nodeClicked);
+							RenderPropertyButton("Camera", (int)animProps->cameraProps.size(), nodeClicked);
+							RenderPropertyButton("Script", (int)animProps->scriptProps.size(), nodeClicked);
+							RenderPropertyButton("Button", (int)animProps->buttonProps.size(), nodeClicked);
+							RenderPropertyButton("Canvas", (int)animProps->canvasProps.size(), nodeClicked);
+							RenderPropertyButton("Audio", (int)animProps->audioProps.size(), nodeClicked);
+							RenderPropertyButton("Text", (int)animProps->textProps.size(), nodeClicked);
+							RenderPropertyButton("BoxCollider", (int)animProps->boxColliderProps.size(), nodeClicked);
+							RenderPropertyButton("CircleCollider", (int)animProps->circleColliderProps.size(), nodeClicked);
+							RenderPropertyButton("RigidBody", (int)animProps->rigidBodyProps.size(), nodeClicked);
+							RenderPropertyButton("CharacterController", (int)animProps->characterControllerProps.size(), nodeClicked);
 
 			
 							ImGui::EndTable();
@@ -415,25 +420,25 @@ namespace FlatGui
 					ImGui::Text("Property Selected: ");
 
 					// Draw Property selected and background rect for it
-					if (node_clicked != "")
+					if (nodeClicked != "")
 					{
 						ImGui::SameLine(0, 5);
 						FL::MoveScreenCursor(0, -3);						
-						Vector2 textSize = ImGui::CalcTextSize(node_clicked.c_str());
+						Vector2 textSize = ImGui::CalcTextSize(nodeClicked.c_str());
 						Vector2 cursorScreen = ImGui::GetCursorScreenPos();
 						ImGui::GetWindowDrawList()->AddRectFilled(cursorScreen, Vector2(cursorScreen.x + textSize.x + 6, cursorScreen.y + textSize.y + 6), ImGui::GetColorU32(FL::GetColor("tableCellLight")), 2);						
 						FL::MoveScreenCursor(3, 3);
-						ImGui::Text(node_clicked.c_str());
+						ImGui::Text(nodeClicked.c_str());
 						
 						FL::MoveScreenCursor(0, 6);
 						if (FL::RenderButton("Add Keyframe"))
 						{
-							L_PushBackKeyFrame(node_clicked);
+							L_PushBackKeyFrame(nodeClicked);
 						}
 						ImGui::SameLine(0, 5);			
 						if (FL::RenderButton("Remove Property"))
 						{
-							L_RemoveKeyFrame(node_clicked);
+							L_RemoveKeyFrame(nodeClicked);
 						}
 					}
 
@@ -445,22 +450,22 @@ namespace FlatGui
 						std::string stopID = "##StopGameloopIcon";
 						bool b_isPreviewing = false;
 			
-						if (animation != nullptr)
-						{
-							b_isPreviewing = animation->IsPlaying();
-						}
+						//if (animation != nullptr)
+						//{
+						//	b_isPreviewing = animation->IsPlaying();
+						//}
 
 						// Play Button
 						ImGui::BeginDisabled(b_isPreviewing);
 						if (FL::RenderImageButton(playID.c_str(), FL::GetTexture("play"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 						{
-							if (animation != nullptr)
-							{
-								FG_previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
-								FG_previewAnimationTime = FL::GetEllapsedGameTimeInMs();
-								animation->Play(FG_previewAnimationStartTime);
-								b_isPreviewing = true;
-							}
+							//if (animation != nullptr)
+							//{
+							//	FG_previewAnimationStartTime = FL::GetEllapsedGameTimeInMs();
+							//	FG_previewAnimationTime = FL::GetEllapsedGameTimeInMs();
+							//	animation->Play(FG_previewAnimationStartTime);
+							//	b_isPreviewing = true;
+							//}
 						}
 						ImGui::EndDisabled();
 						ImGui::SameLine(0, 5);
@@ -469,7 +474,7 @@ namespace FlatGui
 						ImGui::BeginDisabled(!b_isPreviewing);
 						if (FL::RenderImageButton(stopID.c_str(), FL::GetTexture("stop"), Vector2(14, 14), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 						{
-							animation->Stop();
+							//animation->Stop();
 							b_isPreviewing = false;
 							FG_previewAnimationTime = 0;
 						}
@@ -533,7 +538,7 @@ namespace FlatGui
 					float bottomYPos = topYPos + animatorGridgridStep;
 					ImU32 color;
 
-					if (node_clicked == property)
+					if (nodeClicked == property)
 					{
 						color = IM_COL32(rectColor.x, rectColor.y, rectColor.z, rectColor.w);
 					}
@@ -615,7 +620,7 @@ namespace FlatGui
 
 						if (b_isClicked)
 						{
-							node_clicked = ID;
+							nodeClicked = ID;
 							FG_SelectedKeyFrameToEdit = keyFrame;
 						}	
 
@@ -950,11 +955,11 @@ namespace FlatGui
 					Animation* animation = objectForFocusedAnimation->GetAnimation();
 
 					// If animation component is playing, play the animation
-					if (animation != nullptr && animation->IsPlaying())
-					{
-						FG_previewAnimationTime = FL::GetEngineTime();
-						animation->PlayAnimation(FG_previewAnimationTime);
-					}
+					//if (animation != nullptr && animation->IsPlaying())
+					//{
+					//	FG_previewAnimationTime = FL::GetEngineTime();
+					//	animation->PlayAnimation(FG_previewAnimationTime);
+					//}
 				}
 
 				//RenderViewObjects(focusedObjectVector, centerPoint, canvasP0, canvasSize, gridStep.x);
@@ -1497,10 +1502,11 @@ namespace FlatGui
 						FL::MoveScreenCursor(0, 5);
 						ImGui::Text("Audio to play");
 						FL::MoveScreenCursor(0, 3);
-						std::vector<std::string> audios = { "- None -" };				
+						std::vector<std::string> audios = { "- None -" };	
+						// Check the Animation components in the scene to see if they have this Animation attached to it, then get all the Audio component audios those have attached to them.  Those are the available sounds here.
 						for (std::pair<long, FL::Animation> animationPair : FL::GetLoadedScene()->GetAnimations())
 						{
-							if (animationPair.second.GetAnimationName() == FG_FocusedAnimation->animationName)
+							if (animationPair.second.HasAnimation(FG_FocusedAnimation->animationName))
 							{
 								Audio* audioComponent = FL::GetLoadedScene()->GetAudioByOwner(animationPair.first);
 								if (audioComponent != nullptr && audioComponent->GetSounds().size() > 0)

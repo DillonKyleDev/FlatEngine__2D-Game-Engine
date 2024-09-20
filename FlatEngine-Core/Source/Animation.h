@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <SDL_syswm.h> // Uint32
 
 
 namespace FlatEngine
@@ -363,26 +364,30 @@ namespace FlatEngine
 			}
 		};
 
+		struct AnimationData {
+			std::shared_ptr<S_AnimationProperties> animationProperties = nullptr;
+			std::string name = "";
+			std::string path = "";
+			bool b_playing = false;
+			Uint32 startTime = 0;
+		};
+
 		Animation(long myID = -1, long parentID = -1);
 		~Animation();
 		std::string GetData();
 
-		void Play(long startTime = -1);
-		void PlayFromLua();
-		void Stop();
-		void PlayAnimation(long ellapsedTime);
-		bool IsPlaying();
-		void SetAnimationName(std::string animationName);
-		std::string GetAnimationName();
-		void SetAnimationPath(std::string animationPath);
-		std::string GetAnimationPath();
+		void AddAnimation(std::string name, std::string filePath);
+		std::vector<AnimationData> &GetAnimations();
+		void Play(std::string animationName, Uint32 startTime = 0);
+		void PlayFromLua(std::string animationName);
+		void Stop(std::string animationName);
+		void StopAll();
+		void PlayAnimation(std::string animationName, Uint32 ellapsedTime);
+		bool IsPlaying(std::string animationName);
+		bool HasAnimation(std::string animationName);
 	
-	private:
-		std::shared_ptr<S_AnimationProperties> m_animationProperties;
-		std::string m_animationName;
-		std::string m_animationPath;
-		bool m_b_playing;
-		long m_animationStartTime;		
+	private:	
+		std::vector<AnimationData> m_animations;
 	};
 }
 

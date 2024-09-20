@@ -22,18 +22,16 @@ namespace FlatEngine
 			{
 				printf("Failed to initialize.\n");
 			}
+
+			//Load media
+			if (!LoadFonts())
+			{
+				printf("Failed to load fonts.\n");
+			}
 			else
 			{
-				//Load media
-				if (!LoadFonts())
-				{
-					printf("Failed to load fonts.\n");
-				}
-				else
-				{
-					F_Application->Init();
-					F_Application->Run();
-				}
+				F_Application->Init();
+				F_Application->Run();
 			}
 			CloseProgram();
 		}

@@ -164,9 +164,15 @@ namespace FlatEngine
 			Vector2 scale = transform->GetScale();
 			float rotation = transform->GetRotation();
 
-			if (animation != nullptr && animation->IsActive() && animation->IsPlaying())
+			if (animation != nullptr && animation->IsActive())
 			{
-				animation->PlayAnimation((int)FL::GetEllapsedGameTimeInMs());
+				for (Animation::AnimationData animData : animation->GetAnimations())
+				{
+					if (animData.b_playing)
+					{
+						animation->PlayAnimation(animData.name, GetEngineTime());
+					}
+				}
 			}
 
 			if (sprite != nullptr && sprite->IsActive())

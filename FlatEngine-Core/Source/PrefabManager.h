@@ -77,8 +77,7 @@ namespace FlatEngine
 		float height;
 	};
 	struct AnimationPrefabData : public ComponentPrefabData {
-		std::shared_ptr<Animation::S_AnimationProperties> animationProperties;
-		std::string animationPath;
+		std::vector<Animation::AnimationData> animations;
 	};
 	struct AudioPrefabData : public ComponentPrefabData {
 		std::vector<SoundData> sounds;

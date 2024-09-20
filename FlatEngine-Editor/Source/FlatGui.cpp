@@ -244,23 +244,23 @@ namespace FlatGui
 			Animation* animationComponent = focusedObject->GetAnimation();
 			std::string animationPath = "";
 
-			if (animationComponent != nullptr)
-			{
-				animationPath = animationComponent->GetAnimationPath();
-			}
+			//if (animationComponent != nullptr)
+			//{
+			//	animationPath = animationComponent->GetAnimationPath();
+			//}
 
-			// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
-			if (FG_b_showAnimator && FG_FocusedAnimation != nullptr &&
-				animationComponent != nullptr && animationPath == FG_FocusedAnimation->animationPath)
-			{
-				std::vector<GameObject> animatorObjects = std::vector<GameObject>();
-				animatorObjects.clear();
-				//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
-				//FL::Transform* transform = objectForFocusedAnimation->GetTransform();
-				//transform->SetPosition(Vector2(0, 0));
-				//animatorObjects.push_back(*objectForFocusedAnimation);
-				//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
-			}
+			//// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
+			//if (FG_b_showAnimator && FG_FocusedAnimation != nullptr &&
+			//	animationComponent != nullptr && animationPath == FG_FocusedAnimation->animationPath)
+			//{
+			//	std::vector<GameObject> animatorObjects = std::vector<GameObject>();
+			//	animatorObjects.clear();
+			//	//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
+			//	//FL::Transform* transform = objectForFocusedAnimation->GetTransform();
+			//	//transform->SetPosition(Vector2(0, 0));
+			//	//animatorObjects.push_back(*objectForFocusedAnimation);
+			//	//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
+			//}
 			SaveCurrentProject();
 		}
 	}
@@ -646,6 +646,7 @@ namespace FlatGui
 	void RenderViewObject(GameObject &self, Vector2 scrolling, Vector2 canvasP0, Vector2 canvasSize, float gridStep, ImDrawList* drawList, ImDrawListSplitter* drawSplitter)
 	{
 		Transform* transform = self.GetTransform();
+		Animation* animation = self.GetAnimation();
 		Sprite* sprite = self.GetSprite();
 		Camera* camera = self.GetCamera();
 		Button* button = self.GetButton();
@@ -666,6 +667,17 @@ namespace FlatGui
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
 			//Vector2 baseScale = transform->GetBaseScale();
+
+			if (animation != nullptr && animation->IsActive())
+			{
+				for (Animation::AnimationData animData : animation->GetAnimations())
+				{
+					if (animData.b_playing)
+					{
+						animation->PlayAnimation(animData.name, FL::GetEngineTime());
+					}
+				}
+			}
 			
 			if (sprite != nullptr && sprite->GetTexture() != nullptr)
 			{

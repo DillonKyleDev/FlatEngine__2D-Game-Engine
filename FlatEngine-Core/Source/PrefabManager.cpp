@@ -94,7 +94,7 @@ namespace FlatEngine
 
 
 		float objectRotation = 0;
-		// Loop through the components in this PrefabsCheckJson
+		// Loop through the components in this PrefabsJson
 		for (int j = 0; j < objectJson["components"].size(); j++)
 		{
 			json componentJson = objectJson["components"][j];
@@ -211,7 +211,22 @@ namespace FlatEngine
 			{
 				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();	
 				animation->type = "Animation";
-				animation->animationPath = CheckJsonString(componentJson, "path", objectName);
+
+				if (JsonContains(componentJson, "animationData", objectName))
+				{
+					for (int anim = 0; anim < componentJson["animationData"].size(); anim++)
+					{
+						json animationJson = componentJson["animationData"][anim];
+						std::string path = CheckJsonString(animationJson, "path", objectName);
+						std::string name = CheckJsonString(animationJson, "name", objectName);
+
+						Animation::AnimationData animData;
+						animData.name = name;
+						animData.path = path;
+
+						animation->animations.push_back(animData);
+					}
+				}
 
 				prefab.components.emplace(componentID, animation);
 			}
@@ -223,10 +238,10 @@ namespace FlatEngine
 				{
 					for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
 					{
-						json tileJson = componentJson["soundData"][sound];
-						std::string path = CheckJsonString(tileJson, "path", objectName);
-						std::string name = CheckJsonString(tileJson, "name", objectName);
-						bool b_isMusic = CheckJsonBool(tileJson, "b_isMusic", objectName);
+						json audioJson = componentJson["soundData"][sound];
+						std::string path = CheckJsonString(audioJson, "path", objectName);
+						std::string name = CheckJsonString(audioJson, "name", objectName);
+						bool b_isMusic = CheckJsonBool(audioJson, "b_isMusic", objectName);
 
 						SoundData soundData;
 						soundData.name = name;
@@ -473,11 +488,11 @@ namespace FlatEngine
 		std::vector<long> childIDs = gameObject.GetChildren();
 		for (int i = 0; i < childIDs.size(); i++)
 		{
-			// Add the gameObjectCheckJson to the prefabObjectJsonArray
+			// Add the gameObjectJson to the prefabObjectJsonArray
 			prefabObjectJsonArray.push_back(CreateJsonFromObject(*GetObjectById(childIDs[i])));
 		}
 
-		// Recreate the GameObjectsCheckJson object and add the array as the content
+		// Recreate the GameObjectJson object and add the array as the content
 		json prefabObject = json::object({ { "Prefab", prefabObjectJsonArray }, { "Name", prefabName } });
 
 		// Add the GameObjects object contents to the file
@@ -615,7 +630,11 @@ namespace FlatEngine
 					{
 						std::shared_ptr<AnimationPrefabData> animationData = std::static_pointer_cast<AnimationPrefabData>(prefab.components.at(componentID));
 						Animation* animation = self->AddAnimation(-1, animationData->b_isActive, animationData->b_isCollapsed);
-						animation->SetAnimationPath(animationData->animationPath);
+
+						for (Animation::AnimationData animData : animationData->animations)
+						{
+							animation->AddAnimation(animData.name, animData.path);
+						}
 					}
 					else if (prefab.components.at(componentID)->type == "Audio")
 					{

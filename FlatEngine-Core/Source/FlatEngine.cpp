@@ -95,8 +95,8 @@ namespace FlatEngine
 	bool LoadFonts()
 	{
 		bool b_success = true;
-		F_fontCinzel = TTF_OpenFont("C:\\Users\\Dillon Kyle\\source\\repos\\FlatEngine3D\\FlatEngine-Core\\Source\\assets\\fonts\\Cinzel\\Cinzel-Black.ttf", 46);
-		if (F_fontCinzel == NULL)
+		F_fontCinzel = TTF_OpenFont(GetFilePath("cinzelBlack").c_str(), 40);
+		if (F_fontCinzel == nullptr)
 		{
 			printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 			b_success = false;
@@ -109,7 +109,7 @@ namespace FlatEngine
 	{
 		//Free global fonts
 		TTF_CloseFont(F_fontCinzel);
-		F_fontCinzel = NULL;
+		F_fontCinzel = nullptr;
 	}
 
 	// Get directory path using name given in Directories.lua
@@ -266,32 +266,33 @@ namespace FlatEngine
 						//Initialize SDL_mixer
 						if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 						{
-							printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+							printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());						
+							LogError("Audio Device Not Found - SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 							b_success = false;
 						}
 						else
 						{
 							Mix_AllocateChannels(100);							   // Sets number of individual audios that can play at once
 							printf("SDL_mixer initialized...\n");
-
-							InitLua();
-							printf("Lua initialized...\n");
-
-							F_AssetManager.CollectDirectories(dirType);			   // Collect important directories and file paths from Directories.lua
-							F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
-							F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
-							SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
-							SetImGuiColors();									   // Use the collected colors to style ImGui elements
-							RetrieveLuaScriptPaths();
-							InitializeTileSets();
-
-							printf("Engine Assets initialized...\n");
-							printf("System Ready...\n");
-
-							LogSeparator();
-							LogString("System ready. Begin logging...");
-							LogSeparator();
 						}
+
+						InitLua();
+						printf("Lua initialized...\n");
+
+						F_AssetManager.CollectDirectories(dirType);			   // Collect important directories and file paths from Directories.lua
+						F_AssetManager.CollectColors();						   // Collect global colors from Colors.lua
+						F_AssetManager.CollectTextures();				       // Collect and create Texture icons from Textures.lua
+						SetupImGui();										   // Setup ImGui for use in the prompt for Directories.lua location
+						SetImGuiColors();									   // Use the collected colors to style ImGui elements
+						RetrieveLuaScriptPaths();
+						InitializeTileSets();
+
+						printf("Engine Assets initialized...\n");
+						printf("System Ready...\n");
+
+						LogSeparator();
+						LogString("System ready. Begin logging...");
+						LogSeparator();
 					}
 				}
 			}
@@ -335,37 +336,77 @@ namespace FlatEngine
 		{
 			const char* name = ImGui::GetStyleColorName(i);
 
-			if (name == "TitleBgActive")
+			if (name == "SeparatorActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
-				ref->Colors[i] = GetColor("titleBgActive");
+				ref->Colors[i] = GetColor("buttonActive");
 			}
-			if (name == "TabUnfocusedActive")
+			if (name == "SeparatorHovered")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("buttonHovered");
+			}
+			if (name == "ButtonHovered")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("buttonHovered");
+			}
+			if (name == "ButtonActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("buttonActive");
+			}
+			if (name == "Button")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("button");
+			}
+			if (name == "WindowBg")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("windowBg");
+			}
+			if (name == "TitleBg")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("viewportTitleBg");
+			}
+			else if (name == "TitleBgActive")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("viewportTitleBgActive");
+			}
+			else if (name == "TabUnfocusedActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("tabUnfocusedActive");
 			}
-			if (name == "TabActive")
+			else if (name == "TabActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("tabActive");
 			}
-			if (name == "ResizeGripHovered")
+			else if (name == "ResizeGripHovered")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("resizeGripHovered");
 			}
-			if (name == "ResizeGripActive")
+			else if (name == "ResizeGrip")
+			{
+				ImGuiStyle* ref = &ImGui::GetStyle();
+				ref->Colors[i] = GetColor("resizeGrip");
+			}
+			else if (name == "ResizeGripActive")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("resizeGripActive");
 			}
-			if (name == "DockingPreview")
+			else if (name == "DockingPreview")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("dockingPreview");
 			}
-			if (name == "DockingEmptyBg")
+			else if (name == "DockingEmptyBg")
 			{
 				ImGuiStyle* ref = &ImGui::GetStyle();
 				ref->Colors[i] = GetColor("dockingPreviewEmpty");
@@ -395,7 +436,7 @@ namespace FlatEngine
 		for (SDL_Joystick* gamepad : F_gamepads)
 		{
 			SDL_JoystickClose(gamepad);
-			gamepad = NULL;
+			gamepad = nullptr;
 		}
 
 		FreeFonts();
@@ -419,14 +460,14 @@ namespace FlatEngine
 			for (SDL_Joystick* gamepad : F_gamepads)
 			{
 				SDL_JoystickClose(gamepad);
-				gamepad = NULL;
+				gamepad = nullptr;
 			}
 
 			controllersConnected = SDL_NumJoysticks();
 			for (int i = 0; i < controllersConnected; i++)
 			{
 				SDL_Joystick* gamepad = SDL_JoystickOpen(i);
-				if (gamepad == NULL)
+				if (gamepad == nullptr)
 				{
 					printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
 				}
@@ -491,7 +532,7 @@ namespace FlatEngine
 		{		
 			projectJson = json::parse(fileContent);
 
-			if (projectJson["Project Properties"][0] != "NULL")
+			if (projectJson["Project Properties"][0] != "nullptr")
 			{				
 				for (int i = 0; i < projectJson["Project Properties"].size(); i++)
 				{					
@@ -833,7 +874,7 @@ namespace FlatEngine
 			MappingContext newContext = MappingContext();
 		
 			json contextData = LoadFileData(path);
-			if (contextData != NULL)
+			if (contextData != nullptr)
 			{
 				auto mappings = contextData["Mapping Context"][0];
 				newContext.SetName(CheckJsonString(mappings, "name", "MappingContext"));
@@ -1126,7 +1167,7 @@ namespace FlatEngine
 			TileSet tileSet = TileSet();
 			json tileSetJson = LoadFileData(path);
 
-			if (tileSetJson != NULL)
+			if (tileSetJson != nullptr)
 			{
 				auto tileSetData = tileSetJson["tileSetData"];
 
@@ -1860,20 +1901,20 @@ namespace FlatEngine
 		std::string sSelectedFile;
 		std::string sFilePath;
 		HRESULT hr = 0;
-		wchar_t* pSaveFileName = NULL;
-		IShellItem* pShellItem = NULL;
-		wchar_t* ppszName = NULL;
+		wchar_t* pSaveFileName = nullptr;
+		IShellItem* pShellItem = nullptr;
+		wchar_t* ppszName = nullptr;
 
 		//  CREATE FILE OBJECT INSTANCE
-		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		HRESULT f_SysHr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 		if (FAILED(f_SysHr))
 		{
 			return "";
 		}
 
 		// CREATE FileSaveDialog OBJECT
-		IFileSaveDialog* f_FileSystem = NULL;
-		hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
+		IFileSaveDialog* f_FileSystem = nullptr;
+		hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_INPROC_SERVER, IID_IFileSaveDialog, (void**)(&f_FileSystem));
 		if (FAILED(f_SysHr)) 
 		{
 			CoUninitialize();
@@ -1881,7 +1922,7 @@ namespace FlatEngine
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
-		f_SysHr = f_FileSystem->Show(NULL);
+		f_SysHr = f_FileSystem->Show(nullptr);
 		if (FAILED(f_SysHr)) 
 		{
 			f_FileSystem->Release();
@@ -1933,12 +1974,12 @@ namespace FlatEngine
 		std::string sSelectedFile;
 		std::string sFilePath;
 		HRESULT hr = 0;
-		wchar_t* pSaveFileName = NULL;
-		IShellItem* pShellItem = NULL;
-		wchar_t* ppszName = NULL;
+		wchar_t* pSaveFileName = nullptr;
+		IShellItem* pShellItem = nullptr;
+		wchar_t* ppszName = nullptr;
 
 		//  CREATE FILE OBJECT INSTANCE
-		HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		HRESULT f_SysHr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 		if (FAILED(f_SysHr))
 		{
 			return "";
@@ -1946,7 +1987,7 @@ namespace FlatEngine
 
 		// CREATE FileOpenDialog OBJECT
 		IFileOpenDialog* f_FileSystem;
-		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
+		f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
 		if (FAILED(f_SysHr)) 
 		{
 			CoUninitialize();
@@ -1954,7 +1995,7 @@ namespace FlatEngine
 		}
 
 		//  SHOW OPEN FILE DIALOG WINDOW
-		f_SysHr = f_FileSystem->Show(NULL);
+		f_SysHr = f_FileSystem->Show(nullptr);
 		if (FAILED(f_SysHr)) 
 		{
 			f_FileSystem->Release();
@@ -2069,7 +2110,7 @@ namespace FlatEngine
 	std::string GetCurrentDir()
 	{
 		TCHAR buffer[MAX_PATH] = { 0 };
-		GetModuleFileName(NULL, buffer, MAX_PATH);
+		GetModuleFileName(nullptr, buffer, MAX_PATH);
 		std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
 		std::wstring ws = std::wstring(buffer).substr(0, pos);
 		std::string dir(ws.begin(), ws.end());
@@ -2102,7 +2143,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -2612,8 +2653,19 @@ namespace FlatEngine
 				}
 				else if (type == "Animation")
 				{
-					Animation* newAnimation = loadedObject->AddAnimation(id, b_isActive, b_isCollapsed);
-					newAnimation->SetAnimationPath(CheckJsonString(componentJson, "path", objectName));
+					Animation* newAnimation = loadedObject->AddAnimation(id, b_isActive, b_isCollapsed);				
+
+					if (JsonContains(componentJson, "animationData", objectName))
+					{
+						for (int anim = 0; anim < componentJson["animationData"].size(); anim++)
+						{
+							json animationJson = componentJson["animationData"][anim];
+							std::string path = CheckJsonString(animationJson, "path", objectName);
+							std::string name = CheckJsonString(animationJson, "name", objectName);							
+
+							newAnimation->AddAnimation(name, path);
+						}
+					}
 				}
 				else if (type == "Audio")
 				{
@@ -2623,10 +2675,10 @@ namespace FlatEngine
 					{
 						for (int sound = 0; sound < componentJson["soundData"].size(); sound++)
 						{
-							json tileJson = componentJson["soundData"][sound];
-							std::string path = CheckJsonString(tileJson, "path", objectName);
-							std::string name = CheckJsonString(tileJson, "name", objectName);
-							bool b_isMusic = CheckJsonBool(tileJson, "b_isMusic", objectName);							
+							json soundJson = componentJson["soundData"][sound];
+							std::string path = CheckJsonString(soundJson, "path", objectName);
+							std::string name = CheckJsonString(soundJson, "name", objectName);
+							bool b_isMusic = CheckJsonBool(soundJson, "b_isMusic", objectName);
 
 							newAudio->AddSound(name, path, b_isMusic);
 						}

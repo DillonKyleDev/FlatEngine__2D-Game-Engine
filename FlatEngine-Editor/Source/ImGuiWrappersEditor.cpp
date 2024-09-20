@@ -623,69 +623,132 @@ namespace FlatGui
 
 	void RenderAnimationComponent(Animation* animation)
 	{
-		std::string path = animation->GetAnimationPath();
 		bool b_isActive = animation->IsActive();
 		long ID = animation->GetID();
+		std::vector<FL::Animation::AnimationData> &animations = animation->GetAnimations();
 
 		if (RenderIsActiveCheckbox(b_isActive))
 		{
 			animation->SetActive(b_isActive);
 		}
 
-		int droppedValue = -1;
-		std::string openedPath = "";
-		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(ID), "Path", FL::GetFilenameFromPath(path, true), FL::F_fileExplorerTarget, droppedValue, openedPath, "Drop animation files here from the File Explorer"))
+		int droppedAnimValue = -1;
+		std::string openedAnimPath = "";
+		static std::string newAnimationName = "";
+		static std::string newAnimationPath = "";
+
+		FL::RenderInput("##NewAnimationName", "Name", newAnimationName, false);
+
+		if (FL::DropInputCanOpenFiles("##AnimationPathInspectorwindow-" + std::to_string(ID), "File", FL::GetFilenameFromPath(newAnimationPath, true), FL::F_fileExplorerTarget, droppedAnimValue, openedAnimPath, "Drop animation files here from the File Explorer"))
 		{
-			if (droppedValue >= 0)
+			if (droppedAnimValue >= 0)
 			{
-				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
+				std::filesystem::path fsPath(FL::F_selectedFiles[droppedAnimValue - 1]);
 				if (fsPath.extension() == ".anm")
 				{
-					animation->SetAnimationPath(fsPath.string());
+					newAnimationPath = fsPath.string();
 				}
 				else
 				{
 					FL::LogError("File must be of type .anm to drop here.");
 				}
 			}
-			else if (droppedValue == -2)
+			else if (droppedAnimValue == -2)
 			{
-				animation->SetAnimationPath("");
+				newAnimationPath = "";
 			}
-			else if (openedPath != "")
+			else if (openedAnimPath != "")
 			{
-				animation->SetAnimationPath(openedPath);
+				newAnimationPath = openedAnimPath;
 			}
 		}
 
-		if (path != "")
+		ImGui::BeginDisabled(newAnimationPath == "" || newAnimationName == "");
+		if (FL::RenderButton("Add Animation"))
 		{
-			FL::RenderSeparator(3, 3);
+			animation->AddAnimation(newAnimationName, newAnimationPath);
+			newAnimationName = "";
+			newAnimationPath = "";
+		}
+		ImGui::EndDisabled();
+
+
+		if (animations.size() > 0)
+		{
+			FL::RenderSeparator(4, 4);
+			FL::RenderSubTitle("Attached Animations");
 		}
 
-		if (FL::GameLoopStarted() && !FL::GameLoopPaused())
+		int IDCounter = 0;
+		for (FL::Animation::AnimationData &animData : animations)
 		{
-			if (FL::RenderButton("Play Animation"))
+			std::string currentAnimationName = animData.name;
+
+			if (FL::RenderInput("##NewAnimationName" + std::to_string(IDCounter), "Name", currentAnimationName, false))
 			{
-				animation->Play(FL::GetEllapsedGameTimeInMs());
+				animData.name = currentAnimationName;
 			}
 
-			if (animation->GetAnimationPath() != "")
+			int droppedAnimDataValue = -1;
+			std::string openedAnimDataPath = animData.path;
+			if (FL::DropInputCanOpenFiles("##AnimationPathInspectorWindow-" + std::to_string(IDCounter), "File", FL::GetFilenameFromPath(openedAnimDataPath, true), FL::F_fileExplorerTarget, droppedAnimDataValue, openedAnimDataPath, "Drop animation files here from the File Explorer"))
+			{
+				if (droppedAnimDataValue >= 0)
+				{
+					std::filesystem::path fsPath(FL::F_selectedFiles[droppedAnimDataValue - 1]);
+					if (fsPath.extension() == ".anm")
+					{
+						animData.path = fsPath.string();
+					}
+					else
+					{
+						FL::LogError("File must be of type .anm to drop here.");
+					}
+				}
+				else if (droppedAnimDataValue == -2)
+				{
+					animData.path = "";
+				}
+				else if (openedAnimDataPath != "")
+				{
+					animData.path = openedAnimDataPath;
+				}
+			}
+
+			if (animData.path != "")
+			{
+				FL::RenderSeparator(3, 3);
+			}
+
+			ImGui::BeginDisabled(animData.path == "");
+			if (FL::RenderButton("Play Animation##" + std::to_string(IDCounter)))
+			{
+				animation->Play(animData.name);
+			}
+			ImGui::EndDisabled();
+
+			if (animData.path != "")
 			{
 				ImGui::SameLine(0, 5);
 			}
-		}
-		
-		if (animation->GetAnimationPath() != "")
-		{									
-			if (FL::RenderButton("Edit Animation"))
-			{
-				FG_b_showAnimator = true;
-				FG_b_showAnimationPreview = true;
 
-				SetFocusedAnimation(FL::LoadAnimationFile(animation->GetAnimationPath()));
-				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animation->GetAnimationPath());
+			if (animData.path != "")
+			{
+				if (FL::RenderButton("Edit Animation"))
+				{
+					FG_b_showAnimator = true;					
+
+					SetFocusedAnimation(FL::LoadAnimationFile(animData.path));
+					FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animData.path);
+				}
 			}
+
+			if (animData.name != animations.back().name)
+			{
+				FL::RenderSeparator(4, 6);
+			}
+
+			IDCounter++;
 		}
 	}
 

@@ -134,25 +134,40 @@ namespace FlatEngine
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
 			LogInt(value, line, prefix);
 		};
+		F_Lua["LogInt"] = [](int value)
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogInt(value, prefix);
+		};
 		F_Lua["LogFloat"] = [](float value, std::string line)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
 			LogFloat(value, line, prefix);
+		};
+		F_Lua["LogFloat"] = [](float value)
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogFloat(value, prefix);
 		};
 		F_Lua["LogDouble"] = [](double value, std::string line)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
 			LogDouble(value, line, prefix);
 		};
+		F_Lua["LogDouble"] = [](double value)
+		{
+			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
+			LogDouble(value, prefix);
+		};
 		F_Lua["LogLong"] = [](long value, std::string line)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
 			LogLong(value, line, prefix);
 		};
-		F_Lua["LogVector2"] = [](float xValue, float yValue, std::string line)
+		F_Lua["LogLong"] = [](long value)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-			LogVector2(Vector2(xValue, yValue), line, prefix);
+			LogLong(value, prefix);
 		};
 		F_Lua["GetMappingContext"] = [](std::string contextName)
 		{
@@ -200,7 +215,7 @@ namespace FlatEngine
 		};
 		F_Lua["Destroy"] = [](long ID)
 		{
-			F_Application->GetGameLoop()->AddObjectToDeleteQueue(ID);
+ 			F_Application->GetGameLoop()->AddObjectToDeleteQueue(ID);
 		};
 		F_Lua["GetColor"] = [](std::string color)
 		{
@@ -320,7 +335,9 @@ namespace FlatEngine
 			"GetID", &Animation::GetID,
 			"Play", &Animation::PlayFromLua,
 			"Stop", &Animation::Stop,
-			"SetAnimationPath", &Animation::SetAnimationPath			
+			"StopAll", &Animation::StopAll,
+			"IsPlaying", &Animation::IsPlaying,
+			"HasAnimation", &Animation::HasAnimation
 		);
 
 		F_Lua.new_usertype<Animation::S_EventFunctionParam>("EventParameter",

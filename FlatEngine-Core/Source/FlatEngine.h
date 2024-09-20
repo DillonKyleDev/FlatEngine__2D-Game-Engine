@@ -8,7 +8,7 @@
 #include <sstream>
 #include <vector>
 #include "SDL.h"
-#include <SDL_syswm.h>
+#include <SDL_syswm.h> // Uint32
 #include <SDL_image.h>
 #include "SDL_ttf.h"
 #include "imgui.h"

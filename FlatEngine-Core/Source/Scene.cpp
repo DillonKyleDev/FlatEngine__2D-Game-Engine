@@ -162,8 +162,11 @@ namespace FlatEngine
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject *objectToDelete = GetObjectById(sceneObjectID);		
-		Scene::DeleteChildrenAndSelf(objectToDelete);
+		GameObject *objectToDelete = GetObjectById(sceneObjectID);	
+		if (objectToDelete != nullptr)
+		{
+			Scene::DeleteChildrenAndSelf(objectToDelete);
+		}
 	}
 
 	// Recursive
@@ -193,7 +196,6 @@ namespace FlatEngine
 				{
 					Scene::DeleteChildrenAndSelf(child);
 				}
-				objectToDelete->RemoveChild(childrenIDs[i]);
 			}
 		}
 

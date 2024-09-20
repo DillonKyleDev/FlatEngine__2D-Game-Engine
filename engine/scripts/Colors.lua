@@ -44,7 +44,10 @@ F_Colors = {
 	-- Windows -----------
 	----------------------
 	-- Main
+	paneBg = Vector4:new(0.05, 0.05, 0.06, 1.0),
 	windowBg = Vector4:new(0.08, 0.08, 0.10, 1.0),
+	viewportTitleBg = Vector4:new(0.06, 0.06, 0.07, 1.0),
+	viewportTitleBgActive = Vector4:new(0.09, 0.09, 0.1, 1.0),
 	outerWindow = Vector4:new(0.13, 0.13, 0.15, 1.0),
 	innerWindow = Vector4:new(0.1, 0.1, 0.12, 1.0),
 	singleItem = Vector4:new(0.16, 0.16, 0.17, 1.0),

@@ -87,7 +87,11 @@ namespace FlatGui
 				Vector2 mousePosInGrid = Vector2((inputOutput.MousePos.x - FG_sceneViewCenter.x) / FG_sceneViewGridStep.x, -(inputOutput.MousePos.y - FG_sceneViewCenter.y) / FG_sceneViewGridStep.y);
 				std::string filePath = FL::F_selectedFiles[droppedValue - 1];			
 			
-				FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
+				GameObject* newObject = FL::CreateAssetUsingFilePath(filePath, mousePosInGrid);
+				if (newObject != nullptr)
+				{
+					SetFocusedGameObjectID(newObject->GetID());
+				}
 			}
 			
 			Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();

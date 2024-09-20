@@ -241,6 +241,13 @@
                     "activeWidth": 2.0,
                     "id": 20,
                     "type": "BoxCollider"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "animationData": [],
+                    "id": 118,
+                    "type": "Animation"
                 }
             ],
             "id": 4,
@@ -470,8 +477,8 @@
             ],
             "id": 7,
             "ignoreTags": {
-                "Enemy": false,
-                "EnemyDamage": false,
+                "Enemy": true,
+                "EnemyDamage": true,
                 "EnemyTrigger": false,
                 "EnvironmentalDamage": false,
                 "EnvironmentalTrigger": false,
@@ -481,7 +488,7 @@
                 "Npc": false,
                 "NpcTrigger": false,
                 "Player": false,
-                "PlayerDamage": false,
+                "PlayerDamage": true,
                 "PlayerTrigger": false,
                 "Projectile": false,
                 "Terrain": false,
@@ -678,7 +685,7 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 55,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -698,7 +705,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 57,
                     "path": "..\\assets\\images\\Pieces\\queenB.png",
                     "pivotPoint": "PivotCenter",
@@ -1546,8 +1553,8 @@
             "children": [
                 26,
                 27,
-                16,
-                37
+                37,
+                16
             ],
             "components": [
                 {
@@ -2220,7 +2227,7 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 93,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -2241,8 +2248,13 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
+                    "animationData": [
+                        {
+                            "name": "Level1",
+                            "path": "..\\assets\\animations\\Level1.anm"
+                        }
+                    ],
                     "id": 95,
-                    "path": "..\\assets\\animations\\Level1.anm",
                     "type": "Animation"
                 }
             ],
@@ -2298,7 +2310,7 @@
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 96,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -2306,7 +2318,7 @@
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 30.0,
+                    "yPos": -29.834999084472656,
                     "yScale": 1.0
                 },
                 {
@@ -2320,8 +2332,8 @@
                     "text": "Level 1",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
-                    "tintColorY": 0.9312499761581421,
-                    "tintColorZ": 0.9312499761581421,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "type": "Text",
                     "xOffset": 63.0,
                     "yOffset": 16.5
@@ -2329,8 +2341,13 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
+                    "animationData": [
+                        {
+                            "name": "DisplayIntroText",
+                            "path": "..\\assets\\animations\\DisplayLvl1Intro.anm"
+                        }
+                    ],
                     "id": 98,
-                    "path": "..\\assets\\animations\\DisplayLvl1Intro.anm",
                     "type": "Animation"
                 },
                 {
@@ -2364,7 +2381,7 @@
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": 30.0,
+            "spawnLocationY": -29.834999084472656,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -2398,7 +2415,7 @@
                     "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 0.6000000238418579,
-                    "yOrigin": 30.0,
+                    "yOrigin": -29.834999084472656,
                     "yPos": -3.25,
                     "yScale": 0.6000000238418579
                 },
@@ -2410,13 +2427,13 @@
                     "id": 101,
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 55,
-                    "text": "Red Salt Plains",
+                    "text": "Salt Plains",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
-                    "tintColorY": 0.8999999761581421,
-                    "tintColorZ": 0.8999999761581421,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
                     "type": "Text",
-                    "xOffset": 135.0,
+                    "xOffset": 99.0,
                     "yOffset": 16.5
                 }
             ],
