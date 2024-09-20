@@ -245,33 +245,62 @@ The TileMap component allows the user to quickly draw scenes using TileSets crea
 
 ## Engine Assets
 
-### Projects
+<div>
+  <h2>Projects</h2>
+<picture>
+ <img alt="Projects" src="https://github.com/user-attachments/assets/7fa21df7-cfc4-490e-8d17-836775eb90b5">
+</picture>
+<p>Projects contain all the data associated with a particular project including scene to load up at the start of a game but mostly information that is not relevant to the end user.</p>
+</div>
 
-Projects contain all the data associated with a particular project including scene to load up at the start of a game but mostly information that is not relevant to the end user.
+<div>
+  <h2>Scenes</h2>
+<picture>
+ <img alt="Scenes" src="https://github.com/user-attachments/assets/24bb752a-9bd9-45d1-937a-5692bfa1b1bc">
+</picture>
+<p>Scenes are the container for all GameObjects and are saved in JSON format using a JSON Formatting library for simple parsing.</p>
+</div>
 
-### Scenes
+<div>
+  <h2>TileSet</h2>
+<picture>
+ <img alt="TileSet" src="https://github.com/user-attachments/assets/33c561a0-40b5-4d0d-ab76-2a4ff9b8d828">
+</picture>
+<p>TileSets are used by the TileMap system to allow them to draw texture tiles.</p>
+</div>
 
-Scenes are the container for all GameObjects and are saved in JSON format using a JSON Formatting library for simple parsing. 
+<div>
+  <h2>Script</h2>
+<picture>
+ <img alt="Script" src="https://github.com/user-attachments/assets/9c2e9d4b-ab18-4624-b7ab-b213d16e306a">
+</picture>
+<p>Lua script files for scripting.  In FlatEngine, these files have the extension ".scp.lua".</p>
+</div>
 
-### TileSet
+<div>
+  <h2>Mapping Context</h2>
+<picture>
+ <img alt="Mapping Context" src="https://github.com/user-attachments/assets/fc6ed04f-5fb0-476d-a076-c1c7c1b9d181">
+</picture>
+<p>Mapping Contexts (and the Mapping Context Editor) are the interface for binding input actions to specific controls.  Currently mouse/keyboard and XInput (Xbox controller) are supported with more planned to be added in the future.  The Mapping Context system is not yet exposed to the Scripting system so it is not yet possible to dynamically set key bindings (in a game settings menu for example) but that is a feature that is easy to implement and is toward the top of the list of priorities.</p>
+</div>
 
-TileSets are used by the TileMap system to allow them to draw texture tiles.
+<div>
+  <h2>Animation</h2>
+<picture>
+ <img alt="Animation" src="https://github.com/user-attachments/assets/e88f98cd-855e-40c8-8b32-e3759fcbdd08">
+</picture>
+<p>Animations are what the Animation components use to... play animations.  Animations are edited using the Animator window in combination with the Keyframe Editor.  If you have used Unity you should be familiar with how this functions.</p>
+</div>
 
-### Script
+<div>
+  <h2>Prefabs</h2>
+<picture>
+ <img alt="Prefab" src="https://github.com/user-attachments/assets/f0bb4978-2afe-425b-9ac0-6a09710e92ca">
+</picture>
+<p>Prefabs are saved GameObjects (including any children and components) that can be instantiated at runtime, or at any time.</p>
+</div>
 
-Lua script files for scripting
-
-### Mapping Context
-
-Mapping Contexts (and the Mapping Context Editor) are the interface for binding input actions to specific controls.  Currently mouse/keyboard and XInput (Xbox controller) are supported with more planned to be added in the future.  The Mapping Context system is not yet exposed to the Scripting system so it is not yet possible to dynamically set key bindings (in a game settings menu for example) but that is a feature that is easy to implement and is toward the top of the list of priorities.
-
-### Animation
-
-Animations are what the Animation components use to... Play animations.  Animations are edited using the Animator window in combination with the Keyframe Editor.  If you have used Unity you should be familiar with how this functions.
-
-### Prefabs
-
-Prefabs are saved GameObjects (including any children and components) that can be instantiated at runtime, or at any time.
 
 
 --------------------------------------------------------------------------------------
