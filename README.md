@@ -673,7 +673,7 @@ Action: Generates a random number within specified range.<br/>
 Parameters: min - the lowest value (inclusive), max - the highest value (inclusive)<br/>
 Returns: int<br/>
 
-<h1>UNDER CONSTRUCTION</h1>
+# UNDER CONSTRUCTION
 
 ### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
 
@@ -689,6 +689,8 @@ Returns: int<br/>
 |SetXY(float x, float y)|Action: </br>Parameters: </br>Returns: |
 
 ## Vector4
+|Method|Details|
+|:-----|-------|
 |Vector4(), Vector4(float x, float y, float z, float w)|Action: Constructors</br></br>Parameters: x,y,z,w - values to set x, y, z, and w to.</br>Returns: Vector4
 |SetX|Action: </br>Parameters: </br>Returns: |
 |x|Action: </br>Parameters: </br>Returns: |
@@ -702,6 +704,8 @@ Returns: int<br/>
 
 
 ## GameObject
+|Method|Details|
+|:-----|-------|
 |GetID|Action: </br>Parameters: </br>Returns: |
 |GetName|Action: </br>Parameters: </br>Returns: |
 |SetName|Action: </br>Parameters: </br>Returns: |
@@ -730,6 +734,8 @@ Returns: int<br/>
 |FindChildByName|Action: </br>Parameters: </br>Returns: |
 
 ## Transform
+|Method|Details|
+|:-----|-------|
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |GetID|Action: </br>Parameters: </br>Returns: |
@@ -743,6 +749,8 @@ Returns: int<br/>
 |LookAt|Action: </br>Parameters: </br>Returns: |
 
 ## Sprite
+|Method|Details|
+|:-----|-------|
 |SetActive|Action: </br>Parameters: </br>Returns: |
 |IsActive|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
@@ -758,6 +766,8 @@ Returns: int<br/>
 |GetTintColor|Action: </br>Parameters: </br>Returns: |
 
 ## Audio
+|Method|Details|
+|:-----|-------|
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -770,6 +780,8 @@ Returns: int<br/>
 |StopAll|Action: </br>Parameters: </br>Returns: |
 
 ## Animation
+|Method|Details|
+|:-----|-------|
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -782,6 +794,8 @@ Returns: int<br/>
 |HasAnimation|Action: </br>Parameters: </br>Returns: |
 
 ## EventParameter
+|Method|Details|
+|:-----|-------|
 |type|Action: </br>Parameters: </br>Returns: |
 |string|Action: </br>Parameters: </br>Returns: |
 |int|Action: </br>Parameters: </br>Returns: |
@@ -792,6 +806,8 @@ Returns: int<br/>
 |Vector2|Action: </br>Parameters: </br>Returns: |
 
 ## RigidBody
+|Method|Details|
+|:-----|-------|
 |SetActive|Action: </br>Parameters: </br>Returns: |
 |IsActive|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
@@ -821,6 +837,8 @@ Returns: int<br/>
 
 
 ## BoxCollider
+|Method|Details|
+|:-----|-------|
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -829,6 +847,8 @@ Returns: int<br/>
 
 
 ## CharacterController
+|Method|Details|
+|:-----|-------|
 |MoveToward|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
@@ -838,6 +858,8 @@ Returns: int<br/>
 
 
 ## MappingContext
+|Method|Details|
+|:-----|-------|
 |Fired|Action: </br>Parameters: </br>Returns: |
 |ActionPressed|Action: </br>Parameters: </br>Returns: |
 |GetName|Action: </br>Parameters: </br>Returns: |
