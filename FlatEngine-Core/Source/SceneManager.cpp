@@ -26,15 +26,15 @@ namespace FlatEngine
 		return &m_loadedScene;
 	}
 
-	void SceneManager::SaveScene(Scene *scene, std::string filepath)
+	void SceneManager::SaveScene(Scene *scene, std::string filePath)
 	{		
 		std::ofstream file_obj;
-		std::ifstream ifstream(filepath);
+		std::ifstream ifstream(filePath);
 
-		file_obj.open(filepath, std::ofstream::out | std::ofstream::trunc);
+		file_obj.open(filePath, std::ofstream::out | std::ofstream::trunc);
 		file_obj.close();
 
-		file_obj.open(filepath, std::ios::app);
+		file_obj.open(filePath, std::ios::app);
 		json sceneObjectsJsonArray;
 
 		std::map<long, GameObject> &sceneObjects = scene->GetSceneObjects();
@@ -60,25 +60,25 @@ namespace FlatEngine
 		SaveScene(&m_loadedScene, m_loadedScenePath);
 	}
 
-	bool SceneManager::LoadScene(std::string filepath, bool b_isTemp)
+	bool SceneManager::LoadScene(std::string loadFrom, std::string pointTo)
 	{
-		std::string fileName = "";
-		if (b_isTemp)
+		std::string pointToPath = "";
+		if (pointTo != "")
 		{
-			fileName = GetLoadedScene()->GetName();
+			pointToPath = pointTo;
 		}
 		else
 		{
-			fileName = GetFilenameFromPath(filepath, false);
+			pointToPath = loadFrom;
 		}
 		bool b_success = true;
 
 		m_loadedScene.UnloadECSManager();
 
 		std::ofstream file_obj;
-		std::ifstream ifstream(filepath);
+		std::ifstream ifstream(loadFrom);
 
-		file_obj.open(filepath, std::ios::in);
+		file_obj.open(loadFrom, std::ios::in);
 		std::string fileContent = "";
 
 		if (file_obj.good())
@@ -99,13 +99,9 @@ namespace FlatEngine
 		if (file_obj.good() && fileContent != "")
 		{
 			m_loadedScene = Scene();
-			if (!b_isTemp)
-			{
-				m_loadedScenePath = filepath;
-				m_loadedScene.SetPath(filepath);
-			}
-
-			m_loadedScene.SetName(fileName);
+			m_loadedScenePath = pointToPath;
+			m_loadedScene.SetPath(pointToPath);
+			m_loadedScene.SetName(GetFilenameFromPath(pointToPath, false));
 
 			json fileContentJson = json::parse(fileContent);
 
@@ -141,12 +137,12 @@ namespace FlatEngine
 					}
 				}
 
-				F_Application->OnLoadScene(fileName);
+				F_Application->OnLoadScene(pointToPath);
 			}
 		}
 		else
 		{
-			LogError("Failed to load scene: " + fileName);
+			LogError("Failed to load scene: " + pointToPath);
 			b_success = false;
 		}
 

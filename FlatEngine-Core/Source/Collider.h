@@ -38,6 +38,8 @@ namespace FlatEngine
 		void SetPreviousPosition(Vector2 prevPos);
 		Vector2 GetPreviousCenterPoint();
 		void SetPreviousCenterPoint(Vector2 centerPoint);
+		float GetPreviousGridStep();
+		void SetPreviousGridStep(float prevGridStep);
 		bool HasMoved();
 		std::vector<GameObject*> GetCollidingObjects();
 		void ClearCollidingObjects();
@@ -120,6 +122,7 @@ namespace FlatEngine
 		Vector2 m_activeOffset;
 		Vector2 m_previousPosition;
 		Vector2 m_previousCenterPoint;
+		float m_previousGridStep;
 		Vector2 m_centerGrid;
 		Vector2 m_nextCenterGrid;
 		Vector2 m_centerCoord;

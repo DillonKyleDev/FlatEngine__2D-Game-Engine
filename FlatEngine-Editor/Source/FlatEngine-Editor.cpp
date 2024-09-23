@@ -41,6 +41,7 @@ class EditorGameLoop : public FL::GameLoop
 public:
 	EditorGameLoop() 
 	{
+		m_startedScenePath = "";
 	};
 	~EditorGameLoop() {};
 
@@ -48,8 +49,9 @@ public:
 	{
 		FL::AddProfilerProcess("GameLoop (variable executions)");		
 		FL::AddProfilerProcess("Not GameLoop");
-		FL::AddProfilerProcess("Collision Testing");		
-		FL::SaveScene(FL::GetLoadedScene(), "..\\engine\\tempFiles\\tempScene.scn");
+		FL::AddProfilerProcess("Collision Testing");	
+		m_startedScenePath = FL::GetLoadedScenePath();
+		FL::SaveScene(FL::GetLoadedScene(), "..\\engine\\tempFiles\\" + FL::GetLoadedScene()->GetName() + ".scn");
 		FL::GameLoop::Start();
 	};
 	void Stop()
@@ -58,6 +60,7 @@ public:
 		FL::RemoveProfilerProcess("Not GameLoop");
 		FL::RemoveProfilerProcess("Collision Testing");
 		FL::GameLoop::Stop();
+		FL::LoadScene("..\\engine\\tempFiles\\" + FL::GetFilenameFromPath(m_startedScenePath, true), m_startedScenePath);
 	};
 	void Update()
 	{
@@ -68,6 +71,7 @@ public:
 		//
 	};
 private:
+	std::string m_startedScenePath;
 };
 
 

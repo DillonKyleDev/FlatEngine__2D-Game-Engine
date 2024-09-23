@@ -49,15 +49,15 @@ namespace FlatEngine {
 		return data;
 	}
 
-	void CircleCollider::UpdateCenter(float step, Vector2 centerPoint)
+	void CircleCollider::UpdateCenter(float gridStep, Vector2 centerPoint)
 	{
 		Transform* transform = GetParent()->GetTransform();
 		Vector2 position = transform->GetTruePosition();
 		float activeRadius = GetActiveRadiusGrid();
 		Vector2 activeOffset = GetActiveOffset();
 
-		float xCenter = centerPoint.x + (position.x + activeOffset.x) * step;
-		float yCenter = centerPoint.y - (position.y + activeOffset.y) * step;
+		float xCenter = centerPoint.x + (position.x + activeOffset.x) * gridStep;
+		float yCenter = centerPoint.y - (position.y + activeOffset.y) * gridStep;
 		
 		SetCenterGrid(Vector2(position.x + activeOffset.x, position.y + activeOffset.y));
 		SetCenterCoord(Vector2(xCenter, yCenter));
@@ -65,7 +65,7 @@ namespace FlatEngine {
 
 	// Just based on actual pixel locations (0,0) being the top left of the window
 	// You can use it for either game view or scene view, you just need the correct center location of whichever you choose
-	void CircleCollider::UpdateActiveEdges(float step, Vector2 centerPoint)
+	void CircleCollider::UpdateActiveEdges(float gridStep, Vector2 centerPoint)
 	{
 		// Only if the activeEdges has not been set or if the velocity is not 0 do we update the active edges
 		bool b_shouldUpdate = false;
@@ -84,11 +84,16 @@ namespace FlatEngine {
 			scale = transform->GetScale();
 		}
 
-		// Accounts for any scene view scrolling / panning
+		// Accounts for any scene view scrolling / panning / zooming
 		if (GetPreviousCenterPoint() != centerPoint)
 		{
 			b_shouldUpdate = true;
 			SetPreviousCenterPoint(centerPoint);
+		}
+		if (GetPreviousGridStep() != gridStep)
+		{
+			b_shouldUpdate = true;
+			SetPreviousGridStep(gridStep);
 		}
 
 		RigidBody* rigidBody;
@@ -120,10 +125,10 @@ namespace FlatEngine {
 			// For visual representation ( screen space values )
 			SetCenterGrid(Vector2(transform->GetTruePosition().x + activeOffset.x, transform->GetTruePosition().y + activeOffset.y));
 
-			m_activeLeft = centerPoint.x + (GetCenterGrid().x - (activeRadius * scale.x)) * step;
-			m_activeTop = centerPoint.y + (-GetCenterGrid().y - (activeRadius * scale.y)) * step;
-			m_activeRight = centerPoint.x + (GetCenterGrid().x + (activeRadius * scale.x)) * step;
-			m_activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeRadius * scale.y)) * step;
+			m_activeLeft = centerPoint.x + (GetCenterGrid().x - (activeRadius * scale.x)) * gridStep;
+			m_activeTop = centerPoint.y + (-GetCenterGrid().y - (activeRadius * scale.y)) * gridStep;
+			m_activeRight = centerPoint.x + (GetCenterGrid().x + (activeRadius * scale.x)) * gridStep;
+			m_activeBottom = centerPoint.y + (-GetCenterGrid().y + (activeRadius * scale.y)) * gridStep;
 
 			SetCenterCoord(Vector2(m_activeLeft + (m_activeRight - m_activeLeft) / 2, m_activeTop + (m_activeBottom - m_activeTop) / 2));
 
@@ -149,9 +154,9 @@ namespace FlatEngine {
 		UpdatePreviousPosition();
 	}
 
-	void CircleCollider::RecalculateBounds(float step, Vector2 centerPoint)
+	void CircleCollider::RecalculateBounds(float gridStep, Vector2 centerPoint)
 	{
-		UpdateCenter(step, centerPoint);
-		UpdateActiveEdges(step, centerPoint);
+		UpdateCenter(gridStep, centerPoint);
+		UpdateActiveEdges(gridStep, centerPoint);
 	}
 }

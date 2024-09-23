@@ -168,6 +168,11 @@ namespace FlatEngine
 			Vector2 scale = transform->GetScale();
 			float rotation = transform->GetRotation();
 
+			float cameraLeftEdge = cameraPosition.x - cameraWidth / 2;
+			float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
+			float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
+			float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
+
 			if (animation != nullptr && animation->IsActive())
 			{
 				for (Animation::AnimationData animData : animation->GetAnimations())
@@ -196,16 +201,12 @@ namespace FlatEngine
 				float spriteTopEdge = position.y + offset.y * newScale.y;
 				float spriteBottomEdge = position.y - offset.y * newScale.y;
 
-				float cameraLeftEdge = cameraPosition.x - cameraWidth / 2;
-				float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
-				float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
-				float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
-
 				bool b_isIntersecting = false;
 
-				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge &&
-					spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
+				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge && spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
+				{
 					b_isIntersecting = true;
+				}
 
 				if (b_isIntersecting)
 				{
@@ -232,20 +233,40 @@ namespace FlatEngine
 			{
 				std::shared_ptr<Texture> textTexture = text->GetTexture();
 				float textWidth = (float)textTexture->GetWidth();
-				float textHeight = (float)textTexture->GetHeight();
+				float textHeight = (float)textTexture->GetHeight();				
 				int renderOrder = text->GetRenderOrder();
 				Vector2 offset = text->GetOffset();
 				bool b_spriteScalesWithZoom = true;
 				Vector4 tintColor = text->GetColor();
+				Vector2 newScale = Vector2(scale.x * F_spriteScaleMultiplier, scale.y * F_spriteScaleMultiplier);
 
-				if (textTexture->GetTexture() != nullptr)
+				float spriteLeftEdge = position.x - offset.x * newScale.x;
+				float spriteRightEdge = position.x + offset.x * newScale.x;
+				float spriteTopEdge = position.y + offset.y * newScale.y;
+				float spriteBottomEdge = position.y - offset.y * newScale.y;
+
+				bool b_isIntersecting = false;
+
+				if (spriteLeftEdge < cameraRightEdge && spriteRightEdge > cameraLeftEdge && spriteTopEdge > cameraBottomEdge && spriteBottomEdge < cameraTopEdge)
 				{
-					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
-						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
-					else
-						drawSplitter->SetCurrentChannel(draw_list, 0);
+					b_isIntersecting = true;
+				}
 
-					AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, scale, b_spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+				if (b_isIntersecting)
+				{
+					if (textTexture->GetTexture() != nullptr)
+					{
+						if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
+						{
+							drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+						}
+						else
+						{
+							drawSplitter->SetCurrentChannel(draw_list, 0);
+						}
+
+						AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, newScale, b_spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+					}
 				}
 			}
 

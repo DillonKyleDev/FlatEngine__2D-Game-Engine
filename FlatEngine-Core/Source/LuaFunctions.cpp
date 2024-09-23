@@ -45,33 +45,69 @@ namespace FlatEngine
 		std::vector<std::string> newVec = std::vector<std::string>();
 		return newVec;
 	}
+	std::vector<int> CreateIntVector()
+	{
+		std::vector<int> newVec = std::vector<int>();
+		return newVec;
+	}
+	std::vector<long> CreateLongVector()
+	{
+		std::vector<long> newVec = std::vector<long>();
+		return newVec;
+	}
+	std::vector<float> CreateFloatVector()
+	{
+		std::vector<float> newVec = std::vector<float>();
+		return newVec;
+	}
+	std::vector<double> CreateDoubleVector()
+	{
+		std::vector<double> newVec = std::vector<double>();
+		return newVec;
+	}
+	std::vector<bool> CreateBoolVector()
+	{
+		std::vector<bool> newVec = std::vector<bool>();
+		return newVec;
+	}
+	std::map<std::string, std::string> CreateStringStringMap()
+	{
+		std::map<std::string, std::string> newMap = std::map<std::string, std::string>();
+		return newMap;
+	}
+
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
 		F_Lua["CreateStringVector"] = []()
 		{
-				return CreateStringVector();
-		};/*
+			return CreateStringVector();
+		};
 		F_Lua["CreateIntVector"] = []()
 		{
-			std::vector<int> newVec = std::vector<int>();
-			return newVec;
-		};
-		F_Lua["CreateFloatVector"] = []()
-		{
-			std::vector<float> newVec = std::vector<float>();
-			return newVec;
+			return CreateIntVector();
 		};
 		F_Lua["CreateLongVector"] = []()
 		{
-			std::vector<long> newVec = std::vector<long>();
-			return newVec;
+			return CreateLongVector();
 		};
-		F_Lua["CreateStringStringMap"] = []()
+		F_Lua["CreateFloatVector"] = []()
 		{
-			std::map<std::string, std::string> newMap = std::map<std::string, std::string>();
-			return newMap;			
+			return CreateFloatVector();
 		};
+		F_Lua["CreateDoubleVector"] = []()
+		{
+			return CreateDoubleVector();
+		};
+		F_Lua["CreateBoolVector"] = []()
+		{
+			return CreateBoolVector();
+		};
+		//F_Lua["CreateStringStringMap"] = []()
+		//{
+		//	return CreateStringStringMap();
+		//};
+		/*
 		F_Lua["CreateStringIntMap"] = []()
 		{
 			std::map<std::string, int> newMap = std::map<std::string, int>();
@@ -111,6 +147,18 @@ namespace FlatEngine
 		{
 			return std::to_string(value);
 		};
+		F_Lua["LongToString"] = [](long value)
+		{
+			return std::to_string(value);
+		};
+		F_Lua["FloatToString"] = [](float value)
+		{
+			return std::to_string(value);
+		};
+		F_Lua["DoubleToString"] = [](double value)
+		{
+			return std::to_string(value);
+		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
 			LoadLuaGameObject(GetObjectById(ID));
@@ -141,7 +189,7 @@ namespace FlatEngine
 		F_Lua["LogInt"] = [](int value)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-			LogInt(value, prefix);
+			LogInt(value, "", prefix);
 		};
 		F_Lua["LogFloat"] = [](float value, std::string line)
 		{
@@ -151,7 +199,7 @@ namespace FlatEngine
 		F_Lua["LogFloat"] = [](float value)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-			LogFloat(value, prefix);
+			LogFloat(value, "", prefix);
 		};
 		F_Lua["LogDouble"] = [](double value, std::string line)
 		{
@@ -161,7 +209,7 @@ namespace FlatEngine
 		F_Lua["LogDouble"] = [](double value)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-			LogDouble(value, prefix);
+			LogDouble(value, "", prefix);
 		};
 		F_Lua["LogLong"] = [](long value, std::string line)
 		{
@@ -171,7 +219,11 @@ namespace FlatEngine
 		F_Lua["LogLong"] = [](long value)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
-			LogLong(value, prefix);
+			LogLong(value, "", prefix);
+		};
+		F_Lua["CloseProgram"] = []()
+		{
+			CloseProgram();
 		};
 		F_Lua["GetMappingContext"] = [](std::string contextName)
 		{

@@ -732,11 +732,13 @@ namespace FlatGui
 				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(text->GetID());
 				ImGuiIO& inputOutput = ImGui::GetIO();
 				
+				Vector2 newScale = Vector2(scale.x * FL::F_spriteScaleMultiplier, scale.y * FL::F_spriteScaleMultiplier);
+
 				if (textTexture->GetTexture() != nullptr)
 				{
 					//Vector2 scaledPosition = Vector2(origin.x + (relativePosition.x * baseScale.x), origin.y + (relativePosition.y * baseScale.y));
-					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * scale.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * scale.y));
-					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * gridStep * scale.x, textHeight * FL::F_spriteScaleMultiplier * gridStep * scale.y);
+					Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * newScale.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * newScale.y));
+					Vector2 buttonSize = Vector2(textWidth * FL::F_spriteScaleMultiplier * gridStep * newScale.x, textHeight * FL::F_spriteScaleMultiplier * gridStep * newScale.y);
 					
 					AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);						
 					const bool b_isClicked = ImGui::IsItemClicked();
@@ -754,7 +756,7 @@ namespace FlatGui
 						drawSplitter->SetCurrentChannel(drawList, 0);
 					}
 									
-					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, scale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
+					FL::AddImageToDrawList(textTexture->GetTexture(), position, FG_sceneViewCenter, textWidth, textHeight, offset, newScale, b_spriteScalesWithZoom, FG_sceneViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
 				}
 			}
 			

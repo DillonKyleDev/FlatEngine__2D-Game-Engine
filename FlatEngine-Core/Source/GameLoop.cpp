@@ -38,8 +38,7 @@ namespace FlatEngine
 		m_pausedTime = 0;
 		m_framesCounted = 0;
 		m_deltaTime = 0.005f;
-		m_accumulator = m_deltaTime;
-		m_startedScene = "";
+		m_accumulator = m_deltaTime;		
 		m_hoveredButtons = std::vector<Button>();
 		m_objectsQueuedForDelete = std::vector<long>();
 	}
@@ -56,7 +55,6 @@ namespace FlatEngine
 		m_accumulator = 0.0f;
 
 		// Save the name of the scene we started with so we can load it back up when we stop
-		m_startedScene = GetLoadedScenePath();
 		m_b_started = true;
 		RunAwakeAndStart();
 		m_currentTime = GetEngineTime();
@@ -82,8 +80,6 @@ namespace FlatEngine
 		m_b_started = false;
 		m_b_paused = false;
 		m_framesCounted = 0;
-
-		FL::LoadScene("..\\engine\\tempFiles\\tempScene.scn", true);
 	}
 
 	void GameLoop::Pause()
@@ -136,7 +132,7 @@ namespace FlatEngine
 						b_hasLeftClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonLeftClick);
 					}					
-					else if (!ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+					else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 					{
 						b_hasLeftClicked = false;
 					}	
@@ -146,7 +142,7 @@ namespace FlatEngine
 						b_hasRightClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonRightClick);
 					}					
-					else if (!ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+					else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 					{
 						b_hasRightClicked = false;
 					}

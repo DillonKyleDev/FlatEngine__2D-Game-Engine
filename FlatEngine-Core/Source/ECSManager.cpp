@@ -144,7 +144,9 @@ namespace FlatEngine
 
 		// Update m_ColliderPairs
 		if (GetObjectById(ownerID) != nullptr) // If BoxCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+		{
 			UpdateColliderPairs();
+		}
 
 		return &m_BoxColliders.at(ownerID).at(collider.GetID());
 	}
@@ -166,7 +168,9 @@ namespace FlatEngine
 
 		// Update m_ColliderPairs
 		if (GetObjectById(ownerID) != nullptr) // If CircleCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
+		{
 			UpdateColliderPairs();
+		}
 
 		return &m_CircleColliders.at(ownerID).at(collider.GetID());
 	}

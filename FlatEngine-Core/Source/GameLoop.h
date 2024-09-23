@@ -61,8 +61,7 @@ namespace FlatEngine
 		bool m_b_paused;
 		bool m_b_frameSkipped;
 		bool m_b_gamePaused;
-		long m_framesCounted;
-		std::string m_startedScene;
+		long m_framesCounted;		
 		std::vector<Button> m_hoveredButtons;
 		std::vector<long> m_objectsQueuedForDelete;
 	};

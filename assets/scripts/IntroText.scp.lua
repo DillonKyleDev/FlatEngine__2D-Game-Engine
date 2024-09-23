@@ -3,7 +3,9 @@
 
 function Awake() 
      introText = GetObjectByName("Level1IntroText")
-     introText:GetAnimation():Play("DisplayIntroText")
+     if introText ~= NULL then
+          introText:GetAnimation():Play("DisplayIntroText")
+     end
 end 
 
 function Start() 

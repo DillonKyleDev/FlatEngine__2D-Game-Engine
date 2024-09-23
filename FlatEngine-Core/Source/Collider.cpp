@@ -21,6 +21,7 @@ namespace FlatEngine
 		m_activeOffset = Vector2(0, 0);
 		m_previousPosition = Vector2(0, 0);
 		m_centerGrid = Vector2(0, 0);
+		m_previousGridStep = 0;
 		m_nextCenterGrid = Vector2(0, 0);
 		m_centerCoord = Vector2(0, 0);
 		m_nextCenterCoord = Vector2(0, 0);
@@ -908,6 +909,16 @@ namespace FlatEngine
 	void Collider::SetPreviousCenterPoint(Vector2 centerPoint)
 	{
 		m_previousCenterPoint = centerPoint;
+	}
+
+	float Collider::GetPreviousGridStep()
+	{
+		return m_previousGridStep;
+	}
+
+	void Collider::SetPreviousGridStep(float prevGridStep)
+	{
+		m_previousGridStep = prevGridStep;
 	}
 
 	bool Collider::HasMoved()

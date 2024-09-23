@@ -609,7 +609,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("..\\intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\..\\..\\intermediates", F_LoadedProject.GetBuildPath() + "\\intermediates", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -637,11 +637,11 @@ namespace FlatEngine
 		F_sceneToBeLoaded = scenePath;
 	}
 
-	void LoadScene(std::string filepath, bool b_isTemp)
+	void LoadScene(std::string loadFrom, std::string pointTo)
 	{		
 		F_SoundController.StopMusic();
 
-		if (F_SceneManager.LoadScene(filepath, b_isTemp))
+		if (F_SceneManager.LoadScene(loadFrom, pointTo))
 		{
 			if (F_SceneManager.GetLoadedScene() != nullptr)
 			{

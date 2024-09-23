@@ -20,9 +20,9 @@ namespace FlatEngine
 		~SceneManager();
 
 		Scene* CreateNewScene();
-		void SaveScene(Scene* scene, std::string filepath);
+		void SaveScene(Scene* scene, std::string filePath);
 		void SaveCurrentScene();
-		bool LoadScene(std::string filepath, bool b_isTemp = false);		
+		bool LoadScene(std::string filePath, std::string pointTo = "");
 		Scene* GetLoadedScene();
 		std::string GetLoadedScenePath();
 		void SaveAnimationPreviewObjects();
