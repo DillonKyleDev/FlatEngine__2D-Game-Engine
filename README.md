@@ -678,168 +678,171 @@ Returns: int<br/>
 <br/>
 
 Vector2<br/>
-    constructors<Vector2(), Vector2(float x,float y)>(),
-    |SetX|
-    |x|
-    |SetY|
-    |y|
-    |SetXY|
+
+|Method|Details|
+|:-----|-------|
+|Vector2(), Vector2(float x,float y)|Action: Constructors</br>Parameters: x,y,z,w - values to set x and y to.</br>Returns: Vector2
+|SetX(float x)|Action: Sets the x-value of the Vector2.</br>Parameters: x - the value to set x to.</br>Returns: void|
+|x|Action: </br>Parameters: </br>Returns: |
+|SetY(float y)|Action: Sets the y-value of the Vector2.</br>Parameters: y - the value to set x to.</br>Returns: void|
+|y|Action: </br>Parameters: </br>Returns: |
+|SetXY(float x, float y)|Action: </br>Parameters: </br>Returns: |
 
 Vector4<br/>
-    sol::constructors<Vector4(), Vector4(float x, float y, float z, float w)>(),
-    |SetX|
-    |x|
-    |SetY|
-    |y|
-    |SetZ|
-    |z|
-    |SetW|
-    |w|
-    |SetXYZW|
+|Vector4(), Vector4(float x, float y, float z, float w)|Action: Constructors</br></br>Parameters: x,y,z,w - values to set x, y, z, and w to.</br>Returns: Vector4
+|SetX|Action: </br>Parameters: </br>Returns: |
+|x|Action: </br>Parameters: </br>Returns: |
+|SetY|Action: </br>Parameters: </br>Returns: | 
+|y|Action: </br>Parameters: </br>Returns: |
+|SetZ|Action: </br>Parameters: </br>Returns: | 
+|z|Action: </br>Parameters: </br>Returns: |
+|SetW|Action: </br>Parameters: </br>Returns: | 
+|w|Action: </br>Parameters: </br>Returns: |
+|SetXYZW|Action: </br>Parameters: </br>Returns: |
 
 
 GameObject<br/>
-    |GetID|
-    |GetName|
-    |SetName|
-    |IsActive|
-    |SetActive|
-    |GetParent|
-    |GetParentID|
-    |HasTag|
-    |GetTransform|
-    |AddSprite|
-    |GetSprite|
-    |GetCamera|
-    |GetAnimation|
-    |GetAudio|
-    |GetButton|
-    |GetCanvas|
-    |GetText|
-    |GetCharacterController|
-    |GetRigidBody|
-    |GetBoxColliders|
-    |GetBoxCollider|
-    |GetFirstChild|
-    |HasChildren|
-    |GetChildren|
-    |HasScript|
-    |FindChildByName|
+|GetID|Action: </br>Parameters: </br>Returns: |
+|GetName|Action: </br>Parameters: </br>Returns: |
+|SetName|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|HasTag|Action: </br>Parameters: </br>Returns: |
+|GetTransform|Action: </br>Parameters: </br>Returns: |
+|AddSprite|Action: </br>Parameters: </br>Returns: |
+|GetSprite|Action: </br>Parameters: </br>Returns: |
+|GetCamera|Action: </br>Parameters: </br>Returns: |
+|GetAnimation|Action: </br>Parameters: </br>Returns: |
+|GetAudio|Action: </br>Parameters: </br>Returns: |
+|GetButton|Action: </br>Parameters: </br>Returns: |
+|GetCanvas|Action: </br>Parameters: </br>Returns: |
+|GetText|Action: </br>Parameters: </br>Returns: |
+|GetCharacterController|Action: </br>Parameters: </br>Returns: |
+|GetRigidBody|Action: </br>Parameters: </br>Returns: |
+|GetBoxColliders|Action: </br>Parameters: </br>Returns: |
+|GetBoxCollider|Action: </br>Parameters: </br>Returns: |
+|GetFirstChild|Action: </br>Parameters: </br>Returns: |
+|HasChildren|Action: </br>Parameters: </br>Returns: |
+|GetChildren|Action: </br>Parameters: </br>Returns: |
+|HasScript|Action: </br>Parameters: </br>Returns: |
+|FindChildByName|Action: </br>Parameters: </br>Returns: |
 
 Transform<br/>
-    |GetParent|
-    |GetParentID|
-    |GetID|
-    |SetPosition|
-    |GetPosition|
-    |GetTruePosition|
-    |SetRotation|
-    |GetRotation|
-    |SetScale|
-    |GetScale|
-    |LookAt|
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
+|SetPosition|Action: </br>Parameters: </br>Returns: |
+|GetPosition|Action: </br>Parameters: </br>Returns: |
+|GetTruePosition|Action: </br>Parameters: </br>Returns: |
+|SetRotation|Action: </br>Parameters: </br>Returns: |
+|GetRotation|Action: </br>Parameters: </br>Returns: |
+|SetScale|Action: </br>Parameters: </br>Returns: |
+|GetScale|Action: </br>Parameters: </br>Returns: |
+|LookAt|Action: </br>Parameters: </br>Returns: |
 
 Sprite<br/>
-    |SetActive|
-    |IsActive|
-    |GetParent|
-    |GetParentID|
-    |GetID|
-    |SetTexture|
-    |GetPath|
-    |SetScale|
-    |GetScale|
-    |GetTextureWidth|
-    |GetTextureHeight|	
-    |SetTintColor|
-    |GetTintColor|
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
+|SetTexture|Action: </br>Parameters: </br>Returns: |
+|GetPath|Action: </br>Parameters: </br>Returns: |
+|SetScale|Action: </br>Parameters: </br>Returns: |
+|GetScale|Action: </br>Parameters: </br>Returns: |
+|GetTextureWidth|Action: </br>Parameters: </br>Returns: |
+|GetTextureHeight|Action: </br>Parameters: </br>Returns: |
+|SetTintColor|Action: </br>Parameters: </br>Returns: |
+|GetTintColor|Action: </br>Parameters: </br>Returns: |
 
 Audio<br/>
-    |GetParent|
-    |GetParentID|
-    |SetActive|
-    |IsActive|
-    |GetID|
-    |IsMusicPlaying|
-    |Play|
-    |Pause|
-    |Stop|
-    |StopAll|
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
+|IsMusicPlaying|Action: </br>Parameters: </br>Returns: |
+|Play|Action: </br>Parameters: </br>Returns: |
+|Pause|Action: </br>Parameters: </br>Returns: |
+|Stop|Action: </br>Parameters: </br>Returns: |
+|StopAll|Action: </br>Parameters: </br>Returns: |
 
 Animation<br/>
-    |GetParent|
-    |GetParentID|
-    |SetActive|
-    |IsActive|
-    |GetID|
-    |Play|
-    |Stop|
-    |StopAll|
-    |IsPlaying|
-    |HasAnimation|
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
+|Play|Action: </br>Parameters: </br>Returns: |
+|Stop|Action: </br>Parameters: </br>Returns: |
+|StopAll|Action: </br>Parameters: </br>Returns: |
+|IsPlaying|Action: </br>Parameters: </br>Returns: |
+|HasAnimation|Action: </br>Parameters: </br>Returns: |
 
 EventParameter<br/>
-    |type|
-    |string|
-    |int|
-    |long|
-    |float|
-    |double|
-    |bool|
-    |Vector2|
+|type|Action: </br>Parameters: </br>Returns: |
+|string|Action: </br>Parameters: </br>Returns: |
+|int|Action: </br>Parameters: </br>Returns: |
+|long|Action: </br>Parameters: </br>Returns: |
+|float|Action: </br>Parameters: </br>Returns: |
+|double|Action: </br>Parameters: </br>Returns: |
+|bool|Action: </br>Parameters: </br>Returns: |
+|Vector2|Action: </br>Parameters: </br>Returns: |
 
 
 RigidBody<br/>
-    |SetActive|
-    |IsActive|
-    |GetParent|
-    |GetParentID|
-    |GetID|
-    |SetMass|
-    |GetMass|
-    |SetGravity|
-    |GetGravity|
-    |SetFallingGravity|
-    |GetFallingGravity|
-    |SetFriction|
-    |GetFriction|
-    |SetAngularDrag|
-    |GetAngularDrag|
-    |SetAngularVelocity|
-    |GetAngularVelocity|
-    |SetTorquesAllowed|
-    |TorquesAllowed|
-    |AddForce|
-    |AddTorque|
-    |GetVelocity|
-    |SetPendingForces|
-    |GetPendingForces|
-    |SetTerminalVelocity|
-    |GetTerminalVelocity|
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
+|SetMass|Action: </br>Parameters: </br>Returns: |
+|GetMass|Action: </br>Parameters: </br>Returns: |
+|SetGravity|Action: </br>Parameters: </br>Returns: |
+|GetGravity|Action: </br>Parameters: </br>Returns: |
+|SetFallingGravity|Action: </br>Parameters: </br>Returns: |
+|GetFallingGravity|Action: </br>Parameters: </br>Returns: |
+|SetFriction|Action: </br>Parameters: </br>Returns: |
+|GetFriction|Action: </br>Parameters: </br>Returns: |
+|SetAngularDrag|Action: </br>Parameters: </br>Returns: |
+|GetAngularDrag|Action: </br>Parameters: </br>Returns: |
+|SetAngularVelocity|Action: </br>Parameters: </br>Returns: |
+|GetAngularVelocity|Action: </br>Parameters: </br>Returns: |
+|SetTorquesAllowed|Action: </br>Parameters: </br>Returns: |
+|TorquesAllowed|Action: </br>Parameters: </br>Returns: |
+|AddForce|Action: </br>Parameters: </br>Returns: |
+|AddTorque|Action: </br>Parameters: </br>Returns: |
+|GetVelocity|Action: </br>Parameters: </br>Returns: |
+|SetPendingForces|Action: </br>Parameters: </br>Returns: |
+|GetPendingForces|Action: </br>Parameters: </br>Returns: |
+|SetTerminalVelocity|Action: </br>Parameters: </br>Returns: |
+|GetTerminalVelocity|Action: </br>Parameters: </br>Returns: |
 
 
 
 BoxCollider<br/>
-    |GetParent|
-    |GetParentID|
-    |SetActive|
-    |IsActive|
-    |GetID|
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
 
 
 CharacterController<br/>
-    |MoveToward|
-    |GetParent|
-    |GetParentID|
-    |SetActive|
-    |IsActive|
-    |GetID|
+|MoveToward|Action: </br>Parameters: </br>Returns: |
+|GetParent|Action: </br>Parameters: </br>Returns: |
+|GetParentID|Action: </br>Parameters: </br>Returns: |
+|SetActive|Action: </br>Parameters: </br>Returns: |
+|IsActive|Action: </br>Parameters: </br>Returns: |
+|GetID|Action: </br>Parameters: </br>Returns: |
 
 
 MappingContext<br/>
-    |Fired|
-    |ActionPressed|
-    |GetName|
+|Fired|Action: </br>Parameters: </br>Returns: |
+|ActionPressed|Action: </br>Parameters: </br>Returns: |
+|GetName|Action: </br>Parameters: </br>Returns: |
 
 
 

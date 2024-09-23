@@ -83,7 +83,7 @@ namespace FlatEngine
 		m_b_paused = false;
 		m_framesCounted = 0;
 
-		LoadScene(m_startedScene);
+		FL::LoadScene("..\\engine\\tempFiles\\tempScene.scn", true);
 	}
 
 	void GameLoop::Pause()

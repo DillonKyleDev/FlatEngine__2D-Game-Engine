@@ -27,9 +27,7 @@ namespace FlatEngine
 	}
 
 	void SceneManager::SaveScene(Scene *scene, std::string filepath)
-	{
-		m_loadedScenePath = filepath;
-		
+	{		
 		std::ofstream file_obj;
 		std::ifstream ifstream(filepath);
 
@@ -62,9 +60,17 @@ namespace FlatEngine
 		SaveScene(&m_loadedScene, m_loadedScenePath);
 	}
 
-	bool SceneManager::LoadScene(std::string filepath)
+	bool SceneManager::LoadScene(std::string filepath, bool b_isTemp)
 	{
-		std::string fileName = GetFilenameFromPath(filepath, false);
+		std::string fileName = "";
+		if (b_isTemp)
+		{
+			fileName = GetLoadedScene()->GetName();
+		}
+		else
+		{
+			fileName = GetFilenameFromPath(filepath, false);
+		}
 		bool b_success = true;
 
 		m_loadedScene.UnloadECSManager();
@@ -78,10 +84,13 @@ namespace FlatEngine
 		if (file_obj.good())
 		{
 			std::string line;
-			while (!ifstream.eof()) {
+			while (!ifstream.eof()) 
+			{
 				std::getline(ifstream, line);
 				if (line != "")
+				{
 					fileContent.append(line + "\n");
+				}
 			}
 		}
 
@@ -90,9 +99,13 @@ namespace FlatEngine
 		if (file_obj.good() && fileContent != "")
 		{
 			m_loadedScene = Scene();
-			m_loadedScenePath = filepath;
+			if (!b_isTemp)
+			{
+				m_loadedScenePath = filepath;
+				m_loadedScene.SetPath(filepath);
+			}
+
 			m_loadedScene.SetName(fileName);
-			m_loadedScene.SetPath(filepath);
 
 			json fileContentJson = json::parse(fileContent);
 

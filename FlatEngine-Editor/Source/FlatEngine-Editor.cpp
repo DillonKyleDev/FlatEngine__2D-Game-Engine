@@ -41,7 +41,6 @@ class EditorGameLoop : public FL::GameLoop
 public:
 	EditorGameLoop() 
 	{
-		m_tempSaveSceneFilePath = FL::GetDir("tempFiles") + "tempScene.scn";
 	};
 	~EditorGameLoop() {};
 
@@ -50,7 +49,7 @@ public:
 		FL::AddProfilerProcess("GameLoop (variable executions)");		
 		FL::AddProfilerProcess("Not GameLoop");
 		FL::AddProfilerProcess("Collision Testing");		
-		FL::SaveScene(FL::GetLoadedScene(), m_tempSaveSceneFilePath);
+		FL::SaveScene(FL::GetLoadedScene(), "..\\engine\\tempFiles\\tempScene.scn");
 		FL::GameLoop::Start();
 	};
 	void Stop()
@@ -58,7 +57,6 @@ public:
 		FL::RemoveProfilerProcess("GameLoop (variable executions)");
 		FL::RemoveProfilerProcess("Not GameLoop");
 		FL::RemoveProfilerProcess("Collision Testing");
-		FL::LoadScene(m_tempSaveSceneFilePath);
 		FL::GameLoop::Stop();
 	};
 	void Update()
@@ -70,7 +68,6 @@ public:
 		//
 	};
 private:
-	std::string m_tempSaveSceneFilePath;
 };
 
 
@@ -102,22 +99,22 @@ public:
 			RunOnceAfterInitialization();
 
 			static Uint32 frameStart = FL::GetEngineTime();
-			//Uint32 renderStartTime = 0;
-			//renderStartTime = FL::GetEngineTime(); // Profiler
+			Uint32 renderStartTime = 0;
+			renderStartTime = FL::GetEngineTime(); // Profiler
 			b_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
-			//FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
+			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
 
 			if ((GameLoopStarted() && !GameLoopPaused()) || (GameLoopPaused() && A_GameLoop->IsFrameSkipped()))
 			{
 				// Profiler
-				//Uint32 updateLoopStart = 0;
-				//static Uint32 updateLoopEnd = 0;				
-				//updateLoopStart = FL::GetEngineTime();
-				//Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
-				//FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
-				//updateLoopEnd = updateLoopStart;
+				Uint32 updateLoopStart = 0;
+				static Uint32 updateLoopEnd = 0;				
+				updateLoopStart = FL::GetEngineTime();
+				Uint32 everythingElseHangTime = updateLoopStart - updateLoopEnd;
+				FL::AddProcessData("Not GameLoop", (float)everythingElseHangTime);
+				updateLoopEnd = updateLoopStart;
 
 				float frameTime = (float)(FL::GetEngineTime() - frameStart) / 1000.0f; // actual deltaTime (in seconds)
 
@@ -134,9 +131,9 @@ public:
 				if (!GameLoopPaused() || A_GameLoop->IsFrameSkipped())
 				{
 					A_GameLoop->SetFrameSkipped(false);
-
+					
 					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
-					{
+					{						
 						FL::HandleEvents(b_hasQuit);
 						A_GameLoop->Update();
 
@@ -154,9 +151,9 @@ public:
 					SDL_Delay((Uint32)(A_GameLoop->m_deltaTime - frameTime) * 1000);
 				}
 
-				//Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
-				//FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);				
-				//updateLoopEnd = FL::GetEngineTime();
+				Uint32 hangTime = FL::GetEngineTime() - updateLoopStart;
+				FL::AddProcessData("GameLoop (variable executions)", (float)hangTime);				
+				updateLoopEnd = FL::GetEngineTime();
 			}
 			else
 			{

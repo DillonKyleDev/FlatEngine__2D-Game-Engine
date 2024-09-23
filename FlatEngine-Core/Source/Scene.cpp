@@ -73,8 +73,7 @@ namespace FlatEngine
 		m_sceneObjects.emplace(id, sceneObject);
 		KeepNextGameObjectIDUpToDate(id);
 
-		if (sceneObject.HasComponent("BoxCollider") ||
-			(sceneObject.HasComponent("TileMap") && sceneObject.GetTileMap()->GetCollisionAreas().size() > 0))
+		if (sceneObject.HasComponent("BoxCollider") || (sceneObject.HasComponent("TileMap") && sceneObject.GetTileMap()->GetCollisionAreas().size() > 0))
 		{
 			UpdateColliderPairs();
 		}

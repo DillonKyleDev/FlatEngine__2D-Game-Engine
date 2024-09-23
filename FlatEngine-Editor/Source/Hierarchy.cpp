@@ -185,7 +185,7 @@ namespace FlatGui
 	// Add GameObject to Hierarchy viewport
 	void AddObjectToHierarchy(GameObject& currentObject, const char* charName, int& node_clicked, long& queuedForDelete, float indent)
 	{
-		ImGuiTreeNodeFlags node_flags;
+		ImGuiTreeNodeFlags nodeFlags;
 		long focusedObjectID = GetFocusedGameObjectID();
 		bool b_objectFocused = focusedObjectID == currentObject.GetID();
 
@@ -212,11 +212,11 @@ namespace FlatGui
 		{
 			if (currentObject.HasChildren())
 			{
-				node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected;
+				nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected;
 			}
 			else
 			{
-				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
+				nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Selected;
 			}
 		}
 		// Not focused
@@ -224,11 +224,11 @@ namespace FlatGui
 		{
 			if (currentObject.HasChildren())
 			{
-				node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen;
+				nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_DefaultOpen;
 			}
 			else
 			{
-				node_flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+				nodeFlags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 			}
 		}
 
@@ -305,7 +305,7 @@ namespace FlatGui
 			ImGui::EndDragDropTarget();
 		}
 
-		bool node_open = false;
+		bool b_nodeOpen = false;
 
 		ImGui::PushStyleColor(ImGuiCol_Header, FL::GetColor("transparent"));
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, FL::GetColor("transparent"));
@@ -329,12 +329,12 @@ namespace FlatGui
 			}
 
 			ImGui::SetNextItemOpen(FG_leafExpandedTracker.at(currentObject.GetID()));
-			node_open = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
-			FG_leafExpandedTracker.at(currentObject.GetID()) = node_open;
+			b_nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), nodeFlags, charName);
+			FG_leafExpandedTracker.at(currentObject.GetID()) = b_nodeOpen;
 		}
 		else
 		{
-			ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), node_flags, charName);
+			ImGui::TreeNodeEx((void*)(intptr_t)currentObject.GetID(), nodeFlags, charName);
 		}
 
 		// Don't change the background color of the tree node, change the background of the table row because it will fill the entire rect
@@ -522,7 +522,7 @@ namespace FlatGui
 			FL::PopMenuStyles();
 		}
 		
-		if (currentObject.HasChildren() && node_open)
+		if (currentObject.HasChildren() && b_nodeOpen)
 		{
 			std::vector<long> childrenIDs = currentObject.GetChildren();
 			

@@ -4,12 +4,21 @@
 function Awake() 
     PlayerController[my_id] = 
     {
+        gameScore = 0,
+        scoreText = GetObjectByName("CurrentScore"),
         mappingContext = GetMappingContext("MC_Player"),
         characterController = this_object:GetCharacterController(),
         transform = this_object:GetTransform(),
         sprite = this_object:GetSprite(),
-        rigidBody = this_object:GetRigidBody()
-    }        
+        rigidBody = this_object:GetRigidBody(),
+        animation = this_object:GetAnimation(),
+        boxCollider = this_object:GetBoxCollider(),
+        healthBar = GetObjectByName("CurrentHealth"),
+        shootTimer = 500,
+        lastShotTime = 0,
+        totalHealth = 100,
+        currentHealth = 100
+    }    
 end 
 
 function Start()     
@@ -21,10 +30,33 @@ function Update()
     handleAttacks();    
 end 
 
+function UpdatePlayerHealthbar(id)
+    local data = PlayerController[id]
+
+    local healthSprite = data.healthBar:GetSprite()
+    local spriteScale = healthSprite:GetScale()
+    local healthScale = data.currentHealth / data.totalHealth
+    healthSprite:SetScale(Vector2:new(healthScale, spriteScale:y()))
+end
+
+function DamagePlayer(id, amount)
+    local data = PlayerController[id]    
+
+    data.currentHealth = data.currentHealth - amount
+    data.animation:Play("TakeDamage")
+    UpdatePlayerHealthbar(id)
+
+    if data.currentHealth <= 0 then
+        data.boxCollider:SetActive(false)
+        data.animation:Play("ShipExplode")     
+    end
+end
+
 function handleAttacks()
     local data = PlayerController[my_id]
     
-    if data.mappingContext:Fired("IA_Shoot") then
+    if data.mappingContext:ActionPressed("IA_Shoot") and (GetTime() - data.lastShotTime > data.shootTimer) then
+        data.lastShotTime = GetTime()
         local blasterRound = Instantiate("BlasterRound", data.transform:GetPosition())
         blasterRound:GetRigidBody():AddForce(Vector2:new(0,1), 10)
     end
@@ -79,6 +111,14 @@ function handleMovement()
     end
 
     data.sprite:SetScale(Vector2:new(1 - (xVel * 4), 1))
+end
+
+function AddToScore(amount)
+    playerID = GetObjectByName("Player"):GetID()
+    local data = PlayerController[playerID]
+
+    data.gameScore = data.gameScore + amount
+    data.scoreText:GetText():SetText(IntToString(data.gameScore)) 
 end
 
 function OnBoxCollision(collidedWith)    

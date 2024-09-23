@@ -84,8 +84,8 @@ namespace FlatEngine
 	{		
 		Scene* loadedScene = FL::GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
-		FL::Camera* primaryCamera;
-		Transform* cameraTransform;
+		FL::Camera* primaryCamera = nullptr;
+		Transform* cameraTransform = nullptr;
 
 		if (loadedScene != nullptr)
 		{
@@ -111,7 +111,11 @@ namespace FlatEngine
 		
 		if (primaryCamera != nullptr)
 		{
-			cameraTransform = primaryCamera->GetParent()->GetTransform();
+			GameObject* owner = primaryCamera->GetParent();
+			if (owner != nullptr)
+			{
+				cameraTransform = owner->GetTransform();
+			}
 			cameraWidth = primaryCamera->GetWidth();
 			cameraHeight = primaryCamera->GetHeight();
 			F_gameViewGridStep.x = primaryCamera->GetZoom();
@@ -206,10 +210,21 @@ namespace FlatEngine
 				if (b_isIntersecting)
 				{
 					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
+					{
 						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+					}
 					else
+					{
 						drawSplitter->SetCurrentChannel(draw_list, 0);
-					AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, Vector2(scale.x * spriteScale.x, scale.y * spriteScale.y), b_scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+					}
+
+					spriteScale.x *= scale.x;
+					spriteScale.y *= scale.y;
+
+					if (spriteScale.x > 0 && spriteScale.y > 0)
+					{
+						AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, spriteScale, b_scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+					}
 				}
 			}
 

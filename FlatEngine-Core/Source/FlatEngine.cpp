@@ -637,11 +637,11 @@ namespace FlatEngine
 		F_sceneToBeLoaded = scenePath;
 	}
 
-	void LoadScene(std::string filepath)
+	void LoadScene(std::string filepath, bool b_isTemp)
 	{		
 		F_SoundController.StopMusic();
 
-		if (F_SceneManager.LoadScene(filepath))
+		if (F_SceneManager.LoadScene(filepath, b_isTemp))
 		{
 			if (F_SceneManager.GetLoadedScene() != nullptr)
 			{

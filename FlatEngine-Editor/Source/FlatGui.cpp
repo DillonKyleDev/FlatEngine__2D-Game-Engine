@@ -689,21 +689,14 @@ namespace FlatGui
 				bool b_spriteScalesWithZoom = true;
 				int renderOrder = sprite->GetRenderOrder();
 				Vector4 tintColor = sprite->GetTintColor();
-				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());
-				Vector2 spriteScaleFinal = spriteScale;			
+				std::string invisibleButtonID = "GameObjectSelectorButton_" + std::to_string(sprite->GetID());	
 				ImGuiIO& inputOutput = ImGui::GetIO();
 
-				if (scale.x != 0)
-				{
-					spriteScaleFinal.x *= scale.x;
-				}
-				if (scale.y != 0)
-				{
-					spriteScaleFinal.y *= scale.y;
-				}
+				spriteScale.x *= scale.x;
+				spriteScale.y *= scale.y;
 
-				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * spriteScaleFinal.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * spriteScaleFinal.y));
-				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * gridStep * spriteScaleFinal.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * gridStep * spriteScaleFinal.y);											
+				Vector2 positionOnScreen = Vector2(FG_sceneViewCenter.x + (position.x * gridStep) - ((offset.x * FL::F_spriteScaleMultiplier * gridStep) * spriteScale.x), FG_sceneViewCenter.y - (position.y * gridStep) - ((offset.y * FL::F_spriteScaleMultiplier * gridStep) * spriteScale.y));
+				Vector2 buttonSize = Vector2(spriteTextureWidth * FL::F_spriteScaleMultiplier * gridStep * spriteScale.x, spriteTextureHeight * FL::F_spriteScaleMultiplier * gridStep * spriteScale.y);
 				
 				AddSceneViewMouseControls(invisibleButtonID, positionOnScreen, buttonSize, FG_sceneViewScrolling, FG_sceneViewCenter, FG_sceneViewGridStep, FL::GetColor32("transparent"), false, 0, true);			
 				const bool b_isClicked = ImGui::IsItemClicked();
@@ -720,8 +713,11 @@ namespace FlatGui
 				{
 					drawSplitter->SetCurrentChannel(drawList, 0);
 				}
-				
-				FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, Vector2(transformScale.x * spriteScale.x, transformScale.y * spriteScale.y), b_spriteScalesWithZoom, gridStep, drawList, rotation, ImGui::GetColorU32(tintColor));
+
+				if (spriteScale.x > 0 && spriteScale.y > 0)
+				{
+					FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, spriteScale, b_spriteScalesWithZoom, gridStep, drawList, rotation, ImGui::GetColorU32(tintColor));
+				}
 			}
 
 			if (text != nullptr)
@@ -1494,106 +1490,109 @@ namespace FlatGui
 
 	void AddSceneViewMouseControls(std::string buttonID, Vector2 startPos, Vector2 size, Vector2 &scrolling, Vector2 centerPoint, Vector2 &gridStep, Uint32 rectColor, bool b_filled, ImGuiButtonFlags buttonFlags, bool b_allowOverlap, bool b_weightedScroll, float zoomMultiplier, float minGridStep, float maxGridStep)
 	{
-		ImGuiIO& inputOutput = ImGui::GetIO();
-		Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
-
-		// For calculating scrolling mouse position and what vector to zoom to
-		DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);
-		DYNAMIC_VIEWPORT_HEIGHT = trunc(endPos.y - startPos.y);
-		
-		if (b_filled)
+		if (size.x > 0 && size.y > 0)
 		{
-			ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
-		}
-		else
-		{
-			ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
-		}
+			ImGuiIO& inputOutput = ImGui::GetIO();
+			Vector2 endPos = Vector2(startPos.x + size.x, startPos.y + size.y);
 
-		FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool b_isHovered = ImGui::IsItemHovered();
-		const bool b_isActive = ImGui::IsItemActive();
-		const bool b_isClicked = ImGui::IsItemClicked();
-		
-		const float mouse_threshold_for_pan = 0.0f;
-		if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-		{			
-			// This does not seem to work properly when resizing the window
-			// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
-			scrolling.x += inputOutput.MouseDelta.x;
-			scrolling.y += inputOutput.MouseDelta.y;
+			// For calculating scrolling mouse position and what vector to zoom to
+			DYNAMIC_VIEWPORT_WIDTH = trunc(endPos.x - startPos.x);
+			DYNAMIC_VIEWPORT_HEIGHT = trunc(endPos.y - startPos.y);
 
-			SaveCurrentProject();
-		}
-
-		// Show cursor position in scene view when pressing Alt
-		if (b_isHovered && inputOutput.KeyAlt)
-		{
-			RenderSceneViewTooltip();
-		}
-
-		// Get scroll amount for changing zoom level of scene view
-		Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
-		float scrollInput = inputOutput.MouseWheel;
-		float weight = 0.01f;
-		float signedMousePosX = mousePos.x - centerPoint.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
-		float signedMousePosY = mousePos.y - centerPoint.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
-		float zoomSpeed = 1;		
-		float finalZoomSpeed = zoomSpeed * zoomMultiplier;
-
-		if (inputOutput.KeyCtrl)
-		{
-			finalZoomSpeed += zoomMultiplier;
-		}
-		
-		if (b_isHovered)
-		{
-			if (scrollInput > 0)
+			if (b_filled)
 			{
-				if (b_weightedScroll)
-				{
-					scrolling.x -= trunc(signedMousePosX * weight);
-					scrolling.y -= trunc(signedMousePosY * weight);
-				}
-				if (gridStep.x + finalZoomSpeed < maxGridStep)
-				{
-					gridStep.x += finalZoomSpeed;					
-				}
-				else
-				{
-					gridStep.x = maxGridStep;
-				}
-				if (gridStep.y + finalZoomSpeed < maxGridStep)
-				{
-					gridStep.y += finalZoomSpeed;
-				}
-				else
-				{
-					gridStep.y = maxGridStep;
-				}
+				ImGui::GetWindowDrawList()->AddRectFilled(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
 			}
-			else if (scrollInput < 0)
+			else
 			{
-				if (b_weightedScroll)
+				ImGui::GetWindowDrawList()->AddRect(startPos, Vector2(startPos.x + size.x, startPos.y + size.y), rectColor);
+			}
+
+			FL::RenderInvisibleButton(buttonID.c_str(), startPos, size, b_allowOverlap, false, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+			const bool b_isHovered = ImGui::IsItemHovered();
+			const bool b_isActive = ImGui::IsItemActive();
+			const bool b_isClicked = ImGui::IsItemClicked();
+
+			const float mouse_threshold_for_pan = 0.0f;
+			if (b_isActive && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+			{
+				// This does not seem to work properly when resizing the window
+				// inputOutput.MousePos and MouseDelta give incorrect values after upon dragging the mouse
+				scrolling.x += inputOutput.MouseDelta.x;
+				scrolling.y += inputOutput.MouseDelta.y;
+
+				SaveCurrentProject();
+			}
+
+			// Show cursor position in scene view when pressing Alt
+			if (b_isHovered && inputOutput.KeyAlt)
+			{
+				RenderSceneViewTooltip();
+			}
+
+			// Get scroll amount for changing zoom level of scene view
+			Vector2 mousePos = Vector2(inputOutput.MousePos.x, inputOutput.MousePos.y);
+			float scrollInput = inputOutput.MouseWheel;
+			float weight = 0.01f;
+			float signedMousePosX = mousePos.x - centerPoint.x - (DYNAMIC_VIEWPORT_WIDTH / 2);
+			float signedMousePosY = mousePos.y - centerPoint.y - (DYNAMIC_VIEWPORT_HEIGHT / 2);
+			float zoomSpeed = 1;
+			float finalZoomSpeed = zoomSpeed * zoomMultiplier;
+
+			if (inputOutput.KeyCtrl)
+			{
+				finalZoomSpeed += zoomMultiplier;
+			}
+
+			if (b_isHovered)
+			{
+				if (scrollInput > 0)
 				{
-					scrolling.x += trunc(signedMousePosX * weight);
-					scrolling.y += trunc(signedMousePosY * weight);
+					if (b_weightedScroll)
+					{
+						scrolling.x -= trunc(signedMousePosX * weight);
+						scrolling.y -= trunc(signedMousePosY * weight);
+					}
+					if (gridStep.x + finalZoomSpeed < maxGridStep)
+					{
+						gridStep.x += finalZoomSpeed;
+					}
+					else
+					{
+						gridStep.x = maxGridStep;
+					}
+					if (gridStep.y + finalZoomSpeed < maxGridStep)
+					{
+						gridStep.y += finalZoomSpeed;
+					}
+					else
+					{
+						gridStep.y = maxGridStep;
+					}
 				}
-				if (gridStep.x - finalZoomSpeed > minGridStep)
+				else if (scrollInput < 0)
 				{
-					gridStep.x -= finalZoomSpeed;
-				}
-				else
-				{
-					gridStep.x = minGridStep;
-				}
-				if (gridStep.y - finalZoomSpeed > minGridStep)
-				{
-					gridStep.y -= finalZoomSpeed;
-				}
-				else
-				{
-					gridStep.y = minGridStep;
+					if (b_weightedScroll)
+					{
+						scrolling.x += trunc(signedMousePosX * weight);
+						scrolling.y += trunc(signedMousePosY * weight);
+					}
+					if (gridStep.x - finalZoomSpeed > minGridStep)
+					{
+						gridStep.x -= finalZoomSpeed;
+					}
+					else
+					{
+						gridStep.x = minGridStep;
+					}
+					if (gridStep.y - finalZoomSpeed > minGridStep)
+					{
+						gridStep.y -= finalZoomSpeed;
+					}
+					else
+					{
+						gridStep.y = minGridStep;
+					}
 				}
 			}
 		}

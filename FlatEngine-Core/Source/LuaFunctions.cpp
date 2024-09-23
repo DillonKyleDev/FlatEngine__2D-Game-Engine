@@ -107,6 +107,10 @@ namespace FlatEngine
 			std::map<int, bool> newMap = std::map<int, bool>();
 			return newMap;
 		};*/
+		F_Lua["IntToString"] = [](int value)
+		{
+			return std::to_string(value);
+		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
 			LoadLuaGameObject(GetObjectById(ID));
@@ -312,6 +316,15 @@ namespace FlatEngine
 			"GetTextureHeight", &Sprite::GetTextureHeight,			
 			"SetTintColor", &Sprite::SetTintColor,
 			"GetTintColor", &Sprite::GetTintColor
+		);
+
+		F_Lua.new_usertype<Text>("Text",
+			"GetParent", &Text::GetParent,
+			"GetParentID", &Text::GetParentID,
+			"SetActive", &Text::SetActive,
+			"IsActive", &Text::IsActive,
+			"GetID", &Text::GetID,
+			"SetText", &Text::SetText
 		);
 
 		F_Lua.new_usertype<Audio>("Audio",

@@ -12,8 +12,7 @@ F_Dirs = {
 	scenes = "..\\assets\\scenes\\",
 	scripts = "..\\assets\\scripts\\",	-- in-game lua scripting
 	tileTextures = "..\\engine\\images\\tileTextures\\",
-	tileSets = "..\\assets\\tileSets\\",
-	tempFiles = "..\\engine\\tempFiles\\",
+	tileSets = "..\\assets\\tileSets\\"
 }
 
 F_Paths = {
