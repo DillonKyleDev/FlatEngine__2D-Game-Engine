@@ -674,10 +674,10 @@ Parameters: min - the lowest value (inclusive), max - the highest value (inclusi
 Returns: int<br/>
 
 <h1>UNDER CONSTRUCTION</h1>
-### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
-<br/>
 
-Vector2<br/>
+### FlatEngine classes exposed to Lua and their methods (Lua usertypes)
+
+## Vector2
 
 |Method|Details|
 |:-----|-------|
@@ -688,7 +688,7 @@ Vector2<br/>
 |y|Action: </br>Parameters: </br>Returns: |
 |SetXY(float x, float y)|Action: </br>Parameters: </br>Returns: |
 
-Vector4<br/>
+## Vector4
 |Vector4(), Vector4(float x, float y, float z, float w)|Action: Constructors</br></br>Parameters: x,y,z,w - values to set x, y, z, and w to.</br>Returns: Vector4
 |SetX|Action: </br>Parameters: </br>Returns: |
 |x|Action: </br>Parameters: </br>Returns: |
@@ -701,7 +701,7 @@ Vector4<br/>
 |SetXYZW|Action: </br>Parameters: </br>Returns: |
 
 
-GameObject<br/>
+## GameObject
 |GetID|Action: </br>Parameters: </br>Returns: |
 |GetName|Action: </br>Parameters: </br>Returns: |
 |SetName|Action: </br>Parameters: </br>Returns: |
@@ -729,7 +729,7 @@ GameObject<br/>
 |HasScript|Action: </br>Parameters: </br>Returns: |
 |FindChildByName|Action: </br>Parameters: </br>Returns: |
 
-Transform<br/>
+## Transform
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |GetID|Action: </br>Parameters: </br>Returns: |
@@ -742,7 +742,7 @@ Transform<br/>
 |GetScale|Action: </br>Parameters: </br>Returns: |
 |LookAt|Action: </br>Parameters: </br>Returns: |
 
-Sprite<br/>
+## Sprite
 |SetActive|Action: </br>Parameters: </br>Returns: |
 |IsActive|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
@@ -757,7 +757,7 @@ Sprite<br/>
 |SetTintColor|Action: </br>Parameters: </br>Returns: |
 |GetTintColor|Action: </br>Parameters: </br>Returns: |
 
-Audio<br/>
+## Audio
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -769,7 +769,7 @@ Audio<br/>
 |Stop|Action: </br>Parameters: </br>Returns: |
 |StopAll|Action: </br>Parameters: </br>Returns: |
 
-Animation<br/>
+## Animation
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -781,7 +781,7 @@ Animation<br/>
 |IsPlaying|Action: </br>Parameters: </br>Returns: |
 |HasAnimation|Action: </br>Parameters: </br>Returns: |
 
-EventParameter<br/>
+## EventParameter
 |type|Action: </br>Parameters: </br>Returns: |
 |string|Action: </br>Parameters: </br>Returns: |
 |int|Action: </br>Parameters: </br>Returns: |
@@ -791,8 +791,7 @@ EventParameter<br/>
 |bool|Action: </br>Parameters: </br>Returns: |
 |Vector2|Action: </br>Parameters: </br>Returns: |
 
-
-RigidBody<br/>
+## RigidBody
 |SetActive|Action: </br>Parameters: </br>Returns: |
 |IsActive|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
@@ -821,8 +820,7 @@ RigidBody<br/>
 |GetTerminalVelocity|Action: </br>Parameters: </br>Returns: |
 
 
-
-BoxCollider<br/>
+## BoxCollider
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
 |SetActive|Action: </br>Parameters: </br>Returns: |
@@ -830,7 +828,7 @@ BoxCollider<br/>
 |GetID|Action: </br>Parameters: </br>Returns: |
 
 
-CharacterController<br/>
+## CharacterController
 |MoveToward|Action: </br>Parameters: </br>Returns: |
 |GetParent|Action: </br>Parameters: </br>Returns: |
 |GetParentID|Action: </br>Parameters: </br>Returns: |
@@ -839,7 +837,7 @@ CharacterController<br/>
 |GetID|Action: </br>Parameters: </br>Returns: |
 
 
-MappingContext<br/>
+## MappingContext
 |Fired|Action: </br>Parameters: </br>Returns: |
 |ActionPressed|Action: </br>Parameters: </br>Returns: |
 |GetName|Action: </br>Parameters: </br>Returns: |
