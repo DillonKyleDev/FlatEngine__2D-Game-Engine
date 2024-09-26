@@ -197,13 +197,11 @@ The Collision components are not all complete.  The BoxCollider component is com
 
 The RigidBody component is responsible for handling all of the phyiscs that an object can be subjected to.  Using the RigidBody, you can add forces and torques to an object to manipulate its velocity and rotation.  The RigidBody component has the following properties:
 
-Mass:  Determines how difficult it is to change the velocity of the object.
-Gravity Scale: Determines how much gravity the GameObject experiences
-Falling Gravity: Falling gravity is used if you would like your GameObject to have a different gravity going down than it has going down.  This is useful for fine tuning the feeling of a jump or could be used to add a glide or hover mechanic.  Both this and regular Gravity Scale can be freely changed.
-
-
 | Property        | Description |
 |:--------------------|:---------------|
+|Mass|Determines how difficult it is to change the velocity of the object.|
+|Gravity| Determines how much gravity the GameObject experiences.|
+|Falling Gravity| Falling gravity is used if you would like your GameObject to have a different gravity going down than it has going down.  This is useful for fine tuning the feeling of a jump or could be used to add a glide or hover mechanic.  Both this and regular Gravity Scale can be freely changed.|
 |Terminal Velocity|The maximum speed a GameObject can fall due to gravity.|
 |Wind Resistance|The amount that a GameObject is slowed while not grounded.|
 |Friction|The amount that a GameObejct is slowed while grounded.|
