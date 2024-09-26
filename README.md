@@ -184,8 +184,7 @@ The Collision components are not all complete.  The BoxCollider component is com
 |:--------------------|:---------------|
 |Dimensions|The width and height of the collision box.|
 |Offset|The position relative to the Transforms position|
-|Active Layer|This feature is neglected due to the Tags system being in place, but it will be updated when I do the necessary overhaul of the collision system as a whole.
-  Colliders should only interact with other colliders on the same layer.|
+|Active Layer|This feature is neglected due to the Tags system being in place, but it will be updated when I do the necessary overhaul of the collision system as a whole.  Colliders should only interact with other colliders on the same layer.|
 |Is Continuous?|Determines how often this collider needs to be checked for collision. Currently it is set to every 10 frames for non continuous colliders, this is subject to change.|
 |Is Static?|If a collider is static it may not need to be checked or updated as often as non static colliders, this saves on performance.|
 |Is Solid?|Determines whether other collisiders should pass through this collider or if it is just a trigger.|
