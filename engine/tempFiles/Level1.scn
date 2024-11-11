@@ -244,7 +244,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "animationData": [
                         {
                             "name": "TakeDamage",
@@ -257,6 +257,19 @@
                     ],
                     "id": 115,
                     "type": "Animation"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 209,
+                    "soundData": [
+                        {
+                            "b_isMusic": false,
+                            "name": "TakeHit",
+                            "path": "..\\assets\\audio\\spark.wav"
+                        }
+                    ],
+                    "type": "Audio"
                 }
             ],
             "id": 4,
@@ -688,22 +701,33 @@
         {
             "_isActive": true,
             "_isPrefab": false,
-            "children": [
-                34
-            ],
+            "children": [],
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 55,
+                    "_isCollapsed": true,
+                    "id": 57,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": 22.950000762939453,
+                    "yPos": 0.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 171,
+                    "soundData": [
+                        {
+                            "b_isMusic": true,
+                            "name": "ThemeMusic",
+                            "path": "..\\assets\\audio\\tetris.wav"
+                        }
+                    ],
+                    "type": "Audio"
                 }
             ],
             "id": 14,
@@ -725,11 +749,11 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "GameManager",
+            "name": "Music",
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": 22.950000762939453,
+            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -1964,7 +1988,7 @@
                     "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": 22.950000762939453,
+                    "yOrigin": 0.0,
                     "yPos": 0.0,
                     "yScale": 1.0
                 },
@@ -2008,7 +2032,7 @@
                 "TerrainTrigger": false
             },
             "name": "PropSpawner",
-            "parent": 14,
+            "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,
@@ -2475,7 +2499,7 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "Score",
+            "name": "ScoreText",
             "parent": 38,
             "prefabName": "",
             "spawnLocationX": -7.0,
@@ -2749,11 +2773,11 @@
                     "id": 152,
                     "rotation": 0.0,
                     "type": "Transform",
-                    "xOrigin": -0.800000011920929,
-                    "xPos": 4.5,
+                    "xOrigin": 0.0,
+                    "xPos": -0.30000001192092896,
                     "xScale": 1.0,
                     "yOrigin": -2.0,
-                    "yPos": 0.0,
+                    "yPos": -1.600000023841858,
                     "yScale": 1.0
                 },
                 {
@@ -2762,7 +2786,7 @@
                     "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
                     "fontSize": 100,
                     "id": 153,
-                    "pivotPoint": "PivotLeft",
+                    "pivotPoint": "PivotCenter",
                     "renderOrder": 0,
                     "text": "0",
                     "tintColorW": 1.0,
@@ -2770,7 +2794,7 @@
                     "tintColorY": 0.9019607901573181,
                     "tintColorZ": 0.0,
                     "type": "Text",
-                    "xOffset": 0.0,
+                    "xOffset": 22.0,
                     "yOffset": 41.0
                 }
             ],
@@ -2796,8 +2820,8 @@
             "name": "Score",
             "parent": 45,
             "prefabName": "",
-            "spawnLocationX": 4.5,
-            "spawnLocationY": 0.0,
+            "spawnLocationX": -0.30000001192092896,
+            "spawnLocationY": -1.600000023841858,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -2831,7 +2855,7 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": -0.800000011920929,
+                    "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
                     "yPos": -2.0,
@@ -2877,7 +2901,7 @@
             "name": "ScoreText",
             "parent": 43,
             "prefabName": "",
-            "spawnLocationX": -0.800000011920929,
+            "spawnLocationX": 0.0,
             "spawnLocationY": -2.0,
             "tags": {
                 "Enemy": false,
@@ -3159,7 +3183,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "attachedScript": "",
+                    "attachedScript": "QuitButton",
                     "id": 167,
                     "type": "Script"
                 }
@@ -3280,7 +3304,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 171,
+                    "id": 207,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
@@ -3293,7 +3317,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 172,
+                    "id": 208,
                     "soundData": [
                         {
                             "b_isMusic": false,
@@ -3323,7 +3347,7 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "Audio(50)",
+            "name": "Audios",
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
