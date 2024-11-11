@@ -1,0 +1,8 @@
+.vs/
+bin/
+bin-int
+WindowsApplication/x64/
+Release/
+/Vendor
+/assets/
+assets
