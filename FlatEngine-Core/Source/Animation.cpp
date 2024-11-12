@@ -175,40 +175,6 @@ namespace FlatEngine
 				// While the animation is not over (with a 1 second buffer to catch the last animation keyframes)
 				if (props->animationLength + 1000 > ellapsedTime - animData.startTime)
 				{
-					// Event Animation Frames
-					for (const std::shared_ptr<S_Event>& eventFrame : props->eventProps)
-					{
-						if ((eventFrame->time == 0 && !eventFrame->b_fired) || (!eventFrame->b_fired && (ellapsedTime >= animData.startTime + eventFrame->time || eventFrame->time == 0)))
-						{
-							if (eventFrame->parameters.size() == 0)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
-							}
-							else if (eventFrame->parameters.size() == 1)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0]);
-							}
-							else if (eventFrame->parameters.size() == 2)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1]);
-							}
-							else if (eventFrame->parameters.size() == 3)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2]);
-							}
-							else if (eventFrame->parameters.size() == 4)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3]);
-							}
-							else if (eventFrame->parameters.size() == 5)
-							{
-								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3], eventFrame->parameters[4]);
-							}
-
-							eventFrame->b_fired = true;
-						}
-					}
-
 					// Transform Animation Frames
 					int transformFrameCounter = 0;
 					for (std::vector<std::shared_ptr<S_Transform>>::iterator frame = props->transformProps.begin(); frame != props->transformProps.end(); frame++)
@@ -304,7 +270,7 @@ namespace FlatEngine
 							}
 
 							if (keyframeTime == 0 && !(*frame)->b_fired)
-							{
+							{							
 								if (b_offsetAnimated)
 								{
 									sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
@@ -324,7 +290,7 @@ namespace FlatEngine
 								thisFrameProps->b_fired = true;
 							}
 							else if ((ellapsedTime > lastFrameTime + animData.startTime) && (ellapsedTime < animData.startTime + keyframeTime))
-							{
+							{								
 								std::shared_ptr<S_Sprite> lastFrameProps = (*lastFrame);
 								float timeLeft = (animData.startTime + keyframeTime) - ellapsedTime;
 								float percentDone = (float)(ellapsedTime - animData.startTime - lastFrameTime) / (keyframeTime - lastFrameTime);
@@ -505,6 +471,40 @@ namespace FlatEngine
 								thisFrameProps->b_fired = true;
 							}
 							audioFrameCounter++;
+						}
+					}
+
+					// Event Animation Frames (Do last because if we delete the object, we don't want to do any other Animation things with it.)
+					for (const std::shared_ptr<S_Event>& eventFrame : props->eventProps)
+					{
+						if ((eventFrame->time == 0 && !eventFrame->b_fired) || (!eventFrame->b_fired && (ellapsedTime >= animData.startTime + eventFrame->time || eventFrame->time == 0)))
+						{
+							if (eventFrame->parameters.size() == 0)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName);
+							}
+							else if (eventFrame->parameters.size() == 1)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0]);
+							}
+							else if (eventFrame->parameters.size() == 2)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1]);
+							}
+							else if (eventFrame->parameters.size() == 3)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2]);
+							}
+							else if (eventFrame->parameters.size() == 4)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3]);
+							}
+							else if (eventFrame->parameters.size() == 5)
+							{
+								CallLuaAnimationEventFunction(GetParent(), eventFrame->functionName, eventFrame->parameters[0], eventFrame->parameters[1], eventFrame->parameters[2], eventFrame->parameters[3], eventFrame->parameters[4]);
+							}
+
+							eventFrame->b_fired = true;							
 						}
 					}
 				}

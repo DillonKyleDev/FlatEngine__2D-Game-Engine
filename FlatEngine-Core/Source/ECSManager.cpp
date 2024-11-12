@@ -426,7 +426,7 @@ namespace FlatEngine
 	{
 		bool b_success = false;
 		if (m_Sprites.count(ownerID))
-		{
+		{			
 			m_Sprites.erase(ownerID);			
 			b_success = true;
 		}

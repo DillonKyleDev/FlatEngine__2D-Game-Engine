@@ -72,7 +72,6 @@ namespace FlatEngine
 		CalculatePhysics();
 		HandleCollisions(gridstep, viewportCenter);
 		ApplyPhysics();
-		DeleteObjectsInDeleteQueue();
 	}
 
 	void GameLoop::Stop()

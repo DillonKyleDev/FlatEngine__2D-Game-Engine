@@ -222,7 +222,7 @@ namespace FlatEngine
 					spriteScale.x *= scale.x;
 					spriteScale.y *= scale.y;
 
-					if (spriteScale.x > 0 && spriteScale.y > 0)
+					if (spriteScale.x > 0 && spriteScale.y > 0 && spriteTexture != nullptr)
 					{
 						AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, spriteScale, b_scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
 					}

@@ -26,6 +26,7 @@ namespace FlatEngine
 
 	Sprite::~Sprite()
 	{
+		RemoveTexture();
 	}
 
 	std::string Sprite::GetData()

@@ -714,7 +714,7 @@ namespace FlatGui
 					drawSplitter->SetCurrentChannel(drawList, 0);
 				}
 
-				if (spriteScale.x > 0 && spriteScale.y > 0)
+				if (spriteScale.x > 0 && spriteScale.y > 0 && spriteTexture != nullptr)
 				{
 					FL::AddImageToDrawList(spriteTexture, position, scrolling, spriteTextureWidth, spriteTextureHeight, offset, spriteScale, b_spriteScalesWithZoom, gridStep, drawList, rotation, ImGui::GetColorU32(tintColor));
 				}

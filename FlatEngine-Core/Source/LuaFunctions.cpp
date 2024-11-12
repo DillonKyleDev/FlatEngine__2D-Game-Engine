@@ -614,7 +614,7 @@ namespace FlatEngine
 		outfile.open(fileNameWExtention, std::ios_base::app);
 		outfile <<
 			"-- " + fileName + ".scp.lua\n\n" +
-			"-- Use \"this_object\" to reference the object that owns this script\n\n\n" +
+			"-- Use \"this_object\" to reference the object that owns this script and \"my_id\" to access its id\n\n\n" +
 
 			"function Awake() \n" +
 			"     " + fileName + "[my_id] =\n" +
@@ -634,7 +634,7 @@ namespace FlatEngine
 			"     local data = " + fileName + "[my_id]\n" +
 			"end\n\n"+
 
-			"-- each of these functions must be present in each file otherwise other files copies will be used with this object instead\n" +
+			"-- each of these functions must be present in each file otherwise other scripts copies will be used with this object instead\n" +
 			"function OnBoxCollision(collidedWith)\n" +
 			"end\n\n" +
 

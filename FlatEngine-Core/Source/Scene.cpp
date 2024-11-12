@@ -179,6 +179,15 @@ namespace FlatEngine
 			m_primaryCamera = nullptr;
 		}
 		
+		if (objectToDelete->GetAnimation() != nullptr)
+		{
+			objectToDelete->GetAnimation()->StopAll();
+		}
+		if (objectToDelete->GetAudio() != nullptr)
+		{
+			objectToDelete->GetAudio()->StopAll();
+		}
+
 		for (Component* component : objectToDelete->GetComponents())
 		{
 			m_ECSManager.RemoveComponent(component);
