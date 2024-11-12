@@ -164,7 +164,7 @@ namespace FlatEngine
 		{
 			LoadLuaGameObject(GetObjectById(ID), "scriptname");
 		};
-		F_Lua["GetObjectByID"] = [](long ID)
+		F_Lua["GetObjectById"] = [](long ID)
 		{
 			return GetObjectById(ID);
 		};
