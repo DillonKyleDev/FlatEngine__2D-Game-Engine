@@ -133,6 +133,8 @@ public:
 			}
 
 			EndRender();
+
+			A_GameLoop->DeleteObjectsInDeleteQueue();
 		}
 	}
 	void RunOnceAfterInitialization()

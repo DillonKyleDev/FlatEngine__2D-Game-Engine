@@ -183,10 +183,6 @@ namespace FlatEngine
 		{
 			objectToDelete->GetAnimation()->StopAll();
 		}
-		if (objectToDelete->GetAudio() != nullptr)
-		{
-			objectToDelete->GetAudio()->StopAll();
-		}
 
 		for (Component* component : objectToDelete->GetComponents())
 		{

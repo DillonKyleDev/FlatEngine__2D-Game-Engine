@@ -447,6 +447,7 @@ namespace FlatEngine
 			"TorquesAllowed", &RigidBody::TorquesAllowed,
 			"AddForce", &RigidBody::AddForce,
 			"AddTorque", &RigidBody::AddTorque,
+			"SetVelocity", &RigidBody::SetVelocity,
 			"GetVelocity", &RigidBody::GetVelocity,
 			"SetPendingForces", &RigidBody::SetPendingForces,
 			"GetPendingForces", &RigidBody::GetPendingForces,
