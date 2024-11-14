@@ -118,6 +118,15 @@ namespace FlatEngine
 		static bool b_hasLeftClicked = false;
 		static bool b_hasRightClicked = false;
 
+		if (!ImGui::IsKeyDown(ImGuiKey_MouseLeft))
+		{
+			b_hasLeftClicked = false;
+		}
+		if (!ImGui::IsKeyDown(ImGuiKey_MouseRight))
+		{
+			b_hasRightClicked = false;
+		}
+
 		if (CheckForMouseOver())
 		{
 			for (Button& hovered : m_hoveredButtons)
@@ -136,7 +145,6 @@ namespace FlatEngine
 						// For Button On Click events in Button Inspector Component
 						if (hovered.GetLeftClick() && functionName != "")
 						{
-							CallVoidLuaFunction<GameObject*>(functionName);
 							std::shared_ptr<Animation::S_Event> functionParams = hovered.GetLuaFunctionParams();
 							std::vector<Animation::S_EventFunctionParam> parameters = functionParams->parameters;
 							GameObject* owner = hovered.GetParent();
@@ -182,7 +190,6 @@ namespace FlatEngine
 						if (hovered.GetRightClick() && functionName != "")
 						{
 							// For OnButtonRightClick() event function in Lua Scripts
-							CallVoidLuaFunction<GameObject*>(functionName);
 							std::shared_ptr<Animation::S_Event> functionParams = hovered.GetLuaFunctionParams();
 							std::vector<Animation::S_EventFunctionParam> parameters = functionParams->parameters;
 							GameObject* owner = hovered.GetParent();
