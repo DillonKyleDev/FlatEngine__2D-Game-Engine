@@ -89,6 +89,7 @@ namespace FlatEngine
 
 	extern F_CURSOR_MODE F_CursorMode;
 	extern bool F_b_closeProgram;
+	extern bool F_b_closeProgramQueued;
 
 	// Assets loaded from files on application start	
 	extern std::vector<std::string> F_luaScriptPaths;
@@ -198,7 +199,7 @@ namespace FlatEngine
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
 	extern bool InitLuaScript(Script* script);
-	extern bool ReadyScriptFile(sol::protected_function loadedScriptFile, std::string& message);
+	extern bool ReadyScriptFile(std::string scriptToLoad, std::string& message);
 	extern void RunLuaFuncOnAllScripts(std::string functionName);
 	extern void RunLuaFuncOnSingleScript(Script* script, std::string functionName);
 	extern void RunAwakeAndStart();	
@@ -214,6 +215,8 @@ namespace FlatEngine
 	extern void CallLuaButtonEventFunction(GameObject* caller, LuaEventFunction eventFunc);
 	extern void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc);
 	extern void CallLuaAnimationEventFunction(GameObject* caller, std::string eventFunc, Animation::S_EventFunctionParam param1, Animation::S_EventFunctionParam param2 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param3 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param4 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param5 = Animation::S_EventFunctionParam());
+	extern void CallLuaButtonOnClickFunction(GameObject* caller, std::string eventFunc);
+	extern void CallLuaButtonOnClickFunction(GameObject* caller, std::string eventFunc, Animation::S_EventFunctionParam param1, Animation::S_EventFunctionParam param2 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param3 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param4 = Animation::S_EventFunctionParam(), Animation::S_EventFunctionParam param5 = Animation::S_EventFunctionParam());
 
 	// Profiler
 	extern void AddProfilerProcess(std::string name);
@@ -237,7 +240,7 @@ namespace FlatEngine
 	extern void SaveScene(Scene* scene, std::string filePath);
 	extern void SaveCurrentScene();
 	extern void QueueLoadScene(std::string scenePath);
-	extern void LoadScene(std::string loadFrom, std::string pointTo = "");
+	extern void LoadScene(std::string actualPath, std::string pointTo = "");
 	extern std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);

@@ -388,14 +388,14 @@
                     "id": 26,
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 0,
-                    "text": "New Game",
+                    "text": "Start",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
                     "type": "Text",
-                    "xOffset": 112.0,
-                    "yOffset": 23.299999237060547
+                    "xOffset": 70.0,
+                    "yOffset": 26.5
                 }
             ],
             "id": 8,

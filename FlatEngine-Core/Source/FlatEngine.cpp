@@ -33,6 +33,7 @@
 namespace FlatEngine
 {	
 	bool F_b_closeProgram = false;
+	bool F_b_closeProgramQueued = false;
 
 	std::shared_ptr<WindowManager> F_Window = std::make_shared<WindowManager>();
 
@@ -637,19 +638,28 @@ namespace FlatEngine
 		F_sceneToBeLoaded = scenePath;
 	}
 
-	void LoadScene(std::string loadFrom, std::string pointTo)
-	{		
-		F_SoundController.StopMusic();
-
-		if (F_SceneManager.LoadScene(loadFrom, pointTo))
+	// actualPath is the actual scene path we want to load from, pointTo is the scene path we say we're loading. Useful for loading temporary scene copies and not saving the temp scene file location as last scene loaded
+	void LoadScene(std::string actualPath, std::string pointTo)
+	{				
+		if (DoesFileExist(actualPath))
 		{
-			if (F_SceneManager.GetLoadedScene() != nullptr)
-			{
-				F_SceneManager.SaveAnimationPreviewObjects();
-			}
+			F_SoundController.StopMusic();
 
-			F_SceneManager.LoadAnimationPreviewObjects();
-			F_PlayerObject = GetObjectByTag("Player");			
+			if (F_SceneManager.LoadScene(actualPath, pointTo))
+			{
+				if (F_SceneManager.GetLoadedScene() != nullptr)
+				{
+					F_SceneManager.SaveAnimationPreviewObjects();
+				}
+
+				F_SceneManager.LoadAnimationPreviewObjects();
+				F_PlayerObject = GetObjectByTag("Player");
+			}
+		}
+		else
+		{
+			LogError("Failed to load scene. Scene does not exist.");
+			LogString("Path: " + actualPath);
 		}
 	}
 
@@ -1747,7 +1757,7 @@ namespace FlatEngine
 	// Logging
 	void LogError(std::string line, std::string from)
 	{
-		ImGui::SetWindowFocus("Logger");
+		//ImGui::SetWindowFocus("Logger"); Find a way to set focus once but not have it completely disable all other GUI interaction
 		F_Logger.LogString("ERROR : " + line, from);
 	}
 
@@ -2643,6 +2653,30 @@ namespace FlatEngine
 					newButton->SetActiveDimensions(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 					newButton->SetActiveOffset(Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName)));
 					newButton->SetActiveLayer(CheckJsonInt(componentJson, "activeLayer", objectName));
+					newButton->SetLuaFunctionName(CheckJsonString(componentJson, "luaFunctionName", objectName));
+					newButton->SetLeftClick(CheckJsonBool(componentJson, "_leftClick", objectName));
+					newButton->SetRightClick(CheckJsonBool(componentJson, "_rightClick", objectName));
+
+					json functionParamsJson = componentJson["luaFunctionParameters"];
+					std::shared_ptr<Animation::S_Event> functionParams = std::make_shared<Animation::S_Event>();
+
+					for (int i = 0; i < functionParamsJson.size(); i++)
+					{
+						json param = functionParamsJson[i];
+						Animation::S_EventFunctionParam parameter;
+						parameter.type = CheckJsonString(param, "type", objectName);
+						parameter.e_string = CheckJsonString(param, "string", objectName);
+						parameter.e_int = CheckJsonInt(param, "int", objectName);
+						parameter.e_float = CheckJsonFloat(param, "float", objectName);
+						parameter.e_long = CheckJsonLong(param, "long", objectName);
+						parameter.e_double = CheckJsonDouble(param, "double", objectName);
+						parameter.e_boolean = CheckJsonBool(param, "bool", objectName);
+						parameter.e_Vector2 = Vector2(CheckJsonFloat(param, "vector2X", objectName), CheckJsonFloat(param, "vector2Y", objectName));
+
+						functionParams->parameters.push_back(parameter);
+					}
+
+					newButton->SetLuaFunctionParams(functionParams);
 				}
 				else if (type == "Canvas")
 				{

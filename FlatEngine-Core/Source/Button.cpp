@@ -2,6 +2,7 @@
 #include "FlatEngine.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "Animation.h"
 
 
 namespace FlatEngine
@@ -17,6 +18,10 @@ namespace FlatEngine
 		m_activeHeight = 3;
 		m_activeOffset = Vector2(0, 0);
 		m_activeLayer = 0;
+		m_luaFunctionName = "";
+		m_luaFunctionParams = std::make_shared<Animation::S_Event>();
+		m_b_leftClick = true;
+		m_b_rightClick = false;
 	}
 
 	Button::~Button()
@@ -35,7 +40,28 @@ namespace FlatEngine
 			{ "activeOffsetX", m_activeOffset.x },
 			{ "activeOffsetY", m_activeOffset.y },
 			{ "activeLayer", m_activeLayer },
+			{ "luaFunctionName", m_luaFunctionName },
+			{ "_leftClick", m_b_leftClick },
+			{ "_rightClick", m_b_rightClick },
 		};
+
+		json parameters = json::array();
+
+		for (Animation::S_EventFunctionParam parameter : m_luaFunctionParams->parameters)
+		{
+			parameters.push_back({
+				{ "type", parameter.type },
+				{ "string", parameter.e_string },
+				{ "int", parameter.e_int },
+				{ "float", parameter.e_float },
+				{ "double", parameter.e_double },
+				{ "long", parameter.e_long },
+				{ "bool", parameter.e_boolean },
+				{ "vector2X", parameter.e_Vector2.x },
+				{ "vector2Y", parameter.e_Vector2.y },
+			});
+		}
+		jsonData.push_back({ "luaFunctionParameters", parameters });
 
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
@@ -128,5 +154,45 @@ namespace FlatEngine
 	Vector4 Button::GetActiveEdges()
 	{
 		return m_activeEdges;
+	}
+
+	void Button::SetLuaFunctionName(std::string functionName)
+	{
+		m_luaFunctionName = functionName;
+	}
+
+	std::string Button::GetLuaFunctionName()
+	{
+		return m_luaFunctionName;
+	}
+
+	void Button::SetLeftClick(bool b_leftClick)
+	{
+		m_b_leftClick = b_leftClick;
+	}
+
+	bool Button::GetLeftClick()
+	{
+		return m_b_leftClick;
+	}
+
+	void Button::SetRightClick(bool b_rightClick)
+	{
+		m_b_rightClick = b_rightClick;
+	}
+
+	bool Button::GetRightClick()
+	{
+		return m_b_rightClick;
+	}
+
+	void Button::SetLuaFunctionParams(std::shared_ptr<Animation::S_Event> params)
+	{
+		m_luaFunctionParams = params;
+	}
+
+	std::shared_ptr<Animation::S_Event> Button::GetLuaFunctionParams()
+	{
+		return m_luaFunctionParams;
 	}
 }

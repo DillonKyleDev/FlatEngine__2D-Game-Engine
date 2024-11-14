@@ -108,7 +108,7 @@ namespace FlatGui
 				ImGui::Separator();
 				if (ImGui::MenuItem("Quit", "Alt+F4"))
 				{
-					FL::CloseProgram();
+					FL::F_b_closeProgramQueued = true;
 				}
 
 				ImGui::EndMenu();

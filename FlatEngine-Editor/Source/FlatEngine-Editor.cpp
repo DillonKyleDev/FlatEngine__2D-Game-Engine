@@ -105,7 +105,6 @@ public:
 			static Uint32 frameStart = FL::GetEngineTime();
 			Uint32 renderStartTime = 0;
 			renderStartTime = FL::GetEngineTime(); // Profiler
-			b_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
 			FL::AddProcessData("Render", (float)(FL::GetEngineTime() - renderStartTime)); // Profiler
@@ -172,7 +171,13 @@ public:
 
 			EndRender();
 
+
 			A_GameLoop->DeleteObjectsInDeleteQueue();
+
+			if (FL::F_b_closeProgramQueued)
+			{
+				Quit();
+			}
 		}
 	}
 	void RunOnceAfterInitialization()

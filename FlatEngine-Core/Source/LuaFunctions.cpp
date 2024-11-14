@@ -160,6 +160,16 @@ namespace FlatEngine
 		{
 			return std::to_string(value);
 		};
+		F_Lua["GetInstanceData"] = [](std::string scriptName, long ID)
+		{
+			// Checks the Lua state to see if there is a table value for the given script in the called functions Script file
+			std::optional<sol::table> instanceData = F_Lua[scriptName][ID];
+			if (!instanceData.has_value())
+			{
+				LogError("No instance data for " + scriptName + " found using id: " + std::to_string(ID) + ".\n -- Lua Function called by GameObject : " + GetObjectById(ID)->GetName() + ".\n -- Specific calling Script component : " + F_Lua["calling_script_name"].get_or<std::string>("Script") + ".\n -- Lua Script where called function lives : " + scriptName + ".\n -- The calling Script file may be missing the function called and is using another Script files version instead. Make sure the called function exists in the " + GetObjectById(ID)->GetName() + " Script file.");
+			}
+			return instanceData;
+		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
 			LoadLuaGameObject(GetObjectById(ID), "scriptname");
@@ -175,7 +185,18 @@ namespace FlatEngine
 		F_Lua["LoadScene"] = [](std::string sceneName)
 		{
 			std::string scenePath = GetFilePathUsingFileName(GetDir("scenes"), sceneName + ".scn");
-			QueueLoadScene(scenePath);
+			if (scenePath != "")
+			{
+				QueueLoadScene(scenePath);
+			}
+			else
+			{
+				LogError("Failed to load scene. Scene \"" + sceneName + "\" not found.");
+			}
+		};
+		F_Lua["ReloadScene"] = []()
+		{				
+			QueueLoadScene(GetLoadedScenePath());
 		};
 		F_Lua["LogString"] = [](std::string line)
 		{
@@ -224,7 +245,7 @@ namespace FlatEngine
 		};
 		F_Lua["CloseProgram"] = []()
 		{
-			CloseProgram();
+			F_b_closeProgramQueued = true;
 		};
 		F_Lua["GetMappingContext"] = [](std::string contextName)
 		{
@@ -516,7 +537,7 @@ namespace FlatEngine
 			if (F_LoadedScriptFiles.count(attachedScript))
 			{
 				std::string message = "";
-				if (ReadyScriptFile(F_LoadedScriptFiles.at(attachedScript), message))
+				if (ReadyScriptFile(attachedScript, message))
 				{
 					LoadLuaGameObject(script->GetParent(), attachedScript);
 					sol::protected_function func = F_Lua[functionName];
@@ -524,7 +545,7 @@ namespace FlatEngine
 
 					if (!calledFunction.valid())
 					{
-						sol::error err = calledFunction;
+						sol::error err = calledFunction;						
 						LogError(err.what());
 					}
 				}
@@ -622,24 +643,25 @@ namespace FlatEngine
 			"     {\n" +
 			"		-- Key value pairs here\n" +
 			"     }\n" +
-			"     local data = " + fileName + "[my_id]\n" +
+			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
 			"end\n\n" +
 
 			"function Start()\n" +
 			"     -- required to access instance data\n" +
-			"     local data = " + fileName + "[my_id]\n\n" +
+			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
 			"     LogString(\"" + fileName + " : Start() called on \"..this_object:GetName())\n" +
 			"end\n\n" +
 
 			"function Update()\n" +
-			"     local data = " + fileName + "[my_id]\n" +
+			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
 			"end\n\n"+
 
-			"-- each of these functions must be present in each file otherwise other scripts copies will be used with this object instead\n" +
+			"-- each of these functions must be present in each file if they are to be called otherwise other scripts copies will be used with this object instead\n" +
 			"function OnBoxCollision(collidedWith)\n" +
 			"end\n\n" +
 
 			"function OnBoxCollisionEnter(collidedWith)\n" +
+			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
 			"end\n\n" +
 
 			"function OnBoxCollisionLeave(collidedWith)\n" +
@@ -738,7 +760,7 @@ namespace FlatEngine
 			F_LoadedScriptFiles.emplace(attachedScript, loadedScriptFile);
 			std::string message = "";
 
-			if (!ReadyScriptFile(loadedScriptFile, message))
+			if (!ReadyScriptFile(attachedScript, message))
 			{
 				LogError("Could not invoke script file " + attachedScript + " on " + caller->GetName() + "\n" + message);
 				return false;
@@ -754,9 +776,11 @@ namespace FlatEngine
 		return true;
 	}
 
-	bool ReadyScriptFile(sol::protected_function loadedScriptFile, std::string &message)
+	bool ReadyScriptFile(std::string scriptToLoad, std::string &message)
 	{
+		sol::protected_function loadedScriptFile = F_LoadedScriptFiles.at(scriptToLoad);
 		sol::protected_function_result scriptResult = loadedScriptFile(); // invoke the script and get the result
+		F_Lua["loaded_script_file"] = scriptToLoad;
 		if (!scriptResult.valid())
 		{
 			sol::error error = scriptResult;
@@ -814,7 +838,7 @@ namespace FlatEngine
 						std::string filePath = F_LuaScriptsMap.at(attachedScript);
 						std::string functionName = GetFilenameFromPath(filePath) + F_LuaEventNames[eventFunc];
 						std::string message = "";
-						if (!ReadyScriptFile(F_LoadedScriptFiles.at(attachedScript), message))
+						if (!ReadyScriptFile(attachedScript, message))
 						{
 							LogError("Could not invoke script file " + attachedScript + " on " + script->GetParent()->GetName() + "\n" + message);
 						}
@@ -826,7 +850,7 @@ namespace FlatEngine
 		}
 	}
 
-	// Button Events Passed to Lua
+	// Button Events passed to Lua through attached Script files
 	void CallLuaButtonEventFunction(GameObject* caller, LuaEventFunction eventFunc)
 	{
 		if (caller->HasComponent("Script"))
@@ -840,7 +864,7 @@ namespace FlatEngine
 						std::string attachedScript = script->GetAttachedScript();
 						std::string filePath = F_LuaScriptsMap.at(attachedScript);
 						std::string message = "";
-						if (!ReadyScriptFile(F_LoadedScriptFiles.at(attachedScript), message))
+						if (!ReadyScriptFile(attachedScript, message))
 						{
 							LogError("Could not invoke script file " + attachedScript + " on " + script->GetParent()->GetName() + "\n" + message);
 						}
@@ -848,6 +872,51 @@ namespace FlatEngine
 						CallVoidLuaFunction<GameObject*>(F_LuaEventNames[eventFunc]);						
 					}
 				}
+			}
+		}
+	}
+
+	// Button On Click function events directly added through the Button Component in the Inspector window
+	void CallLuaButtonOnClickFunction(GameObject* caller, std::string eventFunc)
+	{
+		LoadLuaGameObject(caller, "Button On Click function");
+		CallVoidLuaFunction<GameObject*>(eventFunc);
+	}
+	// Button On Click function events directly added through the Button Component in the Inspector window
+	void CallLuaButtonOnClickFunction(GameObject* caller, std::string eventFunc, Animation::S_EventFunctionParam param1, Animation::S_EventFunctionParam param2, Animation::S_EventFunctionParam param3, Animation::S_EventFunctionParam param4, Animation::S_EventFunctionParam param5)
+	{
+		LoadLuaGameObject(caller, "Button On Click function");
+		sol::protected_function protectedFunc = F_Lua[eventFunc];
+		if (protectedFunc)
+		{
+			auto result = sol::function_result();
+
+			if (param2.type == "empty")
+			{
+				result = protectedFunc(param1);
+			}
+			else if (param3.type == "empty")
+			{
+				result = protectedFunc(param1, param2);
+			}
+			else if (param4.type == "empty")
+			{
+				result = protectedFunc(param1, param2, param3);
+			}
+			else if (param5.type == "empty")
+			{
+				result = protectedFunc(param1, param2, param3, param4);
+			}
+			else
+			{
+				result = protectedFunc(param1, param2, param3, param4, param5);
+			}
+
+			if (!result.valid())
+			{
+				sol::error err = result;
+				LogError("Something went wrong in Lua function: " + eventFunc + "()");
+				LogError(err.what());
 			}
 		}
 	}
@@ -866,7 +935,7 @@ namespace FlatEngine
 						std::string attachedScript = script->GetAttachedScript();
 						std::string filePath = F_LuaScriptsMap.at(attachedScript);
 						std::string message = "";
-						if (!ReadyScriptFile(F_LoadedScriptFiles.at(attachedScript), message))
+						if (!ReadyScriptFile(attachedScript, message))
 						{
 							LogError("Could not invoke script file " + attachedScript + " on " + script->GetParent()->GetName() + "\n" + message);
 						}
@@ -890,7 +959,7 @@ namespace FlatEngine
 						std::string attachedScript = script->GetAttachedScript();
 						std::string filePath = F_LuaScriptsMap.at(attachedScript);
 						std::string message = "";
-						if (!ReadyScriptFile(F_LoadedScriptFiles.at(attachedScript), message))
+						if (!ReadyScriptFile(attachedScript, message))
 						{
 							LogError("Could not invoke script file " + attachedScript + " on " + script->GetParent()->GetName() + "\n" + message);
 						}

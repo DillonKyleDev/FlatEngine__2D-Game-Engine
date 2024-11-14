@@ -75,13 +75,12 @@ public:
 	}
 	void Run()
 	{
-		bool& _hasQuit = HasQuit();
-		while (!_hasQuit)
+		bool& b_hasQuit = HasQuit();
+		while (!b_hasQuit)
 		{
 			RunOnceAfterInitialization();
 
 			static Uint32 frameStart = FL::GetEngineTime();			
-			_hasQuit = FL::F_b_closeProgram;
 
 			BeginRender();
 
@@ -103,7 +102,7 @@ public:
 				{
 					while (A_GameLoop->m_accumulator >= A_GameLoop->m_deltaTime)
 					{
-						FL::HandleEvents(_hasQuit);
+						FL::HandleEvents(b_hasQuit);
 						A_GameLoop->Update();
 						A_GameLoop->SetFrameSkipped(false);
 
@@ -123,7 +122,7 @@ public:
 			}
 			else
 			{
-				FL::HandleEvents(_hasQuit);
+				FL::HandleEvents(b_hasQuit);
 			}
 
 			// If gameloop isn't running, make sure our framestart keeps up with current engine time otherwise it will cause a freeze on initially starting gameloop
@@ -134,7 +133,13 @@ public:
 
 			EndRender();
 
+
 			A_GameLoop->DeleteObjectsInDeleteQueue();
+
+			if (FL::F_b_closeProgramQueued)
+			{
+				Quit();
+			}
 		}
 	}
 	void RunOnceAfterInitialization()

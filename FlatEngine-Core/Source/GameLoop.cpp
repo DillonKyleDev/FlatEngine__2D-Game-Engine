@@ -128,8 +128,44 @@ namespace FlatEngine
 					
 					if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !b_hasLeftClicked)
 					{
+						// For OnButtonLeftClick() event function in Lua Scripts
 						b_hasLeftClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonLeftClick);
+						std::string functionName = hovered.GetLuaFunctionName();
+
+						// For Button On Click events in Button Inspector Component
+						if (hovered.GetLeftClick() && functionName != "")
+						{
+							CallVoidLuaFunction<GameObject*>(functionName);
+							std::shared_ptr<Animation::S_Event> functionParams = hovered.GetLuaFunctionParams();
+							std::vector<Animation::S_EventFunctionParam> parameters = functionParams->parameters;
+							GameObject* owner = hovered.GetParent();
+
+							if (parameters.size() == 0)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName);
+							}
+							else if (parameters.size() == 1)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0]);
+							}
+							else if (parameters.size() == 2)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1]);
+							}
+							else if (parameters.size() == 3)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2]);
+							}
+							else if (parameters.size() == 4)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2], parameters[3]);
+							}
+							else if (parameters.size() == 5)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+							}
+						}
 					}					
 					else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 					{
@@ -140,6 +176,43 @@ namespace FlatEngine
 					{
 						b_hasRightClicked = true;
 						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonRightClick);
+
+						std::string functionName = hovered.GetLuaFunctionName();
+
+						if (hovered.GetRightClick() && functionName != "")
+						{
+							// For OnButtonRightClick() event function in Lua Scripts
+							CallVoidLuaFunction<GameObject*>(functionName);
+							std::shared_ptr<Animation::S_Event> functionParams = hovered.GetLuaFunctionParams();
+							std::vector<Animation::S_EventFunctionParam> parameters = functionParams->parameters;
+							GameObject* owner = hovered.GetParent();
+
+							// For Button On Click events in Button Inspector Component
+							if (parameters.size() == 0)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName);
+							}
+							else if (parameters.size() == 1)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0]);
+							}
+							else if (parameters.size() == 2)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1]);
+							}
+							else if (parameters.size() == 3)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2]);
+							}
+							else if (parameters.size() == 4)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2], parameters[3]);
+							}
+							else if (parameters.size() == 5)
+							{
+								CallLuaButtonOnClickFunction(owner, functionName, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+							}
+						}
 					}					
 					else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 					{
@@ -159,7 +232,7 @@ namespace FlatEngine
 
 		for (std::pair<long, Button> buttonPair : buttons)
 		{
-			if (buttonPair.second.IsActive())
+			if (buttonPair.second.IsActive() && buttonPair.second.GetParent()->IsActive())
 			{
 				Transform* transform = buttonPair.second.GetParent()->GetTransform();
 				Vector4 activeEdges = buttonPair.second.GetActiveEdges();
@@ -167,13 +240,12 @@ namespace FlatEngine
 
 				if (AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
 				{
-					m_hoveredButtons.push_back(buttonPair.second);
-					buttonPair.second.SetMouseIsOver(true);
-
 					if (buttonPair.second.GetActiveLayer() >= GetFirstUnblockedLayer())
 					{
+						m_hoveredButtons.push_back(buttonPair.second);
+						buttonPair.second.SetMouseIsOver(true);
 						GameObject* owner = buttonPair.second.GetParent();
-						CallLuaButtonEventFunction(buttonPair.second.GetParent(), LuaEventFunction::OnButtonMouseOver);
+						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonMouseOver);
 					}
 				}
 			}

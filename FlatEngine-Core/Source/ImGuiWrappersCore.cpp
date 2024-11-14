@@ -321,7 +321,7 @@ namespace FlatEngine
 		MoveScreenCursor(0, 2);
 		ImGui::Text(fieldName.c_str());
 		ImGui::TableSetColumnIndex(1);
-		bool b_checked = RenderCheckbox("", b_value);
+		bool b_checked = RenderCheckbox("##"+ID, b_value);
 		ImGui::PushID(ID.c_str());
 		ImGui::PopID();
 
