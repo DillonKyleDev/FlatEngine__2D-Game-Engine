@@ -591,7 +591,7 @@ namespace FlatGui
 						const bool b_isClicked = ImGui::IsItemClicked();
 						const bool b_isHovered = ImGui::IsItemHovered();
 						const bool b_isActive = ImGui::IsItemActive();   // Held
-						const bool b_isRightClicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);
+						const bool b_isRightClicked = ImGui::IsItemClicked(ImGuiMouseButton_Right);						
 
 						if (b_isHovered)
 						{
@@ -622,6 +622,7 @@ namespace FlatGui
 						{
 							nodeClicked = ID;
 							FG_SelectedKeyFrameToEdit = keyFrame;
+							//ImGui::SetWindowFocus("Keyframe Editor");
 						}	
 
 						// Right click menu

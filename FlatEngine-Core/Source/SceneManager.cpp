@@ -73,6 +73,7 @@ namespace FlatEngine
 		}
 		bool b_success = true;
 
+		m_loadedScene.UnloadSceneObjects();
 		m_loadedScene.UnloadECSManager();
 
 		std::ofstream file_obj;

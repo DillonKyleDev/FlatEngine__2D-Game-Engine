@@ -170,9 +170,15 @@ namespace FlatEngine
 			}
 			return instanceData;
 		};
+		F_Lua["ContainsData"] = [](std::string scriptName, long ID)
+		{
+			// Checks the Lua state to see if there is a table value for the given script in the called functions Script file
+			std::optional<sol::table> instanceData = F_Lua[scriptName][ID];
+			return instanceData.has_value();
+		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
-			LoadLuaGameObject(GetObjectById(ID), "scriptname");
+			LoadLuaGameObject(GetObjectById(ID), F_Lua["calling_script_name"]);
 		};
 		F_Lua["GetObjectById"] = [](long ID)
 		{
@@ -778,17 +784,25 @@ namespace FlatEngine
 
 	bool ReadyScriptFile(std::string scriptToLoad, std::string &message)
 	{
-		sol::protected_function loadedScriptFile = F_LoadedScriptFiles.at(scriptToLoad);
-		sol::protected_function_result scriptResult = loadedScriptFile(); // invoke the script and get the result
-		F_Lua["loaded_script_file"] = scriptToLoad;
-		if (!scriptResult.valid())
+		if (F_LoadedScriptFiles.count(scriptToLoad))
 		{
-			sol::error error = scriptResult;
-			message = error.what();
+			sol::protected_function loadedScriptFile = F_LoadedScriptFiles.at(scriptToLoad);
+			sol::protected_function_result scriptResult;
+			scriptResult = loadedScriptFile(); // invoke the script and get the result
+			F_Lua["loaded_script_file"] = scriptToLoad;
+			if (!scriptResult.valid())
+			{
+				sol::error error = scriptResult;
+				message = error.what();
+				return false;
+			}
+			return true;
+		}
+		else
+		{
+			message = "Script does not exist in F_LoadedScriptFiles";
 			return false;
 		}
-
-		return true;
 	}
 
 	template <class T>

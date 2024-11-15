@@ -63,8 +63,12 @@ namespace FlatEngine
 
 	void Scene::UnloadECSManager()
 	{
-		m_sceneObjects.clear();
 		m_ECSManager.Cleanup();
+	}
+
+	void Scene::UnloadSceneObjects()
+	{
+		m_sceneObjects.clear();
 	}
 
 	GameObject* Scene::AddSceneObject(GameObject sceneObject)
@@ -168,6 +172,14 @@ namespace FlatEngine
 		}
 	}
 
+	void Scene::DeleteGameObject(GameObject *objectToDelete)
+	{
+		if (objectToDelete != nullptr)
+		{
+			Scene::DeleteChildrenAndSelf(objectToDelete);
+		}
+	}
+
 	// Recursive
 	void Scene::DeleteChildrenAndSelf(GameObject *objectToDelete)
 	{
@@ -186,7 +198,7 @@ namespace FlatEngine
 
 		for (Component* component : objectToDelete->GetComponents())
 		{
-			m_ECSManager.RemoveComponent(component);
+			RemoveComponent(component);
 		}
 
 		if (objectToDelete->HasChildren())
@@ -264,7 +276,7 @@ namespace FlatEngine
 		}
 		else
 		{
-			LogError("Scene::Setm_primaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
+			LogError("Scene::SetPrimaryCamera() - The Camera pointer you tried to set as the primary Camera was a nullptr.");
 		}
 	}
 
@@ -296,7 +308,9 @@ namespace FlatEngine
 	void Scene::KeepNextComponentIDUpToDate(long ID)
 	{
 		if (ID >= m_nextComponentID)
+		{
 			m_nextComponentID = ID + 1;
+		}
 	}
 
 	Transform* Scene::AddTransform(Transform transform, long ownerID)

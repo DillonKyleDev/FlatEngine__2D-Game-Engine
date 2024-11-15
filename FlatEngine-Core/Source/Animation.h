@@ -187,31 +187,57 @@ namespace FlatEngine
 				float endTime = 0.0f;
 				
 				if (eventProps.size() > 0 && eventProps.back()->time > endTime)
+				{
 					endTime = eventProps.back()->time;
+				}
 				if (transformProps.size() > 0 && transformProps.back()->time > endTime)
+				{
 					endTime = transformProps.back()->time;
+				}
 				if (spriteProps.size() > 0 && spriteProps.back()->time > endTime)
+				{
 					endTime = spriteProps.back()->time;
+				}
 				if (cameraProps.size() > 0 && cameraProps.back()->time > endTime)
+				{
 					endTime = cameraProps.back()->time;
+				}
 				if (scriptProps.size() > 0 && scriptProps.back()->time > endTime)
+				{
 					endTime = scriptProps.back()->time;
+				}
 				if (buttonProps.size() > 0 && buttonProps.back()->time > endTime)
+				{
 					endTime = buttonProps.back()->time;
+				}
 				if (canvasProps.size() > 0 && canvasProps.back()->time > endTime)
+				{
 					endTime = canvasProps.back()->time;
+				}
 				if (audioProps.size() > 0 && audioProps.back()->time > endTime)
+				{
 					endTime = audioProps.back()->time;
+				}
 				if (textProps.size() > 0 && textProps.back()->time > endTime)
+				{
 					endTime = textProps.back()->time;
+				}
 				if (boxColliderProps.size() > 0 && boxColliderProps.back()->time > endTime)
+				{
 					endTime = boxColliderProps.back()->time;
+				}
 				if (circleColliderProps.size() > 0 && circleColliderProps.back()->time > endTime)
+				{
 					endTime = circleColliderProps.back()->time;
+				}
 				if (rigidBodyProps.size() > 0 && rigidBodyProps.back()->time > endTime)
+				{
 					endTime = rigidBodyProps.back()->time;
+				}
 				if (characterControllerProps.size() > 0 && characterControllerProps.back()->time > endTime)
+				{
 					endTime = characterControllerProps.back()->time;
+				}
 
 				animationLength = endTime;
 			};

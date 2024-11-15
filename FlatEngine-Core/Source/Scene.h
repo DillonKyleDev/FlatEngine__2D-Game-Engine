@@ -35,6 +35,7 @@ namespace FlatEngine
 		void SetPath(std::string path);
 		std::string GetPath();
 		void UnloadECSManager();
+		void UnloadSceneObjects();
 		GameObject* AddSceneObject(GameObject sceneObject);
 		void KeepNextGameObjectIDUpToDate(long id);
 		std::map<long, GameObject> &GetSceneObjects();
@@ -45,6 +46,7 @@ namespace FlatEngine
 		GameObject* GetObjectByTag(std::string tag);
 		GameObject* CreateGameObject(long parentID = -1, long myID = -1);
 		void DeleteGameObject(long sceneObjectID);
+		void DeleteGameObject(GameObject* objectToDelete);
 		void DeleteChildrenAndSelf(GameObject *objectToDelete);
 		void IncrementGameObjectID();
 		long GetNextGameObjectID();
