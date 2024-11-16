@@ -130,6 +130,19 @@ namespace FlatEngine
 		return b_hasScript;
 	}
 
+	Script* GameObject::GetScript(std::string scriptName)
+	{
+		for (Script* script : GetScripts())
+		{
+			if (script->GetAttachedScript() == scriptName)
+			{
+				return script;
+			}
+		}
+
+		return nullptr;
+	}
+
 	void GameObject::RemoveComponent(Component* component)
 	{
 		if (component != nullptr)

@@ -178,7 +178,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "id": 17,
                     "path": "..\\assets\\images\\sprites\\FlatSpace\\player.png",
                     "pivotPoint": "PivotCenter",
@@ -211,9 +211,35 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "attachedScript": "PlayerController",
                     "id": 19,
+                    "scriptParameters": [
+                        {
+                            "bool": false,
+                            "double": 0.0,
+                            "float": 0.0,
+                            "int": 5,
+                            "long": 0,
+                            "paramName": "attackDamage",
+                            "string": "",
+                            "type": "int",
+                            "vector2X": 0.0,
+                            "vector2Y": 0.0
+                        },
+                        {
+                            "bool": false,
+                            "double": 0.0,
+                            "float": 0.5,
+                            "int": 0,
+                            "long": 0,
+                            "paramName": "chanceToDrop",
+                            "string": "",
+                            "type": "float",
+                            "vector2X": 0.0,
+                            "vector2Y": 0.0
+                        }
+                    ],
                     "type": "Script"
                 },
                 {
@@ -1994,9 +2020,10 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "attachedScript": "PropSpawner",
                     "id": 94,
+                    "scriptParameters": [],
                     "type": "Script"
                 },
                 {
@@ -2109,6 +2136,7 @@
                     "_isCollapsed": true,
                     "attachedScript": "IntroText",
                     "id": 99,
+                    "scriptParameters": [],
                     "type": "Script"
                 }
             ],
@@ -3596,6 +3624,7 @@
                     "_isCollapsed": false,
                     "attachedScript": "GameManager",
                     "id": 259,
+                    "scriptParameters": [],
                     "type": "Script"
                 }
             ],

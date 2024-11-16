@@ -176,6 +176,65 @@ namespace FlatEngine
 			std::optional<sol::table> instanceData = F_Lua[scriptName][ID];
 			return instanceData.has_value();
 		};
+		F_Lua["GetScriptParam"] = [](std::string paramName, long ID, std::string scriptName)
+			{
+				GameObject* thisObject = GetObjectById(ID);
+				Animation::S_EventFunctionParam parameter = Animation::S_EventFunctionParam();
+
+				if (thisObject != nullptr)
+				{
+					Script* script = thisObject->GetScript(scriptName);
+					if (script != nullptr)
+					{
+						parameter = script->GetParam(paramName);
+
+						if (parameter.type == "empty")
+						{
+							LogError("No parameter with the name \"" + paramName + "\" found in " + scriptName + " Script on the " + thisObject->GetName() + " GameObject");
+						}
+					}
+					else
+					{
+						LogError(thisObject->GetName() + " does not contain the Script named " + scriptName);
+					}
+				}
+				else
+				{
+					LogError("GameObject with that id not found.");
+				}
+
+				return parameter;
+			};
+		F_Lua["GetScriptParam"] = [](std::string paramName, long ID)
+		{
+			GameObject* thisObject = GetObjectById(ID);
+			std::string scriptName = F_Lua["calling_script_name"];
+			Animation::S_EventFunctionParam parameter = Animation::S_EventFunctionParam();
+
+			if (thisObject != nullptr)
+			{
+				Script* script = thisObject->GetScript(scriptName);
+				if (script != nullptr)
+				{
+					parameter = script->GetParam(paramName);
+
+					if (parameter.type == "empty")
+					{
+						LogError("No parameter with the name \"" + paramName + "\" found in " + scriptName + " Script on the " + thisObject->GetName() + " GameObject");
+					}
+				}
+				else
+				{
+					LogError(thisObject->GetName() + " does not contain the Script named " + scriptName);
+				}
+			}
+			else
+			{
+				LogError("GameObject with that id not found.");
+			}
+
+			return parameter;
+		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
 			LoadLuaGameObject(GetObjectById(ID), F_Lua["calling_script_name"]);
@@ -286,21 +345,21 @@ namespace FlatEngine
 			ImGui::End(); // Scene View
 		};
 		F_Lua["GameDrawLine"] = [](Vector2 startPoint, Vector2 endPoint, Vector4 color, float thickness)
-			{
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
-				PushWindowStyles();
-				ImGui::Begin("Scene View", 0, 16 | 8);
-				PopWindowStyles();
-				// {
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, Vector2(0, 0));
+			PushWindowStyles();
+			ImGui::Begin("Scene View", 0, 16 | 8);
+			PopWindowStyles();
+			// {
 
-				DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
+			DrawLine(startPoint, endPoint, color, thickness, ImGui::GetWindowDrawList());
 
-				// }
-				ImGui::PopStyleVar();
-				ImGui::PopStyleVar();
-				ImGui::End(); // Scene View
-			};
+			// }
+			ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
+			ImGui::End(); // Scene View
+		};
 		F_Lua["GetTime"] = []()
 		{
 			return GetEllapsedGameTimeInMs();

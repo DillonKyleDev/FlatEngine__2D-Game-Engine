@@ -44,7 +44,7 @@ namespace FlatEngine
 			bool b_fired;
 		};	
 		struct S_EventFunctionParam {
-			std::string type = "empty";
+			std::string type = "empty"; // Can be "string", "int", "float", "double", "long", "bool", "Vector2"
 			int e_int = 0;
 			long e_long = 0;
 			float e_float = 0.0f;

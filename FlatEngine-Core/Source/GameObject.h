@@ -47,6 +47,7 @@ namespace FlatEngine
 		bool HasTag(std::string tagName);
 		void SetTag(std::string tagName, bool b_hasTag);
 		bool HasScript(std::string scriptName);
+		Script* GetScript(std::string scriptName);
 
 
 		// Components

@@ -64,6 +64,7 @@ namespace FlatEngine
 	};
 	struct ScriptPrefabData : public ComponentPrefabData {		
 		std::string attachedScript;
+		std::map<std::string, Animation::S_EventFunctionParam> scriptParams;
 	};
 	struct ButtonPrefabData : public ComponentPrefabData {
 		Vector2 activeDimensions;

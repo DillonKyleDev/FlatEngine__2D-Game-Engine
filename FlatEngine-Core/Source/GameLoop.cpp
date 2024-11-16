@@ -433,7 +433,7 @@ namespace FlatEngine
 	}
 
 	void GameLoop::DeleteObjectsInDeleteQueue()
-	{
+	{		
 		for (long objectID : m_objectsQueuedForDelete)
 		{
 			DeleteGameObject(objectID);

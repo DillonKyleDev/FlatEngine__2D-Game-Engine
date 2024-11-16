@@ -502,12 +502,13 @@ namespace FlatGui
 	}
 
 	void RenderScriptComponent(Script* script)
-	{		
+	{
 		static int currentLuaScript = 0;
 		std::string attachedScriptName = script->GetAttachedScript();
 		bool b_isActive = script->IsActive();
+		std::map<std::string, Animation::S_EventFunctionParam> &scriptParams = script->GetScriptParams();
 		long ID = script->GetID();
-		
+
 		if (RenderIsActiveCheckbox(b_isActive))
 		{
 			script->SetActive(b_isActive);
@@ -524,21 +525,223 @@ namespace FlatGui
 
 		std::string newScriptModalLabel = "Create Lua Script";
 		std::string newScriptName = "";
-		
+
 		if (FL::RenderSelectable("##SelectLuaScript", FL::F_luaScriptNames, currentLuaScript))
 		{
 			script->SetAttachedScript(FL::F_luaScriptNames[currentLuaScript]);
 		}
-	
+
 		bool b_openModal = false;
 		if (FL::RenderButton("New Script", Vector2(100, 20)))
 		{
 			b_openModal = true;
 		}
-		
+
 		if (FL::RenderInputModal(newScriptModalLabel.c_str(), "Enter a name for the Lua script", newScriptName, b_openModal))
 		{
 			FL::CreateNewLuaScript(newScriptName);
+		}
+
+		FL::RenderSeparator(3, 3);
+		FL::RenderSectionHeader("Parameters");
+
+		// Set the values for a new parameter
+		static std::string newParamName = "";
+		int currentNewParamType = 0;
+		std::vector<std::string> types = { "string", "int", "float", "double", "long", "bool", "Vector2" };
+		static Animation::S_EventFunctionParam newParam = Animation::S_EventFunctionParam();
+
+		for (int i = 0; i < types.size(); i++)
+		{
+			if (newParam.type == types[i])
+			{
+				currentNewParamType = i;
+			}
+		}
+
+		std::string newParamComboID = "##EventFunctionParameterType-createNew";
+		if (FL::RenderCombo(newParamComboID, types[currentNewParamType], types, currentNewParamType, 85))
+		{
+			newParam.type = types[currentNewParamType];
+		}
+
+		ImGui::SameLine();
+		FL::RenderInput("##newScriptParamInput", "", newParamName);
+
+		float inputWidth = ImGui::GetContentRegionAvail().x - 36;
+
+		ImGui::BeginDisabled(newParamName == "");
+		FL::MoveScreenCursor(0, 3);
+		if (FL::RenderButton("Add parameter"))
+		{
+			newParam.type = types[currentNewParamType];
+			script->AddScriptParam(newParamName, newParam);
+			newParamName = "";
+			currentNewParamType = 0;
+		}
+		ImGui::EndDisabled();
+
+		if (scriptParams.size() > 0)
+		{
+			FL::RenderSeparator(3, 3);
+
+			// Display existing parameters
+			FL::MoveScreenCursor(0, 5);
+
+			if (scriptParams.size() > 0)
+			{
+				ImGui::Text("Type:");
+				ImGui::SameLine(0, 60);
+				ImGui::Text("Name:");
+				ImGui::SameLine(0, 75);
+				ImGui::Text("Value:");
+			}
+
+			FL::MoveScreenCursor(0, 5);
+		}
+
+		int paramCounter = 0;		
+		std::string paramQueuedForDelete = "";
+		for (std::map<std::string, Animation::S_EventFunctionParam>::iterator paramIter = scriptParams.begin(); paramIter != scriptParams.end(); paramIter++)
+		{
+			int currentParamType = 0;
+			Animation::S_EventFunctionParam &param = paramIter->second;
+
+			for (int i = 0; i < types.size(); i++)
+			{
+				if (param.type == types[i])
+				{
+					currentParamType = i;
+				}
+			}
+
+			std::string currentParamComboID = "##EventFunctionParameterType" + std::to_string(paramCounter);
+			if (FL::RenderCombo(currentParamComboID, types[currentParamType], types, currentParamType, 85))
+			{
+				param.type = types[currentParamType];
+			}
+
+			ImGui::SameLine();
+			ImGui::Text(paramIter->first.c_str());
+			ImGui::SameLine();
+
+
+
+			float inputWidth = ImGui::GetContentRegionAvail().x - 36;
+
+			if (param.type == "string")
+			{
+				std::string stringValue = param.e_string;
+				if (FL::RenderInput("##EventParamString" + std::to_string(paramCounter), "", stringValue, false, inputWidth))
+				{
+					param.e_string = stringValue;
+				}
+			}
+			else if (param.type == "int")
+			{
+				int intValue = param.e_int;
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragInt("##EventParamInt" + std::to_string(paramCounter), inputWidth, intValue, 1, INT_MIN, INT_MAX, 0, "input"))
+				{
+					param.e_int = intValue;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+			}
+			else if (param.type == "long")
+			{
+				int longValue = (int)param.e_long;
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragInt("##EventParamLong" + std::to_string(paramCounter), inputWidth, longValue, 1, INT_MIN, INT_MAX, 0, "input"))
+				{
+					param.e_long = longValue;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+			}
+			else if (param.type == "float")
+			{
+				float floatValue = param.e_float;
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragFloat("##EventParamFloat" + std::to_string(paramCounter), inputWidth, floatValue, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+				{
+					param.e_float = floatValue;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+			}
+			else if (param.type == "double")
+			{
+				float doubleValue = (float)param.e_double;
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragFloat("##EventParamFloat" + std::to_string(paramCounter), inputWidth, doubleValue, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+				{
+					param.e_double = doubleValue;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+			}
+			else if (param.type == "bool")
+			{
+				std::vector<std::string> trueFalse = { "true", "false" };
+				int currentBool = 0;
+				if (param.e_boolean)
+				{
+					currentBool = 0;
+				}
+				else
+				{
+					currentBool = 1;
+				}
+				if (FL::RenderCombo("##EventParamBooleanDropdown" + std::to_string(paramCounter), param.e_boolean ? "true" : "false", trueFalse, currentBool, inputWidth))
+				{
+					param.e_boolean = trueFalse[currentBool] == "true";
+				}
+			}
+			else if (param.type == "Vector2")
+			{
+				inputWidth = (inputWidth / 2) - 3;
+				Vector2 vector2Value = param.e_Vector2;
+
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragFloat("##EventParamVector2X" + std::to_string(paramCounter), inputWidth, vector2Value.x, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+				{
+					param.e_Vector2.x = vector2Value.x;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+
+				ImGui::SameLine(0, 6);
+
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, Vector2(5, 4));
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+				if (FL::RenderDragFloat("##EventParamVector2Y" + std::to_string(paramCounter), inputWidth, vector2Value.y, 0.01f, -FLT_MAX, FLT_MAX, 0, "input"))
+				{
+					param.e_Vector2.y = vector2Value.y;
+				}
+				ImGui::PopStyleVar();
+				ImGui::PopStyleVar();
+			}
+
+			ImGui::SameLine(0, 5);
+
+			std::string trashcanID = "##EventParamtrashIcon-" + std::to_string(paramCounter);
+			if (FL::RenderImageButton(trashcanID.c_str(), FL::GetTexture("trash")))
+			{
+				paramQueuedForDelete = paramIter->first;
+			}
+
+			paramCounter++;
+		}
+
+		if (paramQueuedForDelete != "")
+		{
+			scriptParams.erase(paramQueuedForDelete);
 		}
 	}
 
@@ -599,6 +802,7 @@ namespace FlatGui
 			FL::RenderSectionHeader("On Click Function Parameters");
 
 			ImGui::BeginDisabled(luaFunctionParams->parameters.size() >= 5);
+			FL::MoveScreenCursor(0, 3);
 			if (FL::RenderButton("Add parameter"))
 			{
 				Animation::S_EventFunctionParam param = Animation::S_EventFunctionParam();

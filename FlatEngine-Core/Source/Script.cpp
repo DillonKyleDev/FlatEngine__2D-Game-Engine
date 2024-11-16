@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "FlatEngine.h"
 
 #include "json.hpp"
 
@@ -30,6 +31,28 @@ namespace FlatEngine
 			{ "attachedScript", m_attachedScript },
 		};
 
+		json parameters = json::array();
+
+		for (std::pair<std::string, Animation::S_EventFunctionParam> paramPair : m_scriptParams)
+		{
+			std::string paramName = paramPair.first;
+			Animation::S_EventFunctionParam parameter = paramPair.second;
+
+			parameters.push_back({
+				{ "paramName", paramName },
+				{ "type", parameter.type },
+				{ "string", parameter.e_string },
+				{ "int", parameter.e_int },
+				{ "float", parameter.e_float },
+				{ "double", parameter.e_double },
+				{ "long", parameter.e_long },
+				{ "bool", parameter.e_boolean },
+				{ "vector2X", parameter.e_Vector2.x },
+				{ "vector2Y", parameter.e_Vector2.y },
+			});
+		}
+		jsonData.push_back({ "scriptParameters", parameters });
+
 		std::string data = jsonData.dump();
 		// Return dumped json object with required data for saving
 		return data;
@@ -43,5 +66,49 @@ namespace FlatEngine
 	std::string Script::GetAttachedScript()
 	{
 		return m_attachedScript;
+	}
+
+	std::map<std::string, Animation::S_EventFunctionParam> &Script::GetScriptParams()
+	{
+		return m_scriptParams;
+	}
+
+	void Script::SetScriptParams(std::map<std::string, Animation::S_EventFunctionParam> scriptParams)
+	{
+		m_scriptParams = scriptParams;
+	}
+
+	Animation::S_EventFunctionParam Script::GetParam(std::string paramName)
+	{
+		if (m_scriptParams.count(paramName))
+		{
+			return m_scriptParams.at(paramName);
+		}
+
+		return Animation::S_EventFunctionParam();
+	}
+
+	void Script::AddScriptParam(std::string paramName, Animation::S_EventFunctionParam parameter)
+	{
+		if (m_scriptParams.count(paramName) == 0)
+		{
+			m_scriptParams.emplace(paramName, parameter);
+		}
+		else
+		{
+			LogError("Script parameter already exists with that name.");
+		}
+	}
+
+	void Script::DeleteScriptParam(std::string paramName)
+	{
+		if (m_scriptParams.count(paramName) == 0)
+		{
+			m_scriptParams.erase(paramName);
+		}
+		else
+		{
+			LogError("No Script parameter with that name was found.");
+		}
 	}
 }

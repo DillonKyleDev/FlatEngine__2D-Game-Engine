@@ -184,6 +184,25 @@ namespace FlatEngine
 				script->ownerId = object.ID;
 				script->attachedScript = CheckJsonString(componentJson, "attachedScript", objectName);
 
+				json scriptParamsJson = componentJson["scriptParameters"];
+
+				for (int i = 0; i < scriptParamsJson.size(); i++)
+				{
+					json param = scriptParamsJson[i];
+					Animation::S_EventFunctionParam parameter;
+					std::string paramName = CheckJsonString(param, "paramName", objectName);
+					parameter.type = CheckJsonString(param, "type", objectName);
+					parameter.e_string = CheckJsonString(param, "string", objectName);
+					parameter.e_int = CheckJsonInt(param, "int", objectName);
+					parameter.e_float = CheckJsonFloat(param, "float", objectName);
+					parameter.e_long = CheckJsonLong(param, "long", objectName);
+					parameter.e_double = CheckJsonDouble(param, "double", objectName);
+					parameter.e_boolean = CheckJsonBool(param, "bool", objectName);
+					parameter.e_Vector2 = Vector2(CheckJsonFloat(param, "vector2X", objectName), CheckJsonFloat(param, "vector2Y", objectName));
+
+					script->scriptParams.emplace(paramName, parameter);
+				}
+
 				prefab.components.emplace(componentID, script);
 			}
 			else if (type == "Button")
@@ -586,6 +605,10 @@ namespace FlatEngine
 						std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
 						Sprite* sprite = self->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
 						sprite->SetTexture(spriteData->path);
+						if (!DoesFileExist(spriteData->path))
+						{
+							LogError("Sprite file not found for Prefab: \"" + prefab.name + "\". This may lead to unexpected behavior.  \npath: " + spriteData->path);
+						}
 						sprite->SetOffset(spriteData->offset);
 						sprite->SetScale(spriteData->scale);
 						sprite->SetPivotPoint(spriteData->pivotPoint);
@@ -609,6 +632,7 @@ namespace FlatEngine
 						std::shared_ptr<ScriptPrefabData> scriptData = std::static_pointer_cast<ScriptPrefabData>(prefab.components.at(componentID));
 						Script* script = self->AddScript(-1, scriptData->b_isActive, scriptData->b_isCollapsed);
 						script->SetAttachedScript(scriptData->attachedScript);
+						script->SetScriptParams(scriptData->scriptParams);
 					}
 					else if (prefab.components.at(componentID)->type == "Button")
 					{
@@ -634,6 +658,10 @@ namespace FlatEngine
 						for (Animation::AnimationData animData : animationData->animations)
 						{
 							animation->AddAnimation(animData.name, animData.path);
+							if (!DoesFileExist(animData.path))
+							{
+								LogError("Animation file not found for Prefab: \"" + prefab.name + "\" - on Animation: \"" + animData.name + "\". This may lead to unexpected behavior.  \npath: " + animData.path);
+							}
 						}
 					}
 					else if (prefab.components.at(componentID)->type == "Audio")
@@ -641,11 +669,22 @@ namespace FlatEngine
 						std::shared_ptr<AudioPrefabData> audioData = std::static_pointer_cast<AudioPrefabData>(prefab.components.at(componentID));
 						Audio* audio = self->AddAudio(-1, audioData->b_isActive, audioData->b_isCollapsed);
 						audio->SetSounds(audioData->sounds);
+						for (SoundData sound : audioData->sounds)
+						{
+							if (!DoesFileExist(sound.path))
+							{
+								LogError("Audio file not found for Prefab: \"" + prefab.name + "\" - on Audio: \"" + sound.name + "\". This may lead to unexpected behavior.  \npath: " + sound.path);
+							}
+						}
 					}
 					else if (prefab.components.at(componentID)->type == "Text")
 					{
 						std::shared_ptr<TextPrefabData> textData = std::static_pointer_cast<TextPrefabData>(prefab.components.at(componentID));
 						Text* text = self->AddText(-1, textData->b_isActive, textData->b_isCollapsed);
+						if (!DoesFileExist(textData->fontPath))
+						{
+							LogError("Font file not found for Prefab: \"" + prefab.name + "\". This may lead to unexpected behavior.  \npath: " + textData->fontPath);
+						}
 						text->SetFontPath(textData->fontPath);
 						text->SetFontSize(textData->fontSize);
 						text->SetColor(textData->color);

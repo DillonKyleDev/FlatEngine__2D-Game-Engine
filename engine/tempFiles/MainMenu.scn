@@ -210,20 +210,29 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
+                    "_leftClick": true,
+                    "_rightClick": false,
                     "activeHeight": 1.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
                     "activeWidth": 10.0,
                     "id": 8,
+                    "luaFunctionName": "LoadLevel",
+                    "luaFunctionParameters": [
+                        {
+                            "bool": false,
+                            "double": 0.0,
+                            "float": 0.0,
+                            "int": 1,
+                            "long": 0,
+                            "string": "1",
+                            "type": "int",
+                            "vector2X": 0.0,
+                            "vector2Y": 0.0
+                        }
+                    ],
                     "type": "Button"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "StartButton",
-                    "id": 27,
-                    "type": "Script"
                 }
             ],
             "id": 3,
@@ -316,6 +325,7 @@
                     "_isCollapsed": true,
                     "attachedScript": "IntroText",
                     "id": 24,
+                    "scriptParameters": [],
                     "type": "Script"
                 }
             ],

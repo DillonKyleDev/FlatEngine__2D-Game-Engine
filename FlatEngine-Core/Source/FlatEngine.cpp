@@ -2622,7 +2622,12 @@ namespace FlatEngine
 						CheckJsonFloat(componentJson, "tintColorZ", objectName),
 						CheckJsonFloat(componentJson, "tintColorW", objectName)
 					));
-					newSprite->SetTexture(CheckJsonString(componentJson, "path", objectName));
+					std::string path = CheckJsonString(componentJson, "path", objectName);
+					if (!DoesFileExist(path))
+					{
+						LogError("Sprite file not found for GameObject: \"" + objectName + "\". This may lead to unexpected behavior.  \npath: " + path);
+					}
+					newSprite->SetTexture(path);
 					newSprite->SetOffset(Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName)));
 				}
 				else if (type == "Camera")
@@ -2646,6 +2651,25 @@ namespace FlatEngine
 				{
 					Script* newScript = loadedObject->AddScript(id, b_isActive, b_isCollapsed);
 					newScript->SetAttachedScript(CheckJsonString(componentJson, "attachedScript", objectName));
+
+					json scriptParamsJson = componentJson["scriptParameters"];					
+
+					for (int i = 0; i < scriptParamsJson.size(); i++)
+					{
+						json param = scriptParamsJson[i];
+						Animation::S_EventFunctionParam parameter;
+						std::string paramName = CheckJsonString(param, "paramName", objectName);
+						parameter.type = CheckJsonString(param, "type", objectName);
+						parameter.e_string = CheckJsonString(param, "string", objectName);
+						parameter.e_int = CheckJsonInt(param, "int", objectName);
+						parameter.e_float = CheckJsonFloat(param, "float", objectName);
+						parameter.e_long = CheckJsonLong(param, "long", objectName);
+						parameter.e_double = CheckJsonDouble(param, "double", objectName);
+						parameter.e_boolean = CheckJsonBool(param, "bool", objectName);
+						parameter.e_Vector2 = Vector2(CheckJsonFloat(param, "vector2X", objectName), CheckJsonFloat(param, "vector2Y", objectName));
+
+						newScript->AddScriptParam(paramName, parameter);
+					}					
 				}
 				else if (type == "Button")
 				{
@@ -2695,9 +2719,12 @@ namespace FlatEngine
 						{
 							json animationJson = componentJson["animationData"][anim];
 							std::string path = CheckJsonString(animationJson, "path", objectName);
-							std::string name = CheckJsonString(animationJson, "name", objectName);							
-
-							newAnimation->AddAnimation(name, path);
+							std::string animationName = CheckJsonString(animationJson, "name", objectName);
+							if (!DoesFileExist(path))
+							{
+								LogError("Animation file not found for GameObject: \"" + objectName + "\" - on Animation: \"" + animationName + "\". This may lead to unexpected behavior.  \npath: " + path);
+							}																	
+							newAnimation->AddAnimation(animationName, path);
 						}
 					}
 				}
@@ -2711,17 +2738,26 @@ namespace FlatEngine
 						{
 							json soundJson = componentJson["soundData"][sound];
 							std::string path = CheckJsonString(soundJson, "path", objectName);
-							std::string name = CheckJsonString(soundJson, "name", objectName);
+							std::string soundName = CheckJsonString(soundJson, "name", objectName);
+							if (!DoesFileExist(path))
+							{
+								LogError("Audio file not found for GameObject: \"" + objectName + "\" - on Audio: \"" + soundName + "\". This may lead to unexpected behavior.  \npath: " + path);
+							}						
 							bool b_isMusic = CheckJsonBool(soundJson, "b_isMusic", objectName);
 
-							newAudio->AddSound(name, path, b_isMusic);
+							newAudio->AddSound(soundName, path, b_isMusic);
 						}
 					}
 				}
 				else if (type == "Text")
 				{
 					Text* newText = loadedObject->AddText(id, b_isActive, b_isCollapsed);
-					newText->SetFontPath(CheckJsonString(componentJson, "fontPath", objectName));
+					std::string fontPath = CheckJsonString(componentJson, "fontPath", objectName);
+					if (!DoesFileExist(fontPath))
+					{
+						LogError("Font file not found for GameObject: \"" + objectName + "\". This may lead to unexpected behavior.  \npath: " + fontPath);
+					}
+					newText->SetFontPath(fontPath);
 					newText->SetFontSize(CheckJsonInt(componentJson, "fontSize", objectName));
 					newText->SetPivotPoint(CheckJsonString(componentJson, "pivotPoint", objectName));
 					newText->SetColor(Vector4(
