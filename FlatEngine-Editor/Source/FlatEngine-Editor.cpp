@@ -230,6 +230,7 @@ public:
 		// If window was recreated this frame ( for after selecting a project )
 		if (m_b_recreateWindow)
 		{
+			//FL::F_Window->SetScreenDimensions(600, 400);
 			FL::F_Window->SetScreenDimensions(1500, 850);
 			//FL::F_Window->SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());

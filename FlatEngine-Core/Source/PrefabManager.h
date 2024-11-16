@@ -157,6 +157,8 @@ namespace FlatEngine
 		~PrefabManager();
 		void CreatePrefabFromJson(json objectJson, Prefab &prefab);
 		void CreatePrefab(std::string path, GameObject gameObject);
+		void UpdatePrefab(std::string prefabName);
+		void AddPrefab(std::string path);
 		void InitializePrefabs();
 		GameObject* InstantiateSelfAndChildren(long parentID, long myID, Prefab prefab, Vector2 spawnLocation = Vector2(0,0));
 		GameObject *Instantiate(std::string prefabName, Vector2 spawnLocation, long parentID = -1, long ID = -1);

@@ -30,7 +30,7 @@ namespace FlatGui
 			if (FL::RenderImageButton(playID.c_str(), FL::GetTexture("play")))
 			{
 				FL::StartGameLoop();
-				ImGui::SetWindowFocus("Game View");
+				//ImGui::SetWindowFocus("Game View");
 			}
 			ImGui::EndDisabled();
 			ImGui::SameLine(0, 5);
@@ -39,7 +39,7 @@ namespace FlatGui
 			if (FL::RenderImageButton(pauseID.c_str(), FL::GetTexture("pause")))
 			{
 				FL::PauseGameLoop();
-				ImGui::SetWindowFocus("Game View");
+				//ImGui::SetWindowFocus("Game View");
 			}
 			ImGui::EndDisabled();
 			ImGui::SameLine(0, 5);
@@ -56,7 +56,7 @@ namespace FlatGui
 			if (FL::RenderImageButton(nextFrameID.c_str(), FL::GetTexture("nextFrame")))
 			{
 				FL::F_Application->GetGameLoop()->SetFrameSkipped(true);
-				ImGui::SetWindowFocus("Game View");
+				//ImGui::SetWindowFocus("Game View");
 			}
 			ImGui::EndDisabled();
 

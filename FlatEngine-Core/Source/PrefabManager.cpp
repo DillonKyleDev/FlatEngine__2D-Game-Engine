@@ -27,14 +27,14 @@ namespace FlatEngine
 	{
 	}
 
-	void PrefabManager::CreatePrefabFromJson(json objectJson, Prefab &prefab)
+	void PrefabManager::CreatePrefabFromJson(json objectJson, Prefab& prefab)
 	{
 		GameObjectPrefabData object;
 		object.name = CheckJsonString(objectJson, "name", "Name");
 		std::string objectName = object.name;
 		object.b_isActive = CheckJsonBool(objectJson, "_isActive", objectName);
 		object.ID = CheckJsonLong(objectJson, "id", objectName);
-		object.parentID = CheckJsonLong(objectJson, "parent", objectName);		
+		object.parentID = CheckJsonLong(objectJson, "parent", objectName);
 		TagList tags = TagList();
 
 		if (JsonContains(objectJson, "children", objectName))
@@ -89,7 +89,7 @@ namespace FlatEngine
 			tags.SetIgnore("InteractableObject", CheckJsonBool(ignoreTags, "InteractableObject", objectName), b_updateColliderPairs);
 			tags.SetIgnore("Item", CheckJsonBool(ignoreTags, "Item", objectName), b_updateColliderPairs);
 		}
-		
+
 		object.tagList = tags;
 
 
@@ -133,7 +133,7 @@ namespace FlatEngine
 				sprite->ownerId = object.ID;
 				sprite->path = CheckJsonString(componentJson, "path", objectName);
 				std::string pivotPoint = "Center";
-				if  (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
+				if (CheckJsonString(componentJson, "pivotPoint", objectName) != "")
 				{
 					pivotPoint = CheckJsonString(componentJson, "pivotPoint", objectName);
 				}
@@ -176,7 +176,7 @@ namespace FlatEngine
 			}
 			else if (type == "Script")
 			{
-				std::shared_ptr<ScriptPrefabData> script = std::make_shared<ScriptPrefabData>();	
+				std::shared_ptr<ScriptPrefabData> script = std::make_shared<ScriptPrefabData>();
 				script->type = "Script";
 				script->id = componentID;
 				script->b_isActive = b_isActive;
@@ -207,12 +207,12 @@ namespace FlatEngine
 			}
 			else if (type == "Button")
 			{
-				std::shared_ptr<ButtonPrefabData> button = std::make_shared<ButtonPrefabData>();	
+				std::shared_ptr<ButtonPrefabData> button = std::make_shared<ButtonPrefabData>();
 				button->type = "Button";
 				button->activeDimensions = Vector2(CheckJsonFloat(componentJson, "activeWidth", objectName), CheckJsonFloat(componentJson, "activeHeight", objectName));
 				button->activeOffset = Vector2(CheckJsonFloat(componentJson, "activeOffsetX", objectName), CheckJsonFloat(componentJson, "activeOffsetY", objectName));
 				button->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
-				
+
 				prefab.components.emplace(componentID, button);
 			}
 			else if (type == "Canvas")
@@ -228,7 +228,7 @@ namespace FlatEngine
 			}
 			else if (type == "Animation")
 			{
-				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();	
+				std::shared_ptr<AnimationPrefabData> animation = std::make_shared<AnimationPrefabData>();
 				animation->type = "Animation";
 
 				if (JsonContains(componentJson, "animationData", objectName))
@@ -300,13 +300,13 @@ namespace FlatEngine
 				);
 				text->text = CheckJsonString(componentJson, "text", objectName);
 				text->offset = Vector2(CheckJsonFloat(componentJson, "xOffset", objectName), CheckJsonFloat(componentJson, "yOffset", objectName));
-				text->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);				
+				text->renderOrder = CheckJsonInt(componentJson, "renderOrder", objectName);
 
 				prefab.components.emplace(componentID, text);
 			}
 			else if (type == "CharacterController")
 			{
-				std::shared_ptr<CharacterControllerPrefabData> characterController = std::make_shared<CharacterControllerPrefabData>();		
+				std::shared_ptr<CharacterControllerPrefabData> characterController = std::make_shared<CharacterControllerPrefabData>();
 				characterController->type = "CharacterController";
 				characterController->maxSpeed = CheckJsonFloat(componentJson, "maxSpeed", objectName);
 				characterController->maxAcceleration = CheckJsonFloat(componentJson, "maxAcceleration", objectName);
@@ -328,7 +328,7 @@ namespace FlatEngine
 				boxCollider->b_isContinuous = CheckJsonBool(componentJson, "_isContinuous", objectName);
 				boxCollider->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
 				boxCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
-				boxCollider->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);	
+				boxCollider->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
 				boxCollider->b_showActiveRadius = CheckJsonBool(componentJson, "_showActiveRadius", objectName);
 				boxCollider->b_isComposite = CheckJsonBool(componentJson, "_isComposite", objectName);
 				boxCollider->rotation = objectRotation;
@@ -346,7 +346,7 @@ namespace FlatEngine
 				circleCollider->b_isSolid = CheckJsonBool(componentJson, "_isSolid", objectName);
 				circleCollider->activeLayer = CheckJsonInt(componentJson, "activeLayer", objectName);
 				circleCollider->b_isComposite = CheckJsonBool(componentJson, "_isComposite", objectName);
-			
+
 				prefab.components.emplace(componentID, circleCollider);
 			}
 			else if (type == "RigidBody")
@@ -358,11 +358,11 @@ namespace FlatEngine
 				rigidBody->gravity = CheckJsonFloat(componentJson, "gravity", objectName);
 				rigidBody->fallingGravity = CheckJsonFloat(componentJson, "fallingGravity", objectName);
 				rigidBody->friction = CheckJsonFloat(componentJson, "friction", objectName);
-				rigidBody->windResistance =CheckJsonFloat(componentJson, "windResistance", objectName);
-				rigidBody->equilibriumForce =CheckJsonFloat(componentJson, "equilibriumForce", objectName);
-				rigidBody->terminalVelocity =CheckJsonFloat(componentJson, "terminalVelocity", objectName);
-				rigidBody->b_isStatic =CheckJsonBool(componentJson, "_isStatic", objectName);
-				rigidBody->b_allowTorques =CheckJsonBool(componentJson, "_allowTorques", objectName);
+				rigidBody->windResistance = CheckJsonFloat(componentJson, "windResistance", objectName);
+				rigidBody->equilibriumForce = CheckJsonFloat(componentJson, "equilibriumForce", objectName);
+				rigidBody->terminalVelocity = CheckJsonFloat(componentJson, "terminalVelocity", objectName);
+				rigidBody->b_isStatic = CheckJsonBool(componentJson, "_isStatic", objectName);
+				rigidBody->b_allowTorques = CheckJsonBool(componentJson, "_allowTorques", objectName);
 
 				prefab.components.emplace(componentID, rigidBody);
 			}
@@ -374,7 +374,7 @@ namespace FlatEngine
 				tileMap->height = CheckJsonInt(componentJson, "height", objectName);
 				tileMap->tileWidth = CheckJsonInt(componentJson, "tileWidth", objectName);
 				tileMap->tileHeight = CheckJsonInt(componentJson, "tileHeight", objectName);
-		
+
 				// Get used TileSet names
 				if (JsonContains(componentJson, "tileSets", objectName))
 				{
@@ -464,7 +464,7 @@ namespace FlatEngine
 
 					tileMap->collisionAreas = collisionAreasDataMap;
 				}
-				
+
 				prefab.components.emplace(componentID, tileMap);
 			}
 		}
@@ -520,39 +520,52 @@ namespace FlatEngine
 		// Close the file
 		file_obj.close();
 
-		// Reinitialize prefabs
-		InitializePrefabs();
+		AddPrefab(path);
+	}
+
+	void PrefabManager::AddPrefab(std::string path)
+	{
+		std::filesystem::path prefabPath(path);
+
+		Prefab prefab;
+		prefab.name = GetFilenameFromPath(path);
+
+		json prefabJson = LoadFileData(prefabPath.string());
+		if (prefabJson != NULL)
+		{
+			auto prefabObjects = prefabJson["Prefab"];
+
+			if (prefabObjects != "NULL")
+			{
+				for (int i = 0; i < prefabObjects.size(); i++)
+				{
+					CreatePrefabFromJson(prefabObjects[i], prefab);
+				}
+			}
+
+			// Add pair to m_prefabs
+			if (m_prefabs.count(prefabJson["Name"]))
+			{
+				m_prefabs.at(prefabJson["Name"]) = prefab;
+			}
+			else
+			{
+				m_prefabs.emplace(prefabJson["Name"], prefab);
+			}
+		}
 	}
 
 	void PrefabManager::InitializePrefabs()
 	{
+		printf("Initializing prefabs...\n");
 		m_prefabs.clear();
 		std::vector<std::string> prefabPaths = FindAllFilesWithExtension(GetDir("projectDir"), ".prf");
 
 		for (std::string path : prefabPaths)
 		{
-			std::filesystem::path prefabPath(path);
-			
-			Prefab prefab;
-			prefab.name = GetFilenameFromPath(path);
-
-			json prefabJson = LoadFileData(prefabPath.string());
-			if (prefabJson != NULL)
-			{
-				auto prefabObjects = prefabJson["Prefab"];
-											
-				if (prefabObjects != "NULL")
-				{					
-					for (int i = 0; i < prefabObjects.size(); i++)
-					{					
-						CreatePrefabFromJson(prefabObjects[i], prefab);
-					}
-				}
-
-				// Add pair to m_prefabs
-				m_prefabs.emplace(prefabJson["Name"], prefab);
-			}
+			AddPrefab(path);
 		}
+		printf("Prefabs initialized.\n");
 	}
 
 	GameObject* PrefabManager::InstantiateSelfAndChildren(long parentID, long childIDToFind, Prefab prefab, Vector2 spawnLocation)
@@ -605,7 +618,7 @@ namespace FlatEngine
 						std::shared_ptr<SpritePrefabData> spriteData = std::static_pointer_cast<SpritePrefabData>(prefab.components.at(componentID));
 						Sprite* sprite = self->AddSprite(-1, spriteData->b_isActive, spriteData->b_isCollapsed);
 						sprite->SetTexture(spriteData->path);
-						if (!DoesFileExist(spriteData->path))
+						if (spriteData->path != "" && !DoesFileExist(spriteData->path))
 						{
 							LogError("Sprite file not found for Prefab: \"" + prefab.name + "\". This may lead to unexpected behavior.  \npath: " + spriteData->path);
 						}

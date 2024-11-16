@@ -708,17 +708,17 @@ namespace FlatEngine
 			"     {\n" +
 			"		-- Key value pairs here\n" +
 			"     }\n" +
-			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
+			"     local data = GetInstanceData(\"" + fileName + "\", my_id)\n" +
 			"end\n\n" +
 
 			"function Start()\n" +
 			"     -- required to access instance data\n" +
-			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
+			"     local data = GetInstanceData(\"" + fileName + "\", my_id)\n" +
 			"     LogString(\"" + fileName + " : Start() called on \"..this_object:GetName())\n" +
 			"end\n\n" +
 
 			"function Update()\n" +
-			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
+			"     local data = GetInstanceData(\"" + fileName + "\", my_id)\n" +
 			"end\n\n"+
 
 			"-- each of these functions must be present in each file if they are to be called otherwise other scripts copies will be used with this object instead\n" +
@@ -726,7 +726,7 @@ namespace FlatEngine
 			"end\n\n" +
 
 			"function OnBoxCollisionEnter(collidedWith)\n" +
-			"     local data = GetInstanceData(\"fileName\", my_id)\n" +
+			"     local data = GetInstanceData(\"" + fileName + "\", my_id)\n" +
 			"end\n\n" +
 
 			"function OnBoxCollisionLeave(collidedWith)\n" +

@@ -185,7 +185,7 @@
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 0.4009999930858612,
                     "yOrigin": 0.0,
                     "yPos": -1.7294111251831055,
                     "yScale": 1.0
@@ -304,7 +304,7 @@
                     "id": 22,
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 0,
-                    "text": "FLAT SPACE",
+                    "text": "Flat Space",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -312,21 +312,6 @@
                     "type": "Text",
                     "xOffset": 350.0,
                     "yOffset": 65.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "animationData": [],
-                    "id": 23,
-                    "type": "Animation"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "attachedScript": "IntroText",
-                    "id": 24,
-                    "scriptParameters": [],
-                    "type": "Script"
                 }
             ],
             "id": 7,
@@ -387,7 +372,7 @@
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": -1.7294111251831055,
-                    "yPos": 0.0,
+                    "yPos": -0.05555582046508789,
                     "yScale": 1.0
                 },
                 {
@@ -429,6 +414,76 @@
             },
             "name": "ButtonText",
             "parent": 3,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": -0.05555582046508789,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 23,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "GameManager",
+                    "id": 27,
+                    "scriptParameters": [],
+                    "type": "Script"
+                }
+            ],
+            "id": 9,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "GameManager",
+            "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,

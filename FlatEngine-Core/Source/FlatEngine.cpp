@@ -328,6 +328,8 @@ namespace FlatEngine
 		ImGui_ImplSDL2_InitForSDLRenderer(F_Window->GetWindow(), F_Window->GetRenderer());
 		ImGui_ImplSDLRenderer2_Init(F_Window->GetRenderer());
 		SetImGuiColors();
+
+		printf("ImGui initialized...\n");
 	}
 
 	void SetImGuiColors()
@@ -2623,7 +2625,7 @@ namespace FlatEngine
 						CheckJsonFloat(componentJson, "tintColorW", objectName)
 					));
 					std::string path = CheckJsonString(componentJson, "path", objectName);
-					if (!DoesFileExist(path))
+					if (path != "" && !DoesFileExist(path))
 					{
 						LogError("Sprite file not found for GameObject: \"" + objectName + "\". This may lead to unexpected behavior.  \npath: " + path);
 					}
