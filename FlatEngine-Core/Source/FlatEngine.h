@@ -246,7 +246,7 @@ namespace FlatEngine
 	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
 	extern void DeleteGameObject(long sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
-	extern GameObject* GetObjectById(long objectID);
+	extern GameObject* GetObjectByID(long objectID);
 	extern GameObject* GetObjectByName(std::string name);
 	extern GameObject* GetObjectByTag(std::string tag);
 

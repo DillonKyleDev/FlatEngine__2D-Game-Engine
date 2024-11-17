@@ -240,7 +240,7 @@ namespace FlatGui
 		FG_FocusedGameObjectID = ID;
 		if (ID != -1)
 		{
-			GameObject *focusedObject = FL::GetObjectById(ID);
+			GameObject *focusedObject = FL::GetObjectByID(ID);
 			Animation* animationComponent = focusedObject->GetAnimation();
 			std::string animationPath = "";
 
@@ -255,7 +255,7 @@ namespace FlatGui
 			//{
 			//	std::vector<GameObject> animatorObjects = std::vector<GameObject>();
 			//	animatorObjects.clear();
-			//	//objectForFocusedAnimation = GameObject(FL::GetObjectById(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
+			//	//objectForFocusedAnimation = GameObject(FL::GetObjectByID(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
 			//	//FL::Transform* transform = objectForFocusedAnimation->GetTransform();
 			//	//transform->SetPosition(Vector2(0, 0));
 			//	//animatorObjects.push_back(*objectForFocusedAnimation);
@@ -365,7 +365,7 @@ namespace FlatGui
 		Vector2 gridStep = FL::F_LoadedProject.GetSceneViewGridStep();
 		FG_sceneViewGridStep = gridStep;
 
-		if (FL::F_LoadedProject.GetFocusedGameObjectID() != -1 && FL::GetObjectById(FL::F_LoadedProject.GetFocusedGameObjectID()) != nullptr)
+		if (FL::F_LoadedProject.GetFocusedGameObjectID() != -1 && FL::GetObjectByID(FL::F_LoadedProject.GetFocusedGameObjectID()) != nullptr)
 		{
 			SetFocusedGameObjectID(FL::F_LoadedProject.GetFocusedGameObjectID());
 		}
@@ -540,10 +540,10 @@ namespace FlatGui
 	}
 
 
-	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool b_weightedScroll, Vector2 canvasP0, Vector2 canvas_p1, Vector2 canvasSize, Vector2& gridStep, Vector2 centerOffset, bool b_showAxis)
+	void RenderGridView(Vector2& centerPoint, Vector2 &scrolling, bool b_weightedScroll, Vector2 canvasP0, Vector2 canvasP1, Vector2 canvasSize, Vector2& gridStep, Vector2 centerOffset, bool b_showAxis)
 	{
 		FG_DrawList = ImGui::GetWindowDrawList();
-		FG_DrawList->AddRectFilled(canvasP0, canvas_p1, IM_COL32(50, 50, 50, 255));
+		FG_DrawList->AddRectFilled(canvasP0, canvasP1, IM_COL32(50, 50, 50, 255));
 
 		// Our grid gridStep determines the largest gap between each grid point so our centerpoints must fall on
 		// one of those gridStep locations. We get the total grid gridSteps that will render given the current viewport
@@ -560,12 +560,12 @@ namespace FlatGui
 		// Draw horizontal grid lines
 		for (float x = trunc(fmodf(scrolling.x + canvasP0.x, gridStep.y)); x < canvasP0.x + canvasSize.x; x += gridStep.y)
 		{
-			FL::DrawLine(Vector2(x, canvasP0.y), Vector2(x, canvas_p1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(x, canvasP0.y), Vector2(x, canvasP1.y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 		// Draw vertical grid lines
 		for (float y = trunc(fmodf(scrolling.y + canvasP0.y, gridStep.y)); y < canvasP0.y + canvasSize.y; y += gridStep.y)
 		{
-			FL::DrawLine(Vector2(canvasP0.x, y), Vector2(canvas_p1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(canvasP0.x, y), Vector2(canvasP1.x, y), Vector4(0.8f, 0.8f, 0.8f, 0.15f), 1.0f, FG_DrawList);
 		}
 
 		// Draw our x and y axis blue and green lines
@@ -589,9 +589,9 @@ namespace FlatGui
 			float drawXAxisAt = centerPoint.y;
 
 			// x axis bounds check + color change (lighten) if out of bounds
-			if (centerPoint.x > canvas_p1.x - 1)
+			if (centerPoint.x > canvasP1.x - 1)
 			{
-				drawYAxisAt = canvas_p1.x - 1;
+				drawYAxisAt = canvasP1.x - 1;
 				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 			}
 			else if (centerPoint.x < canvasP0.x)
@@ -600,9 +600,9 @@ namespace FlatGui
 				yColor = Vector4(0, 0.82f, 0.14f, 0.4f);
 			}
 			// y axis bounds check + color change (lighten) if out of bounds
-			if (centerPoint.y > canvas_p1.y - 1)
+			if (centerPoint.y > canvasP1.y - 1)
 			{
-				drawXAxisAt = canvas_p1.y - 1;
+				drawXAxisAt = canvasP1.y - 1;
 				xColor = Vector4(0.07f, 0.07f, 0.8f, 0.58f);
 			}
 			else if (centerPoint.y < canvasP0.y)
@@ -613,8 +613,8 @@ namespace FlatGui
 
 
 			// Draw the axis and center point
-			FL::DrawLine(Vector2(drawYAxisAt, canvasP0.y), Vector2(drawYAxisAt, canvas_p1.y), yColor, 1.0f, FG_DrawList);
-			FL::DrawLine(Vector2(canvasP0.x, drawXAxisAt), Vector2(canvas_p1.x, drawXAxisAt), xColor, 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(drawYAxisAt, canvasP0.y), Vector2(drawYAxisAt, canvasP1.y), yColor, 1.0f, FG_DrawList);
+			FL::DrawLine(Vector2(canvasP0.x, drawXAxisAt), Vector2(canvasP1.x, drawXAxisAt), xColor, 1.0f, FG_DrawList);
 			FL::DrawPoint(Vector2(centerPoint.x, centerPoint.y), centerColor, FG_DrawList);
 		}
 	}
@@ -667,17 +667,6 @@ namespace FlatGui
 			float rotation = transform->GetRotation();
 			Vector2 scale = transform->GetScale();
 			//Vector2 baseScale = transform->GetBaseScale();
-
-			if (animation != nullptr && animation->IsActive())
-			{
-				for (Animation::AnimationData animData : animation->GetAnimations())
-				{
-					if (animData.b_playing)
-					{
-						animation->PlayAnimation(animData.name, FL::GetEngineTime());
-					}
-				}
-			}
 			
 			if (sprite != nullptr && sprite->GetTexture() != nullptr)
 			{
@@ -1404,7 +1393,7 @@ namespace FlatGui
 			// Renders Transform Arrow widget
 			if (FL::F_CursorMode == FL::F_CURSOR_MODE::TRANSLATE && focusedObjectID != -1 && focusedObjectID == self.GetID())
 			{
-				GameObject *focusedObject = FL::GetObjectById(focusedObjectID);
+				GameObject *focusedObject = FL::GetObjectByID(focusedObjectID);
 				SDL_Texture* arrowToRender = FL::GetTexture("transformArrow");
 				// * 3 because the texture is so small. If we change the scale, it will change the render starting position. We only want to change the render ending position so we adjust dimensions only
 				float arrowWidth = (float)FL::GetTextureObject("transformArrow")->GetWidth() * 3;

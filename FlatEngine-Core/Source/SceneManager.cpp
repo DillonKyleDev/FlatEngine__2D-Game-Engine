@@ -131,9 +131,9 @@ namespace FlatEngine
 
 					if (parentID != -1)
 					{
-						if (GetObjectById(parentID) != nullptr)
+						if (GetObjectByID(parentID) != nullptr)
 						{
-							GetObjectById(parentID)->AddChild(myID);
+							GetObjectByID(parentID)->AddChild(myID);
 						}
 					}
 				}

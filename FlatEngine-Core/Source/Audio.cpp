@@ -101,13 +101,15 @@ namespace FlatEngine
 	{
 		if (soundData.path != "" && soundData.sound != nullptr)
 		{
-			if (soundData.b_isMusic)
+			if (FlatEngine::FilepathHasExtension(soundData.path, ".mp3"))
 			{
 				soundData.sound->LoadMusic(soundData.path);
+				soundData.b_isMusic = true;
 			}
 			else
 			{
 				soundData.sound->LoadEffect(soundData.path);
+				soundData.b_isMusic = false;
 			}
 		}
 	}
@@ -124,11 +126,10 @@ namespace FlatEngine
 		return false;
 	}
 
-	void Audio::AddSound(std::string soundName, std::string soundPath, bool b_isMusic)
+	void Audio::AddSound(std::string soundName, std::string soundPath)
 	{
 		SoundData soundData;
 		soundData.name = soundName;
-		soundData.b_isMusic = b_isMusic;
 		soundData.path = soundPath;
 		soundData.sound = std::make_shared<Sound>();
 
@@ -182,6 +183,18 @@ namespace FlatEngine
 				Pause(sound.name);
 			}
 		}
+	}
+
+	bool Audio::IsPaused(std::string soundName)
+	{
+		for (SoundData sound : m_sounds)
+		{
+			if (sound.name == soundName)
+			{
+				return sound.sound->IsPaused();
+			}
+		}
+		return false;
 	}
 
 	void Audio::StopSound(std::string soundName)

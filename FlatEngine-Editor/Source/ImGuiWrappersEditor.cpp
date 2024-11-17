@@ -420,11 +420,11 @@ namespace FlatGui
 		bool b_follow = camera->GetShouldFollow();
 		std::string followingName = "";
 		long toFollowID = camera->GetToFollowID();
-		GameObject* followingObject = FL::GetObjectById(toFollowID);
+		GameObject* followingObject = FL::GetObjectByID(toFollowID);
 
 		if (toFollowID != -1 && followingObject != nullptr)
 		{
-			followingName = FL::GetObjectById(toFollowID)->GetName();
+			followingName = FL::GetObjectByID(toFollowID)->GetName();
 		}
 		else if (followingObject == nullptr)
 		{
@@ -452,7 +452,7 @@ namespace FlatGui
 			{
 				camera->SetZoom(zoom);
 			}
-			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(ID), "Follow Smoothing", followSmoothing, 0.01f, 0, 1))
+			if (FL::RenderFloatDragTableRow("##cameraFollowSmoothing" + std::to_string(ID), "Follow smoothing", followSmoothing, 0.01f, 0, 1))
 			{
 				camera->SetFollowSmoothing(followSmoothing);
 			}
@@ -464,7 +464,7 @@ namespace FlatGui
 		int droppedValue = -1;
 		if (FL::DropInput("##CameraFollowObject", "Following", followingName, "DND_HIERARCHY_OBJECT", droppedValue, "Drag a GameObject here from the Hierarchy"))
 		{
-			if (FL::GetObjectById(droppedValue) != nullptr || droppedValue == -1)
+			if (FL::GetObjectByID(droppedValue) != nullptr || droppedValue == -1)
 			{
 				camera->SetToFollowID(droppedValue);
 			}
@@ -1203,7 +1203,7 @@ namespace FlatGui
 			if (droppedValue >= 0)
 			{
 				std::filesystem::path fsPath(FL::F_selectedFiles[droppedValue - 1]);
-				if (fsPath.extension() == ".wav" || fsPath.extension() == ".mp4")
+				if (fsPath.extension() == ".wav" || fsPath.extension() == ".mp3")
 				{
 					path = FL::F_selectedFiles[droppedValue - 1];
 				}
@@ -1223,18 +1223,14 @@ namespace FlatGui
 		}
 		FL::MoveScreenCursor(0, 4);
 
-		FL::RenderCheckbox("Is Music?", b_isNewAudioMusic);
-		FL::MoveScreenCursor(0, 4);
-
 		ImGui::BeginDisabled(path == "" || name == "");
 		if (FL::RenderButton("Add Audio"))
 		{
 			if (!audio->ContainsName(name) && FL::DoesFileExist(path))
 			{
-				audio->AddSound(name, path, b_isNewAudioMusic);
+				audio->AddSound(name, path);
 				path = "";
 				name = "";
-				b_isNewAudioMusic = false;
 			}
 			else
 			{
@@ -1259,8 +1255,7 @@ namespace FlatGui
 			FL::SoundData& sound = (*soundIter);
 			std::string audioPath = sound.path;
 			std::string audioName = sound.name;
-			std::string newName = audioName;
-			bool b_isMusic = sound.b_isMusic;
+			std::string newName = audioName;			
 			int newDroppedValue = -1;
 			std::string inputId = "##audioPath_" + std::to_string(ID) + sound.name + std::to_string(IDCounter);
 
@@ -1274,15 +1269,16 @@ namespace FlatGui
 			{
 				if (newDroppedValue != -1 && FL::F_selectedFiles.size() >= newDroppedValue)
 				{
-					audioPath = FL::F_selectedFiles[newDroppedValue - 1];
-					sound.path = audioPath;
-					if (sound.b_isMusic)
+					std::filesystem::path fsPath(FL::F_selectedFiles[newDroppedValue - 1]);
+					if (fsPath.extension() == ".wav" || fsPath.extension() == ".mp3")
 					{
-						sound.sound->LoadMusic(audioPath);
+						audioPath = FL::F_selectedFiles[newDroppedValue - 1];
+						sound.path = audioPath;
+						audio->LoadAudio(sound);
 					}
 					else
 					{
-						sound.sound->LoadEffect(audioPath);
+						FL::LogError("File must be of type audio to drop here.");
 					}
 				}
 				else if (newDroppedValue == -1)
@@ -1292,31 +1288,37 @@ namespace FlatGui
 				}
 			}
 			FL::MoveScreenCursor(0, 4);
-
-			if (FL::RenderCheckbox("Is Music##" + std::to_string(IDCounter), b_isMusic))
-			{
-				sound.b_isMusic = b_isMusic;
-				audio->LoadAudio(sound);
-			}
 			
 			ImGui::BeginDisabled(sound.name == "" || sound.path == "");
-			// Play Audio
-			if (FL::RenderImageButton("##ImageButtonPlay" + sound.name, FL::GetTexture("play")))
-			{
-				audio->PlaySound(sound.name);
-			}
-			ImGui::SameLine(0, 5);
-			// Pause Audio
-			if (FL::RenderImageButton("##ImageButtonPause" + sound.name, FL::GetTexture("pause")))
-			{
-				audio->PauseSound(sound.name);
-			}
-			ImGui::SameLine(0, 5);
-			// Stop Audio
-			if (FL::RenderImageButton("##ImageButtonStop" + sound.name, FL::GetTexture("stop")))
-			{
-				audio->StopSound(sound.name);
-			}
+			// {
+
+				// Play Audio
+				ImGui::BeginDisabled(!(!sound.b_isMusic || !audio->IsMusicPlaying(sound.name)));
+				if (FL::RenderImageButton("##ImageButtonPlay" + sound.name, FL::GetTexture("play")))
+				{
+					audio->Play(sound.name);
+				}
+				ImGui::SameLine(0, 5);
+				ImGui::EndDisabled();
+
+				// Pause Audio
+				ImGui::BeginDisabled((!(!sound.b_isMusic || audio->IsMusicPlaying(sound.name)) || !sound.b_isMusic));
+				if (FL::RenderImageButton("##ImageButtonPause" + sound.name, FL::GetTexture("pause")))
+				{
+					audio->Pause(sound.name);
+				}
+				ImGui::EndDisabled();
+				ImGui::SameLine(0, 5);
+
+				// Stop Audio
+				ImGui::BeginDisabled((sound.b_isMusic && !audio->IsMusicPlaying(sound.name)));
+				if (FL::RenderImageButton("##ImageButtonStop" + sound.name, FL::GetTexture("stop")))
+				{
+					audio->Stop(sound.name);
+				}
+				ImGui::EndDisabled();
+
+			// }
 			ImGui::EndDisabled();
 
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 90, 0);

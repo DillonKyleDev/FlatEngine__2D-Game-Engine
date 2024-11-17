@@ -15,6 +15,7 @@ namespace FlatEngine
 		Mix_Chunk* LoadEffect(std::string path);
 		void PlayMusic();
 		void PauseMusic();
+		bool IsPaused();
 		void StopMusic();
 		bool IsMusicPlaying();
 		void PlayEffect(int channel = -1);

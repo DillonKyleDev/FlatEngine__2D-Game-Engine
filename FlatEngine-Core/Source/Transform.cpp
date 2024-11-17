@@ -77,7 +77,7 @@ namespace FlatEngine
 		{
 			for (long id : GetParent()->GetChildren())
 			{
-				GameObject *child = GetObjectById(id);
+				GameObject *child = GetObjectByID(id);
 				if (child->HasComponent("Transform"))
 				{
 					child->GetTransform()->UpdateOrigin(GetTruePosition());
@@ -99,7 +99,7 @@ namespace FlatEngine
 		{
 			for (long ID : GetParent()->GetChildren())
 			{
-				GameObject *child = GetObjectById(ID);
+				GameObject *child = GetObjectByID(ID);
 				if (child->HasComponent("Transform"))
 				{
 					Transform* childTransform = child->GetTransform();
@@ -118,7 +118,7 @@ namespace FlatEngine
 			{
 				for (long ID : GetParent()->GetChildren())
 				{
-					GameObject* child = GetObjectById(ID);
+					GameObject* child = GetObjectByID(ID);
 					if (child->HasComponent("Transform"))
 					{						
 						Transform* childTransform = child->GetTransform();

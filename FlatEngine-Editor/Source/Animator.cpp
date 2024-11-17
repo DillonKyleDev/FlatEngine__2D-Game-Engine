@@ -55,6 +55,7 @@ namespace FlatGui
 					if (FL::RenderInputModal("Create Animation", "Enter a name for the Animation", newFileName, b_openAnimationModal))
 					{
 						FL::CreateNewAnimationFile(newFileName, FL::GetDir("animations"));
+						SetFocusedAnimation(FL::LoadAnimationFile(animationFilePath));
 					}
 
 					FL::RenderSectionHeader(animationName);

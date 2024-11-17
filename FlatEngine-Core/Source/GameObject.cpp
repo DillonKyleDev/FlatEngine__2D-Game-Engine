@@ -183,7 +183,7 @@ namespace FlatEngine
 		// Set transforms origin to parents true position
 		if (m_parentID != -1)
 		{
-			GameObject *parent = GetObjectById(m_parentID);
+			GameObject *parent = GetObjectByID(m_parentID);
 			if (parent != nullptr && parent->HasComponent("Transform"))
 			{
 				Transform* parentTransform = parent->GetTransform();
@@ -604,16 +604,16 @@ namespace FlatEngine
 
 	GameObject *GameObject::GetFirstChild()
 	{
-		return GetObjectById(m_childrenIDs[0]);
+		return GetObjectByID(m_childrenIDs[0]);
 	}
 
 	GameObject *GameObject::FindChildByName(std::string name)
 	{
 		for (int i = 0; i < m_childrenIDs.size(); i++)
 		{
-			if (GetObjectById(m_childrenIDs[i])->GetName() == name)
+			if (GetObjectByID(m_childrenIDs[i])->GetName() == name)
 			{
-				return GetObjectById(m_childrenIDs[i]);
+				return GetObjectByID(m_childrenIDs[i]);
 			}
 		}
 
@@ -636,7 +636,7 @@ namespace FlatEngine
 
 		for (long child : GetChildren())
 		{
-			GetObjectById(child)->SetActive(b_active);
+			GetObjectByID(child)->SetActive(b_active);
 		}
 	}
 
@@ -647,6 +647,6 @@ namespace FlatEngine
 	
 	GameObject *GameObject::GetParent()
 	{
-		return GetObjectById(m_parentID);
+		return GetObjectByID(m_parentID);
 	}
 }

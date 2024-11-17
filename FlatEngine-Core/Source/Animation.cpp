@@ -282,6 +282,7 @@ namespace FlatEngine
 								if (b_pathAnimated && !thisFrameProps->b_fired)
 								{
 									sprite->SetTexture(thisFrameProps->path);
+									/*LogString("First frame: " + thisFrameProps->path);*/
 								}
 								if (b_tintColorAnimated)
 								{
@@ -289,7 +290,7 @@ namespace FlatEngine
 								}
 								thisFrameProps->b_fired = true;
 							}
-							else if ((ellapsedTime > lastFrameTime + animData.startTime) && (ellapsedTime < animData.startTime + keyframeTime))
+							else if (ellapsedTime > animData.startTime + keyframeTime && !thisFrameProps->b_fired)
 							{								
 								std::shared_ptr<S_Sprite> lastFrameProps = (*lastFrame);
 								float timeLeft = (animData.startTime + keyframeTime) - ellapsedTime;
@@ -297,6 +298,7 @@ namespace FlatEngine
 
 								if (b_pathAnimated && !thisFrameProps->b_fired && thisFrameProps->path != "")
 								{
+									//LogString("Different frame: " + thisFrameProps->path);
 									sprite->SetTexture(thisFrameProps->path);
 									thisFrameProps->b_fired = true;
 								}
@@ -458,7 +460,7 @@ namespace FlatEngine
 									audio->StopAll();
 								}
 
-								audio->PlaySound(thisFrameProps->soundName);
+								audio->Play(thisFrameProps->soundName);
 								thisFrameProps->b_fired = true;
 							}
 							else if (!thisFrameProps->b_fired && (ellapsedTime > animData.startTime + keyframeTime))
@@ -467,7 +469,7 @@ namespace FlatEngine
 								{
 									audio->StopAll();
 								}
-								audio->PlaySound(thisFrameProps->soundName);
+								audio->Play(thisFrameProps->soundName);
 								thisFrameProps->b_fired = true;
 							}
 							audioFrameCounter++;
@@ -509,14 +511,30 @@ namespace FlatEngine
 					}
 				}
 				else if (props->b_loop)
-				{
+				{					
 					animData.startTime = ellapsedTime;
 
-					// Unfire Event Animation Frames
+					// Unfire Animation Frames
+					for (const std::shared_ptr<S_Transform>& transformFrame : animData.animationProperties->transformProps)
+					{
+						transformFrame->b_fired = false;
+					}
+					for (const std::shared_ptr<S_Sprite>& spriteFrame : animData.animationProperties->spriteProps)
+					{
+						spriteFrame->b_fired = false;
+					}
+					for (const std::shared_ptr<S_Text>& textFrame : animData.animationProperties->textProps)
+					{
+						textFrame->b_fired = false;
+					}
+					for (const std::shared_ptr<S_Audio>& audioFrame : animData.animationProperties->audioProps)
+					{
+						audioFrame->b_fired = false;
+					}
 					for (const std::shared_ptr<S_Event>& eventFrame : animData.animationProperties->eventProps)
 					{
 						eventFrame->b_fired = false;
-					}
+					}			
 				}
 				else
 				{

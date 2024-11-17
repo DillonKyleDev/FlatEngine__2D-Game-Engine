@@ -743,12 +743,12 @@ namespace FlatEngine
 
 	Component* GetObjectComponent(long objectID, ComponentTypes type)
 	{
-		return GetLoadedScene()->GetObjectById(objectID)->GetComponent(type);
+		return GetLoadedScene()->GetObjectByID(objectID)->GetComponent(type);
 	}
 
-	GameObject* GetObjectById(long objectID)
+	GameObject* GetObjectByID(long objectID)
 	{
-		return GetLoadedScene()->GetObjectById(objectID);
+		return GetLoadedScene()->GetObjectByID(objectID);
 	}
 
 	GameObject* GetObjectByName(std::string name)
@@ -2168,8 +2168,12 @@ namespace FlatEngine
 
 	bool FilepathHasExtension(std::string filepath, std::string extension)
 	{
+		if (extension.substr(0, 1) == ".")
+		{
+			extension = extension.substr(1);
+		}
 		const size_t dot = filepath.find_last_of(".");
-		std::string actualExtension = filepath.substr(dot);
+		std::string actualExtension = filepath.substr(dot + 1);
 
 		return actualExtension == extension;
 	}
@@ -2790,7 +2794,7 @@ namespace FlatEngine
 							}						
 							bool b_isMusic = CheckJsonBool(soundJson, "b_isMusic", objectName);
 
-							newAudio->AddSound(soundName, path, b_isMusic);
+							newAudio->AddSound(soundName, path);
 						}
 					}
 				}

@@ -166,7 +166,7 @@ namespace FlatEngine
 			std::optional<sol::table> instanceData = F_Lua[scriptName][ID];
 			if (!instanceData.has_value())
 			{
-				LogError("No instance data for " + scriptName + " found using id: " + std::to_string(ID) + ".\n -- Lua Function called by GameObject : " + GetObjectById(ID)->GetName() + ".\n -- Specific calling Script component : " + F_Lua["calling_script_name"].get_or<std::string>("Script") + ".\n -- Lua Script where called function lives : " + scriptName + ".\n -- The calling Script file may be missing the function called and is using another Script files version instead. Make sure the called function exists in the " + GetObjectById(ID)->GetName() + " Script file.");
+				LogError("No instance data for " + scriptName + " found using id: " + std::to_string(ID) + ".\n -- Lua Function called by GameObject : " + GetObjectByID(ID)->GetName() + ".\n -- Specific calling Script component : " + F_Lua["calling_script_name"].get_or<std::string>("Script") + ".\n -- Lua Script where called function lives : " + scriptName + ".\n -- The calling Script file may be missing the function called and is using another Script files version instead. Make sure the called function exists in the " + GetObjectByID(ID)->GetName() + " Script file.");
 			}
 			return instanceData;
 		};
@@ -178,7 +178,7 @@ namespace FlatEngine
 		};
 		F_Lua["GetScriptParam"] = [](std::string paramName, long ID, std::string scriptName)
 			{
-				GameObject* thisObject = GetObjectById(ID);
+				GameObject* thisObject = GetObjectByID(ID);
 				Animation::S_EventFunctionParam parameter = Animation::S_EventFunctionParam();
 
 				if (thisObject != nullptr)
@@ -207,7 +207,7 @@ namespace FlatEngine
 			};
 		F_Lua["GetScriptParam"] = [](std::string paramName, long ID)
 		{
-			GameObject* thisObject = GetObjectById(ID);
+			GameObject* thisObject = GetObjectByID(ID);
 			std::string scriptName = F_Lua["calling_script_name"];
 			Animation::S_EventFunctionParam parameter = Animation::S_EventFunctionParam();
 
@@ -237,11 +237,11 @@ namespace FlatEngine
 		};
 		F_Lua["LoadGameObject"] = [](long ID)
 		{
-			LoadLuaGameObject(GetObjectById(ID), F_Lua["calling_script_name"]);
+			LoadLuaGameObject(GetObjectByID(ID), F_Lua["calling_script_name"]);
 		};
-		F_Lua["GetObjectById"] = [](long ID)
+		F_Lua["GetObjectByID"] = [](long ID)
 		{
-			return GetObjectById(ID);
+			return GetObjectByID(ID);
 		};
 		F_Lua["GetObjectByName"] = [](std::string objectName)
 		{

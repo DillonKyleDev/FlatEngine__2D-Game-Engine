@@ -72,7 +72,7 @@ namespace FlatEngine
 
 	void Camera::Follow()
 	{
-		GameObject *followTarget = GetObjectById(m_toFollowID);
+		GameObject *followTarget = GetObjectByID(m_toFollowID);
 		if (m_b_shouldFollow && GetParent()->HasComponent("Transform") && followTarget != nullptr && followTarget->HasComponent("Transform"))
 		{
 			Transform* cameraTransform = GetParent()->GetTransform();

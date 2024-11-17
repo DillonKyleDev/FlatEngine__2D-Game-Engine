@@ -59,18 +59,18 @@ namespace FlatEngine
 		
 			static bool opt_enable_context_menu = true;
 
-			Vector2 canvas_p0 = ImGui::GetCursorScreenPos();
-			Vector2 canvas_sz = ImGui::GetContentRegionAvail();
-			if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
-			if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-			Vector2 canvas_p1 = Vector2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+			Vector2 canvasP0 = ImGui::GetCursorScreenPos();
+			Vector2 canvasSize = ImGui::GetContentRegionAvail();
+			if (canvasSize.x < 50.0f) canvasSize.x = 50.0f;
+			if (canvasSize.y < 50.0f) canvasSize.y = 50.0f;
+			Vector2 canvas_p1 = Vector2(canvasP0.x + canvasSize.x, canvasP0.y + canvasSize.y);
 
 			// Set viewport dimensions for rendering objects in game view. We want this to always be centered in game view so we can get it every frame.
-			F_GAME_VIEWPORT_WIDTH = canvas_p1.x - canvas_p0.x + 1;
-			F_GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvas_p0.y + 1;
+			F_GAME_VIEWPORT_WIDTH = canvas_p1.x - canvasP0.x + 1;
+			F_GAME_VIEWPORT_HEIGHT = canvas_p1.y - canvasP0.y + 1;
 
 			// Render GameObjects in game view
-			Game_RenderObjects(canvas_p0, canvas_sz);
+			Game_RenderObjects(canvasP0, canvasSize);
 
 		// }
 		ImGui::End();
@@ -80,11 +80,11 @@ namespace FlatEngine
 		ImGui::PopStyleVar();
 	}
 
-	void Game_RenderObjects(Vector2 canvas_p0, Vector2 canvas_sz)
+	void Game_RenderObjects(Vector2 canvasP0, Vector2 canvasSize)
 	{		
 		Scene* loadedScene = FL::GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
-		FL::Camera* primaryCamera = nullptr;
+		Camera* primaryCamera;
 		Transform* cameraTransform = nullptr;
 
 		if (loadedScene != nullptr)
@@ -98,10 +98,10 @@ namespace FlatEngine
 			primaryCamera = nullptr;
 		}
 		
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		ImDrawListSplitter* drawSplitter = new ImDrawListSplitter();
 		// 3 channels for now in this scene view. 0 = scene objects, 1 = other UI (camera icon, etc), 2 = transform arrow
-		drawSplitter->Split(draw_list, F_maxSpriteLayers + 5);
+		drawSplitter->Split(drawList, F_maxSpriteLayers + 5);
 
 		Vector2 cameraPosition(0, 0);
 		float cameraWidth = 50;
@@ -132,8 +132,8 @@ namespace FlatEngine
 			}
 		}
 		
-		F_gameViewCenter = Vector2((F_GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * F_gameViewGridStep.x) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * F_gameViewGridStep.x) + canvas_p0.y);
-		Vector2 viewportCenterPoint = Vector2((F_GAME_VIEWPORT_WIDTH / 2) + canvas_p0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + canvas_p0.y);
+		F_gameViewCenter = Vector2((F_GAME_VIEWPORT_WIDTH / 2) - (cameraPosition.x * F_gameViewGridStep.x) + canvasP0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + (cameraPosition.y * F_gameViewGridStep.x) + canvasP0.y);
+		Vector2 viewportCenterPoint = Vector2((F_GAME_VIEWPORT_WIDTH / 2) + canvasP0.x, (F_GAME_VIEWPORT_HEIGHT / 2) + canvasP0.y);
 		
 		float renderStartTime = 0;
 		renderStartTime = (float)FL::GetEngineTime();
@@ -142,16 +142,16 @@ namespace FlatEngine
 		{
 			if (iter->second.IsActive())
 			{
-				Game_RenderObject(iter->second, canvas_p0, canvas_sz, draw_list, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
+				Game_RenderObject(iter->second, canvasP0, canvasSize, drawList, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
 			}
 
 			iter++;
 		}
 
-		drawSplitter->Merge(draw_list);
+		drawSplitter->Merge(drawList);
 	}
 
-	void Game_RenderObject(GameObject self, Vector2 canvas_p0, Vector2 canvas_sz, ImDrawList* draw_list, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
+	void Game_RenderObject(GameObject self, Vector2 canvasP0, Vector2 canvasSize, ImDrawList* drawList, ImDrawListSplitter* drawSplitter, Vector2 cameraPosition, float cameraWidth, float cameraHeight)
 	{
 		FL::Transform* transform = self.GetTransform();
 		Sprite* sprite = self.GetSprite();
@@ -172,19 +172,20 @@ namespace FlatEngine
 			float cameraRightEdge = cameraPosition.x + cameraWidth / 2;
 			float cameraTopEdge = cameraPosition.y + cameraHeight / 2;
 			float cameraBottomEdge = cameraPosition.y - cameraHeight / 2;
-
+			
+			// I may want to find somewhere else to do this that is not dependent on a view.
 			if (animation != nullptr && animation->IsActive())
 			{
 				for (Animation::AnimationData animData : animation->GetAnimations())
 				{
 					if (animData.b_playing)
 					{
-						animation->PlayAnimation(animData.name, GetEngineTime());
+						animation->PlayAnimation(animData.name, GetEngineTime());						
 					}
 				}
 			}
 
-			if (sprite != nullptr && sprite->IsActive())
+			if (sprite != nullptr && sprite->GetTexture() != nullptr && sprite->IsActive())
 			{
 				SDL_Texture* spriteTexture = sprite->GetTexture();
 				float textureWidth = (float)sprite->GetTextureWidth();
@@ -212,19 +213,19 @@ namespace FlatEngine
 				{
 					if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 					{
-						drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+						drawSplitter->SetCurrentChannel(drawList, renderOrder);
 					}
 					else
 					{
-						drawSplitter->SetCurrentChannel(draw_list, 0);
+						drawSplitter->SetCurrentChannel(drawList, 0);
 					}
-
+				
 					spriteScale.x *= scale.x;
 					spriteScale.y *= scale.y;
 
 					if (spriteScale.x > 0 && spriteScale.y > 0 && spriteTexture != nullptr)
 					{
-						AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, spriteScale, b_scalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+						AddImageToDrawList(spriteTexture, position, F_gameViewCenter, textureWidth, textureHeight, offset, spriteScale, b_scalesWithZoom, F_gameViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
 					}
 				}
 			}
@@ -258,14 +259,14 @@ namespace FlatEngine
 					{
 						if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 						{
-							drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+							drawSplitter->SetCurrentChannel(drawList, renderOrder);
 						}
 						else
 						{
-							drawSplitter->SetCurrentChannel(draw_list, 0);
+							drawSplitter->SetCurrentChannel(drawList, 0);
 						}
 
-						AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, newScale, b_spriteScalesWithZoom, F_gameViewGridStep.x, draw_list, rotation, ImGui::GetColorU32(tintColor));
+						AddImageToDrawList(textTexture->GetTexture(), position, F_gameViewCenter, textWidth, textHeight, offset, newScale, b_spriteScalesWithZoom, F_gameViewGridStep.x, drawList, rotation, ImGui::GetColorU32(tintColor));
 					}
 				}
 			}
@@ -313,14 +314,14 @@ namespace FlatEngine
 
 								if (renderOrder <= F_maxSpriteLayers && renderOrder >= 0)
 								{
-									drawSplitter->SetCurrentChannel(draw_list, renderOrder);
+									drawSplitter->SetCurrentChannel(drawList, renderOrder);
 								}
 								else
 								{
-									drawSplitter->SetCurrentChannel(draw_list, 0);
+									drawSplitter->SetCurrentChannel(drawList, 0);
 								}
 
-								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, draw_list, 0, FL::GetColor32("white"), uvStart, uvEnd);
+								FL::AddImageToDrawList(texture, tilePosition, F_gameViewCenter, tileWidth, tileHeight, Vector2(0, 0), scale, true, F_gameViewGridStep.x, drawList, 0, FL::GetColor32("white"), uvStart, uvEnd);
 							}
 						}
 					}
@@ -346,12 +347,12 @@ namespace FlatEngine
 				//Vector2 topLeft = { activeLeft, activeTop };
 				//Vector2 bottomRight = { activeRight, activeBottom };
 
-				//drawSplitter->SetCurrentChannel(draw_list, F_maxSpriteLayers + 2);
+				//drawSplitter->SetCurrentChannel(drawList, F_maxSpriteLayers + 2);
 
 				//if (_isActive)
-				//	FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentActive"), 3.0f, draw_list);
+				//	FL::DrawRectangle(topLeft, bottomRight, canvasP0, canvasSize, FL::GetColor("buttonComponentActive"), 3.0f, drawList);
 				//else
-				//	FL::DrawRectangle(topLeft, bottomRight, canvas_p0, canvas_sz, FL::GetColor("buttonComponentInactive"), 3.0f, draw_list);
+				//	FL::DrawRectangle(topLeft, bottomRight, canvasP0, canvasSize, FL::GetColor("buttonComponentInactive"), 3.0f, drawList);
 			}
 
 			if (canvas != nullptr && canvas->IsActive())

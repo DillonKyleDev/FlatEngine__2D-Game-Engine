@@ -508,7 +508,7 @@ namespace FlatEngine
 		for (int i = 0; i < childIDs.size(); i++)
 		{
 			// Add the gameObjectJson to the prefabObjectJsonArray
-			prefabObjectJsonArray.push_back(CreateJsonFromObject(*GetObjectById(childIDs[i])));
+			prefabObjectJsonArray.push_back(CreateJsonFromObject(*GetObjectByID(childIDs[i])));
 		}
 
 		// Recreate the GameObjectJson object and add the array as the content
@@ -603,7 +603,7 @@ namespace FlatEngine
 
 						if (parentID != -1)
 						{
-							Vector2 parentPosition = GetObjectById(parentID)->GetTransform()->GetTruePosition();
+							Vector2 parentPosition = GetObjectByID(parentID)->GetTransform()->GetTruePosition();
 							transform->SetOrigin(parentPosition);
 							transform->SetInitialPosition(transformData->position);
 						}

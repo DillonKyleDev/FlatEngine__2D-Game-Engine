@@ -108,7 +108,7 @@ namespace FlatEngine
 		return m_animatorPreviewObjects;
 	}
 
-	GameObject* Scene::GetObjectById(long ID)
+	GameObject* Scene::GetObjectByID(long ID)
 	{
 		if (m_sceneObjects.count(ID) > 0)
 		{
@@ -165,7 +165,7 @@ namespace FlatEngine
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
-		GameObject *objectToDelete = GetObjectById(sceneObjectID);	
+		GameObject *objectToDelete = GetObjectByID(sceneObjectID);	
 		if (objectToDelete != nullptr)
 		{
 			Scene::DeleteChildrenAndSelf(objectToDelete);
@@ -201,13 +201,19 @@ namespace FlatEngine
 			RemoveComponent(component);
 		}
 
+		long parentID = objectToDelete->GetParentID();
+		if (parentID != -1)
+		{
+			GetObjectByID(parentID)->RemoveChild(ID);
+		}
+
 		if (objectToDelete->HasChildren())
 		{
 			std::vector<long> childrenIDs = objectToDelete->GetChildren();
 
 			for (int i = 0; i < objectToDelete->GetChildren().size(); i++)
 			{				
-				GameObject *child = GetObjectById(childrenIDs[i]);
+				GameObject *child = GetObjectByID(childrenIDs[i]);
 				if (child != nullptr)
 				{
 					Scene::DeleteChildrenAndSelf(child);

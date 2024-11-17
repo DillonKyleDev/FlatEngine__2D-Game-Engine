@@ -231,8 +231,8 @@ public:
 		if (m_b_recreateWindow)
 		{
 			//FL::F_Window->SetScreenDimensions(600, 400);
-			FL::F_Window->SetScreenDimensions(1500, 850);
-			//FL::F_Window->SetScreenDimensions(1900, 1000);
+			//FL::F_Window->SetScreenDimensions(1500, 850);
+			FL::F_Window->SetScreenDimensions(1900, 1000);
 			//FL::F_AssetManager.CollectDirectories(GetDirectoriesType());
 			FL::F_AssetManager.CollectColors();
 			FL::RestartImGui(); // ImGui setup relies on global colors
@@ -250,7 +250,7 @@ public:
 	}
 	void OnLoadScene(std::string sceneName)
 	{
-		if (FL::GetObjectById(FlatGui::GetFocusedGameObjectID()) == nullptr)
+		if (FL::GetObjectByID(FlatGui::GetFocusedGameObjectID()) == nullptr)
 		{
 			FlatGui::SetFocusedGameObjectID(-1);
 		}

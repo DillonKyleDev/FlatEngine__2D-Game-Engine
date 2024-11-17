@@ -29,7 +29,7 @@ namespace FlatEngine
 
 	GameObject* Component::GetParent()
 	{
-		return GetObjectById(m_parentID);
+		return GetObjectByID(m_parentID);
 	}
 
 	void Component::SetType(ComponentTypes componentType)

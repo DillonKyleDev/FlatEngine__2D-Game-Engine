@@ -111,7 +111,7 @@ namespace FlatGui
 
 
 			// For centering on focused GameObject
-			GameObject* lockedObject = FL::GetObjectById(FG_sceneViewLockedObjectID);
+			GameObject* lockedObject = FL::GetObjectByID(FG_sceneViewLockedObjectID);
 			if (FG_b_sceneViewLockedOnObject && lockedObject != nullptr)
 			{
 				Transform* transform = lockedObject->GetTransform();

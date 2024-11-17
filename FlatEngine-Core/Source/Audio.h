@@ -31,19 +31,21 @@ namespace FlatEngine
 		void SetIsMusic(std::string soundName, bool b_isMusic);
 		void LoadAudio(SoundData& soundData);
 		bool IsMusic(std::string soundName);
-		void AddSound(std::string soundName, std::string soundPath, bool b_isMusic);
+		void AddSound(std::string soundName, std::string soundPath);
 		void SetSounds(std::vector<SoundData> sounds);
 		void RemoveSound(std::string soundName);
-		void PlaySound(std::string soundName);
-		void PauseSound(std::string soundName);
-		void StopSound(std::string soundName);
+		bool IsPaused(std::string soundName);
 		void StopAll();
 		bool IsMusicPlaying(std::string soundName);
-
-	private:
 		void Play(std::string soundName, int channel = -1);
 		void Pause(std::string soundName, int channel = -1);
 		void Stop(std::string soundName, int channel = -1);
+		// Lua function wrappers because optional parameters are not allowed in Lua
+		void PlaySound(std::string soundName);
+		void PauseSound(std::string soundName);
+		void StopSound(std::string soundName);
+
+	private:
 		std::vector<SoundData> m_sounds;
 	};
 }

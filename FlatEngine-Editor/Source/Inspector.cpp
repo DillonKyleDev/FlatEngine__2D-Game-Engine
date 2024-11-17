@@ -34,10 +34,10 @@ namespace FlatGui
 
 			long focusedObjectID = GetFocusedGameObjectID();
 
-			if (focusedObjectID != -1 && FL::GetObjectById(focusedObjectID) != nullptr)
+			if (focusedObjectID != -1 && FL::GetObjectByID(focusedObjectID) != nullptr)
 			{
 				// Get focused GameObject
-				GameObject* focusedObject = FL::GetObjectById(focusedObjectID);
+				GameObject* focusedObject = FL::GetObjectByID(focusedObjectID);
 
 				// Lambda
 				auto L_ShowAddComponentsWindow = [&]()

@@ -1,4 +1,5 @@
 #include "Sound.h"
+#include "FlatEngine.h"
 
 
 namespace FlatEngine
@@ -59,6 +60,11 @@ namespace FlatEngine
 		{
 			Mix_PauseMusic();
 		}
+	}
+
+	bool Sound::IsPaused()
+	{
+		return Mix_PausedMusic() == 1;
 	}
 
 	void Sound::StopMusic()

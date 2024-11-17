@@ -172,7 +172,7 @@ namespace FlatGui
 				FL::DeleteGameObject(queuedForDelete);
 
 				// If previous focused object still exists, set it to focused object again
-				if (FL::GetObjectById(saveFocusedObject) != nullptr)
+				if (FL::GetObjectByID(saveFocusedObject) != nullptr)
 				{
 					SetFocusedGameObjectID(saveFocusedObject);
 				}
@@ -291,11 +291,11 @@ namespace FlatGui
 				int ID = *(const int*)payload->Data;
 
 				// Save Dropped Object
-				GameObject* dropped = FL::GetObjectById(ID);
+				GameObject* dropped = FL::GetObjectByID(ID);
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
-					GameObject *parent = FL::GetObjectById(dropped->GetParentID());
+					GameObject *parent = FL::GetObjectByID(dropped->GetParentID());
 					parent->RemoveChild(dropped->GetID());
 				}
 				// Set parent ID of dropped object to -1
@@ -481,7 +481,7 @@ namespace FlatGui
 				int ID = *(const int*)payload->Data;
 
 				// Save Dropped Object
-				GameObject *dropped = FL::GetObjectById(ID);
+				GameObject *dropped = FL::GetObjectByID(ID);
 				// Remove dropped object from its previous parents children
 				if (dropped->GetParentID() != -1)
 				{
@@ -527,7 +527,7 @@ namespace FlatGui
 			
 			for (long childID : childrenIDs)
 			{
-				GameObject* child = FL::GetObjectById(childID);
+				GameObject* child = FL::GetObjectByID(childID);
 
 				if (child != nullptr)
 				{

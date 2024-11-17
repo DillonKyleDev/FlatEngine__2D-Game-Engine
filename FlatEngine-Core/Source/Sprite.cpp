@@ -57,7 +57,7 @@ namespace FlatEngine
 		RemoveTexture();
 
 		if (newPath != "")
-		{			
+		{						
 			m_path = newPath;
 			if (m_texture.LoadFromFile(m_path))
 			{

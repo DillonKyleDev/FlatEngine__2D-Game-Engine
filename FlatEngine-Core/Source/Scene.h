@@ -41,7 +41,7 @@ namespace FlatEngine
 		std::map<long, GameObject> &GetSceneObjects();
 		void SetAnimatorPreviewObjects(std::vector<GameObject*> previewObjects);
 		std::vector<GameObject*> GetAnimatorPreviewObjects();
-		GameObject* GetObjectById(long ID);
+		GameObject* GetObjectByID(long ID);
 		GameObject* GetObjectByName(std::string name);
 		GameObject* GetObjectByTag(std::string tag);
 		GameObject* CreateGameObject(long parentID = -1, long myID = -1);

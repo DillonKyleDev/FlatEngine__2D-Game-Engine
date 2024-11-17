@@ -33,7 +33,7 @@
                     "id": 7,
                     "type": "Camera",
                     "width": 24.600000381469727,
-                    "zoom": 20.899999618530273
+                    "zoom": 30.0
                 }
             ],
             "id": 1,
@@ -725,7 +725,7 @@
                         {
                             "b_isMusic": true,
                             "name": "ThemeMusic",
-                            "path": "..\\assets\\audio\\tetris.wav"
+                            "path": "..\\assets\\audio\\tetris.mp3"
                         }
                     ],
                     "type": "Audio"
@@ -2390,7 +2390,7 @@
                     "id": 111,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotLeft",
-                    "renderOrder": 27,
+                    "renderOrder": 55,
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
@@ -2472,7 +2472,7 @@
                     "fontSize": 100,
                     "id": 108,
                     "pivotPoint": "PivotCenter",
-                    "renderOrder": 0,
+                    "renderOrder": 55,
                     "text": "Score",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
@@ -2551,7 +2551,7 @@
                     "fontSize": 100,
                     "id": 107,
                     "pivotPoint": "PivotLeft",
-                    "renderOrder": 0,
+                    "renderOrder": 55,
                     "text": "0",
                     "tintColorW": 1.0,
                     "tintColorX": 1.0,
@@ -2629,7 +2629,7 @@
                     "id": 110,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotLeft",
-                    "renderOrder": 27,
+                    "renderOrder": 55,
                     "tintColorW": 1.0,
                     "tintColorX": 0.19999992847442627,
                     "tintColorY": 1.0,
@@ -3295,81 +3295,6 @@
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": -3.0,
-            "tags": {
-                "Enemy": false,
-                "EnemyDamage": false,
-                "EnemyTrigger": false,
-                "EnvironmentalDamage": false,
-                "EnvironmentalTrigger": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "NpcTrigger": false,
-                "Player": false,
-                "PlayerDamage": false,
-                "PlayerTrigger": false,
-                "Projectile": false,
-                "Terrain": false,
-                "TerrainTrigger": false
-            }
-        },
-        {
-            "_isActive": true,
-            "_isPrefab": false,
-            "children": [],
-            "components": [
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 207,
-                    "rotation": 0.0,
-                    "type": "Transform",
-                    "xOrigin": 0.0,
-                    "xPos": 0.0,
-                    "xScale": 1.0,
-                    "yOrigin": 0.0,
-                    "yPos": 0.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "id": 208,
-                    "soundData": [
-                        {
-                            "b_isMusic": false,
-                            "name": "ThemeMusic",
-                            "path": "..\\assets\\audio\\tetris.wav"
-                        }
-                    ],
-                    "type": "Audio"
-                }
-            ],
-            "id": 50,
-            "ignoreTags": {
-                "Enemy": false,
-                "EnemyDamage": false,
-                "EnemyTrigger": false,
-                "EnvironmentalDamage": false,
-                "EnvironmentalTrigger": false,
-                "InteractableItem": false,
-                "InteractableObject": false,
-                "Item": false,
-                "Npc": false,
-                "NpcTrigger": false,
-                "Player": false,
-                "PlayerDamage": false,
-                "PlayerTrigger": false,
-                "Projectile": false,
-                "Terrain": false,
-                "TerrainTrigger": false
-            },
-            "name": "Audios",
-            "parent": -1,
-            "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
