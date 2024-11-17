@@ -2248,11 +2248,35 @@ namespace FlatEngine
 	}
 	float GetRandFloat(float low, float high)
 	{
-		std::random_device dev;
-		std::mt19937 rng(dev());
-		std::uniform_int_distribution<std::mt19937::result_type> dist(low, high);
+		if (low < high)
+		{
+			std::random_device dev;
+			std::mt19937 rng(dev());
+			int multiplier = 1;
 
-		return dist(rng);
+			if (low < 0)
+			{
+				float chanceToBeNegative = (float)(low*(-1) / (low*(-1) + high)) * 100;			
+				std::uniform_int_distribution<std::mt19937::result_type> negativeDist(0, 100);
+				if (negativeDist(rng) <= chanceToBeNegative)
+				{
+					multiplier *= -1;
+				}
+
+				low = 0;
+			}
+
+			low *= 100;
+			high *= 100;
+			std::uniform_int_distribution<std::mt19937::result_type> dist(low, high);
+
+			return (float)(dist(rng) / 100.0f * multiplier);
+		}
+		else
+		{
+			LogError("RandomFloat() - low must be lower than high.");
+			return 0;
+		}
 	}
 
 	// Json Parsing

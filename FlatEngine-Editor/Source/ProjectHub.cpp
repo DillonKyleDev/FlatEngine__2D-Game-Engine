@@ -74,43 +74,47 @@ namespace FlatGui
 				// {
 
 					Vector2 startTable = ImGui::GetCursorScreenPos();
+					float scrollY = 0;
 
 					ImGui::PushStyleColor(ImGuiCol_TableRowBg, FL::GetColor32("transparent"));
 					ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, FL::GetColor32("transparent"));
 					ImGui::PushStyleColor(ImGuiCol_TableBorderLight, FL::GetColor32("transparent"));
 					ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, FL::GetColor32("transparent"));
-					FL::PushTable("#ProjectsTable", 1);
-					ImGui::PopStyleColor();
-					ImGui::PopStyleColor();
-					ImGui::PopStyleColor();
-					ImGui::PopStyleColor();
-
-					ImGui::TableNextRow();
-
-					if (projectPaths.size() == 0)
+					if (FL::PushTable("#ProjectsTable", 1))
 					{
-						ImGui::TableSetColumnIndex(0);
-						ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 5));
-						ImGui::Text("Nothing to see here...");
-					}
-					else
-					{
-						for (std::string path : projectPaths)
+						// {
+						ImGui::TableNextRow();
+
+						if (projectPaths.size() == 0)
 						{
 							ImGui::TableSetColumnIndex(0);
-							ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y));
-							if (FL::RenderButton(FL::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 60), 1, FL::GetColor("projectHubButton"), FL::GetColor("projectHubButtonHovered"), FL::GetColor("projectHubButtonActive")))
-							{
-								b_projectSelected = true;
-								projectPath = path;
-							}
-							ImGui::TableNextRow();
+							ImGui::SetCursorPos(Vector2(ImGui::GetCursorPosX(), ImGui::GetCursorPosY() + 5));
+							ImGui::Text("Nothing to see here...");
 						}
+						else
+						{
+							for (std::string path : projectPaths)
+							{
+								ImGui::TableSetColumnIndex(0);
+								ImGui::SetCursorScreenPos(Vector2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y));
+								if (FL::RenderButton(FL::GetFilenameFromPath(path), Vector2(ImGui::GetContentRegionAvail().x, 60), 1, FL::GetColor("projectHubButton"), FL::GetColor("projectHubButtonHovered"), FL::GetColor("projectHubButtonActive")))
+								{
+									b_projectSelected = true;
+									projectPath = path;
+								}
+								ImGui::TableNextRow();
+							}
+						}
+
+						// Save table scroll for table outline
+						scrollY = ImGui::GetScrollY();
+						FL::PopTable();
 					}
 
-					// Save table scroll for table outline
-					float scrollY = ImGui::GetScrollY(); 
-					FL::PopTable();
+					ImGui::PopStyleColor();
+					ImGui::PopStyleColor();
+					ImGui::PopStyleColor();
+					ImGui::PopStyleColor();
 
 				// }
 				FL::EndWindowChild(); // ProjectsTable
