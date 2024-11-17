@@ -64,8 +64,8 @@ namespace FlatGui
 			if (ImGui::BeginTable("##table", 3, flags, Vector2(-1, 0))) 
 			{
 				ImGui::TableSetupColumn("Process Name", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-				ImGui::TableSetupColumn("Hang Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-				ImGui::TableSetupColumn("Hang Time Visualization");
+				ImGui::TableSetupColumn("Time (ms)", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				ImGui::TableSetupColumn("Visualization");
 				ImGui::TableHeadersRow();
 				ImPlot::PushColormap(ImPlotColormap_Cool);
 

@@ -18,6 +18,7 @@
 #include <shobjidl.h> 
 #include "implot.h"
 #include "imgui_internal.h"
+#include <random>
 
 
 
@@ -2235,6 +2236,24 @@ namespace FlatEngine
 		return Vector2(startPos.x + easedDiff.x, startPos.y + easedDiff.y);
 	}
 
+
+	// Helper Functions
+	int GetRandInt(int low, int high)
+	{
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dist(low, high);
+
+		return dist(rng);
+	}
+	float GetRandFloat(float low, float high)
+	{
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dist(low, high);
+
+		return dist(rng);
+	}
 
 	// Json Parsing
 	json CreateJsonFromObject(GameObject currentObject)

@@ -622,9 +622,9 @@ namespace FlatEngine
 						{
 							LogError("Sprite file not found for Prefab: \"" + prefab.name + "\". This may lead to unexpected behavior.  \npath: " + spriteData->path);
 						}
-						sprite->SetOffset(spriteData->offset);
 						sprite->SetScale(spriteData->scale);
 						sprite->SetPivotPoint(spriteData->pivotPoint);
+						sprite->SetOffset(spriteData->offset);
 						sprite->SetRenderOrder(spriteData->renderOrder);
 						sprite->SetTintColor(spriteData->tintColor);
 					}

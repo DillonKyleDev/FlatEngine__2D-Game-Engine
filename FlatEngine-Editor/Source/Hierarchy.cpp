@@ -393,6 +393,12 @@ namespace FlatGui
 		if (ImGui::BeginPopupContextItem())
 		{
 			FL::PushMenuStyles();
+			if (ImGui::MenuItem("Create Child"))
+			{
+				GameObject* childObject = FL::CreateGameObject(currentObject.GetID());
+				SetFocusedGameObjectID(childObject->GetID());
+				ImGui::CloseCurrentPopup();
+			}
 			if (currentObject.IsPrefab())
 			{
 				std::string prefabName = "Prefab: " + currentObject.GetPrefabName();
@@ -425,13 +431,6 @@ namespace FlatGui
 					modalOpenOn = currentObject.GetID();
 					ImGui::CloseCurrentPopup();
 				}
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Create Child"))
-			{
-				GameObject* childObject = FL::CreateGameObject(currentObject.GetID());
-				SetFocusedGameObjectID(childObject->GetID());
-				ImGui::CloseCurrentPopup();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject"))

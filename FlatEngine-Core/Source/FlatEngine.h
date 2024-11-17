@@ -328,6 +328,10 @@ namespace FlatEngine
 	// Helper Functions //
 	//////////////////////
 
+	// Random
+	extern int GetRandInt(int low, int high);
+	extern float GetRandFloat(float low, float high);
+
 	// Json parsing
 	extern json CreateJsonFromObject(GameObject gameObject);
 	extern GameObject *CreateObjectFromJson(json objectJson);

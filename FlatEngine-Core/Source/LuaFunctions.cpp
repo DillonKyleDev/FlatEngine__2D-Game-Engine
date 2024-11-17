@@ -372,13 +372,13 @@ namespace FlatEngine
 		{
 			return GetColor(color);
 		};
-		F_Lua["RandomNumber"] = [](unsigned int min, unsigned int max)
+		F_Lua["RandomInt"] = [](int min, int max)
 		{
-			std::random_device dev;
-			std::mt19937 rng(dev());
-			std::uniform_int_distribution<std::mt19937::result_type> dist6(min, max);
-
-			return dist6(rng);
+			return GetRandInt(min, max);
+		};
+		F_Lua["RandomFloat"] = [](float min, float max)
+		{
+			return GetRandFloat(min, max);
 		};
 	}
 
