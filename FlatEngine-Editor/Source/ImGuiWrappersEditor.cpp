@@ -1166,6 +1166,11 @@ namespace FlatGui
 			}
 			ImGui::EndDisabled();
 
+			if (FL::RenderCheckbox("Play on Start", animData.b_playing))
+			{
+				animData.b_playing = !animData.b_playing;
+			}
+
 			if (animData.name != animations.back().name)
 			{
 				FL::RenderSeparator(4, 6);

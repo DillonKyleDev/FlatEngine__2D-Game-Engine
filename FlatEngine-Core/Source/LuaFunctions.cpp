@@ -462,7 +462,9 @@ namespace FlatEngine
 			"GetTextureWidth", &Sprite::GetTextureWidth,
 			"GetTextureHeight", &Sprite::GetTextureHeight,			
 			"SetTintColor", &Sprite::SetTintColor,
-			"GetTintColor", &Sprite::GetTintColor
+			"GetTintColor", &Sprite::GetTintColor,
+			"SetAlpha", &Sprite::SetAlpha,
+			"GetAlpha", &Sprite::GetAlpha
 		);
 
 		F_Lua.new_usertype<Text>("Text",

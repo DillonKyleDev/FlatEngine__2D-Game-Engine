@@ -264,4 +264,20 @@ namespace FlatEngine
 	{
 		return m_tintColor;
 	}
+	void Sprite::SetAlpha(float alpha)
+	{
+		if (alpha <= 1 && alpha >= 0)
+		{
+			m_tintColor.w = alpha;
+		}
+		else
+		{
+			LogError("Sprite:SetAlpha() - Alpha value must be a float between 0 and 1.");
+		}
+	}
+
+	float Sprite::GetAlpha()
+	{
+		return m_tintColor.w;
+	}
 }

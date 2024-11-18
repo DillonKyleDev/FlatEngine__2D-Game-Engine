@@ -270,7 +270,11 @@ namespace FlatEngine
 							}
 
 							if (keyframeTime == 0 && !(*frame)->b_fired)
-							{							
+							{			
+								if (b_pathAnimated && !thisFrameProps->b_fired)
+								{
+									sprite->SetTexture(thisFrameProps->path);
+								}
 								if (b_offsetAnimated)
 								{
 									sprite->SetOffset(Vector2(thisFrameProps->xOffset, thisFrameProps->yOffset));
@@ -279,15 +283,11 @@ namespace FlatEngine
 								{
 									sprite->SetScale(Vector2(thisFrameProps->xScale, thisFrameProps->yScale));
 								}
-								if (b_pathAnimated && !thisFrameProps->b_fired)
-								{
-									sprite->SetTexture(thisFrameProps->path);
-									/*LogString("First frame: " + thisFrameProps->path);*/
-								}
 								if (b_tintColorAnimated)
 								{
 									sprite->SetTintColor(thisFrameProps->tintColor);
 								}
+								sprite->UpdatePivotOffset();
 								thisFrameProps->b_fired = true;
 							}
 							else if (ellapsedTime > animData.startTime + keyframeTime && !thisFrameProps->b_fired)

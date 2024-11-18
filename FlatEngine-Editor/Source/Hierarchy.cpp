@@ -399,6 +399,7 @@ namespace FlatGui
 				SetFocusedGameObjectID(childObject->GetID());
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::Separator();
 			if (currentObject.IsPrefab())
 			{
 				std::string prefabName = "Prefab: " + currentObject.GetPrefabName();

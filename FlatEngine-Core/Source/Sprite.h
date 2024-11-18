@@ -41,6 +41,8 @@ namespace FlatEngine
 		Vector2 GetPivotOffset();
 		void SetTintColor(Vector4 newTintColor);
 		Vector4 GetTintColor();
+		void SetAlpha(float);
+		float GetAlpha();
 
 	private:
 		Texture m_texture;
