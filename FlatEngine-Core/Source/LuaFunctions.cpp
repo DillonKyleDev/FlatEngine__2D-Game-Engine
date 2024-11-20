@@ -263,6 +263,10 @@ namespace FlatEngine
 		{				
 			QueueLoadScene(GetLoadedScenePath());
 		};
+		F_Lua["GetLoadedScene"] = []()
+		{
+			return GetLoadedScene();
+		};
 		F_Lua["LogString"] = [](std::string line)
 		{
 			std::string prefix = "[LUA] " + F_Lua["calling_script_name"].get_or<std::string>("Script") + " :";
@@ -385,6 +389,12 @@ namespace FlatEngine
 	// Map C++ types to Lua "Types" -- https://sol2.readthedocs.io/en/latest/api/usertype.html
 	void RegisterLuaTypes()
 	{
+		F_Lua.new_usertype<Scene>("Scene",
+			"SetName", &Scene::SetName,
+			"GetName", &Scene::GetName,
+			"GetPath", &Scene::GetPath
+		);
+
 		F_Lua.new_usertype<Vector2>("Vector2",
 			sol::constructors<Vector2(), Vector2(float x,float y)>(),
 			"SetX", &Vector2::SetX,

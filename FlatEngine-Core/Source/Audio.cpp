@@ -1,4 +1,5 @@
 #include "Audio.h"
+#include "GameObject.h"
 #include "FlatEngine.h"
 
 
@@ -165,12 +166,18 @@ namespace FlatEngine
 
 	void Audio::PlaySound(std::string soundName)
 	{
+		bool b_audioFound = false;
 		for (SoundData sound : m_sounds)
 		{
 			if (sound.name == soundName)
 			{
 				Play(sound.name);
-			}
+				b_audioFound = true;
+			}	
+		}
+		if (!b_audioFound)
+		{
+			LogError("Audio sound " + soundName + " not found.");
 		}
 	}
 
