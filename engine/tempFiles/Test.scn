@@ -116,7 +116,7 @@
                 "Item": false,
                 "Npc": false,
                 "NpcTrigger": false,
-                "Player": false,
+                "Player": true,
                 "PlayerDamage": false,
                 "PlayerTrigger": false,
                 "Projectile": false,

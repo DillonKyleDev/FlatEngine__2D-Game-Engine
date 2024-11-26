@@ -652,6 +652,11 @@ namespace FlatEngine
 		}
 	}
 
+	void SetProjectLoadedScenePath(std::string scenePath)
+	{
+		F_LoadedProject.SetLoadedScenePath(scenePath);
+	}
+
 	// GameObject / Scene management
 	void SaveScene(Scene* scene, std::string filepath)
 	{
@@ -725,7 +730,7 @@ namespace FlatEngine
 		return F_SceneManager.GetLoadedScene();
 	}
 
-	void CreateNewSceneFile(std::string filename, std::string path)
+	std::string CreateNewSceneFile(std::string filename, std::string path)
 	{
 		Scene* newScene = CreateNewScene();
 		newScene->SetName(filename);
@@ -743,6 +748,8 @@ namespace FlatEngine
 		newScene->SetPath(filePath);
 
 		SaveScene(newScene, filePath);
+
+		return filePath;
 	}
 
 	Scene *CreateNewScene()

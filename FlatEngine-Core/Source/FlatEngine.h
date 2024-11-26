@@ -231,6 +231,7 @@ namespace FlatEngine
 	extern Project& GetLoadedProject();
 	extern void LoadGameProject(std::string path, json& projectJson);
 	extern void BuildProject();
+	extern void SetProjectLoadedScenePath(std::string scenePath);
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -314,7 +315,7 @@ namespace FlatEngine
 
 	// File Explorer
 	extern void CreateNewLuaScript(std::string fileName, std::string path = "");
-	extern void CreateNewSceneFile(std::string fileName, std::string path = "");
+	extern std::string CreateNewSceneFile(std::string fileName, std::string path = "");
 	extern void CreateNewAnimationFile(std::string fileName, std::string path = "");
 	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
 	extern void CreateNewTileSetFile(std::string fileName, std::string path);

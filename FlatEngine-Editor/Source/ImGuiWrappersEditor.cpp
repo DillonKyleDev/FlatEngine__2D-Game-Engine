@@ -1093,7 +1093,8 @@ namespace FlatGui
 		}
 
 		int IDCounter = 0;
-		for (FL::Animation::AnimationData &animData : animations)
+		int queuedAnimationForDelete = -1;
+		for (FL::Animation::AnimationData& animData : animations)
 		{
 			std::string currentAnimationName = animData.name;
 
@@ -1159,12 +1160,19 @@ namespace FlatGui
 			ImGui::BeginDisabled(animData.path == "");
 			if (FL::RenderButton("Edit##" + std::to_string(IDCounter)))
 			{
-				FG_b_showAnimator = true;					
+				FG_b_showAnimator = true;
 
 				SetFocusedAnimation(FL::LoadAnimationFile(animData.path));
 				FL::F_LoadedProject.SetLoadedPreviewAnimationPath(animData.path);
 			}
 			ImGui::EndDisabled();
+
+			ImGui::SameLine(0, 10);
+
+			if (FL::RenderButton("Delete##" + std::to_string(IDCounter)))
+			{
+				queuedAnimationForDelete = IDCounter;
+			}
 
 			if (FL::RenderCheckbox("Play on Start", animData.b_playing))
 			{
@@ -1177,6 +1185,12 @@ namespace FlatGui
 			}
 
 			IDCounter++;
+		}
+
+		if (queuedAnimationForDelete != -1)
+		{
+			std::vector<Animation::AnimationData>::iterator index = animations.begin() + queuedAnimationForDelete;
+			animations.erase(index);
 		}
 	}
 

@@ -5,13 +5,15 @@
 
 ### Disclaimer
 
-This project is in active development so there are a few things you need to keep in mind if you plan to use FlatEngine:
+This project is in active development and there is currently no released build available.  Feel free to download the source code and build it yourself in Visual Studio.
 
 This is a hobby project.
 It will likely crash eventually so save often. THERE IS NO AUTOSAVE.
 Things will change, sometimes drastically, with updates.
 Your results and the usefulness of FlatEngine may vary.
 Key systems are not optimized.
+
+Many things in this README are already out of date so keep that in mind when reading.  The general architecture of FlatEngine won't change that much over the course of development.
 
 
 ## About:
@@ -109,6 +111,7 @@ Sprites are the visual representation of GameObjects in the scene.  Currently on
 
 ### Script
 
+**EDIT: This is outdated.**
 Scripts in FlatEngine are written in Lua in ".scp.lua" files.  The Script component is merely a container for a script reference.  Eventually I plan on enabling exposure of Lua variables inside the Script component but that is not currently a feature of FlatEngine.  See the explanation farther down on how scripting works in FlatEngine for more details.
 
 ### Button
@@ -177,7 +180,7 @@ Text|The actual text to be rendered.|
 
 ### Collision Components
 
-The Collision components are not all complete.  The BoxCollider component is complete but it does not take rotation into account.  This is a feature I will be working on in the near future.  The CircleCollider can detect collisions, but it does not yet know how to handle positioning based on collisions.  The CompositeCollider I am waiting until the other Collision components are finished to continue work on it.  As a result, I have disabled the use of Circle and Composite colliders from the engine temporarily.  The BoxCollider uses a simple AABB collision detection approach, but it is rather expensive.  The collision system is connected to the Tags system and will not check collisions between GameObjects that are ignoring each other based on the Tags they pocess.  The BoxCollider component has the following properties:
+The Collision components are not all complete.  The BoxCollider component is complete but it does not take rotation into account.  This is a feature I will be working on in the near future.  The CircleCollider can detect collisions, but it does not yet know how to handle positioning based on collisions.  The CompositeCollider I am waiting until the other Collision components are finished to continue work on it.  As a result, I have disabled the use of Circle and Composite colliders from the engine temporarily.  The BoxCollider uses a simple AABB collision detection approach.  The collision system is connected to the Tags system and will not check collisions between GameObjects that are ignoring each other based on the Tags they pocess.  The BoxCollider component has the following properties:
 
 
 | Property        | Description |

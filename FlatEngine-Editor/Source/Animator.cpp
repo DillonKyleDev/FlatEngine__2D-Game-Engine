@@ -1040,11 +1040,17 @@ namespace FlatGui
 
 				if (FG_SelectedKeyFrameToEdit != nullptr)
 				{
+					float frameTime = FG_SelectedKeyFrameToEdit->time / 1000;
+					if (FL::RenderDragFloat("Keyframe time (seconds)", 100, frameTime, 0.001f, 0, 10000000))
+					{
+						FG_SelectedKeyFrameToEdit->time = frameTime * 1000;
+					}
+
 					if (FG_SelectedKeyFrameToEdit->name == "Event")
 					{
 						std::shared_ptr<Animation::S_Event> event = std::static_pointer_cast<Animation::S_Event>(FG_SelectedKeyFrameToEdit);
 						std::string functionName = event->functionName;
-						if (FL::RenderInput("AnimationEventName", "Function Name", functionName))
+						if (FL::RenderInput("##AnimationEventName", "Function Name", functionName))
 						{
 							event->functionName = functionName;
 						}

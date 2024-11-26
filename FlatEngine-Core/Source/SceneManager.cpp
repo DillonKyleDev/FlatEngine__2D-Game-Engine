@@ -28,6 +28,7 @@ namespace FlatEngine
 
 	void SceneManager::SaveScene(Scene *scene, std::string filePath)
 	{		
+		scene->SetPath(filePath);
 		std::ofstream file_obj;
 		std::ifstream ifstream(filePath);
 
@@ -57,7 +58,14 @@ namespace FlatEngine
 
 	void SceneManager::SaveCurrentScene()
 	{
-		SaveScene(&m_loadedScene, m_loadedScenePath);
+		if (m_loadedScenePath != "")
+		{
+			SaveScene(&m_loadedScene, m_loadedScenePath);
+		}
+		else
+		{
+
+		}
 	}
 
 	bool SceneManager::LoadScene(std::string loadFrom, std::string pointTo)
