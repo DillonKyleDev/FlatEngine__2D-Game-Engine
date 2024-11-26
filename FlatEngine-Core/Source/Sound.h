@@ -13,6 +13,10 @@ namespace FlatEngine
 
 		Mix_Music* LoadMusic(std::string path);
 		Mix_Chunk* LoadEffect(std::string path);
+		int getMusicVolume();
+		void setMusicVolume(int volume);
+		int getEffectVolume();
+		void setEffectVolume(int volume);
 		void PlayMusic();
 		void PauseMusic();
 		bool IsPaused();
@@ -25,6 +29,8 @@ namespace FlatEngine
 		Mix_Music* m_music;
 		Mix_Chunk* m_effect;
 		std::string m_path;
+		int m_effectVolume;
+		int m_musicVolume;
 		bool m_b_isPaused;
 	};
 }

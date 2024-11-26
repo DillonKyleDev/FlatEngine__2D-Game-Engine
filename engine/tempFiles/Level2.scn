@@ -2685,7 +2685,7 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [
                 45,
@@ -2777,7 +2777,7 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [],
             "components": [
@@ -2856,7 +2856,7 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [
                 44
@@ -3030,20 +3030,23 @@
         {
             "_isActive": false,
             "_isPrefab": false,
-            "children": [],
+            "children": [
+                59,
+                61
+            ],
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 158,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 2.0,
                     "yOrigin": -3.0,
                     "yPos": 0.0,
-                    "yScale": 1.0
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
@@ -3054,7 +3057,7 @@
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 6.0,
+                    "activeWidth": 2.0,
                     "id": 162,
                     "luaFunctionName": "ReloadScene",
                     "luaFunctionParameters": [],
@@ -3062,24 +3065,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
-                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
-                    "fontSize": 100,
-                    "id": 163,
-                    "pivotPoint": "PivotCenter",
-                    "renderOrder": 55,
-                    "text": "Restart",
-                    "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
-                    "type": "Text",
-                    "xOffset": 154.0,
-                    "yOffset": 41.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 166,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
@@ -3090,9 +3076,17 @@
                     "tintColorZ": 0.0,
                     "type": "Sprite",
                     "xOffset": 8.0,
-                    "xScale": 3.0,
+                    "xScale": 1.0,
                     "yOffset": 8.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "ButtonInteractions",
+                    "id": 288,
+                    "scriptParameters": [],
+                    "type": "Script"
                 }
             ],
             "id": 47,
@@ -3141,37 +3135,23 @@
         {
             "_isActive": false,
             "_isPrefab": false,
-            "children": [],
+            "children": [
+                60,
+                62
+            ],
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 159,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
-                    "xScale": 1.0,
+                    "xScale": 2.0,
                     "yOrigin": -3.0,
-                    "yPos": -3.0,
-                    "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
-                    "fontSize": 100,
-                    "id": 160,
-                    "pivotPoint": "PivotCenter",
-                    "renderOrder": 55,
-                    "text": "Quit",
-                    "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
-                    "type": "Text",
-                    "xOffset": 88.0,
-                    "yOffset": 41.0
+                    "yPos": -1.4285717010498047,
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
@@ -3182,7 +3162,7 @@
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 5.0,
+                    "activeWidth": 2.0,
                     "id": 161,
                     "luaFunctionName": "CloseProgram",
                     "luaFunctionParameters": [],
@@ -3190,7 +3170,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 165,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
@@ -3201,9 +3181,17 @@
                     "tintColorZ": 0.0,
                     "type": "Sprite",
                     "xOffset": 8.0,
-                    "xScale": 2.5,
+                    "xScale": 1.0,
                     "yOffset": 8.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "ButtonInteractions",
+                    "id": 289,
+                    "scriptParameters": [],
+                    "type": "Script"
                 }
             ],
             "id": 48,
@@ -3229,7 +3217,7 @@
             "parent": 49,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": -3.0,
+            "spawnLocationY": -1.4285717010498047,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -3315,24 +3303,25 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [
-                52
+                52,
+                58
             ],
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 252,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
                     "xPos": 0.0,
-                    "xScale": 4.0,
+                    "xScale": 2.0,
                     "yOrigin": 0.0,
-                    "yPos": -6.199999809265137,
-                    "yScale": 1.0
+                    "yPos": -5.200000762939453,
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
@@ -3377,6 +3366,14 @@
                     "xScale": 1.0,
                     "yOffset": 8.0,
                     "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "attachedScript": "ButtonInteractions",
+                    "id": 305,
+                    "scriptParameters": [],
+                    "type": "Script"
                 }
             ],
             "id": 51,
@@ -3402,7 +3399,7 @@
             "parent": 43,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": -6.199999809265137,
+            "spawnLocationY": -5.200000762939453,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -3423,7 +3420,7 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [],
             "components": [
@@ -3436,7 +3433,7 @@
                     "xOrigin": 0.0,
                     "xPos": 0.0,
                     "xScale": 1.0,
-                    "yOrigin": -6.199999809265137,
+                    "yOrigin": -5.200000762939453,
                     "yPos": -0.13043594360351563,
                     "yScale": 1.0
                 },
@@ -3444,7 +3441,7 @@
                     "_isActive": true,
                     "_isCollapsed": false,
                     "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
-                    "fontSize": 96,
+                    "fontSize": 67,
                     "id": 256,
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 55,
@@ -3454,8 +3451,8 @@
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
                     "type": "Text",
-                    "xOffset": 168.0,
-                    "yOffset": 39.0
+                    "xOffset": 116.0,
+                    "yOffset": 27.5
                 }
             ],
             "id": 52,
@@ -3864,6 +3861,481 @@
             "parent": 54,
             "prefabName": "",
             "spawnLocationX": 30.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 280,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 2.0999999046325684,
+                    "yOrigin": -5.200000762939453,
+                    "yPos": 0.0,
+                    "yScale": 0.6000000238418579
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 281,
+                    "path": "..\\assets\\images\\colors\\white.png",
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 20,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "xScale": 1.0,
+                    "yOffset": 8.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 58,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Border",
+            "parent": 51,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 163,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -3.0,
+                    "yPos": -0.07692241668701172,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
+                    "fontSize": 67,
+                    "id": 282,
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 55,
+                    "text": "Restart",
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Text",
+                    "xOffset": 101.5,
+                    "yOffset": 27.5
+                }
+            ],
+            "id": 59,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "RestartText",
+            "parent": 47,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": -0.07692241668701172,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 160,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": -4.428571701049805,
+                    "yPos": -0.047618865966796875,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
+                    "fontSize": 67,
+                    "id": 283,
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 55,
+                    "text": "Quit",
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Text",
+                    "xOffset": 58.0,
+                    "yOffset": 27.5
+                }
+            ],
+            "id": 60,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "QuitText",
+            "parent": 48,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": -0.047618865966796875,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 284,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 2.0999999046325684,
+                    "yOrigin": -3.0,
+                    "yPos": 0.0,
+                    "yScale": 0.6000000238418579
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 285,
+                    "path": "..\\assets\\images\\colors\\white.png",
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 20,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "xScale": 1.0,
+                    "yOffset": 8.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 61,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Border",
+            "parent": 47,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 286,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 2.0999999046325684,
+                    "yOrigin": -4.428571701049805,
+                    "yPos": 0.0,
+                    "yScale": 0.6000000238418579
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 287,
+                    "path": "..\\assets\\images\\colors\\white.png",
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 20,
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "xScale": 1.0,
+                    "yOffset": 8.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 62,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Border",
+            "parent": 48,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": true,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 303,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 1.0,
+                    "yOrigin": 0.0,
+                    "yPos": 0.0,
+                    "yScale": 1.0
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 304,
+                    "soundData": [
+                        {
+                            "b_isMusic": false,
+                            "name": "Hover",
+                            "path": "..\\assets\\audio\\hover.wav"
+                        },
+                        {
+                            "b_isMusic": false,
+                            "name": "Click",
+                            "path": "..\\assets\\audio\\click.wav"
+                        }
+                    ],
+                    "type": "Audio"
+                }
+            ],
+            "id": 63,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "GlobalSounds",
+            "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,
             "tags": {
                 "Enemy": false,

@@ -71,6 +71,10 @@ namespace FlatEngine
 	Logger F_Logger = Logger();
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
+
+	int F_musicVolume = 10;
+	int F_effectsVolume = 10;
+
 	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
 	std::vector<std::string> F_KeyBindingsAvailable = std::vector<std::string>();
 	std::string F_selectedMappingContextName = "";
@@ -216,6 +220,31 @@ namespace FlatEngine
 		}
 
 		return renderStart;
+	}
+
+
+	void SetMusicVolume(int volume)
+	{
+		F_musicVolume = volume;
+		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
+		{
+			for (SoundData sound : audio.second.GetSounds())
+			{
+				sound.sound->setMusicVolume(volume);
+			}
+		}
+	}
+
+	void SetEffectsVolume(int volume)
+	{
+		F_effectsVolume = volume;
+		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
+		{
+			for (SoundData sound : audio.second.GetSounds())
+			{
+				sound.sound->setEffectVolume(volume);
+			}
+		}
 	}
 
 

@@ -397,7 +397,9 @@ namespace FlatEngine
 			}
 		}
 		if (continuousCounter >= 10)
+		{
 			continuousCounter = 0;
+		}
 		continuousCounter++;
 
 		processTime = (float)GetEngineTime() - processTime;

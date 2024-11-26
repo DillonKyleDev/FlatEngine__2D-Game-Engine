@@ -425,6 +425,8 @@ namespace FlatEngine
 			"GetParent", &GameObject::GetParent,
 			"GetParentID", &GameObject::GetParentID,
 			"HasTag", &GameObject::HasTag,
+			"SetTag", &GameObject::SetTag,
+			"SetIgnore", &GameObject::SetIgnore,
 			"GetTransform", &GameObject::GetTransform,
 			"AddSprite", &GameObject::AddTransform,
 			"GetSprite", &GameObject::GetSprite,

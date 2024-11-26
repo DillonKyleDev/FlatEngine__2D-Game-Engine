@@ -20,6 +20,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+namespace FL = FlatEngine;
+
 
 namespace FlatEngine 
 {
@@ -262,7 +264,25 @@ namespace FlatEngine
 		return b_isChanged;
 	}
 
-	bool RenderTagListTableRow(std::string ID, std::string fieldName, FlatEngine::TagList &tagList)
+	bool RenderIntSliderTableRow(std::string ID, std::string fieldName, int& value, int increment, int min, int max)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
+		ImGui::TableNextRow();
+		ImGui::TableSetColumnIndex(0);
+		MoveScreenCursor(4, 4);
+		ImGui::Text(fieldName.c_str());
+		ImGui::TableSetColumnIndex(1);
+		ImGui::PopStyleVar();
+		PushSliderStyles();
+		bool b_isChanged = RenderSliderInt(fieldName, value, increment, min, max);
+		PopSliderStyles();
+		ImGui::PushID(ID.c_str());
+		ImGui::PopID();
+
+		return b_isChanged;
+	}
+
+	bool RenderTagListTableRow(std::string ID, std::string fieldName, FL::TagList &tagList)
 	{
 		bool b_changed = false;
 		bool b_hasTag = tagList.HasTag(fieldName);
@@ -441,7 +461,7 @@ namespace FlatEngine
 			std::string buttonId = ID + "openFileButton";
 			if (RenderImageButton(buttonId.c_str(), GetTexture("openFile"), Vector2(16), 1, GetColor("openFileButtonBg"), GetColor("imageButtonTint"), GetColor("openFileButtonHovered"), GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(3)))
 			{
-				std::string assetPath = FlatEngine::OpenLoadFileExplorer();
+				std::string assetPath = FL::OpenLoadFileExplorer();
 				strcpy_s(newPath, assetPath.c_str());
 				b_editedButton = true;
 			}
@@ -593,7 +613,7 @@ namespace FlatEngine
 		std::string buttonId = ID + "openFileButton";		
 		if (RenderImageButton(buttonId.c_str(), GetTexture("openFile"), Vector2(16), 1, GetColor("openFileButtonBg"), GetColor("imageButtonTint"), GetColor("openFileButtonHovered"), GetColor("imageButtonActive"), Vector2(0), Vector2(1), Vector2(3)))
 		{
-			std::string assetPath = FlatEngine::OpenLoadFileExplorer();
+			std::string assetPath = FL::OpenLoadFileExplorer();
 			strcpy_s(newPath, assetPath.c_str());
 			b_editedButton = true;
 		}
@@ -998,7 +1018,7 @@ namespace FlatEngine
 	{
 		if (b_showRect)
 		{
-			FlatEngine::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), GetColor("white"), 1.0f, ImGui::GetWindowDrawList());
+			FL::DebugRectangle(startingPoint, Vector2(startingPoint.x + size.x, startingPoint.y + size.y), GetColor("white"), 1.0f, ImGui::GetWindowDrawList());
 		}
 ;
 		if (b_allowOverlap)

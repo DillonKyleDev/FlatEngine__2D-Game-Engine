@@ -2685,7 +2685,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "_isPrefab": false,
             "children": [
                 45,
@@ -2777,7 +2777,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "_isPrefab": false,
             "children": [],
             "components": [
@@ -2856,7 +2856,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "_isPrefab": false,
             "children": [
                 44
@@ -3030,7 +3030,9 @@
         {
             "_isActive": false,
             "_isPrefab": false,
-            "children": [],
+            "children": [
+                61
+            ],
             "components": [
                 {
                     "_isActive": true,
@@ -3050,11 +3052,11 @@
                     "_isCollapsed": false,
                     "_leftClick": true,
                     "_rightClick": false,
-                    "activeHeight": 2.0,
+                    "activeHeight": 1.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 6.0,
+                    "activeWidth": 4.0,
                     "id": 162,
                     "luaFunctionName": "ReloadScene",
                     "luaFunctionParameters": [],
@@ -3062,9 +3064,9 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
-                    "fontSize": 100,
+                    "fontSize": 67,
                     "id": 163,
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 55,
@@ -3074,12 +3076,12 @@
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
                     "type": "Text",
-                    "xOffset": 154.0,
-                    "yOffset": 41.0
+                    "xOffset": 101.5,
+                    "yOffset": 27.5
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 166,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
@@ -3090,9 +3092,9 @@
                     "tintColorZ": 0.0,
                     "type": "Sprite",
                     "xOffset": 8.0,
-                    "xScale": 3.0,
+                    "xScale": 2.0,
                     "yOffset": 8.0,
-                    "yScale": 1.0
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
@@ -3149,11 +3151,13 @@
         {
             "_isActive": false,
             "_isPrefab": false,
-            "children": [],
+            "children": [
+                62
+            ],
             "components": [
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 159,
                     "rotation": 0.0,
                     "type": "Transform",
@@ -3161,36 +3165,19 @@
                     "xPos": 0.0,
                     "xScale": 1.0,
                     "yOrigin": -3.0,
-                    "yPos": -3.0,
+                    "yPos": -1.499999761581421,
                     "yScale": 1.0
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": true,
-                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
-                    "fontSize": 100,
-                    "id": 160,
-                    "pivotPoint": "PivotCenter",
-                    "renderOrder": 55,
-                    "text": "Quit",
-                    "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
-                    "type": "Text",
-                    "xOffset": 88.0,
-                    "yOffset": 41.0
                 },
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
                     "_leftClick": true,
                     "_rightClick": false,
-                    "activeHeight": 2.0,
+                    "activeHeight": 1.0,
                     "activeLayer": 0,
                     "activeOffsetX": 0.0,
                     "activeOffsetY": 0.0,
-                    "activeWidth": 5.0,
+                    "activeWidth": 4.0,
                     "id": 161,
                     "luaFunctionName": "CloseProgram",
                     "luaFunctionParameters": [],
@@ -3198,7 +3185,7 @@
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": true,
+                    "_isCollapsed": false,
                     "id": 165,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
@@ -3209,17 +3196,34 @@
                     "tintColorZ": 0.0,
                     "type": "Sprite",
                     "xOffset": 8.0,
-                    "xScale": 2.5,
+                    "xScale": 2.0,
                     "yOffset": 8.0,
-                    "yScale": 1.0
+                    "yScale": 0.5
                 },
                 {
                     "_isActive": true,
-                    "_isCollapsed": false,
+                    "_isCollapsed": true,
                     "attachedScript": "ButtonInteractions",
                     "id": 291,
                     "scriptParameters": [],
                     "type": "Script"
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "fontPath": "..\\engine\\fonts\\ProggyClean.ttf",
+                    "fontSize": 67,
+                    "id": 160,
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 55,
+                    "text": "Quit",
+                    "tintColorW": 1.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Text",
+                    "xOffset": 58.0,
+                    "yOffset": 27.5
                 }
             ],
             "id": 48,
@@ -3245,7 +3249,7 @@
             "parent": 49,
             "prefabName": "",
             "spawnLocationX": 0.0,
-            "spawnLocationY": -3.0,
+            "spawnLocationY": -1.499999761581421,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,
@@ -3331,7 +3335,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "_isPrefab": false,
             "children": [
                 52,
@@ -3448,7 +3452,7 @@
             }
         },
         {
-            "_isActive": true,
+            "_isActive": false,
             "_isPrefab": false,
             "children": [],
             "components": [
@@ -3934,7 +3938,7 @@
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 54,
-                    "tintColorW": 1.0,
+                    "tintColorW": 0.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
@@ -4014,12 +4018,17 @@
                         {
                             "b_isMusic": false,
                             "name": "Hover",
-                            "path": "..\\assets\\audio\\Click2.wav"
+                            "path": "..\\assets\\audio\\hover.wav"
                         },
                         {
                             "b_isMusic": false,
                             "name": "Click",
-                            "path": "..\\assets\\audio\\Click3.wav"
+                            "path": "..\\assets\\audio\\click.wav"
+                        },
+                        {
+                            "b_isMusic": false,
+                            "name": "GameOver",
+                            "path": "..\\assets\\audio\\gameOver.wav"
                         }
                     ],
                     "type": "Audio"
@@ -4046,6 +4055,164 @@
             },
             "name": "GlobalSounds",
             "parent": -1,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 305,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 2.0999999046325684,
+                    "yOrigin": -3.0,
+                    "yPos": 0.0,
+                    "yScale": 0.6000000238418579
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 306,
+                    "path": "..\\assets\\images\\colors\\white.png",
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 50,
+                    "tintColorW": 0.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "xScale": 1.0,
+                    "yOffset": 8.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 61,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Border",
+            "parent": 47,
+            "prefabName": "",
+            "spawnLocationX": 0.0,
+            "spawnLocationY": 0.0,
+            "tags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            }
+        },
+        {
+            "_isActive": false,
+            "_isPrefab": false,
+            "children": [],
+            "components": [
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 307,
+                    "rotation": 0.0,
+                    "type": "Transform",
+                    "xOrigin": 0.0,
+                    "xPos": 0.0,
+                    "xScale": 2.0999999046325684,
+                    "yOrigin": -4.5,
+                    "yPos": 0.0,
+                    "yScale": 0.6000000238418579
+                },
+                {
+                    "_isActive": true,
+                    "_isCollapsed": false,
+                    "id": 308,
+                    "path": "..\\assets\\images\\colors\\white.png",
+                    "pivotPoint": "PivotCenter",
+                    "renderOrder": 46,
+                    "tintColorW": 0.0,
+                    "tintColorX": 1.0,
+                    "tintColorY": 1.0,
+                    "tintColorZ": 1.0,
+                    "type": "Sprite",
+                    "xOffset": 8.0,
+                    "xScale": 1.0,
+                    "yOffset": 8.0,
+                    "yScale": 1.0
+                }
+            ],
+            "id": 62,
+            "ignoreTags": {
+                "Enemy": false,
+                "EnemyDamage": false,
+                "EnemyTrigger": false,
+                "EnvironmentalDamage": false,
+                "EnvironmentalTrigger": false,
+                "InteractableItem": false,
+                "InteractableObject": false,
+                "Item": false,
+                "Npc": false,
+                "NpcTrigger": false,
+                "Player": false,
+                "PlayerDamage": false,
+                "PlayerTrigger": false,
+                "Projectile": false,
+                "Terrain": false,
+                "TerrainTrigger": false
+            },
+            "name": "Border",
+            "parent": 48,
             "prefabName": "",
             "spawnLocationX": 0.0,
             "spawnLocationY": 0.0,

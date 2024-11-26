@@ -10,6 +10,10 @@ namespace FlatEngine
 		m_b_isPaused = false;
 		m_music = nullptr;
 		m_effect = nullptr;
+		m_musicVolume = 20;
+		m_effectVolume = 10;
+		Mix_Volume(-1, m_effectVolume);
+		Mix_VolumeMusic(m_musicVolume);
 	}
 	Sound::~Sound()
 	{
@@ -17,6 +21,26 @@ namespace FlatEngine
 		Mix_FreeChunk(m_effect);
 		m_music = nullptr;
 		m_effect = nullptr;
+	}
+
+	int Sound::getMusicVolume()
+	{
+		return Mix_VolumeMusic(-1);
+	}
+
+	void Sound::setMusicVolume(int volume)
+	{
+		Mix_VolumeMusic(volume);
+	}
+
+	int Sound::getEffectVolume()
+	{
+		return Mix_Volume(-1, -1);
+	}
+
+	void Sound::setEffectVolume(int volume)
+	{
+		Mix_Volume(-1, volume);
 	}
 
 	Mix_Music* Sound::LoadMusic(std::string path)

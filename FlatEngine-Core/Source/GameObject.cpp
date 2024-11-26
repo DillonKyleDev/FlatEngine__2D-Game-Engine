@@ -115,6 +115,11 @@ namespace FlatEngine
 		m_tagList.SetTag(tagName, b_hasTag);
 	}
 
+	void GameObject::SetIgnore(std::string tagName, bool b_hasTag)
+	{
+		m_tagList.SetIgnore(tagName, b_hasTag);
+	}
+
 	bool GameObject::HasScript(std::string scriptName)
 	{
 		bool b_hasScript = false;

@@ -3,6 +3,7 @@
 #include "Project.h"
 
 #include "imgui.h"
+#include "SDL_mixer.h"
 
 
 namespace FL = FlatEngine;
@@ -44,7 +45,7 @@ namespace FlatGui
 				{
 					// List settings per grouping
 					if (settingSelected == "Game")
-					{						
+					{
 						std::string startupScene = FL::F_LoadedProject.GetRuntimeScene();
 						if (FL::RenderInputTableRow("##SceneLoadedOnStart", "Scene to load on game start", startupScene, true))
 						{
@@ -61,6 +62,7 @@ namespace FlatGui
 						std::string currentResString = std::to_string((int)currentResolution.x) + " x " + std::to_string((int)currentResolution.y);
 						std::vector<std::string> resolutions = { "800 x 600", "1920 x 1080", "1920 x 1200" };
 						static int currentResolutionIndex = 0;
+
 						for (int r = 0; r < resolutions.size(); r++)
 						{
 							if (resolutions[r] == currentResString)
@@ -83,13 +85,23 @@ namespace FlatGui
 						{
 							FL::F_LoadedProject.SetResolution(Vector2(1920, 1200));
 						}
+
+						int musicVolume = FL::F_musicVolume;
+						int effectsVolume = FL::F_effectsVolume;
+						if (FL::RenderIntSliderTableRow("##MusicVolume", "Music Volume", musicVolume, 1, 0, MIX_MAX_VOLUME))
+						{
+							FL::SetMusicVolume(musicVolume);
+						}
+						if (FL::RenderIntSliderTableRow("##EffectVolume", "Effects Volume", effectsVolume, 1, 0, MIX_MAX_VOLUME))
+						{
+							FL::SetEffectsVolume(effectsVolume);
+						}
 						
 						bool b_fullscreen = FL::F_LoadedProject.IsFullscreen();
 						if (FL::RenderCheckboxTableRow("##FullscreenCheckbox", "Fullscreen", b_fullscreen))
 						{
 							FL::F_LoadedProject.SetFullscreen(b_fullscreen);
 						}
-
 						bool b_vsyncEnabled = FL::F_LoadedProject.IsVsyncEnabled();
 						if (FL::RenderCheckboxTableRow("##VsyncCheckbox", "Vsync", b_vsyncEnabled))
 						{

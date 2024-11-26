@@ -417,12 +417,12 @@
                         {
                             "b_isMusic": false,
                             "name": "Hover",
-                            "path": "..\\assets\\audio\\Click2.wav"
+                            "path": "..\\assets\\audio\\hover.wav"
                         },
                         {
                             "b_isMusic": false,
                             "name": "Click",
-                            "path": "..\\assets\\audio\\Click3.wav"
+                            "path": "..\\assets\\audio\\click.wav"
                         }
                     ],
                     "type": "Audio"
@@ -735,7 +735,7 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [],
             "components": [
@@ -758,8 +758,8 @@
                     "id": 44,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
-                    "renderOrder": 18,
-                    "tintColorW": 1.0,
+                    "renderOrder": 10,
+                    "tintColorW": 0.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,
@@ -1010,14 +1010,14 @@
             }
         },
         {
-            "_isActive": false,
+            "_isActive": true,
             "_isPrefab": false,
             "children": [],
             "components": [
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 49,
+                    "id": 50,
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
@@ -1030,11 +1030,11 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "id": 50,
+                    "id": 49,
                     "path": "..\\assets\\images\\colors\\white.png",
                     "pivotPoint": "PivotCenter",
-                    "renderOrder": 27,
-                    "tintColorW": 1.0,
+                    "renderOrder": 20,
+                    "tintColorW": 0.0,
                     "tintColorX": 1.0,
                     "tintColorY": 1.0,
                     "tintColorZ": 1.0,

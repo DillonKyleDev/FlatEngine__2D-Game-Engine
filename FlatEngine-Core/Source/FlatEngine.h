@@ -136,6 +136,8 @@ namespace FlatEngine
 	extern Sound F_SoundController;
 	extern TTF_Font* F_fontCinzel;
 
+	extern int F_musicVolume;
+	extern int F_effectsVolume;
 
 	extern int F_maxSpriteLayers;
 	extern float F_spriteScaleMultiplier;
@@ -256,6 +258,9 @@ namespace FlatEngine
 	// SDL
 	extern Vector2 AddImageToDrawList(SDL_Texture* texture, Vector2 positionInGrid, Vector2 relativeCenterPoint, float textureWidthPx, float textureHeightPx, Vector2 offset, Vector2 scale, bool b_scalesWithZoom, float zoomMultiplier, ImDrawList* drawList, float rotation = 0, ImU32 addColor = GetColor32("white"), Vector2 uvStart = Vector2(0, 0), Vector2 uvEnd = Vector2(1, 1));
 
+	extern void SetMusicVolume(int volume);
+	extern void SetEffectsVolume(int volume);
+
 	// Engine
 	extern bool Init(int windowWidth, int windowHeight, DirectoryType dirType);
 	extern void CloseProgram();
@@ -375,6 +380,7 @@ namespace FlatEngine
 	extern void PopTableStyles();
 	extern bool PushTable(std::string ID, int columns, ImGuiTableFlags flags = F_tableFlags);
 	extern bool RenderFloatDragTableRow(std::string ID, std::string fieldName, float& value, float increment, float min, float max);
+	extern bool RenderIntSliderTableRow(std::string ID, std::string fieldName, int& value, int increment, int min, int max);
 	extern bool RenderTagListTableRow(std::string ID, std::string fieldName, TagList& tagList);
 	extern bool RenderIntDragTableRow(std::string ID, std::string fieldName, int& value, float speed, int min, int max);
 	extern bool RenderCheckboxTableRow(std::string ID, std::string fieldName, bool& _value);
