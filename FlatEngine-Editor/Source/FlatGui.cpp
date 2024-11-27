@@ -371,17 +371,33 @@ namespace FlatGui
 		}
 	}
 
+	void CreateNewProject(std::string projectName)
+	{
+		SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
+		//std::string projectPath = FL::OpenSaveFileExplorer();
+		if (projectName != "")
+		{
+			Project newProject = Project();
+			std::string directoryPath = "..\\projects\\" + projectName;
+			std::string projectFilePath = directoryPath + "\\" + projectName + ".prj";
+			CreateProjectDirectory(directoryPath);
+			SaveProject(newProject, projectFilePath);
+			LoadProject(projectFilePath);
+		}
+	}
+
 	void CreateProjectDirectory(std::string path)
 	{
 		std::filesystem::create_directory(path);
-		std::filesystem::create_directory(path + "/animations");
-		std::filesystem::create_directory(path + "/audio");
-		std::filesystem::create_directory(path + "/images");
-		std::filesystem::create_directory(path + "/mappingContexts");
-		std::filesystem::create_directory(path + "/prefabs");
-		std::filesystem::create_directory(path + "/scenes");
-		std::filesystem::create_directory(path + "/scripts");
-		std::filesystem::create_directory(path + "/tileSets");
+		std::filesystem::create_directory(path + "\\animations");
+		std::filesystem::create_directory(path + "\\audio");
+		std::filesystem::create_directory(path + "\\images");
+		std::filesystem::create_directory(path + "\\images\\tileTextures");
+		std::filesystem::create_directory(path + "\\mappingContexts");
+		std::filesystem::create_directory(path + "\\prefabs");
+		std::filesystem::create_directory(path + "\\scenes");
+		std::filesystem::create_directory(path + "\\scripts");
+		std::filesystem::create_directory(path + "\\tileSets");
 	}
 
 	void SaveProject(Project project, std::string path)

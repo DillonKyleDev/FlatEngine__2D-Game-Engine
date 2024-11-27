@@ -3,6 +3,8 @@
 #include "FlatEngine.h"
 #include "Texture.h"
 #include "Vector4.h"
+#include "Project.h"
+
 #include "imgui.h"
 #include <fstream>
 
@@ -21,6 +23,21 @@ namespace FlatEngine
 
 	AssetManager::~AssetManager()
 	{
+	}
+
+	void AssetManager::UpdateProjectDirs(std::string projectPath)
+	{
+		std::string projectName = GetFilenameFromPath(projectPath);
+
+		m_directories.emplace("mappingContexts", "..\\projects\\" + projectName + "\\mappingContexts\\");
+		m_directories.emplace("prefabs", "..\\projects\\" + projectName + "\\prefabs\\");
+		m_directories.emplace("animations", "..\\projects\\" + projectName + "\\animations\\");
+		m_directories.emplace("scenes", "..\\projects\\" + projectName + "\\scenes\\");
+		m_directories.emplace("scripts", "..\\projects\\" + projectName + "\\scripts\\");
+		m_directories.emplace("audio", "..\\projects\\" + projectName + "\\audio\\");
+		m_directories.emplace("images", "..\\projects\\" + projectName + "\\images\\");
+		m_directories.emplace("tileSets", "..\\projects\\" + projectName + "\\tileSets\\");
+		m_directories.emplace("tileTextures", "..\\projects\\" + projectName + "\\imagese\\tileTextures\\");
 	}
 
 	void AssetManager::CollectDirectories(DirectoryType dirType)

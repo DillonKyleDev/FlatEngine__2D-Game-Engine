@@ -22,10 +22,12 @@ namespace FlatGui
 				// List settings groups
 				FL::RenderSectionHeader("Engine Setting");
 				static std::string settingSelected = "Game";
-				FL::PushTreeList("EngineSettingSelect");
-				FL::RenderTreeLeaf("Game", settingSelected);
-				FL::RenderTreeLeaf("State", settingSelected);
-				FL::PopTreeList();
+				if (FL::PushTreeList("EngineSettingSelect"))
+				{
+					FL::RenderTreeLeaf("Game", settingSelected);
+					FL::RenderTreeLeaf("State", settingSelected);
+					FL::PopTreeList();
+				}
 
 			// }
 			ImGui::EndChild();
@@ -86,8 +88,8 @@ namespace FlatGui
 							FL::F_LoadedProject.SetResolution(Vector2(1920, 1200));
 						}
 
-						int musicVolume = FL::F_musicVolume;
-						int effectsVolume = FL::F_effectsVolume;
+						int musicVolume = FL::GetLoadedProject().GetMusicVolume();
+						int effectsVolume = FL::GetLoadedProject().GetEffectsVolume();
 						if (FL::RenderIntSliderTableRow("##MusicVolume", "Music Volume", musicVolume, 1, 0, MIX_MAX_VOLUME))
 						{
 							FL::SetMusicVolume(musicVolume);

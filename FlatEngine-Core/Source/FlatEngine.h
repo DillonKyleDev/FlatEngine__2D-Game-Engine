@@ -136,9 +136,6 @@ namespace FlatEngine
 	extern Sound F_SoundController;
 	extern TTF_Font* F_fontCinzel;
 
-	extern int F_musicVolume;
-	extern int F_effectsVolume;
-
 	extern int F_maxSpriteLayers;
 	extern float F_spriteScaleMultiplier;
 	extern float F_pixelsPerGridSpace;
@@ -317,6 +314,7 @@ namespace FlatEngine
 	extern void CreateNewLuaScript(std::string fileName, std::string path = "");
 	extern std::string CreateNewSceneFile(std::string fileName, std::string path = "");
 	extern void CreateNewAnimationFile(std::string fileName, std::string path = "");
+	extern void AddMappingContext(std::string path);
 	extern void CreateNewMappingContextFile(std::string fileName, std::string path = "");
 	extern void CreateNewTileSetFile(std::string fileName, std::string path);
 	extern GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position);
@@ -327,6 +325,7 @@ namespace FlatEngine
 
 	// TileSet / TileMap
 	extern void SaveTileSet(TileSet tileSet);
+	extern void AddTileSet(std::string path);
 	extern void InitializeTileSets();
 	extern TileSet* GetTileSet(std::string tileSetName);
 
@@ -405,7 +404,7 @@ namespace FlatEngine
 	extern bool RenderInvisibleButton(std::string ID, Vector2 startingPoint, Vector2 size, bool b_allowOverlap = true, bool b_showRect = false, ImGuiButtonFlags flags = ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 	extern bool RenderCombo(std::string ID, std::string displayedValue, std::vector<std::string> options, int& currentOption, float width = -1);
 	extern bool RenderSelectable(std::string ID, std::vector<std::string> options, int& currentOption);
-	extern void PushTreeList(std::string ID);
+	extern bool PushTreeList(std::string ID);
 	extern void RenderTreeLeaf(std::string name, std::string& nodeClicked);
 	extern void PopTreeList();
 	extern void RenderTextToolTip(std::string text);

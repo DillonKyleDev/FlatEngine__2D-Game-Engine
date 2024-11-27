@@ -731,13 +731,25 @@ namespace FlatEngine
 		return b_selectionMade;
 	}
 
-	void PushTreeList(std::string ID)
+	bool PushTreeList(std::string ID)
 	{
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, GetColor("innerWindow"));
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 		PushMenuStyles();
-		ImGui::BeginTable(ID.c_str(), 1, F_tableFlags);
-		ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
+		bool b_beginTable = ImGui::BeginTable(ID.c_str(), 1, F_tableFlags);
+
+		if (b_beginTable)
+		{
+			ImGui::TableSetupColumn("##PROPERTY", 0, ImGui::GetContentRegionAvail().x + 1);
+		}
+		else
+		{
+			PopMenuStyles();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+		}
+
+		return b_beginTable;
 	}
 
 	void PopTreeList()

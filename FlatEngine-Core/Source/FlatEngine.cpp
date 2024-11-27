@@ -72,9 +72,6 @@ namespace FlatEngine
 	SceneManager F_SceneManager = SceneManager();	
 	Sound F_SoundController = Sound();
 
-	int F_musicVolume = 10;
-	int F_effectsVolume = 10;
-
 	std::vector<MappingContext> F_MappingContexts = std::vector<MappingContext>();
 	std::vector<std::string> F_KeyBindingsAvailable = std::vector<std::string>();
 	std::string F_selectedMappingContextName = "";
@@ -226,7 +223,6 @@ namespace FlatEngine
 	void SetMusicVolume(int volume)
 	{
 		GetLoadedProject().SetMusicVolume(volume);
-		F_musicVolume = volume;
 		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
 		{
 			for (SoundData sound : audio.second.GetSounds())
@@ -239,7 +235,6 @@ namespace FlatEngine
 	void SetEffectsVolume(int volume)
 	{
 		GetLoadedProject().SetEffectsVolume(volume);
-		F_effectsVolume = volume;
 		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
 		{
 			for (SoundData sound : audio.second.GetSounds())
@@ -628,7 +623,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("..\\projects\\" + GetFilenameFromPath(F_LoadedProject.GetPath()), F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\projects\\" + GetFilenameFromPath(F_LoadedProject.GetPath()), F_LoadedProject.GetBuildPath() + "\\projects\\" + GetFilenameFromPath(F_LoadedProject.GetPath()), std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -819,7 +814,7 @@ namespace FlatEngine
 		newContext.SetPath(filePath);
 		newContext.SetName(fileName);
 		SaveMappingContext(filePath, newContext);
-		InitializeMappingContexts();
+		AddMappingContext(filePath);
 	}
 
 	GameObject* CreateAssetUsingFilePath(std::string filePath, Vector2 position)
@@ -895,6 +890,36 @@ namespace FlatEngine
 		InitializeMappingContexts();
 	}
 
+	void AddMappingContext(std::string path)
+	{
+		MappingContext newContext = MappingContext();
+
+		json contextData = LoadFileData(path);
+		if (contextData != nullptr)
+		{
+			auto mappings = contextData["Mapping Context"][0];
+			newContext.SetName(CheckJsonString(mappings, "name", "MappingContext"));
+			newContext.SetPath(path);
+
+			if (newContext.GetName() == "")
+			{
+				newContext.SetName(GetFilenameFromPath(path));
+			}
+
+			std::string errorMessage = "";
+			for (std::string possibleBinding : F_KeyBindingsAvailable)
+			{
+				std::string inputAction = CheckJsonString(mappings, possibleBinding, newContext.GetName(), errorMessage);
+				if (inputAction != "")
+				{
+					newContext.AddKeyBinding(possibleBinding, inputAction);
+				}
+			}
+
+			F_MappingContexts.push_back(newContext);
+		}
+	}
+
 	void InitializeMappingContexts()
 	{
 		F_MappingContexts.clear();
@@ -923,32 +948,7 @@ namespace FlatEngine
 
 		for (std::string path : mappingContextFiles)
 		{
-			MappingContext newContext = MappingContext();
-		
-			json contextData = LoadFileData(path);
-			if (contextData != nullptr)
-			{
-				auto mappings = contextData["Mapping Context"][0];
-				newContext.SetName(CheckJsonString(mappings, "name", "MappingContext"));
-				newContext.SetPath(path);
-
-				if (newContext.GetName() == "")
-				{
-					newContext.SetName(GetFilenameFromPath(path));
-				}
-
-				std::string errorMessage = "";
-				for (std::string possibleBinding : F_KeyBindingsAvailable)
-				{
-					std::string inputAction = CheckJsonString(mappings, possibleBinding, newContext.GetName(), errorMessage);
-					if (inputAction != "")
-					{
-						newContext.AddKeyBinding(possibleBinding, inputAction);
-					}				
-				}
-
-				F_MappingContexts.push_back(newContext);
-			}
+			AddMappingContext(path);
 		}
 	}
 
@@ -1167,7 +1167,7 @@ namespace FlatEngine
 		tileSet.SetTileSetPath(filePath);
 		tileSet.SetName(fileName);
 		SaveTileSet(tileSet);
-		InitializeTileSets();
+		AddTileSet(filePath);
 	}
 
 	void SaveTileSet(TileSet tileSet)
@@ -1207,6 +1207,36 @@ namespace FlatEngine
 		fileObject.close();
 	}
 
+	void AddTileSet(std::string path)
+	{
+		TileSet tileSet = TileSet();
+		json tileSetJson = LoadFileData(path);
+
+		if (tileSetJson != nullptr)
+		{
+			auto tileSetData = tileSetJson["tileSetData"];
+
+			tileSet.SetName(tileSetData["name"]);
+			tileSet.SetTileSetPath(tileSetData["tileSetPath"]);
+			tileSet.SetTexturePath(tileSetData["texturePath"]);
+			tileSet.SetTileWidth(tileSetData["tileWidth"]);
+			tileSet.SetTileHeight(tileSetData["tileHeight"]);
+
+			std::vector<int> indices;
+			for (auto tile : tileSetJson["tiles"])
+			{
+				int index = CheckJsonInt(tile, "index", "TileSet tiles");
+				if (index != -1)
+				{
+					indices.push_back(index);
+				}
+			}
+			tileSet.SetTileSetIndices(indices);
+
+			F_TileSets.push_back(tileSet);
+		}
+	}
+
 	void InitializeTileSets()
 	{
 		F_TileSets.clear();
@@ -1216,32 +1246,7 @@ namespace FlatEngine
 
 		for (std::string path : tileSetFiles)
 		{			
-			TileSet tileSet = TileSet();
-			json tileSetJson = LoadFileData(path);
-
-			if (tileSetJson != nullptr)
-			{
-				auto tileSetData = tileSetJson["tileSetData"];
-
-				tileSet.SetName(tileSetData["name"]);
-				tileSet.SetTileSetPath(tileSetData["tileSetPath"]);
-				tileSet.SetTexturePath(tileSetData["texturePath"]);
-				tileSet.SetTileWidth(tileSetData["tileWidth"]);
-				tileSet.SetTileHeight(tileSetData["tileHeight"]);
-
-				std::vector<int> indices;
-				for (auto tile : tileSetJson["tiles"])
-				{
-					int index = CheckJsonInt(tile, "index", "TileSet tiles");
-					if (index != -1)
-					{
-						indices.push_back(index);
-					}
-				}
-				tileSet.SetTileSetIndices(indices);
-				
-				F_TileSets.push_back(tileSet);
-			}
+			AddTileSet(path);
 		}
 	}
 

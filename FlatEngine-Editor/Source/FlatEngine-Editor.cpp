@@ -241,6 +241,7 @@ public:
 			FL::InitializeTileSets();
 			FL::F_PrefabManager->InitializePrefabs();
 			FlatGui::LoadProject(m_startupProject);
+			FL::F_AssetManager.UpdateProjectDirs(m_startupProject);
 		}
 	}
 	void Quit()

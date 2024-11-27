@@ -22,6 +22,13 @@ namespace FlatGui
 		static bool b_openAnimationModal = false;
 		static bool b_openMappingContextModal = false;
 		static bool b_openTileSetModal = false;
+		static bool b_openProjectModal = false;
+		std::string projectName = "";
+
+		if (FL::RenderInputModal("Create New Project", "Project name", projectName, b_openProjectModal))
+		{
+			CreateNewProject(projectName);
+		}
 
 		FL::PushMenuStyles();
 
@@ -31,16 +38,7 @@ namespace FlatGui
 			{
 				if (ImGui::MenuItem("New Project..."))
 				{					
-					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
-					std::string projectPath = FL::OpenSaveFileExplorer();
-					if (projectPath != "")
-					{				
-						CreateProjectDirectory(projectPath);
-						Project newProject = Project();
-						projectPath = projectPath + "/" + FL::GetFilenameFromPath(projectPath) + ".prj";
-						SaveProject(newProject, projectPath);
-						LoadProject(projectPath);
-					}
+					b_openProjectModal = true;
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Open Project..."))

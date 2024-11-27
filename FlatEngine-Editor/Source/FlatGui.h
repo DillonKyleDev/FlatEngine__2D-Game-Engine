@@ -82,6 +82,7 @@ namespace FlatGui
 	extern ImDrawList* FG_DrawList;
 
 	// Project Management 
+	extern void CreateNewProject(std::string projectName);
 	extern void CreateProjectDirectory(std::string path);
 	extern void LoadProject(std::string path);
 	extern void SaveProject(Project project, std::string path);

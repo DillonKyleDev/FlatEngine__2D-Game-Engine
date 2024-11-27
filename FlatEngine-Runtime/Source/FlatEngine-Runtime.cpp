@@ -151,7 +151,7 @@ public:
 			json projectJson;
 			FL::InitializeTileSets();
 			FL::InitializeMappingContexts();
-			FL::LoadGameProject(FL::GetFilePath("gameStartupProject"), projectJson);
+			FL::LoadGameProject(FL::FindAllFilesWithExtension("..\\", ".prj").front(), projectJson);
 			FL::F_PrefabManager->InitializePrefabs();
 			FL::LoadScene(FL::F_LoadedProject.GetRuntimeScene());
 

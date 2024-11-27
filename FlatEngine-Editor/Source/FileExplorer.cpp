@@ -364,16 +364,19 @@ namespace FlatGui
 
 				Vector2 currentPos = ImGui::GetCursorScreenPos();
 
-				RenderFileIcon(entry, currentPos);
+				if (entry.path().extension() != ".prj" && entry.path().extension() != ".git")
+				{
+					RenderFileIcon(entry, currentPos);
 
-				if (iconsThisRow != maxIconsPerRow)
-				{
-					ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconButtonSize.x + horizontalSpacing, currentPos.y)); // Ready to draw the next button
-					iconsThisRow++;
-				}
-				else
-				{
-					iconsThisRow = 0;
+					if (iconsThisRow != maxIconsPerRow)
+					{
+						ImGui::SetCursorScreenPos(Vector2(currentPos.x + iconButtonSize.x + horizontalSpacing, currentPos.y)); // Ready to draw the next button
+						iconsThisRow++;
+					}
+					else
+					{
+						iconsThisRow = 0;
+					}
 				}
 			}
 		}
@@ -434,10 +437,6 @@ namespace FlatGui
 		else if (extension == ".scn")
 		{
 			icon = "sceneFile";
-		}
-		else if (extension == ".prj")
-		{
-			icon = "projectFile";
 		}
 		else if (extension == ".tls")
 		{

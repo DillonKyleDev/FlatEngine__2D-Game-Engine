@@ -136,10 +136,12 @@ namespace FlatGui
 
 				if (FL::RenderInputModal("Create New Project", "Project name", projectName, b_openProjectModal))
 				{
-					Project newProject = Project();
+					/*Project newProject = Project();
 					std::string projectPath = FL::GetDir("projects") + "/" + projectName + ".prj";
 					SaveProject(newProject, projectPath);
 					LoadProject(projectPath);
+					*/
+					CreateNewProject(projectName);
 					projectPaths = RetrieveProjectPaths();
 				}
 
