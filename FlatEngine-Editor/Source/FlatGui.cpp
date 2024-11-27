@@ -371,6 +371,19 @@ namespace FlatGui
 		}
 	}
 
+	void CreateProjectDirectory(std::string path)
+	{
+		std::filesystem::create_directory(path);
+		std::filesystem::create_directory(path + "/animations");
+		std::filesystem::create_directory(path + "/audio");
+		std::filesystem::create_directory(path + "/images");
+		std::filesystem::create_directory(path + "/mappingContexts");
+		std::filesystem::create_directory(path + "/prefabs");
+		std::filesystem::create_directory(path + "/scenes");
+		std::filesystem::create_directory(path + "/scripts");
+		std::filesystem::create_directory(path + "/tileSets");
+	}
+
 	void SaveProject(Project project, std::string path)
 	{		
 		std::ofstream file_obj;
@@ -415,6 +428,8 @@ namespace FlatGui
 			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
 			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
 			{ "_vsyncEnabled", FL::F_LoadedProject.IsVsyncEnabled() },
+			{ "musicVolume", FL::F_LoadedProject.GetMusicVolume() },
+			{ "effectsVolume", FL::F_LoadedProject.GetEffectsVolume() },
 		});
 		projectProperties.push_back(animationName);
 		

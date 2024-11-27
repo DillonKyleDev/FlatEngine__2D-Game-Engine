@@ -1,11 +1,14 @@
 #include "Project.h"
 #include "FlatEngine.h"
 #include "WindowManager.h"
+
+#include "SDL_mixer.h"
 #include "json.hpp"
 #include <SDL.h>
 
 using json = nlohmann::json;
 using namespace nlohmann::literals;
+
 
 namespace FlatEngine
 {
@@ -21,6 +24,8 @@ namespace FlatEngine
 		m_resolution = Vector2(1920, 1080);
 		m_b_vsyncEnabled = true;
 		m_b_fullscreen = false;
+		m_musicVolume = 10;
+		m_effectsVolume = 10;
 	}
 
 	Project::~Project()
@@ -43,6 +48,8 @@ namespace FlatEngine
 			{ "resolutionHeight", m_resolution.y },
 			{ "_fullscreen", m_b_fullscreen },
 			{ "_vsyncEnabled", m_b_vsyncEnabled },
+			{ "musicVolume", m_musicVolume },
+			{ "effectsVolume", m_effectsVolume }
 		};
 
 		std::string data = jsonData.dump();
@@ -192,5 +199,31 @@ namespace FlatEngine
 	bool Project::IsVsyncEnabled()
 	{
 		return m_b_vsyncEnabled;
+	}
+
+	void Project::SetMusicVolume(int volume)
+	{
+		if (volume >= 0 && volume <= MIX_MAX_VOLUME)
+		{
+			m_musicVolume = volume;
+		}
+	}
+
+	int Project::GetMusicVolume()
+	{
+		return m_musicVolume;
+	}
+
+	void Project::SetEffectsVolume(int volume)
+	{
+		if (volume >= 0 && volume <= MIX_MAX_VOLUME)
+		{
+			m_effectsVolume = volume;
+		}
+	}
+
+	int Project::GetEffectsVolume()
+	{
+		return m_effectsVolume;
 	}
 }

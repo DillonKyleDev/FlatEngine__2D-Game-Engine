@@ -225,6 +225,7 @@ namespace FlatEngine
 
 	void SetMusicVolume(int volume)
 	{
+		GetLoadedProject().SetMusicVolume(volume);
 		F_musicVolume = volume;
 		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
 		{
@@ -237,6 +238,7 @@ namespace FlatEngine
 
 	void SetEffectsVolume(int volume)
 	{
+		GetLoadedProject().SetEffectsVolume(volume);
 		F_effectsVolume = volume;
 		for (std::pair<long, Audio> audio : GetLoadedScene()->GetAudios())
 		{
@@ -584,6 +586,8 @@ namespace FlatEngine
 					newProject.SetResolution(Vector2(CheckJsonFloat(projectData, "resolutionWidth", name), CheckJsonFloat(projectData, "resolutionHeight", name)));
 					newProject.SetFullscreen(CheckJsonBool(projectData, "_fullscreen", name));
 					newProject.SetVsyncEnabled(CheckJsonBool(projectData, "_vsyncEnabled", name));
+					newProject.SetMusicVolume(CheckJsonInt(projectData, "musicVolume", name));
+					newProject.SetEffectsVolume(CheckJsonInt(projectData, "effectsVolume", name));
 				}
 			}
 		}
@@ -624,7 +628,7 @@ namespace FlatEngine
 			}
 			try
 			{
-				std::filesystem::copy("..\\assets", F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+				std::filesystem::copy("..\\projects\\" + GetFilenameFromPath(F_LoadedProject.GetPath()), F_LoadedProject.GetBuildPath() + "\\assets", std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
 			}
 			catch (std::exception& e)
 			{
@@ -2103,7 +2107,12 @@ namespace FlatEngine
 			const size_t slash = path.find_last_of("/\\");
 			std::string wholeFilename = path.substr(slash + 1);
 			const size_t dot1 = wholeFilename.find_last_of(".");
-			std::string extension1 = wholeFilename.substr(dot1);
+			std::string extension1 = "";
+
+			if (dot1 < 100)
+			{
+				extension1 = wholeFilename.substr(dot1);
+			}
 
 			if (!b_keepExtension)
 			{

@@ -34,8 +34,10 @@ namespace FlatGui
 					SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
 					std::string projectPath = FL::OpenSaveFileExplorer();
 					if (projectPath != "")
-					{						
+					{				
+						CreateProjectDirectory(projectPath);
 						Project newProject = Project();
+						projectPath = projectPath + "/" + FL::GetFilenameFromPath(projectPath) + ".prj";
 						SaveProject(newProject, projectPath);
 						LoadProject(projectPath);
 					}
@@ -374,16 +376,21 @@ namespace FlatGui
 					ImGui::EndMenu();
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Project Settings", NULL, FG_b_showSettings))
+				if (ImGui::MenuItem("Project Settings", NULL))
 				{
 					FG_b_showSettings = !FG_b_showSettings;
 				}
-				if (ImGui::MenuItem("Build Project", NULL, FG_b_showSettings))
+				if (ImGui::MenuItem("Build Project", NULL))
 				{
 					FL::BuildProject();
 				}
 				ImGui::EndMenu();
 			}
+			// Display name of loaded project on Menu bar
+			std::string projectNameString = "Loaded Project: " + FL::GetFilenameFromPath(FL::F_LoadedProject.GetPath());
+			ImGui::BeginDisabled();
+			ImGui::BeginMenu(projectNameString.c_str());
+			ImGui::EndDisabled();
 			ImGui::EndMainMenuBar();
 		}
 

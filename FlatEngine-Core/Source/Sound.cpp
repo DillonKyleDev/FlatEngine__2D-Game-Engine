@@ -11,7 +11,7 @@ namespace FlatEngine
 		m_music = nullptr;
 		m_effect = nullptr;
 		m_musicVolume = 20;
-		m_effectVolume = 10;
+		m_effectVolume = 7;
 		Mix_Volume(-1, m_effectVolume);
 		Mix_VolumeMusic(m_musicVolume);
 	}

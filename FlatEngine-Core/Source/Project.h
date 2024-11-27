@@ -10,8 +10,10 @@ namespace FlatEngine
 	public:
 		Project();
 		~Project();
-		std::string GetPath();
 
+		std::string GetData();
+
+		std::string GetPath();
 		void SetPath(std::string path);
 		void SetLoadedScenePath(std::string path);
 		std::string GetLoadedScenePath();
@@ -37,8 +39,10 @@ namespace FlatEngine
 		bool IsFullscreen();
 		void SetVsyncEnabled(bool b_vsync);
 		bool IsVsyncEnabled();
-
-		std::string GetData();
+		void SetMusicVolume(int volume);
+		int GetMusicVolume();
+		void SetEffectsVolume(int volume);
+		int GetEffectsVolume();
 
 	private:
 		std::string m_path;
@@ -54,5 +58,7 @@ namespace FlatEngine
 		Vector2 m_resolution;
 		bool m_b_fullscreen;
 		bool m_b_vsyncEnabled;
+		int m_musicVolume;
+		int m_effectsVolume;
 	};
 }

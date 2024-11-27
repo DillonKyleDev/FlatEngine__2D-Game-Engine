@@ -75,18 +75,20 @@ namespace FlatGui
 			FL::BeginWindowChild("##ScrollingHierarchy");
 			// {
 
+				long queuedForDelete = -1;
 				FL::MoveScreenCursor(0, 4);
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, FL::GetColor("innerWindow"));
 				ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, Vector2(0, 0));
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, Vector2(0, 0));
-				ImGui::BeginTable("##HierarchyTable", 3, FL::F_tableFlags, Vector2(ImGui::GetContentRegionAvail().x - 1, ImGui::GetContentRegionAvail().y));
-				ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
-				ImGui::TableSetupColumn("##OBJECT", 0, objectColumnWidth);
-				ImGui::TableSetupColumn("##ISPREFAB", 0, isPrefabIconColumnWidth);
-				ImGui::TableNextRow();
-				// {
-				
-					// Visible/Invisible all gameObjects at once
+				if (ImGui::BeginTable("##HierarchyTable", 3, FL::F_tableFlags, Vector2(ImGui::GetContentRegionAvail().x - 1, ImGui::GetContentRegionAvail().y)))
+				{
+					ImGui::TableSetupColumn("##VISIBLE", 0, visibleIconColumnWidth);
+					ImGui::TableSetupColumn("##OBJECT", 0, objectColumnWidth);
+					ImGui::TableSetupColumn("##ISPREFAB", 0, isPrefabIconColumnWidth);
+					ImGui::TableNextRow();
+					// {
+
+						// Visible/Invisible all gameObjects at once
 					ImGui::TableSetColumnIndex(0);
 					if (b_allAreVisible)
 					{
@@ -95,19 +97,19 @@ namespace FlatGui
 						{
 							for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end(); iter++)
 							{
-								iter->second.SetActive(false);					
+								iter->second.SetActive(false);
 							}
 							b_allAreVisible = false;
 						}
 					}
 					else
-					{								
+					{
 						FL::MoveScreenCursor(-1, 0);
 						if (FL::RenderImageButton("##SetAllVisible", FL::GetTexture("hide"), Vector2(16, 16), 0, FL::GetColor("button"), FL::GetColor("white"), FL::GetColor("buttonHovered"), FL::GetColor("buttonActive")))
 						{
 							for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end(); iter++)
 							{
-								iter->second.SetActive(true);					
+								iter->second.SetActive(true);
 							}
 							b_allAreVisible = true;
 						}
@@ -132,7 +134,6 @@ namespace FlatGui
 					}
 
 					static int node_clicked = -1;
-					long queuedForDelete = -1;
 
 					for (std::map<long, GameObject>::iterator object = sceneObjects.begin(); object != sceneObjects.end(); object++)
 					{
@@ -140,7 +141,7 @@ namespace FlatGui
 						if (object->second.GetParentID() == -1)
 						{
 							// Get Object name
-							GameObject &currentObject = object->second;
+							GameObject& currentObject = object->second;
 							std::string name = currentObject.GetName();
 							const char* charName = name.c_str();
 							float indent = 0;
@@ -176,8 +177,9 @@ namespace FlatGui
 						}
 					}
 
-				// }
-				ImGui::EndTable(); // Hierarchy Table
+					// }
+					ImGui::EndTable(); // Hierarchy Table
+				}
 				ImGui::PopStyleVar();
 				ImGui::PopStyleColor();
 				ImGui::PopStyleVar();
