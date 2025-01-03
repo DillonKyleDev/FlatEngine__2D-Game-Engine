@@ -1611,7 +1611,8 @@ namespace FlatGui
 		bool b_isColliding = circleCollider->IsColliding();
 		bool b_isContinuous = circleCollider->IsContinuous();
 		bool b_isStatic = circleCollider->IsStatic();
-		bool b_isSolid = circleCollider->IsSolid();			
+		//bool b_isSolid = circleCollider->IsSolid();	temporarily disabled because circle physics is not sorted out yet
+		bool b_isSolid = false;
 		bool b_isComposite = circleCollider->IsComposite();
 		float activeRadius = circleCollider->GetActiveRadiusGrid();
 		Vector2 activeOffset = circleCollider->GetActiveOffset();
@@ -1662,6 +1663,10 @@ namespace FlatGui
 		if (FL::RenderCheckbox(" Is Solid", b_isSolid))
 		{
 			circleCollider->SetIsSolid(b_isSolid);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			FL::RenderTextToolTip("SOLID circle colliders temporarily disabled.");
 		}
 		if (FL::RenderCheckbox(" Is Composite", b_isComposite))
 		{

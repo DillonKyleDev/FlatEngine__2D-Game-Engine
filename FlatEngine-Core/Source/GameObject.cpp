@@ -253,6 +253,7 @@ namespace FlatEngine
 
 		Script* scriptPtr = GetLoadedScene()->AddScript(script, m_ID);
 		m_components.push_back(scriptPtr);
+
 		return scriptPtr;
 	}
 

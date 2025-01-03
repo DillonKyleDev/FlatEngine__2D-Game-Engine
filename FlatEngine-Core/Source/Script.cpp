@@ -111,4 +111,10 @@ namespace FlatEngine
 			LogError("No Script parameter with that name was found.");
 		}
 	}
+
+	void Script::RunAwakeAndStart()
+	{
+		RunLuaFuncOnSingleScript(this, "Awake");
+		RunLuaFuncOnSingleScript(this, "Start");
+	}
 }

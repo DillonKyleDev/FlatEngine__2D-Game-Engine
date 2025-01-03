@@ -52,6 +52,14 @@ namespace FlatEngine
 			bool e_boolean = false;
 			Vector2 e_Vector2 = Vector2(0, 0);
 			std::string e_string = "";
+			void SetType(std::string newType) { type = newType; };
+			void SetString(std::string newString) { e_string = newString; };
+			void SetInt(int newInt) { e_int = newInt; };
+			void SetLong(long newLong) { e_long = newLong; };
+			void SetFloat(float newFloat) { e_float = newFloat; };
+			void SetDouble(double newDouble) { e_double = newDouble; };
+			void SetBool(bool newBoolean) { e_boolean = newBoolean; };
+			void SetVector2(Vector2 newVector2) { e_Vector2 = newVector2; };
 			std::string GetType() { return type; };
 			std::string GetString() { return e_string; };
 			int GetInt() { return e_int; };
@@ -64,6 +72,8 @@ namespace FlatEngine
 		struct S_Event : public S_Property {
 			std::string functionName = "";
 			std::vector<S_EventFunctionParam> parameters = std::vector<S_EventFunctionParam>();
+			void SetParameters(std::vector<S_EventFunctionParam> newParameters) { parameters = newParameters; };
+			void AddParameter(S_EventFunctionParam eventParam) { parameters.push_back(eventParam); };
 		};
 		struct S_Transform : public S_Property {
 			InterpType transformInterpType = I_Lerp;

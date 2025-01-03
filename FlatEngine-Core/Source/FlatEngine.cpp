@@ -52,7 +52,9 @@ namespace FlatEngine
 	bool F_b_loadNewScene = false;
 	std::string F_sceneToBeLoaded = "";
 
+
 	std::vector<SDL_Joystick*> F_gamepads = std::vector<SDL_Joystick*>();	
+
 
 	// For rendering sprites
 	int F_maxSpriteLayers = 55;
@@ -1065,11 +1067,11 @@ namespace FlatEngine
 					break;
 
 				case SDLK_7:
-					F_CursorMode = F_CURSOR_MODE::TILE_MOVE;
+					F_CursorMode = F_CURSOR_MODE::TILE_MULTISELECT;
 					break;
 
 				case SDLK_8:
-					F_CursorMode = F_CURSOR_MODE::TILE_MULTISELECT;
+					F_CursorMode = F_CURSOR_MODE::TILE_MOVE;
 					break;
 				}
 			}
@@ -1148,6 +1150,19 @@ namespace FlatEngine
 		}
 	}
 
+	void RemapInputAction(std::string contextName, std::string inputAction, Uint32 timeoutTime)
+	{
+		for (MappingContext &context : F_MappingContexts)
+		{
+			if (context.GetName() == contextName)
+			{
+				context.SetRemapStartTime(GetEngineTime());
+				context.SetWaitingForRemap(true);
+				context.SetActionToRemap(inputAction);
+				context.SetRemapTimeoutTime(timeoutTime);
+			}
+		}
+	}
 
 	// TileSet / TileMap Management
 	void CreateNewTileSetFile(std::string fileName, std::string path)
@@ -2322,7 +2337,7 @@ namespace FlatEngine
 
 			low *= 100;
 			high *= 100;
-			std::uniform_int_distribution<std::mt19937::result_type> dist(low, high);
+			std::uniform_int_distribution<std::mt19937::result_type> dist((unsigned int)(low), (unsigned int)(high));
 
 			return (float)(dist(rng) / 100.0f * multiplier);
 		}

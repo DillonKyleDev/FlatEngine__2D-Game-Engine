@@ -16,6 +16,7 @@
 #include "Project.h"
 #include "Scene.h"
 #include "CharacterController.h"
+#include "MappingContext.h"
 
 #include <vector>
 #include <process.h>

@@ -454,7 +454,10 @@ namespace FlatEngine
 		if (m_Scripts.count(ownerID))
 		{
 			if (m_Scripts.at(ownerID).count(scriptID))
+			{
+				// TODO: Remove Lua script from F_Lua state also			
 				m_Scripts.at(ownerID).erase(scriptID);
+			}
 		}
 
 		return b_success;

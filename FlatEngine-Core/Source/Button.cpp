@@ -191,6 +191,15 @@ namespace FlatEngine
 		m_luaFunctionParams = params;
 	}
 
+	void Button::SetLuaFunctionParamsLua(Animation::S_Event params)
+	{		
+		m_luaFunctionParams->name = params.name;
+		m_luaFunctionParams->functionName = params.functionName;
+		m_luaFunctionParams->time = params.time;
+		m_luaFunctionParams->b_fired = params.b_fired;
+		m_luaFunctionParams->parameters = params.parameters;
+	}
+
 	std::shared_ptr<Animation::S_Event> Button::GetLuaFunctionParams()
 	{
 		return m_luaFunctionParams;

@@ -256,6 +256,8 @@ namespace FlatEngine
 		std::string keyCode = "";
 		std::string actionName = "";
 		bool b_fired = false;
+		std::string GetKeyCode() { return keyCode; };
+		std::string GetActionName() { return actionName; };
 	};
 
 	class MappingContext
@@ -277,6 +279,15 @@ namespace FlatEngine
 		SDL_Event GetInputAction(std::string actionName);
 		bool ActionPressed(std::string actionName);		
 		std::map<std::string, std::shared_ptr<InputMapping>> GetInputActions();
+		std::vector<std::shared_ptr<InputMapping>> GetInputMappingsLua();
+		void SetWaitingForRemap(bool b_waiting);
+		bool WaitingForRemap();
+		void SetActionToRemap(std::string actionToRemap);
+		std::string GetActionToRemap();
+		void SetRemapStartTime(Uint32 startTime);
+		bool RemapTimedOut(Uint32 currentTime);
+		void SetRemapTimeoutTime(Uint32 timeoutTime);
+		Uint32 GetRemapTimeoutTime();
 
 	private:
 		std::string m_name;
@@ -284,5 +295,9 @@ namespace FlatEngine
 		std::map<std::string, std::shared_ptr<InputMapping>> m_inputsByBinding;
 		// Eventually: map<string, vector<shared_ptr<InputMapping>> so that the same action can be bound to more than one input, ie. Controller/Keyboard can both be used for the same actions
 		std::map<std::string, std::shared_ptr<InputMapping>> m_inputsByAction;
+		Uint32 m_remapTimeoutTime;
+		Uint32 m_remapStartTime;
+		std::string m_actionToRemap;
+		bool m_b_waitingForRemap;
 	};
 }

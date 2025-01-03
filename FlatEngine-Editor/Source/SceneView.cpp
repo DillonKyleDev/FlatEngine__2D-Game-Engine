@@ -211,7 +211,7 @@ namespace FlatGui
 		}
 		if (ImGui::IsItemHovered())
 		{
-			FL::RenderTextToolTip("Scale Mode (2)");
+			FL::RenderTextToolTip("Scale Mode (2) *not available*");
 		}
 		ImGui::SameLine();
 
@@ -234,7 +234,7 @@ namespace FlatGui
 		}
 		if (ImGui::IsItemHovered())
 		{
-			FL::RenderTextToolTip("Rotate Mode (3)");
+			FL::RenderTextToolTip("Rotate Mode (3) *not available*");
 		}
 		ImGui::SameLine();
 
@@ -347,7 +347,7 @@ namespace FlatGui
 		}
 		if (ImGui::IsItemHovered())
 		{
-			FL::RenderTextToolTip("Move Tiles Mode (8)");
+			FL::RenderTextToolTip("Move Tiles Mode (8) *experimental*");
 		}
 	}
 

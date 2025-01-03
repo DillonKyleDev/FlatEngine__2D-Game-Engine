@@ -21,6 +21,7 @@ namespace FlatEngine
 		Animation::S_EventFunctionParam GetParam(std::string paramName);
 		void AddScriptParam(std::string paramName, Animation::S_EventFunctionParam parameter);
 		void DeleteScriptParam(std::string paramName);
+		void RunAwakeAndStart();
 
 	private:
 		std::string m_attachedScript;

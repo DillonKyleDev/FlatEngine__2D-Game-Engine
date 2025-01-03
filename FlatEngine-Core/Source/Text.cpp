@@ -181,7 +181,13 @@ namespace FlatEngine
 		}
 
 		m_pivotPoint = Pivot::PivotCenter;	
+		LogError("Pivot point string not valid. Try 'Pivot<Direction>': ie. PivotLeft, PivotRight, PivotCenter");
 		UpdatePivotOffset();
+	}
+
+	void Text::SetPivotPointLua(std::string newPivot)
+	{
+		SetPivotPoint(newPivot);
 	}
 
 	Pivot Text::GetPivotPoint()

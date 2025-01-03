@@ -70,6 +70,21 @@ namespace FlatEngine
 		CharacterController* AddCharacterController(long ID = -1, bool b_active = true, bool b_collapsed = false);
 		TileMap* AddTileMap(long ID = -1, bool b_active = true, bool b_collapsed = false);
 
+		Sprite* AddSpriteLua() { return AddSprite(-1, true, false); };
+		Camera* AddCameraLua() { return AddCamera(-1, true, false); };
+		Script* AddScriptLua() { return AddScript(-1, true, false); };
+		Button* AddButtonLua() { return AddButton(-1, true, false); };
+		Canvas* AddCanvasLua() { return AddCanvas(-1, true, false); };
+		Animation* AddAnimationLua() { return AddAnimation(-1, true, false); };
+		Audio* AddAudioLua() { return AddAudio(-1, true, false); };
+		Text* AddTextLua() { return AddText(-1, true, false); };
+		BoxCollider* AddBoxColliderLua() { return AddBoxCollider(-1, true, false); };
+		CircleCollider* AddCircleColliderLua() { return AddCircleCollider(-1, true, false); };
+		CompositeCollider* AddCompositeColliderLua() { return AddCompositeCollider(-1, true, false); };
+		RigidBody* AddRigidBodyLua() { return AddRigidBody(-1, true, false); };
+		CharacterController* AddCharacterControllerLua() { return AddCharacterController(-1, true, false); };
+		TileMap* AddTileMapLua() { return AddTileMap(-1, true, false); };
+
 		Component* GetComponent(ComponentTypes type);
 		bool HasComponent(ComponentTypes type);
 		bool HasComponent(std::string type);

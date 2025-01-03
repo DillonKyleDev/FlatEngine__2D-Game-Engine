@@ -34,6 +34,7 @@ namespace FlatEngine
 		Vector2 GetOffset();
 		void SetPivotPoint(Pivot newPivot);
 		void SetPivotPoint(std::string newPivot);
+		void SetPivotPointLua(std::string newPivot);
 		Pivot GetPivotPoint();
 		std::string GetPivotPointString();
 		void SetPivotOffset(Vector2 newPivotOffset);

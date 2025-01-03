@@ -1,4 +1,5 @@
 #include "MappingContext.h"
+#include "FlatEngine.h"
 
 #include <SDL.h>
 #include "json.hpp"
@@ -14,6 +15,10 @@ namespace FlatEngine {
 		m_name = "";		
 		m_inputsByBinding = std::map<std::string, std::shared_ptr<InputMapping>>();
 		m_inputsByAction = std::map<std::string, std::shared_ptr<InputMapping>>();
+		m_remapTimeoutTime = 0;
+		m_remapStartTime = 0;
+		m_actionToRemap = "";
+		m_b_waitingForRemap = false;
 	}
 
 	MappingContext::~MappingContext()
@@ -109,6 +114,17 @@ namespace FlatEngine {
 	{
 		std::string actionName = "";
 
+		if (m_b_waitingForRemap && !RemapTimedOut(GetEngineTime()))
+		{
+			AddKeyBinding(keyBinding, m_actionToRemap);
+			m_b_waitingForRemap = false;
+			SaveMappingContext(m_path, *this);
+		}
+		else if (RemapTimedOut(GetEngineTime()))
+		{
+			m_b_waitingForRemap = false;
+		}
+
 		if (m_inputsByBinding.count(keyBinding) > 0)
 		{
 			m_inputsByBinding.at(keyBinding)->event = event;
@@ -170,5 +186,58 @@ namespace FlatEngine {
 	std::map<std::string, std::shared_ptr<InputMapping>> MappingContext::GetInputActions()
 	{
 		return m_inputsByAction;
+	}
+
+	std::vector<std::shared_ptr<InputMapping>> MappingContext::GetInputMappingsLua()
+	{
+		std::vector<std::shared_ptr<InputMapping>> inputActions = std::vector<std::shared_ptr<InputMapping>>();
+
+		for (std::pair<std::string, std::shared_ptr<InputMapping>> inputAction : m_inputsByAction)
+		{
+			InputMapping newMapping;
+			inputActions.push_back(inputAction.second);
+		}
+
+		return inputActions;
+	}
+
+	void MappingContext::SetWaitingForRemap(bool b_waiting)
+	{
+		m_b_waitingForRemap = b_waiting;
+	}
+
+	bool MappingContext::WaitingForRemap()
+	{
+		return m_b_waitingForRemap;
+	}
+
+	void MappingContext::SetActionToRemap(std::string actionToRemap)
+	{
+		m_actionToRemap = actionToRemap;
+	}
+
+	std::string MappingContext::GetActionToRemap()
+	{
+		return m_actionToRemap;
+	}
+
+	void MappingContext::SetRemapStartTime(Uint32 startTime)
+	{
+		m_remapStartTime = startTime;
+	}
+
+	bool MappingContext::RemapTimedOut(Uint32 currentTime)
+	{
+		return !(m_remapTimeoutTime != 0 && m_remapStartTime + m_remapTimeoutTime > currentTime);
+	}
+
+	void MappingContext::SetRemapTimeoutTime(Uint32 timeoutTime)
+	{
+		m_remapTimeoutTime = timeoutTime;
+	}
+
+	Uint32 MappingContext::GetRemapTimeoutTime()
+	{
+		return m_remapTimeoutTime;
 	}
 }

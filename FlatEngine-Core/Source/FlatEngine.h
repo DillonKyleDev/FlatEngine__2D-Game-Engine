@@ -166,6 +166,7 @@ namespace FlatEngine
 	extern void HandleEvents(bool& b_quit);
 	extern void HandleEngineEvents(SDL_Event event);
 	extern void HandleContextEvents(MappingContext& context, SDL_Event event, std::vector<std::string>& firedKeys);
+	extern void RemapInputAction(std::string contextName, std::string inputAction, Uint32 timeoutTime = 0);
 
 	// Lua / Sol
 	enum LuaEventFunction {

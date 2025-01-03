@@ -34,6 +34,7 @@ namespace FlatEngine
 		void SetLuaFunctionName(std::string functionName);
 		std::string GetLuaFunctionName();
 		void SetLuaFunctionParams(std::shared_ptr<Animation::S_Event> params);
+		void SetLuaFunctionParamsLua(Animation::S_Event params);
 		std::shared_ptr<Animation::S_Event> GetLuaFunctionParams();
 		void SetLeftClick(bool b_leftClick);
 		bool GetLeftClick();

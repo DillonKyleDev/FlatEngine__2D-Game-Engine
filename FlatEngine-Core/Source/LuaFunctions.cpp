@@ -80,6 +80,10 @@ namespace FlatEngine
 	// Inject functions that can be called from within Lua directly into the Lua state
 	void RegisterLuaFunctions()
 	{
+		F_Lua["CreateGameObject"] = [](long parentID)
+		{
+			return CreateGameObject(parentID);
+		};
 		F_Lua["CreateStringVector"] = []()
 		{
 			return CreateStringVector();
@@ -384,6 +388,10 @@ namespace FlatEngine
 		{
 			return GetRandFloat(min, max);
 		};
+		F_Lua["Remap"] = [](std::string contextName, std::string inputAction, int timeoutTime)
+		{
+			RemapInputAction(contextName, inputAction, Uint32(timeoutTime));
+		};
 	}
 
 	// Map C++ types to Lua "Types" -- https://sol2.readthedocs.io/en/latest/api/usertype.html
@@ -428,8 +436,8 @@ namespace FlatEngine
 			"SetTag", &GameObject::SetTag,
 			"SetIgnore", &GameObject::SetIgnore,
 			"GetTransform", &GameObject::GetTransform,
-			"AddSprite", &GameObject::AddTransform,
 			"GetSprite", &GameObject::GetSprite,
+			"GetScript", &GameObject::GetScript,
 			"GetCamera", &GameObject::GetCamera,
 			"GetAnimation", &GameObject::GetAnimation,
 			"GetAudio", &GameObject::GetAudio,
@@ -440,6 +448,21 @@ namespace FlatEngine
 			"GetRigidBody", &GameObject::GetRigidBody,
 			"GetBoxColliders", &GameObject::GetBoxColliders,
 			"GetBoxCollider", &GameObject::GetBoxCollider,
+			"GetTileMap", &GameObject::GetTileMap,
+			"AddSprite", &GameObject::AddSpriteLua,
+			"AddScript", &GameObject::AddScriptLua,
+			"AddCamera", &GameObject::AddCameraLua,
+			"AddAnimation", &GameObject::AddAnimationLua,
+			"AddAudio", &GameObject::AddAudioLua,
+			"AddButton", &GameObject::AddButtonLua,
+			"AddCanvas", &GameObject::AddCanvasLua,
+			"AddText", &GameObject::AddTextLua,
+			"AddCharacterController", &GameObject::AddCharacterControllerLua,
+			"AddRigidBody", &GameObject::AddRigidBodyLua,
+			"AddBoxCollider", &GameObject::AddBoxColliderLua,
+			"AddTileMap", &GameObject::AddTileMapLua,
+			"AddChild", &GameObject::AddChild,
+			"RemoveChild", &GameObject::RemoveChild,
 			"GetFirstChild", &GameObject::GetFirstChild,
 			"HasChildren", &GameObject::HasChildren,
 			"GetChildren", &GameObject::GetChildren,
@@ -485,7 +508,8 @@ namespace FlatEngine
 			"SetActive", &Text::SetActive,
 			"IsActive", &Text::IsActive,
 			"GetID", &Text::GetID,
-			"SetText", &Text::SetText
+			"SetText", &Text::SetText,
+			"SetPivotPoint", &Text::SetPivotPointLua
 		);
 
 		F_Lua.new_usertype<Audio>("Audio",
@@ -499,6 +523,30 @@ namespace FlatEngine
 			"Pause", &Audio::PauseSound,
 			"Stop", &Audio::PauseSound,
 			"StopAll", &Audio::StopAll
+		);
+
+		F_Lua.new_usertype<Button>("Button",
+			"SetActiveDimensions", &Button::SetActiveDimensions,
+			"SetActiveOffset", & Button::SetActiveOffset,
+			"GetActiveOffset", &Button::GetActiveOffset,
+			"SetActiveLayer", & Button::SetActiveLayer,
+			"GetActiveLayer", & Button::GetActiveLayer,
+			"GetActiveWidth", & Button::GetActiveWidth,
+			"GetActiveHeight", &Button::GetActiveHeight,
+			"MouseIsOver", &Button::MouseIsOver,
+			"SetLeftClick", &Button::SetLeftClick,
+			"GetLeftClick", & Button::GetLeftClick,
+			"SetRightClick", & Button::SetRightClick,
+			"GetRightClick", & Button::GetRightClick,
+			"SetLuaFunctionName", &Button::SetLuaFunctionName,
+			"GetLuaFunctionName", & Button::GetLuaFunctionName,
+			"SetLuaFunctionParams", &Button::SetLuaFunctionParamsLua
+		);
+
+		F_Lua.new_usertype<Script>("Script",
+			"SetAttachedScript", &Script::SetAttachedScript,
+			"GetAttachedScript", &Script::GetAttachedScript,
+			"RunAwakeAndStart", &Script::RunAwakeAndStart
 		);
 
 		F_Lua.new_usertype<Animation>("Animation",
@@ -522,7 +570,20 @@ namespace FlatEngine
 			"float", &Animation::S_EventFunctionParam::GetFloat,
 			"double", &Animation::S_EventFunctionParam::GetDouble,
 			"bool", &Animation::S_EventFunctionParam::GetBool,
-			"Vector2", &Animation::S_EventFunctionParam::GetVector2
+			"Vector2", &Animation::S_EventFunctionParam::GetVector2,
+			"SetType", & Animation::S_EventFunctionParam::SetType,
+			"SetString", & Animation::S_EventFunctionParam::SetString,
+			"SetInt", & Animation::S_EventFunctionParam::SetInt,
+			"SetLong", & Animation::S_EventFunctionParam::SetLong,
+			"SetFloat", & Animation::S_EventFunctionParam::SetFloat,
+			"SetDouble", & Animation::S_EventFunctionParam::SetDouble,
+			"SetBool", & Animation::S_EventFunctionParam::SetBool,
+			"SetVector2", & Animation::S_EventFunctionParam::SetVector2
+		);
+
+		F_Lua.new_usertype<Animation::S_Event>("ParameterList",
+			"SetParameters", &Animation::S_Event::SetParameters,
+			"AddParameter", &Animation::S_Event::AddParameter
 		);
 
 		F_Lua.new_usertype<RigidBody>("RigidBody",
@@ -580,10 +641,16 @@ namespace FlatEngine
 			"GetID", &CharacterController::GetID
 		);
 
+		F_Lua.new_usertype<InputMapping>("InputMapping",
+			"KeyCode", &InputMapping::GetKeyCode,
+			"InputActionName", &InputMapping::GetActionName
+		);
+
 		F_Lua.new_usertype<MappingContext>("MappingContext",
 			"Fired", &MappingContext::Fired,
 			"ActionPressed", &MappingContext::ActionPressed,
-			"GetName", &MappingContext::GetName
+			"GetName", &MappingContext::GetName,
+			"GetInputMappings", &MappingContext::GetInputMappingsLua
 		);
 	}
 
