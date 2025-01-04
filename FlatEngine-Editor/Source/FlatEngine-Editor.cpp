@@ -61,6 +61,7 @@ public:
 		FL::RemoveProfilerProcess("Collision Testing");
 		FL::GameLoop::Stop();
 		FL::LoadScene("..\\engine\\tempFiles\\" + FL::GetFilenameFromPath(m_startedScenePath, true), m_startedScenePath);
+		FL::GetLoadedProject().LoadPersistantScene();
 	};
 	void Update()
 	{
@@ -257,7 +258,7 @@ public:
 		}
 		if (GameLoopStarted())
 		{
-			FL::RunAwakeAndStart();
+			FL::RunSceneAwakeAndStart();
 		}
 	}
 	FL::GameLoop* GetGameLoop()

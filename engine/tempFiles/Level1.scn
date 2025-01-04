@@ -52,14 +52,6 @@
                     "activeWidth": 12.0,
                     "id": 2,
                     "type": "BoxCollider"
-                },
-                {
-                    "_isActive": true,
-                    "_isCollapsed": false,
-                    "attachedScript": "ColliderSquare",
-                    "id": 3,
-                    "scriptParameters": [],
-                    "type": "Script"
                 }
             ],
             "id": 0,
@@ -81,7 +73,7 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "BlueBrick1",
+            "name": "Sprite(0)",
             "parent": -1,
             "prefabName": "",
             "spawnLocationX": 0.0,

@@ -11,6 +11,7 @@
 #include "Texture.h"
 #include "TileMap.h"
 #include "TileSet.h"
+#include "Project.h"
 
 #include "imgui.h"
 
@@ -84,6 +85,8 @@ namespace FlatEngine
 	{		
 		Scene* loadedScene = FL::GetLoadedScene();
 		std::map<long, GameObject> sceneObjects;
+		Scene* persistantObjectScene = GetLoadedProject().GetPersistantGameObjectScene();
+		std::map<long, GameObject> persistantObjects = std::map<long, GameObject>();
 		Camera* primaryCamera;
 		Transform* cameraTransform = nullptr;
 
@@ -96,6 +99,11 @@ namespace FlatEngine
 		{
 			sceneObjects = std::map<long, GameObject>();
 			primaryCamera = nullptr;
+		}
+
+		if (persistantObjectScene != nullptr)
+		{
+			persistantObjects = persistantObjectScene->GetSceneObjects();
 		}
 		
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -139,6 +147,15 @@ namespace FlatEngine
 		renderStartTime = (float)FL::GetEngineTime();
 
 		for (std::map<long, GameObject>::iterator iter = sceneObjects.begin(); iter != sceneObjects.end();)
+		{
+			if (iter->second.IsActive())
+			{
+				Game_RenderObject(iter->second, canvasP0, canvasSize, drawList, drawSplitter, cameraPosition, cameraWidth, cameraHeight);
+			}
+
+			iter++;
+		}
+		for (std::map<long, GameObject>::iterator iter = persistantObjects.begin(); iter != persistantObjects.end();)
 		{
 			if (iter->second.IsActive())
 			{

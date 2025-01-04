@@ -243,25 +243,6 @@ namespace FlatGui
 			GameObject *focusedObject = FL::GetObjectByID(ID);
 			Animation* animationComponent = focusedObject->GetAnimation();
 			std::string animationPath = "";
-
-			//if (animationComponent != nullptr)
-			//{
-			//	animationPath = animationComponent->GetAnimationPath();
-			//}
-
-			//// If applicable to the current animation, create a copy of the focused GameObject to be used for the animator window.
-			//if (FG_b_showAnimator && FG_FocusedAnimation != nullptr &&
-			//	animationComponent != nullptr && animationPath == FG_FocusedAnimation->animationPath)
-			//{
-			//	std::vector<GameObject> animatorObjects = std::vector<GameObject>();
-			//	animatorObjects.clear();
-			//	//objectForFocusedAnimation = GameObject(FL::GetObjectByID(ID), animatorObjects, FL::GetLoadedScene()->GetSceneObjects(), -1);
-			//	//FL::Transform* transform = objectForFocusedAnimation->GetTransform();
-			//	//transform->SetPosition(Vector2(0, 0));
-			//	//animatorObjects.push_back(*objectForFocusedAnimation);
-			//	//FL::GetLoadedScene()->SetAnimatorPreviewObjects(animatorObjects); // FIX LATER
-			//}
-			SaveCurrentProject();
 		}
 	}
 
@@ -272,6 +253,7 @@ namespace FlatGui
 
 	void DestroySelf(std::shared_ptr<FL::GameObject> thisObject)
 	{
+		if (thisObject)
 		FL::DeleteGameObject(thisObject->GetID());
 	}
 
@@ -360,6 +342,7 @@ namespace FlatGui
 		{
 			SetFocusedAnimation(FL::LoadAnimationFile(FL::F_LoadedProject.GetLoadedPreviewAnimationPath()));
 		}
+
 		Vector2 scrolling = FL::F_LoadedProject.GetSceneViewScrolling();
 		FG_sceneViewScrolling = scrolling;
 		Vector2 gridStep = FL::F_LoadedProject.GetSceneViewGridStep();
@@ -374,13 +357,19 @@ namespace FlatGui
 	void CreateNewProject(std::string projectName)
 	{
 		SaveProject(FL::F_LoadedProject, FL::F_LoadedProject.GetPath());
-		//std::string projectPath = FL::OpenSaveFileExplorer();
+
 		if (projectName != "")
 		{
 			Project newProject = Project();
 			std::string directoryPath = "..\\projects\\" + projectName;
 			std::string projectFilePath = directoryPath + "\\" + projectName + ".prj";
+			std::string persistantGameObjectsScenePath = directoryPath + "\\" + projectName + ".scn";
+
 			CreateProjectDirectory(directoryPath);
+
+			newProject.SetPersistantGameObjectsScenePath(persistantGameObjectsScenePath);
+			newProject.SaveScene();
+
 			SaveProject(newProject, projectFilePath);
 			LoadProject(projectFilePath);
 		}
@@ -400,8 +389,10 @@ namespace FlatGui
 		std::filesystem::create_directory(path + "\\tileSets");
 	}
 
-	void SaveProject(Project project, std::string path)
+	void SaveProject(Project& project, std::string path)
 	{		
+		project.SaveScene();
+
 		std::ofstream file_obj;
 		std::ifstream ifstream(path);
 
@@ -413,12 +404,20 @@ namespace FlatGui
 
 		json projectProperties;
 		
-		json animationName = json::object({
+		json properties = json::object({
 			{ "path", path },
 			{ "loadedScenePath", project.GetLoadedScenePath()},
 			{ "loadedAnimationPath", project.GetLoadedPreviewAnimationPath() },
 			{ "sceneToLoadAtRuntime", project.GetRuntimeScene() },
+			{ "persistantGameObjectsScenePath", project.GetPersistantGameObjectsScenePath() },
 			{ "buildPath", project.GetBuildPath() },
+			{ "_autoSave", project.AutoSaveOn() },
+			{ "resolutionWidth", project.GetResolution().x },
+			{ "resolutionHeight", project.GetResolution().y },
+			{ "_fullscreen", project.IsFullscreen() },
+			{ "_vsyncEnabled", project.IsVsyncEnabled() },
+			{ "musicVolume", project.GetMusicVolume() },
+			{ "effectsVolume", project.GetEffectsVolume() },
 			{ "currentFileDirectory", FG_currentDirectory },
 			{ "focusedGameObjectID", GetFocusedGameObjectID() },
 			{ "sceneViewScrollingX", FG_sceneViewScrolling.x },
@@ -438,17 +437,10 @@ namespace FlatGui
 			{ "_showLogger", FG_b_showLogger },
 			{ "_showProfiler", FG_b_showProfiler },
 			{ "_showMappingContextEditor", FG_b_showMappingContextEditor },
-			{ "_clearLogBuffer", FG_b_clearBufferEveryFrame },
-			{ "_autoSave", FL::F_LoadedProject.AutoSaveOn() },
-			{ "resolutionWidth", FL::F_LoadedProject.GetResolution().x },
-			{ "resolutionHeight", FL::F_LoadedProject.GetResolution().y },
-			{ "_fullscreen", FL::F_LoadedProject.IsFullscreen() },
-			{ "_vsyncEnabled", FL::F_LoadedProject.IsVsyncEnabled() },
-			{ "musicVolume", FL::F_LoadedProject.GetMusicVolume() },
-			{ "effectsVolume", FL::F_LoadedProject.GetEffectsVolume() },
+			{ "_clearLogBuffer", FG_b_clearBufferEveryFrame }
 		});
-		projectProperties.push_back(animationName);
-		
+
+		projectProperties.push_back(properties);
 		json newFileObject = json::object({ {"Project Properties", projectProperties } });
 		file_obj << newFileObject.dump(4).c_str() << std::endl;
 		file_obj.close();
@@ -1543,7 +1535,7 @@ namespace FlatGui
 				scrolling.x += inputOutput.MouseDelta.x;
 				scrolling.y += inputOutput.MouseDelta.y;
 
-				SaveCurrentProject();
+				//SaveCurrentProject();
 			}
 
 			// Show cursor position in scene view when pressing Alt

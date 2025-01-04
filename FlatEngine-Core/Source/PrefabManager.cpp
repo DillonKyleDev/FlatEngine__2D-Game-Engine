@@ -568,9 +568,9 @@ namespace FlatEngine
 		printf("Prefabs initialized.\n");
 	}
 
-	GameObject* PrefabManager::InstantiateSelfAndChildren(long parentID, long childIDToFind, Prefab prefab, Vector2 spawnLocation)
+	GameObject* PrefabManager::InstantiateSelfAndChildren(long parentID, long childIDToFind, Prefab prefab, Scene* scene, Vector2 spawnLocation)
 	{
-		GameObject* self = CreateGameObject(parentID);
+		GameObject* self = CreateGameObject(parentID, -1, scene);
 
 		if (prefab.objects.count(childIDToFind) > 0)
 		{
@@ -782,24 +782,44 @@ namespace FlatEngine
 
 			for (long prefabChildID : myData.childrenIDs)
 			{
-				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab);
+				GameObject* child = InstantiateSelfAndChildren(self->GetID(), prefabChildID, prefab, scene);
 			}
 
 			// After all components are initialized, activate the script components if there are any
 			if (GameLoopStarted())
 			{
-				for (Script* script : self->GetScripts())
+				if (self->IsPersistant())
 				{
-					if (InitLuaScript(script))
+					for (Script* script : self->GetScripts())
 					{
-						RunLuaFuncOnSingleScript(script, "Awake");
+						if (InitLuaScript(script, F_LoadedPersistantScriptFiles))
+						{
+							RunLuaFuncOnSingleScript(script, "Awake");
+						}
+					}
+					for (Script* script : self->GetScripts())
+					{
+						if (InitLuaScript(script, F_LoadedPersistantScriptFiles))
+						{
+							RunLuaFuncOnSingleScript(script, "Start");
+						}
 					}
 				}
-				for (Script* script : self->GetScripts())
+				else
 				{
-					if (InitLuaScript(script))
+					for (Script* script : self->GetScripts())
 					{
-						RunLuaFuncOnSingleScript(script, "Start");
+						if (InitLuaScript(script, F_LoadedSceneScriptFiles))
+						{
+							RunLuaFuncOnSingleScript(script, "Awake");
+						}
+					}
+					for (Script* script : self->GetScripts())
+					{
+						if (InitLuaScript(script, F_LoadedSceneScriptFiles))
+						{
+							RunLuaFuncOnSingleScript(script, "Start");
+						}
 					}
 				}
 			}
@@ -808,7 +828,7 @@ namespace FlatEngine
 		return self;
 	}
 
-	GameObject *PrefabManager::Instantiate(std::string prefabName, Vector2 spawnLocation, long parentID, long ID)
+	GameObject *PrefabManager::Instantiate(std::string prefabName, Vector2 spawnLocation, Scene* scene, long parentID, long ID)
 	{
 		GameObject* rootObject = nullptr;
 
@@ -817,7 +837,7 @@ namespace FlatEngine
 			Prefab prefab = m_prefabs.at(prefabName);
 			GameObjectPrefabData root = prefab.rootObject;
 
-			rootObject = InstantiateSelfAndChildren(-1, root.ID, prefab, spawnLocation);
+			rootObject = InstantiateSelfAndChildren(-1, root.ID, prefab, scene, spawnLocation);
 		}
 
 		return rootObject;

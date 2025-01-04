@@ -4,6 +4,7 @@
 #include "Animation.h"
 #include "Audio.h"    // SoundData
 #include "TileMap.h"  // Tile
+#include "Scene.h"
 
 #include <string>
 #include <memory>
@@ -160,8 +161,8 @@ namespace FlatEngine
 		void UpdatePrefab(std::string prefabName);
 		void AddPrefab(std::string path);
 		void InitializePrefabs();
-		GameObject* InstantiateSelfAndChildren(long parentID, long myID, Prefab prefab, Vector2 spawnLocation = Vector2(0,0));
-		GameObject *Instantiate(std::string prefabName, Vector2 spawnLocation, long parentID = -1, long ID = -1);
+		GameObject* InstantiateSelfAndChildren(long parentID, long myID, Prefab prefab, Scene* scene, Vector2 spawnLocation = Vector2(0, 0));
+		GameObject* Instantiate(std::string prefabName, Vector2 spawnLocation, Scene* scene, long parentID = -1, long ID = -1);
 		std::map<std::string, Prefab> GetPrefabs();
 
 	private:

@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "Project.h"
 
 #include "imgui_internal.h"
 #include <cmath> // trunc
@@ -94,20 +95,22 @@ namespace FlatGui
 				}
 			}
 			
-			Scene* loadedScene = FlatEngine::F_SceneManager.GetLoadedScene();
-			std::map<long, GameObject> sceneObjects;
+			Scene* loadedScene = FL::F_SceneManager.GetLoadedScene();
+			std::map<long, GameObject> sceneObjects = std::map<long, GameObject>();
+			std::map<long, GameObject> persistantObjects = std::map<long, GameObject>();
 
 			if (loadedScene != nullptr)
 			{
 				sceneObjects = loadedScene->GetSceneObjects();
 			}
-			else
+			if (FL::GetLoadedProject().GetPersistantGameObjectScene() != nullptr)
 			{
-				sceneObjects = std::map<long, GameObject>();
+				persistantObjects = FL::GetLoadedProject().GetPersistantGameObjectScene()->GetSceneObjects();
 			}
 
 
 			RenderViewObjects(sceneObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);
+			RenderViewObjects(persistantObjects, FG_sceneViewCenter, canvas_p0, canvas_sz, FG_sceneViewGridStep.x);
 
 
 			// For centering on focused GameObject

@@ -82,7 +82,8 @@ namespace FlatEngine
 	extern std::shared_ptr<WindowManager> F_Window;
 	extern std::shared_ptr<Application> F_Application;
 	extern sol::state F_Lua;
-	extern std::map<std::string, sol::protected_function> F_LoadedScriptFiles;
+	extern std::map<std::string, sol::protected_function> F_LoadedSceneScriptFiles;
+	extern std::map<std::string, sol::protected_function> F_LoadedPersistantScriptFiles;
 
 	extern std::string F_RuntimeDirectoriesLuaFilepath;
 	extern std::string F_EditorDirectoriesLuaFilepath;
@@ -142,12 +143,16 @@ namespace FlatEngine
 
 	// Game view
 	extern float F_GAME_VIEWPORT_WIDTH;
-	extern 	float F_GAME_VIEWPORT_HEIGHT;
+	extern float F_GAME_VIEWPORT_HEIGHT;
 	extern float F_xGameCenter;
 	extern float F_yGameCenter;
 	extern Vector2 F_gameViewCenter;
 	extern Vector2 F_gameViewGridStep;
 
+
+	// Collision Detection
+	extern std::vector<std::pair<Collider*, Collider*>> F_ColliderPairs;
+	extern void UpdateColliderPairs();
 
 	extern bool LoadFonts();
 	extern void FreeFonts();
@@ -198,11 +203,12 @@ namespace FlatEngine
 	extern void InitLua();
 	extern void RegisterLuaFunctions();
 	extern void RegisterLuaTypes();
-	extern bool InitLuaScript(Script* script);
+	extern bool InitLuaScript(Script* script, std::map<std::string, sol::protected_function>& scriptTracker);
 	extern bool ReadyScriptFile(std::string scriptToLoad, std::string& message);
 	extern void RunLuaFuncOnAllScripts(std::string functionName);
 	extern void RunLuaFuncOnSingleScript(Script* script, std::string functionName);
-	extern void RunAwakeAndStart();	
+	extern void RunSceneAwakeAndStart();	
+	extern void RunPersistantAwakeAndStart();
 	extern void RetrieveLuaScriptPaths();
 	extern bool CheckLuaScriptFile(std::string filePath);
 	extern void LoadLuaGameObject(GameObject* object, std::string scriptName);
@@ -225,11 +231,13 @@ namespace FlatEngine
 
 	// Project Management
 	extern Project F_LoadedProject;
-	extern void SetLoadedProject(Project loadedProject);
+	extern void SetLoadedProject(Project &loadedProject);
 	extern Project& GetLoadedProject();
 	extern void LoadGameProject(std::string path, json& projectJson);
 	extern void BuildProject();
 	extern void SetProjectLoadedScenePath(std::string scenePath);
+	extern GameObject* CreatePersistantGameObject(long parentID = -1, long myID = -1);
+	extern std::map<long, GameObject>& GetPersistantObjects();
 
 	// Player Management
 	extern GameObject* GetPlayerObject();
@@ -244,7 +252,7 @@ namespace FlatEngine
 	extern void LoadScene(std::string actualPath, std::string pointTo = "");
 	extern std::string GetLoadedScenePath();
 	extern std::map<long, GameObject> &GetSceneObjects();
-	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1);
+	extern GameObject* CreateGameObject(long parentID = -1, long myID = -1, Scene* scene = nullptr);
 	extern void DeleteGameObject(long sceneObjectID);
 	extern Component* GetObjectComponent(long objectID, ComponentTypes type);
 	extern GameObject* GetObjectByID(long objectID);
@@ -274,7 +282,7 @@ namespace FlatEngine
 	// Prefabs
 	extern void CreatePrefab(std::string path, GameObject& gameObject);
 	extern void InitializePrefabs();
-	extern GameObject *Instantiate(std::string prefabName, Vector2 position, long parentID = -1, long ID = -1);
+	extern GameObject *Instantiate(std::string prefabName, Vector2 position, Scene* scene, long parentID = -1, long ID = -1);
 	//extern std::map<std::string, Prefab> GetPrefabs();
 
 	// Logging Prettification
@@ -340,7 +348,7 @@ namespace FlatEngine
 
 	// Json parsing
 	extern json CreateJsonFromObject(GameObject gameObject);
-	extern GameObject *CreateObjectFromJson(json objectJson);
+	extern GameObject* CreateObjectFromJson(json objectJson, Scene* scene);
 	extern std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName);
 	extern std::string CheckJsonString(json obj, std::string checkFor, std::string loadedName, std::string& errorMessage);
 	extern float CheckJsonFloat(json obj, std::string checkFor, std::string loadedName);

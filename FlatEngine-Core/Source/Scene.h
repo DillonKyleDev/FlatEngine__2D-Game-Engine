@@ -49,8 +49,10 @@ namespace FlatEngine
 		void DeleteGameObject(GameObject* objectToDelete);
 		void DeleteChildrenAndSelf(GameObject *objectToDelete);
 		void IncrementGameObjectID();
+		void SetNextGameObjectID(long nextID);
 		long GetNextGameObjectID();
 		void IncrementComponentID();
+		void SetNextComponentID(long nextID);
 		long GetNextComponentID();
 		void SetPrimaryCamera(Camera* camera);
 		void RemovePrimaryCamera();
@@ -112,6 +114,8 @@ namespace FlatEngine
 		std::map<long, CharacterController>& GetCharacterControllers();
 		std::map<long, TileMap>& GetTileMaps();
 		std::vector<std::pair<Collider*, Collider*>> GetColliderPairs();
+		void SetPersistantScene(bool b_persistant);
+		bool IsPersistantScene();
 
 	private:
 		std::string m_name;
@@ -124,5 +128,6 @@ namespace FlatEngine
 		long m_nextComponentID;
 		std::vector<long> m_freedComponentIDs;
 		std::vector<long> m_freedGameObjectIDs;
+		bool m_b_persistantScene;
 	};
 }

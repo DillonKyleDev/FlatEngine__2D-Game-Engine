@@ -5,6 +5,8 @@
 #include "SDL_mixer.h"
 #include "json.hpp"
 #include <SDL.h>
+#include <fstream>
+
 
 using json = nlohmann::json;
 using namespace nlohmann::literals;
@@ -18,6 +20,8 @@ namespace FlatEngine
 		m_loadedScenePath = "";
 		m_loadedAnimationPath = "";
 		m_currentFileDirectory = "";
+		m_persistantGameObjectsScenePath = "";
+		m_persistantGameObjectsScene = Scene();
 		m_sceneViewScrolling = Vector2(0, 0);
 		m_focusedGameObjectID = -1;
 		m_b_autoSave = true;
@@ -30,31 +34,6 @@ namespace FlatEngine
 
 	Project::~Project()
 	{
-	}
-
-	std::string Project::GetData()
-	{
-		json jsonData = {
-			{ "path", m_path },
-			{ "loadedScenePath", m_loadedScenePath },
-			{ "sceneToLoadAtRuntime", m_sceneToLoadAtRuntime },
-			{ "buildPath", m_buildPath },
-			{ "currentFileDirectory", m_currentFileDirectory },
-			{ "loadedAnimationPath", m_loadedAnimationPath },
-			{ "sceneViewScrollingX", m_sceneViewScrolling.x },
-			{ "sceneViewScrollingY", m_sceneViewScrolling.y },
-			{ "_autoSave", m_b_autoSave },
-			{ "resolutionWidth", m_resolution.x },
-			{ "resolutionHeight", m_resolution.y },
-			{ "_fullscreen", m_b_fullscreen },
-			{ "_vsyncEnabled", m_b_vsyncEnabled },
-			{ "musicVolume", m_musicVolume },
-			{ "effectsVolume", m_effectsVolume }
-		};
-
-		std::string data = jsonData.dump();
-		// Return dumped json object with required data for saving
-		return data;
 	}
 
 	void Project::SetPath(std::string projectPath)
@@ -95,6 +74,132 @@ namespace FlatEngine
 	std::string Project::GetCurrentFileDirectory()
 	{
 		return m_currentFileDirectory;
+	}
+
+	Scene* Project::GetPersistantGameObjectScene()
+	{
+		return &m_persistantGameObjectsScene;
+	}
+
+	void Project::SetPersistantGameObjectsScenePath(std::string path)
+	{
+		m_persistantGameObjectsScenePath = path;
+	}
+
+	std::string Project::GetPersistantGameObjectsScenePath()
+	{
+		return m_persistantGameObjectsScenePath;
+	}
+
+	void Project::LoadPersistantScene()
+	{
+		m_persistantGameObjectsScene.UnloadSceneObjects();
+		m_persistantGameObjectsScene.UnloadECSManager();
+
+		std::ofstream file_obj;
+		std::ifstream ifstream(m_persistantGameObjectsScenePath);
+
+		file_obj.open(m_persistantGameObjectsScenePath, std::ios::in);
+		std::string fileContent = "";
+
+		if (file_obj.good())
+		{
+			std::string line;
+			while (!ifstream.eof())
+			{
+				std::getline(ifstream, line);
+				if (line != "")
+				{
+					fileContent.append(line + "\n");
+				}
+			}
+		}
+
+		file_obj.close();
+
+		if (file_obj.good() && fileContent != "")
+		{
+			m_persistantGameObjectsScene = Scene();
+			// Set persistant gameobjects starting ID's at arbitrarily high values so they will never collide with the regular scene object ID's
+			m_persistantGameObjectsScene.SetNextComponentID(10000000);
+			m_persistantGameObjectsScene.SetNextGameObjectID(10000000);
+			m_persistantGameObjectsScene.SetName(GetFilenameFromPath(m_persistantGameObjectsScenePath, false));
+			m_persistantGameObjectsScene.SetPersistantScene(true);
+
+			json fileContentJson = json::parse(fileContent);
+
+			if (fileContentJson.contains("Persistant GameObjects") && fileContentJson["Persistant GameObjects"][0] != "NULL")
+			{
+				auto firstObjectName = fileContentJson["Persistant GameObjects"];
+
+				// Loop through the saved GameObjects in the JSON file
+				for (int i = 0; i < fileContentJson["Persistant GameObjects"].size(); i++)
+				{
+					// Add created GameObject to our new Scene
+					bool b_persistant = true;
+					GameObject* loadedObject = CreateObjectFromJson(fileContentJson["Persistant GameObjects"][i], &m_persistantGameObjectsScene);
+					// Check for primary camera
+					if (loadedObject != nullptr && loadedObject->HasComponent("Camera") && loadedObject->GetCamera()->IsPrimary())
+					{
+						m_persistantGameObjectsScene.SetPrimaryCamera(loadedObject->GetCamera());
+					}
+				}
+
+				// Just in case any parent objects had not been created at the time of children being created on scene load,
+				// loop through objects with parents and add them as children to their parent objects
+				for (std::pair<long, GameObject> sceneObject : m_persistantGameObjectsScene.GetSceneObjects())
+				{
+					long myID = sceneObject.first;
+					long parentID = sceneObject.second.GetParentID();
+
+					if (parentID != -1)
+					{
+						if (GetObjectByID(parentID) != nullptr)
+						{
+							GetObjectByID(parentID)->AddChild(myID);
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			LogError("Failed to load scene: " + m_persistantGameObjectsScenePath);
+		}
+	}
+
+	void Project::SaveScene()
+	{
+		std::ofstream file_obj;
+		std::ifstream ifstream(m_persistantGameObjectsScenePath);
+
+		file_obj.open(m_persistantGameObjectsScenePath, std::ofstream::out | std::ofstream::trunc);
+		file_obj.close();
+
+		file_obj.open(m_persistantGameObjectsScenePath, std::ios::app);
+		json persistantObjectsJsonArray;
+
+		std::map<long, GameObject>& persistantObjects = m_persistantGameObjectsScene.GetSceneObjects();
+		if (persistantObjects.size() > 0)
+		{
+			for (std::map<long, GameObject>::iterator iter = persistantObjects.begin(); iter != persistantObjects.end(); iter++)
+			{
+				persistantObjectsJsonArray.push_back(CreateJsonFromObject(iter->second));
+			}
+		}
+		else
+		{
+			persistantObjectsJsonArray.push_back("NULL");
+		}
+
+		json newFileObject = json::object({ { "Persistant GameObjects", persistantObjectsJsonArray } });
+		file_obj << newFileObject.dump(4).c_str() << std::endl;
+		file_obj.close();
+	}
+
+	std::map<long, GameObject>& Project::GetPersistantObjects()
+	{
+		return m_persistantGameObjectsScene.GetSceneObjects();
 	}
 
 	void Project::SetFocusedGameObjectID(long ID)

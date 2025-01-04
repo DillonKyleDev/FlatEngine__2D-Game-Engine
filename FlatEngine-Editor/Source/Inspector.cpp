@@ -290,7 +290,7 @@ namespace FlatGui
 							EndComponent(transform);
 						}
 
-						Sprite* sprite = FL::GetLoadedScene()->GetSpriteByOwner(focusedObjectID);
+						Sprite* sprite = focusedObject->GetSprite();
 						if (sprite != nullptr)
 						{
 							BeginComponent(sprite, queuedForDelete);

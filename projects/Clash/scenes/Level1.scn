@@ -13,10 +13,10 @@
                     "rotation": 0.0,
                     "type": "Transform",
                     "xOrigin": 0.0,
-                    "xPos": 0.0,
+                    "xPos": 4.25,
                     "xScale": 1.0,
                     "yOrigin": 0.0,
-                    "yPos": -17.25,
+                    "yPos": -24.4375,
                     "yScale": 1.0
                 },
                 {
@@ -27,9 +27,9 @@
                     "pivotPoint": "PivotCenter",
                     "renderOrder": 27,
                     "tintColorW": 1.0,
-                    "tintColorX": 1.0,
-                    "tintColorY": 1.0,
-                    "tintColorZ": 1.0,
+                    "tintColorX": 0.2724263370037079,
+                    "tintColorY": 0.8187500238418579,
+                    "tintColorZ": 0.22003908455371857,
                     "type": "Sprite",
                     "xOffset": 48.0,
                     "xScale": 1.0,
@@ -56,7 +56,7 @@
                 {
                     "_isActive": true,
                     "_isCollapsed": false,
-                    "attachedScript": "ColliderSquare",
+                    "attachedScript": "GameManager",
                     "id": 3,
                     "scriptParameters": [],
                     "type": "Script"
@@ -81,11 +81,11 @@
                 "Terrain": false,
                 "TerrainTrigger": false
             },
-            "name": "BlueBrick1",
+            "name": "GreenBrick",
             "parent": -1,
             "prefabName": "",
-            "spawnLocationX": 0.0,
-            "spawnLocationY": -17.25,
+            "spawnLocationX": 4.25,
+            "spawnLocationY": -24.4375,
             "tags": {
                 "Enemy": false,
                 "EnemyDamage": false,

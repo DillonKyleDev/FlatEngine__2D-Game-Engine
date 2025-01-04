@@ -18,6 +18,10 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "TileMap.h"
+#include "FlatEngine.h"
+
+namespace FL = FlatEngine;
+
 
 namespace FlatEngine
 {
@@ -146,6 +150,7 @@ namespace FlatEngine
 		if (GetObjectByID(ownerID) != nullptr) // If BoxCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
 		{
 			UpdateColliderPairs();
+			FL::UpdateColliderPairs();
 		}
 
 		return &m_BoxColliders.at(ownerID).at(collider.GetID());
@@ -170,6 +175,7 @@ namespace FlatEngine
 		if (GetObjectByID(ownerID) != nullptr) // If CircleCollider added to object, but object not yet added to Scene, (will be caught in Scene::AddSceneObject())
 		{
 			UpdateColliderPairs();
+			FL::UpdateColliderPairs();
 		}
 
 		return &m_CircleColliders.at(ownerID).at(collider.GetID());
@@ -350,6 +356,7 @@ namespace FlatEngine
 		}
 		else if (component->GetTypeString() == "Script")
 		{
+			F_Lua[static_cast<Script*>(component)->GetAttachedScript()][ownerID] = "nil";
 			return RemoveScript(ownerID, component->GetID());
 		}
 		else if (component->GetTypeString() == "Button")
@@ -504,6 +511,7 @@ namespace FlatEngine
 			m_CompositeColliders.erase(ownerID);
 			b_success = true;
 			UpdateColliderPairs();
+			FL::UpdateColliderPairs();
 		}
 		return b_success;
 	}
@@ -518,6 +526,7 @@ namespace FlatEngine
 				m_BoxColliders.at(ownerID).erase(componentID);
 				b_success = true;
 				UpdateColliderPairs();
+				FL::UpdateColliderPairs();
 			}
 		}
 		return b_success;
@@ -533,6 +542,7 @@ namespace FlatEngine
 				m_CircleColliders.at(ownerID).erase(componentID);
 				b_success = true;
 				UpdateColliderPairs();
+				FL::UpdateColliderPairs();
 			}
 		}
 		return b_success;

@@ -183,7 +183,7 @@ public:
 	{
 		if (GameLoopStarted())
 		{
-			FL::RunAwakeAndStart();
+			FL::RunSceneAwakeAndStart();
 		}
 	}
 	FL::GameLoop* GetGameLoop()

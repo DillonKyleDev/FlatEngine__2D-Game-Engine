@@ -117,6 +117,8 @@ namespace FlatEngine
 		bool HasChildren();
 		void SetActive(bool b_active);
 		bool IsActive();
+		void SetPersistant(bool b_persistant);
+		bool IsPersistant();
 
 	private:
 		std::string m_name;
@@ -129,5 +131,6 @@ namespace FlatEngine
 		bool m_b_isActive;
 		std::vector<Component*> m_components;
 		std::vector<long> m_childrenIDs;
+		bool m_b_persistant;
 	};
 }

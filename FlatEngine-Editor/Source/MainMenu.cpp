@@ -213,6 +213,12 @@ namespace FlatGui
 					SetFocusedGameObjectID(newObject->GetID());
 				}
 				ImGui::Separator();
+				if (ImGui::MenuItem("Persistant GameObject"))
+				{
+					GameObject* newObject = FL::CreatePersistantGameObject(-1);
+					SetFocusedGameObjectID(newObject->GetID());
+				}
+				ImGui::Separator();
 				if (ImGui::BeginMenu("Components"))
 				{
 					if (ImGui::MenuItem("Sprite"))
@@ -319,7 +325,7 @@ namespace FlatGui
 						{
 							if (ImGui::MenuItem(pair.first.c_str()))
 							{
-								GameObject *instantiatedObject = FL::Instantiate(pair.first, Vector2(0, 0), -1);
+								GameObject *instantiatedObject = FL::Instantiate(pair.first, Vector2(0, 0), FL::GetLoadedScene(), -1);
 								SetFocusedGameObjectID(instantiatedObject->GetID());
 							}
 						}

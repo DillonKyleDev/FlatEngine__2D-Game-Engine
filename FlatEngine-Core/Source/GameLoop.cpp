@@ -57,7 +57,8 @@ namespace FlatEngine
 
 		// Save the name of the scene we started with so we can load it back up when we stop
 		m_b_started = true;
-		RunAwakeAndStart();
+		RunSceneAwakeAndStart();
+		RunPersistantAwakeAndStart();
 		m_currentTime = GetEngineTime();
 	}
 
@@ -236,9 +237,30 @@ namespace FlatEngine
 		std::vector<Button> lastHovered = m_hoveredButtons;
 		ResetHoveredButtons();
 
-		std::map<long, Button>& buttons = GetLoadedScene()->GetButtons();
+		std::map<long, Button>& sceneButtons = GetLoadedScene()->GetButtons();
+		std::map<long, Button>& persistantButtons = GetLoadedProject().GetPersistantGameObjectScene()->GetButtons();
 
-		for (std::pair<long, Button> buttonPair : buttons)
+		for (std::pair<long, Button> buttonPair : sceneButtons)
+		{
+			if (buttonPair.second.IsActive() && buttonPair.second.GetParent()->IsActive())
+			{
+				Transform* transform = buttonPair.second.GetParent()->GetTransform();
+				Vector4 activeEdges = buttonPair.second.GetActiveEdges();
+				Vector2 mousePos = ImGui::GetIO().MousePos;
+
+				if (AreCollidingViewport(activeEdges, Vector4(mousePos.y, mousePos.x, mousePos.y, mousePos.x)))
+				{
+					if (buttonPair.second.GetActiveLayer() >= GetFirstUnblockedLayer())
+					{
+						m_hoveredButtons.push_back(buttonPair.second);
+						buttonPair.second.SetMouseIsOver(true);
+						GameObject* owner = buttonPair.second.GetParent();
+						CallLuaButtonEventFunction(owner, LuaEventFunction::OnButtonMouseOver);
+					}
+				}
+			}
+		}
+		for (std::pair<long, Button> buttonPair : persistantButtons)
 		{
 			if (buttonPair.second.IsActive() && buttonPair.second.GetParent()->IsActive())
 			{
@@ -349,6 +371,10 @@ namespace FlatEngine
 		{
 			owner.second.SetMoving(false);
 		}
+		for (std::pair<const long, CharacterController>& owner : FL::GetLoadedProject().GetPersistantGameObjectScene()->GetCharacterControllers())
+		{
+			owner.second.SetMoving(false);
+		}
 	}
 
 	void GameLoop::CalculatePhysics()
@@ -361,14 +387,32 @@ namespace FlatEngine
 				rigidBody.second.CalculatePhysics();
 			}
 		}
+		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedProject().GetPersistantGameObjectScene()->GetRigidBodies())
+		{
+			if (rigidBody.second.IsActive())
+			{
+				rigidBody.second.CalculatePhysics();
+			}
+		}
 		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "CalculatePhysics: ");
 	}
 
 	void GameLoop::HandleCollisions(float gridstep, Vector2 viewportCenter)
 	{		
-		std::map<long, std::map<long, BoxCollider>>& boxColliders = GetLoadedScene()->GetBoxColliders();
-		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = boxColliders.begin(); outerIter != boxColliders.end();)
+		std::map<long, std::map<long, BoxCollider>>& sceneBoxColliders = GetLoadedScene()->GetBoxColliders();
+		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = sceneBoxColliders.begin(); outerIter != sceneBoxColliders.end();)
+		{
+			for (std::map<long, BoxCollider>::iterator innerIter = outerIter->second.begin(); innerIter != outerIter->second.end();)
+			{
+				innerIter->second.ResetCollisions();
+				innerIter->second.RecalculateBounds(gridstep, viewportCenter);
+				innerIter++;
+			}
+			outerIter++;
+		}
+		std::map<long, std::map<long, BoxCollider>>& persistantBoxColliders = GetLoadedProject().GetPersistantGameObjectScene()->GetBoxColliders();
+		for (std::map<long, std::map<long, BoxCollider>>::iterator outerIter = persistantBoxColliders.begin(); outerIter != persistantBoxColliders.end();)
 		{
 			for (std::map<long, BoxCollider>::iterator innerIter = outerIter->second.begin(); innerIter != outerIter->second.end();)
 			{
@@ -381,7 +425,7 @@ namespace FlatEngine
 
 		float processTime = (float)GetEngineTime();		
 		static int continuousCounter = 0;
-		for (std::pair<Collider*, Collider*>& colliderPair : GetLoadedScene()->GetColliderPairs())
+		for (std::pair<Collider*, Collider*>& colliderPair : F_ColliderPairs)
 		{
 			Collider* collider1 = colliderPair.first;
 			Collider* collider2 = colliderPair.second;
@@ -418,6 +462,14 @@ namespace FlatEngine
 				rigidBody.second.ApplyPhysics((float)m_deltaTime);
 			}
 		}
+		for (std::pair<const long, RigidBody>& rigidBody : GetLoadedProject().GetPersistantGameObjectScene()->GetRigidBodies())
+		{
+			if (rigidBody.second.IsActive())
+			{
+				rigidBody.second.ApplyPhysics((float)m_deltaTime);
+			}
+		}
+		
 		processTime = (float)GetEngineTime() - processTime;
 		//LogFloat(processTime, "Apply Physics: ");
 	}

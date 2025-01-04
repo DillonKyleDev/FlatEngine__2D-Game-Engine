@@ -122,7 +122,7 @@ namespace FlatEngine
 				for (int i = 0; i < fileContentJson["Scene GameObjects"].size(); i++)
 				{
 					// Add created GameObject to our freshScene
-					GameObject *loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i]);
+					GameObject *loadedObject = CreateObjectFromJson(fileContentJson["Scene GameObjects"][i], &m_loadedScene);
 					// Check for primary camera
 					if (loadedObject != nullptr && loadedObject->HasComponent("Camera") && loadedObject->GetCamera()->IsPrimary())
 					{
@@ -158,7 +158,7 @@ namespace FlatEngine
 		return b_success;
 	}
 
-	Scene *SceneManager::GetLoadedScene()
+	Scene* SceneManager::GetLoadedScene()
 	{
 		return &m_loadedScene;
 	}

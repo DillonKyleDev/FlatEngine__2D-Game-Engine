@@ -19,6 +19,9 @@
 #include "GameLoop.h"
 #include "ECSManager.h"
 #include "TileMap.h"
+#include "FlatEngine.h"
+
+namespace FL = FlatEngine;
 
 
 namespace FlatEngine
@@ -35,6 +38,7 @@ namespace FlatEngine
 		m_nextComponentID = 0;
 		m_freedComponentIDs = std::vector<long>();
 		m_freedGameObjectIDs = std::vector<long>();
+		m_b_persistantScene = false;
 	}
 
 	Scene::~Scene()
@@ -155,17 +159,21 @@ namespace FlatEngine
 	GameObject* Scene::CreateGameObject(long parentID, long myID)
 	{
 		GameObject newObject = GameObject(parentID, myID);
+		newObject.SetPersistant(m_b_persistantScene);
 		newObject.AddTransform();
+
 		if (parentID != -1 && m_sceneObjects.count(parentID))
 		{
 			m_sceneObjects.at(parentID).AddChild(newObject.GetID());
 		}
+
 		return AddSceneObject(newObject);
 	}
 
 	void Scene::DeleteGameObject(long sceneObjectID)
 	{
 		GameObject *objectToDelete = GetObjectByID(sceneObjectID);	
+
 		if (objectToDelete != nullptr)
 		{
 			Scene::DeleteChildrenAndSelf(objectToDelete);
@@ -230,9 +238,15 @@ namespace FlatEngine
 		m_nextGameObjectID += 1;
 	}
 
+	void Scene::SetNextGameObjectID(long nextID)
+	{
+		m_nextGameObjectID = nextID;
+	}
+
 	long Scene::GetNextGameObjectID()
 	{
 		long ID;
+
 		if (m_freedGameObjectIDs.size() > 0)
 		{
 			ID = m_freedGameObjectIDs.back();
@@ -243,6 +257,7 @@ namespace FlatEngine
 			ID = m_nextGameObjectID;
 			IncrementGameObjectID();
 		}
+
 		return ID;
 	}
 
@@ -251,9 +266,15 @@ namespace FlatEngine
 		m_nextComponentID += 1;
 	}
 
+	void Scene::SetNextComponentID(long nextID)
+	{
+		m_nextComponentID = nextID;
+	}
+
 	long  Scene::GetNextComponentID()
 	{
 		long ID;
+
 		if (m_freedComponentIDs.size() > 0)
 		{
 			ID = m_freedComponentIDs.back();
@@ -264,6 +285,7 @@ namespace FlatEngine
 			ID = m_nextComponentID;
 			IncrementComponentID();
 		}
+
 		return ID;
 	}
 
@@ -301,14 +323,26 @@ namespace FlatEngine
 		return m_ECSManager.GetColliderPairs();
 	}
 
+	void Scene::SetPersistantScene(bool b_persistant)
+	{
+		m_b_persistantScene = b_persistant;
+	}
+
+	bool Scene::IsPersistantScene()
+	{
+		return m_b_persistantScene;
+	}
+
 	void Scene::OnPrefabInstantiated()
 	{
 		m_ECSManager.UpdateColliderPairs();
+		FL::UpdateColliderPairs();
 	}
 
 	void Scene::UpdateColliderPairs()
 	{
 		m_ECSManager.UpdateColliderPairs();
+		FL::UpdateColliderPairs();
 	}
 
 	void Scene::KeepNextComponentIDUpToDate(long ID)

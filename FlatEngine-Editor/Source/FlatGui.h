@@ -85,7 +85,7 @@ namespace FlatGui
 	extern void CreateNewProject(std::string projectName);
 	extern void CreateProjectDirectory(std::string path);
 	extern void LoadProject(std::string path);
-	extern void SaveProject(Project project, std::string path);
+	extern void SaveProject(Project& project, std::string path);
 	extern void SaveCurrentProject();	
 
 	// File Explorer

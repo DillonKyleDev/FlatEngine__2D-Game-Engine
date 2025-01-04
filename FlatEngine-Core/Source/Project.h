@@ -1,4 +1,6 @@
 #pragma once
+#include "Scene.h"	
+
 #include <string>
 #include "Vector2.h"
 
@@ -11,8 +13,6 @@ namespace FlatEngine
 		Project();
 		~Project();
 
-		std::string GetData();
-
 		std::string GetPath();
 		void SetPath(std::string path);
 		void SetLoadedScenePath(std::string path);
@@ -23,6 +23,12 @@ namespace FlatEngine
 		std::string GetBuildPath();
 		void SetCurrentFileDirectory(std::string dirName);
 		std::string GetCurrentFileDirectory();
+		void SetPersistantGameObjectsScenePath(std::string path);
+		Scene* GetPersistantGameObjectScene();
+		std::string GetPersistantGameObjectsScenePath();
+		void LoadPersistantScene();
+		void SaveScene();
+		std::map<long, GameObject>& GetPersistantObjects();
 		void SetFocusedGameObjectID(long ID);
 		long GetFocusedGameObjectID();
 		void SetLoadedPreviewAnimationPath(std::string path);
@@ -51,6 +57,8 @@ namespace FlatEngine
 		std::string m_sceneToLoadAtRuntime;
 		std::string m_loadedAnimationPath;
 		std::string m_currentFileDirectory;
+		std::string m_persistantGameObjectsScenePath;
+		Scene m_persistantGameObjectsScene;
 		Vector2 m_sceneViewScrolling;
 		Vector2 m_sceneViewGridStep;
 		long m_focusedGameObjectID;

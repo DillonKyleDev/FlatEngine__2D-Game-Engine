@@ -91,10 +91,10 @@ namespace FlatEngine
 	std::shared_ptr<Animation::S_AnimationProperties> FocusedAnimation = std::make_shared<Animation::S_AnimationProperties>();
 	std::shared_ptr<GameObject> objectForFocusedAnimation = nullptr;
 	std::shared_ptr<Animation::S_Property> selectedKeyFrameToEdit = nullptr;
-	int previewAnimationStartTime = 0;
-	int previewAnimationTime = 0;
-	bool _playPreviewAnimation = true;
 
+
+	// Collision Detection
+	std::vector<std::pair<Collider*, Collider*>> F_ColliderPairs = std::vector<std::pair<Collider*, Collider*>>();
 
 
 	bool LoadFonts()
@@ -526,7 +526,7 @@ namespace FlatEngine
 
 
 	// Project Management
-	void SetLoadedProject(Project loadedProject)
+	void SetLoadedProject(Project &loadedProject)
 	{
 		F_LoadedProject = loadedProject;
 	}
@@ -576,7 +576,8 @@ namespace FlatEngine
 					newProject.SetBuildPath(CheckJsonString(projectData, "buildPath", name));
 					newProject.SetLoadedPreviewAnimationPath(CheckJsonString(projectData, "loadedAnimationPath", name));
 					newProject.SetFocusedGameObjectID(CheckJsonLong(projectData, "focusedGameObjectID", name));
-					newProject.SetRuntimeScene(CheckJsonString(projectData, "sceneToLoadAtRuntime", name));				
+					newProject.SetRuntimeScene(CheckJsonString(projectData, "sceneToLoadAtRuntime", name));		
+					newProject.SetPersistantGameObjectsScenePath(CheckJsonString(projectData, "persistantGameObjectsScenePath", name));
 					newProject.SetSceneViewScrolling(Vector2(CheckJsonFloat(projectData, "sceneViewScrollingX", name), CheckJsonFloat(projectData, "sceneViewScrollingY", name)));					
 					newProject.SetSceneViewGridStep(Vector2(CheckJsonFloat(projectData, "sceneViewGridStepX", name), CheckJsonFloat(projectData, "sceneViewGridStepY", name)));
 					newProject.SetAutoSave(CheckJsonBool(projectData, "_autoSave", name));
@@ -589,16 +590,21 @@ namespace FlatEngine
 			}
 		}
 
-		if (newProject.GetLoadedScenePath() != "")
+		SetLoadedProject(newProject);
+
+		if (F_LoadedProject.GetPersistantGameObjectsScenePath() != "")
 		{
-			LoadScene(newProject.GetLoadedScenePath());
+			F_LoadedProject.LoadPersistantScene();
+		}
+
+		if (F_LoadedProject.GetLoadedScenePath() != "")
+		{
+			LoadScene(F_LoadedProject.GetLoadedScenePath());
 		}
 		else
 		{
 			CreateNewScene();
 		}
-
-		SetLoadedProject(newProject);
 	}
 
 	void BuildProject()
@@ -656,6 +662,11 @@ namespace FlatEngine
 	void SetProjectLoadedScenePath(std::string scenePath)
 	{
 		F_LoadedProject.SetLoadedScenePath(scenePath);
+	}
+
+	std::map<long, GameObject>& GetPersistantObjects()
+	{
+		return GetLoadedProject().GetPersistantObjects();
 	}
 
 	// GameObject / Scene management
@@ -768,14 +779,37 @@ namespace FlatEngine
 		return GetLoadedScene()->GetSceneObjects();
 	}
 
-	GameObject* CreateGameObject(long parentID, long myID)
+	GameObject* CreatePersistantGameObject(long parentID, long myID)
 	{
-		return GetLoadedScene()->CreateGameObject(parentID, myID);
+		if (myID == -1)
+		{
+			myID = GetLoadedProject().GetPersistantGameObjectScene()->GetNextGameObjectID();
+		}
+		return GetLoadedProject().GetPersistantGameObjectScene()->CreateGameObject(parentID, myID);
+	}
+
+	GameObject* CreateGameObject(long parentID, long myID, Scene* scene)
+	{
+		if (scene != nullptr)
+		{
+			return scene->CreateGameObject(parentID, myID);
+		}
+		else
+		{
+			return GetLoadedScene()->CreateGameObject(parentID, myID);
+		}
 	}
 
 	void DeleteGameObject(long sceneObjectID)
 	{
-		GetLoadedScene()->DeleteGameObject(sceneObjectID);
+		if (GetLoadedScene()->GetObjectByID(sceneObjectID))
+		{
+			GetLoadedScene()->DeleteGameObject(sceneObjectID);
+		}
+		else if (GetLoadedProject().GetPersistantGameObjectScene()->GetObjectByID(sceneObjectID))
+		{
+			GetLoadedProject().GetPersistantGameObjectScene()->DeleteGameObject(sceneObjectID);
+		}
 	}
 
 	Component* GetObjectComponent(long objectID, ComponentTypes type)
@@ -785,17 +819,47 @@ namespace FlatEngine
 
 	GameObject* GetObjectByID(long objectID)
 	{
-		return GetLoadedScene()->GetObjectByID(objectID);
+		GameObject* sceneObject = GetLoadedScene()->GetObjectByID(objectID);
+		GameObject* persistantObject = GetLoadedProject().GetPersistantGameObjectScene()->GetObjectByID(objectID);
+
+		if (sceneObject != nullptr)
+		{
+			return sceneObject;
+		}
+		else
+		{
+			return persistantObject;
+		}
 	}
 
 	GameObject* GetObjectByName(std::string name)
 	{
-		return GetLoadedScene()->GetObjectByName(name);
+		GameObject* sceneObject = GetLoadedScene()->GetObjectByName(name);
+		GameObject* persistantObject = GetLoadedProject().GetPersistantGameObjectScene()->GetObjectByName(name);
+
+		if (sceneObject != nullptr)
+		{
+			return sceneObject;
+		}
+		else
+		{
+			return persistantObject;
+		}
 	}
 
 	GameObject* GetObjectByTag(std::string tag)
 	{
-		return GetLoadedScene()->GetObjectByTag(tag);
+		GameObject* sceneObject = GetLoadedScene()->GetObjectByTag(tag);
+		GameObject* persistantObject = GetLoadedProject().GetPersistantGameObjectScene()->GetObjectByTag(tag);
+
+		if (sceneObject != nullptr)
+		{
+			return sceneObject;
+		}
+		else
+		{
+			return persistantObject;
+		}
 	}
 
 
@@ -833,7 +897,7 @@ namespace FlatEngine
 		}
 		else if (extension == ".prf")
 		{
-			return Instantiate(GetFilenameFromPath(filePath), position);
+			return Instantiate(GetFilenameFromPath(filePath), position, GetLoadedScene());
 		}
 		else
 		{
@@ -1811,9 +1875,93 @@ namespace FlatEngine
 		F_PrefabManager->InitializePrefabs();
 	}
 
-	GameObject *Instantiate(std::string prefabName, Vector2 position, long parentID, long ID)
+	GameObject *Instantiate(std::string prefabName, Vector2 position, Scene* scene, long parentID, long ID)
 	{
-		return F_PrefabManager->Instantiate(prefabName, position, parentID, ID);
+		return F_PrefabManager->Instantiate(prefabName, position, scene, parentID, ID);
+	}
+
+	
+	// Collision Detection
+	void UpdateColliderPairs()
+	{
+		std::map<long, std::map<long, BoxCollider>>& sceneBoxColliders = GetLoadedScene()->GetBoxColliders();
+		std::map<long, std::map<long, BoxCollider>> &persistantBoxColliders = GetLoadedProject().GetPersistantGameObjectScene()->GetBoxColliders();
+
+		//if (GetLoadedScene() != nullptr)
+		//{
+		//	sceneBoxColliders = ;
+		//}
+		//if (GetLoadedProject().GetPersistantGameObjectScene() != nullptr)
+		//{
+		//	persistantBoxColliders = 
+		//}
+
+		// Remake colliderPairs
+		F_ColliderPairs.clear();
+		std::vector<BoxCollider*> colliders;
+
+		// Collect BoxColliders into a simple to navigate vector
+		for (std::map<long, std::map<long, BoxCollider>>::iterator colliderMap = sceneBoxColliders.begin(); colliderMap != sceneBoxColliders.end();)
+		{
+			for (std::map<long, BoxCollider>::iterator innerMap = colliderMap->second.begin(); innerMap != colliderMap->second.end();)
+			{
+				colliders.push_back(&innerMap->second);
+				innerMap++;
+			}
+			colliderMap++;
+		}
+		for (std::map<long, std::map<long, BoxCollider>>::iterator colliderMap = persistantBoxColliders.begin(); colliderMap != persistantBoxColliders.end();)
+		{
+			for (std::map<long, BoxCollider>::iterator innerMap = colliderMap->second.begin(); innerMap != colliderMap->second.end();)
+			{
+				colliders.push_back(&innerMap->second);
+				innerMap++;
+			}
+			colliderMap++;
+		}
+
+		int colliderCounter = 1;
+		for (std::vector<BoxCollider*>::iterator collider1 = colliders.begin(); collider1 != colliders.end(); collider1++)
+		{
+			for (std::vector<BoxCollider*>::iterator collider2 = collider1 + colliderCounter; collider2 != colliders.end(); collider2++)
+			{
+				if ((*collider1)->GetParentID() != (*collider2)->GetParentID())
+				{
+					TagList coll1TagList = (*collider1)->GetParent()->GetTagList();
+					TagList coll2TagList = (*collider2)->GetParent()->GetTagList();
+
+					std::vector<std::string> coll1Ignored = coll1TagList.GetIgnoredTags();
+					std::vector<std::string> coll2Ignored = coll2TagList.GetIgnoredTags();
+
+					bool _ignorePair = false;
+
+					for (std::string ignoredTag : coll1Ignored)
+					{
+						if (coll2TagList.HasTag(ignoredTag))
+						{
+							_ignorePair = true;
+							break;
+						}
+					}
+					if (!_ignorePair)
+					{
+						for (std::string ignoredTag : coll2Ignored)
+						{
+							if (coll1TagList.HasTag(ignoredTag))
+							{
+								_ignorePair = true;
+								break;
+							}
+						}
+					}
+					if (!_ignorePair)
+					{
+						std::pair<Collider*, Collider*> newPair = { (*collider1), (*collider2) };
+						F_ColliderPairs.push_back(newPair);
+					}
+				}
+			}
+		}
 	}
 
 
@@ -2392,7 +2540,7 @@ namespace FlatEngine
 			{ "InteractableItem", tagList.at("InteractableItem") },
 			{ "InteractableObject", tagList.at("InteractableObject") },
 			{ "Item", tagList.at("Item") },
-			});
+		});
 
 		json ignoreTagsObjectJson = json::object({
 			{ "Player", ignoreTagList.at("Player") },
@@ -2421,6 +2569,7 @@ namespace FlatEngine
 		}
 		
 		json gameObjectJson = json::object({
+			{ "_isPersistant", currentObject.IsPersistant() },
 			{ "_isPrefab", currentObject.IsPrefab() },
 			{ "prefabName", currentObject.GetPrefabName() },
 			{ "spawnLocationX", spawnLocation.x },
@@ -2433,7 +2582,7 @@ namespace FlatEngine
 			{ "components", componentsArray },
 			{ "tags", tagsObjectJson },
 			{ "ignoreTags", ignoreTagsObjectJson },
-			});
+		});
 
 		return gameObjectJson;
 	}
@@ -2619,12 +2768,13 @@ namespace FlatEngine
 		return value;
 	}
 
-	GameObject *CreateObjectFromJson(json objectJson)
+	GameObject *CreateObjectFromJson(json objectJson, Scene* scene)
 	{
 		GameObject *loadedObject;
 		std::string objectName = CheckJsonString(objectJson, "name", "Name");
 		bool b_isActive = CheckJsonBool(objectJson, "_isActive", objectName);
 		bool b_isPrefab = CheckJsonBool(objectJson, "_isPrefab", objectName);
+		bool b_isPersistant = CheckJsonBool(objectJson, "_isPersistant", objectName);
 		std::string prefabName = CheckJsonString(objectJson, "prefabName", objectName);
 		Vector2 spawnLocation = Vector2(0, 0);
 		spawnLocation.x = CheckJsonFloat(objectJson, "spawnLocationX", objectName); // SetOrigin() is taken care of by Instantiate() using parentID
@@ -2644,12 +2794,13 @@ namespace FlatEngine
 
 		if (b_isPrefab)
 		{
-			loadedObject = Instantiate(prefabName, spawnLocation, loadedParentID, loadedID);
+			loadedObject = Instantiate(prefabName, spawnLocation, scene, loadedParentID, loadedID);
 			loadedObject->SetName(objectName);
 		}
 		else
 		{
-			loadedObject = CreateGameObject(loadedParentID, loadedID);
+			loadedObject = CreateGameObject(loadedParentID, loadedID, scene);
+			
 			loadedObject->SetName(objectName);
 			loadedObject->SetActive(b_isActive);
 

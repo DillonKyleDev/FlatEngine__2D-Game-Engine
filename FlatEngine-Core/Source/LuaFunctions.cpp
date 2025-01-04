@@ -16,6 +16,7 @@
 #include "RigidBody.h"
 #include "Script.h"
 #include "MappingContext.h"
+#include "Project.h"
 
 #include <fstream>
 #include <random>
@@ -29,7 +30,8 @@
 namespace FlatEngine
 {
 	sol::state F_Lua;	
-	std::map<std::string, sol::protected_function> F_LoadedScriptFiles = std::map<std::string, sol::protected_function>();
+	std::map<std::string, sol::protected_function> F_LoadedSceneScriptFiles = std::map<std::string, sol::protected_function>();
+	std::map<std::string, sol::protected_function> F_LoadedPersistantScriptFiles = std::map<std::string, sol::protected_function>();
 	std::vector<std::string> F_luaScriptPaths = std::vector<std::string>();
 	std::vector<std::string> F_luaScriptNames = std::vector<std::string>();
 	std::map<std::string, std::string> F_LuaScriptsMap = std::map<std::string, std::string>();
@@ -329,7 +331,7 @@ namespace FlatEngine
 			// track what GameObject called Instantiate() so we can set the Lua state back to that GameObject after Instantiate() initializes any scripts it creates by calling Awake()/Start() on them
 			GameObject* currentLuaObject = F_Lua["this_object"];
 			std::string callingScript = F_Lua["calling_script_name"];
-			GameObject *newObject = Instantiate(prefabName, position);
+			GameObject *newObject = Instantiate(prefabName, position, GetLoadedScene());
 			LoadLuaGameObject(currentLuaObject, callingScript);
 
 			// Maybe try Instantiations on a new thread so we don't keep going deeper into the RunLuaFuncOnSingleScript() nesting
@@ -672,6 +674,16 @@ namespace FlatEngine
 				}
 			}
 		}
+		for (std::pair<long, std::map<long, Script>> object : GetLoadedProject().GetPersistantGameObjectScene()->GetScripts())
+		{
+			for (auto& script : object.second)
+			{
+				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
+				{
+					RunLuaFuncOnSingleScript(&script.second, functionName);
+				}
+			}
+		}
 	}
 
 	void RunLuaFuncOnSingleScript(Script* script, std::string functionName)
@@ -680,7 +692,7 @@ namespace FlatEngine
 
 		if (script->IsActive() && attachedScript != "")
 		{
-			if (F_LoadedScriptFiles.count(attachedScript))
+			if (F_LoadedSceneScriptFiles.count(attachedScript) || F_LoadedPersistantScriptFiles.count(attachedScript))
 			{
 				std::string message = "";
 				if (ReadyScriptFile(attachedScript, message))
@@ -707,9 +719,9 @@ namespace FlatEngine
 		}
 	}
 
-	void RunAwakeAndStart()
+	void RunSceneAwakeAndStart()
 	{
-		F_LoadedScriptFiles.clear();
+		F_LoadedSceneScriptFiles.clear();
 
 		for (std::pair<long, std::map<long, Script>> object : GetLoadedScene()->GetScripts())
 		{
@@ -717,7 +729,7 @@ namespace FlatEngine
 			{
 				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
-					InitLuaScript(&script.second);
+					InitLuaScript(&script.second, F_LoadedSceneScriptFiles);
 					RunLuaFuncOnSingleScript(&script.second, "Awake");
 				}
 			}
@@ -728,7 +740,35 @@ namespace FlatEngine
 			{
 				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
 				{
-					InitLuaScript(&script.second);
+					InitLuaScript(&script.second, F_LoadedSceneScriptFiles);
+					RunLuaFuncOnSingleScript(&script.second, "Start");
+				}
+			}
+		}
+	}
+
+	void RunPersistantAwakeAndStart()
+	{
+		F_LoadedPersistantScriptFiles.clear();
+
+		for (std::pair<long, std::map<long, Script>> object : GetLoadedProject().GetPersistantGameObjectScene()->GetScripts())
+		{
+			for (auto& script : object.second)
+			{
+				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
+				{
+					InitLuaScript(&script.second, F_LoadedPersistantScriptFiles);
+					RunLuaFuncOnSingleScript(&script.second, "Awake");
+				}
+			}
+		}
+		for (std::pair<long, std::map<long, Script>> object : GetLoadedProject().GetPersistantGameObjectScene()->GetScripts())
+		{
+			for (auto& script : object.second)
+			{
+				if (script.second.IsActive() && script.second.GetAttachedScript() != "")
+				{
+					InitLuaScript(&script.second, F_LoadedPersistantScriptFiles);
 					RunLuaFuncOnSingleScript(&script.second, "Start");
 				}
 			}
@@ -870,7 +910,7 @@ namespace FlatEngine
 	}
 
 	// Checks that the script filePath is good and sends the Lua state contextual data
-	bool InitLuaScript(Script* script)
+	bool InitLuaScript(Script* script, std::map<std::string, sol::protected_function>& scriptTracker)
 	{
 		std::string attachedScript = script->GetAttachedScript();
 		std::string filePath = "";
@@ -903,7 +943,7 @@ namespace FlatEngine
 		if (scriptFile.valid())
 		{
 			sol::protected_function loadedScriptFile = scriptFile.get<sol::protected_function>();
-			F_LoadedScriptFiles.emplace(attachedScript, loadedScriptFile);
+			scriptTracker.emplace(attachedScript, loadedScriptFile);
 			std::string message = "";
 
 			if (!ReadyScriptFile(attachedScript, message))
@@ -924,9 +964,23 @@ namespace FlatEngine
 
 	bool ReadyScriptFile(std::string scriptToLoad, std::string &message)
 	{
-		if (F_LoadedScriptFiles.count(scriptToLoad))
+		if (F_LoadedSceneScriptFiles.count(scriptToLoad))
 		{
-			sol::protected_function loadedScriptFile = F_LoadedScriptFiles.at(scriptToLoad);
+			sol::protected_function loadedScriptFile = F_LoadedSceneScriptFiles.at(scriptToLoad);
+			sol::protected_function_result scriptResult;
+			scriptResult = loadedScriptFile(); // invoke the script and get the result
+			F_Lua["loaded_script_file"] = scriptToLoad;
+			if (!scriptResult.valid())
+			{
+				sol::error error = scriptResult;
+				message = error.what();
+				return false;
+			}
+			return true;
+		}
+		else if (F_LoadedPersistantScriptFiles.count(scriptToLoad))
+		{
+			sol::protected_function loadedScriptFile = F_LoadedPersistantScriptFiles.at(scriptToLoad);
 			sol::protected_function_result scriptResult;
 			scriptResult = loadedScriptFile(); // invoke the script and get the result
 			F_Lua["loaded_script_file"] = scriptToLoad;
